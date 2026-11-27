@@ -1,0 +1,15 @@
+cm848: round 58 closing - task 046, the session archive, the PR body, the MISSING count
+
+- task 046, round 58:
+  - the last 12 protection_* globals;
+  - the access-scan method and its limit;
+  - the proof;
+  - leads: 99 rows with protection inside their names, the line table's entry 17 kernel render, an i16 candidate,
+    and the scanner as a repo tool.
+- firmware/CLAUDE.md, a factual correction (numbers only): the MISSING sentence says 218 since round 58 (121
+  documentation rows, 3 deferred). This round's own rows changed it: one deferred row gained _cal, and two
+  documentation rows were deleted. The memory note on the _cal rule says the same.
+- PR body, README, todo, memory, and the round 58 session folder (the stage script and map, the access scanners, the
+  proof scripts, the closing scripts, the verify log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

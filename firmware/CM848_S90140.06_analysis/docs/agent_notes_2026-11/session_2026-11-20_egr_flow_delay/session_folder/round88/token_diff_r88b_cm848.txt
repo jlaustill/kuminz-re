@@ -1,0 +1,14 @@
+0x00038ac8: 2 token changes:  => ushort receive_interval ; | ; ushort receive_interval => 
+0x00538974: 18 token changes: word => dword | pwVar1 => working_ram_pointer | pdVar2 => chunk_end | pwVar1 => working_ram_pointer |  => ( dword * ) | pdVar2 => chunk_end | ( dword * ) ( ( int ) pwVar1 => working_ram_pointer | 0x100 ) => 0x40 | ( dword * ) ( ( int ) pwVar1 => working_ram_pointer | 0x100 ) => 0x40 | pdVar2 => chunk_end | pwVar1 => working_ram_pointer | pdVar2 => chunk_end | pwVar1 => working_ram_pointer | ( word * ) ( ( int ) pwVar1 => working_ram_pointer | 4 ) => 1 | ( dword * ) pwVar1 => working_ram_pointer | pwVar1 => working_ram_pointer
+---- census of distinct changes
+   5 pwVar1 => working_ram_pointer
+   4 pdVar2 => chunk_end
+   2 ( dword * ) ( ( int ) pwVar1 => working_ram_pointer
+   2 0x100 ) => 0x40
+   1  => ushort receive_interval ;
+   1 ; ushort receive_interval => 
+   1 word => dword
+   1  => ( dword * )
+   1 ( word * ) ( ( int ) pwVar1 => working_ram_pointer
+   1 4 ) => 1
+   1 ( dword * ) pwVar1 => working_ram_pointer

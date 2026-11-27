@@ -109,7 +109,7 @@ function_address,function_name,variable_name,variable_type,is_parameter
 0x0002238e,diagMemoryReadResponseBuilder,node_address,byte,false
 0x0002238e,diagMemoryReadResponseBuilder,uVar4,undefined3,false
 0x0002238e,diagMemoryReadResponseBuilder,validation_result,dword,false
-0x0002238e,diagMemoryReadResponseBuilder,response_header,j1939_header_t *,false
+0x0002238e,diagMemoryReadResponseBuilder,response_header,j1939_message_header_t *,false
 0x0002238e,diagMemoryReadResponseBuilder,uVar5,undefined2,false
 0x0002238e,diagMemoryReadResponseBuilder,loop_counter,dword,false
 0x0002238e,diagMemoryReadResponseBuilder,uVar6,ushort,false
@@ -346,7 +346,7 @@ function_address,function_name,variable_name,variable_type,is_parameter
 0x0002cf7e,diagnosticParameterTransferHandler,bVar3,byte,false
 0x0002cf7e,diagnosticParameterTransferHandler,bVar6,byte,false
 0x0002cf7e,diagnosticParameterTransferHandler,bVar5,byte,false
-0x0000b7bc,sensorInputFilterProcessor,local_8,table_interp_args_t *,false
+0x0000b7bc,sensorInputFilterProcessor,local_8,table_lookup_1d_arguments_t *,false
 0x0000b7bc,sensorInputFilterProcessor,local_D0w_1174,word,false
 0x0000b7bc,sensorInputFilterProcessor,bVar1,bool,false
 0x0000b7bc,sensorInputFilterProcessor,uVar2,undefined2,false

@@ -1,0 +1,31 @@
+cm848: 0x128a0 is the EGR transport delay stage, not a throttle fuel calculation (e2m 177F)
+
+cm848_throttleBasedFuelCalculation computed nothing about the throttle or
+fueling. The ECU's parameter ID table resolves every word it writes to
+e2m block 177F (the charge properties EGR words): it delays the residual
+oxygen fraction and the EGR mass flow from where they are computed to
+the intake valve (CHP_O2_Flow_Delay = volume fraction x 120 x 1000 /
+(volumetric efficiency x engine speed) ms; CHP_EGR_Flow_Delay = a
+fraction of it), filters them into CHP_O2_Frac_EGR and
+egr_mass_flow_delayed_filtered, and forms EGR_Fraction = delayed EGR
+flow x 8192 / charge flow. The RAM dump agrees (oxygen delay 40959 =
+0xffff x 1000 / 1600 with the engine stopped).
+
+Renames (label-only: reverse_names.py EQUIVALENT, 0 functions differ):
+- cm848_throttleBasedFuelCalculation -> cm848_calculateDelayedEgrFlowAndFraction
+- cm848_circularBufferWriteUnsigned / Signed -> cm848_delayUnsignedSample /
+  cm848_delaySignedSample (write a sample, return the one delay_samples
+  calls back; only callers are 0x128a0)
+- throttle_fuel_trim_t / throttle_fuel_trim_t_0040a3ea ->
+  egr_flow_estimate_terms_t / egr_flow_estimate_terms, its 12 fields
+  from e2m 177F +0 .. +16 (final_trim = egr_mass_flow_before_delay,
+  throttle_conversion = oxygen_flow_delay_milliseconds, load_adjusted =
+  egr_flow_delay_milliseconds, rpm_based_trim / load_based_trim =
+  upstream / downstream_egr_mass_flow, reserved_0c/10/12/16 = the
+  corrected flows and the square-root temperatures, ...)
+- engine_fuel_fault_status -> egr_flow_source (177F +18 EGR_Flow_Source)
+- throttle_filter_state -> egr_oxygen_fraction_filter
+
+Headers regenerated (g++ -fsyntax-only clean); lookup_tables.py clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,51 @@
+cm550 + cm848: round 87 stage A - the round 85-86 leads audit: 8 twins share one name, CS5 CAN, speed, restart
+
+A workflow of 5 read-only investigators and 5 skeptics audited round 85-86's naming leads. Applied here: the
+accepted and amended changes of four groups. The fifth group (the filter library and its records) is next.
+
+Twins (one unprefixed name in both firmwares; each pair checked statement by statement):
+- restartOnKeyOnDuringPowerDown: CM550 0x27af0 / CM848 0x539938
+- copyCalibrationFromRomToRam: CM550 0x117ec / CM848 0x4bd00 (was cm848_copyRomToRamBuffer)
+- clearWorkingRam: CM550 0x2e9ac (was cm550_clearWorkingMemory) / CM848 0x538974
+- getJ1939DiagnosticResponseEchoLength: CM550 0xb688 (was cm550_FUN_0000b688) / CM848 0x204a8
+- executiveFrameInterruptHandler: CM550 0x1b876 / CM848 0xc0a0 (both were main_loop: the periodic interrupt
+  timer's handler, one frame of the 40-phase executive per interrupt, not a loop)
+- restartThroughBootRom: CM550 0x1192a (was cm550_FUN_0001192a) / CM848 0x216fc
+- handleJ1939RestartService: CM550 0x11908 (was cm550_eepromWriteWrapper) / CM848 0x218dc
+- ignoreCanTransmitInterrupt: CM550 0xc80c (was cm550_emptyStubFunction1) / CM848 0x26f78 (was
+  emptyStubFunction4). The skeptic found the CM848 half: both are the empty transmit-complete hook that the twin
+  transmit-complete step calls for every message object except the J1939 transmit one.
+- Rejected as a twin: runPowerDownSequence (counterparts).
+
+CM550 chip select 5 CAN (the VP44 pump link): 0xc80e vp44_dispatchReceivedPumpMessage (was
+cm550_modeBasedDataDispatcher: there is no mode; it dispatches by message object number), 0x1e1be
+vp44_handleCanCs5ReceiveInterrupt, 0x1e1ac vp44_handleCanCs5TransmitInterrupt.
+
+CM550 speed sensing and outputs: 0x1025c cm550_detectEngineSpeedSensorSyncPulse (was
+cm550_retarderModeThresholdCalculator), 0x1a95a cm550_processPrimarySpeedPulsePeriodWithSyncPulse (was
+cm550_throttleTimeAccumulatorProcessor), 0x2e2f4 mc68k_stepPwm3AndPwm4OutputStartUpTest (was
+mc68k_waterInFuelDiagnosticHandler), 0x15df0 mc68k_initializeDiscreteOutputDrivers (was mc68k_FUN_00015df0).
+
+CM550 restart: 0x28978 cm550_restartApplicationWithoutReset, 0x1191a cm550_restartThroughBootRomAfterJ1708Request
+(was cm550_triggerDiagnosticSystemReset). 13 globals, placed by CM550's own parameter ID table: engine_state
+(0x80d0c8, e2m 1068 +0; was smoke_limiter_output_value), power_down_start_flag (0x80d0ca), power_down_refresh_enable
+(0x80dc6e) and parameter_block_uploaded (0x80dc70) (were calibration_bank_copy_valid / calibration_bank_active),
+the parameter blocks' save start / complete counts (0x803fd6 / 0x803fd8 / 0x803fde / 0x803fe0) and checksums
+(0x803b12 / 0x803b14), flash_write_failure_flag_cal (0x803fe8, was eeprom_calibration_write_success: the polarity
+was backwards), and the DM8 test identifier / value (0x803470 / 0x803472).
+
+CM848: 0x509b74 cm848_copyROMCalibrationToRAM -> cm848_loadDefaultJ1939NamesAndSourceAddresses. It copies the
+default J1939 NAMEs and source addresses, not the calibration; next to the twin name copyCalibrationFromRomToRam
+the old name would mislead.
+
+Docs: the renamed CM848 functions in firmware/CLAUDE.md (3 lines), engine_hours_and_odometer.md and
+j1939_broadcast_investigation.md.
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed or added; label-only except 5 functions, whose only token
+  changes come from the newly typed parameter block words (4 short -> word, 3 1U -> 1, 2 (byte *) casts); no new
+  build warning (unmapped types 5436 -> 5429).
+- CM848: verify DETERMINISTIC; label-only (0 differing lines with the rename map); no new build warning.
+- Headers: 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 31 -> 28).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

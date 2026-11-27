@@ -1,0 +1,52 @@
+cm848: round 56 stage A - the discrete output overrides (e2m 8B5B / 8C29) replace the last protection_* names
+
+The 0x514048-0x514394 "protection" cluster and its globals are the discrete output overrides. A service tool can
+force each of eleven driver outputs on or off with an enable byte and a value byte. One override priority word sits
+in front of them.
+
+Placement:
+- e2m 8B5B holds the priority word and five enable / value pairs; 8C29 holds six more pairs.
+- Neither block is in the parameter ID table. They tile the gap between 8A79 (coolant_overheat_level_time_limits,
+  which ends at 0x408787) and 8A5F (round 52, which starts at 0x4087a0) exactly: 12 + 12 bytes.
+- Every pair is passed with the logical output its e2m record names. The output's own module and its round 32
+  read-back check use the same number: 11 engine brake 1, 38 air conditioning, 43 / 44 intake air heaters, 53 lift
+  pump, 21 / 20 / 19 cruise servo supply / vacuum / vent, 17 overdrive, 18 converter clutch, 16 transmission relay.
+
+Names and types:
+- discrete_output_override_t {byte enable; byte value;}: 11 instances named from the round 32 read-back stems
+  (engine_brake_1_output_override, ...), each citing both e2m records. They replace protection_fault_enable_eventN
+  and the unnamed DAT_ value bytes.
+- protection_fault_severity_code -> discrete_output_override_priority (8B5B +0, 3 in the dump).
+- protection_fault_prevEnable_eventN -> <stem>_output_override_enable_previous (the 11 words at 0x3fcde0).
+- The lift pump module's own override (lift_pump_override_enable / _state, e2m 8A6F) and the driver-level
+  lift_pump_output_override now point at each other.
+- The script builds the output table from the decompile's call arguments and asserts it. The legacy suffixes are
+  decimal output numbers (event11 = output 0xb), but protection_event_11_reset drives output 0x11 (17).
+
+Functions (none in CM550):
+- engine_protection_faultSeverity_manage -> cm848_applyDiscreteOutputOverride. On the enable's falling edge it only
+  zeroes the output's request priority, and only if that priority still equals the override priority; the request
+  bit is left alone.
+  - It gets no prototype; the plate names param_1-4 instead. Three pilot builds committed the four parameter names,
+    with dword, int32_t and undefined4. Each one put a (uint) cast on all 33 call arguments of
+    cm848_applyDiscreteOutputOverrides (11 -> 44 casts), because a committed parameter locks the argument types.
+- protection_fault_snapshot_update -> cm848_applyDiscreteOutputOverrides (periodic).
+- protection_fault_snapshot_initialize -> cm848_initializeDiscreteOutputOverrides (boot).
+- protection_accumulator_update -> cm848_addCoolantOverheatLevelTimersToTotals: a power-down step that adds the five
+  coolant overheat level timers (8A72) to their lifetime totals (8A73, EEPROM mirror 0x3fee04, left untyped).
+- protection_event_11_reset -> cm848_initializeOverdriveSwitchAndShift: the boot initializer of
+  cm848_processOverdriveSwitchAndShift. It requests output 17 off and clears the converter clutch and overdrive test
+  bits that module tests.
+
+Proof (prove_r56.sh: the 5 function renames applied to the old .cpp, the casts and two char literals folded,
+then prove_caches.py with the 34 global map entries; the struct fields map to instance.enable / instance.value):
+- 0 of 1968 functions differ.
+- The 11 struct instances render with no pieces or underscores.
+- count_casts.py: the five functions keep their cast counts (11 / 1 / 0 / 0 / 0).
+- No old global name and no value-byte DAT_ is left in the .cpp. Each old function name is left once, in its
+  own plate's (was ...) note.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

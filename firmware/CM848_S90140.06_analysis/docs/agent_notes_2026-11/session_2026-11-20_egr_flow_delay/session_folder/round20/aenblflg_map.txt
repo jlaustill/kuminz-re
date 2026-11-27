@@ -1,0 +1,28 @@
++00 word -1 0x3fd59a (no row)  | Software_AENBLFLG(1)
++02 word  0 0x3fd59c governor_fault_status_flags word | AFC_Low_Boost_Derate_Enable(2), Alpha_AFC_Enable(800), Alpha_Engine_Protection_Override_Enable(4000), Alpha_Fuel_Rate_Enable(1000)
++04 word  1 0x3fd59e governor_feature_flags word | Alpha_User_Override_Enable(1), Altitude_Derate_Enable(20), LSG_Aggressive_Gain_Set_Enable(1000), LSG_High_Gear_Gain_Set_Enable(200
++06 word  2 0x3fd5a0 governor_feature_config_word word | EB_Clutch_Enable(40), Engine_Protection_Enable(10), Engine_Protection_Restart_Enable(20), Engine_Protection_Shutdown_Enable(1), J1
++08 word  3 0x3fd5a2 algorithm_enable_flags_3_cal word | ANC_Fuel_Algorithm_Enable(1000), ANC_Speed_Algorithm_Enable(4000), ANC_Timing_Algorithm_Enable(2000), Cruise_Control_Enable(40), C
++0a word  4 0x3fd5a4 algorithm_enable_flags_4_cal algorithm_enable_flags_4_t | User_Commanded_Fueling_Enable(1), User_Commanded_Timing_Enable(100)
++0c word  5 0x3fd5a6 combustion_override_and_estimation_enable_flags_cal word | T_CBL_EGR_Frac_User_Override(0001), T_CBL_Fuel_User_Override(0002), T_CBL_MCF_User_Override(0004), T_CBL_SOI_Increment_Enable(0008
++0e word  6 0x3fd5a8 algorithm_enable_flags_6_cal word | Alt_Not_Brake_Switch_Enable(0010), Cruise_Brake_Enable(8000), Enhanced_Diagnostics_Enable(0020), Fan_AC_Pressure_Enable(400), Fan_
++10 word  7 0x3fd5aa (no row)  | Coolant_Level_Fueling_Limiting_Enable(1), Coolant_Level_RPM_Limiting_Enable(2), Coolant_Level_Restart_Enable(8), Coolant_Level_Shu
++12 word  8 0x3fd5ac (no row)  | C_Out_Temperature_Fueling_Limiting_Enable(10), C_Out_Temperature_RPM_Limiting_Enable(20), C_Out_Temperature_Restart_Enable(80), C_
++18 word 11 0x3fd5b2 (no row)  | J1587_Communication_Enable(2), J1922_Communication_Enable(4), J1939_Communication_Enable(8), Proprietary_Communication_Enable(1)
++1a word 12 0x3fd5b4 algorithm_enable_flags_12_cal algorithm_enable_flags_12_t | AFC_Override_Enable(8), Accelerator_Interlock_Enable(80), ESP_Enable(10), Idle_Speed_Save_Enable(1), LSG_Droop_Enable(40), OBD_Fau
++1c word 13 0x3fd5b6 fault_feature_config_flags word | Active_Driver_Demand_With_Jcomm(2), EB_Switch_Level_Override(1), Fuel_Press_Idle_Diag_Enable(0020), Net_Torque_Derate_Enable(4)
++26 word 18 0x3fd5c0 algorithm_enable_flags_18_cal algorithm_enable_flags_18_t | AC_Smart_Enable(40), Cruise_Control_AR_Enable(800), DC_Mon_Enable(0008), DR_Enable(4), EB_Rate_Limit_Enable(8000), EB_Service_Brak
++28 word 19 0x3fd5c2 feature_enable_flags_cal word | Alpha_Altitude_Derate_Override_Enable(0020), Alternate_Curve_Configuration_Enable(1), COT_Estimation_Enable(0080), CWG_Monitor_Ena
++2a word 20 0x3fd5c4 algorithm_enable_flags_20_cal word | T_CSE_Delta_P_Only_Mode(1), T_EMO_Air_Handling_AECD_Enable(0100), T_EMO_Engine_Start_AECD_Enable(1000), T_EMO_Extended_Idle_AECD_E
++2c word 21 0x3fd5c6 governor_feature_config_flags word | AC_Anti_Slugging_Start_Enable(0200), TVA_ASIC_Diagnostic_Enable(0004), T_Charge_Press_IR_Enable(0010), T_Deicer_Speed_Limit_Enable
++34 word 25 0x3fd5ce governor_mode_config_flags word | EB_Rate_Limit_Defeat_Enable(1), Fan_Clutch_1_AC_Enable(40), Fan_Clutch_1_Coolant_Enable(80), Fan_Clutch_1_IMT_Enable(100), Fan_Clu
++36 word 26 0x3fd5d0 (no row)  | C_Out_Temperature_Data_Noderate_Enable(20), Coolant_Level_Data_Noderate_Enable(1), Coolant_Temperature_Data_Noderate_Enable(2), Fu
++38 word 27 0x3fd5d2 governor_system_config_flags word | AH_Enable(20), AT_AUTO_Anti_Theft_Enable(800), Anti_Theft_Auto_Lock_Enable(1000), Boost_In_Range_Enable(10), Cruise_Use_Min_Fuel_R
++3a word 28 0x3fd5d4 j1939_input_processing_enable_cal word | AT_Random_Number_Generator_Enable(1000), ES_Alarm_During_Autostart_Enable(20), ES_Keyless_Restart(8), J1939_Multiplex_Enable(400),
++3c word 29 0x3fd5d6 j1939_feature_enable_flags_cal word | AH_Direct_Derate_Enable(10), DM13_Enable(0100), EPF_Shutdown_Override_Enable(200), Fan_Clutch_Variable_Speed_Fan_Logic_Enable(8000
++40 word 31 0x3fd5da injection_timing_enable_flags word | Hybrid_Governor_Enable(1)
++42 word 32 0x3fd5dc governor_fuel_feature_flags word | EOI_Limit_Algorithm_Enable(0002), Equivalent_Throttle_Enable(7), IAH_24V_Enable(10), IAH_Control_Enable(1)
++52 word 40 0x3fd5ec engine_feature_enable_flags_cal word | AC_Control_Enable(8), Ambient_Air_Pressure_Monitor_Enable(0080), CT_Derate_Enable(2), DDT_Is_Unmanaged_Torque_Enable(0800), EVR_En
++54 word 41 0x3fd5ee algorithm_enable_flags_41_cal algorithm_enable_flags_41_t | AFC_Cold_Increment_Enable(2000), Brake_Switch_Diag_Enable(2), CTIR_Monitor_Enable(40), EVR_PID_Enable(20), Fuel_Lvl_Rationality_En
++56 word 42 0x3fd5f0 protection_feature_flags word | Actual_Sensor_Values_Enable(2), Altitude_Derate_Cold_Increment_Enable(0080), FSS_Derate_Cold_Increment_Enable(0008), HPCR_Cusum_Le
++58 word 43 0x3fd5f2 fuel_feature_control_flags word | CWG_LS_Pressure_Driver_Enable(1000), Chi_Cold_Increment_Enable(0040), Density_Cold_Increment_Enable(0080), EGR_Orifice_Temp_Ration

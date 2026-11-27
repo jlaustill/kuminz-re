@@ -1,0 +1,21 @@
+cm550 docs: round 89 stage D - the README and npm scripts follow the one deterministic build
+
+CM550's README and package.json still described the partial pipeline that the one deterministic build replaced:
+- the Quick Start ran npm run ghidra:full / init / analyze / memmap / ramvars / bootstrap / export;
+- the CLI section listed analyze.sh init / analyze / memmap / ramvars / bootstrap / export / import / full;
+- the workflow said import, then re-export;
+- the script table pointed at ghidra/scripts/ (the scripts are shared in firmware/scripts/);
+- the counts were 489 functions and 5,866 globals.
+scripts/common.sh rejects those subcommands ("Unknown command: ... Partial commands (import/export/analyze/...) were
+removed"), so 11 of the 13 ghidra:* npm scripts failed.
+
+- README: the analysis state recounted from the CSVs (762 functions, 5,558 global rows, 44 structure types with 244
+  fields, a 1.3 MB decompilation), the output files as build inputs, the two CM550-only stages (SetupMemoryMap.java,
+  ApplyHardwareRegisters.java), build / verify as the Quick Start, the real command list, analyze.sh decompile, and the
+  edit -> build -> headers workflow of the firmware's CLAUDE.md. It points at docs/analog_sensor_channels.md.
+- package.json: ghidra:build / ghidra:verify / ghidra:decompile / ghidra:status (the dead scripts are gone).
+- docs/memory_map.md: the two A/D record arrays (0x806ae2 / 0x80a2aa) in the RAM and extended RAM contents.
+
+No build input changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

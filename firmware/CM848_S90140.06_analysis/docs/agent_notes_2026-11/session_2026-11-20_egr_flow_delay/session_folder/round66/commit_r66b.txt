@@ -1,0 +1,33 @@
+cm848: round 66 follow-up - BOOT_DIAGNOSTIC_RESULT from the boot kernel's own producers; e2m names for the torque words
+
+From the round's closing review: three members of 382fa677 had their meaning taken from the application's enum,
+not from boot code.
+- 0x09 UNMAPPED_ADDRESS -> ADDRESS_NOT_ACCEPTED. cm848_lookupBootMemoryRegionType also returns 9 for Bank 2 flash
+  while flash2_writes_enabled is 0, and cm848_trackDownloadBlock returns it for an out-of-sequence address or a
+  block overrun.
+- 0x0a REGION_REFUSED -> ROM_HANDLER_REFUSED. memory_region_table's types are 0 / 2 / 3 / 4 / 5, with no 10. The
+  dispatcher refusing a handler in ROM while the low nibble of eeprom_service_mode_flags is set is its only producer.
+- 0x17 EEPROM_TRANSFER_NOT_STARTED -> FLASH_ERASE_FAILED. mpc555_initEepromTransfer answers 0x17 when its flash erase
+  (mpc555_cmfEraseBlocks then cm848_flashEraseChip) fails.
+- New members:
+  - 0x10 NO_DOWNLOAD_BLOCK (cm848_trackDownloadBlock: a write while eeprom_xfer_state.block_length is 0);
+  - 0x14 CHECKSUM_MISMATCH (cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC);
+  - 0x15 DOWNLOAD_BLOCK_LIST_FULL (its 10-entry list).
+  The write worker passes these up to the response. 0x14 is the code CM550's DIAG_RESPONSE_CODE called
+  CHECKSUM_MISMATCH, now shown for the boot kernel.
+- The torque words take their e2m name:
+  - 0x4059f4 coolant_torque_adjustment_factor (e2m 16A4 +1E C_CBP_Coolant_Torque_Adj_Factor 'Used on
+    Coolant_Torque_Adjustment in CBR'; was net_combustion_torque_coolant_friction_scale from 382fa677);
+  - 0x3fba10 coolant_torque_adjustment_term.
+- cm848_handleBootExecuteAtAddressService has its full prototype (request / the enum return): its 16 siblings
+  already called the message request.
+
+Proof (prove_r66.sh): 4 of 1968 functions differ:
+- the dispatcher (ROM_HANDLER_REFUSED);
+- the 0x19 handler (request / ADDRESS_NOT_ACCEPTED);
+- the net torque calculation (the two names);
+- one local declaration-order move.
+No artifact count changed. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed. Headers
+regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219, history notes intact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

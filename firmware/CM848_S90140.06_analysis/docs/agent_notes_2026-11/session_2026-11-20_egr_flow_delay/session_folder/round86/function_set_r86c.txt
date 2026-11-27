@@ -1,0 +1,1659 @@
+removed 0: 
+added 0: 
+changed 120
+  0x0000b688 cm550_FUN_0000b688: 14 lines
+      -undefined1 cm550_FUN_0000b688(undefined4 param_1)
+      +byte cm550_FUN_0000b688(word diagnostic_service)
+      -  if (0x40 < param_1._1_1_) {
+      -    if (param_1._1_1_ < 0x4f) {
+      -      return *(undefined1 *)((short)(ushort)param_1._1_1_ + 0xb639);
+      +  byte bVar1;
+      +  bVar1 = (byte)diagnostic_service;
+      +  if (0x40 < bVar1) {
+      +    if (bVar1 < 0x4f) {
+      +      return *(byte *)((short)(diagnostic_service & 0xff) + 0xb639);
+      -  if ((param_1._1_1_ == 4) || (param_1._1_1_ == 5)) {
+      +  if ((bVar1 == 4) || (bVar1 == 5)) {
+      -  if (param_1._1_1_ == 0x19) {
+      +  if (bVar1 == 0x19) {
+  0x0000c80e cm550_modeBasedDataDispatcher: 10 lines
+      -void cm550_modeBasedDataDispatcher(undefined4 param_1)
+      +void cm550_modeBasedDataDispatcher(word message_object)
+      -  if (param_1._1_1_ == '\x01') {
+      +  char cVar1;
+      +  cVar1 = (char)message_object;
+      +  if (cVar1 == '\x01') {
+      -  if (param_1._1_1_ == '\x03') {
+      +  if (cVar1 == '\x03') {
+      -  if (param_1._1_1_ == '\x05') {
+      +  if (cVar1 == '\x05') {
+  0x0000d1a4 cm550_diagnosticStatus2Initializer: 4 lines
+      -void cm550_diagnosticStatus2Initializer(undefined4 param_1)
+      +void cm550_diagnosticStatus2Initializer(word previous_user_fueling_state)
+      -    if (param_1._0_2_ != 2) {
+      +    if (previous_user_fueling_state != 2) {
+  0x0000d4ae cm550_FUN_0000d4ae: 4 lines
+      -uint cm550_FUN_0000d4ae(undefined4 param_1)
+      +uint cm550_FUN_0000d4ae(word previous_user_fueling_state)
+      -    if ((param_1._0_2_ != 7) && (param_1._0_2_ != 3)) {
+      +    if ((previous_user_fueling_state != 7) && (previous_user_fueling_state != 3)) {
+  0x0000ed34 cm550_diagnosticCodeTableSearch: 12 lines
+      -uint cm550_diagnosticCodeTableSearch(undefined4 param_1)
+      +byte cm550_diagnosticCodeTableSearch(word fault_index)
+      -  uint in_D0;
+      -  uint uVar1;
+      +  ushort uVar1;
+      -      return in_D0 & 0xffffff00;
+      +      return 0;
+      -    if (param_1._1_1_ == (&DGAEFUBF)[(short)uVar1]) break;
+      -    in_D0 = uVar1;
+      -    uVar1 = (uint)(byte)((byte)uVar1 + 1);
+      +    if ((char)fault_index == (&DGAEFUBF)[(short)uVar1]) break;
+      +    uVar1 = (ushort)(byte)((byte)uVar1 + 1);
+  0x0000ed64 insiteCommandByteDispatcher: 130 lines
+      -  undefined2 uVar3;
+      -  undefined2 uVar4;
+      -  char cVar5;
+      -  uint uVar2;
+      -  byte bVar6;
+      -  undefined1 uVar7;
+      +  undefined3 extraout_var;
+      +  undefined3 extraout_var_00;
+      +  undefined3 extraout_var_01;
+      +  undefined3 uVar2;
+      +  undefined3 extraout_var_02;
+      +  undefined3 extraout_var_03;
+      +  undefined3 extraout_var_04;
+      +  undefined3 extraout_var_05;
+      +  undefined3 extraout_var_06;
+      +  byte bVar4;
+      +  uint uVar3;
+      +  undefined1 uVar5;
+      -          uVar1 = cm550_diagnosticCodeTableSearch();
+      -          if ((char)uVar1 == '\0') {
+      -            uVar1 = cm550_diagnosticCodeTableSearch();
+      -            if ((char)uVar1 == '\0') {
+      -              uVar1 = cm550_diagnosticCodeTableSearch();
+      -              if ((char)uVar1 != '\0') {
+  0x0000f796 cm550_paramSystemModeController: 6 lines
+      -                 ((_four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 -
+      -                  _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+      +                 ((short)(_four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100
+      +                         - _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
+      +                  _determined_peak_engine_fueling_0_100 -
+      +                  _maximum_fueling_value_that_does_not_inject_fuel_0_100);
+  0x0000f8c6 cm550_param_lookup_1: 4 lines
+      -                         _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+      +                         _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
+      +                  _determined_peak_engine_fueling_0_100 -
+      +                  _maximum_fueling_value_that_does_not_inject_fuel_0_100);
+  0x0000f930 cm550_param_lookup_3: 4 lines
+      -                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+      +                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
+      +                  _fueling_value_at_100_throttle_0_100 -
+      +                  _maximum_fueling_value_that_does_not_inject_fuel_0_100);
+  0x0000f99c cm550_FUN_0000f99c: 4 lines
+      -                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+      +                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
+      +                  _determined_peak_engine_fueling_0_100 -
+      +                  _maximum_fueling_value_that_does_not_inject_fuel_0_100);
+  0x0001025c cm550_retarderModeThresholdCalculator: 30 lines
+      -undefined2 cm550_retarderModeThresholdCalculator(undefined4 param_1)
+      +word cm550_retarderModeThresholdCalculator(word backup_sensor_flag)
+      -  undefined2 uVar1;
+      +  word wVar1;
+      +  char cVar3;
+      +  cVar3 = (char)backup_sensor_flag;
+      -    uVar1 = 0;
+      +    wVar1 = 0;
+      -    if (param_1._1_1_ == '\0') {
+      +    if (cVar3 == '\0') {
+      -        uVar1 = 1;
+      +        wVar1 = 1;
+      -        uVar1 = 0;
+      +        wVar1 = 0;
+      -      uVar1 = cm550_bufferThresholdValidator();
+      +      wVar1 = cm550_bufferThresholdValidator();
+      -      uVar1 = cm550_bufferDecreasingPatternCheck();
+      +      wVar1 = cm550_bufferDecreasingPatternCheck();
+      -      uVar1 = 0;
+      +      wVar1 = 0;
+      -    if (param_1._1_1_ == '\0') {
+      +    if (cVar3 == '\0') {
+      -  if (param_1._1_1_ == '\0') {
+      -    _DAT_0080aa16 = uVar1;
+  0x00011908 cm550_eepromWriteWrapper: 4 lines
+      -void cm550_eepromWriteWrapper(undefined4 param_1)
+      +void cm550_eepromWriteWrapper(dword param_1)
+      -  cm550_FUN_0001192a(param_1);
+      +  cm550_FUN_0001192a(param_1,0);
+  0x0001191a cm550_triggerDiagnosticSystemReset: 2 lines
+      -  cm550_FUN_0001192a(0);
+      +  cm550_FUN_0001192a(0,1);
+  0x0001192a cm550_FUN_0001192a: 20 lines
+      -undefined4 cm550_FUN_0001192a(undefined2 param_1,undefined4 param_2)
+      +byte cm550_FUN_0001192a(dword request,word acknowledge_datalink)
+      -  char cVar2;
+      -  undefined4 uVar1;
+      +  char cVar1;
+      +  byte bVar2;
+      -    while (cVar2 = cm550_circularBufferEmptyCheck(), cVar2 == '\0') {
+      +    while (cVar1 = cm550_circularBufferEmptyCheck(), cVar1 == '\0') {
+      -    if (param_2._1_1_ == '\0') {
+      -      cm550_diagnosticMultiPacketResponseBuilder(param_1);
+      +    if ((char)acknowledge_datalink == '\0') {
+      +      cm550_diagnosticMultiPacketResponseBuilder((can_std_rx_desc_t *)request,0);
+      -    else if (param_2._1_1_ == '\x01') {
+      +    else if ((char)acknowledge_datalink == '\x01') {
+      -    uVar1 = 0xff;
+      +    bVar2 = 0xff;
+      -    uVar1 = 7;
+      +    bVar2 = 7;
+      -  return uVar1;
+      +  return bVar2;
+  0x00011da6 cm550_crc16Calculate: 17 lines
+      -undefined4 cm550_crc16Calculate(byte *param_1,undefined4 param_2)
+      +word cm550_crc16Calculate(byte *data,word byte_count)
+      -  undefined4 unaff_D3;
+      -  undefined4 uVar2;
+      +  char cVar2;
+      -  uVar2 = CONCAT22((short)((uint)unaff_D3 >> 0x10),param_2._0_2_);
+      -    if ((char)uVar2 == '\0') break;
+      +    cVar2 = (char)byte_count;
+      +    byte_count = (word)(byte)(cVar2 - 1);
+      +    if (cVar2 == '\0') break;
+      -                            (short)(((ushort)uVar1 ^ (ushort)*param_1) & 0xff) * 2) ^
+      +                            (short)(((ushort)uVar1 ^ (ushort)*data) & 0xff) * 2) ^
+      -    param_1 = (byte *)CONCAT31(param_1._0_3_,(char)param_1 + '\x01');
+      -    uVar2 = CONCAT31((int3)((uint)uVar2 >> 8),(char)uVar2 + -1);
+      +    data = (byte *)CONCAT31(data._0_3_,(char)data + '\x01');
+      -  return CONCAT22((short)((uint)uVar2 >> 0x10),(ushort)uVar1);
+      +  return (ushort)uVar1;
+  0x00013616 vp44_communication_state_machine: 4 lines
+      -uint vp44_communication_state_machine(undefined4 param_1)
+      +uint vp44_communication_state_machine(word scheduler_call)
+      -    if ((_DAT_008052fe == param_1._0_2_) && (_DAT_00805308 != 0)) {
+      +    if ((_DAT_008052fe == scheduler_call) && (_DAT_00805308 != 0)) {
+  0x000138b6 cm550_FUN_000138b6: 24 lines
+      -  undefined1 uVar2;
+      +  byte bVar2;
+      -  undefined *puVar5;
+      +  byte *pbVar5;
+      -        puVar5 = &flash_write_end_address;
+      +        pbVar5 = (byte *)&flash_write_end_address;
+      -            uVar2 = cm550_FUN_00013ed8();
+      -            *puVar5 = uVar2;
+      +            bVar2 = cm550_FUN_00013ed8((word)CONCAT31((int3)(uVar1 >> 8),bVar3));
+      +            *pbVar5 = bVar2;
+      -            *puVar5 = 1;
+      +            *pbVar5 = 1;
+      -          puVar5 = puVar5 + 1;
+      +          pbVar5 = pbVar5 + 1;
+      -          uVar1 = cm550_FUN_00013ed8();
+      -          DAT_0080036d = (char)uVar1;
+      +          DAT_0080036d = cm550_FUN_00013ed8(3);
+      +          uVar1 = (uint)DAT_0080036d;
+      -          DAT_0080036d = '\0';
+      +          DAT_0080036d = 0;
+      -          if (DAT_0080036d != '\0') {
+      +          if (DAT_0080036d != 0) {
+      -          if (DAT_0080036d != '\0') {
+      +          if (DAT_0080036d != 0) {
+  0x00013ed8 cm550_FUN_00013ed8: 187 lines
+      -undefined4 cm550_FUN_00013ed8(undefined4 param_1)
+      +byte cm550_FUN_00013ed8(word condition_record_index)
+      -  short sVar3;
+      -  uint uVar2;
+      -  undefined1 uVar4;
+      -  sVar3 = (ushort)param_1._1_1_ << 4;
+      -  if (*(short *)(&DAT_00803d66 + sVar3) == 0) {
+      -    if (*(short *)(sVar3 + 0x803d68) == 0) {
+      -      if (*(short *)(sVar3 + 0x803d72) == 0) {
+      -        cVar1 = *(char *)((short)((ushort)param_1._1_1_ * 2) * 8 + 0x803d64);
+      +  short sVar2;
+      +  byte bVar3;
+      +  byte bVar4;
+      +  bVar4 = (byte)condition_record_index;
+      +  sVar2 = (condition_record_index & 0xff) << 4;
+      +  if (*(short *)(&DAT_00803d66 + sVar2) == 0) {
+      +    if (*(short *)(sVar2 + 0x803d68) == 0) {
+      +      if (*(short *)(sVar2 + 0x803d72) == 0) {
+      +        cVar1 = *(char *)((short)((condition_record_index & 0xff) * 2) * 8 + 0x803d64);
+      -          uVar2 = (uint)**(byte **)(&scheduler_reserved_padding + (uint)param_1._1_1_ * 4);
+      -          if (uVar2 < (*(uint *)(sVar3 + 0x803d6e) & 0xff)) {
+      -            uVar4 = 1;
+      +          if ((uint)**(byte **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
+      +              (*(uint *)(sVar2 + 0x803d6e) & 0xff)) {
+  0x000144bc cm550_diagnosticCodeDebounceHandler: 2 lines
+      -        cm550_diagnosticTableEntryClear();
+      +        cm550_diagnosticTableEntryClear(code_index & 0xff);
+  0x0001452e cm550_phase2_sensor_data_processor: 2 lines
+      -      cm550_diagnosticTableEntryClear();
+      +      cm550_diagnosticTableEntryClear((ushort)unaff_D2b);
+  0x000146b4 cm550_oldestDiagnosticTimestampSearch: 20 lines
+      -short cm550_oldestDiagnosticTimestampSearch(undefined4 param_1)
+      +word cm550_oldestDiagnosticTimestampSearch(word fault_status)
+      -  short sVar2;
+      +  word wVar2;
+      -  short sVar5;
+      +  word wVar5;
+      -  sVar5 = -1;
+      -  sVar2 = 0;
+      +  wVar5 = 0xffff;
+      +  wVar2 = 0;
+      -    if (((byte)(&diagnostic_fault_status_table)[sVar1] == param_1._0_2_) &&
+      +    if (((byte)(&diagnostic_fault_status_table)[sVar1] == fault_status) &&
+      -      sVar5 = sVar2;
+      +      wVar5 = wVar2;
+      -    sVar2 = sVar2 + 1;
+      -  } while (sVar2 < 0x14);
+      -  return sVar5;
+      +    wVar2 = wVar2 + 1;
+      +  } while ((short)wVar2 < 0x14);
+      +  return wVar5;
+  0x00014720 cm550_diagnosticCodeRegistrar: 43 lines
+      -  ushort uVar1;
+      +  word wVar1;
+      -  short sVar3;
+      +  wVar1 = 0;
+      -  sVar3 = 0;
+      -    if (code_index == *(word *)(&diagnostic_fault_code_table + sVar3)) {
+      -      cm550_diagnosticTableSnapshotCapture(code_index);
+      +    if (code_index == *(word *)(&diagnostic_fault_code_table + sVar2)) {
+      +      cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
+      -    sVar3 = sVar3 + 0x30;
+      -    sVar2 = sVar2 + 1;
+      -  } while (sVar2 < 0x14);
+      +    sVar2 = sVar2 + 0x30;
+      +    wVar1 = wVar1 + 1;
+      +  } while ((short)wVar1 < 0x14);
+      +  wVar1 = 0;
+      -  sVar3 = 0;
+      -    if (*(short *)(&diagnostic_fault_code_table + sVar3) == 0x7d) {
+      -      cm550_diagnosticTableSnapshotCapture(code_index);
+      +    if (*(short *)(&diagnostic_fault_code_table + sVar2) == 0x7d) {
+      +      cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
+      -    sVar3 = sVar3 + 0x30;
+      -    sVar2 = sVar2 + 1;
+      -  } while (sVar2 < 0x14);
+  0x00014812 cm550_FUN_00014812: 6 lines
+      -  byte bVar1;
+      +  ushort uVar1;
+      -    for (bVar1 = 1; bVar1 <= DGIEFUBF; bVar1 = bVar1 + 1) {
+      -      cm550_diagnosticTableEntryClear();
+      +    for (uVar1 = 1; (byte)uVar1 <= DGIEFUBF; uVar1 = (ushort)(byte)((byte)uVar1 + 1)) {
+      +      cm550_diagnosticTableEntryClear((ushort)(&DGIEFUBF)[(short)uVar1]);
+  0x00014f42 cm550_insitePidDtcHandler: 4 lines
+      -void cm550_insitePidDtcHandler(undefined4 param_1)
+      +void cm550_insitePidDtcHandler(word spn_byte)
+      -    if ((param_1._1_1_ == *(char *)(pwVar4 + 2)) &&
+      +    if (((char)spn_byte == *(char *)(pwVar4 + 2)) &&
+  0x00015f8e mc68k_dispatchJ1708ReceivedMessages: 106 lines
+      +  char cVar4;
+      -  char cVar6;
+      -  byte bVar7;
+      -  short sVar4;
+      -  byte *pbVar8;
+      +  byte bVar6;
+      +  word elapsedTimerCount;
+      +  byte *pbVar7;
+      -  word elapsedTimerCount;
+      -  if ((BYTE_0080dde4 != 0) && (cVar5 = cm550_circularBufferEmptyCheck(), cVar5 != '\0')) {
+      +  if ((BYTE_0080dde4 != 0) && (cVar4 = cm550_circularBufferEmptyCheck(), cVar4 != '\0')) {
+      -    elapsedTimerCount = CTM4_BIUTBR;
+      -    if ((499 < (int)((uint)elapsedTimerCount - (uint)currentTimerCount)) ||
+      +    wVar3 = CTM4_BIUTBR;
+      +    if ((499 < (int)((uint)wVar3 - (uint)currentTimerCount)) ||
+      -    cVar5 = *(char *)j1708_receive_buffer_pointer_2_32_dcaa;
+      +    cVar4 = *(char *)j1708_receive_buffer_pointer_2_32_dcaa;
+      -    cVar6 = (char)local_8;
+      +    cVar5 = (char)local_8;
+      -          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+      -          bVar7 = 0;
+      -          pbVar8 = abStack_16;
+      +          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
+      +          bVar6 = 0;
+  0x000165f2 cm550_param_address_calc: 8 lines
+      -uint cm550_param_address_calc(uint param_1,undefined4 param_2)
+      +word cm550_param_address_calc(dword dividend,word divisor)
+      -  if (param_1 < (uint)param_2._0_2_ * 0xffff) {
+      -    return param_1 / param_2._0_2_;
+      +  if (dividend < (uint)divisor * 0xffff) {
+      +    return (word)(dividend / divisor);
+      -  return CONCAT22((short)((uint)param_2._0_2_ * 0xffff >> 0x10),0xffff);
+      +  return 0xffff;
+  0x000186ae cm550_protectionThresholdCalculationHelper: 23 lines
+      -ushort cm550_protectionThresholdCalculationHelper
+      -                 (int param_1,int param_2,ushort *param_3,undefined4 param_4)
+      +word cm550_protectionThresholdCalculationHelper
+      +               (word *protection_config,word *protection_state,word *severity_indexes,
+      +               word derate_selector)
+      -  if (param_4._0_2_ == 0) {
+      -    uVar3 = *param_3;
+      -    uVar1 = *(ushort *)(param_2 + 6);
+      -    uVar2 = *(ushort *)(param_1 + 2);
+      -    uVar4 = *(ushort *)(param_1 + 6);
+      +  if (derate_selector == 0) {
+      +    uVar3 = *severity_indexes;
+      +    uVar1 = protection_state[3];
+      +    uVar2 = protection_config[1];
+      +    uVar4 = protection_config[3];
+      -    uVar3 = param_3[1];
+      -    uVar1 = *(ushort *)(param_2 + 8);
+      -    uVar2 = *(ushort *)(param_1 + 4);
+      -    uVar4 = *(ushort *)(param_1 + 8);
+      +    uVar3 = severity_indexes[1];
+      +    uVar1 = protection_state[4];
+      +    uVar2 = protection_config[2];
+      +    uVar4 = protection_config[4];
+  0x00018708 cm550_protectionPercentageCalculator: 21 lines
+      -undefined4 cm550_protectionPercentageCalculator(undefined4 param_1,undefined4 param_2)
+      +word cm550_protectionPercentageCalculator
+      +               (word sensor_value,word minimum_threshold,word maximum_threshold)
+      -  int iVar1;
+      -  short sVar2;
+      -  iVar1 = ((int)(short)(param_1._0_2_ - param_1._2_2_) << 8) /
+      -          (int)(short)(param_2._0_2_ - param_1._2_2_);
+      -  sVar2 = (short)iVar1;
+      -  if (sVar2 < 0x101) {
+      -    if (sVar2 < 0) {
+      -      sVar2 = 0;
+      +  word wVar1;
+      +  wVar1 = (word)(((int)(short)(sensor_value - minimum_threshold) << 8) /
+      +                (int)(short)(maximum_threshold - minimum_threshold));
+      +  if ((short)wVar1 < 0x101) {
+      +    if ((short)wVar1 < 0) {
+      +      wVar1 = 0;
+      -    sVar2 = 0x100;
+      +    wVar1 = 0x100;
+      -  return CONCAT22((short)((uint)iVar1 >> 0x10),sVar2);
+      +  return wVar1;
+  0x00018c1c cm550_diagnosticProtectionProcessor: 8 lines
+      -  undefined2 uVar3;
+      +  word wVar3;
+      -      uVar3 = cm550_protectionPercentageCalculator(**(undefined2 **)(state_offset + 10));
+      -      *(undefined2 *)(threshold_value + 4) = uVar3;
+      +      wVar3 = cm550_protectionPercentageCalculator
+      +                        (**(word **)state_offset,**(word **)(state_offset + 10),
+      +                         **(word **)(state_offset + 0xe));
+      +      *(word *)(threshold_value + 4) = wVar3;
+  0x00018e0c cm550_FUN_00018e0c: 37 lines
+      -  ushort uVar2;
+      +  word wVar2;
+      -  undefined *puVar6;
+      -  ushort *puVar7;
+      -  undefined *puVar8;
+      -  puVar8 = &protection_system_sensor_data_ptr;
+      -  puVar6 = &coolant_level_fueling_severity_index_0_0_1_0;
+      +  word *severity_indexes;
+      +  word *protection_config;
+      +  word *protection_state;
+      +  protection_state = (word *)&protection_system_sensor_data_ptr;
+      +  severity_indexes = (word *)&coolant_level_fueling_severity_index_0_0_1_0;
+      -  for (puVar7 = (ushort *)&engine_protection_config_table_base; puVar7 < &load_breakpoint_table;
+      -      puVar7 = puVar7 + 0x12) {
+      -    if ((*puVar7 & 2) != 0) {
+      +  for (protection_config = (word *)&engine_protection_config_table_base;
+      +      protection_config < &load_breakpoint_table; protection_config = protection_config + 0x12) {
+      +    if ((*protection_config & 2) != 0) {
+      -        uVar2 = 0;
+      +        wVar2 = 0;
+      -        uVar2 = cm550_protectionThresholdCalculationHelper(puVar7,puVar8,(short)puVar6);
+      -        if ((uVar2 < *(ushort *)(puVar6 + 6)) &&
+      +        wVar2 = cm550_protectionThresholdCalculationHelper
+      +                          (protection_config,protection_state,severity_indexes,1);
+  0x000192f2 cm550_protectionCalculationHelper: 11 lines
+      -uint cm550_protectionCalculationHelper(undefined4 param_1,uint param_2)
+      +word cm550_protectionCalculationHelper(word sensor_value,word extremity_value,word config_flags)
+      -  uint in_D0;
+      -  if ((param_2 & 0x40000) == 0) {
+      -    if (((param_2 & 0x80000) != 0) && (param_1._0_2_ < param_1._2_2_)) {
+      +  if ((config_flags & 4) == 0) {
+      +    if (((config_flags & 8) != 0) && (sensor_value < extremity_value)) {
+      -  else if (param_1._2_2_ < param_1._0_2_) {
+      +  else if (extremity_value < sensor_value) {
+      -  return in_D0 & 0xffff0000;
+      +  return 0;
+  0x00019332 protectionStateProcessor: 12 lines
+      -ushort protectionStateProcessor(undefined4 param_1)
+      +ushort protectionStateProcessor(word derate_selector)
+      -  short sVar2;
+      +  word wVar2;
+      -  if (param_1._0_2_ == 0) {
+      +  if (derate_selector == 0) {
+      -    sVar2 = cm550_protectionCalculationHelper(*(undefined2 *)(iVar7 + 4 + (uint)uVar4 * 8));
+      +    wVar2 = cm550_protectionCalculationHelper
+      +                      (*(word *)*_protection_state_data_ptr,*(word *)(iVar7 + 4 + (uint)uVar4 * 8),
+      +                       *_protection_config_table_ptr);
+      -    if (sVar2 != 0) {
+      +    if (wVar2 != 0) {
+  0x00019436 protectionStateValidator: 4 lines
+      -undefined8 protectionStateValidator(undefined4 param_1)
+      +undefined8 protectionStateValidator(word derate_selector)
+      -  if (param_1._0_2_ == 0) {
+      +  if (derate_selector == 0) {
+  0x0001952c cm550_protectionState3bRpmMonitor: 59 lines
+      -  ushort uVar1;
+      -  short sVar2;
+      -  bool bVar3;
+      -  bool bVar4;
+      -  short sVar5;
+      +  ushort config_flags;
+      +  word sensor_value;
+      +  bool bVar1;
+      +  bool bVar2;
+      +  word wVar3;
+      -    uVar1 = *_protection_config_table_ptr;
+      +    config_flags = *_protection_config_table_ptr;
+      -    bVar3 = false;
+      -    bVar4 = false;
+      +    bVar1 = false;
+      +    bVar2 = false;
+      -      protectionStateValidator();
+      -      protectionStateValidator();
+      +      protectionStateValidator(0);
+      +      protectionStateValidator(1);
+      -          bVar3 = true;
+      +          bVar1 = true;
+      -          bVar4 = true;
+      +          bVar2 = true;
+  0x00019702 cm550_FUN_00019702: 39 lines
+      -  undefined *puVar7;
+      -  ushort *puVar8;
+      -  ushort *puVar9;
+      -  puVar7 = &protection_system_sensor_data_ptr;
+      -  puVar9 = (ushort *)&coolant_level_fueling_severity_index_0_0_1_0;
+      +  word *protection_state;
+      +  word *protection_config;
+      +  word *severity_indexes;
+      +  protection_state = (word *)&protection_system_sensor_data_ptr;
+      +  severity_indexes = (word *)&coolant_level_fueling_severity_index_0_0_1_0;
+      -  for (puVar8 = (ushort *)&engine_protection_config_table_base; puVar8 < &load_breakpoint_table;
+      -      puVar8 = puVar8 + 0x12) {
+      -    if ((*puVar8 & 1) != 0) {
+      +  for (protection_config = (word *)&engine_protection_config_table_base;
+      +      protection_config < &load_breakpoint_table; protection_config = protection_config + 0x12) {
+      +    if ((*protection_config & 1) != 0) {
+      -        if ((*puVar8 & 0x40) == 0) {
+      -          if (puVar8[1] < *(ushort *)(puVar7 + 6)) {
+      -            uVar3 = cm550_protectionPercentageCalculator(**(undefined2 **)(puVar7 + 10));
+      +        if ((*protection_config & 0x40) == 0) {
+      +          if (protection_config[1] < protection_state[3]) {
+      +            uVar3 = cm550_protectionPercentageCalculator
+      +                              (**(word **)protection_state,**(word **)(protection_state + 5),
+      +                               **(word **)(protection_state + 7));
+  0x00019acc mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0: 2 lines
+      -  vp44_communication_state_machine();
+      +  vp44_communication_state_machine(1);
+  0x00019e90 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1: 2 lines
+      -  vp44_communication_state_machine();
+      +  vp44_communication_state_machine(1);
+  0x0001a52c mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2: 2 lines
+      -  vp44_communication_state_machine();
+      +  vp44_communication_state_machine(1);
+  0x0001a8a4 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3: 11 lines
+      -  undefined4 uVar2;
+      -  int iVar3;
+      +  dword dVar2;
+      -  uVar2 = Ram00ffffa8;
+      +  dVar2 = Ram00ffffa8;
+      -  iVar3 = cm550_throttleTimeAccumulatorProcessor(uVar2);
+      +  dVar2 = cm550_throttleTimeAccumulatorProcessor(dVar2,wVar1);
+      -    if (iVar3 == 0) {
+      +    if (dVar2 == 0) {
+      -  vp44_communication_state_machine();
+      +  vp44_communication_state_machine(1);
+  0x0001a95a cm550_throttleTimeAccumulatorProcessor: 12 lines
+      -int cm550_throttleTimeAccumulatorProcessor(uint param_1,undefined4 param_2)
+      +dword cm550_throttleTimeAccumulatorProcessor(dword pulse_period,word edge_time_stamp)
+      -  short sVar1;
+      -  _io_control_handshake_state = param_1;
+      -  _main_signal_edge_time_stamp_0_65535 = param_2._0_2_;
+      -  sVar1 = cm550_retarderModeThresholdCalculator();
+      -  if (sVar1 != 0) {
+      +  word wVar1;
+      +  _io_control_handshake_state = pulse_period;
+      +  _main_signal_edge_time_stamp_0_65535 = edge_time_stamp;
+      +  wVar1 = cm550_retarderModeThresholdCalculator(0);
+      +  if (wVar1 != 0) {
+  0x0001a95e vp44FaultThresholdTablesInit: 6 lines
+      -  short sVar1;
+      +  word wVar1;
+      -  sVar1 = cm550_retarderModeThresholdCalculator();
+      -  if (sVar1 != 0) {
+      +  wVar1 = cm550_retarderModeThresholdCalculator(0);
+      +  if (wVar1 != 0) {
+  0x0001b518 vp44_engine_management_system: 2 lines
+      -  vp44_communication_state_machine();
+      +  vp44_communication_state_machine(0);
+  0x0001e1be cm550_modeBasedDataDispatcherWrapper: 5 lines
+      -void cm550_modeBasedDataDispatcherWrapper(void)
+      +void cm550_modeBasedDataDispatcherWrapper(undefined4 param_1)
+      -  cm550_modeBasedDataDispatcher();
+      +  undefined2 in_D0w;
+      +  cm550_modeBasedDataDispatcher(CONCAT11((char)((ushort)in_D0w >> 8),param_1._1_1_));
+  0x0001e79a cm550_insiteMultiFrameResponseBuilder: 28 lines
+      -uint cm550_insiteMultiFrameResponseBuilder(undefined4 param_1)
+      +byte cm550_insiteMultiFrameResponseBuilder(word first_frame_byte_count,word frame_byte_count)
+      -  uint uVar2;
+      +  int iVar2;
+      +  insite_multiframe_frame_bytes_remaining = (byte)first_frame_byte_count;
+      -  DAT_0080095c = (byte)param_1;
+      -  cVar3 = param_1._1_1_ + 6;
+      -  for (insite_multiframe_last_frame_bytes = cVar1 - param_1._1_1_;
+      -      (byte)param_1 < insite_multiframe_last_frame_bytes;
+      -      insite_multiframe_last_frame_bytes = insite_multiframe_last_frame_bytes - (byte)param_1) {
+      +  DAT_0080095c = (byte)frame_byte_count;
+      +  cVar3 = insite_multiframe_frame_bytes_remaining + 6;
+      +  for (insite_multiframe_last_frame_bytes = cVar1 - insite_multiframe_frame_bytes_remaining;
+      +      DAT_0080095c < insite_multiframe_last_frame_bytes;
+      +      insite_multiframe_last_frame_bytes = insite_multiframe_last_frame_bytes - DAT_0080095c) {
+      -    cVar3 = (byte)param_1 + 5 + cVar3;
+      +    cVar3 = DAT_0080095c + 5 + cVar3;
+      -  insite_multiframe_frame_bytes_remaining = param_1._1_1_;
+      -  insite_response_length = param_1._1_1_ + 6;
+      +  insite_response_length = insite_multiframe_frame_bytes_remaining + 6;
+      -    uVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) - 2;
+      +    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
+      -    uVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
+      +    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
+  0x0001e956 buildPgn65228Dm3ClearInitMessage: 2 lines
+      -              cm550_insitePidDtcHandler();
+      +              cm550_insitePidDtcHandler((ushort)BYTE_0080de25);
+  0x0001ec3c cm550_diagnosticMemoryWriteHandler: 35 lines
+      -  dword *pdVar7;
+      -  byte *pbVar8;
+      -  bool bVar9;
+      +  byte bVar7;
+      +  dword *pdVar8;
+      +  byte *pbVar9;
+      +  bool bVar10;
+      -  bVar9 = bVar3 == 0;
+      -  if (bVar9) {
+      +  bVar10 = bVar3 == 0;
+      +  if (bVar10) {
+      -  pdVar7 = (dword *)&DAT_0080db68;
+      +  bVar7 = 0;
+      +  pdVar8 = (dword *)&DAT_0080db68;
+      -        bVar3 = cm550_FUN_0002cf7e();
+      +        bVar3 = cm550_FUN_0002cf7e((ushort)bVar7);
+      -    pbVar8 = &bStack_f + bVar6;
+      +    pbVar9 = &bStack_f + bVar6;
+      -      *pbVar8 = *local_8;
+      +      *pbVar9 = *local_8;
+      -      pbVar8 = pbVar8 + -1;
+      +      pbVar9 = pbVar9 + -1;
+      -    if (bVar9) {
+      +    if (bVar10) {
+  0x0001edae cm550_diagnosticMemoryReadHandler: 11 lines
+      -  undefined2 uVar6;
+      +  word wVar6;
+      +  undefined4 unaff_D7;
+      -      uVar6 = cm550_crc16Calculate();
+      +      wVar6 = cm550_crc16Calculate(local_14,(word)CONCAT31((int3)((uint)unaff_D7 >> 8),bVar14 - 4));
+      -      local_16._1_1_ = (byte)uVar6;
+      +      local_16._1_1_ = (byte)wVar6;
+      -      local_16._0_1_ = (undefined1)((ushort)uVar6 >> 8);
+      +      local_16._0_1_ = (undefined1)(wVar6 >> 8);
+      -      local_16 = uVar6;
+      +      local_16 = wVar6;
+  0x0001f4e8 cm550_FUN_0001f4e8: 33 lines
+      +  word wVar8;
+      -  bool bVar8;
+      +  bool bVar9;
+      -  uVar7 = cm550_diagnosticMessageValidator(0x4a);
+      -  if ((short)uVar7 != 0) {
+      -    return uVar7;
+      +  wVar8 = cm550_diagnosticMessageValidator(0,0x4a,uVar4);
+      +  if (wVar8 != 0) {
+      +    return (uint)wVar8;
+      -    uVar7 = cm550_diagnosticSessionValidator(0x4a);
+      -    if ((short)uVar7 != 0) {
+      -      return uVar7;
+      +    wVar8 = cm550_diagnosticSessionValidator(0,0x4a);
+      +    if (wVar8 != 0) {
+      +      return (uint)wVar8;
+      -    uVar7 = cm550_diagnosticSessionValidator(0x4a);
+      -    if ((short)uVar7 != 0) {
+      -      return uVar7;
+      +    wVar8 = cm550_diagnosticSessionValidator(0,0x4a);
+      +    if (wVar8 != 0) {
+      +      return (uint)wVar8;
+      -    cm550_diagnosticStateInitializer(0x4a);
+      +    cm550_diagnosticStateInitializer(0,0x4a);
+      -    cm550_diagnosticStateInitializer(0x4a);
+  0x0001f8bc cm550_engineFluidLevelDataBuilder: 104 lines
+      -  ushort uVar3;
+      -  char cVar4;
+      -  short sVar5;
+      -  undefined2 extraout_D0u;
+      -  uint uVar6;
+      -  int iVar7;
+      +  ushort override_control_mode;
+      +  char cVar3;
+      +  short sVar4;
+      +  word wVar6;
+      +  uint uVar5;
+      -  cVar4 = (char)local_8;
+      +  cVar3 = (char)local_8;
+      -  uVar6 = *local_8 & 4;
+      +  uVar5 = *local_8 & 4;
+      -    uVar3 = *local_8 & 3;
+      -    uVar6 = cm550_diagnosticMessageValidator(0x4f);
+      -    if ((short)uVar6 == 0) {
+      -      if ((uint)(int)(short)uVar3 < 4) {
+      -        switch(uVar3) {
+      +    override_control_mode = *local_8 & 3;
+      +    wVar6 = cm550_diagnosticMessageValidator(0,0x4f,override_control_mode);
+      +    uVar5 = (uint)wVar6;
+      +    if (wVar6 == 0) {
+  0x0001fdc0 cm550_j1939MessageTypeCounter: 10 lines
+      -uint cm550_j1939MessageTypeCounter(undefined4 param_1)
+      +uint cm550_j1939MessageTypeCounter(word control_mode)
+      -    if (param_1._0_2_ == 1) {
+      +    if (control_mode == 1) {
+      -    if (param_1._0_2_ == 2) {
+      +    if (control_mode == 2) {
+      -    if (param_1._0_2_ != 3) {
+      -      return (int)param_1._0_2_;
+      +    if (control_mode != 3) {
+      +      return (int)(short)control_mode;
+  0x0001ffd6 cm550_j1939TorqueControlModeParser: 58 lines
+      -uint cm550_j1939TorqueControlModeParser(int param_1,undefined4 param_2)
+      +byte cm550_j1939TorqueControlModeParser(can_std_rx_desc_t *request,byte enable)
+      -  byte bVar1;
+      +  char cVar1;
+      -  undefined2 uVar3;
+      -  undefined4 in_D0;
+      -  ushort uVar4;
+      -  uVar3 = (undefined2)((uint)in_D0 >> 0x10);
+      -  bVar1 = *(byte *)(*(int *)(param_1 + 6) + 1);
+      -  cVar2 = *(char *)(*(int *)(param_1 + 6) + 2);
+      -  if ((bVar1 == 0xfe) && (cVar2 == -2)) {
+      -    uVar4 = 0xffff;
+      +  ushort uVar3;
+      +  cVar1 = request->data_ptr[1];
+      +  cVar2 = request->data_ptr[2];
+      +  if ((cVar1 == -2) && (cVar2 == -2)) {
+      +    uVar3 = 0xffff;
+      -    uVar3 = (undefined2)(bVar1 - 1 >> 0x10);
+      -    switch(bVar1 - 1) {
+      -    case 0:
+      -      uVar4 = 0xc;
+      +    switch(cVar1) {
+      +    case '\x01':
+      +      uVar3 = 0xc;
+  0x000200a4 cm550_j1939TorqueControlModeClear: 4 lines
+      -void cm550_j1939TorqueControlModeClear(undefined4 param_1)
+      +void cm550_j1939TorqueControlModeClear(can_std_rx_desc_t *param_1)
+      -  cm550_j1939TorqueControlModeParser(param_1);
+      +  cm550_j1939TorqueControlModeParser(param_1,0);
+  0x000200b4 cm550_j1939TorqueControlModeSet: 4 lines
+      -void cm550_j1939TorqueControlModeSet(undefined4 param_1)
+      +void cm550_j1939TorqueControlModeSet(can_std_rx_desc_t *param_1)
+      -  cm550_j1939TorqueControlModeParser(param_1);
+      +  cm550_j1939TorqueControlModeParser(param_1,1);
+  0x000201d6 cm550_FUN_000201d6: 8 lines
+      -void cm550_FUN_000201d6(undefined4 param_1)
+      +void cm550_FUN_000201d6(word bit_index)
+      -  *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+      -       ~(1 << ((short)param_1._1_1_ & 0x1fU)) &
+      -       *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+      +  *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)(char)bit_index >> 5) * 4) =
+      +       ~(1 << ((short)(char)bit_index & 0x1fU)) &
+      +       *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)(char)bit_index >> 5) * 4);
+  0x00020210 cm550_FUN_00020210: 8 lines
+      -void cm550_FUN_00020210(undefined4 param_1)
+      +void cm550_FUN_00020210(word bit_index)
+      -  *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+      -       ~(1 << ((short)param_1._1_1_ & 0x1fU)) &
+      -       *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+      +  *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)(char)bit_index >> 5) * 4) =
+      +       ~(1 << ((short)(char)bit_index & 0x1fU)) &
+      +       *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)(char)bit_index >> 5) * 4);
+  0x0002024a cm550_FUN_0002024a: 8 lines
+      -void cm550_FUN_0002024a(undefined4 param_1)
+      +void cm550_FUN_0002024a(word bit_index)
+      -  *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+      -       ~(1 << ((short)param_1._1_1_ & 0x1fU)) &
+      -       *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+      +  *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)(char)bit_index >> 5) * 4) =
+      +       ~(1 << ((short)(char)bit_index & 0x1fU)) &
+      +       *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)(char)bit_index >> 5) * 4);
+  0x000202d8 setBitInArray: 8 lines
+      -void setBitInArray(undefined4 param_1)
+      +void setBitInArray(word bit_index)
+      -  *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+      -       1 << ((short)param_1._1_1_ & 0x1fU) |
+      -       *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+      +  *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)(char)bit_index >> 5) * 4) =
+      +       1 << ((short)(char)bit_index & 0x1fU) |
+      +       *(uint *)(&DAT_00800aa0 + (uint)((ushort)(short)(char)bit_index >> 5) * 4);
+  0x00020310 cm550_FUN_00020310: 8 lines
+      -void cm550_FUN_00020310(undefined4 param_1)
+      +void cm550_FUN_00020310(word bit_index)
+      -  *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+      -       1 << ((short)param_1._1_1_ & 0x1fU) |
+      -       *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+      +  *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)(char)bit_index >> 5) * 4) =
+      +       1 << ((short)(char)bit_index & 0x1fU) |
+      +       *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)(char)bit_index >> 5) * 4);
+  0x00020348 cm550_FUN_00020348: 8 lines
+      -void cm550_FUN_00020348(undefined4 param_1)
+      +void cm550_FUN_00020348(word bit_index)
+      -  *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+      -       1 << ((short)param_1._1_1_ & 0x1fU) |
+      -       *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+      +  *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)(char)bit_index >> 5) * 4) =
+      +       1 << ((short)(char)bit_index & 0x1fU) |
+      +       *(uint *)(&DAT_00800aa4 + (uint)((ushort)(short)(char)bit_index >> 5) * 4);
+  0x00020380 cm550_FUN_00020380: 8 lines
+      -  cm550_FUN_000201d6();
+      -  cm550_FUN_0002024a();
+      +  cm550_FUN_000201d6(5);
+      +  cm550_FUN_0002024a(5);
+      -      uVar1 = cm550_FUN_00020348();
+      +      uVar1 = cm550_FUN_00020348(5);
+      -    uVar1 = setBitInArray();
+      +    uVar1 = setBitInArray(5);
+  0x0002041c cm550_FUN_0002041c: 8 lines
+      -  cm550_FUN_000201d6();
+      -  cm550_FUN_0002024a();
+      +  cm550_FUN_000201d6(0);
+      +  cm550_FUN_0002024a(0);
+      -      uVar1 = cm550_FUN_00020348();
+      +      uVar1 = cm550_FUN_00020348(0);
+      -    uVar1 = setBitInArray();
+      +    uVar1 = setBitInArray(0);
+  0x000204b0 cm550_outputControlState1Handler: 12 lines
+      -  cm550_FUN_000201d6();
+      -  cm550_FUN_0002024a();
+      -  cm550_FUN_00020210();
+      +  cm550_FUN_000201d6(6);
+      +  cm550_FUN_0002024a(6);
+      +  cm550_FUN_00020210(6);
+      -      cm550_FUN_00020348();
+      -      uVar1 = cm550_FUN_00020310();
+      +      cm550_FUN_00020348(6);
+      +      uVar1 = cm550_FUN_00020310(6);
+      -      uVar1 = setBitInArray();
+      +      uVar1 = setBitInArray(6);
+  0x00020784 cm550_FUN_00020784: 12 lines
+      -  cm550_FUN_000201d6();
+      -  cm550_FUN_0002024a();
+      -  cm550_FUN_00020210();
+      +  cm550_FUN_000201d6(1);
+      +  cm550_FUN_0002024a(1);
+      +  cm550_FUN_00020210(1);
+      -      cm550_FUN_00020348();
+      -      uVar1 = cm550_FUN_00020310();
+      +      cm550_FUN_00020348(1);
+      +      uVar1 = cm550_FUN_00020310(1);
+      -      uVar1 = setBitInArray();
+      +      uVar1 = setBitInArray(1);
+  0x00020890 cm550_FUN_00020890: 129 lines
+      -  ushort uVar2;
+      -  undefined2 uVar4;
+      -  uint uVar3;
+      +  char *pcVar2;
+      +  ushort uVar3;
+      +  undefined4 uVar4;
+      +  uint uVar5;
+      -  uVar4 = (undefined2)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),(&DAT_0002010c)[iVar1]);
+      -  cm550_FUN_0002024a();
+      -  cm550_FUN_000201d6(uVar4);
+      -  uVar3 = 0;
+      +  uVar4 = cm550_FUN_0002024a((word)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),
+      +                                            (&DAT_0002010c)[iVar1]));
+      +  cm550_FUN_000201d6((word)CONCAT31((int3)((uint)uVar4 >> 8),(&DAT_0002010c)[iVar1]));
+      +  uVar5 = 0;
+      -     (uVar3 = (uint)*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a),
+      -     uVar3 <= _j1939_source_address_of_commanding_device)) {
+      +     (uVar5 = (uint)*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a),
+      +     uVar5 <= _j1939_source_address_of_commanding_device)) {
+      -    if (*(short *)(&DAT_00804234 + (short)(char)(&DAT_0002010c)[(short)input_index * 10] * 2) == 0)
+      -    {
+      -      cm550_FUN_00020348();
+      -      uVar3 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+      -      if (*(char *)(uVar3 + 0x80bd4a) == '\0') {
+  0x00020c98 cm550_FUN_00020c98: 6 lines
+      -      cm550_FUN_00020348();
+      -      cm550_FUN_00020310();
+      +      cm550_FUN_00020348(7);
+      +      cm550_FUN_00020310(7);
+      -      uVar1 = setBitInArray();
+      +      uVar1 = setBitInArray(7);
+  0x00020e14 cm550_FUN_00020e14: 8 lines
+      -  cm550_FUN_000201d6();
+      -  cm550_FUN_0002024a();
+      -  cm550_FUN_00020210();
+      +  cm550_FUN_000201d6(7);
+      +  cm550_FUN_0002024a(7);
+      +  cm550_FUN_00020210(7);
+      -        uVar1 = setBitInArray();
+      +        uVar1 = setBitInArray(7);
+  0x00020fac cm550_FUN_00020fac: 8 lines
+      -  cm550_FUN_000201d6();
+      -  cm550_FUN_0002024a();
+      +  cm550_FUN_000201d6(9);
+      +  cm550_FUN_0002024a(9);
+      -      uVar1 = cm550_FUN_00020348();
+      +      uVar1 = cm550_FUN_00020348(9);
+      -    uVar1 = setBitInArray();
+      +    uVar1 = setBitInArray(9);
+  0x0002148a writeJ1939DiagnosticMemory: 4 lines
+      +  undefined4 in_D0;
+      -  bVar2 = getJ1939MemoryServiceHeaderLength();
+      +  bVar2 = getJ1939MemoryServiceHeaderLength
+      +                    ((word)CONCAT31((int3)((uint)in_D0 >> 8),**(undefined1 **)(request + 6)));
+  0x00021964 getJ1939MemoryServiceHeaderLength: 9 lines
+      -uint getJ1939MemoryServiceHeaderLength(undefined4 param_1)
+      +byte getJ1939MemoryServiceHeaderLength(word service_id)
+      -  uint in_D0;
+      -  if (param_1._1_1_ < 0x41) {
+      -    return in_D0 & 0xffffff00;
+      +  if ((byte)service_id < 0x41) {
+      +    return 0;
+      -  return (uint)*(byte *)((short)(ushort)param_1._1_1_ + 0x21915);
+      +  return *(byte *)((short)(service_id & 0xff) + 0x21915);
+  0x00021f4e cm550_diagnosticGroupPositionBufferStore: 4 lines
+      -void cm550_diagnosticGroupPositionBufferStore(undefined4 param_1)
+      +void cm550_diagnosticGroupPositionBufferStore(byte session_kind)
+      -  if (param_1._1_1_ == '\0') {
+      +  if (session_kind == 0) {
+  0x00021fac cm550_diagnosticGroupSnapshotCapture: 4 lines
+      -void cm550_diagnosticGroupSnapshotCapture(undefined4 param_1)
+      +void cm550_diagnosticGroupSnapshotCapture(byte command_record_index)
+      -  if (param_1._1_1_ == '\0') {
+      +  if (command_record_index == 0) {
+  0x00022070 cm550_memoryRegisterController: 18 lines
+      -          cm550_diagnosticGroupPositionBufferStore();
+      +          cm550_diagnosticGroupPositionBufferStore(0);
+      -            cm550_diagnosticGroupPositionBufferStore();
+      -            cm550_diagnosticGroupSnapshotCapture();
+      +            cm550_diagnosticGroupPositionBufferStore(0);
+      +            cm550_diagnosticGroupSnapshotCapture(0);
+      -          cm550_diagnosticGroupSnapshotCapture();
+      +          cm550_diagnosticGroupSnapshotCapture(0);
+      -        cm550_diagnosticGroupPositionBufferStore();
+      +        cm550_diagnosticGroupPositionBufferStore(0);
+      -          uVar1 = cm550_diagnosticGroupPositionBufferStore();
+      +          uVar1 = cm550_diagnosticGroupPositionBufferStore(1);
+      -          cm550_diagnosticGroupPositionBufferStore();
+      -          uVar1 = cm550_diagnosticGroupSnapshotCapture();
+      +          cm550_diagnosticGroupPositionBufferStore(1);
+      +          uVar1 = cm550_diagnosticGroupSnapshotCapture(1);
+      -        uVar1 = cm550_diagnosticGroupSnapshotCapture();
+      +        uVar1 = cm550_diagnosticGroupSnapshotCapture(1);
+  0x0002238e cm550_diagMemoryReadResponseBuilder: 47 lines
+      +  char cVar3;
+      +  byte bVar4;
+      -  undefined3 uVar3;
+      -  byte bVar5;
+      -  MEMORY_REGION_TYPE MVar6;
+      -  undefined2 uVar4;
+      -  char cVar7;
+      +  undefined3 uVar5;
+      +  undefined4 in_D0;
+      +  byte bVar6;
+      +  MEMORY_REGION_TYPE MVar7;
+      -  cVar7 = **(char **)(request_ptr + 6);
+      +  cVar3 = **(char **)(request_ptr + 6);
+      -  bVar5 = getJ1939MemoryServiceHeaderLength();
+      -  if (((*(short *)(request_ptr + 4) != 8) && (*(ushort *)(request_ptr + 4) != (ushort)bVar5)) &&
+      -     (*(short *)(request_ptr + 4) != (ushort)(bVar5 + 10))) {
+      +  bVar6 = getJ1939MemoryServiceHeaderLength((word)CONCAT31((int3)((uint)in_D0 >> 8),cVar3));
+      +  if (((*(short *)(request_ptr + 4) != 8) && (*(ushort *)(request_ptr + 4) != (ushort)bVar6)) &&
+      +     (*(short *)(request_ptr + 4) != (ushort)(bVar6 + 10))) {
+      -  MVar6 = lookupApplicationMemoryRegionType(start_address,range_length);
+      -  if ((MVar6 == MEMORY_REGION_TYPE_REFUSED) || (MVar6 == MEMORY_REGION_TYPE_UNMAPPED)) {
+      -    return CONCAT31(extraout_var,MVar6);
+      +  MVar7 = lookupApplicationMemoryRegionType(start_address,range_length);
+      +  if ((MVar7 == MEMORY_REGION_TYPE_REFUSED) || (MVar7 == MEMORY_REGION_TYPE_UNMAPPED)) {
+  0x000229ea cm550_messageErrorHandler: 6 lines
+      -void cm550_messageErrorHandler(undefined4 param_1)
+      +void cm550_messageErrorHandler(byte destination_address,word pgn)
+      -  local_12 = CONCAT22(0x18ec,(ushort)param_1._1_1_ << 8);
+      +  local_12 = CONCAT22(0x18ec,(ushort)destination_address << 8);
+      -  local_1e = (undefined1)((uint)param_1 >> 8);
+      +  local_1e = (undefined1)(pgn >> 8);
+  0x00022a58 vp44CanFrameBuilder: 6 lines
+      -void vp44CanFrameBuilder(undefined4 param_1)
+      +void vp44CanFrameBuilder(byte destination_address,word pgn)
+      -  local_12 = CONCAT22(0x18ec,(ushort)param_1._1_1_ << 8);
+      +  local_12 = CONCAT22(0x18ec,(ushort)destination_address << 8);
+      -  local_1e = (undefined1)((uint)param_1 >> 8);
+      +  local_1e = (undefined1)(pgn >> 8);
+  0x00022ad8 vp44MessageTransmitter: 21 lines
+      -undefined1 vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
+      +byte vp44MessageTransmitter
+      +               (byte destination_address,byte next_packet_number,byte packet_count,word pgn)
+      -  undefined1 auStack_1c [2];
+      -  undefined1 uStack_1a;
+      +  undefined1 uStack_1c;
+      +  byte bStack_1b;
+      +  byte bStack_1a;
+      -  undefined1 local_13;
+      +  byte local_13;
+      -  local_12 = CONCAT22(0x18ec,(ushort)param_1._1_1_ << 8);
+      +  local_12 = CONCAT22(0x18ec,(ushort)destination_address << 8);
+      -  local_c = auStack_1c;
+      -  auStack_1c[0] = 0x11;
+      -  uStack_1a = (undefined1)param_1;
+      +  local_c = &uStack_1c;
+      +  uStack_1c = 0x11;
+      +  bStack_1b = packet_count;
+      +  bStack_1a = next_packet_number;
+      -  local_1e = (undefined1)((ushort)param_2 >> 8);
+      +  local_1e = (undefined1)(pgn >> 8);
+  0x00022b50 vp44FuelTempHandler: 22 lines
+      -  undefined1 uVar2;
+      -  undefined2 in_D0w;
+      -  char cVar3;
+      +  byte destination_address;
+      +  byte bVar2;
+      -  short local_6;
+      +  word local_6;
+      -  cVar3 = (char)rx_msg->id;
+      +  destination_address = (byte)rx_msg->id;
+      -  uVar2 = (undefined1)((ushort)in_D0w >> 8);
+      -  if ((((vp44_multiframe_rx_active == '\x01') && (cVar3 != DAT_008012cf)) || (puVar1[6] != 0xef)) ||
+      -     (0x6a4 < local_8)) {
+      -    cm550_messageErrorHandler(local_6);
+      +  if ((((vp44_multiframe_rx_active == '\x01') && (destination_address != DAT_008012cf)) ||
+      +      (puVar1[6] != 0xef)) || (0x6a4 < local_8)) {
+      +    cm550_messageErrorHandler(destination_address,local_6);
+      -    cVar3 = vp44MessageTransmitter(CONCAT22(CONCAT11(uVar2,cVar3),CONCAT11(uVar2,1)),0xef00);
+      -    if (cVar3 != '\0') {
+      -      cm550_messageErrorHandler(_multiframe_rx_pgn);
+      +    bVar2 = vp44MessageTransmitter(destination_address,1,multiframe_rx_packets_in_window,0xef00);
+      +    if (bVar2 != 0) {
+      +      cm550_messageErrorHandler(destination_address,_multiframe_rx_pgn);
+  0x00022c26 vp44MultiFrameResponseHandler: 70 lines
+      +  byte destination_address;
+      -  undefined3 uVar2;
+      -  undefined4 in_D0;
+      -  char cVar4;
+      -  int iVar3;
+      -  byte bVar5;
+      -  byte bVar6;
+      -  undefined1 *puVar7;
+      -  undefined1 *puVar8;
+      +  byte bVar2;
+      +  byte bVar3;
+      +  undefined1 *puVar4;
+      +  undefined1 *puVar5;
+      -      (cVar4 = *(char *)(param_1 + 3), vp44_multiframe_rx_active == '\x01')) &&
+      -     (cVar4 == DAT_008012cf)) {
+      +      (destination_address = *(byte *)(param_1 + 3), vp44_multiframe_rx_active == '\x01')) &&
+      +     (destination_address == DAT_008012cf)) {
+      -        bVar6 = DAT_008012d1 + bVar1 * -7 + 7;
+      +        bVar3 = DAT_008012d1 + bVar1 * -7 + 7;
+      -        bVar6 = 7;
+      +        bVar3 = 7;
+      -      puVar8 = *(undefined1 **)(param_1 + 6);
+      -      puVar7 = (undefined1 *)(_DAT_008012d2 + (uint)bVar1 * 7 + -7);
+      -      for (bVar5 = 0; puVar8 = puVar8 + 1, bVar5 < bVar6; bVar5 = bVar5 + 1) {
+  0x00023130 cm550_multiPacketBufferAllocator: 14 lines
+      -undefined4 cm550_multiPacketBufferAllocator(undefined4 param_1)
+      +j1939_header_t * cm550_multiPacketBufferAllocator(word data_length)
+      -  if (param_1._0_2_ < 9) {
+      +  if (data_length < 9) {
+      -    _DAT_00801236 = param_1._0_2_;
+      +    _DAT_00801236 = data_length;
+      -    return 0x801232;
+      +    return (j1939_header_t *)0x801232;
+      -    _DAT_00800b1e = param_1._0_2_;
+      +    _DAT_00800b1e = data_length;
+      -    return 0x800b1a;
+      +    return (j1939_header_t *)0x800b1a;
+      -  return 0;
+      +  return (j1939_header_t *)0x0;
+  0x000231da cm550_fuelArbitratorResetHandler: 4 lines
+      +  word control_mode;
+      +  control_mode = _datalink_speed_control_mode;
+      -  cm550_j1939MessageTypeCounter();
+      +  cm550_j1939MessageTypeCounter(control_mode);
+  0x00023244 cm550_fuelDemandLimitOrchestrator: 97 lines
+      -  undefined1 uVar4;
+      -  ushort uVar5;
+      -  uint uVar6;
+      +  ushort uVar4;
+      +  uint uVar5;
+      +  bool bVar6;
+      -  bool bVar10;
+      -  bVar7 = _high_idle_override_duration_timer == 1;
+      -  if (bVar7) {
+      +  bVar6 = _high_idle_override_duration_timer == 1;
+      +  if (bVar6) {
+      -  bVar8 = _DAT_0080da8c == 1;
+      -  if (bVar8) {
+      +  bVar7 = _DAT_0080da8c == 1;
+      +  if (bVar7) {
+      -  bVar9 = _driveline_disengage_timeout_timer == 1;
+      -  if (bVar9) {
+      +  bVar8 = _driveline_disengage_timeout_timer == 1;
+      +  if (bVar8) {
+      -  bVar10 = _retarder_disengage_hold_timer == 1;
+      -  if (bVar10) {
+      +  bVar9 = _retarder_disengage_hold_timer == 1;
+      +  if (bVar9) {
+      -  bVar10 = bVar10 || (bVar9 || (bVar8 || bVar7));
+  0x00023820 cm550_diagnosticMessageValidator: 18 lines
+      -uint cm550_diagnosticMessageValidator(undefined4 param_1,undefined4 param_2)
+      +word cm550_diagnosticMessageValidator
+      +               (word network_type,word source_address,word override_control_mode)
+      -  uint in_D0;
+      -  short *psVar2;
+      -  psVar2 = (short *)&DAT_00801994;
+      +  word *pwVar2;
+      +  pwVar2 = (word *)&DAT_00801994;
+      -      return in_D0 & 0xffff0000;
+      +      return 0;
+      -    if (((param_1._0_2_ == *psVar2) && ((char)param_1 == *(char *)(psVar2 + 1))) &&
+      -       (param_2._0_2_ == psVar2[2])) break;
+      -    psVar2 = psVar2 + 4;
+      +    if (((network_type == *pwVar2) && ((char)source_address == *(char *)(pwVar2 + 1))) &&
+      +       (override_control_mode == pwVar2[2])) break;
+      +    pwVar2 = pwVar2 + 4;
+      -  psVar2[3] = _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+      +  pwVar2[3] = _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+  0x00023870 cm550_ioControlTimeoutTableLookup: 7 lines
+      -uint cm550_ioControlTimeoutTableLookup(undefined4 param_1)
+      +word cm550_ioControlTimeoutTableLookup(word source_address)
+      -  uint in_D0;
+      -      return in_D0 & 0xffff0000;
+      +      return 0;
+      -    if (param_1._1_1_ == *pcVar2) break;
+      +    if ((char)source_address == *pcVar2) break;
+  0x000238ac cm550_ioControlEntryAdd: 8 lines
+      -void cm550_ioControlEntryAdd(undefined4 param_1,undefined4 param_2)
+      +void cm550_ioControlEntryAdd(word network_type,byte source_address,word override_control_mode)
+      -    *(undefined2 *)(&DAT_00801994 + iVar1) = param_1._0_2_;
+      -    (&DAT_00801996)[iVar1] = (undefined1)param_1;
+      -    *(undefined2 *)(&diagnostic_service_state_counter + iVar1) = param_2._0_2_;
+      +    *(word *)(&DAT_00801994 + iVar1) = network_type;
+      +    (&DAT_00801996)[iVar1] = source_address;
+      +    *(word *)(&diagnostic_service_state_counter + iVar1) = override_control_mode;
+  0x000238ec cm550_ioControlTimeoutEntryAdd: 4 lines
+      -void cm550_ioControlTimeoutEntryAdd(undefined4 param_1)
+      +void cm550_ioControlTimeoutEntryAdd(byte source_address)
+      -    (&DAT_008019bc)[uVar1 * 4] = param_1._1_1_;
+      +    (&DAT_008019bc)[uVar1 * 4] = source_address;
+  0x000239d2 cm550_diagnosticStateInitializer: 18 lines
+      -void cm550_diagnosticStateInitializer(undefined4 param_1)
+      +void cm550_diagnosticStateInitializer(word network_type,word source_address)
+      -  short *psVar3;
+      +  word *pwVar3;
+      -    psVar3 = (short *)(&DAT_0080198c + (uint)io_control_entry_count * 8);
+      +    pwVar3 = (word *)(&DAT_0080198c + (uint)io_control_entry_count * 8);
+      -      if ((param_1._0_2_ == *psVar3) && ((char)param_1 == *(char *)(psVar3 + 1))) {
+      +      if ((network_type == *pwVar3) && ((char)source_address == *(char *)(pwVar3 + 1))) {
+      -          *psVar3 = *(short *)(&DAT_00801994 + iVar1);
+      -          *(undefined *)(psVar3 + 1) = (&DAT_00801996)[iVar1];
+      -          psVar3[2] = *(short *)(&diagnostic_service_state_counter + iVar1);
+      -          psVar3[3] = *(short *)(&diagnostic_security_access_mode + iVar1);
+      +          *pwVar3 = *(word *)(&DAT_00801994 + iVar1);
+      +          *(undefined *)(pwVar3 + 1) = (&DAT_00801996)[iVar1];
+      +          pwVar3[2] = *(word *)(&diagnostic_service_state_counter + iVar1);
+      +          pwVar3[3] = *(word *)(&diagnostic_security_access_mode + iVar1);
+      -      psVar3 = psVar3 + -4;
+      +      pwVar3 = pwVar3 + -4;
+  0x00023a3c cm550_ioControlEntryRemove: 4 lines
+      -void cm550_ioControlEntryRemove(undefined4 param_1)
+      +void cm550_ioControlEntryRemove(word source_address)
+      -      if (param_1._1_1_ == *pcVar3) {
+      +      if ((char)source_address == *pcVar3) {
+  0x00024b4e cm550_ioControlDigitDisplaySequencer: 10 lines
+      -uint cm550_ioControlDigitDisplaySequencer(undefined4 param_1)
+      +uint cm550_ioControlDigitDisplaySequencer(word fault_code)
+      -    DAT_008019e4 = (char)(param_1._0_2_ / 100);
+      -    DAT_008019e5 = (char)(param_1._0_2_ / 10) + DAT_008019e4 * -10;
+      -    uVar1 = (short)(param_1._0_2_ / 10) * 10;
+      +    DAT_008019e4 = (char)(fault_code / 100);
+      +    DAT_008019e5 = (char)(fault_code / 10) + DAT_008019e4 * -10;
+      +    uVar1 = (short)(fault_code / 10) * 10;
+      -    DAT_008019e6 = (char)((uint)param_1 >> 0x10) - (char)uVar1;
+      +    DAT_008019e6 = (char)fault_code - (char)uVar1;
+  0x00024c5a cm550_FUN_00024c5a: 11 lines
+      -byte cm550_FUN_00024c5a(undefined4 param_1)
+      +byte cm550_FUN_00024c5a(byte current_fault_index)
+      -      if ((param_1._1_1_ == 0x7d) ||
+      +      if ((current_fault_index == 0x7d) ||
+      -      param_1._1_1_ = (&DGAEFUBF)[(short)(ushort)fault_list_navigation_index];
+      +      current_fault_index = (&DGAEFUBF)[(short)(ushort)fault_list_navigation_index];
+      -            (short)((ushort)param_1._1_1_ * 2 + (ushort)param_1._1_1_) * 2) & 0x40) == 0) {
+      -        return param_1._1_1_;
+      +            (short)((ushort)current_fault_index * 2 + (ushort)current_fault_index) * 2) & 0x40) == 0
+      +         ) {
+      +        return current_fault_index;
+  0x00024cd2 cm550_FUN_00024cd2: 11 lines
+      -byte cm550_FUN_00024cd2(undefined4 param_1)
+      +byte cm550_FUN_00024cd2(byte current_fault_index)
+      -      if ((param_1._1_1_ == 0x7d) ||
+      +      if ((current_fault_index == 0x7d) ||
+      -      param_1._1_1_ = (&DGAEFUBF)[(short)(ushort)fault_list_navigation_index];
+      +      current_fault_index = (&DGAEFUBF)[(short)(ushort)fault_list_navigation_index];
+      -            (short)((ushort)param_1._1_1_ * 2 + (ushort)param_1._1_1_) * 2) & 0x40) == 0) {
+      -        return param_1._1_1_;
+      +            (short)((ushort)current_fault_index * 2 + (ushort)current_fault_index) * 2) & 0x40) == 0
+      +         ) {
+      +        return current_fault_index;
+  0x00024d40 cm550_faultCodeDisplayController: 42 lines
+      -  char extraout_D0b;
+      -  char extraout_D0b_00;
+      -  char extraout_D0b_01;
+      -  char extraout_D0b_02;
+      -  char cVar2;
+      +  byte bVar2;
+      -            cm550_FUN_00024c5a();
+      +            bVar2 = cm550_FUN_00024c5a(fault_code_display_current);
+      -            cVar2 = extraout_D0b_02;
+      -            cVar2 = fault_code_display_current;
+      +            bVar2 = fault_code_display_current;
+      -          if (cVar2 != '}') {
+      +          if (bVar2 != 0x7d) {
+      -            fault_code_display_current = cVar2;
+      +            fault_code_display_current = bVar2;
+      -        cm550_FUN_00024cd2();
+      +        bVar2 = cm550_FUN_00024cd2(fault_code_display_current);
+      -        if (extraout_D0b_01 != '}') {
+      +        if (bVar2 != 0x7d) {
+      -          fault_code_display_current = extraout_D0b_01;
+      +          fault_code_display_current = bVar2;
+      -      cm550_FUN_00024c5a();
+      +      bVar2 = cm550_FUN_00024c5a(fault_code_display_current);
+      -      if (extraout_D0b_00 != '}') {
+  0x00025806 cm550_FUN_00025806: 7 lines
+      -void cm550_FUN_00025806(undefined4 param_1)
+      +void cm550_FUN_00025806(word previous_user_fueling_state)
+      -           ((_fault_confirm_status_word_4 & 0x20) != 0)))) && (_FSDSFLST = 6, param_1._0_2_ != 6)) {
+      +           ((_fault_confirm_status_word_4 & 0x20) != 0)))) &&
+      +         (_FSDSFLST = 6, previous_user_fueling_state != 6)) {
+      -            (_FSDSFLST = 6, param_1._0_2_ != 6)) {
+      +            (_FSDSFLST = 6, previous_user_fueling_state != 6)) {
+  0x00026272 cm550_epsOverrideChecker: 7 lines
+      -uint cm550_epsOverrideChecker(undefined4 param_1)
+      +word cm550_epsOverrideChecker(word gain_set_already_selected)
+      -  uint in_D0;
+      -  if (param_1._0_2_ != 0) {
+      +  if (gain_set_already_selected != 0) {
+      -    return in_D0 & 0xffff0000;
+      +    return 0;
+  0x0002629e cm550_epsControlModeSelector: 8 lines
+      -  short sVar1;
+      +  word wVar1;
+      -  cm550_epsRpmTargetModeChecker();
+      -  sVar1 = cm550_epsOverrideChecker();
+      -  if (sVar1 == 0) {
+      +  wVar1 = cm550_epsRpmTargetModeChecker();
+      +  wVar1 = cm550_epsOverrideChecker(wVar1);
+      +  if (wVar1 == 0) {
+  0x00026eec cm550_insiteActiveFaultListBuilder: 22 lines
+      -  byte bVar1;
+      -  char cVar2;
+      +  char cVar1;
+      +  byte bVar2;
+      -    cVar2 = (char)_insite_active_fault_count;
+      -    *(char *)insite_response_write_pointer = cVar2;
+      +    cVar1 = (char)_insite_active_fault_count;
+      +    *(char *)insite_response_write_pointer = cVar1;
+      -    for (; cVar2 != '\0'; cVar2 = cVar2 + -1) {
+      +    for (; cVar1 != '\0'; cVar1 = cVar1 + -1) {
+      -  cVar2 = cm550_insiteMultiFrameResponseBuilder(0xe000f);
+      -  if (cVar2 == '\0') {
+      +  bVar2 = cm550_insiteMultiFrameResponseBuilder(0xe,0xf);
+      +  if (bVar2 == 0) {
+      -      while (bVar1 = insite_multiframe_frame_bytes_remaining - 1,
+      +      while (bVar2 = insite_multiframe_frame_bytes_remaining - 1,
+      -        insite_multiframe_frame_bytes_remaining = bVar1;
+      +        insite_multiframe_frame_bytes_remaining = bVar2;
+      -        insite_multiframe_frame_bytes_remaining = bVar1;
+      +        insite_multiframe_frame_bytes_remaining = bVar2;
+      -        insite_multiframe_frame_bytes_remaining = bVar1;
+      +        insite_multiframe_frame_bytes_remaining = bVar2;
+  0x00026fea cm550_insiteFaultDetailBuilder: 71 lines
+      -  char cVar3;
+      +  byte bVar3;
+      -  byte bVar8;
+      -  ushort uVar9;
+      +  ushort uVar8;
+      +  byte *pbVar9;
+      -  byte *pbVar11;
+      -      bVar8 = 0;
+      -      uVar7 = 1;
+      -      while ((bVar5 <= DGAEFUBF && (bVar8 < _active_j1922_reportable_fault_count))) {
+      +      bVar3 = 0;
+      +      uVar7 = 1;
+      +      while ((bVar5 <= DGAEFUBF && (bVar3 < _active_j1922_reportable_fault_count))) {
+      -          bVar8 = bVar8 + 1;
+      +          bVar3 = bVar3 + 1;
+      -      pbVar10 = &insite_fault_change_queue_count + (short)(ushort)insite_fault_change_queue_count;
+      +      pbVar9 = &insite_fault_change_queue_count + (short)(ushort)insite_fault_change_queue_count;
+      -        sVar2 = ((ushort)*pbVar10 * 2 + (ushort)*pbVar10) * 2;
+      +        sVar2 = ((ushort)*pbVar9 * 2 + (ushort)*pbVar9) * 2;
+      -        pbVar10 = pbVar10 + -1;
+      +        pbVar9 = pbVar9 + -1;
+      -      bVar8 = 0;
+      -      uVar7 = 1;
+      -      while ((bVar5 <= DGAEFUBF && (bVar8 < _active_j1922_reportable_fault_count))) {
+  0x0002758e cm550_insiteVersionInfoBuilder: 113 lines
+      -  char cVar1;
+      -  byte bVar2;
+      +  byte bVar1;
+      +  undefined *puVar2;
+      -  undefined *puVar5;
+      -    bVar2 = 0;
+      -    puVar4 = &DAT_01000309;
+      +    bVar1 = 0;
+      +    puVar3 = &DAT_01000309;
+      -      *(undefined *)insite_response_write_pointer = *puVar4;
+      +      *(undefined *)insite_response_write_pointer = *puVar3;
+      -      bVar2 = bVar2 + 1;
+      -      puVar4 = puVar4 + 1;
+      -    } while (bVar2 < 4);
+      +      bVar1 = bVar1 + 1;
+      +      puVar3 = puVar3 + 1;
+      +    } while (bVar1 < 4);
+      -    bVar2 = 0;
+      -    puVar4 = &DAT_0100030d;
+      +    bVar1 = 0;
+      +    puVar3 = &DAT_0100030d;
+      -      *(undefined *)insite_response_write_pointer = *puVar4;
+      +      *(undefined *)insite_response_write_pointer = *puVar3;
+      -      bVar2 = bVar2 + 1;
+  0x00027706 cm550_insiteCapacityResponseBuilder: 25 lines
+      -  char cVar1;
+      -  byte bVar2;
+      -  undefined *puVar3;
+      +  byte bVar1;
+      +  undefined *puVar2;
+      -    puVar3 = &DAT_01000375;
+      -    for (bVar2 = 0; bVar2 < 0x14; bVar2 = bVar2 + 1) {
+      -      *(undefined *)insite_response_write_pointer = *puVar3;
+      +    puVar2 = &DAT_01000375;
+      +    for (bVar1 = 0; bVar1 < 0x14; bVar1 = bVar1 + 1) {
+      +      *(undefined *)insite_response_write_pointer = *puVar2;
+      -      puVar3 = puVar3 + 1;
+      +      puVar2 = puVar2 + 1;
+      -  cVar1 = cm550_insiteMultiFrameResponseBuilder(0xe000f);
+      -  if (cVar1 == '\0') {
+      -    puVar3 = &DAT_01000375;
+      +  bVar1 = cm550_insiteMultiFrameResponseBuilder(0xe,0xf);
+      +  if (bVar1 == 0) {
+      +    puVar2 = &DAT_01000375;
+      -      for (bVar2 = 0; bVar2 < insite_multiframe_frame_bytes_remaining; bVar2 = bVar2 + 1) {
+      -        *(undefined *)insite_response_write_pointer = *puVar3;
+      +      for (bVar1 = 0; bVar1 < insite_multiframe_frame_bytes_remaining; bVar1 = bVar1 + 1) {
+      +        *(undefined *)insite_response_write_pointer = *puVar2;
+      -        puVar3 = puVar3 + 1;
+  0x000277e6 cm550_FUN_000277e6: 83 lines
+      -  char cVar2;
+      -  ushort uVar3;
+      +  ushort uVar2;
+      +  undefined *puVar3;
+      -  undefined *puVar5;
+      -    uVar3 = 0;
+      +    uVar2 = 0;
+      -      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar3 + 0x803dcc);
+      +      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar2 + 0x803dcc);
+      -      bVar1 = (char)uVar3 + 1;
+      -      uVar3 = (ushort)bVar1;
+      +      bVar1 = (char)uVar2 + 1;
+      +      uVar2 = (ushort)bVar1;
+      -    uVar3 = 0;
+      +    uVar2 = 0;
+      -      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar3 + 0x803dd1);
+      +      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar2 + 0x803dd1);
+      -      bVar1 = (char)uVar3 + 1;
+      -      uVar3 = (ushort)bVar1;
+      +      bVar1 = (char)uVar2 + 1;
+      +      uVar2 = (ushort)bVar1;
+      -    uVar3 = 0;
+      +    uVar2 = 0;
+      -      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar3 + 0x803de2);
+  0x00027cd0 cm550_savePowerDownDataToFlashBank: 4 lines
+      -void cm550_savePowerDownDataToFlashBank(undefined4 param_1)
+      +void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
+      -  if (param_1._1_1_ == '\x01') {
+      +  if (flash_bank_number == 1) {
+  0x00027f9c mc68k_runPowerDownSequence: 69 lines
+      -  ushort uVar12;
+      -  undefined *puVar13;
+      +  undefined *puVar12;
+      -    cm550_savePowerDownDataToFlashBank();
+      +    cm550_savePowerDownDataToFlashBank(2);
+      -      cm550_savePowerDownDataToFlashBank();
+      +      cm550_savePowerDownDataToFlashBank(1);
+      -      cm550_savePowerDownDataToFlashBank();
+      +      cm550_savePowerDownDataToFlashBank(1);
+      -      cm550_savePowerDownDataToFlashBank();
+      -    }
+      -  }
+      -  uVar12 = (ushort)(byte)(cVar3 << 4 | cVar8 << 3 | cVar9 << 2 | cVar10 << 1 | bVar11);
+      +      cm550_savePowerDownDataToFlashBank(2);
+      +    }
+      +  }
+      +  bVar11 = cVar3 << 4 | cVar8 << 3 | cVar9 << 2 | cVar10 << 1 | bVar11;
+      -  puVar13 = &eeprom_hour_meter_buffer;
+      +  puVar12 = &eeprom_hour_meter_buffer;
+      -    cm550_emptyPlaceholderFunction(puVar13,(short)source_ptr,uVar12);
+      +    cm550_emptyPlaceholderFunction(puVar12,(short)source_ptr,bVar11);
+      -    uVar12 = 0;
+      -    do {
+      -      SIM_SWSR = 0x55;
+  0x0002cf52 cm550_FUN_0002cf52: 14 lines
+      -void cm550_FUN_0002cf52(undefined1 *param_1,undefined4 param_2)
+      +void cm550_FUN_0002cf52(byte *source,word byte_count)
+      -  undefined *puVar2;
+      -  puVar2 = &DAT_00801afc;
+      -  for (uVar1 = 0; uVar1 < param_2._0_2_; uVar1 = uVar1 + 1) {
+      -    *puVar2 = *param_1;
+      -    param_1 = (undefined1 *)CONCAT31(param_1._0_3_,(char)param_1 + '\x01');
+      -    puVar2 = puVar2 + 1;
+      +  byte *pbVar2;
+      +  pbVar2 = &DAT_00801afc;
+      +  for (uVar1 = 0; uVar1 < byte_count; uVar1 = uVar1 + 1) {
+      +    *pbVar2 = *source;
+      +    source = (byte *)CONCAT31(source._0_3_,(char)source + '\x01');
+      +    pbVar2 = pbVar2 + 1;
+  0x0002cf7e cm550_FUN_0002cf7e: 67 lines
+      -uint cm550_FUN_0002cf7e(undefined4 param_1)
+      +byte cm550_FUN_0002cf7e(word write_record_count)
+      -  uint in_D0;
+      -  uint uVar2;
+      +  byte bVar2;
+      -  byte bVar5;
+      -  undefined *puVar6;
+      -  undefined4 *puVar7;
+      -  undefined1 *puVar8;
+      +  undefined *puVar5;
+      +  undefined4 *puVar6;
+      +  undefined1 *puVar7;
+      -  puVar6 = &DAT_0080db68;
+      +  puVar5 = &DAT_0080db68;
+      +  bVar2 = 0;
+      -  bVar4 = 0;
+      -  for (bVar5 = 0; bVar5 < param_1._1_1_; bVar5 = bVar5 + 1) {
+      -    if ((puVar6[9] == '\x05') || (puVar6[9] == '\x03')) {
+      -      bVar4 = bVar4 + 1;
+      -      bVar3 = puVar6[8] + bVar3;
+      +  for (bVar4 = 0; bVar4 < (byte)write_record_count; bVar4 = bVar4 + 1) {
+      +    if ((puVar5[9] == '\x05') || (puVar5[9] == '\x03')) {
+      +      bVar3 = bVar3 + 1;
+      +      bVar2 = puVar5[8] + bVar2;
+  0x0002eea2 cm550_diagnosticServiceDispatcher: 11 lines
+      +  undefined2 in_D0w;
+      -        cm550_diagnosticMultiPacketResponseBuilder((short)msg_ptr);
+      +        cm550_diagnosticMultiPacketResponseBuilder
+      +                  ((can_std_rx_desc_t *)msg_ptr,CONCAT11((char)((ushort)in_D0w >> 8),cVar1));
+      +    in_D0w = CONCAT11((char)((ushort)in_D0w >> 8),*pcVar3);
+      -      cVar1 = cm550_diagnosticServiceSecurityValidator(msg_ptr);
+      +      in_D0w = cm550_diagnosticServiceSecurityValidator(msg_ptr);
+      +      cVar1 = (char)in_D0w;
+      -        cVar1 = (**(code **)(pcVar3 + 2))((short)msg_ptr);
+      +        in_D0w = (**(code **)(pcVar3 + 2))((short)msg_ptr);
+      +        cVar1 = (char)in_D0w;
+  0x0002ef1c cm550_diagnosticResponseHandler2: 4 lines
+      -void cm550_diagnosticResponseHandler2(undefined4 param_1)
+      +void cm550_diagnosticResponseHandler2(can_std_rx_desc_t *param_1)
+      -  cm550_diagnosticCanResponseSender(param_1);
+      +  cm550_diagnosticCanResponseSender(param_1,0);
+  0x0002ef4a cm550_FUN_0002ef4a: 2 lines
+      -  cm550_diagnosticCanResponseSender((char)msg_ptr);
+      +  cm550_diagnosticCanResponseSender((can_std_rx_desc_t *)msg_ptr,1);
+  0x0002f128 processEngineTsc1Request: 39 lines
+      +  ushort override_control_mode;
+      -  byte bVar4;
+      -  undefined3 uVar5;
+      +  undefined3 uVar4;
+      -  undefined4 uVar6;
+      -  short sVar7;
+      +  uint uVar5;
+      +  word wVar6;
+      -    bVar4 = torque_control_message_byte_0 & 3;
+      +    override_control_mode = torque_control_message_byte_0 & 3;
+      -    uVar5 = (undefined3)((uint)in_D0 >> 8);
+      +    uVar4 = (undefined3)((uint)in_D0 >> 8);
+      -      uVar6 = cm550_diagnosticStateInitializer((short)CONCAT31(uVar5,cVar1));
+      +      uVar5 = cm550_diagnosticStateInitializer(1,(word)CONCAT31(uVar4,cVar1));
+      -      uVar6 = cm550_diagnosticMessageValidator((short)CONCAT31(uVar5,cVar1));
+      -      if ((short)uVar6 != 0) {
+      +      wVar6 = cm550_diagnosticMessageValidator(1,(word)CONCAT31(uVar4,cVar1),override_control_mode);
+      +      uVar5 = (uint)wVar6;
+      +      if (wVar6 != 0) {
+      -    uVar5 = (undefined3)((uint)uVar6 >> 8);
+      +    uVar4 = (undefined3)(uVar5 >> 8);
+      -      sVar7 = cm550_diagnosticSessionValidator((short)CONCAT31(uVar5,cVar1));
+      -      if (sVar7 != 0) {
+      +      wVar6 = cm550_diagnosticSessionValidator(1,(word)CONCAT31(uVar4,cVar1));
+  0x0002f4be cm550_FUN_0002f4be: 2 lines
+      -      cm550_diagnosticCanResponseSender((short)rx_msg);
+      +      cm550_diagnosticCanResponseSender(rx_msg,1);
+  0x0002f606 cm550_FUN_0002f606: 11 lines
+      -uint cm550_FUN_0002f606(undefined4 param_1)
+      +word cm550_FUN_0002f606(word requested_torque)
+      -  uint in_D0;
+      -  if (param_1._1_1_ < 0x19) {
+      +  if ((byte)requested_torque < 0x19) {
+      -  if (param_1._1_1_ < 0x7d) {
+      -    return (uint)(ushort)(0x7d - param_1._1_1_);
+      +  if ((byte)requested_torque < 0x7d) {
+      +    return 0x7d - (requested_torque & 0xff);
+      -  return in_D0 & 0xffff0000;
+      +  return 0;
+  0x0002f7e6 cm550_retarderControlModeHandler: 39 lines
+      -  undefined4 uVar4;
+      -  short sVar5;
+      +  undefined3 uVar4;
+      +  uint uVar5;
+      +  word wVar7;
+      +  undefined4 uVar6;
+      -      if (((_calibration_feature_enable_flags_word_2 & 0x1000) != 0) || (bVar1 != _DAT_00060f82)) {
+      +      uVar5 = _calibration_feature_enable_flags_word_2 & 0x1000;
+      +      if (((_calibration_feature_enable_flags_word_2 & 0x1000) != 0) ||
+      +         (uVar5 = (uint)bVar1, uVar5 != _DAT_00060f82)) {
+      +        uVar4 = (undefined3)(uVar5 >> 8);
+      -          uVar4 = cm550_ioControlEntryRemove();
+      +          uVar5 = cm550_ioControlEntryRemove((word)CONCAT31(uVar4,bVar1));
+      -          uVar4 = cm550_ioControlTimeoutTableLookup();
+      -          if ((short)uVar4 != 0) {
+      +          wVar7 = cm550_ioControlTimeoutTableLookup((word)CONCAT31(uVar4,bVar1));
+      +          uVar5 = (uint)wVar7;
+      +          if (wVar7 != 0) {
+      -          sVar5 = cm550_diagnosticSessionValidator((short)CONCAT31((int3)((uint)uVar4 >> 8),bVar1));
+      -          if (sVar5 != 0) {
+      +          wVar7 = cm550_diagnosticSessionValidator(1,(word)CONCAT31((int3)(uVar5 >> 8),bVar1));
+      +          if (wVar7 != 0) {
+      -          sVar5 = cm550_diagnosticSessionValidator(bVar1);
+      -          if (sVar5 != 0) {
+  0x0002fd90 cm550_FUN_0002fd90: 4 lines
+      -void cm550_FUN_0002fd90(undefined4 param_1)
+      +void cm550_FUN_0002fd90(word code_index)
+      -    if (param_1._0_2_ == *(short *)(&diagnostic_fault_code_table + sVar2)) {
+      +    if (code_index == *(word *)(&diagnostic_fault_code_table + sVar2)) {
+  0x0002fddc cm550_diagnosticTableEntryClear: 17 lines
+      -void cm550_diagnosticTableEntryClear(undefined4 param_1)
+      +void cm550_diagnosticTableEntryClear(word code_index)
+      -  param_1._0_2_ = param_1._0_2_ * 10;
+      -  (&diagnostic_fault_occurrence_count)[param_1._0_2_] = 0;
+      -  *(undefined4 *)(&DGFUCUBF + param_1._0_2_) = 0;
+      -  *(undefined4 *)(param_1._0_2_ + 0x805a20) = 0;
+      -  if ((&diagnostic_fault_status_table)[param_1._0_2_] == '\x02') {
+      -    cm550_FUN_0002fd90();
+      +  short sVar1;
+      +  sVar1 = code_index * 10;
+      +  (&diagnostic_fault_occurrence_count)[sVar1] = 0;
+      +  *(undefined4 *)(&DGFUCUBF + sVar1) = 0;
+      +  *(undefined4 *)(sVar1 + 0x805a20) = 0;
+      +  if ((&diagnostic_fault_status_table)[sVar1] == '\x02') {
+      +    cm550_FUN_0002fd90(code_index);
+      -  (&diagnostic_fault_status_table)[param_1._0_2_] = 0;
+      +  (&diagnostic_fault_status_table)[sVar1] = 0;
+  0x0002fe38 cm550_diagnosticTableSnapshotCapture: 62 lines
+      -void cm550_diagnosticTableSnapshotCapture(undefined4 param_1)
+      +void cm550_diagnosticTableSnapshotCapture(word snapshot_slot,word code_index)
+      -  if ((*(ushort *)(&fault_definition_flags_word + (short)(param_1._2_2_ * 3) * 2) & 0x10) != 0) {
+      -    sVar1 = param_1._0_2_ * 0x30;
+      -    *(short *)(&DAT_0080462e + sVar1) = param_1._2_2_;
+      +  if ((*(ushort *)(&fault_definition_flags_word + (short)(code_index * 3) * 2) & 0x10) != 0) {
+      +    sVar1 = snapshot_slot * 0x30;
+      +    *(word *)(&DAT_0080462e + sVar1) = code_index;
+      -  param_1._0_2_ = param_1._0_2_ * 0x30;
+      -  if (param_1._2_2_ != *(short *)(&diagnostic_fault_code_table + param_1._0_2_)) {
+      -    *(short *)(&diagnostic_fault_code_table + param_1._0_2_) = param_1._2_2_;
+      -    *(undefined2 *)(param_1._0_2_ + 0x804276) = _percent_load_at_current_speed;
+      -    *(undefined2 *)(param_1._0_2_ + 0x804270) =
+      -         _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+      -    *(undefined2 *)(param_1._0_2_ + 0x804272) = _current_engine_rpm_filtered;
+      -    *(undefined2 *)(param_1._0_2_ + 0x804278) =
+      -         _validated_percent_throttle_commanded_by_driver_0_100;
+      -    *(undefined2 *)(param_1._0_2_ + 0x80427a) = _boost_pressure_0_100;
+      -    *(undefined4 *)(param_1._0_2_ + 0x80426a) = _hour_meter_ecm_run_time_none;
+      -    *(undefined2 *)(param_1._0_2_ + 0x80427c) =
+      -         _filtered_and_linearized_coolant_temperature_50_to_293;
+      -    *(undefined2 *)(param_1._0_2_ + 0x80427e) =
+      +  sVar1 = snapshot_slot * 0x30;
+      +  if (code_index != *(word *)(&diagnostic_fault_code_table + sVar1)) {
+  0x00031ace cm550_diagnosticSessionValidator: 18 lines
+      -uint cm550_diagnosticSessionValidator(undefined4 param_1)
+      +word cm550_diagnosticSessionValidator(word data_link,word source_address)
+      -  uint in_D0;
+      -  short *psVar2;
+      -  psVar2 = (short *)&DAT_00808196;
+      +  word *pwVar2;
+      +  pwVar2 = (word *)&DAT_00808196;
+      -  while (((param_1._0_2_ != *psVar2 || ((char)param_1 != *(char *)((int)psVar2 + 3))) &&
+      -         ((param_1._0_2_ != 1 || ((*psVar2 != 1 || (*(char *)((int)psVar2 + 3) != -1))))))) {
+      -    in_D0 = 0;
+      -    psVar2 = psVar2 + 10;
+      +  while (((data_link != *pwVar2 || ((char)source_address != *(char *)((int)pwVar2 + 3))) &&
+      +         ((data_link != 1 || ((*pwVar2 != 1 || (*(char *)((int)pwVar2 + 3) != -1))))))) {
+      +    pwVar2 = pwVar2 + 10;
+      -  _datalink_session_config_pointer = psVar2;
+      -  return in_D0 & 0xffff0000;
+      +  _datalink_session_config_pointer = pwVar2;
+      +  return 0;
+  0x00031b22 cm550_diagnosticCanResponseSender: 12 lines
+      -void cm550_diagnosticCanResponseSender(int param_1,undefined4 param_2)
+      +void cm550_diagnosticCanResponseSender(can_std_rx_desc_t *request,word acknowledgement_type)
+      -  _DAT_00801ea6 = CONCAT11(*(undefined1 *)(param_1 + 3),*(undefined1 *)(param_1 + 2));
+      -  DAT_00801eb2 = param_2._1_1_;
+      -  DAT_00801eb7 = **(undefined1 **)(param_1 + 6);
+      -  DAT_00801eb8 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
+      -  DAT_00801eb9 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
+      +  _DAT_00801ea6 = CONCAT11((char)request->id,*(undefined1 *)((int)&request->id + 2));
+      +  DAT_00801eb2 = (undefined1)acknowledgement_type;
+      +  DAT_00801eb7 = *request->data_ptr;
+      +  DAT_00801eb8 = request->data_ptr[1];
+      +  DAT_00801eb9 = request->data_ptr[2];
+  0x0003216a cm550_diagnosticMultiPacketResponseBuilder: 38 lines
+      -undefined4 cm550_diagnosticMultiPacketResponseBuilder(byte *param_1,undefined4 param_2)
+      +undefined4 cm550_diagnosticMultiPacketResponseBuilder(can_std_rx_desc_t *request,word result_code)
+      -  undefined2 uVar2;
+      -  byte bVar3;
+      +  byte bVar2;
+      +  char cVar3;
+      +  word data_length;
+      -  uVar2 = (undefined2)CONCAT31((int3)((uint)in_D0 >> 8),**(undefined1 **)(param_1 + 6));
+      -  bVar3 = cm550_FUN_0000b688();
+      -  msg_header = (j1939_header_t *)cm550_multiPacketBufferAllocator(uVar2);
+      +  bVar2 = cm550_FUN_0000b688((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_ptr));
+      +  cVar3 = (char)result_code;
+      +  if (cVar3 == '\0') {
+      +    data_length = bVar2 + 1;
+      +  }
+      +  else if (cVar3 == -2) {
+      +    data_length = bVar2 + 3;
+      +  }
+      +  else {
+      +    data_length = bVar2 + 2;
+      +  }
+      +  msg_header = cm550_multiPacketBufferAllocator(data_length);
+      -    bVar4 = *param_1;
+      +    bVar4 = *(byte *)&request->id;
+  0x000333d6 cm550_FUN_000333d6: 23 lines
+      -uint cm550_FUN_000333d6(uint param_1)
+      +byte cm550_FUN_000333d6(word previous_value,word current_value)
+      -  uint in_D0;
+      -  if (param_1._0_2_ == 0) {
+      -    if (param_1._2_2_ == 0) {
+      -      return in_D0 & 0xffffff00;
+      +  if (previous_value == 0) {
+      +    if (current_value == 0) {
+      +      return 0;
+      -  if ((int)((uint)param_1._0_2_ - (param_1 & 0xffff)) < 0) {
+      -    iVar1 = -(param_1 & 0xffff) - (uint)param_1._0_2_;
+      +  if ((int)((uint)previous_value - (uint)current_value) < 0) {
+      +    iVar1 = -(uint)current_value - (uint)previous_value;
+      -    iVar1 = (uint)param_1._0_2_ - (param_1 & 0xffff);
+      +    iVar1 = (uint)previous_value - (uint)current_value;
+      -  if (iVar1 / (int)(uint)param_1._0_2_ < 0) {
+      -    iVar1 = -iVar1 / (int)(uint)param_1._0_2_;
+      +  if (iVar1 / (int)(uint)previous_value < 0) {
+      +    iVar1 = -iVar1 / (int)(uint)previous_value;
+      -    iVar1 = iVar1 / (int)(uint)param_1._0_2_;
+      +    iVar1 = iVar1 / (int)(uint)previous_value;
+      -    return iVar1 * 10 & 0xffffff00;
+      +    return 0;
+  0x00033460 cm550_FUN_00033460: 27 lines
+      -uint cm550_FUN_00033460(uint param_1)
+      +byte cm550_FUN_00033460(word previous_value,word current_value)
+      -  uint in_D0;
+      -  if (param_1._1_1_ == 0) {
+      -    if ((char)param_1 == '\0') {
+      -      return in_D0 & 0xffffff00;
+      +  byte bVar2;
+      +  byte bVar3;
+      +  bVar3 = (byte)previous_value;
+      +  bVar2 = (byte)current_value;
+      +  if (bVar3 == 0) {
+      +    if (bVar2 == 0) {
+      +      return 0;
+      -  if ((int)((uint)param_1._1_1_ - (param_1 & 0xff)) < 0) {
+      -    iVar1 = -(param_1 & 0xff) - (uint)param_1._1_1_;
+      +  if ((int)((uint)bVar3 - (uint)bVar2) < 0) {
+      +    iVar1 = -(uint)bVar2 - (uint)bVar3;
+      -    iVar1 = (uint)param_1._1_1_ - (param_1 & 0xff);
+      +    iVar1 = (uint)bVar3 - (uint)bVar2;
+      -  if (iVar1 / (int)(uint)param_1._1_1_ < 0) {
+      -    iVar1 = -iVar1 / (int)(uint)param_1._1_1_;
+      +  if (iVar1 / (int)(uint)bVar3 < 0) {
+      +    iVar1 = -iVar1 / (int)(uint)bVar3;
+      -    iVar1 = iVar1 / (int)(uint)param_1._1_1_;
+  0x000334ec cm550_FUN_000334ec: 84 lines
+      -  undefined1 uVar1;
+      -  undefined2 uVar2;
+      -  char cVar3;
+      +  undefined1 extraout_var;
+      +  undefined1 extraout_var_00;
+      +  undefined1 extraout_var_01;
+      +  undefined1 extraout_var_02;
+      +  undefined1 extraout_var_03;
+      +  undefined1 extraout_var_04;
+      +  byte bVar1;
+      -  uVar2 = cm550_FUN_000333d6(_DAT_008034f2 >> 0x10);
+      -  if ((char)uVar2 != '\x01') {
+      -    uVar1 = (undefined1)((ushort)uVar2 >> 8);
+      -    cVar3 = cm550_FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803510),CONCAT11(uVar1,DAT_008034f4)));
+      -    if (cVar3 != '\x01') {
+      -      uVar2 = cm550_FUN_000333d6(CONCAT22(CONCAT11(DAT_00803511,DAT_00803512),
+      -                                          CONCAT11(DAT_008034f5,DAT_008034f6)));
+      -      if ((char)uVar2 != '\x01') {
+      -        uVar1 = (undefined1)((ushort)uVar2 >> 8);
+      -        cVar3 = cm550_FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803513),
+      -                                            CONCAT11(uVar1,DAT_008034f7)));
+      -        if (cVar3 != '\x01') {
+      -          uVar2 = cm550_FUN_000333d6(CONCAT22(_DAT_00803514,(short)_DAT_008034f6));
+      -          if ((char)uVar2 != '\x01') {
+  0x0003458c cm550_engine_protection_coordinator: 10 lines
+      -  undefined2 uVar1;
+      -  uVar1 = _FSDSFLST;
+      +  word previous_user_fueling_state;
+      +  previous_user_fueling_state = _FSDSFLST;
+      -  cm550_diagnosticStatus2Initializer();
+      +  cm550_diagnosticStatus2Initializer(previous_user_fueling_state);
+      -  cm550_FUN_00025806(uVar1);
+      -  cm550_FUN_0000d4ae();
+      +  cm550_FUN_00025806(previous_user_fueling_state);
+      +  cm550_FUN_0000d4ae(previous_user_fueling_state);

@@ -1,0 +1,32 @@
+cm848: round 32 stage A - the discrete output read-back checks (labels, types)
+
+A ranking of functions by unnamed data renders (messy_functions.py) put cm848_mainLoopMonitor first: 55 distinct
+DAT_ labels.
+- It runs a read-back check of 11 discrete outputs every fifth pass with the key on, and turns the heater and lift
+  pump outputs off at a key-off. It is now cm848_monitorDiscreteOutputReadBack.
+- The check, cm848_checkDiscreteOutputReadBack (was diag_faultMatch_outputCheck_update), compares a logical output
+  with its read-back line:
+  - commanded on but reading off: debounce, then retries of the output up to auxiliary_driver_toggle_count_limit,
+    then the high fault bit;
+  - commanded off but reading on: debounce, then the low fault bit;
+  - while the two agree, a registered fault clears after its recovery count.
+  - Its prototype names the nine parameters.
+- discrete_output_read_back_counters_t holds the four byte counters (on / off mismatch, high / low fault recovery).
+  - It has 11 instances, one per output: A/C, engine brake 1, intake air heaters 1 / 2, lift pump, transmission
+    relay / overdrive / converter clutch, cruise vent / vacuum / servo supply.
+  - Each output also has a word retry count.
+  - They rendered as DAT_003fd27f..DAT_003fd2c1.
+- cm848_initializeDiscreteOutputReadBackChecks (was cm848_initSensorCalibration) only clears them.
+- Two more names: discrete_output_read_back_pass_count (was fault_match_scan_cycle_count) and
+  ignition_key_off_count_previous (was crank_counter_mainloop_prev).
+- Fault bits 146 / 147: cruise_servo_supply_driver_high / low_control_error. Output 21 is the cruise servo supply
+  (e2m 1577 Cruise_SC_Source_Driver), and its check uses these bits.
+- The time-shared kernel image addresses 0x3fd284 / 0x3fd298 are covered by these named rows now. The thunk stage
+  makes their boot calls call overrides ("data ... kept"), and the BYTE_ labels go; firmware/CLAUDE.md now says so.
+
+Proof (prove_tokens.py with the map's tokens, on copies with wrapped member names joined): every function matches.
+The exceptions are the check, whose body matches with its parameters renamed, and
+mpc555_tickTransferTimeoutAndRuntimeCounter, whose local declarations are reordered. Pieces 1412 -> 1412.
+Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,57 @@
+cm848+cm550: round 72 stage A - lookupApplicationMemoryRegionType is one function in both firmwares; CM550's region codes become MEMORY_REGION_TYPE (was MEMORY_ACCESS_FLAG) and its table is typed
+
+The application memory region lookup is the same function in CM848 (0x50d784) and CM550 (0x3460e). Both bodies:
+- compute end = start + length - 1 (CM550 returns 9 when it wraps);
+- scan the table for an entry with entry.start <= start and end <= entry.end;
+- return the entry's byte +8 when the mode flag is 1 (CM848 development_mode / CM550 the byte at 0x80de30), else its
+  byte +9;
+- return 9 when no entry holds the range.
+
+CM550's table at ROM 0x345dc has 5 x 10 bytes, and the lookup's code follows it at 0x3460e. It holds CM848's codes:
+- main flash 0x0-0x7ffff 4/4;
+- RAM 0x800000-0x8091dc 3/3;
+- extended RAM 0x8091dc-0x80ffff 0/0;
+- EEPROM 0x1000000-0x1001fff 5/5;
+- registers 0xffc800-0xffffff 3/10.
+CM550 has no Bank 2. The twins share one unprefixed name, as the stage 9b twins do.
+
+- CM848: cm848_lookupApplicationMemoryRegionType -> lookupApplicationMemoryRegionType. A pure rename; its plate names
+  the twin.
+- CM550: cm550_addressRangeValidator -> lookupApplicationMemoryRegionType.
+  - MEMORY_REGION_TYPE return, range_start / range_length (uint).
+  - A 'word' length was tried and dropped: Ghidra placed the word at the stack slot's other half. The body then read an
+    in_stack_00000008 placeholder, and the callers cast their argument to (word).
+- CM550 already modeled the codes as MEMORY_ACCESS_FLAG (DIRECT_ACCESS / SECURITY_REQUIRED / WRITE_DENIED /
+  LOGGING_MODE / RANGE_INVALID / ACCESS_DENIED). The shared enum MEMORY_REGION_TYPE takes its place, with CM848's member
+  names; each old member name stays in its comment. 'LOGGING_MODE' was the EEPROM range.
+- CM550 adds a memory_region_t type-only template with no instance rows, so the fields appear once.
+  application_memory_region_table is memory_region_t[5] at ROM 0x345dc.
+- CM550's enum notes held J90280.05's table:
+  - VALID_MEMORY_RANGE (its bounds as an enum; it renders nowhere) is removed.
+  - The service 0x4A note lists J90350's ranges from ROM 0x345dc.
+  - DIAG_ERROR_SOURCE 9 / 10 cite the current lookup.
+  - The headers in function_definitions / local_variables name it.
+- Stale CM550 local rows removed:
+  - The lookup's 4 named placeholders that no longer exist.
+  - The writer's 5 (0x2148a): none applied in the base build. After the retype, 'uVar4' matched by accident and a
+    stray 'dword memcpy_return' appeared on the wrong variable. Stage B writes rows for the real placeholders.
+- README.md: the write-path diagram's lookup box now says lookupApplicationMemoryRegionType, region table @ ROM
+  0x345dc (it said 0x801be8; the code reads ROM 0x345dc) and MEMORY_REGION_TYPE. firmware/docs/service_0x4b_analysis.md
+  gains a name map.
+- The scripts keep CM550's CRLF structure_definitions.csv in CRLF.
+
+Proof:
+- CM550 gate: an unchanged CM550 build reproduced the committed .cpp; only the Generated line differed.
+- CM848 (prove_r72.py): 0 of 1968 functions differ after the rename. verify is byte-identical with round 71's
+  WARNING lines; thunks 18 / 14; locals Skipped 8.
+- CM550 (prove_r72_cm550.py): 7 of 775 functions differ: the lookup (typed table fields, MEMORY_REGION_TYPE returns)
+  and its 6 callers.
+  - The callers' compares name 13 MEMORY_REGION_TYPE members (UNMAPPED / REFUSED / ...).
+  - 4 casts fewer and 1 placeholder more: an extraout_var in cm550_diagMemoryReadResponseBuilder, whose 4-byte return
+    passes the 1-byte region code back. Stage B looks at that.
+  - CM550 verify is byte-identical. Its warnings lost the 9 stale-row warnings and 1 name mismatch; none are new.
+- Headers regenerated for both (0 g++ errors). Tests pass. audit_cal_suffixes.py: CM550 0 / 0 / 0, CM848 HARD 0 /
+  MISSING 210.
+- firmware/CLAUDE.md: unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

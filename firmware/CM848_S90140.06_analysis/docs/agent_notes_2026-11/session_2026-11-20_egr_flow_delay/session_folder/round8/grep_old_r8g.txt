@@ -1,0 +1,4 @@
+work/tasks/046-cm848-egr-flow-estimate.md:451: ...    brake waits for converter lock: `cm848_updateExhaustBrakeLockupInhibit`, `exhaust_brake_lockup_flags
+work/tasks/046-cm848-egr-flow-estimate.md:451: ...r lock: `cm848_updateExhaustBrakeLockupInhibit`, `exhaust_brake_lockup_flags`,
+work/tasks/046-cm848-egr-flow-estimate.md:452: ...    `exhaust_brake_lockup_inhibit_timer` / `_timeout`, `exhaust_brake
+work/tasks/025-cm848-naming-wave-followups.md:776: ...- `cm848_processProtectionRateLimitFlags` → `cm848_updateExhaustBrakeLockupInhibit`

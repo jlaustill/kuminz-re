@@ -1,0 +1,27 @@
+cm848: round 67 closing - task 046, the session archive, the PR body; ebb61637's proof line
+
+- ebb61637's message ends with a PROOF_LINE placeholder instead of its proof. The command that filled it in was
+  refused, and the commit and push sent beside it ran anyway; the pushed commit stays as it is. Its proof
+  (prove_r67.sh with list_differing.py): 22 of 1968 functions differ after canonicalization: 21 predicted (the 10
+  retyped reflash functions; the CRC table builder and reader; the block finish and the serial transfer block that
+  fill download_block_list; the J1939 write worker and the serial data handler, which pass the channel; the erase
+  dispatcher loop and its local; the five boot readers of ECM_STATUS; the serial begin, whose EEPROM casts went)
+  plus one local declaration-order move (mpc555_areBootModeStrapPinsHigh). No new name renders in pieces. verify is
+  byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the baseline, the same
+  warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 920 with 0 sizing problems,
+  audit_cal_suffixes.py HARD 0 / MISSING 216 (was 219), history notes intact, leftovers 0.
+- work/tasks/046: "Done, round 67" records stage A, its proof and the corrections to round 66:
+  - 0xfe does have a producer;
+  - CM550's 0x14 name is in its J1939_DIAGNOSTIC_RESULT;
+  - c48cc435's "the write worker passes these up" holds (asm 0x5710). For a while this round I misread it, because
+    my declaration filter also hid "return xVarN;" lines.
+  Its leads:
+  - the time-shared header fields at 0x3fee18-0x3fee22, with the application's e2m names (8A24 / 8A36 / 8C36);
+  - the boot kernel's eeprom_* download vocabulary;
+  - the image header at ROM 0x8100;
+  - a memory region type enum;
+  - the serial response codes.
+- work/todo.md, the session README, session_folder/round67/, the large-files tarball (the round's build and verify
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

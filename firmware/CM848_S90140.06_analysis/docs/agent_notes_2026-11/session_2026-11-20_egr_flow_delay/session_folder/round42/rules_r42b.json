@@ -1,0 +1,6 @@
+{"*": [
+ ["\\bin_r6\\b", "selected_stage_torque_values"],
+ ["\\bengine_retarder_engaged_stage_count\\b", "engine_retarder_cylinders_on_count"],
+ ["\\bengine_retarder_stage_([1-6])_weight\\b", "engine_retarder_driver_\\1_cylinder_count"],
+ [" ;", ";"]
+]}

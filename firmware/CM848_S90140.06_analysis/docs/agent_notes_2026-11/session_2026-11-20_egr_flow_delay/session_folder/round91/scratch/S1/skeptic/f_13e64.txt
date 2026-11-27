@@ -1,0 +1,38 @@
+013e64: 48e73830                 movem.l d2-d4/a2-a3, -(a7)
+013e68: 4204                     clr.b d4
+013e6a: 227c0080036e             movea.l #$80036e, a1
+013e70: 7600                     moveq #$0, d3
+013e72: 207c00803d66             movea.l #$803d66, a0
+013e78: 0c7000013000             cmpi.w #$1, (a0, d3.w)
+013e7e: 6644                     bne.b $13ec4
+013e80: 4202                     clr.b d2
+013e82: 7000                     moveq #$0, d0
+013e84: 1004                     move.b d4, d0
+013e86: 207c00800366             movea.l #$800366, a0
+013e8c: d1c0                     adda.l d0, a0
+013e8e: 2648                     movea.l a0, a3
+013e90: 247c008067c4             movea.l #$8067c4, a2
+013e96: 207c00803d6a             movea.l #$803d6a, a0
+013e9c: 30303000                 move.w (a0, d3.w), d0
+013ea0: b052                     cmp.w (a2), d0
+013ea2: 6616                     bne.b $13eba
+013ea4: 1682                     move.b d2, (a3)
+013ea6: 7000                     moveq #$0, d0
+013ea8: 1013                     move.b (a3), d0
+013eaa: 3200                     move.w d0, d1
+013eac: e548                     lsl.w #$2, d0
+013eae: d041                     add.w d1, d0
+013eb0: 207c00805a24             movea.l #$805a24, a0
+013eb6: 12b00200                 move.b (a0, d0.w * 2), (a1)
+013eba: 5c8a                     addq.l #$6, a2
+013ebc: 5202                     addq.b #$1, d2
+013ebe: 0c02007d                 cmpi.b #$7d, d2
+013ec2: 65d2                     bcs.b $13e96
+013ec4: 7010                     moveq #$10, d0
+013ec6: d680                     add.l d0, d3
+013ec8: 5289                     addq.l #$1, a1
+013eca: 5204                     addq.b #$1, d4
+013ecc: 0c040004                 cmpi.b #$4, d4
+013ed0: 65a0                     bcs.b $13e72
+013ed2: 4cdf0c1c                 movem.l (a7)+, d2-d4/a2-a3
+013ed6: 4e75                     rts 

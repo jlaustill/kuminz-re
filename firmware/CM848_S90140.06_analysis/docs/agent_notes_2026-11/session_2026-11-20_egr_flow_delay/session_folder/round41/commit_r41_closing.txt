@@ -1,0 +1,12 @@
+cm848: round 41 closing - task 046, the session archive, verify
+
+- task 046, the round 41 section: stage A, the proof, and the leads (the monitor's remaining temps and goto, the
+  record's unread spare count pointer, cylinder_event_count_max).
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round41/: the apply script, the record proof, the map and the commit messages. The .cpp copies are
+    left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

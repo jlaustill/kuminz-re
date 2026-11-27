@@ -1,0 +1,30 @@
+cm848: round 50 stage A - the TSC1-lost counter's calibrations (e2m 8A7B), the commanded throttle difference threshold (1585)
+
+gap_access_signatures.py matches the gaps between dumped parameter ID table blocks by access signature. Every load and
+store inside a gap must land on a record of its width, with lha / lhz agreeing with the record's sign. Only four
+gaps still hold unnamed reads, and two of them fill:
+- 8A7B (10 bytes) is tiled between 8A2A and 8C49: the TSC1-lost counter's calibrations. "PTP mode" is round 46's
+  backup powertrain protection.
+  - j1939_tsc1_active_duration_reload -> tsc1_lost_time_limit (+0 J1939_TSC_Lost_TL, 2 s).
+  - New tsc1_lost_counter_initial_value (+2 TSC_Lost_Counter_Init): the start-up function seeds the counter from it.
+  - j1939_tsc1_timing_fault_counter_threshold -> tsc1_lost_intermittent_time_limit (+4).
+  - New tsc1_lost_maximum_intermittent_count (+6; 5): above it, an intermittent TSC1 counts as lost.
+  - New documentation row park_neutral_status_from_pci_message_0e_enable (+8); no direct access found.
+  - The RAM side follows: j1939_tsc1_active_duration_counter -> tsc1_lost_counter (the e2m's "TSC Lost counter") and
+    j1939_tsc1_timing_fault_cycle_count -> tsc1_lost_intermittent_count.
+  - All of them join the tsc1_lost_* family (10E7, 11C1, 8A7C).
+- 1585 (2 bytes) is tiled between 1052 and 1034: Throttle_Diff_Threshold ('Throttle difference threshold to evaluate
+  throttle stability'; 8 = 2 %).
+  - cm848_filterCommandedThrottle ends a throttle transient once the error is back within +- it.
+  - New i16 row commanded_throttle_difference_threshold (lha x2, a signed record).
+- No CM550 twin carries the old names.
+- Five plates still named rows from rounds 49 / 50 by their DAT_ label, which refresh_references.py leaves alone on
+  purpose. They now use the names (refresh_plate_dat_mentions.py).
+
+Proof (prove_r50a.sh: prove_caches.py with the casts and two char literals folded):
+- 1965 of 1968 functions match. The other three differ only in the order of their local declarations.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,13 @@
+cm848: round 30 closing - task 046, the session archive, verify
+
+- task 046, the round 30 section:
+  - stage A: the watchdog fueling monitor;
+  - the two scans that changed nothing (unit-domain, setter-name);
+  - the leads: the EC1 payload struct, the open fault bits.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round30/: the scans, the worklist, the new rows, the commit messages;
+  - the large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,12 @@
+1 changed functions have local rows
+  0x0b7bc mc68k_processAnalogSensorChannels channel_record: DIFFERENT
+     before: channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
+     before: channel_record->sample_counter = 0;
+     before: channel_record->sample_counter = channel_record->sample_counter + 1;
+     after:  channel_record = &intake_manifold_temperature_sensor_state;
+     after:  channel_record->sample_counter = 0;
+     after:  channel_record->sample_counter = channel_record->sample_counter + 1;
+  0x0b7bc mc68k_processAnalogSensorChannels channel_config: DIFFERENT
+     after:  channel_config = &intake_manifold_temperature_sensor_config;
+     after:  if (channel_config->sample_period == 0) {
+     after:  1 << (channel_config->low_error_fault_number & 0xf)) == 0) ||

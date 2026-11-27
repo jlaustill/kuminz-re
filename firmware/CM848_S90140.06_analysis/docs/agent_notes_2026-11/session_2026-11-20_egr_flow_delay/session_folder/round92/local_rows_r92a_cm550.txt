@@ -1,0 +1,4 @@
+2 changed functions have local rows
+  0x0b7bc mc68k_processAnalogSensorChannels channel_record: same
+  0x0b7bc mc68k_processAnalogSensorChannels channel_config: same
+  0x15f8e mc68k_dispatchJ1708ReceivedMessages currentTimerCount: same

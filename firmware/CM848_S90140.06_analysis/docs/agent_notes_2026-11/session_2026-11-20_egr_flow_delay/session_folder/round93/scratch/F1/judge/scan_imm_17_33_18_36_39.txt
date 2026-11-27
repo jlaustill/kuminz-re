@@ -1,0 +1,57 @@
+===== 17 (0x11)
+  0x01bea: moveq #17,d7   next: fa be a0 d6 a6 6f 90 fe
+  0x02d8a: moveq #17,d3   next: fa f3 a3 cd 81 a9 f2 94
+  0x02df0: moveq #17,d3   next: fa f3 a3 cd 81 a9 f2 ef
+  0x0b3c6: move.w #17,(0x80deca).l
+  0x1bbc4: move.w #17,(a4)
+  0x1d3ee: cmpi.w #17,(a2)
+  0x1d412: move.w #17,(a2)
+  0x21088: cmpi.w #17,d2
+  0x22e78: moveq #17,d1   next: b0 01 67 18 72 10 b0 01
+  0x2adde: moveq #17,d7   next: fa be a0 d6 a6 6f 90 fe
+  0x2bf7e: moveq #17,d3   next: fa f3 a3 cd 81 a9 f2 94
+  0x2bfe4: moveq #17,d3   next: fa f3 a3 cd 81 a9 f2 ef
+  0x2f6d2: move.w #17,(a2)
+  0x2f714: move.w #17,(a2)
+===== 33 (0x21)
+  0x17146: move.w #33,(0x80deca).l
+  0x1bdb0: move.w #33,(a4)
+  0x2f70a: move.w #33,(a2)
+  0x2f74e: move.w #33,(a2)
+===== 18 (0x12)
+  0x0b758: cmpi.w #18,d2
+  0x1018e: moveq #18,d6   next: d0 ae ff ec b0 a8 00 04
+  0x16170: moveq #18,d1   next: b0 81 62 00 00 d2 30 3b
+  0x1bbe2: move.w #18,(a4)
+  0x1d534: move.w #18,(a2)
+  0x1e6c6: moveq #18,d0   next: d1 b9 00 80 d9 b6 20 39
+  0x2139c: moveq #18,d0   next: d1 93 20 13 0c 80 00 80
+  0x2535e: cmpi.w #18,(a2)
+  0x2536c: cmpi.w #18,(a2)
+  0x27fac: moveq #18,d0   next: db c0 4e b9 00 03 0a 5e
+  0x306b4: cmpi.w #18,(0x80d330).l
+  0x3784e: moveq #18,d2   next: 00 80 74 12 00 80 6e 24
+  0x37852: moveq #18,d2   next: 00 80 6e 24 00 80 6e 24
+===== 36 (0x24)
+  0x0b3a0: moveq #36,d5   next: d1 52 30 12 b0 55 63 02
+  0x18772: moveq #36,d0   next: d7 c0 20 0c 06 80 00 00
+  0x187b2: moveq #36,d0   next: d7 c0 24 bc 00 80 a2 6a
+  0x187e6: moveq #36,d0   next: d7 c0 20 0c 72 60 d0 81
+  0x18816: moveq #36,d0   next: d7 c0 20 0c 06 80 00 00
+  0x18856: moveq #36,d0   next: d7 c0 20 0c 72 76 d0 81
+  0x18894: moveq #36,d0   next: d7 c0 20 0c 72 4a d0 81
+  0x188d2: moveq #36,d0   next: d7 c0 24 bc 00 80 a2 54
+  0x1890e: moveq #36,d0   next: d7 c0 20 0c 06 80 00 00
+  0x18ab0: moveq #36,d0   next: d7 c0 70 2e d5 c0 b7 cc
+  0x18d92: moveq #36,d0   next: d7 c0 70 2e d9 c0 70 1e
+  0x18f06: moveq #36,d0   next: d7 c0 70 2e d9 c0 70 1e
+  0x1921e: moveq #36,d0   next: d7 c0 70 2e d5 c0 58 43
+  0x196cc: moveq #36,d0   next: d1 95 70 2e d1 93 70 1e
+  0x19828: moveq #36,d0   next: d7 c0 70 2e d5 c0 70 1e
+  0x1be0a: move.w #36,(a4)
+===== 39 (0x27)
+  0x031f0: moveq #39,d2   next: 2e 40 42 22 bc 2c a2 80
+  0x1b8fe: moveq #39,d1   next: b0 81 62 00 05 82 30 3b
+  0x1be66: move.w #39,(a4)
+  0x1bf98: move.w #39,(0xfffa24).l
+  0x2c3e4: moveq #39,d2   next: 2e 40 42 22 bc 2c a2 80

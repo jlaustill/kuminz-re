@@ -10,8 +10,8 @@ The CM550 ECU uses a Motorola MC68336 microcontroller with external memory expan
 |--------|---------------|------|--------|----------|
 | **ROM** | 0x000000-0x03FFFF | 256KB | Extracted | Firmware code, lookup tables |
 | **RAM** | 0x800000-0x8091C1 | 37KB | Extracted | Working variables, buffers |
-| **EXT_RAM** | 0x8091C2-0x80FF7F | 28KB | Extracted | Scheduler, J1708, diagnostics |
-| **EEPROM** | 0x1000000-0x1000FFF | 4KB | Extracted | Module ID, calibration config |
+| **EXT_RAM** | 0x8091C2-0x80FFFF | 28KB | Extracted (0x80 bytes short, see EXT_RAM below) | Scheduler, J1708, diagnostics |
+| **EEPROM** | 0x1000000-0x1001489 | 0x148A (5 KB) | 0x1000000-0x1000FFF extracted | Module ID, calibration config; loaded into RAM 0x803B0A-0x804F93 at start-up |
 
 **Total Extracted:** 325KB (100% of data memory)
 
@@ -73,8 +73,8 @@ These are memory-mapped hardware registers, not data storage. Reading them retur
            |   (unmapped)    |
            |                 |
 0x01000000 +-----------------+
-           |     EEPROM      | 4KB (Configuration)
-0x01000FFF +-----------------+
+           |     EEPROM      | 0x148A bytes (Configuration)
+0x01001489 +-----------------+
 ```
 
 ## Firmware Files
@@ -125,13 +125,18 @@ private static final long EEPROM_BASE = 0x1000000L;
 - Diagnostic mode buffers
 - Parameter circular buffers
 - QADC result storage
+- A/D channel configuration records: 25 `sensor_configuration_t` from 0x806ae2 (e2m block 1003; [analog_sensor_channels.md](analog_sensor_channels.md))
 
-### EXT_RAM (0x8091C2-0x80FF7F)
+### EXT_RAM (0x8091C2-0x80FFFF)
+
+**The extended RAM dump is 0x80 bytes short.** `J90350.00.extended_ram.bin` (0x6DBE bytes) was read in 128-byte chunks from 0x8091C2 (kuminz-cli asks for 0x8091C2-0x80FFFF, 0x6E3E bytes), and the dump tool skipped one failed chunk - the first (0x8091C2) or the second (0x809242) - without padding. So from 0x8092C2 on, each value sits at file offset address - 0x809242 (address - 0x80 from the region start): of 100 init-time constant stores, 40 match the dump only at address - 0x80 and none only at the address (PR #53 round 87). 0x8091C2-0x8092C1 is uncertain. clip-core's `ECUReader` pads a failed chunk with 0xFF and lists it in `<dump>.gaps.txt` since PR #53 round 88, so new dumps stay aligned. `SetupMemoryMap.java` loads the file's bytes from offset 0x80 at 0x8092C2 and leaves 0x8091C2-0x8092C1 0 (`ScriptUtils.imageFromDumpWithGaps`, PR #53 round 88; it used to load the file at 0x8091C2, 0x80 too high).
+
 - Scheduler phase tables
 - J1708 protocol buffers
 - Diagnostic response buffers
 - Data collector buffers
 - Extended parameter storage
+- A/D channel runtime records: 25 `sensor_state_t` from 0x80a2aa (e2m block 1004; [analog_sensor_channels.md](analog_sensor_channels.md))
 
 ### EEPROM (0x1000000-0x1000FFF)
 - Module ID ("EN" + variant A/B/C)

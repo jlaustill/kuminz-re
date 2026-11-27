@@ -1,0 +1,4 @@
+address,name,old_label,kind
+,etc2_actual_gear_ratio_previous,auxiliary_state,field
+0x0005c39a,j1939_high_idle_override_speed,DAT_0005c39a,global
+,sender_source_address,bVar1,local

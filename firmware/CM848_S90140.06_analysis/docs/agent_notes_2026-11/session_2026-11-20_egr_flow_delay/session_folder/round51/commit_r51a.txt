@@ -1,0 +1,51 @@
+cm848: round 51 stage A - the 0x408d38 gap is four e2m blocks, the trip information blocks 8B6B / 8B6C / 8B6D
+
+The 62-byte gap 0x408d38-0x408d75 between dumped-table blocks 8A57 and 8D79 is four absent blocks back to back:
+8B9B (16 bytes) + 8C2C (24) + 8BB2 (20) + 8B6B (2). That is why round 50's one- and two-block search found nothing,
+and the three-block search too. Every load and store in the gap lands on a record of its width, with lha / lhz
+agreeing with the records' signs. Labels and rows only; the types are stage B and the bitfield structs stage C.
+
+- 8B9B: the 48RE transmission temperature defaults and their limp-in delay. The early / late substitute vocabulary
+  becomes the e2m's:
+  - transmission_temperature_late_substitute_minimum_vehicle_speed -> transmission_temperature_limp_in_delay_minimum_
+    vehicle_speed
+  - transmission_temperature_early_substitute_countdown_reload -> transmission_temperature_limp_in_delay_maximum
+  - transmission_temperature_late_substitute -> transmission_temperature_default_after_limp_in_delay
+  - transmission_temperature_early_substitute -> transmission_temperature_default_during_limp_in_delay
+  - RAM: transmission_temperature_early_substitute_countdown -> transmission_temperature_limp_in_delay_timer
+  - The ROM values match the plate (180 deg F, 0.4375, 87 deg F, 3 repeats).
+- 8C2C: the P0711 rationality calibrations. All 12 records match the existing rows:
+  - transmission_temperature_rationality_minimum_driving_passes -> transmission_temperature_rationality_maximum_test_time
+    (TTSR_Max_Test_Time; the old name read the limit as a minimum)
+  - transmission_temperature_rationality_cold_soak_maximum_temperature -> transmission_temperature_rationality_start_
+    test_maximum_transmission_temperature (the twin of the start test's coolant / battery limits)
+  - transmission_temperature_check_minimum_engine_off_time -> transmission_temperature_rationality_minimum_engine_off_time
+  - RAM 8C2D (three records, three rows at 0x40b626): transmission_temperature_rationality_driving_pass_count ->
+    transmission_temperature_rationality_test_timer (TTSR_Test_Timer)
+- 8BB2: the output shaft speed sensor (9 records, 9 rows). transmission_output_speed_floor ->
+  transmission_output_speed_minimum, the twin of _maximum.
+- 8B6B: new row trip_information_fault_minimum_time at 0x408d74 (TI_Fault_Period, 10 s). 32 one-record blocks fit
+  these 2 bytes by width, so the code picks it: one lhz in a ROM-copied calibration, compared with the vehicle speed
+  sensor fault's persistence count.
+- 8B6D (EEPROM mirror 0x3fee58, nine records on nine rows; the next block 1191 starts at 0x3fee78): the lifetime and
+  trip totals.
+  - trip_counter_status_flags_cal -> trip_information_distance_fault_status_cal (+C Trip_Info_Auto_Fault_Status)
+  - trip_and_lifetime_overflow_flags_cal -> trip_information_fault_status_cal (+E Trip_Info_Fault_Status)
+  - The +C row records that TI_Fault_Period's description says +E, though the code logs the delayed fault in +C.
+- 8B6C (RAM 0x40b638): the trip information cycle words. Five rows cited; new documentation row
+  pci_transmit_message_11_fuel_used (+A J1850_Fuel_Used, no access found).
+- sensorDiagnosticsConfiguration -> cm848_flagTripInformationPowerDownDataLoss. It is a power-down step that logs a
+  power-down data loss into the trip information status. No CM550 twin carries either name.
+- 0x40b58c: the stale 8C34 +12 citation is dropped. 8C34's +12..+17 records exist only from CHR_CC 11.25.05.07 on;
+  this build's code uses the shorter layout, and 8BB6 runs 0x40b58c-0x40b5a7.
+
+Proof (prove_r51a.sh: the function rename applied to the old .cpp, the casts and two char literals folded,
+then prove_caches.py):
+- 1967 of 1968 functions match; mpc555_tickTransferTimeoutAndRuntimeCounter differs only in local declaration
+  order.
+- The one old name left in the .cpp is the new plate's (was ...) note.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,54 @@
+N2 judge (round 95). 157 verdicts: the function, its prototype and 155 globals. 140 CONFIRMED, 17 AMENDED, 0 REFUTED. The investigator's skipped[] is empty, so there is nothing to keep skipped.
+
+FUNCTION 0x34de0. Name and relation CONFIRMED: cm550_lookupTableInterpolation, a counterpart of CM848's lookupTableInterpolation at 0x55ef4, not a twin. The steps, their order and the arguments differ (see the reason). The verdict is AMENDED for the plate comment only: "cached byte offset of the last point" now says the point the previous lookup found. CM848's row keeps its name.
+
+PROTOTYPE CONFIRMED: return word, param 0 arguments table_lookup_1d_arguments_t *.
+
+STRUCT CONFIRMED from the disassembly. table_lookup_1d_arguments_t is 14 bytes:
+- +0 x_axis_offset word 2. Read with movea.w; it is the only field the function writes back (0x34e30 / 0x34e3e).
+- +2 x_axis_pointer word* 4.
+- +6 x_input word 2.
+- +8 y_values_pointer word* 4.
+- +0xc no_interpolation_flag word 2. Read at 0x34e4a. No code writes it, and it is 0 in every dumped record.
+The proposed rows can be used as written, with one wording fix to y_values_pointer: "the value of the x point at byte offset n is read at y_values_pointer + n, so the word at +0 is never read (in a Calterm Y table it is the byte count)". The header-less T tables CBDDCT / CBDI2DCT hold data at +0.
+
+APPLY NOTES
+- Delete the table_interp_args_t block: frozen structure_definitions.csv lines 35-39, the header plus 4 rows. No global row uses that type.
+- Re-point function_definitions.csv line 36.
+- local_variables_actual.csv is not read by any build script, so editing it is cosmetic only.
+- 24 CM550 comments still name the CM550 function lookupTableInterpolation: 23 kept values rows (the <channel>_linearization_values rows of channels 3-24, plus wet_stack_timing_by_coolant_temperature_values) and the plate comment of cm550_initializeEngineWarmupProtection. Update them to cm550_lookupTableInterpolation.
+
+CALLS. 52 calls: 42 jsr (0x34de0).l, plus 2 movea.l #0x34de0,a4 (0x14352 / 0x183da) with five jsr (a4) each. No pc-relative caller. The 53rd decompiled text hit is a plate-comment line. Every call site was disassembled, and each record passed is in globals[].
+
+GLOBALS. Checked by script against the dumps, the e2m records (resolved through the ROM's parameter ID table), the frozen CSVs and every absolute ROM reference:
+- All 66 records point at the cited tables.
+- All 89 tables end exactly at the next e2m record and match the dump's byte count where one is dumped.
+- Every row-inside list equals the frozen rows exactly, and no row is split.
+- The only references inside the tables are expected element reads, plus false positives at 0xc7e6 / 0x261aa / 0x2d8d0.
+- Every reused CM848 name sits on the same Calterm block in CM848's e2m.
+- The final names are unique; none uses an abbreviation, and none is in the EEPROM window.
+
+NAME AMENDMENTS
+(1) 0x800192 becomes engine_retarder_full_scale_torque_lookup. It reads the 6-cylinder brake map at the axis's last point, which is CM848's engine_retarder_full_scale_torque. The J1939 reference retarder torque is a separate calibration (JCRFRDTQ, 0x8089a6).
+(2) 0x80020e / 0x60640 / 0x6065c become cylinder_pressure_maintenance_timing_per_temperature_degree_*. cm550_scaleByRatioSigned is a*b/c, and the units close exactly (1/2048 x 1/128 / (1/30720) = 0.1171875 degree per count). So the table holds timing per temperature degree; the proposal had it inverted.
+(3) 0x8072f4 becomes cylinder_balance_engine_speed_axis and 0x611d0 becomes engine_protection_oil_pressure_limit_engine_speed_axis. Each is shared by two or three lookups, and the repository's table grammar names a shared axis for its input.
+
+COMMENT AMENDMENTS
+- 0x800102: the "(0x800108)" placement.
+- 0x800184 / 0x6052a / 0x60566 / 0x801e30: the full scale torque wording.
+- 0x80024e / 0x80025c / 0x80026a / 0x801a3e / 0x801a4c: the new axis names.
+- 0x80020e: the method 2 condition stated from the code, not as "the boost path faulted".
+
+DESCRIBER ALTERNATIVES NOT TAKEN
+- One table_lookup_1d_arguments_t[25] array at 0x80a792. The same loop walks 25 separate sensor_state_t rows, and the init writes each record by absolute address.
+- all_speed_governor_throttle_prefilter_coefficient_*. CM848 names the same 1326 / 1327 tables speed_request_blend_weight_by_speed_difference_*, and that name describes the code.
+- The shortened names without the engine_protection_ / cylinder_pressure_maintenance_ prefixes.
+
+LEADS NOT PROPOSED, AND RIGHTLY SO. 0x8037c4, 0x803984, 0x803992, 0x8039a0 and 0x803a68 (plus the 2-D-shaped 0x803896 / 0x8038ac / 0x8039ae) have no ROM reference. 0x803992's moved offset 6 and input 6400 show a reader outside the dumped ROM.
+
+FUNCTION-NAME LEADS CONFIRMED IN PASSING (for another batch)
+- 0x124d2 cm550_initLoadTrendingSystem sets up the four cylinder pressure maintenance records (0x8001d4 / 0x8001ea / 0x8001f8 / 0x80020e).
+- 0x34cc4 is the wet stack timing base (max of the two lookups, state 1 / 13).
+- 0xff6c is the engine retarder torque, and 0x2f632 the retarder stage selection.
+- 0xb2aa / 0xb3d0 are the ANC fuel / timing limits.
+- 0xd23c is the ASG friction fuel (0x8091de ASNLFL).

@@ -1,0 +1,171 @@
+2c2
+< // Generated: Sat Nov 21 22:22:49 MST 2026
+---
+> // Generated: Sat Nov 21 22:56:38 MST 2026
+8532d8531
+< /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+8545c8544
+<   int iVar5;
+---
+>   dword dVar5;
+8618c8617
+<     iVar5 = _fuel_demand_load_select_working;
+---
+>     dVar5 = air_fuel_control_fueling_slew_rate_3;
+8620c8619
+<         (iVar5 = _fuel_demand_load_result_working,
+---
+>         (dVar5 = air_fuel_control_fueling_slew_rate_2,
+8622c8621
+<        (iVar5 = _fuel_demand_load_threshold_d,
+---
+>        (dVar5 = air_fuel_control_fueling_slew_rate_1,
+8624c8623
+<       iVar5 = 0x47e00;
+---
+>       dVar5 = 0x47e00;
+8626,8627c8625,8626
+<     if ((iVar5 == 0x47e00) ||
+<        (governor_demand_accumulator = governor_demand_accumulator + iVar5,
+---
+>     if ((dVar5 == 0x47e00) ||
+>        (governor_demand_accumulator = governor_demand_accumulator + dVar5,
+15849c15848
+<    that speed from the maximum fuel grid (four_dimensional_fueling_steady_state_cached_axis_offset,
+---
+>    that speed from the maximum fuel grid (four_dimensional_fueling_steady_state_cached_axis_offsets,
+15867c15866
+<                          (&four_dimensional_fueling_steady_state_cached_axis_offset,param_1,
+---
+>                          (four_dimensional_fueling_steady_state_cached_axis_offsets,param_1,
+20400,20403c20399,20402
+<   four_dimensional_fueling_steady_state_cached_axis_offset = 2;
+<   fuel_demand_threshold_cached_axis_offset_y = 2;
+<   four_dimensional_fueling_transient_cached_axis_offset = 2;
+<   governor_fuel_demand_cached_axis_offset_y = 2;
+---
+>   four_dimensional_fueling_steady_state_cached_axis_offsets[0] = 2;
+>   four_dimensional_fueling_steady_state_cached_axis_offsets[1] = 2;
+>   four_dimensional_fueling_transient_cached_axis_offsets[0] = 2;
+>   four_dimensional_fueling_transient_cached_axis_offsets[1] = 2;
+20545c20544
+<                            (&four_dimensional_fueling_steady_state_cached_axis_offset,
+---
+>                            (four_dimensional_fueling_steady_state_cached_axis_offsets,
+20553c20552
+<                            (&four_dimensional_fueling_steady_state_cached_axis_offset,
+---
+>                            (four_dimensional_fueling_steady_state_cached_axis_offsets,
+20560c20559
+<                            (&four_dimensional_fueling_steady_state_cached_axis_offset,
+---
+>                            (four_dimensional_fueling_steady_state_cached_axis_offsets,
+20577c20576
+<                               (&four_dimensional_fueling_transient_cached_axis_offset,
+---
+>                               (four_dimensional_fueling_transient_cached_axis_offsets,
+20585c20584
+<                            (&four_dimensional_fueling_transient_cached_axis_offset,
+---
+>                            (four_dimensional_fueling_transient_cached_axis_offsets,
+20592c20591
+<                            (&four_dimensional_fueling_transient_cached_axis_offset,
+---
+>                            (four_dimensional_fueling_transient_cached_axis_offsets,
+20698c20697
+<                         (&four_dimensional_fueling_steady_state_cached_axis_offset,param_1,
+---
+>                         (four_dimensional_fueling_steady_state_cached_axis_offsets,param_1,
+20706c20705
+<                          (&four_dimensional_fueling_transient_cached_axis_offset,param_1,
+---
+>                          (four_dimensional_fueling_transient_cached_axis_offsets,param_1,
+27265c27264
+<                         (&four_dimensional_fueling_steady_state_cached_axis_offset,
+---
+>                         (four_dimensional_fueling_steady_state_cached_axis_offsets,
+27274c27273
+<                         (&four_dimensional_fueling_transient_cached_axis_offset,
+---
+>                         (four_dimensional_fueling_transient_cached_axis_offsets,
+42939c42938
+<                           (&four_dimensional_fueling_steady_state_cached_axis_offset,
+---
+>                           (four_dimensional_fueling_steady_state_cached_axis_offsets,
+42950c42949
+<                            (&four_dimensional_fueling_transient_cached_axis_offset,
+---
+>                            (four_dimensional_fueling_transient_cached_axis_offsets,
+86058c86057
+<     cruise_pid_integrator_q16 = wVar5 - local_10._2_2_;
+---
+>     cruise_pid_integrator_q16.integer_part = wVar5 - local_10._2_2_;
+86067c86066
+<     cruise_pid_integrator_q16 = final_fueling - local_10._2_2_;
+---
+>     cruise_pid_integrator_q16.integer_part = final_fueling - local_10._2_2_;
+86076,86077c86075,86077
+<   if ((short)cruise_pid_integrator_q16 < (short)*cruise_governor_fueling_maximum_pointer) {
+<     if ((short)cruise_governor_no_fuel_fueling <= (short)cruise_pid_integrator_q16)
+---
+>   if ((short)cruise_pid_integrator_q16.integer_part <
+>       (short)*cruise_governor_fueling_maximum_pointer) {
+>     if ((short)cruise_governor_no_fuel_fueling <= (short)cruise_pid_integrator_q16.integer_part)
+86081c86081
+<   cruise_pid_integrator_q16 = *pwVar6;
+---
+>   cruise_pid_integrator_q16.integer_part = *pwVar6;
+86083,86084c86083,86084
+<   DAT_003fd034 = 0;
+<   cruise_pid_integral_fuel = cruise_pid_integrator_q16;
+---
+>   cruise_pid_integrator_q16.fractional_part = 0;
+>   cruise_pid_integral_fuel = cruise_pid_integrator_q16.integer_part;
+86100d86099
+< /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+86293c86292
+<     _cruise_pid_integrator_q16 = (uint)wStack_36 << 0x10;
+---
+>     cruise_pid_integrator_q16 = (q16_fixed_point_t)((uint)wStack_36 << 0x10);
+86295,86297c86294,86297
+<   _cruise_pid_integrator_q16 =
+<        ((_cruise_pid_integrator_q16 + iVar8 * cruise_pid_integral_gain * 4) -
+<        (iVar11 * cruise_pid_integral_acceleration_gain >> 4)) + local_34;
+---
+>   cruise_pid_integrator_q16 =
+>        (q16_fixed_point_t)
+>        ((((int)cruise_pid_integrator_q16 + iVar8 * cruise_pid_integral_gain * 4) -
+>         (iVar11 * cruise_pid_integral_acceleration_gain >> 4)) + local_34);
+86328,86329c86328,86330
+<       _cruise_pid_integrator_q16 =
+<            _cruise_pid_integrator_q16 + (short)cruise_governor_sump_trigger_fuel * -0x10000;
+---
+>       cruise_pid_integrator_q16 =
+>            (q16_fixed_point_t)
+>            ((int)cruise_pid_integrator_q16 + (short)cruise_governor_sump_trigger_fuel * -0x10000);
+86341,86342c86342,86344
+<   if ((short)cruise_pid_integrator_q16 < (short)*cruise_governor_fueling_maximum_pointer) {
+<     if ((short)cruise_pid_integrator_q16 < (short)cruise_governor_no_fuel_fueling) {
+---
+>   if ((short)cruise_pid_integrator_q16.integer_part <
+>       (short)*cruise_governor_fueling_maximum_pointer) {
+>     if ((short)cruise_pid_integrator_q16.integer_part < (short)cruise_governor_no_fuel_fueling) {
+86349c86351
+<     _cruise_pid_integrator_q16 = (uint)*pwVar6 << 0x10;
+---
+>     cruise_pid_integrator_q16 = (q16_fixed_point_t)((uint)*pwVar6 << 0x10);
+86351c86353
+<   cruise_pid_integral_fuel = cruise_pid_integrator_q16;
+---
+>   cruise_pid_integral_fuel = cruise_pid_integrator_q16.integer_part;
+86354,86355c86356,86357
+<     iVar9 = (((uint)cruise_governor_fueling - iVar12) - (int)(short)cruise_pid_integrator_q16) +
+<             iVar7;
+---
+>     iVar9 = (((uint)cruise_governor_fueling - iVar12) -
+>             (int)(short)cruise_pid_integrator_q16.integer_part) + iVar7;
+86383c86385,86386
+<   iVar9 = ((iVar12 + (short)cruise_pid_integrator_q16) - iVar7) + (int)cruise_governor_sump_fuel;
+---
+>   iVar9 = ((iVar12 + (short)cruise_pid_integrator_q16.integer_part) - iVar7) +
+>           (int)cruise_governor_sump_fuel;

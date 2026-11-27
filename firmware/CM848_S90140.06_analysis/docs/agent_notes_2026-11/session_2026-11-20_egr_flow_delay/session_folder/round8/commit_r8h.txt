@@ -1,0 +1,11 @@
+cm848: round 8 stage F closing - resolved-name notes, the final verify, the logs
+
+- Old-name sweep for stage F's 73 names, by name and by stem (grep_old_r8f.txt). What is left is history: the
+  "(was ...)" plates and the stage E bullets in task 046, which now carry stage F's correction.
+- Tasks 025 / 027: their "Resolved by PR #53 round 8" sections get stage F's names. A line that pointed at a stage E
+  name stage F renamed again now points at the final name (cm848_processProtectionRateLimitFlags ->
+  cm848_updateExhaustBrakeLockupInhibit). Script: close_r8f.py.
+- ./analyze.sh verify on the final state: the two builds are byte-identical. The large-files tarball gets the stage F
+  build and verify logs (update_large_tar_r8f.sh).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

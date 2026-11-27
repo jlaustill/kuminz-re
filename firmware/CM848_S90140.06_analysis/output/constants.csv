@@ -2,13 +2,13 @@ address,constant_name,value,comment
 # Temperature raw format: Q6 Fahrenheit (raw = °F × 64)
 # Conversion formula used throughout: (raw >> 6) is °F; then Celsius = (°F - 32) × 5/9
 # In code: (((short)raw >> 6) * 5 + -0xa0) / 9  (-0xa0 = -160 = -32 × 5)
-# Variables using this format: ambient_air_temperature_sensor_filtered, fuel_temperature_sensor_filtered, sensor_readings_t.coolant_temp
+# Variables using this format: ambient_air_temperature_sensor_filtered, fuel_temperature_sensor_filtered, coolant_temperature_sensor_filtered
 # J1939 Kelvin encoding: result + 0x111 (* 0x20 for 1/32K units per SAE J1939-71)
 # Q7 weighted blend: (0x80 - w) * A + w * B >> 7
 # w is a weight in range [0, 0x80] (0=pure A, 128=pure B); divisor 128 = 2^7
 # Appears in: governor speed error high blend, oil pressure fuel limit, fuel timing blend
 # Pattern: (short)(w * X >> 7) + (short)((0x80 - w) * Y >> 7)
-# TSC1 speed cap in torqueControlModeHandler (cmplwi r11, 0x5DC0)
+# TSC1 speed cap in processEngineTsc1Request (cmplwi r11, 0x5DC0)
 0x00022FE0,TSC1_SPEED_LIMIT_3000RPM,0x5DC0,24000 counts x 0.125 RPM/bit = 3000 RPM maximum speed target cap for TSC1 speed control mode
 # Busy-wait pass length in cm848_busyWaitDelay (cmpwi r5,2222 ends the inner spin loop)
 0x0000239C,SPINS_PER_DELAY_PASS,2222,Inner spins per delay pass - 4 instructions per spin so a pass is at least 8888 clocks (0.22 ms at 40 MHz); the real pass time is a bench measurement

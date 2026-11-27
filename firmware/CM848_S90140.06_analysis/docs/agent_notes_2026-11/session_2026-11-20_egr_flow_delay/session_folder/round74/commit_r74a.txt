@@ -1,0 +1,41 @@
+cm550: round 74 stage A - the misapplied 256-byte j1708_multipacket_msg_t instance at 0x80ddc6 is gone; its 980 field renders become CM550's own names for the separate globals there
+
+CM550's j1708_multipacket_msg_t instance at 0x80ddc6 was not a record:
+- CM550's own parameter ID table puts 13 separate e2m blocks inside its 256 bytes. CM848's e2m names them:
+  - 1127 J1708_Tx_Buffer at +0 and 1128 J1708_Rx_Buffer at +4 (4-byte pointers);
+  - 1001 / 1002 Name_Length / Key_Switch_Override;
+  - 1328 Development_Mode;
+  - 0013 / 0014 / 0015 the scratch pad buffer, length and CRC;
+  - 116B Tachometer_Override_RPM, 105B AFC_Timing_Increment, 1080 Software_FLT2ERAS, 121A, 1215.
+- Nothing takes its address, and the type had no other instance.
+- Its fields rendered 980 times under generic names (write_ptr 407, reserved_28[3] 82 ...). CM550's CSV already had
+  names for nearly every one of those addresses (insite_response_write_pointer, insite_parameter_id,
+  multipacket_bytes_remaining, instantaneous_fuel_rate_raw ...), but the struct covered them.
+- The instance and the template go. Every accessed address gets a row typed with the field's width, and keeps
+  CM550's existing name.
+  - An address whose row was a coordinate ('...ddc6.field[n]') becomes a type-only row, which renders BYTE_ / WORD_ /
+    DWORD_<address>.
+  - The '+1' coordinate rows go.
+  - The two byte rows inside pointers (0x80dded insite_response_byte_offset / 0x80ddf5 insite_request_byte_offset)
+    go too: the code writes the pointer's low byte, which renders as a piece of the dword. Their names are kept in the
+    dwords' comments.
+  - 0x80ddca (block 1128) and 0x80de28 (block 1001) are dwords. The struct had held them inside byte arrays.
+- A2: with the struct gone the decompiler shows the real widths that the byte arrays had split. Each was confirmed
+  in the m68k code:
+  - 0x80ddce is a dword (move.l): its 4 byte stores become one 'DWORD_0080ddce = 0x808cff'.
+  - 0x80de50 / 0x80de6e / 0x80de72 are words (move.w).
+  - The copy's source 0x80d346 fuel_timing_advance_value and 0x80d34a timing_control_status_flags were 'undefined'
+    (one byte) rows read as words. They are words now, which drops their '_' prefix in 9 more functions.
+- The round 73 plates and the development_mode row no longer say it renders as a struct field.
+
+Proof (prove_r74a_cm550.py; the PAIRS map each old access text to its new render, longest first): CM550 17 of 775
+functions differ after the PAIRS, all predicted: the widths the struct's byte arrays had split (0x80ddce's four byte
+stores become one dword store of 0x808cff; 0x80de50 / 0x80de38 / 0x80de3a / 0x80de6e / 0x80de72 take word stores and
+copies instead of byte pairs), four (dword)& casts on dword rows that hold addresses (j1708_receive_buffer_2_32 /
+address_of_scratch_pad_directory / buffer_used_to_store_secure_write_data / insite_parameter_schedule_pointer, whose
+0x80de00 constant now names its target), the '_' prefix gone from fuel_timing_advance_value /
+timing_control_status_flags in 9 functions, and reordered declarations; 28 placeholders fewer and 4 casts more; no
+struct field render left. CM550 verify byte-identical with round 73's WARNING lines. Headers regenerated (0 g++ errors),
+tests pass, audit_cal_suffixes.py CM550 HARD 0 / MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

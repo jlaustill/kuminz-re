@@ -1,0 +1,12 @@
+185c185
+<     services that name a parameter ID: `cm848_readJ1939DiagnosticMemoryByParameterId`,
+---
+>     services that name a parameter ID: `readJ1939DiagnosticMemoryByParameterId`,
+187c187
+<     `cm848_handleJ1939GetAddressByParameterIdService`.
+---
+>     `handleJ1939GetAddressByParameterIdService`.
+1176c1176
+< | 0x00408EF6 | `cbd_enable_flag` | 1=enabled | ✓ (prior session) |
+---
+> | 0x00408EF6 | `cylinder_balance_enable_flag` | 1=enabled | ✓ (prior session) |

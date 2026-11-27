@@ -1,0 +1,1 @@
+CM550: verify DETERMINISTIC after B and B2; the 9 image functions removed and nothing else (function_set_check.py: 0 added, 0 changed after B; B2 only names cm550_huffmanTreeBuilder's tree_buffer); the 0x2c834 warning gone; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

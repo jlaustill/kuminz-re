@@ -1,0 +1,17 @@
+cm848: round 5 - the cruise / vehicle speed limit governor functions, the A/C clutch working words
+
+- Bank 2's cruise governor (profiled with writes_of.py, the preset read): protectionOutputActuatorControl ->
+  cm848_runCruiseAndVehicleSpeedLimitGovernor (the PID, every pass from cm848_periodicTaskSet_outputs),
+  protectionRampRateControl -> cm848_presetCruiseAndVehicleSpeedLimitGovernor (the bumpless start: target /
+  reference speed, the clamped error, the integrator preset - the repo's preset*Governor* pattern),
+  governorCruiseStateMachine -> cm848_initializeCruiseControlDroopGains (the boot pass),
+  governor_cruise_setpoint_calc -> cm848_selectCruiseControlGainZone (the droop error and the gain zone with its
+  PID gains).
+- The A/C clutch (DR truck) working words were protection_event26_*: the pressure learn count, the hysteresis
+  OK flags of the high / low pressure, high / low engine speed and coolant temperature thresholds, the low rpm
+  on-time count, the cycle on / off counts, the shift hold-off count, the condition code and the request bit
+  edge; protection_exception_event_26_init -> cm848_initializeAirConditioningClutchControl.
+- The heater plates follow INTAKE_AIR_HEATER_PHASE (crank / off, not run-up / shutdown).
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

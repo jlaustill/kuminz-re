@@ -1,0 +1,10 @@
+cm848: round 11 stage D - output 54 is fuel_shutoff_request (label-only)
+
+- **The evidence:** stage B named logical output 54 (e2m 1577 +6 0x40 ASIC_FS_Shutoff_Driver)
+  injector_driver_asic_shutoff_request from its readers, the injector and fuel pressure diagnostics. Its requesters
+  (output_requesters.py 0x36) are the fuel pressure fault reactions: cm848_updateFuelPressureFaultReactionRequests,
+  cm848_applyFuelLimitsForFuelPressureFaults and fuel_quantity_demand_monitor (fuel_quantity_demand_initialize clears
+  it). So it is a fuel shutoff request; FS is not expanded in the e2m.
+- **Proof:** reverse_names.py EQUIVALENT (a field rename).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

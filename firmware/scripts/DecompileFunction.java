@@ -27,7 +27,7 @@ public class DecompileFunction extends GhidraScript {
             println("Usage: DecompileFunction.java <address|name>");
             println("Examples:");
             println("  DecompileFunction.java 0x22e5e");
-            println("  DecompileFunction.java vp44CanMessageDispatcher");
+            println("  DecompileFunction.java dispatchJ1939TransportConnectionManagement");
             return;
         }
 

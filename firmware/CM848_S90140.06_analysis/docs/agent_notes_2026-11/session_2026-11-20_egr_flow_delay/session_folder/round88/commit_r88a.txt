@@ -1,0 +1,44 @@
+cm550 + cm848: round 88 stage A - the filter library: the signed / unsigned filters' names, CM550's filter records
+
+The fifth group of the round 87 audit (an investigator and a skeptic), applied:
+- The shared name exponentialMovingAverage paired the wrong functions: CM550 0x34e9a is the SIGNED (offset binary)
+  first-order filter and CM848 0x56594 the unsigned one. By role 0x34e9a pairs with cm848_signedFirstOrderFilter and
+  0x34f8a with CM848's unsigned filter (the twin calculateAlphaFuelRateResult calls 0x34f8a in CM550), but each pair
+  uses a different formulation (a rounded multiply against a truncated +- |difference| step): counterparts, so every
+  name takes its prefix.
+  - CM550: 0x34e9a cm550_signedFirstOrderFilter, 0x34f8a cm550_exponentialMovingAverage (was
+    cm550_coreTableInterpolation: no table or axis), 0x34f00 cm550_secondOrderFilter (was
+    cm550_unsignedLinearInterpolation), 0x34fe0 cm550_secondOrderFilterUnsigned (new: the module's fourth function,
+    in the same order as CM848's four). Prototypes: return word, the sample / input (ushort), the record pointer.
+  - CM848: 0x56594 cm848_exponentialMovingAverage (37 comment references and 3 firmware/CLAUDE.md lines follow).
+- CM550 types: ema_filter_state_t (CM848's layout: coefficient word* / Q16.16 accumulator) and
+  second_order_filter_state_t; the unused 22-byte sensor_debounce_state_t template gets its real layout (the
+  channel's filter record at +0; reserved_12 was at +18 decimal).
+- 38 CM550 filter records typed ema_filter_state_t: 13 filters (the engine acceleration stages, the low / high speed
+  governor errors, the power take-off speed error and reference, the alpha fuel rate, the all-speed governor
+  reference, the engine speed, the pedal fault mode engine speed ...) and the 25 A/D channel records (0x80a2aa + 22 x
+  channel). The 14 rows inside a record's 8 bytes go: each was the record's own pointer / accumulator under an old
+  name, or a row with no user (0 renders). The old names stay in each record's comment.
+- 40 coefficient words typed word; 37 renamed <record>_filter_coefficient after CM848's convention (3 of them new
+  rows), which replaces names such as adsyfpcs_param / ADBSPRXA / a_d_digital_filter_constant_for_..._0_1 (the old
+  names stay in the comments); the all-speed governor's three spelled out.
+- The A/D channel loops (validateServiceDataLength, cm550_initADCChannelConfiguration) walk the 22-byte records with
+  one pointer and pass it to cm550_exponentialMovingAverage; with the new parameter type that pointer inferred the
+  8-byte record and rendered &peVar3[2].accumulator + 2. Two local rows type it sensor_debounce_state_t *, so the
+  loops read channel_record->sample_counter / ->filtered_value / channel_record + 1.
+
+firmware/CLAUDE.md: three lines name CM848's unsigned filter exponentialMovingAverage; they now say
+cm848_exponentialMovingAverage (the commit's diff has the full lines).
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed, 1 added (0x34fe0, created from its row); the 38 changed functions
+  are the four filters (struct fields), the two A/D loops (record fields) and the record users (for example
+  _DAT_008005ae -> engine_speed_filter_state.accumulator; the signed filter's word result takes (short) casts where
+  it is used signed); all four filters placed at sp+4:2 / sp+6:4; no existing local row moved (only the two new rows
+  sit in changed functions); caller artifacts in_ 8 -> 4, CONCAT 10 -> 6, none up; no new build warning (unmapped
+  types 5428 -> 5373).
+- CM848: verify DETERMINISTIC; label-only at the token level (0 token changes; 22 lines re-wrapped); no new build
+  warning.
+- Headers 0 g++ errors in both; _cal HARD 0 in both.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

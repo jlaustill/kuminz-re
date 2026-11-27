@@ -1,0 +1,40 @@
+== 8A88 at 0x409a8a (CHR_CC_11.60.01.01.e2m)
+   +00 0x409a8a HPCR_Fast_Decay_Debounce_Counts [N2] dump 65535: Number of consecutive fast decay errors required to set injector error
+        row: injector_diagnostic_bits_fast_decay_debounce_limit word | Debounce limit of injector_diagnostic_bits_fast_decay (e2m 80B9
+   +02 0x409a8c HPCR_Open_Circuit_Debounce_Counts [N2] dump 2: Number of consecutive open circuit errors required to set injector err
+        row: injector_diagnostic_bits_open_circuit_debounce_limit word | Debounce limit of injector_diagnostic_bits_open_circuit (e2m 80B9
+   +04 0x409a8e HPCR_Short_Ground_Debounce_Counts [N2] dump 1: Number of consecutive short to ground errors req'd to set injector err
+        row: injector_diagnostic_bits_short_to_ground_debounce_limit word | Debounce limit of injector_diagnostic_bits_short_to_ground (e2m 80B9
+   +06 0x409a90 HPCR_Short_Vbatt_Debounce_Counts [N2] dump 1: Number of consecutive short to Vbatt errors req'd to set injector erro
+        row: injector_diagnostic_bits_short_to_battery_debounce_limit word | Debounce limit of injector_diagnostic_bits_short_to_battery (e2m 80B9
+== 15C7 at 0x5c964 (CHR_CC_11.60.01.01.e2m)
+   +00 0x5c964 VSS_Boost_Counts [N2] dump None: Number of times boost pressure exceeds a threshold
+        row: vehicle_speed_zero_under_load_event_limit word | P0500 zero-under-load monitor: events needed (10) - ROM constant read by cm848_detectVehicleSpeedSensorZeroUnd
+   +02 0x5c966 VSS_Minimum_Boost_Pressure [N2] dump None: Minimum boost pressure for VSS monitor
+        row: vehicle_speed_zero_under_load_minimum_boost_pressure word | P0500 zero-under-load monitor: boost_pressure_above_barometric must be above this for a pass to count - 1760 =
+   +04 0x5c968 VSS_Stopped_RPM [N2] dump None: engine speed to allow brake transition counts
+   +06 0x5c96a VSS_Idle_Counts [N2] dump None: Limit for throttle transitions
+        row: vehicle_speed_zero_under_load_accelerator_off_idle_entry_limit word | P0500 zero-under-load monitor: accelerator off-idle entries needed (10) (lhz @ 0x526b30) (new row 2026-11-17)
+   +08 0x5c96c VSS_Minimum_Road_Speed [N2] dump None: Minimum Road Speed for Sensor lost while moving alg.
+        row: vehicle_speed_signal_loss_minimum_vehicle_speed word | P0500 signal-loss path (cm848_detectVehicleSpeedSensorSignalLoss): the filtered vehicle_speed must still be ab
+   +0A 0x5c96e VSS_PcLd_Threshold [N2] dump None: Percent Load (PcLd) threshold
+        row: vehicle_speed_zero_under_load_minimum_engine_load word | P0500 zero-under-load monitor: the filtered engine load must be above this - 10240 = 40 % at 1/256 % (lhz @ 0x
+   +0C 0x5c970 VSS_Minimum_Load [N2] dump None: Val above which %load must be to set 241 from lost while moving portio
+        row: vehicle_speed_signal_loss_minimum_engine_load word | P0500 signal-loss path: engine_load_percent must be at least this - 3840 = 15 % at 1/256 % (lhz @ 0x526994) (n
+   +0E 0x5c972 VSS_Stopped_Filter_Constant [N2] dump None: VSS lost while stopped alg. percent load filter constant
+        row: vehicle_speed_zero_under_load_engine_load_filter_coefficient word | Coefficient of vehicle_speed_zero_under_load_engine_load_filter_state: 64880 - each pass the filter moves (655
+   +10 0x5c974 VSS_Boost_Timer [N2] dump None: Debounce for VSS boost pressure
+        row: vehicle_speed_zero_under_load_passes_per_event word | P0500 zero-under-load monitor: qualifying passes per event (30) (lhz @ 0x526b00) (new row 2026-11-17)
+== 8A7E at 0x408986 (CHR_CC_11.60.01.01.e2m)
+   +00 0x408986 OPG_RPM_Threshold [N2] dump 4000: Threshold above which OPG diagnostics performed
+        row: low_oil_pressure_check_minimum_rpm word | The low-oil-pressure check runs only above this engine speed (4000 = 500 rpm) (was governor_temp_diag_rpm_enab
+   +02 0x408988 Low_Oil_Switch_Error_Time [N2] dump 150: If Low_Oil_Switch=OFF for this time, Low_Oil_Switch_Error set TRUE
+        row: oil_pressure_switch_stuck_count_limit word | Limit for oil_pressure_switch_stuck_count (was governor_temp_diag_zero_rpm_count_max)
+   +04 0x40898a OPG_Pressure_Filter_Constant [N2] dump 0: Filter constant for OPG_Pressure
+        row:  word | EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_00
+   +06 0x40898c OPG_Pressure_Threshold [N2] dump 0: If OPG_Pressure < this for a given time, set Low_Oil_Pressure_Error
+        row: low_oil_pressure_threshold word | engine_oil_pressure below this counts as low (sensor mode) (was governor_temp_protection_fuel_qty_min)
+   +08 0x40898e Low_Oil_Switch_Chime_Enable [N2] dump 1: Enables chime when Low_Oil_Switch_Error=TRUE
+   +0A 0x408990 Low_Oil_Switch_Chime_Time [N2] dump 150: Amount of time to wait before chime when Low_Oil_Switch_Error=TRUE
+        row: oil_pressure_switch_fault_running_count_limit word | Limit for oil_pressure_switch_fault_running_count (was governor_temp_diag_cold_start_j1939_count_max)
+   +0C 0x408992 OPG_Pressure_Default [N2] dump 0: Default oil pressure broadcast when Low_Oil_Switch_Error=TRUE

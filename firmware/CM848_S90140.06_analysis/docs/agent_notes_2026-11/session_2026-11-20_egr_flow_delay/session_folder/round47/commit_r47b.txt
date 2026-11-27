@@ -1,0 +1,24 @@
+cm848: round 47 stage B - the EGR off / cooler fouled flags (e2m 1A57, a dword split), the cruise set / accelerate switch select
+
+Two more uncited rows from round 47's table audit, both in consistent blocks:
+- 0x40a442 fuel_blend_correction_inhibit_flag (dword) was two words of 1A57; its rows +4..+C were already named.
+  - +0 CHH_CBO_Off ('Flag indicating that EGR may be turned off') -> egr_off_allowed_flag (word).
+    cm848_updateEgrSystemHealthFlags sets it while charge or exhaust pressure runs on its backup source, and
+    cm848_applyOffNominalTimingAdjustment skips its correction while it is set.
+  - +2 CHH_EGR_Cooler_Fouled -> egr_cooler_fouled_flag (a new word row).
+    cm848_updateEgrCoolerFoulingFaultCounter sets it at the fault time and clears it at 0, and it feeds
+    egr_system_failure_flag.
+- 0x3fd530 j1939_ccvs1_switch_logic_option_cal -> cruise_set_accelerate_switch_select_cal.
+  - It is 1180 +8 Set_Accel_Switch_Select ('TRUE = SET/ACCEL and RESUME/COAST, FALSE = SET/COAST and RESUME/ACCEL').
+  - Its four reads are all in the CCVS1 builder and choose which switch sets the accelerate and coast bits.
+  - Its own comment had said "the name fits neither address".
+- refresh_references.py rewrote the old dword's name inside three texts that described its two words; the texts are
+  restored (fix_r47b_texts.py).
+
+Proof: prove_caches.py against the old .cpp with the dword's six ._0_2_ / ._2_2_ pieces folded.
+- All 1968 functions match.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

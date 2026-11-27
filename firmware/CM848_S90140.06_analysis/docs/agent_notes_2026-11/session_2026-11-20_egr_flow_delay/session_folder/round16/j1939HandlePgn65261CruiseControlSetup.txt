@@ -1,0 +1,39 @@
+=== j1939HandlePgn65261CruiseControlSetup (lines 24728-24771, 38 non-blank)
+// Function: j1939HandlePgn65261CruiseControlSetup @ 0x000246fc
+//
+/* handles the J1939 request for PGN 65261 cruise control / setup via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
+void j1939HandlePgn65261CruiseControlSetup(void)
+{
+  if (((j1939_governor_feature_cal & 0x80) == 0) ||
+     (&DAT_00009e00 < (undefined *)(uint)j1939_cruise_speed_setpoint)) {
+    j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit = 0xff;
+  }
+  else {
+    j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit =
+         (byte)((uint)((int)(uint)j1939_cruise_speed_setpoint * 0xa1) / 100 >> 8);
+  }
+  if ((j1939_governor_feature_cal & 0x40) == 0) {
+    j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
+  }
+  else {
+    if (cruise_maximum_road_speed_cal < 0x9e01) {
+      j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed =
+           (byte)(((uint)cruise_maximum_road_speed_cal * 0xa1) / 100 >> 8);
+    }
+    else {
+      j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
+    }
+    if (cruise_speed_low_limit < 0x9e01) {
+      j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed =
+           (byte)(((uint)cruise_speed_low_limit * 0xa1) / 100 >> 8);
+      goto LAB_000247e0;
+    }
+  }
+  j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed = 0xff;
+LAB_000247e0:
+  sendJ1939Message(&j1939_pgn65261_tx_message);
+  return;
+}
+//

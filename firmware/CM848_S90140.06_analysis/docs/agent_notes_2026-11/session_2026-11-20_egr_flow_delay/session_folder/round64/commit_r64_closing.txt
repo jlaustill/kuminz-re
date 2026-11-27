@@ -1,0 +1,17 @@
+cm848: round 64 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 64". It records:
+  - the three stages (3ce87e58 / 57f9cb3d / 36c29ebe) and their proofs;
+  - the history-safe refresh tool.
+  It lists the leads:
+  - a boot twin of J1939_DIAGNOSTIC_RESULT (the boot kernel's 5 / 10);
+  - 0x14 / 0xfe with no CM848 producer found;
+  - CM550's unreviewed members;
+  - round 63's open items.
+- work/todo.md: the round 64 line.
+- The session README: the round 64 section.
+- session_folder/round64/: the round's scripts, maps, commit messages and proof notes.
+- session_folder_large_files.tar.xz: the round's verify logs.
+- pr_body.md: refreshed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

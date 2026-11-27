@@ -1,0 +1,15 @@
+cm848: round 32 closing - task 046, the session archive, verify
+
+- task 046, the round 32 section:
+  - stage A;
+  - the finder (messy_functions.py);
+  - the rest of its ranking as leads: the injection state initializers, the PGN 65249 / 65242 builders, the fault
+    scan lookup and SCI command 20.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round32/: the finder, the call census, the apply and proof scripts, the maps and the commit
+    messages; the flattened .cpp copies are left out;
+  - the large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

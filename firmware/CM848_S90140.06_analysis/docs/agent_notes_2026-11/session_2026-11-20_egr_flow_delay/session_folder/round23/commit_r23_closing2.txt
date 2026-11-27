@@ -1,0 +1,13 @@
+cm848: round 23 closing after the review - docs, the session archive, verify
+
+- task 046, the round 23 section:
+  - stage C;
+  - the reach lead is resolved now that the scan covers every type and the struct fields;
+  - the dead end's wording: no write found, since a base-register store would escape the scan;
+  - a lead for the 276 Ghidra labels in CSV comments, which need a per-hit review.
+- PR body: stage C, the test line.
+- README.
+- The session archive: stage C's scripts and the rerun scan, the build and verify logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

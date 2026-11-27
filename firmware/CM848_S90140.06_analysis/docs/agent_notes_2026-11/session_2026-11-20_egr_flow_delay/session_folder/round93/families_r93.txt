@@ -1,0 +1,145 @@
+0x0ac3c cm550_FUN_0000ac3c
+    callers: cm550_FUN_0001b788@1b788 cm550_slowCycle8Coordinator@1b78e
+    callees: cm550_tableLookup2D@35088
+0x0b3d0 cm550_FUN_0000b3d0
+    callers: cm550_FUN_0001b6c8@1b6c8 cm550_slowCycle20Coordinator@1b6ce
+    callees: lookupTableInterpolation@34de0
+0x0d4ae cm550_FUN_0000d4ae
+    callers: cm550_engine_protection_coordinator@3458c
+    callees: cm550_diagnosticMode10FuelController@d3e6
+0x0e998 cm550_FUN_0000e998
+    callers: cm550_FUN_0001b754@1b754
+    callees: (none)
+0x0ff48 cm550_FUN_0000ff48
+    callers: initializePgn65251EngineConfiguration1Buffer@33692
+    callees: (none)
+0x127c2 vp44_FUN_000127c2
+    callers: executiveFrameInterruptHandler@1b876
+    callees: lookupTableInterpolation@34de0 cm550_scaleByRatioSigned@35076 cm550_tableLookup2D@35088
+0x13616 vp44_communication_state_machine
+    callers: mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0@19acc mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2@1a52c mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3@1a8a4 vp44_engine_management_system@1b518
+    callees: cm550_circularBufferWriteWithStatus@1355e
+0x17120 cm550_FUN_00017120
+    callers: cm550_FUN_00030c3c@30c3c
+    callees: (none)
+0x184c6 cm550_FUN_000184c6
+    callers: buildPgn65251EngineConfiguration1Payload@3320e
+    callees: cm550_FUN_000183cc@183cc
+0x19702 cm550_FUN_00019702
+    callers: cm550_engineProtectionMultiStateSlowCycle40Coordinator@18620
+    callees: cm550_protectionThresholdCalculationHelper@186ae cm550_protectionPercentageCalculator@18708 lookupTableInterpolation@34de0
+0x1c8a0 cm550_FUN_0001c8a0
+    callers: cm550_FUN_0001b828@1b828
+    callees: cm550_FUN_0001c824@1c824 cm550_calculateBlendedTableValue@1cb76
+0x1cad6 vp44_FUN_0001cad6
+    callers: executiveFrameInterruptHandler@1b876
+    callees: cm550_FUN_0001cb48@1cb48
+0x1cc72 cm550_FUN_0001cc72
+    callers: vp44_periodicTaskSet_governorProtection@1b572 vp44_engine_control_cycle@1b57e cm550_slowCycle20ExtendedCoordinator@1b5b4 vp44ExtendedFaultDetectionCoordinator@1b5ba
+    callees: cm550_calculateBlendedTableValue@1cb76 cm550_subtractAndClampValue@1e02a cm550_tableLookup2D@35088
+0x1ce58 cm550_FUN_0001ce58
+    callers: cm550_FUN_00030c3c@30c3c
+    callees: (none)
+0x1d9b4 vp44SensorStatusMonitor
+    callers: vp44_FUN_0001b7f2@1b7f2
+    callees: (none)
+0x1de58 cm550_FUN_0001de58
+    callers: cm550_diagnostic_parameter_handler@1c640
+    callees: cm550_subtractAndClampValue@1e02a cm550_tableLookup2D@35088
+0x1fdc0 cm550_j1939MessageTypeCounter
+    callers: cm550_fuelArbitratorResetHandler@231da cm550_fuelDemandLimitOrchestrator@23244
+    callees: (none)
+0x1ff38 cm550_engineRunTimeHistogramAccumulator
+    callers: cm550_oddPhaseSchedulerTaskSet@1b504
+    callees: (none)
+0x20380 cm550_FUN_00020380
+    callers: cm550_FUN_00021070@21070
+    callees: cm550_FUN_000201d6@201d6 cm550_FUN_0002024a@2024a setBitInArray@202d8 cm550_FUN_00020348@20348
+0x2041c cm550_FUN_0002041c
+    callers: cm550_FUN_00021070@21070
+    callees: cm550_FUN_000201d6@201d6 cm550_FUN_0002024a@2024a setBitInArray@202d8 cm550_FUN_00020348@20348
+0x205c4 cm550_FUN_000205c4
+    callers: cm550_FUN_00020c98@20c98
+    callees: (none)
+0x20784 cm550_FUN_00020784
+    callers: cm550_FUN_00021146@21146
+    callees: cm550_FUN_000201d6@201d6 cm550_FUN_00020210@20210 cm550_FUN_0002024a@2024a setBitInArray@202d8 cm550_FUN_00020310@20310 cm550_FUN_00020348@20348
+0x20c98 cm550_FUN_00020c98
+    callers: cm550_FUN_00021146@21146
+    callees: setBitInArray@202d8 cm550_FUN_00020310@20310 cm550_FUN_00020348@20348 cm550_FUN_000205c4@205c4
+0x20e14 cm550_FUN_00020e14
+    callers: cm550_FUN_00021146@21146
+    callees: cm550_FUN_000201d6@201d6 cm550_FUN_00020210@20210 cm550_FUN_0002024a@2024a setBitInArray@202d8
+0x212b2 mc68k_FUN_000212b2
+    callers: (none by name; ROM pointer at 0x1b4da)
+    callees: (none)
+0x2142c cm550_FUN_0002142c
+    callers: cm550_oddPhaseSchedulerTaskSet@1b504
+    callees: (none)
+0x22070 cm550_memoryRegisterController
+    callers: (none by name; ROM pointer at 0x1b4e6)
+    callees: cm550_diagnosticGroupPositionBufferStore@21f4e cm550_diagnosticGroupSnapshotCapture@21fac
+0x254b6 cm550_FUN_000254b6
+    callers: cm550_dzgTimingAndPressureSlowCycle10Coordinator@1b70c
+    callees: cm550_ioControlMaskStateMachine@24858 vp44_ioControlLampStateMachine@249ee cm550_faultCodeDisplayController@24d40 cm550_activeFaultLampStateMachine@24f30 cm550_faultLampBlinkPatternGenerator@25316 cm550_FUN_000253b0@253b0 cm550_periodicLampFlashController@25448
+0x25806 cm550_FUN_00025806
+    callers: cm550_engine_protection_coordinator@3458c
+    callees: presetPedalFaultModeFuelDemand@258b0
+0x25a34 vp44_FUN_00025a34
+    callers: cm550_runLowSpeedGovernor@25b1c
+    callees: cm550_governorFuelPidController@2595a
+0x26616 cm550_FUN_00026616
+    callers: cm550_auxiliarySystemControlWrapper@1b7a2
+    callees: (none)
+0x26854 mc68k_FUN_00026854
+    callers: mc68k_applicationMain@284e8
+    callees: mc68k_runSerialEepromWriteQueue@266da mc68k_FUN_00026834@26834 cm550_FUN_00026852@26852
+0x26af0 cm550_FUN_00026af0
+    callers: cm550_FUN_00030b34@30b34
+    callees: (none)
+0x2ec50 cm550_FUN_0002ec50
+    callers: vp44_engine_management_system@1b518 vp44ControlSystemCoordinator@1b558
+    callees: (none)
+0x306ca cm550_FUN_000306ca
+    callers: cm550_FUN_0001b862@1b862
+    callees: cm550_accumulatorWithOverflowCarry@303d4 cm550_runTimeCountersUpdate@30414 cm550_runTimeCountersUpdateAlt@30454 cm550_FUN_00030498@30498 cm550_rpmHistogramAndAveragingStatistics@304f4 cm550_scaleByRatio@35064
+0x30a5e cm550_FUN_00030a5e
+    callers: mc68k_runPowerDownSequence@27f9c
+    callees: (none)
+0x31496 cm550_FUN_00031496
+    callers: cm550_FUN_0001b7b0@1b7b0
+    callees: (none)
+0x315be cm550_FUN_000315be
+    callers: executiveFrameInterruptHandler@1b876
+    callees: (none)
+0x31a68 cm550_FUN_00031a68
+    callers: mc68k_applicationMain@284e8
+    callees: (none)
+0x34512 cm550_FUN_00034512
+    callers: executiveFrameInterruptHandler@1b876
+    callees: (none)
+
+40 seeds; 23 placeholder relatives that are not seeds:
+  0x183cc cm550_FUN_000183cc lines 61 (touches 1 seeds; callers 1)
+  0x1b6c8 cm550_FUN_0001b6c8 lines 13 (touches 1 seeds; callers 1)
+  0x1b754 cm550_FUN_0001b754 lines 14 (touches 1 seeds; callers 1)
+  0x1b788 cm550_FUN_0001b788 lines 15 (touches 1 seeds; callers 1)
+  0x1b7b0 cm550_FUN_0001b7b0 lines 15 (touches 1 seeds; callers 1)
+  0x1b7f2 vp44_FUN_0001b7f2 lines 15 (touches 1 seeds; callers 1)
+  0x1b828 cm550_FUN_0001b828 lines 13 (touches 1 seeds; callers 1)
+  0x1b862 cm550_FUN_0001b862 lines 14 (touches 1 seeds; callers 1)
+  0x1c824 cm550_FUN_0001c824 lines 33 (touches 1 seeds; callers 1)
+  0x1cb48 cm550_FUN_0001cb48 lines 13 (touches 1 seeds; callers 1)
+  0x201d6 cm550_FUN_000201d6 lines 14 (touches 4 seeds; callers 7)
+  0x20210 cm550_FUN_00020210 lines 14 (touches 2 seeds; callers 3)
+  0x2024a cm550_FUN_0002024a lines 14 (touches 4 seeds; callers 7)
+  0x20310 cm550_FUN_00020310 lines 14 (touches 2 seeds; callers 3)
+  0x20348 cm550_FUN_00020348 lines 14 (touches 4 seeds; callers 7)
+  0x21070 cm550_FUN_00021070 lines 47 (touches 2 seeds; callers 2)
+  0x21146 cm550_FUN_00021146 lines 46 (touches 3 seeds; callers 2)
+  0x253b0 cm550_FUN_000253b0 lines 41 (touches 1 seeds; callers 1)
+  0x26834 mc68k_FUN_00026834 lines 21 (touches 1 seeds; callers 1)
+  0x26852 cm550_FUN_00026852 lines 11 (touches 1 seeds; callers 1)
+  0x30498 cm550_FUN_00030498 lines 30 (touches 1 seeds; callers 1)
+  0x30b34 cm550_FUN_00030b34 lines 19 (touches 1 seeds; callers 1)
+  0x30c3c cm550_FUN_00030c3c lines 22 (touches 2 seeds; callers 1)

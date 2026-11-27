@@ -1,0 +1,12 @@
+cm848: round 62 follow-up closing - stage B recorded in task 046, the PR body and the archive
+
+- task 046: stage A's registrar name is replaced by stage B's. The stage B bullet records:
+  - why the name changed (the 0x0f / 0x10 handler is a no-op);
+  - the 10CE citation;
+  - the dump value of j1939_input_fault_start_delay (1000);
+  - the CM550 check;
+  - that DM7's "first byte" rests on the code reading byte 0, since the J1939 database gives no byte positions.
+- PR body: a stage B line.
+- The round 62 session folder gains stage B's script, map, message and verify log.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

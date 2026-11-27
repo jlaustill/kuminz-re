@@ -1,0 +1,16 @@
+cm848: round 60 closing - task 046, the session archive, the PR body, two CLAUDE.md corrections
+
+- task 046, round 60:
+  - the parameter ID tables and the SCI command dispatch table typed;
+  - the proof;
+  - leads: the real homes of the two dispatch entry types, the boot lookup's CONCAT22, 69 unprefixed functions.
+  Round 59's lines that gave the kept types wrong homes now say so.
+- firmware/CLAUDE.md, two factual corrections verified this round (no rule text):
+  - the Bank 2 "Command dispatch table" address 0x00539508 -> 0x0053a9a0. 0x539508 is a run of bl calls inside
+    cm848_j1939_system_init; the 19-entry, 6-byte table cm848_dispatchSciCommand reads is at 0x53a9a0.
+  - the stuck-warning row for _param_id_lookup_table now records that the boot table is typed
+    (boot_parameter_id_table, a parameter_id_entry_t[20] array that applies over the ROM-to-RAM window).
+- PR body, README, todo, memory, and the round 60 session folder (the table check, the stage script and map, the proof
+  scripts, the closing scripts, the verify log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

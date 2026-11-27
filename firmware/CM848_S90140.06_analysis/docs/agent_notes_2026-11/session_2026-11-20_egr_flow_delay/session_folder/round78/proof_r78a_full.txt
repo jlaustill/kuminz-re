@@ -1,0 +1,102 @@
+old field renders -> the address they reach -> its name now:
+    2 previous_engine_rpm.previous_engine_rpm -> 0x80000c previous_engine_rpm
+    2 previous_engine_rpm.previous_nonzero -> 0x80000e dma_descriptor_base1
+    3 previous_engine_rpm.previous_sample -> 0x800010 dma_desc1_source_ptr
+    4 engine_rpm_delta.previous_nonzero -> 0x800348 DAT_00800348
+    7 engine_rpm_delta.previous_sample -> 0x80034a data_collector_sample_decimation_counter
+    9 engine_rpm_delta.rpm_delta -> 0x80034c data_collector_channel_count
+    1 diagnostic_rx_buffer_base.tx_buffer_base -> 0x808c00 diagnostic_rx_buffer_base
+    1 diagnostic_rx_buffer_base.rx_buffer_base -> 0x808d00 DAT_00808d00
+    1 logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_start_addr -> 0x80aab6 logical_address_canter_value_stored_to_the_data_collector_buffer_none
+   16 logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr -> 0x80aaba logical_address_of_the_last_value_stored_to_the_data_collector_bu_none
+    2 logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start -> 0x80aabe DAT_0080aabe
+functions differing after the mapping (statement level): 11
+== cm550_FUN_0000af70
+   - ram0x00800012=0x6086e
+   + DWORD_00800012=0x6086e
+== cm550_circularBufferWriteWithStatus
+   - if(DAT_00800348!=0)break
+   - DAT_00800348=1
+   - if(_physical_ram_address_of_the_end_of_the_data_collector_buffer_none<logical_address_of_the_last_value_stored_to_the_data_collector_bu_none)
+   - logical_address_of_the_last_value_stored_to_the_data_collector_bu_none=_actual_starting_ram_address_of_the_data_collector_buffer_none
+   - if((logical_address_of_the_last_value_stored_to_the_data_collector_bu_none==_logical_beginning_address_of_the_data_collector_buffer_none)&&(_logical_b
+   - _logical_beginning_address_of_the_data_collector_buffer_none=_actual_starting_ram_address_of_the_data_collector_buffer_none
+   + if(WORD_00800348!=0)break
+   + WORD_00800348=1
+   + if(physical_ram_address_of_the_end_of_the_data_collector_buffer_none<logical_address_of_the_last_value_stored_to_the_data_collector_bu_none)
+   + logical_address_of_the_last_value_stored_to_the_data_collector_bu_none=actual_starting_ram_address_of_the_data_collector_buffer_none
+   + if((logical_address_of_the_last_value_stored_to_the_data_collector_bu_none==logical_beginning_address_of_the_data_collector_buffer_none)&&(logical_beg
+   + logical_beginning_address_of_the_data_collector_buffer_none=actual_starting_ram_address_of_the_data_collector_buffer_none
+== vp44_communication_state_machine
+   - case0:DAT_0080aabe._0_2_=1
+   - T=_actual_starting_ram_address_of_the_data_collector_buffer_none-0x1000U%data_collector_channel_count
+   - _physical_ram_address_of_the_end_of_the_data_collector_buffer_none=T+0xfff
+   - logical_address_of_the_last_value_stored_to_the_data_collector_bu_none=_actual_starting_ram_address_of_the_data_collector_buffer_none
+   - _logical_beginning_address_of_the_data_collector_buffer_none=_actual_starting_ram_address_of_the_data_collector_buffer_none
+   - DAT_00800348=0
+   - _data_collector_buffer_write_stop_address=(_actual_starting_ram_address_of_the_data_collector_buffer_none+(T>>1)*data_collector_channel_count)-1
+   - _data_collector_buffer_write_stop_address=_physical_ram_address_of_the_end_of_the_data_collector_buffer_none
+   - logical_address_canter_value_stored_to_the_data_collector_buffer_none=logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_ad
+   - if(_physical_ram_address_of_the_end_of_the_data_collector_buffer_none<logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_start_
+   - logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_start_addr=_actual_starting_ram_address_of_the_data_collector_buffer_none
+   - _data_collector_buffer_write_stop_address=logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr+(_DAT_00800350>>1)*data_c
+   - if(_physical_ram_address_of_the_end_of_the_data_collector_buffer_none<_data_collector_buffer_write_stop_address)
+   - DAT_0080aabe._0_2_=0
+   + case0:WORD_0080aabe=1
+   + T=actual_starting_ram_address_of_the_data_collector_buffer_none-0x1000U%data_collector_channel_count
+   + physical_ram_address_of_the_end_of_the_data_collector_buffer_none=T+0xfff
+   + logical_address_of_the_last_value_stored_to_the_data_collector_bu_none=actual_starting_ram_address_of_the_data_collector_buffer_none
+   + logical_beginning_address_of_the_data_collector_buffer_none=actual_starting_ram_address_of_the_data_collector_buffer_none
+   + WORD_00800348=0
+   + _data_collector_buffer_write_stop_address=(actual_starting_ram_address_of_the_data_collector_buffer_none+(T>>1)*data_collector_channel_count)-1
+   + _data_collector_buffer_write_stop_address=physical_ram_address_of_the_end_of_the_data_collector_buffer_none
+   + logical_address_canter_value_stored_to_the_data_collector_buffer_none=logical_address_of_the_last_value_stored_to_the_data_collector_bu_none+1
+   + if(physical_ram_address_of_the_end_of_the_data_collector_buffer_none<logical_address_canter_value_stored_to_the_data_collector_buffer_none)
+   + logical_address_canter_value_stored_to_the_data_collector_buffer_none=actual_starting_ram_address_of_the_data_collector_buffer_none
+   + _data_collector_buffer_write_stop_address=logical_address_of_the_last_value_stored_to_the_data_collector_bu_none+(_DAT_00800350>>1)*data_collector_cha
+   + if(physical_ram_address_of_the_end_of_the_data_collector_buffer_none<_data_collector_buffer_write_stop_address)
+   + WORD_0080aabe=0
+== vp44_initVp44BufferAddresses
+   - _actual_starting_ram_address_of_the_data_collector_buffer_none=0x80aac4
+   - logical_address_canter_value_stored_to_the_data_collector_buffer_none._10_4_=&DAT_00805308
+   + actual_starting_ram_address_of_the_data_collector_buffer_none=0x80aac4
+   + DWORD_0080aac0=&DAT_00805308
+== vp44_rpmTimerInterruptHandler2
+   - if((_io_control_handshake_state<=-fuel_arbitrator_throttle_override._8_4_-1)&&(fuel_arbitrator_throttle_override._8_4_=_io_control_handshake_state+fue
+   + if((_io_control_handshake_state<=-io_control_bit0_state-1)&&(io_control_bit0_state=_io_control_handshake_state+io_control_bit0_state,_io_control_bit4_
+== vp44_FUN_00019e90
+   - if((_io_control_handshake_state<=-fuel_arbitrator_throttle_override._8_4_-1)&&(fuel_arbitrator_throttle_override._8_4_=_io_control_handshake_state+fue
+   + if((_io_control_handshake_state<=-io_control_bit0_state-1)&&(io_control_bit0_state=_io_control_handshake_state+io_control_bit0_state,_io_control_bit4_
+== vp44_FUN_0001a52c
+   - if((_io_control_handshake_state<=-fuel_arbitrator_throttle_override._8_4_-1)&&(fuel_arbitrator_throttle_override._8_4_=_io_control_handshake_state+fue
+   + if((_io_control_handshake_state<=-io_control_bit0_state-1)&&(io_control_bit0_state=_io_control_handshake_state+io_control_bit0_state,_io_control_bit4_
+== cm550_throttleTimeAccumulatorProcessor
+   - if((_io_control_handshake_state<=-fuel_arbitrator_throttle_override._8_4_-1)&&(fuel_arbitrator_throttle_override._8_4_=_io_control_handshake_state+fue
+   + if((_io_control_handshake_state<=-io_control_bit0_state-1)&&(io_control_bit0_state=_io_control_handshake_state+io_control_bit0_state,_io_control_bit4_
+== vp44FaultThresholdTablesInit
+   - if((_io_control_handshake_state<=-fuel_arbitrator_throttle_override._8_4_-1)&&(fuel_arbitrator_throttle_override._8_4_=_io_control_handshake_state+fue
+   + if((_io_control_handshake_state<=-io_control_bit0_state-1)&&(io_control_bit0_state=_io_control_handshake_state+io_control_bit0_state,_io_control_bit4_
+== cm550_diagnosticBufferPointerInit
+   - j1708_transmit_buffer_2_32_dc9c=&diagnostic_tx_buffer_base
+   - j1708_transmit_buffer_0_2_32=&diagnostic_tx_buffer_base
+   - diagnostic_tx_buffer_base=0
+   - j1708_transmit_buffer_2_32_ddc6=&diagnostic_tx_buffer_base
+   - j1708_receive_buffer_2_32=&diagnostic_rx_buffer_base
+   - j1708_receive_buffer_pointer_2_32_dca2=&diagnostic_rx_buffer_base
+   - j1708_receive_buffer_pointer_2_32_dcaa=&diagnostic_rx_buffer_base
+   + j1708_transmit_buffer_2_32_dc9c=diagnostic_tx_buffer_base
+   + j1708_transmit_buffer_0_2_32=diagnostic_tx_buffer_base
+   + diagnostic_tx_buffer_base[0]=0
+   + j1708_transmit_buffer_2_32_ddc6=diagnostic_tx_buffer_base
+   + j1708_receive_buffer_2_32=diagnostic_rx_buffer_base
+   + j1708_receive_buffer_pointer_2_32_dca2=diagnostic_rx_buffer_base
+   + j1708_receive_buffer_pointer_2_32_dcaa=diagnostic_rx_buffer_base
+== cm550_initVectorTable
+   - byte*T
+   - for(T=DAT_00808d00+0xdc
+   - T=T+4)
+   - *(code**)T=cm550_interruptCounter2Increment
+   + undefined4*T
+   + for(T=&DAT_00808ddc
+   + T=T+1)
+   + *T=cm550_interruptCounter2Increment

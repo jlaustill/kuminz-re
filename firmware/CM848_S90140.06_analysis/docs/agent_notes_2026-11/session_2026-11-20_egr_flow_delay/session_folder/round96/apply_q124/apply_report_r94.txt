@@ -1,0 +1,260 @@
+CM550 struct j1939_pgn65249_payload_t added (19 fields)
+CM550 struct j1939_pgn_handler_entry_t added (3 fields)
+CM550 struct j1939_pgn65261_payload_t added (8 fields)
+CM550 struct j1939_pgn65230_payload_t added (6 fields)
+CM550 struct j1708_memory_write_record_t added (4 fields)
+CM848 struct j1939_pgn65230_payload_t added (6 fields)
+CM550 removed global 0x0080345a base_timing_table_lookup_arg_345a (inside a new instance)
+CM550 removed global 0x0080345c vp44_timing_idle_cmd_ptr (inside a new instance)
+CM550 removed global 0x008035e0 fuel_temp_control_flags (inside a new instance)
+CM550 removed global 0x00801a6c fuel_economy_sample_2 (inside a new instance)
+CM550 removed global 0x00801a85 fuel_economy_sample_toggle (inside a new instance)
+CM848 removed global 0x003fad5a j1939_feature_config_tx_word (inside a new instance)
+CM848 removed global 0x003fad5c j1939_dm1_active_faults_tx_word (inside a new instance)
+proposed names rewritten in comments: 4
+Q1 CM550 function 0x00031c84 j1939HandlePgn65265CruiseVehicleSpeed -> cm550_buildPgn65265CruiseControlVehicleSpeedMessage [counterpart]
+Q1 CM550 function 0x00032c76 sendPgn61444ElectronicEngineController1Message -> sendPgn61444ElectronicEngineController1Message [twin]
+Q1 CM848 function 0x0002588c already sendPgn61444ElectronicEngineController1Message
+Q1 CM550 function 0x00032e4c j1939HandlePgn61443Eec2 -> cm550_buildPgn61443ElectronicEngineController2Message [counterpart]
+Q1 CM550 function 0x000330c4 vp44_configParamCanBuilder -> buildPgn65247ElectronicEngineController3Message [twin]
+Q1 CM848 function 0x00025de8 cm848_buildPgn65247ElectronicEngineController3Message -> buildPgn65247ElectronicEngineController3Message [twin of CM550 0x000330c4]
+Q1 CM550 function 0x0003366a sendPgn65251EngineConfiguration1Message -> sendPgn65251EngineConfiguration1Message [twin]
+Q1 CM848 function 0x0001b730 already sendPgn65251EngineConfiguration1Message
+Q1 CM550 function 0x000338ea cm550_dutyCycleMonitorAltIsrHandler -> cm550_buildPgn61440ElectronicRetarderController1Message [counterpart]
+Q1 CM550 function 0x00033b40 cm550_fuelEconomyDataBuilder -> cm550_buildPgn65266FuelEconomyLiquidMessage [standalone]
+Q1 CM550 function 0x0003407a vp44CanMessage100ResponseBuilder -> cm550_buildPgn65249RetarderConfigurationMessage [counterpart]
+Q1 DROPPED function 0x000337c4 (Q2: no change (the judge kept the earlier round's name and plate))
+Q1 DROPPED function 0x00033d38 (Q2: no change (the judge kept the earlier round's name and plate))
+Q1 DROPPED function 0x00033164 (Q2: no change (the judge kept the earlier round's name and plate))
+Q1 DROPPED function 0x00033f5a (Q2: no change (the judge kept the earlier round's name and plate))
+Q1 DROPPED function 0x00031bce (Q2: no change (the judge kept the earlier round's name and plate))
+Q1 DROPPED function 0x00033e58 (Q2: no change (the judge kept the earlier round's name and plate))
+Q1 CM550 function 0x000342f0 cm550_retarderDataBuilder -> buildPgn65271VehicleElectricalPower1Message [twin]
+Q1 CM848 function 0x00026cf0 cm848_j1939HandlePgn65271VehicleElectrical -> buildPgn65271VehicleElectricalPower1Message [twin of CM550 0x000342f0]
+Q1 CM550 function 0x0003229a cm550_FUN_0003229a -> cm550_broadcastPgn65226Dm1WhileFaultsActive [counterpart]
+Q1 CM550 function 0x000339fe cm550_FUN_000339fe -> cm550_buildPgn65213FanDrive1Message [counterpart]
+Q1 CM550 function 0x00032bbc cm550_FUN_00032bbc -> cm550_buildPgn61441ElectronicBrakeController1Message [counterpart]
+Q1 CM550 function 0x00034496 cm550_FUN_00034496 -> cm550_sendPgn65279WaterInFuelIndicatorMessage [counterpart]
+Q1 CM848 function 0x0002567c cm848_j1939BuildEngineControlByte -> cm848_buildPgn61441ElectronicBrakeController1Message [CM848 only]
+Q1 CM848 function 0x000269f4 cm848_j1939HandlePgn65504ProprietaryB -> cm848_buildPgn65504ProprietaryBMessage [CM848 only]
+Q1 CM848 function 0x00024d78 cm848_processDm1FaultBroadcast -> cm848_broadcastPgn65226Dm1UntilFaultsClear [CM848 only]
+Q1 CM848 function 0x00024028 cm848_buildPgn65241AuxiliaryInputOutputStatus1Message: name kept
+Q1 CM550 global 0x00801ee2 ccvs_message_byte_0 undefined -> j1939_pgn65265_two_speed_axle_and_parking_brake_switches_byte byte
+Q1 CM550 global 0x00801ee3 (no row)  -> j1939_pgn65265_wheel_based_vehicle_speed byte[2]
+Q1 CM550 global 0x00801ee5 ccvs_message_byte_3 undefined -> j1939_pgn65265_cruise_brake_and_clutch_switches_byte byte
+Q1 CM550 global 0x00801ee6 ccvs_message_byte_4 undefined -> j1939_pgn65265_cruise_set_and_resume_switches_byte byte
+Q1 CM550 global 0x00801ee7 (no row)  -> j1939_pgn65265_cruise_control_set_speed byte
+Q1 CM550 global 0x00801ee8 (no row)  -> j1939_pgn65265_power_take_off_and_cruise_control_states_byte byte
+Q1 CM550 global 0x00801ee9 (no row)  -> j1939_pgn65265_idle_and_test_mode_switches_byte byte
+Q1 CM550 global 0x00803492 vp44_torque_speed_control_status undefined -> j1939_pgn61444_engine_torque_mode_byte byte
+Q1 CM550 global 0x00803493 (no row)  -> j1939_pgn61444_driver_demand_percent_torque byte
+Q1 CM550 global 0x00803494 vp44_timing_expected_init undefined -> j1939_pgn61444_actual_engine_percent_torque byte
+Q1 CM550 global 0x00803495 (no row)  -> j1939_pgn61444_engine_speed byte[2]
+Q1 CM550 global 0x008034aa vp44_feedback_pulse_low_fault_counter undefined -> j1939_pgn61443_low_idle_and_kickdown_switches_byte byte
+Q1 CM550 global 0x008034ab vp44_feedback_pulse_high_fault_counter undefined -> j1939_pgn61443_accelerator_pedal_position_1 byte
+Q1 CM550 global 0x008034ac lift_pump_timing_smoothed undefined -> j1939_pgn61443_engine_percent_load_at_current_speed byte
+Q1 CM550 global 0x008034ad (no row)  -> j1939_pgn61443_remote_accelerator_pedal_position byte
+Q1 CM550 global 0x008034ae derate_threshold_previous undefined -> j1939_pgn61443_accelerator_pedal_position_2 byte
+Q1 CM550 global 0x008034af (no row)  -> j1939_pgn61443_payload_byte_6 byte
+Q1 CM550 global 0x008034b0 fso_fault_previous_value undefined -> j1939_pgn61443_payload_byte_7 byte
+Q1 CM550 global 0x008034b1 (no row)  -> j1939_pgn61443_payload_byte_8 byte
+Q1 CM550 global 0x008034c2 fso_range_fault_high_counter undefined -> j1939_pgn65247_payload_nominal_friction_percent_torque byte
+Q1 CM550 global 0x008034c3 fso_range_fault_clear_counter undefined -> j1939_pgn65247_payload_desired_operating_speed_low_byte byte
+Q1 CM550 global 0x008034c4 vp44_timing_status_fault_counter undefined -> j1939_pgn65247_payload_desired_operating_speed_high_byte byte
+Q1 CM550 global 0x008034c5 vp44_timing_mode_3_high_counter undefined -> j1939_pgn65247_payload_desired_operating_speed_asymmetry_adjustment byte
+Q1 CM550 global 0x0080356a retarder_tsc_status_byte undefined -> j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte byte
+Q1 CM550 global 0x0080356b (no row)  -> j1939_pgn61440_actual_retarder_percent_torque byte
+Q1 CM550 global 0x008035b4 (no row)  -> j1939_pgn65266_engine_fuel_rate byte[2]
+Q1 CM550 global 0x008035b6 (no row)  -> j1939_pgn65266_engine_instantaneous_fuel_economy byte[2]
+Q1 CM550 global 0x008035b8 (no row)  -> j1939_pgn65266_engine_average_fuel_economy byte[2]
+Q1 CM550 global 0x00803630 (no row)  -> j1939_pgn65249_payload j1939_pgn65249_payload_t
+Q1 DROPPED global CM550 0x00803631 (its final name is the documentation path j1939_pgn65249_payload.retarder_control_method; post_apply_r96_q124.py writes it)
+Q1 CM550 global 0x008035f6 (no row)  -> j1939_pgn65252_idle_shutdown_states_byte byte
+Q1 CM550 global 0x008035f7 (no row)  -> j1939_pgn65252_idle_shutdown_timer_function_byte byte
+Q1 CM550 global 0x008035f8 (no row)  -> j1939_pgn65252_air_conditioner_high_pressure_fan_switch_byte byte
+Q1 CM550 global 0x008035f9 (no row)  -> j1939_pgn65252_wait_to_start_lamp_byte byte
+Q1 CM550 global 0x008034e8 vp44_fso_rpm_fault_counter undefined -> j1939_pgn65263_engine_fuel_delivery_pressure byte
+Q1 CM550 global 0x00803614 derate_percentage_active undefined -> j1939_pgn65270_exhaust_gas_temperature_high_byte byte
+Q1 CM550 global 0x0080367a eeprom_calibration_write_state undefined -> j1939_pgn65271_net_battery_current byte
+Q1 CM550 global 0x0080367b (no row)  -> j1939_pgn65271_alternator_current byte
+Q1 CM550 global 0x0080367c eeprom_calibration_check_value_1 undefined -> j1939_pgn65271_charging_system_potential word
+Q1 CM550 global 0x0080367e loop_termination_flag word -> j1939_pgn65271_battery_potential word
+Q1 CM550 global 0x00803680 protection_flag_source_1 undefined -> j1939_pgn65271_keyswitch_battery_potential word
+Q1 CM550 global 0x00803582 (no row)  -> j1939_pgn65213_estimated_percent_fan_speed byte
+Q1 CM550 global 0x00803583 (no row)  -> j1939_pgn65213_fan_drive_state_byte byte
+Q1 CM550 global 0x0080347b (no row)  -> j1939_pgn61441_brake_pedal_position byte
+Q1 CM550 global 0x0080347d (no row)  -> j1939_pgn61441_accelerator_and_engine_switches_byte byte
+Q1 CM550 global 0x0080347e (no row)  -> j1939_pgn61441_engine_retarder_selection byte
+Q1 CM848 global 0x003fad90 j1939_engine_status_byte byte -> j1939_eec1_engine_torque_mode_byte byte
+Q1 CM848 global 0x003fada9 j1939_eec2_accel_pedal_byte byte -> j1939_eec2_accelerator_pedal_position_1_byte byte
+Q1 CM848 global 0x003fadac (no row)  -> j1939_eec2_accelerator_pedal_position_2_byte byte
+Q1 CM848 global 0x003fadad (no row)  -> j1939_eec2_payload_byte_6 byte
+Q1 CM848 global 0x003fadae (no row)  -> j1939_eec2_payload_byte_7 byte
+Q1 CM848 global 0x003fadaf (no row)  -> j1939_eec2_payload_byte_8 byte
+Q1 CM848 global 0x003fad78 (no row)  -> j1939_pgn61441_payload_byte_1 byte
+Q1 CM848 global 0x003fad79 (no row)  -> j1939_pgn61441_brake_pedal_position byte
+Q1 CM848 global 0x003fad7a (no row)  -> j1939_pgn61441_payload_byte_3 byte
+Q1 CM848 global 0x003fad7b j1939_status_byte_a byte -> j1939_pgn61441_accelerator_and_engine_switches_byte byte
+Q1 CM848 global 0x003fad7c (no row)  -> j1939_pgn61441_engine_retarder_selection byte
+Q1 CM848 global 0x003faeee (no row)  -> j1939_pgn65271_net_battery_current byte
+Q1 CM848 global 0x003faeef (no row)  -> j1939_pgn65271_alternator_current byte
+Q1 CM848 global 0x003faef0 j1939_pgn65271_field1_init_word word -> j1939_pgn65271_charging_system_potential word
+Q1 CM848 global 0x003faef2 j1939_pgn65271_voltage_tx_word word -> j1939_pgn65271_battery_potential word
+Q1 CM848 global 0x003faef4 j1939_pgn65271_field2_init_word word -> j1939_pgn65271_keyswitch_battery_potential word
+Q2 CM550 function 0x0002f47e cm550_FUN_0002f47e -> registerJ1939PgnRequestHandler [twin]
+Q2 CM848 function 0x00023188 cm848_j1939RegisterPgnHandler -> registerJ1939PgnRequestHandler [twin of CM550 0x0002f47e]
+Q2 CM550 function 0x0002f4be cm550_FUN_0002f4be -> cm550_dispatchJ1939PgnRequest [counterpart]
+Q2 CM550 function 0x0002f538 cm550_diagnosticDataDump -> cm550_registerJ1939PgnRequestHandlers [counterpart]
+Q2 CM550 function 0x0002ec50 cm550_FUN_0002ec50 -> cm550_claimRemoteThrottleOverride [counterpart]
+Q2 CM550 function 0x0002ed62 cm550_FUN_0002ed62 -> cm550_initializeRemoteThrottle [counterpart]
+Q2 CM550 function 0x0002ef4a cm550_FUN_0002ef4a -> cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage [counterpart]
+Q2 CM550 function 0x0002f606 cm550_FUN_0002f606 -> decodeRetarderTorqueRequestPercent [twin]
+Q2 CM848 function 0x0002346c cm848_decodeRetarderTorqueRequestPercent -> decodeRetarderTorqueRequestPercent [twin of CM550 0x0002f606]
+Q2 CM550 function 0x0002faa4 cm550_FUN_0002faa4 -> cm550_initializeEngineRetarderTsc1RequestState [counterpart]
+Q2 CM550 function 0x0002fbb2 cm550_FUN_0002fbb2 -> registerTsc1DestinationAddressDispatcher [twin]
+Q2 CM848 function 0x00023bb4 cm848_initJ1939AddressDispatcher -> registerTsc1DestinationAddressDispatcher [twin of CM550 0x0002fbb2]
+Q2 CM550 function 0x0002fb70 cm550_torqueControlAddressDispatcher -> dispatchTsc1ByDestinationAddress [twin]
+Q2 CM848 function 0x00023b38 cm848_dispatchTsc1ByDestinationAddress -> dispatchTsc1ByDestinationAddress [twin of CM550 0x0002fb70]
+Q2 CM550 function 0x0002ef08 cm550_systemControlFunction1 -> registerJ1939DiagnosticServiceDispatcher [twin]
+Q2 CM848 function 0x000221f0 cm848_initJ1939DiagnosticServiceHandler -> registerJ1939DiagnosticServiceDispatcher [twin of CM550 0x0002ef08]
+Q2 CM550 function 0x0002efbc cm550_systemControlFunction2 -> registerJ1939Dm7Handler [twin]
+Q2 CM848 function 0x00022840 cm848_registerJ1939Dm7Handler -> registerJ1939Dm7Handler [twin of CM550 0x0002efbc]
+Q2 CM550 function 0x0002f114 cm550_systemControlFunction3 -> cm550_registerJ1939ElectronicTransmissionController1Handler [counterpart]
+Q2 CM550 function 0x0002ef36 cm550_canTransmissionTrigger -> registerJ1939Dm3RequestHandler [twin]
+Q2 CM848 function 0x00022770 cm848_initPgn65228Dm3Handler -> registerJ1939Dm3RequestHandler [twin of CM550 0x0002ef36]
+Q2 CM550 function 0x0002f632 j1939FormatMultiFrameResponse -> selectEngineRetarderStagePercent [twin]
+Q2 CM848 function 0x000234a4 cm848_selectEngineRetarderStagePercent -> selectEngineRetarderStagePercent [twin of CM550 0x0002f632]
+Q2 CM550 function 0x0002f7e6 cm550_retarderControlModeHandler -> cm550_processEngineRetarderTsc1Request [counterpart]
+Q2 CM550 function 0x0002ef1c cm550_diagnosticResponseHandler2 -> cm550_j1939HandlePgn65228Dm3ClearInactiveFaults [counterpart]
+Q2 DROPPED function 0x00033d38 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 CM550 function 0x00031f30 j1939HandlePgn65261CruiseControlSetup -> cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage [counterpart]
+Q2 DROPPED function 0x00033164 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 DROPPED function 0x00033f5a (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 DROPPED function 0x00031bce (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 DROPPED function 0x00033e58 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 CM550 function 0x000342f0 buildPgn65271VehicleElectricalPower1Message -> buildPgn65271VehicleElectricalPower1Message [twin]
+Q2 CM848 function 0x00026cf0 already buildPgn65271VehicleElectricalPower1Message
+Q2 function 0x00031c84 cm550_buildPgn65265CruiseControlVehicleSpeedMessage: name kept
+Q2 DROPPED function 0x00032052 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 CM550 function 0x00032222 cm550_FUN_00032222 -> buildPgn65234Dm10TestIdentifiersSupportMessage [twin]
+Q2 CM848 function 0x00024b28 cm848_j1939HandlePgn65234Dm10 -> buildPgn65234Dm10TestIdentifiersSupportMessage [twin of CM550 0x00032222]
+Q2 CM550 function 0x000322ae j1939HandlePgn65226Dm1ActiveDtc -> cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage [counterpart]
+Q2 CM550 function 0x0003241c cm550_previousDtcListBuilder -> cm550_buildPgn65227Dm2PreviouslyActiveDiagnosticTroubleCodesMessage [counterpart]
+Q2 DROPPED function 0x0003258a (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 CM550 function 0x00032a42 vp44_diagnosticDM5DataBuilder -> buildPgn65230Dm5DiagnosticReadiness1Message [twin]
+Q2 CM848 function 0x00025458 cm848_j1939HandlePgn65230Dm5Readiness -> buildPgn65230Dm5DiagnosticReadiness1Message [twin of CM550 0x00032a42]
+Q2 function 0x00032e4c cm550_buildPgn61443ElectronicEngineController2Message: name kept
+Q2 DROPPED function 0x00033716 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 DROPPED function 0x000337c4 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 DROPPED function 0x00033a62 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 CM550 function 0x00033c6c cm550_ioControlDataBuilder -> cm550_buildPgn65244IdleOperationMessage [standalone]
+Q2 DROPPED function 0x00034232 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 DROPPED function 0x00034394 (Q2: no change (the judge kept the earlier round's name and plate))
+Q2 CM550 function 0x00034430 cm550_FUN_00034430 -> sendPgn65260VehicleIdentificationMessage [twin]
+Q2 CM848 function 0x00026db4 cm848_j1939HandlePgn65260VehicleId -> sendPgn65260VehicleIdentificationMessage [twin of CM550 0x00034430]
+Q2 CM848 function 0x000246fc j1939HandlePgn65261CruiseControlSetup -> cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage [CM848 only]
+Q2 CM848 function 0x00024be8 j1939HandlePgn65226Dm1ActiveDtc -> cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage [CM848 only]
+Q2 CM848 function 0x000231cc cm848_j1939DispatchPgnHandler -> cm848_dispatchJ1939PgnRequest [CM848 only]
+Q2 CM848 function 0x000232b4 cm848_initJ1939ProtocolHandlers -> cm848_registerJ1939PgnRequestHandlers [CM848 only]
+Q2 CM550 global 0x00801d5a (no row)  -> j1939_pgn_dispatch_table j1939_pgn_handler_entry_t[32]
+Q2 CM550 global 0x00801e1a (no row)  -> j1939_pgn_handler_count byte
+Q2 CM550 global 0x00801d3c (no row)  -> j1939_dm7_test_identifier byte
+Q2 CM550 global 0x00801f4c (no row)  -> j1939_dm10_payload word
+Q2 CM550 global 0x00803458 (no row)  -> j1939_pgn65230_payload j1939_pgn65230_payload_t
+Q2 CM848 global 0x003fad56 (no row)  -> j1939_pgn65230_payload j1939_pgn65230_payload_t
+Q2 CM550 global 0x00801efa (no row)  -> j1939_pgn65261_payload j1939_pgn65261_payload_t
+Q2 CM550 global 0x0080da0e (no row)  -> intake_air_heater_monitor_result word
+Q2 CM550 global 0x00060fa4 (no row)  -> obd_compliance_code word
+Q2 CM550 global 0x00060fa6 (no row)  -> supported_continuous_monitors_bits word
+Q2 CM550 global 0x008035de (no row)  -> j1939_pgn65244_total_idle_fuel_used dword
+Q2 CM550 global 0x008035e2 protection_state_enable_flags dword -> j1939_pgn65244_total_idle_hours dword
+Q2 CM550 global 0x00804fb8 accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000 undefined -> total_idle_fuel_consumed dword
+Q2 CM550 global 0x00804fb4 (no row)  -> total_idle_operating_time dword
+Q2 CM550 global 0x00801e28 (no row)  -> engine_retarder_stage_count word
+Q2 CM550 global 0x0080a9dc (no row)  -> maximum_road_speed word
+Q2 CM550 global 0x00804fc6 (no row)  -> cruise_maximum_road_speed word
+Q2 CM550 global 0x00807bf6 (no row)  -> cruise_speed_low_limit word
+Q2 CM848 enum J1939_PGN_LOWER 65234: PGN_65234_DM11_CLEAR_ACTIVE -> PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT
+Q2 CM848 enum J1939_PGN_LOWER 65504: PGN_65504_PROPRIETARY_A -> PGN_65504_PROPRIETARY_B
+Q2 CM848 enum J1939_PGN_LOWER 65264: PGN_65264_PTO -> PGN_65264_POWER_TAKE_OFF_INFORMATION
+Q2 NOTE verdict with no proposal element: ('prototype', '', '0x0002f47e')
+Q2 NOTE verdict with no proposal element: ('prototype', '', '0x0002ef4a')
+Q2 NOTE verdict with no proposal element: ('prototype', '', '0x0002ef1c')
+Q2 NOTE verdict with no proposal element: ('prototype', '', '0x0002fb70')
+Q4 CM550 function 0x0000b3d0 cm550_FUN_0000b3d0 -> cm550_calculateAccelerationNoiseControlTimingLimit [standalone]
+Q4 CM550 function 0x0000c87c cm550_FUN_0000c87c -> cm550_emptyPrimarySpeedInterruptStep [standalone]
+Q4 CM550 function 0x0000c87e cm550_FUN_0000c87e -> cm550_emptyBackupSpeedInterruptStep [standalone]
+Q4 CM550 function 0x0000c880 cm550_FUN_0000c880 -> cm550_initializeSpeedRequestBlendWeightLookup [counterpart]
+Q4 CM550 function 0x0000d3b2 cm550_FUN_0000d3b2 -> cm550_initializeAllSpeedGovernorReferenceSpeedSets [counterpart]
+Q4 CM550 function 0x0000d4ae cm550_FUN_0000d4ae -> cm550_selectVariableSpeedGovernorMode [counterpart]
+Q4 CM550 function 0x0000f716 cm550_FUN_0000f716 -> cm550_calculateAllSpeedGovernorDroopFueling [counterpart]
+Q4 CM550 function 0x0000f99a cm550_FUN_0000f99a -> emptyPgn61443ElectronicEngineController2InitializationStep [twin]
+Q4 CM848 function 0x00020aec cm848_emptyStubFunction7 -> emptyPgn61443ElectronicEngineController2InitializationStep [twin of CM550 0x0000f99a]
+Q4 CM550 function 0x0000f99c cm550_FUN_0000f99c -> cm550_calculateNominalFrictionPercentTorque [counterpart]
+Q4 CM550 function 0x0000fa68 vp44_FUN_0000fa68 -> setJ1939TorqueCurvePoints1And3AtDeratedFueling [twin]
+Q4 CM848 function 0x00020bfc cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling -> setJ1939TorqueCurvePoints1And3AtDeratedFueling [twin of CM550 0x0000fa68]
+Q4 CM550 function 0x0000ff48 cm550_FUN_0000ff48 -> initializeJ1939ReferenceEngineFuelingAndTorque [twin]
+Q4 CM848 function 0x000212dc cm848_initializeJ1939ReferenceEngineFuelingAndTorque -> initializeJ1939ReferenceEngineFuelingAndTorque [twin of CM550 0x0000ff48]
+Q4 CM550 function 0x00022530 cm550_FUN_00022530 -> handleJ1939ReadByParameterIdLongLengthService [twin]
+Q4 CM848 function 0x0050c640 cm848_handleJ1939ReadByParameterIdLongLengthService -> handleJ1939ReadByParameterIdLongLengthService [twin of CM550 0x00022530]
+Q4 CM550 function 0x0002257c cm550_FUN_0002257c -> handleJ1939ReadByParameterIdShortOffsetService [twin]
+Q4 CM848 function 0x0050c6a8 cm848_handleJ1939ReadByParameterIdShortOffsetService -> handleJ1939ReadByParameterIdShortOffsetService [twin of CM550 0x0002257c]
+Q4 CM550 function 0x000225e0 cm550_FUN_000225e0 -> handleJ1939ReadByParameterIdLongOffsetService [twin]
+Q4 CM848 function 0x0050c734 cm848_handleJ1939ReadByParameterIdLongOffsetService -> handleJ1939ReadByParameterIdLongOffsetService [twin of CM550 0x000225e0]
+Q4 CM550 function 0x00022646 cm550_FUN_00022646 -> handleJ1939ReadMemoryService [twin]
+Q4 CM848 function 0x0050c7b0 cm848_handleJ1939ReadMemoryService -> handleJ1939ReadMemoryService [twin of CM550 0x00022646]
+Q4 CM550 function 0x0002268e cm550_FUN_0002268e -> handleJ1939ReadMemoryLongLengthService [twin]
+Q4 CM848 function 0x0050c81c cm848_handleJ1939ReadMemoryLongLengthService -> handleJ1939ReadMemoryLongLengthService [twin of CM550 0x0002268e]
+Q4 CM550 function 0x000226da cm550_FUN_000226da -> registerJ1939MemoryReadServices [twin]
+Q4 CM848 function 0x0050c880 cm848_registerJ1939MemoryReadServices -> registerJ1939MemoryReadServices [twin of CM550 0x000226da]
+Q4 CM550 function 0x00024804 cm550_FUN_00024804 -> cm550_updateLampOutputsAndCheckLampDriverFaults [standalone]
+Q4 CM550 function 0x00025806 cm550_FUN_00025806 -> cm550_selectPedalFaultMode [counterpart]
+Q4 CM550 function 0x00025a34 vp44_FUN_00025a34 -> cm550_presetLowSpeedGovernorIntegrator [counterpart]
+Q4 CM550 function 0x00026616 cm550_FUN_00026616 -> cm550_calculateLowSpeedGovernorColdIdleSpeed [counterpart]
+Q4 CM550 function 0x00026b3a cm550_FUN_00026b3a -> cm550_calculateNoLoadFuel [counterpart]
+Q4 CM550 function 0x00026b82 cm550_FUN_00026b82 -> cm550_emptyStubFunction12 [standalone]
+Q4 CM550 function 0x00026e86 cm550_FUN_00026e86 -> cm550_initializeEnginePositionPhaseLag [standalone]
+Q4 CM550 function 0x00026e8e cm550_FUN_00026e8e -> cm550_calculateEnginePositionPhaseLag [standalone]
+Q4 CM550 function 0x000277e6 cm550_FUN_000277e6 -> cm550_buildJ1587Pid243ComponentIdentificationReply [standalone]
+Q4 CM550 function 0x00027c20 vp44_FUN_00027c20 -> mc68k_saveEepromForPowerDown [counterpart]
+Q4 CM550 function 0x0002cf7e cm550_FUN_0002cf7e -> cm550_applyJ1708MemoryWriteRecords [standalone]
+Q4 CM550 function 0x0002ddbc cm550_FUN_0002ddbc -> initializePowerTakeOffThrottleOverride [twin]
+Q4 CM848 function 0x0002bd38 cm848_initializePowerTakeOffThrottleOverride -> initializePowerTakeOffThrottleOverride [twin of CM550 0x0002ddbc]
+Q4 CM848 function 0x0000e8cc cm848_initTemperatureTrimCoeff -> cm848_initializeSpeedRequestBlendWeightLookupCache [CM848 only]
+Q4 CM848 function 0x0050daac cm848_transitionEngineOperatingMode -> cm848_selectPedalFaultMode [CM848 only]
+Q4 CM550 global 0x00800040 (no row)  -> acceleration_noise_control_timing_limit_inhibit_timer word
+Q4 CM550 global 0x00800044 anc_timing_limit_active_timer undefined -> acceleration_noise_control_timing_limit_hold_timer word
+Q4 CM550 global 0x0080da34 (no row)  -> reference_engine_torque_working word
+Q4 CM550 global 0x0080a9ac (no row)  -> all_speed_governor_minimum_reference_speed_1_pointer word *
+Q4 CM550 global 0x0080a9b0 (no row)  -> all_speed_governor_maximum_reference_speed_1_pointer word *
+Q4 CM550 global 0x0080a9b4 (no row)  -> all_speed_governor_minimum_reference_speed_2_pointer word *
+Q4 CM550 global 0x0080a9b8 (no row)  -> all_speed_governor_maximum_reference_speed_2_pointer word *
+Q4 CM550 global 0x00803bbc (no row)  -> all_speed_governor_minimum_reference_speed_1_cal word
+Q4 CM550 global 0x00803bbe (no row)  -> all_speed_governor_maximum_reference_speed_1_cal word
+Q4 CM550 global 0x00803bca (no row)  -> all_speed_governor_minimum_reference_speed_2_cal word
+Q4 CM550 global 0x00803bcc (no row)  -> all_speed_governor_maximum_reference_speed_2_cal word
+Q4 CM550 global 0x00803bf0 (no row)  -> variable_speed_governor_default_cal word
+Q4 CM550 global 0x00807ac8 (no row)  -> all_speed_governor_switch_droop_fueling_offset word
+Q4 CM550 global 0x0080821a (no row)  -> pedal_fault_mode_enable_flag word
+Q4 CM550 global 0x00800180 anc_speed_limit_table_3_ptr undefined -> all_speed_governor_droop_snapshot word
+Q4 CM550 global 0x0080a99a asg_selected_droop_slope_0_30 undefined -> asg_selected_droop_slope_0_30 word
+Q4 CM550 global 0x008091de rpm_control_override_flag word -> all_speed_governor_no_load_fuel word
+Q4 CM550 global 0x00801a6a fuel_economy_sample_1 undefined -> low_speed_governor_integral_accumulator dword
+Q4 CM550 global 0x00801a6e fuel_economy_sample_3 undefined -> low_speed_governor_reference_maximum_fuel_quantity word
+Q4 CM550 global 0x00801a70 vp44_fuel_demand_previous word -> low_speed_governor_previous_engine_speed word
+Q4 CM550 global 0x00801a72 (no row)  -> low_speed_governor_proportional_gain_previous i16
+Q4 CM550 global 0x00801a74 non_idle_time_counter i16 -> low_speed_governor_proportional_gain_2_previous i16
+Q4 CM550 global 0x0080823c (no row)  -> low_speed_governor_integrator_preset_minimum i16
+Q4 CM550 global 0x0080dac4 lsg_proportional_gain_active undefined -> lsg_proportional_gain_active i16
+Q4 CM550 global 0x00801a84 rpm_histogram_sample_divider undefined -> low_speed_governor_cold_idle_timer word
+Q4 CM550 global 0x0080db08 (no row)  -> low_speed_governor_cold_idle_override_flag word
+Q4 CM550 global 0x0080db64 (no row)  -> engine_position_normal_phase_lag word
+Q4 CM550 global 0x0080db66 phase_lag_calculation_based_on_the_pulse_0_phase_lag_slope_and_0_40 word -> engine_position_pulse_0_phase_lag word
+Q4 CM550 global 0x00808476 final_fuel_command_min word -> engine_position_normal_phase_lag_intercept word
+Q4 CM550 global 0x00808478 final_fuel_command_max word -> engine_position_normal_phase_lag_slope word
+Q4 CM550 global 0x0080847e fuel_rpm_deviation_calc_param word -> cam_wheel_top_dead_center_adjustment word
+Q4 CM550 global 0x0080ccf2 fuel_demand_blend_mode_select word -> average_engine_speed word
+Q4 CM550 global 0x0080db68 (no row)  -> j1708_memory_write_records j1708_memory_write_record_t[15]
+Q4 CM550 global 0x0080dc2e throttle_fueling_override_active_flag word -> power_take_off_throttle_override_flag word
+Q4 CM550 global 0x0080dc2c max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 word -> power_take_off_throttle_override_engine_speed_limit word
+Q4 CM550 global 0x0080da1c jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125 word -> j1939_nominal_friction_percent_torque_times_256 word

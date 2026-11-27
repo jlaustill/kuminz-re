@@ -1,0 +1,182 @@
++0x0 AENBLFLG   masks=             files=59 Software_AENBLFLG | CHR_CC_11.10.22.00.e2m | [AENBLFLG] LENGTH_OF_ALG_ENABLE_FLAGS_TABLE
++0x0 Algorithm_Enable_Flags_Length masks=             files= 7 Algorithm_Enable_Flags_Length | CHR_B2_11.61.08.05.e2m | length of bit-wise algorithm enable flags in trim space
++0x2 AATBPEN    masks=8000         files=54 Alpha_Turbo_Protection_Enable | CHR_CC_11.10.22.00.e2m | [AATBPEN] Bit F Word 0. Enable bit for the Alpha Ambient Air Pressure Turbo Protection.
++0x2 AFC_Low_Boost_Derate_Enable masks=2            files= 8 AFC_Low_Boost_Derate_Enable | CHR_CC_11.20.13.16.e2m | enables feature AFC Low Boost fuel limit
++0x2 APAFEN     masks=800          files=59 Alpha_AFC_Enable | CHR_CC_11.10.22.00.e2m | [APAFEN] Bit B Word 0. Enables alpha afc subalgorithm for Alpha_Base calculation
++0x2 APATDQEN   masks=             files= 5 APATDQEN | differences.e2m | BIT F WORD 0. ENABLES ALTITUDE DERATE OVERRIDE LOGIC IN THE ALPHA FEAT
++0x2 APEGPNEN   masks=4000         files=59 APEGPNEN | common_parameters.e2m | BIT E WORD 0. ENABLES LOGIC TO USE ENGINE PROTECTIO~enabled / disabled
++0x2 APFLRTEN   masks=1000         files=59 Alpha_Fuel_Rate_Enable | CHR_CC_11.10.22.00.e2m | [APFLRTEN] Bit C Word 0. Enables alpha fuel rate sub-algo for Alpha_Base determination
++0x2 APLSEN     masks=400          files=59 Alpha_LSG_Enable | CHR_CC_11.10.22.00.e2m | [APLSEN] Bit A Word 0. Enables alpha lsg sub-algo for Alpha_Base determination
++0x2 APONGVEN   masks=2000         files=59 Alpha_On_Governor_Enable | CHR_CC_11.10.22.00.e2m | [APONGVEN] Bit D Word 0. Enables alpha on governor sub-algo for Alpha_Base determination
++0x2 Accident_Response_Enable masks=40           files= 6 Accident_Response_Enable | CHR_B2_11.61.08.05.e2m | Enable for Emergency Accident Response System (EARS)
++0x2 Algorithm_Enable_Flags masks=             files= 7 Algorithm_Enable_Flags | CHR_B2_11.61.08.05.e2m | bit-wise algorithm enable flags in trim space
++0x2 Alpha_AFC_Enable masks=800          files= 7 Alpha_AFC_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature AFC functionality
++0x2 Alpha_Engine_Protection_Override_Enable masks=4000         files= 7 Alpha_Engine_Protection_Override_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature epf override functionality
++0x2 Alpha_Fuel_Rate_Enable masks=1000         files= 7 Alpha_Fuel_Rate_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature fuel rate functionality
++0x2 Alpha_LSG_Enable masks=400          files= 7 Alpha_LSG_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature LSG functionality
++0x2 Alpha_On_Governor_Enable masks=2000         files= 7 Alpha_On_Governor_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature on governor functionality
++0x2 Alpha_Turbo_Protection_Enable masks=8000         files= 7 Alpha_Turbo_Protection_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature turbo protection functionality
++0x2 C_FSST_MpropTstEnbl masks=20           files= 6 C_FSST_MpropTstEnbl | CHR_B2_11.61.08.05.e2m | Enable for fuel system service mprop test
++0x2 Collector_Enable masks=100          files=23 Collector_Enable | CHR_B2_11.52.08.72.e2m | Bit 8 of 0-15. EEPROM indicator set by tools to enable data collector operation
++0x2 DCAGEN     masks=100          files=43 DCAGEN | common_parameters.e2m | BIT 8 OF 0-15.  EEPROM INDICATOR SET BY TOOLS TO ENABLE DATA COLLE~0,1
++0x2 DPAGEN     masks=200          files=59 Double_Pulse_Enable | CHR_CC_11.10.22.00.e2m | [DPAGEN] Bit 9 of 0-15. Enable/disable the double pulsing feature, 0 for disable, 1 for
++0x2 EBODEN     masks=40           files=59 Engine_Brake_Override | CHR_CC_11.10.22.00.e2m | [EBODEN] Bit 6 of 0-15. Calibration value which enables FSO valve to close on brake act
++0x2 JCSBR1AO   masks=10           files=59 Shadow_RAM_Auto_Load | CHR_CC_11.10.22.00.e2m | [JCSBR1AO] Bit 4 of 0-15. if true load shadow ram during initialization else dont
++0x2 MM_Enable  masks=80           files= 6 MM_Enable | CHR_B2_11.61.08.05.e2m | Enable for maintenance monitor feature
++0x2 PSAGEN     masks=20           files=59 Prog_Shift_Enable | CHR_CC_11.10.22.00.e2m | [PSAGEN] Bit 5 of 0-15. Customer trim flag to enable/disable Prog. Shift feature.
++0x2 T_EGR_Leak_Detection_Enable masks=200          files= 6 T_EGR_Leak_Detection_Enable | CHR_B2_11.61.08.05.e2m | Element of Algorithm_Enable_Flags
++0x2 T_OBD_Idle_Speed_Monitor_Enable masks=10           files= 7 T_OBD_Idle_Speed_Monitor_Enable | CHR_B2_11.52.08.72.e2m | Enable for obd engine speed diagnostics
++0x2 VSBKEN     masks=80           files=59 VSBKEN | common_parameters.e2m | BIT 7 WORD 0. ENABLES VSS ANTI-TAMPERING DETECTION~enable or disable
++0x2 VSS_Tamper_Enable masks=80           files= 1 VSS_Tamper_Enable | CHR_B2_11.52.08.72.e2m | Enable VSS Tamper Detection feature.
++0x4 APUOAPEN   masks=1            files=59 Alpha_User_Override_Enable | CHR_CC_11.10.22.00.e2m | [APUOAPEN] Bit 0 Word 1. EEPROM indicator set by engr applications to control alpha
++0x4 ATAGEN     masks=20           files=59 Altitude_Derate_Enable | CHR_CC_11.10.22.00.e2m | [ATAGEN] Bit 5 of 0-15. Calibration trim used to enable the altitude derate algorithm
++0x4 Alpha_User_Override_Enable masks=1            files= 7 Alpha_User_Override_Enable | CHR_B2_11.52.08.72.e2m | Enable for alpha feature user override functionality
++0x4 Altitude_Derate_Enable masks=20           files= 7 Altitude_Derate_Enable | CHR_B2_11.52.08.72.e2m | Enable for alt_derate feature
++0x4 CTTHSWOD   masks=4            files=59 Test_Cell_Throttle_Switch_Override_Enable | CHR_CC_11.10.22.00.e2m | [CTTHSWOD] BIT 2 OF 0-15. (WORD 1:B2) TEST CELL USE - ENABLE OVERRIDES UNDEFINED SWITCH F
++0x4 C_FSST_HpTstEnable masks=8            files= 6 C_FSST_HpTstEnable | CHR_B2_11.61.08.05.e2m | Enable for fuel system service mprop test
++0x4 FSTQUOEN   masks=10           files=59 Torque_Derate_Override_Enable | CHR_CC_11.10.22.00.e2m | [FSTQUOEN] Bit 4 Word 1. Enable indicator for torque derate fuel override
++0x4 FSUOFLEN   masks=2            files=59 User_Override_Fueling_Enable | CHR_CC_11.10.22.00.e2m | [FSUOFLEN] Bit 1 Word 1. Enable indicator for engineering fuel override command
++0x4 LSAGGNEN   masks=1000         files=59 LSAGGNEN | common_parameters.e2m | LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE.~Enable / Disable
++0x4 LSG_Aggressive_Gain_Set_Enable masks=1000         files= 7 LSG_Aggressive_Gain_Set_Enable | CHR_B2_11.52.08.72.e2m | Enable for LSG aggressive gain set
++0x4 LSG_High_Gear_Gain_Set_Enable masks=2000         files= 7 LSG_High_Gear_Gain_Set_Enable | CHR_B2_11.52.08.72.e2m | Enable for lsg feature
++0x4 LSG_Jcomm_Gain_Set_Enable masks=8000         files= 7 LSG_Jcomm_Gain_Set_Enable | CHR_B2_11.52.08.72.e2m | Enable for lsg feature
++0x4 LSG_Mid_Gear_Gain_Set_Enable masks=4000         files= 7 LSG_Mid_Gear_Gain_Set_Enable | CHR_B2_11.52.08.72.e2m | Enable for lsg feature
++0x4 LSG_OOM_Idle_Enable masks=80           files= 6 LSG_OOM_Idle_Enable | CHR_B2_11.61.08.05.e2m | Enable for out of mission idle chi8
++0x4 LSHGGNEN   masks=2000         files=59 LSHGGNEN | common_parameters.e2m | ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS.~Enable / Disable
++0x4 LSJCGNEN   masks=8000         files=59 LSJCGNEN | common_parameters.e2m | ENABLES/DISABLES THE LSG JCOMM PID GAINS~Enable/Disable
++0x4 LSMGGNEN   masks=4000         files=59 LSG_Mid_Gear_Gain_Set_Enable | CHR_CC_11.10.22.00.e2m | [LSMGGNEN] Enable parameter for LSG gain set used when in middle gears
++0x4 TSUOTAEN   masks=8            files=59 User_Override_Timing_Enable | CHR_CC_11.10.22.00.e2m | [TSUOTAEN] Bit 3 Word 1. Indicator of which algorithm is in control of the o'ride tmg ena
++0x4 T_CAC_Leak_Detection_Enable masks=40           files= 6 T_CAC_Leak_Detection_Enable | CHR_B2_11.61.08.05.e2m | Enable flag for CAC leak Detection
++0x4 T_CHH_Monitor_Enable masks=100          files= 6 T_CHH_Monitor_Enable | CHR_B2_11.61.08.05.e2m | T_CHH_Monitor_Enable
++0x4 Test_Cell_Throttle_Switch_Override_Enable masks=4            files= 7 Test_Cell_Throttle_Switch_Override_Enable | CHR_B2_11.52.08.72.e2m | Enable for test cell throttle override
++0x4 Torque_Derate_Override_Enable masks=10           files= 7 Torque_Derate_Override_Enable | CHR_B2_11.52.08.72.e2m | Enable for final fueling override by torque derate
++0x4 User_Override_Fueling_Enable masks=2            files= 7 User_Override_Fueling_Enable | CHR_B2_11.52.08.72.e2m | Enable for user override fueling
++0x6 Double_Start_Override_Enable masks=8000         files= 6 Double_Start_Override_Enable | CHR_B2_11.61.08.05.e2m | Enable for double start override feature
++0x6 EBCHDBEN   masks=40           files=59 EB_Clutch_Enable | CHR_CC_11.10.22.00.e2m | [EBCHDBEN] BIT 6 OF 0-15. CALIBRATION INDICATOR USED TO ENABLE ENGINE BRAKE DEACTIVATION
++0x6 EB_Clutch_Enable masks=40           files= 7 EB_Clutch_Enable | CHR_B2_11.52.08.72.e2m | Enable for engine brake clutch
++0x6 EPEN       masks=10           files=59 EPEN | common_parameters.e2m | BIT 4 OF 0-15.  ENGINE PROTECTION FEATURES ENABLE~1=enabled / 0=disabl
++0x6 EPRYEN     masks=20           files=59 EPRYEN | common_parameters.e2m | BIT 5 OF 0-15.  ENABLE RESTART ALGORITHM.~1=enabled / 0=disabl
++0x6 EPSOEN     masks=1            files=59 EPSOEN | common_parameters.e2m | BIT 0 OF 0-15.  ENABLE SHUTDOWN ALGORITHM.~1=enabled / 0=disabl
++0x6 Engine_Protection_Enable masks=10           files= 7 Engine_Protection_Enable | CHR_B2_11.52.08.72.e2m | Enable flag for the engine_protection feature
++0x6 Engine_Protection_Restart_Enable masks=20           files= 7 Engine_Protection_Restart_Enable | CHR_B2_11.52.08.72.e2m | Enable for engine protection restart wnable
++0x6 Engine_Protection_Shutdown_Enable masks=1            files= 7 Engine_Protection_Shutdown_Enable | CHR_B2_11.52.08.72.e2m | Enable for engine protection shutdown wnable
++0x6 ISRPEN     masks=8            files=43 ISRPEN | common_parameters.e2m | BIT 3 WORD2.  1 - PTO WILL NOT OVERRIDE SHUTDOWN, 0 - P~enable/disable
++0x6 Idle_Shutdown_PTO_Enable masks=8            files= 7 Idle_Shutdown_PTO_Enable | CHR_B2_11.52.08.72.e2m | 1 - PTO will not override shutdown;  0 - PTO will override idle shutdown.
++0x6 J1939_Monitor_Enable masks=800          files= 7 J1939_Monitor_Enable | CHR_B2_11.52.08.72.e2m | Enable for j1939 feature
++0x6 J1939_Retarder_Shift_Assist_Enable masks=1000         files= 7 J1939_Retarder_Shift_Assist_Enable | CHR_B2_11.52.08.72.e2m | Enable for j1939 feature
++0x6 JC22CCSW   masks=100          files=54 J1922_Monitor_Clear_Enable | CHR_CC_11.10.22.00.e2m | [JC22CCSW] Bit 1 of Bits 0:15 J1922 Monitor Clear Enable 0 = don"t clear J1922 control fla
++0x6 JC22MRSW   masks=80           files=54 J1922_Monitor_Enable | CHR_CC_11.10.22.00.e2m | [JC22MRSW] J1922 Monitor Enable 0 = disable monitor algorithm 1 = enable monitor algori
++0x6 JC39MREA   masks=800          files=59 J1939_Monitor_Enable | CHR_CC_11.10.22.00.e2m | [JC39MREA] J1939 Monitor Enable 0 = 1939 monitor algo. disabled 1 = 1939 monitor algo. en
++0x6 JCRDTXEA   masks=1000         files=59 JCRDTXEA | common_parameters.e2m | ENABLE FOR SPEED CONTROL / ENGINE BRAKING INTERACTION~enable/disable
++0x6 PTO_Firetruck_Enable masks=2            files= 1 PTO_Firetruck_Enable | CHR_B2_11.52.08.72.e2m | Enable for firetruck  pto
++0x6 PTO_Throttle_Override_Enable masks=2000         files= 7 PTO_Throttle_Override_Enable | CHR_B2_11.52.08.72.e2m | Enable for pto_throttle_override feature
++0x6 PTTHOVEN   masks=2000         files=59 PTO_Throttle_Override_Enable | CHR_CC_11.10.22.00.e2m | [PTTHOVEN] Bit 13 of 0-15. Calibration indicator as to whether throttle depression disabl
++0x6 Smart_O2_Enable masks=400          files= 7 Smart_O2_Enable | CHR_B2_11.52.08.72.e2m | Enable flag for the CEN DL messaging feature
++0x6 Smart_VGT_Enable masks=200          files= 7 Smart_VGT_Enable | CHR_B2_11.52.08.72.e2m | Enable flag for the CEN DL messaging feature
++0x6 TSUCICEN   masks=4000         files=59 User_Commanded_Timing_Increment_Enable | CHR_CC_11.10.22.00.e2m | [TSUCICEN] Bit 14 Word 2. Parameter used to enable the User Timing Increment
++0x6 User_Commanded_Timing_Increment_Enable masks=4000         files= 7 User_Commanded_Timing_Increment_Enable | CHR_B2_11.52.08.72.e2m | Enable for four_d_timing feature
++0x6 ZVPTLMEN   masks=8000         files=59 Zero_Vss_PTO_Limit_Enable | CHR_CC_11.10.22.00.e2m | [ZVPTLMEN] Bit 15 Word 2 - Enable engine speed to be limited when in PTO mode
++0x6 Zero_Vss_PTO_Limit_Enable masks=8000         files= 1 Zero_Vss_PTO_Limit_Enable | CHR_B2_11.52.08.72.e2m | When disabled the algorithm does not impose the RPM limit if PTO is active.
++0x8 CPAGEN     masks=             files=51 Cyl_Press_Maintenance_Enable | CHR_CC_11.10.22.00.e2m | [CPAGEN] Bit 11 of 0-15. enables and disables the cylinder pressure maintenance feature
++0x8 CRAGEN     masks=40           files=59 Cruise_Control_Enable | CHR_CC_11.10.22.00.e2m | [CRAGEN] Bit 6 of 0-15. status indicator which enables/disables cruise control
++0x8 CRDPEN     masks=400          files=59 CRDPEN | common_parameters.e2m | BIT 10 OF 0-15.  BIT 10 IS CRUISE_RSG_DROOP_ENABLE~disable/enable
++0x8 CRSVPWEN   masks=8000         files=59 CRSVPWEN | common_parameters.e2m | BIT 15 OF 0-15, ENABLES/DISABLES SAVING CRUISE SET SP~enable / disable
++0x8 Cruise_Control_Enable masks=40           files= 7 Cruise_Control_Enable | CHR_B2_11.52.08.72.e2m | Enable for cruise_control feature
++0x8 Cruise_Save_Set_Speed_On_Poweroff_Enable masks=8000         files= 7 Cruise_Save_Set_Speed_On_Poweroff_Enable | CHR_B2_11.52.08.72.e2m | Enable for
++0x8 Fuel_Log_Enable masks=200          files= 7 Fuel_Log_Enable | CHR_B2_11.52.08.72.e2m | Fuel Log Enable, enable the calculation of Trip_Info
++0x8 GRGDPNEN   masks=             files=43 GRGDPNEN | common_parameters.e2m | GEAR DOWN PROTECTION ENABLE, BIT 8 OF 0-15~ENABLED/DISABLED
++0x8 Gear_Down_Protection_Enable masks=100          files= 7 Gear_Down_Protection_Enable | CHR_B2_11.52.08.72.e2m | Enable for gear downshifts protection
++0x8 ISAGEN     masks=2            files=43 ISAGEN | common_parameters.e2m | WORD 3, BIT 1 OF 0-15.  1 - IDLE SHUTDOWN ENABLED; 0 - ~enable/disable
++0x8 ISODEN     masks=4            files=43 ISODEN | common_parameters.e2m | WORD 3, BIT 2 OF 0-15.  1 - ISOD IS ABLE TO BE SET; 0 -~enable/disable
++0x8 Idle_Shutdown_Enable masks=2            files= 7 Idle_Shutdown_Enable | CHR_B2_11.52.08.72.e2m | Enables Idle Shutdown Feature.
++0x8 Idle_Shutdown_Override_Enable masks=4            files= 7 Idle_Shutdown_Override_Enable | CHR_B2_11.52.08.72.e2m | 1 - IS OVERRIDE IS ENABLED;  0 - NO OVERRIDE.
++0x8 Idle_Speed_Adjust_Enable masks=8            files= 7 Idle_Speed_Adjust_Enable | CHR_B2_11.52.08.72.e2m | Enable allows operator to adjust speed.  Word 03, Bit 03.
++0x8 LSISAJEN   masks=8            files=59 LSISAJEN | common_parameters.e2m | BIT 3 OF 0-15.  ENABLE ALLOWS OPERATOR TO ADJUST SPEED~enable/disable
++0x8 NZESAGEN   masks=4000         files=59 ANC_Speed_Algorithm_Enable | CHR_CC_11.10.22.00.e2m | [NZESAGEN] Enable for speed limiting of the acceleration noise control algorithm
++0x8 NZFLAGEN   masks=1000         files=59 ANC_Fuel_Algorithm_Enable | CHR_CC_11.10.22.00.e2m | [NZFLAGEN] Enable for fuel limiting of the acceleration noise control algorithm
++0x8 NZTAAGEN   masks=2000         files=59 ANC_Timing_Algorithm_Enable | CHR_CC_11.10.22.00.e2m | [NZTAAGEN] Enable for timing advance of the acceleration noise control algorithm
++0x8 PTAGEN     masks=10           files=59 PTO_Enable | CHR_CC_11.10.22.00.e2m | [PTAGEN] Bit 4 of 0-15. parameter used to enable/disable PTO operation
++0x8 PTO_Enable masks=10           files= 7 PTO_Enable | CHR_B2_11.52.08.72.e2m | Enable for pto feature
++0x8 PTRXEN     masks=20           files=43 PTRXEN | common_parameters.e2m | BIT 5 OF 0-15.  CALIBRATION INDICATOR AS TO WHETHER R~Enable / Disable
++0x8 RSAGEN     masks=80           files=59 Road_Speed_Governor_Enable | CHR_CC_11.10.22.00.e2m | [RSAGEN] Bit 7, Enable/Disable Road Speed Governor for engineering use
++0x8 Road_Speed_Governor_Enable masks=80           files= 7 Road_Speed_Governor_Enable | CHR_B2_11.52.08.72.e2m | Enable flag for the road_speed  feature
++0x8 TIEN       masks=200          files=43 TIEN | common_parameters.e2m | BIT 9 OF 0-15 IN WORD 3.  TRIP INFO SYSTEM ENABLED = 1, DISABLED~0 - 1
++0x8 T_Block_Heater_Detection_Enable masks=1            files= 7 T_Block_Heater_Detection_Enable | CHR_B2_11.52.08.72.e2m | Enable bit for Block-heater detection algorithm
++0x8 T_Cat_In_Tmptr_IR_Low_Enable masks=20           files= 7 T_Cat_In_Tmptr_IR_Low_Enable | CHR_B2_11.52.08.72.e2m | Enable for the cat in tmptr in range low.
++0x8 T_OBD_EGR_Low_Flow_Enable masks=400          files= 6 T_OBD_EGR_Low_Flow_Enable | CHR_B2_11.61.08.05.e2m | Enable for obd egr low flow rationality
++0xa ADV_OVER   masks=100          files=43 ADV_OVER | common_parameters.e2m | BIT 8 OF WORD 4.  ENABLE INDICATOR FOR THE ENGINE~FF = enable, 0 = dis
++0xa FSUCFLEN   masks=1            files=59 FSUCFLEN | common_parameters.e2m | BIT 0 WORD 4.  ENABLES THE USE OF USER_COMMANDED_FUELIN~disable/enable
++0xa TSUCTAEN   masks=100          files=59 User_Commanded_Timing_Enable | CHR_CC_11.10.22.00.e2m | [TSUCTAEN] Bit 8 of word 4. Enable indicator for the engineering command timing advance
++0xa User_Commanded_Fueling_Enable masks=1            files= 7 User_Commanded_Fueling_Enable | CHR_B2_11.52.08.72.e2m | Enable for User_Commanded_Fueling
++0xa User_Commanded_Timing_Enable masks=100          files= 7 User_Commanded_Timing_Enable | CHR_B2_11.52.08.72.e2m | Enable for User_Commanded_Timing
++0xc ADAAPROD   masks=1000         files=37 ADAAPROD | differences.e2m | OVERRIDE FOR AMBIENT AIR PRESSURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADAATPOD   masks=80           files=29 ADAATPOD | differences.e2m | AMBIENT_AIR_TEMPERATURE_OVERRIDE, ALGORITHM_ENABLE_FL~ENABLE / DISABLE
++0xc ADBSPROD   masks=20           files=37 ADBSPROD | differences.e2m | OVERRIDE FOR BOOST PRESSURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADBTVTOD   masks=2000         files=37 ADBTVTOD | differences.e2m | OVERRIDE FOR BATTERY VOLTAGE OVERRIDE FILTERED VALUE~ENABLE / DISABLE
++0xc ADCLTPOD   masks=40           files=37 ADCLTPOD | differences.e2m | OVERRIDE FOR COOLANT TEMPERATURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADCVOD     masks=4            files=36 ADCVOD | differences.e2m | OVERRIDE FOR COOLANT LEVEL FILTERED VALUE~ENABLE/DISABLE
++0xc ADDPTSOD   masks=80           files= 6 ADDPTSOD | differences.e2m | HSG_DROOP_SELECTION, ALGORITHM_ENABLE_FLAGS WORD 5 BI~ENABLE / DISABLE
++0xc ADESSVOD   masks=4000         files=37 ADESSVOD | differences.e2m | OVERRIDE FOR ENGINE SPEED SENSOR SV FILTERED VALUE~ENABLE/DISABLE
++0xc ADEXPROD   masks=200          files= 6 ADEXPROD | differences.e2m | OVERRIDE FOR EXHAUST PRESSURE FILTERED VALUE~enable / disable
++0xc ADFLTPOD   masks=2            files=37 ADFLTPOD | differences.e2m | OVERRIDE FOR FUEL TEMPERATURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADIMTPOD   masks=1            files=37 ADIMTPOD | differences.e2m | OVERRIDE FOR INTAKE MANIFOLD TEMPERATURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADMPSEOD   masks=100          files= 6 ADMPSEOD | differences.e2m | ENABLE FOR WHAT FUELING MAP TO USE FILTERED VALUE~ENABLE/DISABLE
++0xc ADOLPROD   masks=10           files=37 ADOLPROD | differences.e2m | OVERRIDE FOR OIL_PRESSURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADPOTPOD   masks=100          files=29 ADPOTPOD | differences.e2m | OVERRIDE FOR POWER_STEERING_TEMPERATURE FILTERED VALUE~ENABLE/DISABLE
++0xc ADROTHOD   masks=800          files=37 ADROTHOD | differences.e2m | OVERRIDE FOR REMOTE_THROTTLE FILTERED VALUE~ENABLE/DISABLE
++0xc ADSATHOD   masks=400          files=37 ADSATHOD | differences.e2m | OVERRIDE FOR SAMPLED_THROTTLE FILTERED VALUE~ENABLE/DISABLE
++0xc ADSYEPOD   masks=200          files=29 ADSYEPOD | differences.e2m | OVERRIDE FOR SPARE_CHANNEL_1 FILTERED VALUE~ENABLE/DISABLE
++0xc ADSYFPOD   masks=8            files=37 ADSYFPOD | differences.e2m | OVERRIDE FOR FUEL PRESSURE FILTERED VALUE~ENABLE / DISABLE
++0xc ADTHSVOD   masks=8000         files=37 ADTHSVOD | differences.e2m | OVERRIDE FOR THROTTLE_POSITION_SENSOR_SV FILTERED VALUE~ENABLE/DISABLE
++0xc ADTQTSOD   masks=200          files= 6 ADTQTSOD | differences.e2m | TORQUE_CURVE_SELECTION, ALGORITHM_ENABLE_FLAGS WORD 5~ENABLE / DISABLE
++0xc ADTTOD     masks=80           files= 5 ADTTOD | differences.e2m | TRANSMISSION_TEMPERATURE_OVERRIDE
++0xc ADVAPTOD   masks=100,4        files= 5 ADVAPTOD | unique_lines.e2m | VARIABLE_PTO, ALGORITHM_ENABLE_FLAGS WORD 5 BIT 2~ENABLE / DISABLE
++0xc T_CBL_EGR_Frac_User_Override masks=1            files=15 T_CBL_EGR_Frac_User_Override | CHR_B2_11.52.08.72.e2m | Enable for combustion_manager feature, combustion_limit_management
++0xc T_CBL_Fuel_User_Override masks=2            files=15 T_CBL_Fuel_User_Override | CHR_CC_11.20.13.16.e2m | Bit 1 of Word 6, Fueling user override in before Advanced FS Control
++0xc T_CBL_MCF_User_Override masks=4            files=15 T_CBL_MCF_User_Override | CHR_CC_11.20.13.16.e2m | Bit 2 of Word 6, Mass charge flow user override on final output of comb mgr
++0xc T_CBL_SOI_Increment_Enable masks=8            files=15 T_CBL_SOI_Increment_Enable | CHR_B2_11.52.08.72.e2m | Enable for combustion_manager feature, combustion_limit_management
++0xc T_CBL_SOI_User_Override masks=10           files=15 T_CBL_SOI_User_Override | CHR_CC_11.20.13.16.e2m | Bit 4 of Word 6, SOI user override before Cranking or Advanced FS Control
++0xc T_CBR_Alpha_User_Override masks=20           files=15 T_CBR_Alpha_User_Override | CHR_B2_11.52.08.72.e2m | Enable for combustion_manager feature, combustion_reference
++0xc T_CBR_Chi_Selective_Override masks=40           files=15 T_CBR_Chi_Selective_Override | CHR_CC_11.20.13.16.e2m | Bit 6 of Word 6, 0:CBR_SINGLE_USER_OVERRIDE; 1:CBR_FULL_USER_OVERRIDE
++0xc T_CBR_Chi_User_Override masks=80           files=15 T_CBR_Chi_User_Override | CHR_B2_11.52.08.72.e2m | Enable for combustion_manager feature, combustion_reference
++0xc T_CBR_EGR_Off_User_Override masks=100          files=15 T_CBR_EGR_Off_User_Override | CHR_B2_11.52.08.72.e2m | Enable for combustion_manager feature, combustion_reference
++0xc T_CBR_Fuel_Ref_User_Override masks=200          files=15 T_CBR_Fuel_Ref_User_Override | CHR_CC_11.20.13.16.e2m | Bit 0 of Word 9, Fueling user override in combustion manager after OFC limit
++0xc T_CBR_Gross_Fuel_User_Override masks=400          files=15 T_CBR_Gross_Fuel_User_Override | CHR_CC_11.20.13.16.e2m | Bit 10 of Word 6, Fueling user override in combustion manager before OFC limit
++0xc T_Charge_Press_Estimate_Enable masks=8000         files=15 T_Charge_Press_Estimate_Enable | CHR_B2_11.52.08.72.e2m | Enables or disables charge pressure estimation
++0xc T_Charge_Tmptr_Estimate_Enable masks=4000         files=15 T_Charge_Tmptr_Estimate_Enable | CHR_CC_11.20.13.16.e2m | Enables or Disables the charge temperature estimate algorithm
++0xc T_OFC_Equiv_Ratio_User_Override masks=800          files=15 T_OFC_Equiv_Ratio_User_Override | CHR_B2_11.52.08.72.e2m | Enable for combustion_parameter_determination feature
++0xc T_OFC_Fuel_Limit_User_Override masks=1000         files=15 T_OFC_Fuel_Limit_User_Override | CHR_B2_11.52.08.72.e2m | Enable for combustion_parameter_determination feature
++0xc T_TPE_Exhaust_Press_Est_Enable masks=2000         files=15 T_TPE_Exhaust_Press_Est_Enable | CHR_CC_11.20.13.16.e2m | Exhaust pressure estimate enable
++0xe ADCROD     masks=8            files=33 ADCROD | differences.e2m | OVERRIDE FOR CRUISE CONTROL SWITCH MUX FILTERED VALUE~ENABLE/DISABLE
++0xe ADECSVOD   masks=2            files=37 ADECSVOD | differences.e2m | OVERRIDE FOR ENGINE SENSOR SV FILTERED VALUE~ENABLE/DISABLE
++0xe ADEGCFOD   masks=20           files=32 ADEGCFOD | differences.e2m | OVERRIDE FOR EGR CURRENT FEEDBACK FILTERED VALUE~ENABLE/DISABLE
++0xe ADFRPIOD   masks=80           files= 6 ADFRPIOD | differences.e2m | OVERRIDE FOR CAPS FRONT PUMP CURRENT FILTERED VALUE~ENABLE / DISABLE
++0xe ADFTSVOD   masks=4            files=17 ADFTSVOD | differences.e2m | FREQUENCY_THROTTLE_INPUT_SV_OVERRIDE~ENABLE/DISABLE
++0xe ADHBSVOD   masks=4,80         files=37 ADHBSVOD | differences.e2m | OVERRIDE FOR HIGH SIDE GATE BIAS SV FILTERED VALUE~ENABLE/DISABLE
++0xe ADMACEOD   masks=20           files= 6 ADMACEOD | differences.e2m | OVERRIDE FOR CAPS MAIN CURRENT FILTERED VALUE~ENABLE / DISABLE
++0xe ADOCSVOD   masks=100          files=32 ADOCSVOD | differences.e2m | OVERRIDE FOR OP AMPS AND COMPARATORS SV FILTERED VALUES~ENABLE/DISABLE
++0xe ADOEPROD   masks=8            files= 6 ADOEPROD | differences.e2m | OVERRIDE FOR OEM_PRESSURE FILTERED VALUE~ENABLE/DISABLE
++0xe ADPSSVOD   masks=40           files=37 ADPSSVOD | differences.e2m | OVERIDE FOR PROGRAMMING_PULSE_SV FILTERED VALUE~ENABLE/DISABLE
++0xe ADRRPIOD   masks=100          files= 6 ADRRPIOD | differences.e2m | OVERRIDE FOR CAPS REAR PUMP CURRENT FILTERED VALUE~ENABLE / DISABLE
++0xe ADRTCVOD   masks=4            files=17 ADRTCVOD | differences.e2m | OVERRIDE FOR RTC VOLTAGE FILTERED VALUE~ENABLE/DISABLE
++0xe ADVHSVOD   masks=1            files=37 ADVHSVOD | differences.e2m | OVERRIDE FOR VEHICLE_CONNECTOR_SENSORS_SV FILTERED VALU~ENABLE/DISABLE
++0xe ADWFOD     masks=10           files=37 ADWFOD | differences.e2m | OVERRIDE FOR WATER_IN_FUEL FILTERED VALUE~ENABLE/DISABLE
++0xe Alt_Not_Brake_Switch_Enable masks=10           files=13 Alt_Not_Brake_Switch_Enable | CHR_B2_11.52.08.72.e2m | Alternate Brake switch diagnostics algorithm enable/disable
++0xe CREBEN     masks=8000         files=59 CREBEN | common_parameters.e2m | TRIM PARAMETER ENABLES/DISABLES CC/EBRAKE BIT 15 OF 0~enable / disable
++0xe Cruise_Brake_Enable masks=8000         files= 7 Cruise_Brake_Enable | CHR_B2_11.52.08.72.e2m | Enable for cruise_control feature
++0xe Enhanced_Diagnostics_Enable masks=20           files= 9 Enhanced_Diagnostics_Enable | CHR_B2_11.52.08.72.e2m | Enable for pressure_inrange feature
++0xe Executive_Throughput_Monitor_Enable masks=4            files= 6 Executive_Throughput_Monitor_Enable | CHR_B2_11.61.08.05.e2m | Enable for exec thruput monitor
++0xe FC02EN     masks=1000         files=59 FC02EN | common_parameters.e2m | BIT 12 OF 0-15 ALLOWS BUS APPLICATIONS IMT FAN CONTROL~disable/enable
++0xe FCAKAGEN   masks=400          files=59 FCAKAGEN | common_parameters.e2m | BIT 10 OF 0-15, ALLOWS PRESSURE SWITCH FUNCTIONALITY~disable/enable
++0xe FCAKVSEN   masks=800          files=59 Fan_AC_Vehicle_Speed_Interaction_Enable | CHR_CC_11.10.22.00.e2m | [FCAKVSEN] BIT 11 OF 0-15, Allows special AC pressure switch functionality
++0xe FCEBAGEN   masks=2000         files=59 FCEBAGEN | common_parameters.e2m | BIT 13 OF 0-15, ALLOWS ENGINE BRAKE FUNCTIONALITY~disable/enable
++0xe FCEN       masks=4000         files=59 FCEN | common_parameters.e2m | BIT 14 OF 0-15, ALLOWS MANUAL SWITCH INPUT FUNCTIONALIT~disable/enable
++0xe ISIMEN     masks=200          files=43 ISIMEN | common_parameters.e2m | BIT 9 WORD 6. 1 - IMT OVERRIDE SHUTDOWN PROCESS; 0 - AM~enable/disable
++0xe Intake_Air_Throttle_Status_Diag_Enable masks=40           files= 7 Intake_Air_Throttle_Status_Diag_Enable | CHR_B2_11.52.08.72.e2m | Enable for Intake Air Throttle Status feature.
++0xe Low_Fuelpr_Derate_Enable masks=2            files=15 Low_Fuelpr_Derate_Enable | CHR_B2_11.52.08.72.e2m | Enable for Low Fuel Pressure Derate Feature
++0xe RE_2Lock_Enable masks=8            files=10 RE_2Lock_Enable | CHR_CC_11.15.08.04.e2m | Algorithm enable for 2nd gear lockup strategy
++0xe RE_Trans_Enable masks=4            files=11 RE_Trans_Enable | CHR_B2_11.52.08.72.e2m | Bit 3 of Algorithm_Enables_Flags[6] enables feature
++0xe T_RGM_Closed_Loop_DeSOx_Enable masks=80           files= 7 T_RGM_Closed_Loop_DeSOx_Enable | CHR_B2_11.52.08.72.e2m | Enable for aftertreatment Phase 6 feature
++0xe T_RGM_DeNOx_Trim_Fuel_Frac_Enbl masks=100          files= 1 T_RGM_DeNOx_Trim_Fuel_Frac_Enbl | CHR_B2_11.52.08.72.e2m | Enable for aftertreatment Phase 6 feature
++0xe T_TCU_Message_Enable masks=8            files= 7 T_TCU_Message_Enable | CHR_B2_11.52.08.72.e2m | Enables automatic transmission diagnostic message
++0xe T_Turbo_Speed_Estimation_Enable masks=1            files=15 T_Turbo_Speed_Estimation_Enable | CHR_CC_11.20.13.16.e2m | Bit 1 of Algorithm_Enables_Flags[6] enables feature

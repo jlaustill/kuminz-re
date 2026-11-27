@@ -1,0 +1,59 @@
+cm848: round 57 stage A - the cruise cluster named from its code, the cruise N/V ratio from e2m 8A0E / 8A0F
+
+The cruise cluster at 0x511ea8-0x513980, read function by function. It had ten unprefixed legacy names (none in
+CM550), and three of them were wrong-domain:
+- governor_cruise_dualCalc_dispatch -> cm848_runCoolantOverheatDerateMonitors: it runs the coolant overheat minimum
+  and aggressive derate monitors.
+- engine_coolantTemp_delta_calc -> cm848_calculateCoolantOverheatTemperatureError: e2m 8A72 +0 CT_Derate_Temp_Error,
+  setpoint - coolant temperature while the overheat derate is active.
+- fuel_demand_timing_initialize -> cm848_initializeRockCycleAndTsc1LostManagement: the boot initializer of the two
+  functions just before it in ROM (TSC1 lost management armed and its counter loaded, plus the rock cycle lookup
+  cache). Nothing in it is fuel demand or timing.
+
+The cruise state functions, each now returning CRUISE_CONTROL_STATE:
+- governor_cruise_baseState_get -> cm848_selectBaseCruiseState: HOLD while engaged, else CANCEL while a resume speed
+  is kept, else OFF.
+- governor_cruise_standbyState_get -> cm848_selectDeniedCruiseState: the state while cruise is denied.
+- the switch handlers -> cm848_selectCruiseStateForSetSwitch / ...ForResumeSwitch / ...ForCoastSwitch (a new press
+  gives SET / BUMP_UP / BUMP_DOWN; a held switch gives COAST / ACCELERATE after the hold countdown).
+- governor_fuel_mode_initialization -> cm848_initializeCruiseControl (boot).
+
+The ratio functions:
+- governor_cruise_rpmRatio_ema -> cm848_filterCruiseEngineToVehicleSpeedRatio.
+- cm848_integrateCruiseRpmRatioChange -> cm848_integrateCruiseEngineToVehicleSpeedRatioChange.
+
+The e2m 8A0E / 8A0F "N_V ratio" family (both blocks are in the parameter ID table) moves from cruise_rpm_ratio_* to
+cruise_engine_to_vehicle_speed_ratio_*:
+- the ratio (8A0F +2), its previous value, the integral (8A0F +0), the integral limit (8A0E +A), the maximum /
+  minimum (8A0E +E / +10);
+- the integral clear count / level (8A0E +6 / +8, were cruise_steady_debounce_count / cruise_ratio_steady_threshold),
+  the steady count, and cruise_engine_speed_previous;
+- two type-only rows named: the filter coefficient (8A0E +C) and the filter state.
+
+The return types:
+- The five getters take no parameters, so the return row is the whole prototype. They return in r3 (li r3 / extsh
+  r3 before blr).
+- They render the states by name (CVar1 = CRUISE_CANCEL), and the switch handlers lose their (int)(short) return
+  casts (6 casts fewer).
+- The caller cm848_cruiseControlPeriodicUpdate re-renders without adding a cast. Its locals are renumbered, and the
+  toggle value now goes through a local before its store; the values are the same.
+
+Also:
+- refresh_other_csvs_r57.py updates the old names in enums.csv (a CRUISE_SWITCH_COAST comment), which
+  refresh_references.py does not cover.
+- The 0x3fcd90 word that cm848_initializeCruiseControl zeroes has no reader, so it stays unnamed.
+
+Proof:
+- prove_r57.sh (the renames applied to the old .cpp, casts folded): 1962 of 1968 functions are label-only. The
+  other six are the five retyped getters and their caller.
+- prove_return_types_r57.py: the five getters are equal once the members go back to their values, casts are
+  removed and locals / the return type are normalized.
+- diff_function_r57.py on the caller: renumbered locals, and the toggle value through wVar2 before its store.
+- count_casts.py: the caller keeps its 1 cast; the switch handlers go 2 -> 0 each.
+- No old global name is left in the .cpp, and each old function name is left once, in its own plate's (was ...)
+  note. check_history_r44b.py: all 12 renamed rows keep their (was ...) note.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

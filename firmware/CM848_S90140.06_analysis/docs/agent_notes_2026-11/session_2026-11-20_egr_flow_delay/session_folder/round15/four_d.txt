@@ -1,0 +1,33 @@
+=== cm848_processSpeedSensorCompensation (lines 27204-27241, 32 non-blank)
+// Function: cm848_processSpeedSensorCompensation @ 0x00027d38
+//
+void cm848_processSpeedSensorCompensation(void)
+{
+  uint uVar1;
+  word local_8;
+  word local_6;
+  if (four_dimensional_fueling_interpolation_factor != 0) {
+    local_6 = cm848_dualAxisTableInterpolation
+                        (&fuel_demand_threshold_cached_axis_offset,
+                         low_speed_governor_adjusted_reference_speed,fuel_demand_rpm_threshold_cal,
+                         400,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
+    cm848_clampFuelDemandToValidRange(&local_6);
+  }
+  if (four_dimensional_fueling_interpolation_factor < 0x4000) {
+    local_8 = cm848_dualAxisTableInterpolation
+                        (&governor_fuel_demand_cached_axis_offset,
+                         low_speed_governor_adjusted_reference_speed,governor_fuel_table_xaxis_cal,
+                         400,governor_fuel_table_ystart_cal,governor_fuel_table_yend_cal,4);
+    cm848_clampFuelDemandToValidRange(&local_8);
+  }
+  governor_speed_correction = local_6;
+  if ((four_dimensional_fueling_interpolation_factor != 0x4000) &&
+     (governor_speed_correction = local_8, four_dimensional_fueling_interpolation_factor != 0)) {
+    uVar1 = (int)(short)four_dimensional_fueling_interpolation_factor *
+            (int)(short)(local_6 - local_8);
+    governor_speed_correction =
+         (short)((int)uVar1 >> 0xe) + (ushort)((int)uVar1 < 0 && (uVar1 & 0x3fff) != 0) + local_8;
+  }
+  return;
+}
+//

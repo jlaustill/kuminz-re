@@ -153,7 +153,7 @@ The earlier sections use the old names. Each rename's plate comment or comment g
 | 0x40af58 | `power_take_off_throttle_override_flag` (e2m PTTHOV) | `governor_idle_transition_flag` |
 
 Kept on purpose:
-- `cruise_speed_limit_working`: both the cruise control and the vehicle speed limiter use it.
+- `cruise_speed_limit_working`: both the cruise control and the vehicle speed limiter use it. (PR #53 round 16: `road_speed_governor_reference_speed`, the road speed governor's reference.)
 - The `fuel_flow_rpm_*` drivetrain ratio words.
 - The limiter functions of the unidentified codes.
 
@@ -317,7 +317,7 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - **The records.** All 33 are now `ema_filter_state_t` instances, named after what they filter: the call's output,
   or its input when the output is a local. Examples:
   - `power_take_off_speed_error_filter` (was `protection_filter_state_ptr` + `governor_integrator_working`);
-  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`);
+  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`; `low_speed_governor_error_filter` since PR #53 round 14);
   - `fuel_demand_delta_filter` (was `throttle_fuel_pgn_handler_pointer`);
   - the five fuel metering / fuel pressure governor records that were `cam_sync_*`;
   - `pressure_correction_first_filter` / `_second_filter` (two cascaded filters);
@@ -738,6 +738,9 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the `diag_dm1_*` words around 0x3fddb6 / 0x40c278 are the e2m data collector (blocks 0030-003B), not DM1;
   - `sensor_channel109_*` is the exhaust pressure sensor. `boost_pressure_synthetic_ema` / `boost_synthetic_ema_*` /
     `boost_correction_mode_flags` are the exhaust pressure estimate (1772);
+    - Partly done in task 046 (2026-11-20): `boost_pressure_synthetic_ema` / `boost_correction_mode_flags` are now
+      `exhaust_pressure_estimate` / `_estimate_state`. Still open: `sensor_channel109_*` and the 198C
+      `boost_synthetic_ema_*_coef` constants of the TPE estimator.
   - `boost_target_*` is the exhaust temperature estimate;
   - `engine_to_vehicle_speed_ratio_*` is the transfer case low-range detection (8C60);
   - `engine_temperature_protection_filter_state` is the exponentialMovingAverage record of `drivetrain_ratio` (it
@@ -806,7 +809,7 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
     fuel pressure governor faults.
 - [x] **Misnamed words around the arbitration** (renamed in stage 3 except `cruise_speed_limit_working`; still open: the rest of the power take-off cluster below and the 0x3fb52a row):
   - `cruise_fuel_demand_setpoint` (0x40b674) = the vehicle speed limit fuel; `cruise_speed_setpoint_adjusted` (0x40b6e0)
-    = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit.
+    = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit (`road_speed_governor_reference_speed` since PR #53 round 16).
   - `governor_fuel_demand_low_threshold` (0x40b672) = the copy of `high_speed_governor_fueling`;
     `governor_fuel_demand_upper` (0x40b67a) = the low speed governor fuel the max select compares;
     `governor_pid_fuel_output` (0x40b676) = the cruise PID fuel.
@@ -830,3 +833,29 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - `firmware/CM848_S90140.06_analysis/output/global_variables.csv`, `structure_definitions.csv`
 - `e2m-analysis/exports/common_parameters.json` (the FS*ST / PT* records)
 - `firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp` (`runHighSpeedGovernorPid` @ 0x1ce7c)
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `pressure_correction_first_filter` → `intake_manifold_temperature_lag_first_filter`
+- `cruise_speed_offset` → `high_speed_governor_compensator_working_filter_coefficient_3`
+- `cruise_speed_default_cal` → `high_speed_governor_compensator_transition_coefficient`
+- `ambient_air_temperature_selected` → `compressor_inlet_temperature`
+- `cruise_speed_blend_working` → `current_horsepower_peak_fueling_cal`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `etc1_torque_mode_timeout_cal` → `j1939_time_limited_node_recovery_time`
+- `j1939_tsc1_override_state` → `j1939_powertrain_control_state`
+- `j1939_tsc1_override_state.proprietary_offset_value` → `j1939_powertrain_control_state.engine_net_output_torque` (e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque, ft lb, signed; stage B1 / B2)
+
+## Resolved by PR #53 round 7 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `engine_temperature_protection_filter_state` → `drivetrain_ratio_filter_state`

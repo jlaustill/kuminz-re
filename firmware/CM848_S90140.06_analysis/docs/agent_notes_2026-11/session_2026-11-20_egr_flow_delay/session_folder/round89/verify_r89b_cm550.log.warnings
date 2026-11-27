@@ -1,0 +1,75 @@
+0 skipped (invalid format)
+2 failed
+! arrays.csv not found — skipping
+diagnosticErrorHandler[0]: can_std_rx_desc_t* rx_msg
+Error: Unknown type 'bool' for validateSecurityKey.bVar1
+Failed:  0
+Failed: 0
+Failed: 1
+! labels.csv not found — skipping
+Not found: 13 (already absent — fine)
+Placed cm550_messageErrorHandler: destination_address sp+5:1, pgn sp+6:2
+Placed diagnosticErrorHandler: rx_msg sp+4:4
+Skipped: 0
+Skipped: 15
+Skipped (already named): 0
+Type stats: 0 out-of-range, 0 already match, 4898 unmapped type, 190 failed (in code)
+Unknown 0x8091c2-0x8092c1 left 0 (the dump skipped a chunk there)
+WARNING: 1 function imports failed
+Warning: cm550_calculateBlendedTableValue defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_calculateGovernorDroopSpeed defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_diagnosticMemoryAddressResolver defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_diagnosticMessageValidator defines 3 param row(s) but Ghidra recovered 2 — applying the CSV's 3 (verify this is intended)
+Warning: cm550_diagnosticSessionValidator defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_diagnosticStateInitializer defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_diagnosticTableSnapshotCapture defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_exponentialMovingAverage defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_FUN_000142d4 defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_FUN_000333d6 defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_FUN_00033460 defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_insiteMultiFrameResponseBuilder defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_ioControlEntryAdd defines 3 param row(s) but Ghidra recovered 2 — applying the CSV's 3 (verify this is intended)
+Warning: cm550_messageErrorHandler defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_protectionCalculationHelper defines 3 param row(s) but Ghidra recovered 2 — applying the CSV's 3 (verify this is intended)
+Warning: cm550_protectionConditionEvaluator defines 4 param row(s) but Ghidra recovered 3 — applying the CSV's 4 (verify this is intended)
+Warning: cm550_protectionPercentageCalculator defines 3 param row(s) but Ghidra recovered 2 — applying the CSV's 3 (verify this is intended)
+Warning: cm550_secondOrderFilter defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_secondOrderFilterUnsigned defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: cm550_signedFirstOrderFilter defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: Function name mismatch at 0x10520 - expected 'arrayRangeSum', found 'cm550_arrayRangeSum'
+Warning: Function name mismatch at 0x16c3c - expected 'parameterCircularBufferWrite', found 'cm550_parameterCircularBufferWrite'
+Warning: Function name mismatch at 0x18c1c - expected 'diagnosticProtectionProcessor', found 'cm550_diagnosticProtectionProcessor'
+Warning: Function name mismatch at 0x18f86 - expected 'protectionStateUpdater', found 'incrementDiagnosticCounters'
+Warning: Function name mismatch at 0x1bfa2 - expected 'circularBufferPush', found 'cm550_circularBufferPush'
+Warning: Function name mismatch at 0x1bfde - expected 'circularBufferPop', found 'cm550_circularBufferPop'
+Warning: Function name mismatch at 0x1e02a - expected 'fuelingValueClamp', found 'cm550_subtractAndClampValue'
+Warning: Function name mismatch at 0x206a8 - expected 'ptpSwitchedInputDebouncer', found 'cm550_FUN_000206a8'
+Warning: Function name mismatch at 0x21982 - expected 'diagnosticServiceSecurityValidator', found 'cm550_diagnosticServiceSecurityValidator'
+Warning: Function name mismatch at 0x22956 - expected 'diagnosticParamRequestHandler', found 'cm550_diagnosticParamRequestHandler'
+Warning: Function name mismatch at 0x22d8e - expected 'diagnosticStatusRequestHandler', found 'cm550_diagnosticStatusRequestHandler'
+Warning: Function name mismatch at 0x22de2 - expected 'diagnosticErrorHandler', found 'vp44_diagnosticErrorHandler'
+Warning: Function name mismatch at 0x2eea2 - expected 'diagnosticServiceDispatcher', found 'cm550_diagnosticServiceDispatcher'
+Warning: Function name mismatch at 0x2ef4a - expected 'diagnosticByteResponseDispatcher', found 'cm550_FUN_0002ef4a'
+Warning: Function name mismatch at 0x35064 - expected 'unsignedMultiplyDivide', found 'cm550_scaleByRatio'
+Warning: Function name mismatch at 0x35076 - expected 'signedMultiplyDivide64', found 'cm550_scaleByRatioSigned'
+Warning: Function name mismatch at 0x35088 - expected 'twoDimensionalTableInterpolation', found 'cm550_tableLookup2D'
+Warning: Variable 'bVar3' not found in unscrambleSecurityKey
+Warning: Variable 'bVar4' not found in unscrambleSecurityKey
+Warning: Variable 'current_mask' not found in unscrambleSecurityKey
+Warning: Variable 'cVar2' not found in unscrambleSecurityKey
+Warning: Variable 'cVar3' not found in validateSecurityKey
+Warning: Variable 'cVar6' not found in unscrambleSecurityKey
+Warning: Variable 'extracted_hour_meter' not found in validateSecurityKey
+Warning: Variable 'forward_byte_index' not found in unscrambleSecurityKey
+Warning: Variable 'iVar1' not found in unscrambleSecurityKey
+Warning: Variable 'key_matches' not found in validateSecurityKey
+Warning: Variable 'pbVar5' not found in validateSecurityKey
+Warning: Variable 'pbVar8' not found in unscrambleSecurityKey
+Warning: Variable 'pcVar7' not found in unscrambleSecurityKey
+Warning: Variable 'puVar4' not found in validateSecurityKey
+Warning: Variable 'puVar6' not found in validateSecurityKey
+Warning: vp44CanFrameBuilder defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: vp44_diagnosticByteResponseSender defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: vp44_handleCanCs5TransmitInterrupt defines 1 param row(s) but Ghidra recovered 0 — applying the CSV's 1 (verify this is intended)
+Warning: vp44MessageTransmitter defines 4 param row(s) but Ghidra recovered 2 — applying the CSV's 4 (verify this is intended)
+WARN  REPORT: Removed conflicting program file from project: /J90350.00.rom.bin (HeadlessAnalyzer)  

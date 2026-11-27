@@ -44,7 +44,7 @@ For CBD parameters (Column3 = 81AE):
 ### Live ECU Finding
 
 **Surprising discovery:** The RAM dump from a live CM848 ECU shows:
-- `cbd_enable_flag` (0x00408ef6) = **0x01 (ENABLED!)**
+- `cylinder_balance_enable_flag` (0x00408ef6) = **0x01 (ENABLED!)**
 - Someone has already enabled CBD on this specific ECU
 
 Values from live ECU RAM:

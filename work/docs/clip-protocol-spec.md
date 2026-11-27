@@ -440,6 +440,10 @@ This confirms:
 
 From reverse engineering `diagnosticCommandDispatcher` at 0x00012484:
 
+> **Note (2026-11-24, PR #53 round 85):** 0x00012484 is this function's address in J90280.05, a removed dump. In
+> J90350.00 it is `mc68k_dispatchJ1708ReceivedMessages` at 0x00015F8E: it drains the J1708 receive buffer and picks the
+> handler from the first message byte.
+
 1. **Diagnostic Service Enable Flags** (`0x8035ea`):
    - Bit 0: Core services (Service 3,4,5,6)
    - Bit 1: Insite live data
@@ -608,6 +612,8 @@ The CM550 firmware has TWO separate dispatch tables for handling incoming diagno
 |---------|----------|---------|---------|
 | 0x008019B8 | `diag_service_pgn_dispatch_ptr` | PGN-based service routing | `can_transmission_active_count` |
 | 0x008018D8 | `diagnostic_service_dispatch_ptr` | Service byte routing | `diagnostic_service_state_counter` |
+
+> **Correction (PR #53 round 94):** 0x801994-0x8019bb is `engine_tsc1_ignored_request_entries` (five 8-byte `engine_tsc1_ignored_request_t` records: data link / source address / control mode / countdown), not a dispatch table. 0x8019B8 (`diag_service_pgn_dispatch_ptr` here) is the control mode of entry 4, and 0x801998 (`diagnostic_service_state_counter`) is the control mode of entry 0: the TSC1 code indexes both as entry fields. The dispatch loops below are an older reading of the decompilation. And 0x2efd0 (`diagnosticServiceDispatcherByPgn` below) is the PGN 61442 (ETC1) receive handler, registered for 0xf002 at 0x2f114: `cm550_receivePgn61442ElectronicTransmissionController1Message`.
 
 Each entry in these tables is 6 bytes:
 - Bytes 0-1: Service ID / match bytes

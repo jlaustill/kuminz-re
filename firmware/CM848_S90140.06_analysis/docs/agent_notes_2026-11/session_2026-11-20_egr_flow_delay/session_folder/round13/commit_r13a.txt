@@ -1,0 +1,42 @@
+cm848: round 13 stage A - the end-of-line test steps and the SCI command 0x25 service tests (label-only)
+
+The Chrysler end-of-line (in-plant) test sequencer, cm848_runEndOfLineTestSequence, runs seven step functions. The
+steps and their working words carried cold start / protection / cam sync / fault queue guesses. The SCI command 0x25
+(37) tests share two of those words and the timeout function. e2m 164A (EOL_*) and 1649 (CHRY_In_Plant_*) name the
+settings. e2m 8C74 / 8C76 / 8C77 / 8C19 'Cmd25' name the service tool tests, which match DRB 25-25
+CylinderPerformanceTest and 25-26 HighPressSaftyValveTest.
+- **The steps:** 0 start (cm848_runEndOfLineTestStartStep), then 1 output tests (cm848_runEndOfLineOutputTestStep, was
+  engine_coldStart_protection_stateMachine).
+  - The output tests run with the engine stopped: lift pump (output 53, passes without P0629 / P0628), then the
+    wait-to-start lamp (4) and A/C clutch relay (38), then intake air heaters 1 / 2 (43 / 44) one at a time.
+  - Each heater stores the battery voltage and cm848_measureEndOfLineIntakeAirHeaterVoltageDrops takes the drop.
+  - Then 2 the intake air heater verdict, 3 the alternator test (cuts the field), 6 the plant tester's final result.
+  - Also the sequencer initializer and the output request pair cm848_set / clearEndOfLineTestOutputRequest.
+  - cm848_isDtcStoredOtherThanFault: it is called with fault 256, which has no DTC slot, so it means 'a DTC is stored'.
+- **The words:** the step, the output test state / timer / on flag, the two heater voltage drops and their reading
+  delay timers, and the alternator test snapshot and field cut flag.
+  - BYTE_003fd1ac (time-shared with the boot kernel) is end_of_line_test_seconds_since_engine_start. Its boot calls
+    keep their call override.
+  - New rows: its pass divider, end_of_line_test_time_since_engine_start (0.1 s) and the output number.
+  - 0x642ee is e2m 164A +C EOL_EVR_Test_Time.
+- **The alternator test compare:** subf / clrlwi take the present voltage minus the snapshot in 16 bits, so any fall
+  passes.
+- **SCI command 0x25:** cm848_expireSciCommand37Tests (was protectionVoltageTimeoutControl) and its initializer, and
+  the seven test timeouts.
+  - The tests: alternator field 0x11, lift pump 0x24, cylinder contribution 0x25, high pressure safety valve 0x26,
+    and the 48RE governor pressure / converter clutch / overdrive solenoids 0x14-0x16.
+  - New rows: the request bytes (0x3fcf60-63), the governor pressure solenoid test duty and the output speed limit.
+- **The actuator test words:** alternator_field_actuator_test_active_flag (was protection_voltage_active_flag) and the
+  two duty / while-running pairs. The fan's comments said 'cranking'; the code compares ENGINE_STATE_STOPPED.
+- **The high pressure safety valve test (e2m 8C76 / 8C77 / 8022 +1E):** the request flag (was
+  governor_speed_limit_enable_flag), the state (0 not run / 1 running / 2 aborted), the 2500 rpm limit, the 1200 rpm
+  setpoint and the 140 MPa rail pressure setpoint. Also cylinder_contribution_test_request_flag (8C74 +8).
+- **Plates:** the sequencer's step list and the misfire step's seconds counter.
+- **Checks:**
+  - reverse_names.py: 58 names rendered. The only difference is cm848_validateWriteAuth's local declaration order,
+    which flips back from stage 12C; its sorted lines are identical.
+  - The thunk stage still makes 19 thunks and 13 call overrides. lookup_tables 0 sizing problems; the headers
+    compile.
+  - No old name is in CM550.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

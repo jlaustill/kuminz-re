@@ -1,0 +1,44 @@
+===== N = 3 (0x3)
+  move.w #3,(0xfffd20).l @0x39fa [mc68k_checkSerialEepromSignature@0x39a8]
+  move.w #3,(0x80d348).l @0xb4e8 [cm550_fuelDemandLimitMinimumUpdater@0xb4ce]
+  move.w #3,(a3) @0xc3d0 [calculateAlpha@0xc326] -> 0x80a8fc
+  cmpi.w #3,(0x80ded4).l @0xc982 [cm550_runAllSpeedGovernor@0xc962]  <== user_fueling_state
+  cmpi.w #3,(a2) @0xf7f6 [cm550_paramSystemModeController@0xf796] -> 0x80a8f2  <== adjusted_user_fueling_state
+  move.w #3,(a2) @0x1093c [vp44_derateThresholdMonitorAndFaultController@0x10822] -> 0x80aa84
+  move.w #3,(a5) @0x10b02 [vp44_derateThresholdMonitorAndFaultController@0x10822] -> 0x80aa88
+  move.w #3,(a0) @0x11876 [cm550_requestClearInactiveFaults@0x1183e] -> 0x80de7a
+  move.w #3,(a0) @0x1187c [cm550_requestClearInactiveFaults@0x1183e] -> 0x80de7a
+  move.w #3,(a2) @0x1814c [cm550_updateEngineState@0x17f7c] -> 0x80d0c8
+  move.w #3,(a2) @0x181a8 [cm550_updateEngineState@0x17f7c] -> 0x80d0c8
+  move.w #3,(a2) @0x181ee [cm550_updateEngineState@0x17f7c] -> 0x80d0c8
+  move.w #3,(a2) @0x1829a [cm550_updateEngineState@0x17f7c] -> 0x80d0c8
+  move.w #3,(a2) @0x182cc [cm550_updateEngineState@0x17f7c] -> 0x80d0c8
+  move.w #3,(a4) @0x1b9cc [executiveFrameInterruptHandler@0x1b876] -> 0x80068c
+  move.w #3,(a3) @0x1d650 [selectEngineSpeedLimit@0x1d5a0] -> 0x80d644
+  move.w #3,(a3) @0x1da84 [vp44SensorStatusMonitor@0x1d9b4] -> 0x80d674
+  move.w #3,(a5) @0x1f732 [cm550_FUN_0001f4e8@0x1f4e8] -> 0x80da50
+  move.w #3,(0x80d9e4).l @0x1f7da [cm550_FUN_0001f4e8@0x1f4e8]
+  move.w #3,(a5) @0x1fafc [cm550_engineFluidLevelDataBuilder@0x1f8bc] -> 0x80da50
+  move.w #3,(0x80d9e4).l @0x1fb82 [cm550_engineFluidLevelDataBuilder@0x1f8bc]
+  move.w #3,(a2) @0x2644a [cm550_epsDiagnosticModeHandler@0x26340] -> 0x80daca
+  move.w #3,(0xfffd24).l @0x268e6 [mc68k_FUN_00026854@0x26854]
+  move.w #3,(0xfffd20).l @0x2cbee [mc68k_initializeJ1708Datalink@0x29130]
+  cmpi.w #3,(a2) @0x2dcde [cm550_oil_pressure_shutdown_controller@0x2dcb0] -> 0x80ded4  <== user_fueling_state
+  move.w #3,(a5) @0x2f3f4 [processEngineTsc1Request@0x2f128] -> 0x80da50
+  move.w #3,(a4) @0x2fa3c [cm550_retarderControlModeHandler@0x2f7e6] -> 0x80d9e4
+  move.w #3,(a4) @0x307da [cm550_FUN_000306ca@0x306ca] -> 0x80de64
+  move.w #3,(0x8049fa).l @0x318d2 [cm550_FUN_000315be@0x315be]
+  move.w #3,(0x8049fa).l @0x31a12 [cm550_FUN_000315be@0x315be]
+===== N = 18 (0x12)
+  move.w #18,(a4) @0x1bbe2 [executiveFrameInterruptHandler@0x1b876] -> 0x80068c
+  move.w #18,(a2) @0x1d534 [selectHighSpeedGovernorGainSet@0x1d392] -> 0x80d61a
+  cmpi.w #18,(0x80d330).l @0x306b4 [cm550_fuelLimitRestoreFromCapture@0x3061a]  <== final_fueling_state
+===== N = 36 (0x24)
+  move.w #36,(a4) @0x1be0a [executiveFrameInterruptHandler@0x1b876] -> 0x80068c
+===== N = 37 (0x25)
+  move.w #37,(a4) @0x1be28 [executiveFrameInterruptHandler@0x1b876] -> 0x80068c
+===== N = 38 (0x26)
+  move.w #38,(a4) @0x1be44 [executiveFrameInterruptHandler@0x1b876] -> 0x80068c
+===== N = 39 (0x27)
+  move.w #39,(a4) @0x1be66 [executiveFrameInterruptHandler@0x1b876] -> 0x80068c
+  move.w #39,(0xfffa24).l @0x1bf98 [mc68k_scheduler_init@0x1bf54]

@@ -1,0 +1,43 @@
+W3 skeptic running verdict table (scratch; not a report). Evidence tools: cdis.py / refs.py / after.py / addr_loads.py / e2m_raw.py / check_proposal.py in this folder.
+
+GLOBAL FACTS RE-DERIVED (capstone disassembly of J90350.00.rom.bin + raw e2m + dumps)
+- Absolute references (4-byte operands, whole ROM, odd addresses included) 0x803c92-0x803cc3:
+  w15 0x803cb2/b3 none; w16 0x803cb4 6x move.w+andi.w (0x1000 0x400 0x100 0x10 0x4 0x1) all in mc68k_sampleAndDebounceDiscreteInputs;
+  w17 0x803cb6/b7 none; w18 0x803cb8 20x move.w + andi single bit (masks 8,0x200,0x20,0x20,2,2,2,0x200,0x200,1,0x200,0x200,0x200,0x1000,0x1000,0x2000,0x10,0x10,0x10,0x1000);
+  w19 0x803cba/bb none; w22 0x803cc0 1x move.w->d4 (0xb7d8); w23 0x803cc2 1x move.w->d4 (0xbcd2). No write instruction anywhere; no assignment in the .cpp.
+- Base loads: 0x803c94 x15 (all 'move.w (a0,dN.w*2),dN' reads: 13 protection-channel sites bits 0x70+4n+{0..3}, 0x1a0+n, n<=8 (9 channels: (0x807176-0x807032)/36);
+  0x206e6 cm550_FUN_000206a8; 0x208ea cm550_FUN_00020890). 0x803cae -> 0x80054c pointer (only write, 0x15dd2); pointer indices used: sampler 1,0,3,2,5,4,9; strobe handler 1,0,3,2,5,4.
+  0x803b0a bases = generic EEPROM mirror loaders / tool writers; 0x803b0c = 6-byte password compare.
+- Indexed test is WORD-wise: bit n = word n/16 at 0x803c94+2*(n/16), mask 1<<(n%16) (divs.l #16 remainder / asr #4; move.w (a0,d1.w*2)).
+- J1939 descriptor table (ROM 0x20108, 17 x 10 bytes, logical switch word at +8): 72 9 54 11 10 3 1 2 14 13 60 56 58 20 19 15 54.
+- cm550_FUN_000206a8(k,j): if enable bit 208+k and priority ok: value bit k (0x80bcd8+k/8) = bit j of the output image 0x80bcf6. Calls (0x36,1)(0x36,4)(0x21,6)(0x20,0)(0x36,2).
+- Byte masks: [5]=0x803cb3 (w15 bits 0-7) over 0xFFD005 read-back -> 0x80bcd2 (sampler) / 0x80bd02 (strobe) with value 0x80bcdc;
+  [4]=0x803cb2 (w15 bits 8-15) over 0xFFD007 -> 0x80bcd3 / 0x80bd03 with value 0x80bcdd; [9]=0x803cb7 (w17 bits 0-7) over PORTF0 ring -> 0x80bcd6 with value 0x80bce0.
+- Feedback bit n is compared with command latch bit n (diagnosticMainStateProcessor lamps 0x01 0x02 0x04 0x40 0x10 0x20 0x08; updateEngineSyncStatus drivers 0x01 0x02 0x04 0x20 0x10 0x40 0x08 0x80; FSO = lamp read-back bit 7).
+- Lamp identities by code: cm550_FUN_00021920 (DM1 lamp byte): output 1 -> red stop, output 6 -> amber warning, output 4 -> protect / MIL; output 0 wait to start, output 2 water in fuel.
+- Driver identities by code: strobes (e2m 8224 DR..RQ) engine brake bit 0, cold start aid 1 bit 1, cold start aid 2 bit 2, ether start bit 5 of 0x80bcf7.
+- Word 16 direct tests: override branch ORs (value & mask) into the status byte (or.b d0,(a5) / or.b d0,7(a4)); it never clears there.
+- Status bit 54 (0x80bcd4 bit 6): set on PTO-on rising edge at zero road speed with word 28 bit 4 (ISTAEN 'TAS'), cleared on set/resume; CCVS1 byte 1 parking brake bits (0xf3/0xf7). Value bit 54 (0x80bcde bit 6): no reader.
+- Value byte 0x80bce1 (inputs 72-79): no reader; status 0x80bcd7 bit 0 copied from 0x80bcd0 bit 1 (switch 18, A/C pressure turnkey).
+- Analog loop: d2 mask 1, add.w d2,d2 per channel; at channel 16 reload d5=w6 d4=w23, mask 1; ends a3 >= 0x80a4d0 (25 channels). raw override -> 0x10(a3) from 0x80a760+2ch.
+- Dumps (EEPROM bin offset = addr-0x803b0a, and RAM bin): w15 0 w16 0 w17 0 w18 0x303a w19 0x00c0 w22 0 w23 0; length 0x0046.
+- CHR e2m (23 files): +20 +22 +24: none. +26 masks 1 4 8 40 80 100 200 800 1000 2000 4000 8000 (no 2/10/20). +28 no 4/10. +2E/+30: 7 CHR_B2 files HAVE records (other meanings); 16 CHR_CC (CM848) files have none.
+- CM848 algorithm_enable_flags_18_t: bits 0,2,3,6,8,9,11-15 same names as proposed; 1,4,5,10 reserved; 7 executive_timing_enable (CM550 keeps SSECTMEA at its own block 81D7). word 29 bits 10/11 = throttle_activated_diagnostic_switch_enable / throttle_related_error_handler_enable.
+- e2m lamp numbering conflict: bit 3 = lamp 4 by N-record texts (LCLP04EA 'BIT 3', 12A8+23 LCL4FBPZ) but lamp 7 by masks (E+28 DSLP7 0x08, 12A7+3 LCL7PZ); bit 6 = lamp 7 by texts, lamp 4 by masks (DSLP4 0x40, 12A7+6 LCL4PZ). Same 4<->7 swap as relays (masks: relay 7 = bit 11, relay 4 = bit 14; command texts DREA07 'BIT 3' / DREA04 'BIT 6' agree with the masks).
+
+WORD VERDICTS
+w15 CONFIRMED (word, no own-address access, no writes, not shared).
+w16 AMENDED (row comment only: OR semantics); name/type confirmed.
+w17 CONFIRMED.
+w18 CONFIRMED (cm550 type; 20 tests; CM848 diff bits 1 4 5 7).
+w19 CONFIRMED (plain word, no reader).
+w22 CONFIRMED. w23 CONFIRMED. (note CHR_B2 has +2E/+30 records; CM848's CC files do not.)
+
+BIT VERDICTS (all positions verified)
+w15: 0 C, 1 C (note: FUN_000206a8(0x21,6) stores output 6's command), 2 C, 3 A (comment: lamp 4 / lamp 7 + N records; name stays reserved_bit_3), 4 C, 5 C, 6 C, 7 C, 8 C, 9 C, 10 C, 11 C, 12 C, 13 C, 14 C, 15 C
+w16: 0 C, 1 C, 2 C, 3 C, 4 C, 5 C, 6 A (comment: write-only value bit / lamp commands / status 54 = PTO latch sent as parking brake; name kept), 7 C, 8 C, 9 C, 10 C, 11 C, 12 C, 13 C, 14 C, 15 C
+w17: 0 C, 1-7 C, 8 C (note value 0x80bce1 unread), 9-15 C
+w18: all C
+w19: all C
+w22: all C (bit 9: ADSYEPUR raw value record sits at 12D3 +28, not +12 - e2m slip)
+w23: all C

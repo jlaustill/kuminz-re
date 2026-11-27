@@ -1,0 +1,24 @@
+cm848: round 27 stage C - the J1939 switch inputs drive logical switches (labels, firmware/CLAUDE.md)
+
+A peer session's read-only cruise review said that firmware/CLAUDE.md's J1939 input layer note has the right outcome
+but the wrong mechanism. The user approved the correction; it was verified here, in the code and the flash2 table.
+- j1939_input_signal_descriptor_t's third field (+6, dword) is a logical switch number, not a fault bit index.
+  cm848_evaluateJ1939InputSignalFault indexes switch_input_datalink_source_bits_cal, switch_input_source_priority
+  and j1939_switch_input_default_state_bits with it. It then sets or clears that switch's
+  switch_input_datalink_state_bits bit with cm848_setDatalinkSwitchStateIfPriority /
+  cm848_clearDatalinkSwitchStateIfPriority: received 1 sets, 0 clears, and 2 / 3 or a timeout apply the default
+  bit.
+- So fault_bit_index -> logical_switch.
+- The 17 records (flash2 0x53a278, 10 bytes each) map:
+  - the brake switch to switch 11 and the clutch switch to 15;
+  - PTO on to 3 and the remote PTO switch to 19;
+  - the accelerator interlock to 26;
+  - the cruise enable / set / resume switches and the nine others to switch 31, the unwired switch.
+- firmware/CLAUDE.md: the consumers bullet now gives that mechanism. J1939 can drive the brake / clutch / PTO
+  switches (when their datalink-source bits are set) and still cannot drive cruise. The "layer off in this
+  calibration" statement and the pedal clause stay as they were.
+
+Proof: the new .cpp is the old one with fault_bit_index renamed (0 other lines; reverse_names.py EQUIVALENT).
+Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

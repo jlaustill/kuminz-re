@@ -1,0 +1,31 @@
+cm848: round 21 stage C - the engine protection module's functions and working words (label-only)
+
+Named from their bodies as stages A and B typed them. None is a CM550 twin.
+- Functions:
+  - threshold_adjustment_ramp -> cm848_rampEngineProtectionSeverityIndex
+  - protection_threshold_check -> cm848_isEngineProtectionInputPastThreshold
+  - protection_threshold_update -> cm848_updateEngineProtectionRestartSeverityIndexes
+  - protection_state_transition -> cm848_checkEngineProtectionRestartLimitation (channel 4 only, none in this build)
+  - protection_event_timestamp -> cm848_countEngineProtectionShutdownTime (it counts; it takes no timestamp)
+  - governor_fault_derateCalc_channelIter -> cm848_updateEngineProtectionRestartSeverity
+  - governor_fault_eventCounter_update -> cm848_countEngineProtectionOverLimitDurations
+  - governor_fault_channelProcess_mainLoop -> cm848_logEngineProtectionChannelFaults
+  - fault_snapshot_capture -> cm848_recordEngineProtectionFaultLogEntry
+  - fault_event_timing_snapshot -> cm848_closeEngineProtectionFaultLogEntry
+  - hpcr_initFuelTemperatureSensorChannel -> hpcr_initializeEngineProtection (it initializes the whole module, not a
+    sensor channel)
+- Working words (the copy window 0x3fbd2c-0x3fbd4a):
+  - the shutdown latch, the longest shutdown time count, the previous engine speed, the engine start flag;
+  - the scheduler's task index;
+  - the three current-channel record pointers (engine_protection_current_configuration / _state / _history). The last
+    one rendered as PTR_engine_startup_inhibit_cal_003fbd4a, after its boot copy's value.
+  These replace the governor_faultDerate_* / fault_channel_* guesses; the module is engine protection, not a
+  governor.
+- engine_protection_shutdown_override_lamp_flag (0x40a78b, e2m 10B1 +19 EPF_Shutdown_Override_Lamp_Flag): it was
+  DAT_0040a78b. Four stb, no reader in this build.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (20 names, all rendered; 1 function
+differs only in the order of its local declarations). Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing
+problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

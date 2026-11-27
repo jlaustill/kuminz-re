@@ -1,0 +1,23 @@
+cm848: round 22 stage B - the protection helpers read, the second derate cache, two comments corrected (review)
+
+The advisor's review of round 22 stage A:
+- Two engine protection helpers had been seen only as calls. Read now and named:
+  - protection_condition_eval -> cm848_isEngineProtectionInputMoreExtreme: 1 when the input is above the log's
+    extreme value with configuration flag 0x4, or below it with 0x4 clear and 0x8 set;
+  - threshold_value_interpolate -> cm848_interpolateEngineProtectionSeverity: (input - minimum) * 256 / (maximum -
+    minimum), clamped to 0..0x100.
+  Neither is a CM550 twin.
+- The second lookup cache of fault_derate_fuel_limit_by_engine_speed follows the cache rule (the table base + _2, as
+  the retarder torque caches do): fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2. It was
+  fault_derate_torque_curve_points_cached_axis_offset.
+- Two stage A comments went beyond what was read, and are corrected:
+  - the torque curve plate: only the clamp-mask path keeps the minimum; the priority path sets the five fuelings;
+  - the configuration flags: 0x4 also makes the fault log track the maximum, 0x8 (with 0x4 clear) the minimum, and
+    0x40 also picks the fueling severity in the fault derate fuel limit (the time-ramped index rather than the
+    threshold interpolation).
+- hpcr_initializeEngineProtection is called only from cm848_applicationMain, so stage A's "boot / restart" plates hold.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (3 names, all rendered). Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

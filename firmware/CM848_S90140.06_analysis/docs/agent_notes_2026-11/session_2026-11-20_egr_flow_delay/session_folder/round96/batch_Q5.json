@@ -1,0 +1,1316 @@
+{
+ "batch": "Q5",
+ "proposal": {
+  "batch": "Q5",
+  "summary": "RAM 0x3fdba4-0x3fdc39 is EEPROM 0x722-0x7b7 of the application's EEPROM mirror. cm848_applicationMain -> cm848_initEepromDriverAndLoadMirror loads EEPROM 0x0-0x1a3f at start-up, and the periodic reload (cm848_onEepromBlockRead) keeps rewriting 0x0-0x8e7. The application reads the range as four I/O configuration tables, each scanned over every entry by index: switch_input_hardware_line_cal[11..31], switch_input_datalink_source_bits_cal, logical_output_line_active_low_bits_cal and logical_output_line_cal[0..46]. The RAM dump equals the EEPROM dump byte for byte here. The boot service loop (mpc555_systemInitialization) reuses the same RAM. That loop runs only when the strap pins read high or ECM status is not CALIBRATION_VALID, and only after cm848_clearRamRegions. In it, mpc555_initHardwareConfig writes the MPC555 CMF erase / program parameters: a CMFTST enable byte, step counts, CMFCTL bases and per-step bits, 8 per-step CMFTST values for erase and for program, and per-step pulse limits. It also writes the flash2 (external flash) poll / retry limits. The naming rule I applied: a row whose address the application reads directly, or uses as a table base, keeps or takes an application name. A row the application reaches only through another base's index takes its kernel name, and its comment documents both roles. None of the QADC names had any QADC user. The program step tables become dword[8] / word[8] arrays where no application-read row sits inside (14 rows are absorbed). New word rows at 0x3fdbb4 / 0x3fdc00 / 0x3fdbd4 give the application's switch 19 line, output 18 line and the kernel's program step count their own names.",
+  "functions": [],
+  "skipped": [],
+  "globals": [
+   {
+    "firmware": "CM848",
+    "address": "0x003fdba4",
+    "current_name": "switch_input_11_hardware_line_cal",
+    "proposed_name": "switch_input_11_hardware_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x722, loaded by cm848_initEepromDriverAndLoadMirror and kept by the periodic mirror reload): switch_input_hardware_line_cal[11] = the discrete input line of switch 11 (switch_input_state_t.brake_switch, e2m 1612 Brake_Switch): 147 in the RAM and EEPROM dumps, 0 = no line. When it is 0, cm848_monitorBrakeSwitchPairAgreement clears the brake pair faults instead of checking them, and cm848_buildPgn65241AuxiliaryInputOutputStatus1Message reports Auxiliary I/O #02 (SPN 702, byte 1 bits 5-6) as not available. cm848_scanAndDebounceSwitchInputs / cm848_readSwitchHardwareInput / cm848_checkDiscreteOutputReadBack read it through the table index. Boot service loop (mpc555_systemInitialization; cm848_clearRamRegions clears the RAM first and a normal start never runs this): when IMMR >> 16 >= 0x3030, mpc555_initHardwareConfig writes two bytes. Byte 0x3fdba4 (._0_1_) = 1 is the CMFTST enable: with it set, mpc555_cmfEraseBlocks / mpc555_cmfRestoreNormalMode / mpc555_cmfSelectBlockAndStartSequence / mpc555_cmfApplyHighVoltagePulse / mpc555_cmfEndHighVoltagePulse write the per-step CMFTST values; with it 0 they use CMFCTL only. Byte 0x3fdba5 (the (byte) cast) = 8 is the number of erase steps in mpc555_cmfEraseBlocks.",
+    "evidence": "App: lhz r12,22(r5) @0x2408c (r5 = 0x3fdb8e from addi @0x24048) in cm848_buildPgn65241AuxiliaryInputOutputStatus1Message. lhz r11,22(r30) @0x512158 (addi @0x512154) in cm848_monitorBrakeSwitchPairAgreement. Indexed lhzx base 0x3fdb8e @0x4ec48 (loop < 0x20) / @0x4eae8 / @0x537ca0. Boot: stb 1 @0x1480 and stb 8 to 0x3fdba5 @0x14f8, both under cmpwi 12336 / blt @0x1470 in mpc555_initHardwareConfig. lbz 0x3fdba4 @0x4324 @0x43c4 @0x4580 @0x4700 @0x4aac @0x4b40 @0x4c30 @0x4e60 (every test is == 0 / != 0). lbz 0x3fdba5 @0x4be4 @0x4c00 @0x4dc0 (erase step index r16 is compared with it). Dump: RAM 0x3fdba4 = EEPROM 0x722 = 0x0093. PGN 65241 layout from the j1939 database.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdba6",
+    "current_name": "cmf_erase_pulse_total",
+    "proposed_name": "cmf_erase_pulse_total",
+    "proposed_type": "word",
+    "comment": "Boot reflash kernel: the high-voltage erase pulses applied so far. mpc555_initHardwareConfig and mpc555_cmfEraseBlocks clear it, and the erase loop adds each step's pulses to it until it reaches the limit in switch_input_13_hardware_line_cal (100). TIME-SHARED: the application reads this word only through the table index, as switch_input_hardware_line_cal[12] (EEPROM 0x724) = the line of switch 12 (exhaust_brake_switch, e2m 1612 Engine_Brake_Select_1), 149 in the dump.",
+    "evidence": "Boot: sth 0 @0x15e0 (mpc555_initHardwareConfig, unconditional) and sth 0 @0x4a28. lhz @0x4bc0 @0x4c1c @0x4cac @0x4da8 and sth @0x4db4 (total += pulses) in mpc555_cmfEraseBlocks. App: no direct access in either bank (scan_range.py with and without call clobbering, raw_imm_scan.py); the indexed lhzx from 0x3fdb8e @0x4ec48 covers entry 12. Dump 0x0095.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdba8",
+    "current_name": "switch_input_13_hardware_line_cal",
+    "proposed_name": "switch_input_13_hardware_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x726): switch_input_hardware_line_cal[13] = the line of switch 13 (air_conditioning_switch, e2m 1612 AC_On_Off_Switch). It is 0 in this calibration, so cm848_updateAirConditioningSwitchFromPci sets switch 13 from PCI receive message 10 (0x52) bit 7 while that message is valid. It is also read through the table index. Boot service loop: mpc555_initHardwareConfig writes 100 here = the erase pulse limit; mpc555_cmfEraseBlocks stops pulsing when cmf_erase_pulse_total reaches it.",
+    "evidence": "App: lhz r12,-9304(r12) @0x3be34 (lis 0x40 @0x3be30) in cm848_updateAirConditioningSwitchFromPci, plus the indexed lhzx from 0x3fdb8e @0x4ec48. Boot: sth 100 @0x1504. lhz @0x4bc4 / @0x4c20 / @0x4cb0, each compared with cmf_erase_pulse_total (bge exits the pulse loop). Dump 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbaa",
+    "current_name": "cmf_erase_control_base",
+    "proposed_name": "cmf_erase_control_base",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: the CMFCTL timing base for erase (0x28000000 from mpc555_initHardwareConfig). For every CMFCTL_A / CMFCTL_B write, mpc555_cmfEraseBlocks ORs into it the module A block bits (mask & 0xff00) or the module B block bits ((mask & 0xff) << 8), plus cmf_erase_control_bits. TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[14] / [15] (EEPROM 0x728 / 0x72a). In the dump, switch 14 low_oil_pressure_switch = line 150 and switch 15 clutch_switch = 0.",
+    "evidence": "Boot: stw 0x28000000 @0x148c. lwz @0x4a30 into r17, then or'd into r23 / r24 @0x4a7c / @0x4a8c in mpc555_cmfEraseBlocks. App: no direct access, only the indexed reads from 0x3fdb8e. Dump 0x0096 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbae",
+    "current_name": "cmf_erase_control_bits",
+    "proposed_name": "cmf_erase_control_bits",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: CMFCTL bits ORed into every erase control write (0x1e0000 from mpc555_initHardwareConfig). CMFCTL_A / CMFCTL_B = cmf_erase_control_base | block bits | this | 4 (PE) / 6 (PE | SES) / 7 (PE | SES | EHV). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[16] / [17] (EEPROM 0x72c / 0x72e = the EGR and VGT driver feedback switches, both 0 in the dump).",
+    "evidence": "Boot: stw 0x1e0000 @0x1498. lwz 0(r28 = 0x3fdbae from addi @0x4a40) @0x4a44 @0x4a58 @0x4ac8 @0x4ad8 @0x4b5c @0x4b6c @0x4cc4 @0x4d10 @0x4d28 @0x4d74 @0x4e9c @0x4eb4 in mpc555_cmfEraseBlocks. App: indexed reads only. Dump 0 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbb2",
+    "current_name": "qadc_control_word_cal",
+    "proposed_name": "cmf_erase_test_register_step_values",
+    "proposed_type": "word",
+    "comment": "Boot reflash kernel: base of the 8 erase step CMFTST values (dwords 0x3fdbb2-0x3fdbd1: 0xc20 0xd20 0xe20 0xf20 0x420 0x520 0x620 0x720 from mpc555_initHardwareConfig, written only when IMMR >> 16 >= 0x3030). While the CMFTST enable byte (switch_input_11_hardware_line_cal._0_1_) is set, mpc555_cmfEraseBlocks writes step 0's value to CMFTST_A / CMFTST_B when it opens each module, and the value at + 4 x step at each later step. Typed word, not dword[8], because the application reads 0x3fdbb4 / 0x3fdbb6 / 0x3fdbce-0x3fdbd1 inside the table directly (switch_input_19_hardware_line_cal / switch_input_20_hardware_line_cal / switch_input_datalink_source_bits_cal); the kernel's dword accesses render as _cmf_erase_test_register_step_values. TIME-SHARED: the application reads this word only through the table index, as switch_input_hardware_line_cal[18] (EEPROM 0x730; switch 18 has no e2m record; 0 in the dump). No QADC code reads this address (was qadc_control_word_cal).",
+    "evidence": "Boot: stw 0xc20 0(r9) @0x14a8, with r9 = 0x3fdbb2 from addi @0x14a4, and the next 7 dwords at 4..28(r9) @0x14b0-@0x14e0. lwz -9294 @0x4ac0 -> stw CMFTST_A 0x2fc804 @0x4ac4; lwz @0x4b54 -> CMFTST_B 0x2fc844 @0x4b58. lwzx (base 0x3fdbb2, slwi r16,2) @0x4c5c / @0x4c7c with r16 < lbz 0x3fdba5 (8). App: lhz 38(r5) @0x2404c reads 0x3fdbb4 (today rendered qadc_control_word_cal._2_2_); no direct application access to 0x3fdbb2 itself. Dump 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbb4",
+    "current_name": "",
+    "proposed_name": "switch_input_19_hardware_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x732): switch_input_hardware_line_cal[19] = the line of switch 19 (remote_power_take_off_switch, e2m 1612 Remote_PTO_Switch): 148 in the dump. When it is 0 (no line), cm848_buildPgn65241AuxiliaryInputOutputStatus1Message reports Auxiliary I/O #01 (SPN 701, byte 1 bits 7-8) as not available; otherwise it reports on / off from the switch state. It is also read through the table index. Boot service loop: the low half of the erase step 0 CMFTST value (0x0c20), i.e. the first dword of cmf_erase_test_register_step_values.",
+    "evidence": "App: lhz r9,38(r5) @0x2404c with r5 = 0x3fdb8e (addi @0x24048). The decompile shows qadc_control_word_cal._2_2_ == 0 -> 0xc3, and remote_power_take_off_switch -> 0x43 / 0x03. PGN 65241 layout from the j1939 database (SPN 701 at 1.7). Indexed lhzx from 0x3fdb8e @0x4ec48. Boot: covered by the dword stw @0x14a8 / lwz @0x4ac0 at 0x3fdbb2. Dump 0x0094.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbb6",
+    "current_name": "qadc_control_word_b",
+    "proposed_name": "switch_input_20_hardware_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x734): switch_input_hardware_line_cal[20] = the line of switch 20 (park_neutral_switch, e2m 1612 Transmission_Park_Neutral_Switch): 13 in the dump. In cm848_updateParkNeutralFlagAndTsc1Activity, without an ETC2 selected gear: if it is 0, transmission_park_or_neutral_flag follows transmission_selected_gear (park / neutral / not available); otherwise it follows the debounced switch, and an edge sends PCI transmit message 2. It is also read through the table index. Boot service loop: erase step 1 CMFTST value (0xd20). mpc555_initHardwareConfig writes it as a dword (it renders _switch_input_20_hardware_line_cal), and mpc555_cmfEraseBlocks reads it through the cmf_erase_test_register_step_values index (was qadc_control_word_b).",
+    "evidence": "App: lhz r12,-9290(r12) @0x511ba8 (lis 0x40 @0x511ba4), today rendered qadc_control_word_b._0_2_ == 0. Indexed lhzx from 0x3fdb8e @0x4ec48. Boot: stw 0xd20 4(r9) @0x14b0; read by lwzx @0x4c5c / @0x4c7c at step 1. Dump 0x000d.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbba",
+    "current_name": "qadc_control_word_c",
+    "proposed_name": "cmf_erase_step_2_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: erase step 2 CMFTST value (0xe20 from mpc555_initHardwareConfig). mpc555_cmfEraseBlocks reads it through the cmf_erase_test_register_step_values index. Typed dword because every kernel access is a dword (it was a word row that rendered _qadc_control_word_c). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[22] / [23] (EEPROM 0x738 / 0x73a = the transmission relay and overdrive solenoid feedback switches, lines 154 / 153 in the dump). No QADC code reads this address.",
+    "evidence": "Boot: stw 0xe20 8(r9 = 0x3fdbb2) @0x14b8; lwzx @0x4c5c / @0x4c7c at step 2. App: no direct access (only lhzx from 0x3fdb8e). Dump 0x009a 0x0099.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbbe",
+    "current_name": "qadc_control_word_d",
+    "proposed_name": "cmf_erase_step_3_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: erase step 3 CMFTST value (0xf20 from mpc555_initHardwareConfig). mpc555_cmfEraseBlocks reads it through the cmf_erase_test_register_step_values index. Typed dword because every kernel access is a dword (it rendered _qadc_control_word_d). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[24] / [25] (EEPROM 0x73c / 0x73e = the converter clutch and cruise vent solenoid feedback switches, lines 156 / 152 in the dump). No QADC code reads this address.",
+    "evidence": "Boot: stw 0xf20 12(r9) @0x14c0; lwzx @0x4c5c / @0x4c7c at step 3. App: no direct access. Dump 0x009c 0x0098.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbc2",
+    "current_name": "qadc_control_word_e",
+    "proposed_name": "cmf_erase_step_4_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: erase step 4 CMFTST value (0x420 from mpc555_initHardwareConfig). mpc555_cmfEraseBlocks reads it through the cmf_erase_test_register_step_values index. Typed dword because every kernel access is a dword (it rendered _qadc_control_word_e). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[26] / [27] (EEPROM 0x740 / 0x742 = the throttle interlock switch 0 and the cruise vacuum solenoid feedback line 155 in the dump). No QADC code reads this address.",
+    "evidence": "Boot: stw 0x420 16(r9) @0x14c8; lwzx @0x4c5c / @0x4c7c at step 4. App: no direct access. Dump 0x0000 0x009b.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbc6",
+    "current_name": "qadc_control_word_f",
+    "proposed_name": "cmf_erase_step_5_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: erase step 5 CMFTST value (0x520 from mpc555_initHardwareConfig). mpc555_cmfEraseBlocks reads it through the cmf_erase_test_register_step_values index. Typed dword because every kernel access is a dword (it rendered _qadc_control_word_f). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[28] / [29] (EEPROM 0x744 / 0x746 = the cruise servo supply feedback line 22 and switch 29 = 0 in the dump). No QADC code reads this address.",
+    "evidence": "Boot: stw 0x520 20(r9) @0x14d0; lwzx @0x4c5c / @0x4c7c at step 5. App: no direct access. Dump 0x0016 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbca",
+    "current_name": "qadc_control_word_g",
+    "proposed_name": "cmf_erase_step_6_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: erase step 6 CMFTST value (0x620 from mpc555_initHardwareConfig). mpc555_cmfEraseBlocks reads it through the cmf_erase_test_register_step_values index. Typed dword because every kernel access is a dword (it rendered _qadc_control_word_g). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[30] / [31] (EEPROM 0x748 / 0x74a; both 0 in the dump; switch 31 is unwired_switch). No QADC code reads this address.",
+    "evidence": "Boot: stw 0x620 24(r9) @0x14d8; lwzx @0x4c5c / @0x4c7c at step 6. App: no direct access. Dump 0 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbce",
+    "current_name": "switch_input_datalink_source_bits_cal",
+    "proposed_name": "switch_input_datalink_source_bits_cal",
+    "proposed_type": "byte[4]",
+    "comment": "EEPROM-backed (EEPROM 0x74c; arrays.csv row): bit N set = logical switch N takes its state from the J1939 input layer instead of its hardware line, and the ECM's CCVS1 / EEC2 broadcasts report such switches as not available. All 0 in this calibration (was qadc_control_word_h and protection_override_flags). TIME-SHARED: in the boot service loop these 4 bytes are the erase step 7 CMFTST value 0x00000720 (the last dword of cmf_erase_test_register_step_values). mpc555_initHardwareConfig stores it as one dword (it renders as [0..3] = 0 / 0 / 7 / 0x20), and mpc555_cmfEraseBlocks reads it through that index.",
+    "evidence": "Boot: stw r31 (0x720) 28(r9 = 0x3fdbb2) @0x14e0; read by lwzx @0x4c5c / @0x4c7c at step 7 (step < 8). App: base addi @0x4eb5c then lbzx @0x4eb64 (cm848_scanAndDebounceSwitchInputs); lbz @0x25bb0 @0x50a1dc @0x50a72c @0x50aa18; lbzx @0x50a4c0 @0x50a5d0; bytes 1-3 by lbz 1/2/3(rX) in the PGN 65265 / 65264 builders, cm848_j1939BuildEngineControlByte and cm848_checkSwitch31OnTimeFault. Dump 00 00 00 00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbd2",
+    "current_name": "logical_output_line_active_low_bits_cal",
+    "proposed_name": "logical_output_line_active_low_bits_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x750): base of the 10-byte active-low table (0x3fdbd2-0x3fdbdb, outputs 0-79). Bit N (byte N / 8, bit N % 8) set = logical output N is active low: cm848_setLogicalOutputAndDriveLine drives its line (logical_output_line_cal[N]) low for on, and cm848_clearLogicalOutputAndDriveLine drives it high for off; cm848_applyLogicalOutputRequests reads it too. All reads are by index (lbzx) from this base. Dump bytes 00 00 1f 00 00 00 00 c0 00 00: outputs 16-20 / 62 / 63 are active low. Boot service loop: this word = 1 = the erase pulses per step (mpc555_cmfEraseBlocks pulses each erase step that many times). The next word, cmf_program_step_count (0x3fdbd4), and the kernel rows cmf_program_control_base / cmf_program_pulse_control_value lie inside the table. Typed word (was dword) so 0x3fdbd4 can carry its own name (was protection_event_output_polarity_bits_cal; PR #53 round 58).",
+    "evidence": "App: addi base @0x4efac / @0x4f088 / @0x4f214, then lbzx @0x4efb4 / @0x4f090 / @0x4f218; no other application access. Boot: sth 1 @0x14ec. lhz 0(r20 = 0x3fdbd2) @0x4c98 (skips pulsing when 0) and lhz 0(r19) @0x4d94 (pulse loop bound) in mpc555_cmfEraseBlocks. Dump 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbd4",
+    "current_name": "",
+    "proposed_name": "cmf_program_step_count",
+    "proposed_type": "word",
+    "comment": "Boot reflash kernel: the number of program steps (8 from mpc555_initHardwareConfig, written only when IMMR >> 16 >= 0x3030). mpc555_cmfApplyHighVoltagePulse returns 0 once the pulse limit of step cmf_program_step_count - 1 is spent. TIME-SHARED: the application reads these bytes only through the logical_output_line_active_low_bits_cal index, as active-low bytes 2-3 (outputs 16-31; 0x1f00 in the dump = outputs 16-20 active low). Today it renders as logical_output_line_active_low_bits_cal._2_2_.",
+    "evidence": "Boot: sth 8 -9260(r10) @0x15a8. lhz -9260 @0x45f8, then addi -1 / cmpw with the step / ble -> li r3,0 @0x461c in mpc555_cmfApplyHighVoltagePulse. App: no direct access (only lbzx from 0x3fdbd2). No row today. Dump 0x1f00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbd6",
+    "current_name": "cmf_control_base",
+    "proposed_name": "cmf_program_control_base",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: the CMFCTL timing base for programming (0x28000000 from mpc555_initHardwareConfig). mpc555_cmfRestoreNormalMode and mpc555_cmfSelectBlockAndStartSequence write it together with cmf_program_control_step_bits[0] to CMFCTL_A / CMFCTL_B. mpc555_cmfSelectBlockAndStartSequence also ORs the block bit (0x8000 >> block) into it to form cmf_control_block_select. Only the program path uses it (erase uses cmf_erase_control_base). TIME-SHARED: the application reads these bytes only through the logical_output_line_active_low_bits_cal index, as active-low bytes 4-7 (outputs 32-63; 00 00 00 c0 in the dump = outputs 62 / 63) (was cmf_control_base).",
+    "evidence": "Boot: stw 0x28000000 @0x150c. lwz 0(r3 = 0x3fdbd6) @0x4368 / @0x437c (mpc555_cmfRestoreNormalMode); lwz 0(r31) @0x43f8 / @0x440c / @0x441c (mpc555_cmfSelectBlockAndStartSequence). No access from mpc555_cmfEraseBlocks. App: no direct access. Dump 00 00 00 c0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbda",
+    "current_name": "cmf_control_pulse_value",
+    "proposed_name": "cmf_program_pulse_control_value",
+    "proposed_type": "word",
+    "comment": "Boot reflash kernel: the CMFCTL value of the next program pulse = cmf_control_block_select | cmf_program_control_step_bits[step] | 3 (SES | EHV). mpc555_cmfLoadProgramPage sets it for step 0; mpc555_cmfApplyHighVoltagePulse writes it to the active CMFCTL and then computes the next one. It is read and written as a dword (0x3fdbda-0x3fdbdd), so it renders as _cmf_program_pulse_control_value; its low half is logical_output_line_cal[0]. TIME-SHARED: the application reads this word only through the logical_output_line_active_low_bits_cal index, as active-low bytes 8-9 (outputs 64-79; 0 in the dump) (was cmf_control_pulse_value).",
+    "evidence": "Boot: stw -9254 @0x455c (mpc555_cmfLoadProgramPage). lwz 0(r4 = 0x3fdbda) @0x45b8 -> stw to the active CMFCTL, and stw 0(r4) @0x4648 (mpc555_cmfApplyHighVoltagePulse). App: no direct access. Dump 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbdc",
+    "current_name": "logical_output_line_cal",
+    "proposed_name": "logical_output_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x75a): base of the 80-word table 0x3fdbdc-0x3fdc7b; logical_output_line_cal[N] = the discrete output line driven for logical output N (0 = none). The next e2m record, 1069 Powerdown_Memory_Save_Start, starts at 0x3fdc7c. cm848_setLogicalOutputAndDriveLine / cm848_clearLogicalOutputAndDriveLine / cm848_applyLogicalOutputRequests (all 80 entries) / cm848_refreshOutputPortsAndReadback / cm848_checkDiscreteOutputReadBack index it. cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 reads entries 17 / 18 / 62 / 63 (logical_output_17_line_cal / logical_output_18_line_cal / logical_output_62_line_cal / 0x3fdc5a). Dump: 11:146 16:154 17:153 18:156 19:152 20:155 21:21 27:42 38:145 43:130 44:131 47:47 48:46 53:96 54:43 62:158 63:159. Boot reuse of the same words: this word is the low half of the cmf_program_pulse_control_value dword. Entries 1-16 are cmf_program_control_step_bits; 17-32 are the program CMFTST step values (logical_output_17_line_cal / logical_output_18_line_cal / cmf_program_step_1..7_test_register_value); 33-40 are cmf_program_step_pulse_limits; 41-46 are the flash2 erase / program limits. Entries 47-79 (0x3fdc3a on) lie in the boot's 4 KB reflash data ring buffer (0x3fdc3a-0x3fec39, cm848_dataTransferBufferWrite). The table has no protection-event role (was protection_event_output_line_cal; PR #53 round 58).",
+    "evidence": "App: addi 0x3fdbdc @0x4ef88 / @0x4f064 / @0x4f0ec / @0x4f1d8 / @0x52e98 / @0x537cb0. lhzx @0x4ef90 / @0x4f06c / @0x4f1e0 (loop < 0x50) / @0x52eea0 / @0x537cb8. lhz 34 / 36 / 124 / 126(r6) @0x4f0f0 / @0x4f138 / @0x4f0fc / @0x4f144. Boot: the dword stores at 0x3fdbda @0x455c / @0x4648 cover it. The ring buffer index wraps at 0x1000 in cm848_dataTransferBufferWrite. Dump values read from cm848_ram.bin (equal to cm848_eeprom.bin).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbde",
+    "current_name": "cmf_control_step_bits",
+    "proposed_name": "cmf_program_control_step_bits",
+    "proposed_type": "dword[8]",
+    "comment": "Boot reflash kernel: the CMFCTL step bits of the 8 program steps (dwords 0x3fdbde-0x3fdbfd: 0x4f0000 for steps 0-3 and 0xf0000 for steps 4-7 from mpc555_initHardwareConfig, written only when IMMR >> 16 >= 0x3030), indexed by cmf_pulse_step_index. mpc555_cmfApplyHighVoltagePulse builds the next pulse value from entry [step]. mpc555_cmfRestoreNormalMode / mpc555_cmfSelectBlockAndStartSequence / mpc555_cmfLoadProgramPage / mpc555_cmfEndHighVoltagePulse use entry [0]. This array absorbs the rows qadc_channel_config_mask_c..i (entries 1-7). TIME-SHARED: the application reads these 16 words only through the logical_output_line_cal index, as logical_output_line_cal[1..16] (EEPROM 0x75c-0x77b; entry 11 = line 146 and entry 16 = line 154 in the dump, the rest 0) (was cmf_control_step_bits).",
+    "evidence": "Boot: stw 0x4f0000 0/4/8/12(r29 = 0x3fdbde from addi @0x1518) @0x151c-@0x1528, and stw 0xf0000 16-28(r29) @0x1530-@0x153c. lwzx (base 0x3fdbde, rlwinm step << 2) @0x463c in mpc555_cmfApplyHighVoltagePulse. lwz of entry 0 @0x436c / @0x4380, @0x43fc / @0x4410 / @0x44bc / @0x44d0 / @0x44e0, @0x4550, @0x46f0. App: no direct access to 0x3fdbde-0x3fdbfd (only lhzx from 0x3fdbdc). Dump: zeros except 0x3fdbf2 = 0x92 and 0x3fdbfc = 0x9a.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbe2",
+    "current_name": "qadc_channel_config_mask_c",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 1 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0x4f0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 3 / 4).",
+    "evidence": "Boot: stw r9,4(r29) @0x1520 is the only direct access in either bank (scan_range.py both modes, raw_imm_scan.py).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbe6",
+    "current_name": "qadc_channel_config_mask_d",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 2 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0x4f0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 5 / 6).",
+    "evidence": "Boot: stw r9,8(r29) @0x1524 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbea",
+    "current_name": "qadc_channel_config_mask_e",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 3 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0x4f0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 7 / 8).",
+    "evidence": "Boot: stw r9,12(r29) @0x1528 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbee",
+    "current_name": "qadc_channel_config_mask_f",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 4 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0xf0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 9 / 10).",
+    "evidence": "Boot: stw r9,16(r29) @0x1530 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbf2",
+    "current_name": "qadc_channel_config_mask_g",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 5 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0xf0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 11 / 12; entry 11 = line 146 in the dump).",
+    "evidence": "Boot: stw r9,20(r29) @0x1534 is the only direct access. Dump 0x0092 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbf6",
+    "current_name": "qadc_channel_config_mask_h",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 6 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0xf0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 13 / 14).",
+    "evidence": "Boot: stw r9,24(r29) @0x1538 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbfa",
+    "current_name": "qadc_channel_config_mask_i",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 7 of cmf_program_control_step_bits (dword[8] at 0x3fdbde). Its only direct access is the store by mpc555_initHardwareConfig (0xf0000); mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entries 15 / 16; entry 16 = line 154 in the dump).",
+    "evidence": "Boot: stw r9,28(r29) @0x153c is the only direct access. Dump 0x0000 0x009a.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdbfe",
+    "current_name": "qadc_queue_timing_config",
+    "proposed_name": "logical_output_17_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x77c): logical_output_line_cal[17] = the line of logical output 17 (the overdrive solenoid: logical_output_request_bits_16_to_23.overdrive_solenoid_request, e2m 1577 Transmission_Overdrive_Driver): 153 in the dump. cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 makes output 62 follow the overdrive solenoid request only when this and logical_output_62_line_cal are both nonzero; the logical output drivers read it through the table index. Boot service loop: base of the 8 program step CMFTST values (dwords 0x3fdbfe-0x3fdc1d: 0xc20 0xd20 0xe20 0xf20 0x420 0x520 0x620 0x720 from mpc555_initHardwareConfig). While the CMFTST enable byte (switch_input_11_hardware_line_cal._0_1_) is set, mpc555_cmfRestoreNormalMode / mpc555_cmfSelectBlockAndStartSequence write step 0's value to CMFTST_A / CMFTST_B, and mpc555_cmfApplyHighVoltagePulse writes the value at + 4 x step to the active CMFTST; those dword accesses render as _logical_output_17_line_cal. Typed word for the application read (it was the dword qadc_queue_timing_config, rendered qadc_queue_timing_config._0_2_ in the application).",
+    "evidence": "App: lhz r11,34(r6) @0x4f0f0 with r6 = 0x3fdbdc (addi @0x4f0ec) in cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63, plus lhzx from 0x3fdbdc. Boot: stw 0xc20 0(r29) @0x1548, with r29 = 0x3fdbfe from addi @0x1544. lwz 0(r4) @0x433c / @0x4348 (mpc555_cmfRestoreNormalMode); lwz 0(r8) @0x43dc / @0x43e8 (mpc555_cmfSelectBlockAndStartSequence); lwzx (base 0x3fdbfe, step << 2) @0x45a0 (mpc555_cmfApplyHighVoltagePulse). Output 17 = overdrive solenoid per logical_output_request_bits_16_to_23_t. Dump 0x0099.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc00",
+    "current_name": "",
+    "proposed_name": "logical_output_18_line_cal",
+    "proposed_type": "word",
+    "comment": "TIME-SHARED. Application (EEPROM 0x77e): logical_output_line_cal[18] = the line of logical output 18 (the torque converter clutch solenoid: logical_output_request_bits_16_to_23.converter_clutch_solenoid_request, e2m 1577 Transmission_TCC_Driver): 156 in the dump. cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 makes output 63 follow the converter clutch request only when this and entry 63 (0x3fdc5a) are both nonzero; the logical output drivers read it through the table index. Boot service loop: the low half of the program step 0 CMFTST value (0x0c20), i.e. the dword at logical_output_17_line_cal. Today it renders as pwVar1[0x12].",
+    "evidence": "App: lhz r12,36(r6) @0x4f138 in cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63. r6 = 0x3fdbdc is still used after the calls bl 0x4ef24 / 0x4f000 at 0x4f124 / 0x4f134. A call-clobbering scan misses this read; the keep-across-calls scan finds it. Indexed lhzx from 0x3fdbdc. Boot: covered by the dword stw @0x1548 / lwz @0x433c / @0x43dc at 0x3fdbfe. No row today. Dump 0x009c.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc02",
+    "current_name": "qadc_queue_timing_config_b",
+    "proposed_name": "cmf_program_step_1_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 1 CMFTST value (0xd20 from mpc555_initHardwareConfig). While the CMFTST enable byte is set, mpc555_cmfApplyHighVoltagePulse reads it at step 1 through the index based at logical_output_17_line_cal (the program CMFTST table base). TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 19 / 20 (EEPROM 0x780 / 0x782 = the cruise vent and cruise vacuum solenoid outputs, lines 152 / 155 in the dump). No QADC code reads this address (was qadc_queue_timing_config_b).",
+    "evidence": "Boot: stw 0xd20 4(r29 = 0x3fdbfe) @0x154c; lwzx @0x45a0 at step 1. App: no direct access. Dump 0x0098 0x009b.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc06",
+    "current_name": "qadc_queue_timing_config_c",
+    "proposed_name": "cmf_program_step_2_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 2 CMFTST value (0xe20 from mpc555_initHardwareConfig). mpc555_cmfApplyHighVoltagePulse reads it at step 2 through the program CMFTST index based at logical_output_17_line_cal. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 21 / 22 (EEPROM 0x784 / 0x786 = the cruise servo supply output line 21 and output 22 = 0 in the dump). No QADC code reads this address (was qadc_queue_timing_config_c).",
+    "evidence": "Boot: stw 0xe20 8(r29) @0x1550; lwzx @0x45a0 at step 2. App: no direct access. Dump 0x0015 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc0a",
+    "current_name": "qadc_queue_timing_config_d",
+    "proposed_name": "cmf_program_step_3_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 3 CMFTST value (0xf20 from mpc555_initHardwareConfig). mpc555_cmfApplyHighVoltagePulse reads it at step 3 through the program CMFTST index based at logical_output_17_line_cal. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 23 / 24 (EEPROM 0x788 / 0x78a; 0 in the dump). No QADC code reads this address (was qadc_queue_timing_config_d).",
+    "evidence": "Boot: stw 0xf20 12(r29) @0x1554; lwzx @0x45a0 at step 3. App: no direct access. Dump 0 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc0e",
+    "current_name": "qadc_queue_timing_config_e",
+    "proposed_name": "cmf_program_step_4_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 4 CMFTST value (0x420 from mpc555_initHardwareConfig). mpc555_cmfApplyHighVoltagePulse reads it at step 4 through the program CMFTST index based at logical_output_17_line_cal. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 25 / 26 (EEPROM 0x78c / 0x78e; 0 in the dump). No QADC code reads this address (was qadc_queue_timing_config_e).",
+    "evidence": "Boot: stw 0x420 16(r29) @0x1558; lwzx @0x45a0 at step 4. App: no direct access. Dump 0 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc12",
+    "current_name": "qadc_queue_timing_config_f",
+    "proposed_name": "cmf_program_step_5_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 5 CMFTST value (0x520 from mpc555_initHardwareConfig). mpc555_cmfApplyHighVoltagePulse reads it at step 5 through the program CMFTST index based at logical_output_17_line_cal. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 27 / 28 (EEPROM 0x790 / 0x792; entry 27 = line 42 in the dump). No QADC code reads this address (was qadc_queue_timing_config_f).",
+    "evidence": "Boot: stw 0x520 20(r29) @0x155c; lwzx @0x45a0 at step 5. App: no direct access. Dump 0x002a 0x0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc16",
+    "current_name": "qadc_queue_timing_config_g",
+    "proposed_name": "cmf_program_step_6_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 6 CMFTST value (0x620 from mpc555_initHardwareConfig). mpc555_cmfApplyHighVoltagePulse reads it at step 6 through the program CMFTST index based at logical_output_17_line_cal. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 29 / 30 (EEPROM 0x794 / 0x796; 0 in the dump). No QADC code reads this address (was qadc_queue_timing_config_g).",
+    "evidence": "Boot: stw 0x620 24(r29) @0x1560; lwzx @0x45a0 at step 6. App: no direct access. Dump 0 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc1a",
+    "current_name": "qadc_queue_timing_config_h",
+    "proposed_name": "cmf_program_step_7_test_register_value",
+    "proposed_type": "dword",
+    "comment": "Boot reflash kernel: program step 7 (last step) CMFTST value (0x720 from mpc555_initHardwareConfig). mpc555_cmfApplyHighVoltagePulse reads it at step 7 through the program CMFTST index based at logical_output_17_line_cal. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 31 / 32 (EEPROM 0x798 / 0x79a; 0 in the dump). No QADC code reads this address (was qadc_queue_timing_config_h).",
+    "evidence": "Boot: stw 0x720 28(r29) @0x1564; lwzx @0x45a0 at step 7 (step < cmf_program_step_count = 8). App: no direct access. Dump 0 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc1e",
+    "current_name": "cmf_pulses_per_step",
+    "proposed_name": "cmf_program_step_pulse_limits",
+    "proposed_type": "word[8]",
+    "comment": "Boot reflash kernel: the pulse limit of each of the 8 program steps (words 0x3fdc1e-0x3fdc2d: 4 4 4 4 20 20 20 48000 from mpc555_initHardwareConfig, written only when IMMR >> 16 >= 0x3030). mpc555_cmfApplyHighVoltagePulse counts cmf_pulse_count; once the count reaches entry [cmf_pulse_step_index], it moves to the next step, or on the last step (cmf_program_step_count - 1) returns 0. This array absorbs qadc_prescale_count_b..g and qadc_sample_rate_cal (entries 1-7); 48000 is the last step's limit. TIME-SHARED: the application reads these words only through the logical_output_line_cal index, as entries 33-40 (EEPROM 0x79c-0x7ab; entry 38 = line 145 in the dump) (was cmf_pulses_per_step).",
+    "evidence": "Boot: sth 4 0/2/4/6(r31) @0x1574-@0x1580, with r31 = 0x3fdc1e from addi @0x1570; sth 20 8/10/12(r31) @0x1588-@0x1590; sth 48000 (ori 48000 @0x1598) 14(r31) @0x159c. lhzx (base 0x3fdc1e, step x 2) @0x45e8, compared with the old cmf_pulse_count @0x45ec. App: no direct access (only lhzx from 0x3fdbdc). Dump: 0x3fdc28 = 0x0091, the rest 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc20",
+    "current_name": "qadc_prescale_count_b",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 1 of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e; value 4). Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entry 34).",
+    "evidence": "Boot: sth r30,2(r31) @0x1578 is the only direct access in either bank.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc22",
+    "current_name": "qadc_prescale_count_c",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 2 of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e; value 4). Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entry 35).",
+    "evidence": "Boot: sth r30,4(r31) @0x157c is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc24",
+    "current_name": "qadc_prescale_count_d",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 3 of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e; value 4). Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entry 36).",
+    "evidence": "Boot: sth r30,6(r31) @0x1580 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc26",
+    "current_name": "qadc_prescale_count_e",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 4 of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e; value 20). Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entry 37).",
+    "evidence": "Boot: sth r30,8(r31) @0x1588 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc28",
+    "current_name": "qadc_prescale_count_f",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 5 of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e; value 20). Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entry 38 = line 145 in the dump).",
+    "evidence": "Boot: sth r30,10(r31) @0x158c is the only direct access. Dump 0x0091.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc2a",
+    "current_name": "qadc_prescale_count_g",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 6 of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e; value 20). Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index. No QADC code reads this address. The application reads it only through the logical_output_line_cal index (entry 39).",
+    "evidence": "Boot: sth r30,12(r31) @0x1590 is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc2c",
+    "current_name": "qadc_sample_rate_cal",
+    "proposed_name": "",
+    "proposed_type": "",
+    "comment": "DELETE THIS ROW: it is entry 7 (the last step) of cmf_program_step_pulse_limits (word[8] at 0x3fdc1e). Its value 48000 is the last program step's pulse limit, not a QADC sample rate. Its only direct access is the store by mpc555_initHardwareConfig; mpc555_cmfApplyHighVoltagePulse reads it through the index at step 7. The application reads it only through the logical_output_line_cal index (entry 40).",
+    "evidence": "Boot: lis r11,0 / ori r11,r11,48000 @0x1594-@0x1598 then sth r11,14(r31 = 0x3fdc1e) @0x159c. This is the only direct access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc2e",
+    "current_name": "flash_poll_timeout_cycles",
+    "proposed_name": "flash2_chip_erase_poll_limit",
+    "proposed_type": "dword",
+    "comment": "Boot: the maximum number of status polls cm848_flashEraseChip waits for the flash2 (external flash at 0x500000) chip erase. It passes this value (9800000 from mpc555_initHardwareConfig, written at every boot service start) to cm848_flashPollUntilReady, whose loop services the SCI, the paced serial service and the supervisor watchdog once per poll. TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 41 / 42 (EEPROM 0x7ac / 0x7ae; 0 in the dump). It is a boot constant, not EEPROM data, so no _cal (was flash_poll_timeout_cycles).",
+    "evidence": "Boot: stw 9800000 (lis 149 / ori 35136) @0x15f0. lwz 0(r26) @0x1240, with r26 = 0x3fdc2e from addi @0x1224, loads r5 = param 3 of bl 0x1110 @0x1250. cm848_flashPollUntilReady loops while uVar2 < param_3. App: no direct access. Dump 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc32",
+    "current_name": "flash_poll_timeout_cal",
+    "proposed_name": "flash2_word_program_poll_limit",
+    "proposed_type": "dword",
+    "comment": "Boot: the maximum number of status polls cm848_flashWriteWord waits for one flash2 word program (0xa0 command) to finish (200 from mpc555_initHardwareConfig, passed as param 3 of cm848_flashPollUntilReady). TIME-SHARED: the application reads these two words only through the logical_output_line_cal index, as entries 43 / 44 (EEPROM 0x7b0 / 0x7b2; lines 130 / 131 in the dump). It is a boot constant, not EEPROM data, so no _cal (was flash_poll_timeout_cal).",
+    "evidence": "Boot: stw 200 @0x15fc. lwz -9166(r5) @0x1318 in cm848_flashWriteWord, passed to cm848_flashPollUntilReady(*source, destination, limit). App: no direct access. Dump 0x0082 0x0083.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc36",
+    "current_name": "flash_poll_retry_limit_cal",
+    "proposed_name": "flash2_chip_erase_retry_limit",
+    "proposed_type": "word",
+    "comment": "Boot: how many times cm848_flashEraseChip reissues the flash2 chip erase command sequence (0xaa / 0x55 / 0x80 / 0xaa / 0x55 / 0x10 at 0x500aaa / 0x500554) after a poll failure. It loops while the attempt count before the increment is below this value (3 from mpc555_initHardwareConfig). The attempt counter (r21) is never initialized in the function. TIME-SHARED: the application reads this word only through the logical_output_line_cal index, as entry 45 (EEPROM 0x7b4; 0 in the dump). It is a boot constant, so no _cal (was flash_poll_retry_limit_cal).",
+    "evidence": "Boot: sth 3 @0x1608. lhz 0(r25) @0x126c, with r25 = 0x3fdc36 from addi @0x121c, then cmpw (r21 - 1) / blt 0x1228 @0x1270-@0x1274 in cm848_flashEraseChip. r21 is saved by stmw r20 but never set before addi r21,r21,1 @0x1260 (decompile: unaff_r21). App: no direct access. Dump 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fdc38",
+    "current_name": "data_transfer_retry_count",
+    "proposed_name": "flash2_word_program_retry_limit",
+    "proposed_type": "word",
+    "comment": "Boot: the number of consecutive failed program attempts cm848_flashWriteBlock allows for one flash2 word before it gives up (50 from mpc555_initHardwareConfig). A word that programs resets the count, and 0 skips the write loop. TIME-SHARED: the application reads this word only through the logical_output_line_cal index, as entry 46 (EEPROM 0x7b6; 0 in the dump). The boot's 4 KB reflash data ring buffer starts right after it, at 0x3fdc3a (was data_transfer_retry_count).",
+    "evidence": "Boot: sth 50 @0x1614. lhz 0(r27) @0x139c (zero test) and @0x13f0 (loop bound), with r27 = 0x3fdc38 from addi @0x1398, in cm848_flashWriteBlock (reached through eeprom_xfer_state.flash2_write_callback = 0x1338, set by mpc555_initHardwareConfig @0x1690). App: no direct access. Dump 0.",
+    "confidence": "high"
+   }
+  ],
+  "cm848_functions": [
+   {
+    "address": "0x00004570",
+    "current_name": "mpc555_cmfApplyHighVoltagePulse",
+    "proposed_name": "mpc555_cmfApplyHighVoltagePulse",
+    "role": "Applies one program high-voltage pulse and advances the program step when the step's pulse limit is spent.",
+    "discriminator": "The only reader of the program CMFTST table at + 4 x step, cmf_program_step_pulse_limits and cmf_program_step_count; the only writer of cmf_pulse_step_index after mpc555_cmfLoadProgramPage.",
+    "plate_comment": "Boot reflash kernel: one program high-voltage pulse. When the CMFTST enable byte (switch_input_11_hardware_line_cal._0_1_) is set, it writes the program CMFTST value of step cmf_pulse_step_index to the active CMFTST; that dword table is based at logical_output_17_line_cal. It writes cmf_program_pulse_control_value to the active CMFCTL and counts cmf_pulse_count. Once cmf_program_step_pulse_limits[step] pulses are spent, it moves to the next step, or on the last step (cmf_program_step_count - 1) returns 0. Otherwise it sets the next pulse value (cmf_control_block_select | cmf_program_control_step_bits[step] | SES | EHV) and returns 1 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High",
+    "evidence": "Plate refresh only: the current plate names cmf_pulses_per_step, which this batch renames. Code: lbz 0x3fdba4 @0x4580; lwzx 0x3fdbfe @0x45a0; lwz 0x3fdbda @0x45b8; lhzx 0x3fdc1e @0x45e8; lhz 0x3fdbd4 @0x45f8 -> li r3,0 @0x461c; lwzx 0x3fdbde @0x463c -> stw 0x3fdbda @0x4648; li r3,1 @0x464c. Only caller: cm848_runFlashProgramStateMachine (steps 4 and 1).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00004320",
+    "current_name": "mpc555_cmfRestoreNormalMode",
+    "proposed_name": "mpc555_cmfRestoreNormalMode",
+    "role": "Writes the program step 0 CMFCTL or CMFTST setting to both CMF modules, then sets CMFMCR_A / CMFMCR_B = 0x85000000.",
+    "discriminator": "The only program-path function that writes CMFMCR; it uses only the step 0 entries.",
+    "plate_comment": "Boot reflash kernel: returns both CMF flash modules to normal mode before a program sequence (program step 2 of cm848_runFlashProgramStateMachine). With the CMFTST enable byte (switch_input_11_hardware_line_cal._0_1_) clear, it writes cmf_program_control_base | cmf_program_control_step_bits[0] to CMFCTL_A / CMFCTL_B. With the byte set, it writes the program step 0 CMFTST value (the dword at logical_output_17_line_cal) to CMFTST_A / CMFTST_B. It then sets CMFMCR_A / CMFMCR_B = 0x85000000 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High",
+    "evidence": "Plate fix: the current plate calls 0x3fdba4 a 'CMF test-step count', but mpc555_initHardwareConfig writes 1 there (stb @0x1480) and every reader tests it against 0, so it is an enable flag. It also says 'CMFCTL = block select only', but the code writes base | step bits [0]. Code: lbz 0x3fdba4 @0x4324; lwz 0x3fdbfe @0x433c / @0x4348; lwz 0x3fdbd6 @0x4368 / @0x437c with 0x3fdbde @0x436c / @0x4380. Only caller: cm848_runFlashProgramStateMachine.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0004f0dc",
+    "current_name": "cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63",
+    "proposed_name": "cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63",
+    "role": "Copies the overdrive and converter clutch solenoid requests (outputs 17 / 18) to logical outputs 62 / 63 when both outputs of a pair have lines.",
+    "discriminator": "The only direct reader of logical_output_line_cal entries 17 / 18 / 62 / 63.",
+    "plate_comment": "From cm848_applyLogicalOutputRequests: when logical outputs 17 and 62 both have lines (logical_output_line_cal), output 62 follows the overdrive solenoid request (17); when 18 and 63 both have lines, output 63 follows the converter clutch solenoid request (18). Both run at priority 0. Active on this truck: lines 153 / 158 and 156 / 159. It reads logical_output_17_line_cal / logical_output_62_line_cal / logical_output_18_line_cal and entry 63 (0x3fdc5a) through one base register. Entries 17 and 18 time-share the boot kernel's program CMFTST step 0 value (was cm848_checkProtectionModeFlags; PR #53 round 58)",
+    "evidence": "Plate refresh only: the current plate says entry 17 'renders as the kernel's time-shared name qadc_queue_timing_config._0_2_', which this batch replaces. Code: addi r6 = 0x3fdbdc @0x4f0ec; lhz 34(r6) @0x4f0f0, 124(r6) @0x4f0fc, 36(r6) @0x4f138, 126(r6) @0x4f144; set / clear request 62 / 63 via bl 0x4ef24 / 0x4f000.",
+    "confidence": "high"
+   }
+  ],
+  "enum_members": [],
+  "notes": "Method (scripts in /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q5/investigator/): scan_range.py walks every function window of both banks with base-register tracking (lis / addi / ori / mr / add, D-form and X-form indexed accesses). scan_range_keep.py is the same scan keeping registers across calls; it adds exactly one hit, 0x3fdc00 @0x4f138. raw_imm_scan.py checks every lis-0x40 immediate and finds no absolute hit outside the function table. dump_compare.py shows RAM == EEPROM over 0x3fdb8e-0x3fdc7c. No application store reaches the range.\n\nJudgment calls: (1) The rule I applied: a row whose address the application reads at a fixed address, or uses as a table base, gets the application name. A row the application reaches only by index from another base gets the kernel name, because only kernel code renders it. Every comment documents both roles. (2) Two kernel table bases (0x3fdbb2 erase CMFTST, 0x3fdbfe program CMFTST) cannot be dword[8], because application-read rows sit inside them (0x3fdbb4 / 0x3fdbb6 / 0x3fdbce; 0x3fdbfe / 0x3fdc00). They stay word rows, and the kernel's dword accesses there will render with a leading underscore, and the indexed reads as casts. (3) 0x3fdbd2 shrinks from dword to word so that 0x3fdbd4 (program step count) gets a row; the application's lbzx rendering from the base does not change. (4) I added 'program' to the program-only kernel rows (cmf_program_control_base / cmf_program_pulse_control_value / cmf_program_control_step_bits / cmf_program_step_pulse_limits) to pair them with the cmf_erase_* rows. (5) Encoding: a deleted row (absorbed by an array) has proposed_name and proposed_type empty plus a 'DELETE THIS ROW' comment; there are 14 (0x3fdbe2-0x3fdbfa, 0x3fdc20-0x3fdc2c). A new row has current_name empty (0x3fdbb4, 0x3fdbd4, 0x3fdc00). 0x3fdbce is an arrays.csv row. (6) I did not name the CMFCTL bit fields (0x28000000 / 0x1e0000 / 0x4f0000 / 0xf0000) or interpret which MPC555 mask IMMR >> 16 >= 0x3030 selects; neither is proved here.\n\nLeads (outside the range): 0x3fdc5a has no row. It should be logical_output_63_line_cal (word, lhz 126(r6) @0x4f144, line 159), and the cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 plate above already refers to it. The comment of logical_output_62_line_cal (0x3fdc58) says 'past the kernel's range', but 0x3fdc3a-0x3fec39 is the boot's 4 KB reflash data ring buffer (cm848_dataTransferBufferWrite wraps its index at 0x1000; it is DAT_003fdc3a today and could use a row such as reflash_data_ring_buffer). So logical_output_line_cal[47..79] and the EEPROM mirror up to 0x3fec39 are time-shared too. The kernel rows cmf_pulse_step_index 0x3fec8f / cmf_control_block_select 0x3fec90 / cmf_pulse_count 0x3fec98 are used only on the program path and could also take 'program'. In cm848_flashEraseChip the retry counter r21 is never initialized. No Calterm e2m record (CHR 11.45) and no entry in the dumped part of the parameter ID table covers EEPROM 0x70c-0x7f9; the next record, 1069 Powerdown_Memory_Save_Start, starts at 0x7fa = 0x3fdc7c. That ends logical_output_line_cal at exactly 80 words. After applying, regenerate the firmware headers. Only the three plate comments above mention the renamed rows (checked with mentions.py over every frozen CSV)."
+ },
+ "blind": {
+  "batch": "Q5",
+  "roles": [
+   {
+    "address": "0x003fdba4",
+    "role": "CM848 word, dual-use. Boot: byte 0x3fdba4 is the CMFTST-in-use flag. mpc555_initHardwareConfig stores 1 (stb 0x1480) only when IMMR (SPR 638) >> 16 >= 0x3030. mpc555_cmfRestoreNormalMode, cmfSelectBlockAndStartSequence, cmfApplyHighVoltagePulse, cmfEndHighVoltagePulse and cmfEraseBlocks test it (lbz -9308) before every CMFTST write; with 0, restore / select write CMFCTL instead. Byte 0x3fdba5 is the erase step count (8, stb 0x14f8): the cmfEraseBlocks step-loop bound (0x4c00 / 0x4dc0), and count-1 is the step every retry pass restarts at (0x4be4). App: switch_input_hardware_line_cal[11] (EEPROM 0x722), the brake switch line, 147 in the dump. Two functions read it directly as lhz 22(base 0x3fdb8e): cm848_buildPgn65241AuxiliaryInputOutputStatus1Message (0x2408c; 0 -> SPN 702 not available 0x30) and cm848_monitorBrakeSwitchPairAgreement (0x512158; 0 -> monitor off, faults 394 / 395 cleared).",
+    "discriminator": "Its two bytes are two separate boot values (a flag and the erase step count). The app reads the word as switch 11 (switch_input_state_bits.brake_switch). Keep the word type and name. Comment fix: the old note 'cmf test-step count (0 = CMFTST unused)' is wrong: byte 0 is the flag, byte 1 is the erase step count.",
+    "suggested_name": "switch_input_11_hardware_line_cal",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdba6",
+    "role": "CM848 word, boot-only row. The running total of CMF erase pulses. mpc555_initHardwareConfig (sth 0x15e0) and mpc555_cmfEraseBlocks entry (0x4a28) clear it. After each step the step's pulse count is added (0x4da8-0x4db4), and the erase stops when the total reaches the limit at 0x3fdba8 (lhz 0x4bc0 / 0x4c1c / 0x4cac). App overlay: switch_input_hardware_line_cal[12] (EEPROM 0x724, the exhaust brake switch line, 149). The app reads it only through the table index (cm848_scanAndDebounceSwitchInputs loop 0-31, cm848_readSwitchHardwareInput), so the row name never renders in app code.",
+    "discriminator": "The counter of the erase (read and written each step). 0x3fdba8 is its fixed limit. Keep the name and add the app overlay to the comment.",
+    "suggested_name": "cmf_erase_pulse_total",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdba8",
+    "role": "CM848 word, dual-use. Boot: the CMF erase pulse limit, 100 (sth 0x1504). mpc555_cmfEraseBlocks ends its step loop and its retry passes once cmf_erase_pulse_total >= it (lhz 0x4bc4 / 0x4c20 / 0x4cb0). App: switch_input_hardware_line_cal[13] (EEPROM 0x726), the A/C on/off switch line, 0 in the dump. cm848_updateAirConditioningSwitchFromPci reads it directly (lhz -9304 at 0x3be34): 0 -> switch 13 is taken from PCI receive message 10 (0x52) bit 7 while that message is valid.",
+    "discriminator": "Boot: the fixed limit (0x3fdba6 is the counter). App: switch 13 (air_conditioning_switch). The current name and comment are right.",
+    "suggested_name": "switch_input_13_hardware_line_cal",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbaa",
+    "role": "CM848 dword, boot-only. The erase CMFCTL base, 0x28000000 (stw 0x148c). mpc555_cmfEraseBlocks (lwz 0x4a30) builds module A's control word as base | (mask & 0xff00) and module B's as base | (mask & 0xff) << 8. It writes each with cmf_erase_control_bits and |4 (PE), |6 (PE|SES), |7 (PE|SES|EHV). App overlay: switch lines [14] (low oil pressure, 150) and [15] (clutch, 0), table index only.",
+    "discriminator": "Erase path only. The program path uses its own base at 0x3fdbd6 (same value, other readers).",
+    "suggested_name": "cmf_erase_control_base",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbae",
+    "role": "CM848 dword, boot-only. 0x1e0000 (stw 0x1498), ORed into every CMFCTL write of mpc555_cmfEraseBlocks (lwz through r28 = 0x3fdbae, 0x4a44 ... 0x4eb4). It is the one set of CMFCTL timing bits for every erase step. App overlay: switch lines [16] / [17] (EGR / VGT driver feedback, 0 / 0), table index only.",
+    "discriminator": "The same value for every erase step. The program path has a per-step table at 0x3fdbde instead.",
+    "suggested_name": "cmf_erase_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbb2",
+    "role": "CM848 dword, dual-use. Boot: the erase CMFTST value of step 0 (0xc20) and the base of the 8-dword erase CMFTST table 0x3fdbb2-0x3fdbd1 (0xc20 0xd20 0xe20 0xf20 0x420 0x520 0x620 0x720, stored by mpc555_initHardwareConfig 0x14a8-0x14e0). mpc555_cmfEraseBlocks writes [0] to CMFTST_A / CMFTST_B before the interlock writes (lwz 0x4ac0 / 0x4b54), and table[step] for steps 1-7 (lwzx 0x4c5c / 0x4c7c), only while the 0x3fdba4 flag is set. App: the words switch_input_hardware_line_cal[18] (0x3fdbb2, EEPROM 0x730, no named use, 0) and [19] (0x3fdbb4, EEPROM 0x732, the remote PTO switch line, 148). cm848_buildPgn65241AuxiliaryInputOutputStatus1Message reads 0x3fdbb4 directly (lhz 38(base 0x3fdb8e) at 0x2404c, rendered as qadc_control_word_cal._2_2_): 0 -> SPN 701 not available (0xc0), else switch_input_state_bits.remote_power_take_off_switch. Nothing about QADC.",
+    "discriminator": "The app reads only the LOW half (+2 = switch 19). The boot accesses the whole dword 5 times (init store, two direct loads, two indexed loads from this base), so keep the dword and give it a name that covers both app words. Drop the wrong QADC name. Keep _cal: the app load fills EEPROM 0x730 into it.",
+    "suggested_name": "switch_input_18_and_19_hardware_lines_cal",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x003fdbb6",
+    "role": "CM848 dword now, dual-use. Boot: the erase CMFTST value of step 1 (0xd20), stored by mpc555_initHardwareConfig (stw 4(r9) at 0x14b0). mpc555_cmfEraseBlocks reads it only through the 0x3fdbb2 base (lwzx, step 1). App: switch_input_hardware_line_cal[20] (EEPROM 0x734), the park / neutral switch line, 13 in the dump. cm848_updateParkNeutralFlagAndTsc1Activity reads it directly (lhz -9290 at 0x511ba8, rendered as qadc_control_word_b._0_2_). With no ETC2 selected gear: 0 -> transmission_park_or_neutral_flag from transmission_selected_gear, else from switch 20 (park_neutral_switch). The low half 0x3fdbb8 is switch 21 (overdrive off, line 18), table index only.",
+    "discriminator": "The app reads the HIGH half at the row's own address (switch 20). The only by-address boot access is the one init store. So retype it as a word: the app read becomes exact and only that init store renders with '_'. The alternative is to keep a dword named switch_input_20_and_21_hardware_lines_cal.",
+    "suggested_name": "switch_input_20_hardware_line_cal",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x003fdbba",
+    "role": "CM848 word->dword, boot-only. The erase CMFTST value of step 2, 0xe20 (stw 8(r9) at 0x14b8). mpc555_cmfEraseBlocks reads it only through the 0x3fdbb2 base (lwzx, step 2). App overlay: switch lines [22] (transmission relay feedback, 154) / [23] (overdrive solenoid feedback, 153), table index only.",
+    "discriminator": "Step 2 of the 8-entry erase CMFTST table. The boot writes it as a dword, so the word type renders the init as _qadc_control_word_c: retype it to dword. Nothing about QADC.",
+    "suggested_name": "cmf_erase_step_2_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbbe",
+    "role": "CM848 word->dword, boot-only. The erase CMFTST value of step 3, 0xf20 (stw 12(r9) at 0x14c0), read through the 0x3fdbb2 base. App overlay: switch lines [24] (converter clutch feedback, 156) / [25] (cruise vent feedback, 152), table index only.",
+    "discriminator": "Step 3 of the erase CMFTST table (the last of the four 0x8xx steps). Retype to dword.",
+    "suggested_name": "cmf_erase_step_3_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbc2",
+    "role": "CM848 word->dword, boot-only. The erase CMFTST value of step 4, 0x420 (stw 16(r9) at 0x14c8), read through the 0x3fdbb2 base. App overlay: switch lines [26] (throttle interlock, 0) / [27] (cruise vacuum feedback, 155), table index only.",
+    "discriminator": "Step 4 of the erase CMFTST table (the first step without bit 0x800). Retype to dword.",
+    "suggested_name": "cmf_erase_step_4_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbc6",
+    "role": "CM848 word->dword, boot-only. The erase CMFTST value of step 5, 0x520 (stw 20(r9) at 0x14d0), read through the 0x3fdbb2 base. App overlay: switch lines [28] (cruise servo supply feedback, 22) / [29] (0), table index only.",
+    "discriminator": "Step 5 of the erase CMFTST table. Retype to dword.",
+    "suggested_name": "cmf_erase_step_5_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbca",
+    "role": "CM848 word->dword, boot-only. The erase CMFTST value of step 6, 0x620 (stw 24(r9) at 0x14d8), read through the 0x3fdbb2 base. App overlay: switch lines [30] / [31] (0 / 0; 31 = the unwired switch), table index only. This is the last row of switch_input_hardware_line_cal.",
+    "discriminator": "Step 6 of the erase CMFTST table. Retype to dword. Step 7 is the next row, 0x3fdbce, which is app data.",
+    "suggested_name": "cmf_erase_step_6_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbce",
+    "role": "CM848 arrays.csv byte[4], dual-use. Boot: the erase CMFTST value of step 7 (0x720). mpc555_initHardwareConfig stores it as a dword (stw 28(r9) at 0x14e0), rendered as the four byte stores 0 / 0 / 7 / 0x20. mpc555_cmfEraseBlocks reads it through the 0x3fdbb2 base (lwzx, step 7), and every retry pass reuses this last step. App: switch_input_datalink_source_bits_cal (EEPROM 0x74c, all 0): bit N = switch N takes its state from the J1939 input layer. Read through the base by cm848_scanAndDebounceSwitchInputs, cm848_copyStatusBitToDatalinkSwitch and cm848_evaluateJ1939InputSignalFault (lbzx). Read directly (lbz +0..+3) by the PGN 65265 / 61443 / 65264 builders, cm848_j1939BuildEngineControlByte, cm848_checkSwitch31OnTimeFault and the three J1939 accelerator handlers.",
+    "discriminator": "The app's most-used row in the range. Keep the name and byte[4] type. Its comment does not name the boot role: add 'erase CMFTST step 7 (0x720) during boot / reflash'.",
+    "suggested_name": "switch_input_datalink_source_bits_cal",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbd2",
+    "role": "CM848 dword, dual-use. Boot: the word at +0 (0x3fdbd2) is the erase pulses per step, 1 (sth 0x14ec). It is the bound of the inner pulse loop of mpc555_cmfEraseBlocks (lhz 0x4c98 / 0x4d94; 0 skips the pulses). The word at +2 (0x3fdbd4) is the program step count, 8 (sth 0x15a8). mpc555_cmfApplyHighVoltagePulse (lhz 0x45f8) returns 0 (give up) when the step's pulses run out at step >= count - 1. App: logical_output_line_active_low_bits_cal, 10 bytes to 0x3fdbdb (EEPROM 0x750): bit N = logical output N is active low. lbzx through this base in cm848_setLogicalOutputAndDriveLine, cm848_clearLogicalOutputAndDriveLine and cm848_applyLogicalOutputRequests (loop 0-79). Dump 00 00 1f 00 00 00 00 c0 00 00.",
+    "discriminator": "Two boot counts in one app bitmap. Keep the name and the dword type: a byte[10] would overlap the kernel rows 0x3fdbd6 / 0x3fdbda. Comment fix: 'the low half is the pulse step count' is wrong. ._0_2_ is the erase pulses per step and ._2_2_ is the program step count.",
+    "suggested_name": "logical_output_line_active_low_bits_cal",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbd6",
+    "role": "CM848 dword, boot-only. The program CMFCTL base, 0x28000000 (stw 0x150c). Only the program path reads it. With the 0x3fdba4 flag clear, mpc555_cmfRestoreNormalMode and mpc555_cmfSelectBlockAndStartSequence write CMFCTL_A / CMFCTL_B = base | step control bits[0] (lwz 0x4368 / 0x437c / 0x43f8 / 0x440c). The select builds cmf_control_block_select = base | 0x8000 >> block (0x441c). App overlay: active-low bytes 4-7 (outputs 32-63: 00 00 00 c0), table index only.",
+    "discriminator": "The program-side twin of cmf_erase_control_base (0x3fdbaa). The erase never reads it. Add 'program' so the two bases are not confused.",
+    "suggested_name": "cmf_program_control_base",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbda",
+    "role": "CM848 word (accessed as a dword), boot-only. The CMFCTL value of the next program pulse = cmf_control_block_select | step control bits[step] | 3 (SES|EHV). mpc555_cmfLoadProgramPage (stw 0x455c, step 0) and mpc555_cmfApplyHighVoltagePulse (stw 0x4648, next step) store it. cmfApplyHighVoltagePulse writes it to the active CMFCTL (lwz 0x45b8). App overlay: active-low bytes 8-9 (outputs 64-79, 0), table index only.",
+    "discriminator": "The dword runs into 0x3fdbdc (logical_output_line_cal), so the row must stay a word and render as '_name'. The rename only adds 'program' (the current name is otherwise right).",
+    "suggested_name": "cmf_program_pulse_control_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbdc",
+    "role": "CM848 word, dual-use. App: the base of the 80-word logical output line table (EEPROM 0x75a): [N] = the discrete line driven for output N, 0 = none. Readers: cm848_setLogicalOutputAndDriveLine, cm848_clearLogicalOutputAndDriveLine, cm848_applyLogicalOutputRequests (loop 0-79), cm848_refreshOutputPortsAndReadback, cm848_checkDiscreteOutputReadBack and cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 (direct +34 / +36 / +124 / +126). Boot: it is only the low half of the program pulse CMFCTL dword at 0x3fdbda (no access of its own). The kernel's program tables 0x3fdbde-0x3fdc2d and the flash2 settings 0x3fdc2e-0x3fdc39 lie inside the table.",
+    "discriminator": "Keep the name. Comment fix: the kernel range ends at 0x3fdc2d (the pulses table), not 0x3fdc2b. Also add that 0x3fdbdc-0x3fdbdd is the low half of cmf_control_pulse_value.",
+    "suggested_name": "logical_output_line_cal",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbde",
+    "role": "CM848 dword -> dword[8] (0x3fdbde-0x3fdbfd), boot-only. The per-step program CMFCTL timing bits: 0x4f0000 for steps 0-3 and 0xf0000 for steps 4-7 (stw 0(r29) .. 28(r29), 0x151c-0x153c). mpc555_cmfRestoreNormalMode, cmfSelectBlockAndStartSequence, cmfLoadProgramPage and cmfEndHighVoltagePulse read [0]. mpc555_cmfApplyHighVoltagePulse reads [cmf_pulse_step_index] (lwzx 0x463c). App overlay: logical_output_line_cal [1]-[16] (dump [11] = 146, [16] = 154), table index only. No app access lands in 0x3fdbde-0x3fdbfd.",
+    "discriminator": "The only per-step CMFCTL table. The code indexes it from this base, and no app read lands inside it, so declare the dword[8] array and delete the rows 0x3fdbe2-0x3fdbfa.",
+    "suggested_name": "cmf_program_step_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbe2",
+    "role": "CM848 dword, boot-only. Element [1] of the program step control bits table, 0x4f0000 (stw 4(r29) at 0x1520), read only through the 0x3fdbde base (lwzx in mpc555_cmfApplyHighVoltagePulse). App overlay: logical output lines [3] / [4] (0 / 0), table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[1] and delete the row. If the rows stay separate, use the name given here. Nothing about QADC.",
+    "suggested_name": "cmf_program_step_1_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbe6",
+    "role": "CM848 dword, boot-only. Element [2] of the program step control bits table, 0x4f0000 (stw 8(r29) at 0x1524), read through the 0x3fdbde base. App overlay: output lines [5] / [6], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[2]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_2_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbea",
+    "role": "CM848 dword, boot-only. Element [3] of the program step control bits table, 0x4f0000 (stw 12(r29) at 0x1528), read through the 0x3fdbde base. App overlay: output lines [7] / [8], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[3] (the last 0x4f0000 step). Otherwise use this name.",
+    "suggested_name": "cmf_program_step_3_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbee",
+    "role": "CM848 dword, boot-only. Element [4] of the program step control bits table, 0xf0000 (stw 16(r29) at 0x1530), read through the 0x3fdbde base. App overlay: output lines [9] / [10], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[4] (the first 0xf0000 step). Otherwise use this name.",
+    "suggested_name": "cmf_program_step_4_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbf2",
+    "role": "CM848 dword, boot-only. Element [5] of the program step control bits table, 0xf0000 (stw 20(r29) at 0x1534), read through the 0x3fdbde base. App overlay: output lines [11] (engine brake driver 1, 146) / [12], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[5]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_5_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbf6",
+    "role": "CM848 dword, boot-only. Element [6] of the program step control bits table, 0xf0000 (stw 24(r29) at 0x1538), read through the 0x3fdbde base. App overlay: output lines [13] / [14], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[6]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_6_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbfa",
+    "role": "CM848 dword, boot-only. Element [7] of the program step control bits table, 0xf0000 (stw 28(r29) at 0x153c), read through the 0x3fdbde base. App overlay: output lines [15] / [16] (transmission relay, 154), table index only.",
+    "discriminator": "Preferred: fold into cmf_program_step_control_bits[7] (the last step). Otherwise use this name.",
+    "suggested_name": "cmf_program_step_7_control_bits",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdbfe",
+    "role": "CM848 dword, dual-use. Boot: the program CMFTST value of step 0 (0xc20) and the base of the 8-dword program CMFTST table 0x3fdbfe-0x3fdc1d (0xc20 .. 0x720, stw 0x1548-0x1564). With the 0x3fdba4 flag set, mpc555_cmfRestoreNormalMode and cmfSelectBlockAndStartSequence write [0] to CMFTST_A / CMFTST_B (lwz 0x433c / 0x4348 / 0x43dc / 0x43e8). mpc555_cmfApplyHighVoltagePulse writes [step] to the active CMFTST (lwzx 0x45a0). App: logical_output_line_cal[17] (0x3fdbfe, EEPROM 0x77c, the overdrive solenoid output, line 153) and [18] (0x3fdc00, the converter clutch solenoid output, line 156). cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 reads both directly (lhz 34(r6) at 0x4f0f0 and lhz 36(r6) at 0x4f138, base 0x3fdbdc; the second read is missed by a scan that drops r6 at each bl). It mirrors requests 17 / 18 to outputs 62 / 63 only when both lines are nonzero. Nothing about QADC.",
+    "discriminator": "The app reads both halves (outputs 17 and 18). The boot accesses the dword 6 times (init, four direct loads, one indexed). Keep the dword and give it a name that covers both outputs. Keep _cal (EEPROM 0x77c-0x77f). The name sits next to logical_output_62_line_cal.",
+    "suggested_name": "logical_output_17_and_18_lines_cal",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x003fdc02",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 1, 0xd20 (stw 4(r29) at 0x154c). mpc555_cmfApplyHighVoltagePulse reads it only through the 0x3fdbfe base (lwzx). App overlay: logical output lines [19] (cruise vent, 152) / [20] (cruise vacuum, 155), table index only.",
+    "discriminator": "Step 1 of the program CMFTST table. The code indexes from the dual-use 0x3fdbfe row, so these entries keep separate rows (no array). Nothing about QADC.",
+    "suggested_name": "cmf_program_step_1_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc06",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 2, 0xe20 (stw 8(r29) at 0x1550), read through the 0x3fdbfe base. App overlay: output lines [21] (cruise servo supply, 21) / [22] (0), table index only.",
+    "discriminator": "Step 2 of the program CMFTST table.",
+    "suggested_name": "cmf_program_step_2_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc0a",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 3, 0xf20 (stw 12(r29) at 0x1554), read through the 0x3fdbfe base. App overlay: output lines [23] / [24] (0 / 0), table index only.",
+    "discriminator": "Step 3 of the program CMFTST table (the last 0x8xx step).",
+    "suggested_name": "cmf_program_step_3_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc0e",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 4, 0x420 (stw 16(r29) at 0x1558), read through the 0x3fdbfe base. App overlay: output lines [25] / [26], table index only.",
+    "discriminator": "Step 4 of the program CMFTST table.",
+    "suggested_name": "cmf_program_step_4_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc12",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 5, 0x520 (stw 20(r29) at 0x155c), read through the 0x3fdbfe base. App overlay: output lines [27] (42) / [28], table index only.",
+    "discriminator": "Step 5 of the program CMFTST table.",
+    "suggested_name": "cmf_program_step_5_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc16",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 6, 0x620 (stw 24(r29) at 0x1560), read through the 0x3fdbfe base. App overlay: output lines [29] / [30], table index only.",
+    "discriminator": "Step 6 of the program CMFTST table.",
+    "suggested_name": "cmf_program_step_6_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc1a",
+    "role": "CM848 dword, boot-only. The program CMFTST value of step 7, 0x720 (stw 28(r29) at 0x1564), read through the 0x3fdbfe base. App overlay: output lines [31] / [32], table index only.",
+    "discriminator": "Step 7, the last step of the program CMFTST table.",
+    "suggested_name": "cmf_program_step_7_test_register_value",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc1e",
+    "role": "CM848 word -> word[8] (0x3fdc1e-0x3fdc2d), boot-only. The program pulses per step: 4 4 4 4 20 20 20 48000 (sth 0(r31) .. 14(r31), 0x1574-0x159c). mpc555_cmfApplyHighVoltagePulse compares the step's pulse count with [step] (lhzx 0x45e8). When the count reaches it, the routine goes to the next step, or at the last step (count 0x3fdbd4) returns 0 = give up. App overlay: logical_output_line_cal [33]-[40] (dump [38] = 145, the A/C clutch output), table index only. No app access lands inside it.",
+    "discriminator": "A per-step table. The erase has a single pulses-per-step value instead (0x3fdbd2 +0). The code indexes it from this base, so declare the word[8] array and delete the rows 0x3fdc20-0x3fdc2c. Add 'program' to the name.",
+    "suggested_name": "cmf_program_pulses_per_step",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc20",
+    "role": "CM848 word, boot-only. Element [1] of the program pulses-per-step table, 4 (sth 2(r31) at 0x1578), read only through the 0x3fdc1e base (lhzx). App overlay: output line [34], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[1]. Otherwise use this name. Nothing about QADC or a prescaler.",
+    "suggested_name": "cmf_program_step_1_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc22",
+    "role": "CM848 word, boot-only. Element [2] of the program pulses-per-step table, 4 (sth 4(r31) at 0x157c), read through the 0x3fdc1e base. App overlay: output line [35], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[2]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_2_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc24",
+    "role": "CM848 word, boot-only. Element [3] of the program pulses-per-step table, 4 (sth 6(r31) at 0x1580), read through the 0x3fdc1e base. App overlay: output line [36], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[3]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_3_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc26",
+    "role": "CM848 word, boot-only. Element [4] of the program pulses-per-step table, 20 (sth 8(r31) at 0x1588), read through the 0x3fdc1e base. App overlay: output line [37], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[4] (the first 20-pulse step). Otherwise use this name.",
+    "suggested_name": "cmf_program_step_4_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc28",
+    "role": "CM848 word, boot-only. Element [5] of the program pulses-per-step table, 20 (sth 10(r31) at 0x158c), read through the 0x3fdc1e base. App overlay: output line [38] (A/C clutch, 145), table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[5]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_5_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc2a",
+    "role": "CM848 word, boot-only. Element [6] of the program pulses-per-step table, 20 (sth 12(r31) at 0x1590), read through the 0x3fdc1e base. App overlay: output line [39], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[6]. Otherwise use this name.",
+    "suggested_name": "cmf_program_step_6_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc2c",
+    "role": "CM848 word, boot-only. Element [7] of the program pulses-per-step table, 48000 (sth 14(r31) at 0x159c), read through the 0x3fdc1e base. It is the pulse limit of the last program step: mpc555_cmfApplyHighVoltagePulse returns 0 when it is reached. App overlay: output line [40], table index only.",
+    "discriminator": "Preferred: fold into cmf_program_pulses_per_step[7]. Otherwise use this name. It is not a sample rate and not EEPROM data, so drop _cal.",
+    "suggested_name": "cmf_program_step_7_pulse_count",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc2e",
+    "role": "CM848 dword, boot-only. 9800000 (stw 0x15f0; set on every boot, outside the IMMR gate). cm848_flashEraseChip sends the Bank 2 chip-erase sequence (0xAA / 0x55 / 0x80 / 0xAA / 0x55 / 0x10 to 0x500AAA / 0x500554). It then passes this value as the poll limit to cm848_flashPollUntilReady (lwz 0x1240), which waits for 0xFFFF at 0x500000 (or DQ5 0x20 seen twice = failure). App overlay: output lines [41] / [42] (0 / 0), table index only.",
+    "discriminator": "The chip-erase poll limit. 0x3fdc32 is the word-program poll limit. The old name says 'cycles', but the value is a count of poll iterations.",
+    "suggested_name": "flash2_chip_erase_poll_limit",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc32",
+    "role": "CM848 dword, boot-only. 200 (stw 0x15fc). cm848_flashWriteWord programs one Bank 2 word (0xA0 command, then the data) and polls with this limit (lwz -9166 at 0x1318). App overlay: output lines [43] / [44] (intake air heaters 1 / 2, 130 / 131), table index only.",
+    "discriminator": "The word-program poll limit (0x3fdc2e is the chip-erase one). The boot code writes it from a constant and it is never an EEPROM value in that role, so drop _cal.",
+    "suggested_name": "flash2_word_program_poll_limit",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc36",
+    "role": "CM848 word, boot-only. 3 (sth 0x1608). cm848_flashEraseChip repeats the erase command and poll while its counter < this value (lhz 0x126c). The counter (r21) is never initialised (the decompile's unaff_r21), so the real retry count depends on the caller's r21. App overlay: output line [45] (0), table index only.",
+    "discriminator": "A retry count for the chip erase, not a poll limit. The boot writes it from a constant, so drop _cal.",
+    "suggested_name": "flash2_chip_erase_retry_limit",
+    "confidence": "high"
+   },
+   {
+    "address": "0x003fdc38",
+    "role": "CM848 word, boot-only. 50 (sth 0x1614). cm848_flashWriteBlock gives up on a word after this many consecutive failed cm848_flashWriteWord calls (lhz 0x139c / 0x13f0), and writes nothing when the value is 0. cm848_flashWriteBlock has no direct caller: mpc555_initHardwareConfig stores 0x1338 in eeprom_xfer_state.flash2_write_callback. App overlay: output line [46] (0), table index only.",
+    "discriminator": "The per-word retry limit of the Bank 2 block write. It has nothing to do with the data transfer buffer.",
+    "suggested_name": "flash2_word_write_retry_limit",
+    "confidence": "high"
+   }
+  ],
+  "enum_roles": [],
+  "notes": "CM848 only. Each roles[] element is one globals row (firmware CM848, address, type in the role text). There are 45 rows: the 44 global_variables.csv rows in 0x3fdba4-0x3fdc38 and the arrays.csv row 0x3fdbce. No enums.\n\nMETHOD. Scratch is in /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q5/describer/: notes.md, scan_range.py, scan_range_keep_bl.py, raw_imm_scan.py, erase.asm, scan_*.txt.\n- A base-tracking scan of ROM + flash2 (lis / addi / addis / ori / mr and D-form plus X-form accesses), run in two variants: volatile registers dropped at bl, and kept across bl. The second variant adds only 0x4f138 (0x3fdc00) and 0x4f144 (0x3fdc5a).\n- A raw scan of every immediate 0xdb80-0xdc80. It adds nothing; its one extra hit, 0x51dbe8, is a flash2 code pointer.\n- A search for stored 4-byte pointers into the range: none.\n- No range address is passed as an argument, and no e2m record resolves into 0x3fdb8e-0x3fdc7b.\n- Every role was read in the disassembly.\n\nKEY FACT. The application reads the WHOLE range, but almost only through four table bases:\n- switch_input_hardware_line_cal 0x3fdb8e: 32 words, cm848_scanAndDebounceSwitchInputs loop 0-31.\n- switch_input_datalink_source_bits_cal 0x3fdbce: 4 bytes.\n- logical_output_line_active_low_bits_cal 0x3fdbd2: 10 bytes.\n- logical_output_line_cal 0x3fdbdc: 80 words, cm848_applyLogicalOutputRequests loop 0-79.\nThose reads render the base names. A constant-offset app read lands only at these addresses:\n- 0x3fdba4 (switch 11)\n- 0x3fdba8 (switch 13)\n- 0x3fdbb4 (switch 19, inside row 0x3fdbb2)\n- 0x3fdbb6 (switch 20)\n- 0x3fdbce-0x3fdbd1\n- 0x3fdbfe / 0x3fdc00 (outputs 17 / 18, row 0x3fdbfe)\nThe dual-use rows are therefore 0x3fdba4, 0x3fdba8, 0x3fdbb2, 0x3fdbb6, 0x3fdbce, 0x3fdbd2 (its bytes are read only through its own base) and 0x3fdbdc. All the others are boot-only rows under the repository rule.\n\n_CAL. cm848_initEepromDriverAndLoadMirror (called by cm848_applicationMain) loads EEPROM 0x0-0x1a3f into 0x3fd482-0x3feec1. This covers 0x3fdba4-0x3fdc39 (EEPROM 0x722-0x7b7). The RAM dump equals cm848_eeprom.bin over 0x3fdb8e-0x3fdc7b, so the run-time RAM holds the EEPROM values, not the kernel's. App names keep _cal. Boot names drop it: mpc555_initHardwareConfig, called by mpc555_systemInitialization, writes them from constants, so flash_poll_timeout_cal, flash_poll_retry_limit_cal, qadc_sample_rate_cal and qadc_control_word_cal lose it.\n\nBOOT MAP. Every value below comes from mpc555_initHardwareConfig, gated on IMMR >> 16 >= 0x3030, except 0x3fdba6 and 0x3fdc2e-0x3fdc39, which it sets on every boot.\n- 0x3fdba4: byte, CMFTST-in-use flag (1).\n- 0x3fdba5: byte, erase step count (8).\n- 0x3fdba6: erase pulse total.\n- 0x3fdba8: erase pulse limit (100).\n- 0x3fdbaa / 0x3fdbae: erase CMFCTL base 0x28000000 / bits 0x1e0000.\n- 0x3fdbb2-0x3fdbd1: erase CMFTST table, dword[8], 0xc20 0xd20 0xe20 0xf20 0x420 0x520 0x620 0x720.\n- 0x3fdbd2: erase pulses per step (1).\n- 0x3fdbd4: program step count (8).\n- 0x3fdbd6: program CMFCTL base.\n- 0x3fdbda: next program pulse CMFCTL value.\n- 0x3fdbde-0x3fdbfd: program step CMFCTL bits, dword[8], 0x4f0000 x4 then 0xf0000 x4.\n- 0x3fdbfe-0x3fdc1d: program CMFTST table, dword[8], the same eight values.\n- 0x3fdc1e-0x3fdc2d: program pulses per step, word[8], 4 4 4 4 20 20 20 48000.\n- 0x3fdc2e / 0x3fdc32: Bank 2 erase / word-program poll limits (9800000 / 200).\n- 0x3fdc36 / 0x3fdc38: Bank 2 erase / word-write retry limits (3 / 50).\nNone of the qadc_* names fits any user.\n\nTYPING PLAN.\n- Arrays only where the code indexes from a boot-only base and no app read lands inside: cmf_program_step_control_bits dword[8] at 0x3fdbde (delete the rows 0x3fdbe2-0x3fdbfa) and cmf_program_pulses_per_step word[8] at 0x3fdc1e (delete 0x3fdc20-0x3fdc2c).\n- The folded rows still carry a fallback name in suggested_name, for use if the rows stay separate.\n- The erase and program CMFTST tables cannot be arrays. They are indexed from the dual-use rows 0x3fdbb2 / 0x3fdbfe, and the erase table ends in the app's 0x3fdbce byte[4].\n- Retype 0x3fdbba-0x3fdbca word -> dword: the boot writes dwords, which render now as _qadc_control_word_c.\n- 0x3fdbda must stay a word: it would overlap 0x3fdbdc.\n\nCOMMENT FIXES.\n- 0x3fdba4: byte 0 is the flag, byte 1 the erase step count. It is not a 'test-step count'.\n- 0x3fdbd2: ._0_2_ is the erase pulses per step and ._2_2_ is the program step count.\n- 0x3fdbdc: the kernel range ends at 0x3fdc2d.\n- 0x3fdbce: the comment lacks the boot role.\n\nCAVEATS.\n- The uninitialised r21 retry counter in cm848_flashEraseChip.\n- When IMMR >> 16 < 0x3030, nothing initialises 0x3fdba4-0x3fdc2d. After a warm restart the kernel would then read the EEPROM line tables there: the erase limit 0x3fdba8 = 0, so the erase fails at once.\n- Field names inside CMFCTL / CMFTST (beyond PE 4 / SES 2 / EHV 1 / HVS 0x80000000 / BLOCK 0x8000 >> n) are not asserted.\n- No CM550 counterpart: its MC68336 flash driver uses Intel-style 0x2020 / 0xD0D0 / 0x4040 command words and has no such table."
+ },
+ "verdict": {
+  "batch": "Q5",
+  "overall": "I checked every element against my own disassembly of the boot code: mpc555_initHardwareConfig 0x1454, mpc555_cmfEraseBlocks 0x49d0, the 0x4320-0x46dc program path, and cm848_flashEraseChip / cm848_flashWriteWord / cm848_flashWriteBlock / cm848_flashPollUntilReady. I also wrote my own scan of both images (scan_judge.py: dataflow plus linear, registers kept or clobbered across bl) and a raw-immediate scan (raw_scan.py), both in scratch/Q5/judge/. The application set matches both agents exactly. Direct reads land at 0x3fdba4, 0x3fdba8, 0x3fdbb4, 0x3fdbb6, 0x3fdbce-0x3fdbd1, 0x3fdbfe and 0x3fdc00; the 0x3fdc00 read is kept across leaf calls and renders as pwVar1[0x12]. Index bases are 0x3fdb8e, 0x3fdbce, 0x3fdbd2 and 0x3fdbdc. There is no application store, no range pointer passed as an argument, no pointer in a data table, and no r2 / r13 small-data base. Other checks: cm848_applicationMain loads EEPROM 0x0-0x1a3f over the range. RAM equals EEPROM over the range, and every dump value cited in the comments is correct. The PGN 65241 SPN 701 / 702 positions match the j1939 database. No e2m record maps into the range. All new names are unique in every frozen CSV.\n\nWhere the describer differs, the investigator's layout is better. It gives each address the application reads its own exact name: word rows 0x3fdbb4 / 0x3fdbb6 / 0x3fdbfe / 0x3fdc00, not the merged switch_input_18_and_19_hardware_lines_cal / logical_output_17_and_18_lines_cal dwords that would render ._0_2_ / ._2_2_. Kernel names stay on addresses only the kernel reaches: 0x3fdbb2, and 0x3fdbd4 freed by making 0x3fdbd2 a word. This follows the existing 0x3fdbda word precedent (_cmf_control_pulse_value). The describer's synonyms (cmf_program_step_control_bits, cmf_program_pulses_per_step, flash2_word_write_retry_limit) are no better. 'limits' is more accurate, because the step advances on old count >= limit.\n\nResults: four comments amended for factual slips (0x3fdba4, 0x3fdbaa, 0x3fdbd6 and the 0x4570 plate); everything else confirmed. skipped[] is empty, so nothing needs to stay skipped.\n\nFollow-ups for the apply step:\n- Regenerate the CM848 headers.\n- Update the firmware/CLAUDE.md TIME-SHARED line: the application addresses are now 0x3fdbb4 / 0x3fdbb6 / 0x3fdc00, and 0x3fdbb2 is a kernel row.\n- Leads outside the batch, all verified: 0x3fdc5a has no row (logical_output_63_line_cal, line 159). The 0x3fdc58 comment's 'past the kernel's range' is wrong, because 0x3fdc3a-0x3fec39 is the boot reflash ring buffer: cm848_dataTransferBufferWrite wraps its index at 0x1000. cm848_flashEraseChip's retry counter r21 is never initialized.",
+  "verdicts": [
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdba4",
+    "verdict": "AMENDED",
+    "final_name": "switch_input_11_hardware_line_cal",
+    "final_type": "word",
+    "final_comment": "TIME-SHARED. Application (EEPROM 0x722, loaded by cm848_initEepromDriverAndLoadMirror and kept by the periodic mirror reload): switch_input_hardware_line_cal[11] = the discrete input line of switch 11 (switch_input_state_t.brake_switch, e2m 1612 Brake_Switch): 147 in the RAM and EEPROM dumps, 0 = no line. When it is 0, cm848_monitorBrakeSwitchPairAgreement clears the brake pair faults instead of checking them, and cm848_buildPgn65241AuxiliaryInputOutputStatus1Message reports Auxiliary I/O #02 (SPN 702, byte 1 bits 5-6) as not available. cm848_scanAndDebounceSwitchInputs / cm848_readSwitchHardwareInput / cm848_checkDiscreteOutputReadBack read it through the table index. Boot service loop (mpc555_systemInitialization; cm848_clearRamRegions clears the RAM first and a normal start never runs this): when IMMR >> 16 >= 0x3030, mpc555_initHardwareConfig writes two bytes. Byte 0x3fdba4 (._0_1_) = 1 is the CMFTST enable; every reader only tests it against 0. With it set, mpc555_cmfEraseBlocks writes the erase step CMFTST values to CMFTST_A / CMFTST_B and mpc555_cmfApplyHighVoltagePulse writes the program step value to the active CMFTST; mpc555_cmfRestoreNormalMode / mpc555_cmfSelectBlockAndStartSequence write the program step 0 CMFTST value to CMFTST_A / CMFTST_B instead of their opening CMFCTL_A / CMFCTL_B writes; mpc555_cmfEraseBlocks / mpc555_cmfEndHighVoltagePulse write CMFTST = 0 when they finish. With it 0 none of them touches CMFTST. Byte 0x3fdba5 (._1_1_, the (byte) cast in mpc555_cmfEraseBlocks) = 8 is the number of erase steps in mpc555_cmfEraseBlocks.",
+    "reason": "Name and type are right. Application: lhz 22(r5 / r30 = 0x3fdb8e) at 0x2408c and 0x512158 = switch 11 line, 147 in both dumps; PGN 65241 SPN 702 is at 1.5 (j1939 db). Boot: stb 1 at 0x1480 (flag) and stb 8 to 0x3fdba5 at 0x14f8 (the erase step count, the loop bound at 0x4c00 / 0x4dc0). Comment amended: the proposal said that with the flag set all five functions 'write the per-step CMFTST values'. In fact mpc555_cmfEndHighVoltagePulse (0x4714) and the end of mpc555_cmfEraseBlocks (0x4e78 / 0x4e8c) write CMFTST = 0. mpc555_cmfRestoreNormalMode / mpc555_cmfSelectBlockAndStartSequence write CMFTST in place of the CMFCTL_A / CMFCTL_B base write (beq 0x4354 / 0x43f4)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdba6",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_pulse_total",
+    "final_type": "word",
+    "reason": "Boot only. sth 0 at 0x15e0 (mpc555_initHardwareConfig, unconditional) and at 0x4a28. lhz at 0x4bc0 / 0x4c1c / 0x4cac / 0x4da8, and sth at 0x4db4 (total += r25, the step's pulses) in mpc555_cmfEraseBlocks, compared with 0x3fdba8. No direct access in the application in either scan. The application reaches it only through the switch_input_hardware_line_cal index ([12] = 149). The comment is accurate."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdba8",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_input_13_hardware_line_cal",
+    "final_type": "word",
+    "reason": "Dual use. Application: lhz -9304 at 0x3be34 in cm848_updateAirConditioningSwitchFromPci (0 = switch 13 from PCI receive message 10 bit 7); 0 in the dump. Boot: sth 100 at 0x1504; lhz at 0x4bc4 / 0x4c20 / 0x4cb0 against cmf_erase_pulse_total (bge exits) = the erase pulse limit. The comment documents both roles correctly."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbaa",
+    "verdict": "AMENDED",
+    "final_name": "cmf_erase_control_base",
+    "final_type": "dword",
+    "final_comment": "Boot reflash kernel: the CMFCTL timing base for erase (0x28000000 from mpc555_initHardwareConfig). mpc555_cmfEraseBlocks first writes it | cmf_erase_control_bits to CMFCTL_A / CMFCTL_B; every later CMFCTL write also ORs in the module A block bits (mask & 0xff00) or the module B block bits ((mask & 0xff) << 8). TIME-SHARED: the application reads these two words only through the table index, as switch_input_hardware_line_cal[14] / [15] (EEPROM 0x728 / 0x72a). In the dump, switch 14 low_oil_pressure_switch = line 150 and switch 15 clutch_switch = 0.",
+    "reason": "Name and type are right: stw 0x28000000 at 0x148c; lwz at 0x4a30 into r17, then r23 = r17 | (mask & 0xff00) and r24 = r17 | (mask & 0xff) << 8. Boot only: the application reads it only through the index. Comment amended: 'for every CMFCTL write ... ORs the block bits' is wrong for the first two writes, at 0x4a4c and 0x4a60, which are r17 | [0x3fdbae] without block bits."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbae",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_control_bits",
+    "final_type": "dword",
+    "reason": "Boot only. stw 0x1e0000 at 0x1498. mpc555_cmfEraseBlocks reads it through r28 = 0x3fdbae (addi 0x4a40) at every CMFCTL write (0x4a44 ... 0x4eb4), with |4 / |6 / |7 on the sequence writes. There is no application direct access."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbb2",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_test_register_step_values",
+    "final_type": "word",
+    "reason": "Boot: stw 0xc20 0(r9 = 0x3fdbb2) at 0x14a8, then 7 more dwords to 0x3fdbd1. lwz at 0x4ac0 / 0x4b54 goes to CMFTST_A / CMFTST_B, and lwzx base 0x3fdbb2 + step*4 at 0x4c5c / 0x4c7c. The application never reads 0x3fdbb2 at a fixed address. Its only read inside the old dword is lhz 38(base 0x3fdb8e) at 0x2404c = 0x3fdbb4, so with one name per address this is a kernel row. It must be a word so that 0x3fdbb4 gets its own application row; the describer's dword switch_input_18_and_19_hardware_lines_cal would render ._2_2_ in the application and a switch name for CMFTST in the kernel. The new name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbb4",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_input_19_hardware_line_cal",
+    "final_type": "word",
+    "reason": "New row. Application: lhz r9,38(r5) at 0x2404c, with r5 = 0x3fdb8e, today rendered qadc_control_word_cal._2_2_. 0 gives 0xc0 = SPN 701 not available; SPN 701 is at 1.7 per the j1939 db. Otherwise remote_power_take_off_switch decides. EEPROM 0x732 = 148 in both dumps, and the application load covers it, so _cal is right. Boot: only covered by the dword accesses at 0x3fdbb2. Unique name in the existing switch_input_N_hardware_line_cal family."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbb6",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_input_20_hardware_line_cal",
+    "final_type": "word",
+    "reason": "Both agents agree. Application: lhz -9290 at 0x511ba8 in cm848_updateParkNeutralFlagAndTsc1Activity, today qadc_control_word_b._0_2_ == 0. 0 selects the transmission_selected_gear path; otherwise park_neutral_switch decides, and an edge calls cm848_buildPciTransmitMessage2CruiseControlAndStatusBits. 13 in the dump. Boot: only the store stw 0xd20 4(r9) at 0x14b0 and the indexed read through 0x3fdbb2. A word gives the application read exactly; the store renders with '_'. _cal is right (EEPROM 0x734)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbba",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_step_2_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0xe20 8(r9 = 0x3fdbb2) at 0x14b8 is the only direct access, today rendered _qadc_control_word_c. It is read by lwzx base 0x3fdbb2 at step 2. There is no application direct access (the application reads switch lines 22 / 23 = 154 / 153 only by index). The dword fits the 0x3fdbba-0x3fdbbd gap with no overlap. No QADC user."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbbe",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_step_3_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0xf20 12(r9) at 0x14c0 is the only direct access, then lwzx at step 3. The application reads it only by index (lines 156 / 152). Unique name. No QADC user."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbc2",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_step_4_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x420 16(r9) at 0x14c8 is the only direct access, then lwzx at step 4. The application reads it only by index (switch 26 = 0, 27 = 155). Unique name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbc6",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_step_5_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x520 20(r9) at 0x14d0 is the only direct access, then lwzx at step 5. The application reads it only by index (lines 22 / 0). Unique name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbca",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_erase_step_6_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x620 24(r9) at 0x14d8 is the only direct access, then lwzx at step 6. The dword ends at 0x3fdbcd, just before the arrays.csv row at 0x3fdbce, so nothing overlaps. The application reads it only by index (switches 30 / 31 = 0)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbce",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_input_datalink_source_bits_cal",
+    "final_type": "byte[4]",
+    "reason": "The arrays.csv row keeps its application name. Readers: the base addi plus lbzx in cm848_scanAndDebounceSwitchInputs / cm848_copyStatusBitToDatalinkSwitch / cm848_evaluateJ1939InputSignalFault, and direct lbz of bytes 0-3 in 12 functions (PGN 65265 / 61443 / 65264 builders, cm848_j1939BuildEngineControlByte, cm848_checkSwitch31OnTimeFault, three J1939 accelerator handlers). All 0 in the dumps. The boot role in the new comment is right: stw 0x720 28(r9) at 0x14e0, rendered [0..3] = 0 / 0 / 7 / 0x20, read as erase step 7 by lwzx, and reused by the retry passes."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbd2",
+    "verdict": "CONFIRMED",
+    "final_name": "logical_output_line_active_low_bits_cal",
+    "final_type": "word",
+    "reason": "This is the application's table base: addi plus lbzx at 0x4efb4 / 0x4f090 / 0x4f218, with bit N = 1 << (N % 8) as the decompile shows. There is no word or dword application access, so shrinking dword -> word changes nothing in the application. The kernel's lhz at 0x4c98 / 0x4d94 (erase pulses per step = 1, sth at 0x14ec) then renders without the piece. The shrink frees 0x3fdbd4 for its own kernel row. The new comment fixes the old wrong 'low half = pulse step count'. The dump bytes 00 00 1f 00 00 00 00 c0 00 00 match."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbd4",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_count",
+    "final_type": "word",
+    "reason": "New row. Boot: sth 8 at 0x15a8 (inside the IMMR gate). lhz at 0x45f8, then addi -1 / cmpw step / ble -> li r3,0 at 0x461c in mpc555_cmfApplyHighVoltagePulse; today it renders logical_output_line_active_low_bits_cal._2_2_. The application reaches it only by lbzx from 0x3fdbd2, so it is boot only and has no _cal. Unique name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbd6",
+    "verdict": "AMENDED",
+    "final_name": "cmf_program_control_base",
+    "final_type": "dword",
+    "final_comment": "Boot reflash kernel: the CMFCTL timing base for programming (0x28000000 from mpc555_initHardwareConfig). mpc555_cmfRestoreNormalMode (only while the CMFTST enable byte is clear) and mpc555_cmfSelectBlockAndStartSequence write it together with cmf_program_control_step_bits[0] to CMFCTL_A / CMFCTL_B. mpc555_cmfSelectBlockAndStartSequence also ORs the block bit (0x8000 >> the block's number within its module: block for module A, block - 8 for module B) into it to form cmf_control_block_select. Only the program path uses it (erase uses cmf_erase_control_base). TIME-SHARED: the application reads these bytes only through the logical_output_line_active_low_bits_cal index, as active-low bytes 4-7 (outputs 32-63; 00 00 00 c0 in the dump = outputs 62 / 63) (was cmf_control_base).",
+    "reason": "Name is right: stw 0x28000000 at 0x150c. lwz at 0x4368 / 0x437c (RestoreNormalMode, flag clear only) and 0x43f8 / 0x440c / 0x441c (SelectBlock). mpc555_cmfEraseBlocks never reads it, so the 'program' qualifier is justified. Comment amended: the block bit is 0x8000 >> (block - 8) for module B (sraw by r3 - 8 at 0x4488), not 0x8000 >> block. RestoreNormalMode writes CMFCTL only with the flag clear."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbda",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_pulse_control_value",
+    "final_type": "word",
+    "reason": "stw at 0x455c (mpc555_cmfLoadProgramPage = select | bits[0] | 3), lwz at 0x45b8 -> active CMFCTL, and stw at 0x4648 (next value) in mpc555_cmfApplyHighVoltagePulse. It must stay a word because the dword would swallow 0x3fdbdc (logical_output_line_cal), so it renders with '_'. There is no application direct access. Rename only adds 'program'."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbdc",
+    "verdict": "CONFIRMED",
+    "final_name": "logical_output_line_cal",
+    "final_type": "word",
+    "reason": "Application table base: addi plus lhzx in the set / clear / apply (loop 80) / refresh / read-back functions, and the base of the 0x4f0dc direct reads. The dump entries in the comment match exactly (11:146 ... 62:158 63:159). The entry-to-kernel-row map in the comment is right (1-16 step bits, 17-32 program CMFTST, 33-40 pulse limits, 41-46 flash2 limits). The ring buffer at 0x3fdc3a is verified in cm848_dataTransferBufferWrite (index wraps at 0x1000). The next e2m record, 1069 +0, is at 0x3fdc7c."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbde",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_control_step_bits",
+    "final_type": "dword[8]",
+    "reason": "stw 0x4f0000 x4 / 0xf0000 x4 at 0(r29 = 0x3fdbde)..28 (0x151c-0x153c). lwzx base 0x3fdbde + step*4 at 0x463c. Entry 0 is read directly by Restore / Select / LoadProgramPage / End. The array spans 0x3fdbde-0x3fdbfd: it absorbs only the 7 qadc_channel_config_mask rows, which have no other access, and no application-read address lies inside (both scans). Unique name. The describer's cmf_program_step_control_bits is an equivalent synonym."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbe2",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 1 of cmf_program_control_step_bits. Its only direct access is stw 4(r29) at 0x1520; it is read only through the 0x3fdbde index. No QADC user, and no other CSV mentions the name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbe6",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 2 of cmf_program_control_step_bits. Its only direct access is stw 8(r29) at 0x1524."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbea",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 3 of cmf_program_control_step_bits. Its only direct access is stw 12(r29) at 0x1528."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbee",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 4 of cmf_program_control_step_bits (0xf0000). Its only direct access is stw 16(r29) at 0x1530."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbf2",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 5 of cmf_program_control_step_bits. Its only direct access is stw 20(r29) at 0x1534. The application reads it only as logical_output_line_cal[11] / [12] by index."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbf6",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 6 of cmf_program_control_step_bits. Its only direct access is stw 24(r29) at 0x1538."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbfa",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 7 of cmf_program_control_step_bits. Its only direct access is stw 28(r29) at 0x153c. The application reads it only as entries 15 / 16 by index."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdbfe",
+    "verdict": "CONFIRMED",
+    "final_name": "logical_output_17_line_cal",
+    "final_type": "word",
+    "reason": "Dual use, so it takes the application name. Application: lhz 34(r6 = 0x3fdbdc) at 0x4f0f0, today qadc_queue_timing_config._0_2_ = output 17 (overdrive_solenoid_request, e2m 1577 Transmission_Overdrive_Driver); line 153 in the dump. Boot: dword table base, with stw 0xc20 at 0x1548, lwz at 0x433c / 0x4348 / 0x43dc / 0x43e8 and lwzx at 0x45a0, which will render '_'. The word split is better than the describer's dword logical_output_17_and_18_lines_cal: the application reads each half separately, and it matches logical_output_62_line_cal. _cal is right (EEPROM 0x77c, covered by the application load)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc00",
+    "verdict": "CONFIRMED",
+    "final_name": "logical_output_18_line_cal",
+    "final_type": "word",
+    "reason": "New row. lhz 36(r6) at 0x4f138 after the bl calls at 0x4f124 / 0x4f134; the callees 0x4ef24 / 0x4f000 never write r6, so r6 = 0x3fdbdc is kept. This is output 18 (converter_clutch_solenoid_request, Transmission_TCC_Driver), line 156 in the dump. The decompile shows pwVar1[0x12], so the row may stay documentary in the application, but it is harmless and correct. In the kernel it is the low half of the 0x3fdbfe dword. Unique name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc02",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_1_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0xd20 4(r29 = 0x3fdbfe) at 0x154c is the only direct access, then lwzx base 0x3fdbfe at step 1 (0x45a0). The application reads it only by index (outputs 19 / 20 = 152 / 155). Separate rows are required because the table base 0x3fdbfe is a dual-use word. No QADC user."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc06",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_2_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0xe20 8(r29) at 0x1550 is the only direct access, then lwzx at step 2. Application by index only (21 / 0)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc0a",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_3_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0xf20 12(r29) at 0x1554 is the only direct access, then lwzx at step 3. Application by index only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc0e",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_4_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x420 16(r29) at 0x1558 is the only direct access, then lwzx at step 4. Application by index only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc12",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_5_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x520 20(r29) at 0x155c is the only direct access, then lwzx at step 5. Application by index only (entry 27 = 42)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc16",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_6_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x620 24(r29) at 0x1560 is the only direct access, then lwzx at step 6. Application by index only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc1a",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_7_test_register_value",
+    "final_type": "dword",
+    "reason": "stw 0x720 28(r29) at 0x1564 is the only direct access, then lwzx at step 7 (the last step, count 8). The dword ends at 0x3fdc1d, right before 0x3fdc1e. Application by index only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc1e",
+    "verdict": "CONFIRMED",
+    "final_name": "cmf_program_step_pulse_limits",
+    "final_type": "word[8]",
+    "reason": "sth 4 4 4 4 20 20 20 48000 at 0(r31 = 0x3fdc1e)..14 (0x1574-0x159c). lhzx base 0x3fdc1e + step*2 at 0x45e8 is compared with the pre-increment cmf_pulse_count (blt 0x4624); at the limit the step advances, or the function returns 0 on the last step. 'limit' fits better than the describer's 'pulses_per_step', because the state machine re-pulses only until the page verifies. The array spans 0x3fdc1e-0x3fdc2d and absorbs only the 7 rows that have one store each. There is no application direct access."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc20",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 1 of cmf_program_step_pulse_limits. Its only direct access is sth 2(r31) at 0x1578. No QADC user."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc22",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 2 of cmf_program_step_pulse_limits. Its only direct access is sth 4(r31) at 0x157c."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc24",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 3 of cmf_program_step_pulse_limits. Its only direct access is sth 6(r31) at 0x1580."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc26",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 4 of cmf_program_step_pulse_limits (20). Its only direct access is sth 8(r31) at 0x1588."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc28",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 5 of cmf_program_step_pulse_limits. Its only direct access is sth 10(r31) at 0x158c. The application reads it only as logical_output_line_cal[38] (145) by index."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc2a",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 6 of cmf_program_step_pulse_limits. Its only direct access is sth 12(r31) at 0x1590."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc2c",
+    "verdict": "CONFIRMED",
+    "final_name": "",
+    "final_type": "",
+    "reason": "DELETE: entry 7 of cmf_program_step_pulse_limits. Its only direct access is sth (ori 48000) 14(r31) at 0x159c. 48000 is the last program step's pulse limit, not a QADC sample rate, and it is not EEPROM data."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc2e",
+    "verdict": "CONFIRMED",
+    "final_name": "flash2_chip_erase_poll_limit",
+    "final_type": "dword",
+    "reason": "stw 9800000 at 0x15f0 (unconditional). lwz 0(r26 = 0x3fdc2e) at 0x1240 is parameter 3 (r5) of cm848_flashPollUntilReady after the AMD chip-erase sequence (0x80 / 0x10) to 0x500aaa / 0x500554. The parameter is an iteration count (cmplw r30,r26), not cycles. There is no application direct access. This is a boot constant, so no _cal. The flash2_ prefix matches flash2_command_register / flash2_writes_enabled."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc32",
+    "verdict": "CONFIRMED",
+    "final_name": "flash2_word_program_poll_limit",
+    "final_type": "dword",
+    "reason": "stw 200 at 0x15fc. lwz -9166 at 0x1318 in cm848_flashWriteWord (unlock bypass 0x20, then 0xa0 program) is passed as the poll limit. There is no application direct access. A boot constant: dropping _cal is right."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc36",
+    "verdict": "CONFIRMED",
+    "final_name": "flash2_chip_erase_retry_limit",
+    "final_type": "word",
+    "reason": "sth 3 at 0x1608. lhz 0(r25 = 0x3fdc36) at 0x126c; the loop repeats while (r21 - 1) & 0xffff < limit, i.e. the pre-increment count; blt 0x1228 reissues the sequence after a failed poll. r21 is never set (stmw only; unaff_r21), as the comment says. There is no application direct access."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fdc38",
+    "verdict": "CONFIRMED",
+    "final_name": "flash2_word_program_retry_limit",
+    "final_type": "word",
+    "reason": "sth 50 at 0x1614. lhz 0(r27 = 0x3fdc38) at 0x139c (0 skips the loop) and at 0x13f0 (loop while limit > consecutive failures; a word that programs resets r31) in cm848_flashWriteBlock, which is the callback stored at 0x302886 (stw 0x1338 at 0x1690). It pairs with flash2_word_program_poll_limit. The describer's flash2_word_write_retry_limit is an equivalent synonym. Not a data transfer value."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00004570",
+    "verdict": "AMENDED",
+    "final_name": "mpc555_cmfApplyHighVoltagePulse",
+    "final_comment": "Boot reflash kernel: one program high-voltage pulse. When the CMFTST enable byte (switch_input_11_hardware_line_cal._0_1_) is set, it writes the program CMFTST value of step cmf_pulse_step_index to the active CMFTST; that dword table is based at logical_output_17_line_cal. It writes cmf_program_pulse_control_value to the active CMFCTL and counts cmf_pulse_count. Once cmf_program_step_pulse_limits[step] pulses are spent, it moves to the next step and clears the count, or on the last step (cmf_program_step_count - 1) it returns 0. Unless it returned 0, it then sets the next pulse value (cmf_control_block_select | cmf_program_control_step_bits[step] | SES | EHV, for the new step after a move) and returns 1 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High",
+    "own_role": "Applies one CMF program pulse. If the CMFTST enable byte is set, it writes CMFTST[step] (lwzx 0x3fdbfe at 0x45a0); it writes the precomputed pulse CMFCTL value (0x3fdbda) and increments the pulse count. When the pre-increment count reaches limit[step] (lhzx 0x3fdc1e), it returns 0 if step >= step count - 1 (0x3fdbd4); otherwise it advances the step and clears the count. Then it stores select | step bits[step] | 3 to 0x3fdbda and returns 1. Called only from cm848_runFlashProgramStateMachine (steps 4 and 1).",
+    "reason": "Plate refresh, name unchanged. Every fact matches the disassembly (0x4580 / 0x45a0 / 0x45b8 / 0x45e8 / 0x45f8 / 0x461c / 0x463c / 0x4648 / 0x464c). Amended: the proposal's 'Otherwise it sets the next pulse value' reads as if a step advance skips that store. The code falls through from the advance (0x4618 b 0x4624) to the store and returns 1, so the wording is now explicit."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00004320",
+    "verdict": "CONFIRMED",
+    "final_name": "mpc555_cmfRestoreNormalMode",
+    "own_role": "Called at program state 2 of cm848_runFlashProgramStateMachine (its only caller). If the CMFTST enable byte at 0x3fdba4 is clear, it writes CMFCTL_A / CMFCTL_B = program base 0x3fdbd6 | step bits[0] 0x3fdbde. If set, it writes CMFTST_A / CMFTST_B = the program step 0 value 0x3fdbfe and skips CMFCTL. Then CMFMCR_A / CMFMCR_B = 0x85000000.",
+    "reason": "Plate fix verified at 0x4324-0x439c. The old plate called 0x3fdba4 a 'test-step count'; it is a 0 / non-0 flag (stb 1 at 0x1480). It also said 'CMFCTL = block select only', but the code writes base | step bits[0]. The new plate's claim of program step 2 is right (flash_program_step == 2 branch)."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0004f0dc",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63",
+    "own_role": "Called from cm848_applyLogicalOutputRequests. If logical_output_line_cal[17] and [62] are both nonzero (lhz 34 / 124 of r6 = 0x3fdbdc), it sets or clears request 62 at priority 0 from overdrive_solenoid_request (0x40c082 bit 0x2). If [18] and [63] are both nonzero (lhz 36 / 126, r6 kept across the leaf calls), it does the same for request 63 from converter_clutch_solenoid_request (bit 0x4).",
+    "reason": "Plate refresh, name unchanged. All four reads, the priority 0 arguments (li r4,0) and the dump lines 153 / 158 / 156 / 159 are verified. The new text replaces the stale qadc_queue_timing_config._0_2_ mention with the new row names, and correctly says entries 17 / 18 share the program CMFTST step 0 dword."
+   }
+  ]
+ }
+}

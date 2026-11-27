@@ -1,0 +1,71 @@
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:657: ...#   j1939_tsc1_received): the ETC1 bytes (cm848_j1939
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:849: ...#   j1939_tsc1_override_state): the engine TSC1 override, t
+work/tasks/046-cm848-egr-flow-estimate.md:254: ...  `j1939_governor_source_index` and the cached control byte 
+work/tasks/046-cm848-egr-flow-estimate.md:261: ...    `etc1_governor_state_t`), `j1939_powertrain_messages
+work/tasks/046-cm848-egr-flow-estimate.md:265: ...    `etc1_speed_setpoint` the requested percent torque
+work/tasks/046-cm848-egr-flow-estimate.md:265: ...ed_setpoint` the requested percent torque x 256; `etc1_torque_limit_value` the mode 3 speed limit;
+work/tasks/046-cm848-egr-flow-estimate.md:266: ...    `etc1_active_state` the controlling data link (1
+work/tasks/046-cm848-egr-flow-estimate.md:268: ...    `etc1_spn1482_source_address` the TSC1 sender's address.
+work/tasks/046-cm848-egr-flow-estimate.md:273: ...  - **Globals:** `cold_start_state_flag_a` / `_b` are the J1939 / J1708
+work/tasks/046-cm848-egr-flow-estimate.md:295: ...e previous ratio is a word at +0xa (the old byte `auxiliary_state`; Ghidra's `_10_2_` counts in
+work/tasks/025-cm848-naming-wave-followups.md:35: ...t stores ETC2 byte 1 (SPN 524 selected gear) into j1939_tsc1_override_state.etc1_address_filter (0x40ae1b
+work/tasks/025-cm848-naming-wave-followups.md:59: ...ontrol_rpm_upper_limit_cal / TSC1_SPEED_CONTROL / j1939_tsc1_override_state.speed_control_target) mean RP
+work/tasks/025-cm848-naming-wave-followups.md:278: ..._filter=0xff'). The global_variables row 0x40ae1b j1939_tsc1_override_state.etc1_address_filter, which mu
+work/tasks/025-cm848-naming-wave-followups.md:284: ...countdown (0x40ae50) is the ETC2 receive timeout (cm848_processGovernorModeTransition 0x27418-0x27450 forces the ET
+work/tasks/025-cm848-naming-wave-followups.md:284: ...TC2 gear ratio globals are misnamed too: 0x3fa98c j1939_tsc1_received.auxiliary_state (previous rat
+work/tasks/025-cm848-naming-wave-followups.md:284: ...ls are misnamed too: 0x3fa98c j1939_tsc1_received.auxiliary_state (previous ratio) / 0x40a266 g
+work/tasks/025-cm848-naming-wave-followups.md:517: ...d_timer_b is the ETC2 timeout countdown. 0x40ae1b j1939_tsc1_override_state.etc1_address_filter is ETC2 b
+work/tasks/025-cm848-naming-wave-followups.md:517: ...s_filter is ETC2 byte 1 (selected gear). 0x3fa98c j1939_tsc1_received.auxiliary_state is the previo
+work/tasks/025-cm848-naming-wave-followups.md:517: ...e 1 (selected gear). 0x3fa98c j1939_tsc1_received.auxiliary_state is the previous ETC2 gear rat
+work/tasks/025-cm848-naming-wave-followups.md:521: ... 0x5c39e + 1 (51) at 0x22cdc on every valid ETC2; cm848_processGovernorModeTransition counts it down and at 1 clear
+work/tasks/025-cm848-naming-wave-followups.md:522: ...- 0x0040ae1b j1939_tsc1_override_state.etc1_address_filter (struct f
+work/tasks/025-cm848-naming-wave-followups.md:523: ...- 0x003fa98c j1939_tsc1_received.auxiliary_state (struct field
+work/tasks/025-cm848-naming-wave-followups.md:523: ...- 0x003fa98c j1939_tsc1_received.auxiliary_state (struct field) - previous etc
+work/tasks/025-cm848-naming-wave-followups.md:593: ...- Which J1939 field feeds j1939_tsc1_override_state.etc1_address_filter (0x40ae1b
+work/tasks/025-cm848-naming-wave-followups.md:598: ...imary_sa = 3 with DLC 8. It stores data byte 1 in etc1_governor_state_t.etc1_address_filter (0x40ae1b
+work/tasks/025-cm848-naming-wave-followups.md:612: ...- 0x40ae1b etc1_governor_state_t.etc1_address_filter (struct f
+work/tasks/025-cm848-naming-wave-followups.md:748: ...- `j1939_tsc1_override_state` → `j1939_powertrain_control_
+work/tasks/025-cm848-naming-wave-followups.md:749: ...- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainC
+work/tasks/025-cm848-naming-wave-followups.md:750: ...- `j1939_tsc1_received` → `j1939_powertrain_messages
+work/tasks/025-cm848-naming-wave-followups.md:751: ...- `etc1_governor_state_t` → `j1939_powertrain_control_
+work/tasks/025-cm848-naming-wave-followups.md:752: ...- `j1939_tsc1_received.auxiliary_state` (0x3fa98c) →
+work/tasks/025-cm848-naming-wave-followups.md:752: ...- `j1939_tsc1_received.auxiliary_state` (0x3fa98c) → `j1939_powertra
+work/tasks/044-cm848-dtc-code-name-clashes.md:30: ...not renamed because the function does much more: `cm848_processGovernorModeTransition`
+work/tasks/044-cm848-dtc-code-name-clashes.md:145: ...- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainC
+work/tasks/042-table-campaign-rename-leads.md:399: ...e TSC1 requests the ECM ignores. A = engine TSC1 (torqueControlModeHandler: cm848_removeCoolantCalEntryB
+work/tasks/042-table-campaign-rename-leads.md:763: ...- `torqueControlModeHandler` → `processEngineTsc1Request`
+work/tasks/027-cm848-naming-wave-2-followups.md:87: ...TC2 handler (PGN 61445) reloads two timeouts that cm848_processGovernorModeTransition counts down: one invalidates 
+work/tasks/027-cm848-naming-wave-2-followups.md:104: ... DAT_0005c3a8 (=100) are unnamed ROM constants in cm848_processGovernorModeTransition (ETC fault debounce depth / g
+work/tasks/027-cm848-naming-wave-2-followups.md:104: ...overnorModeTransition (ETC fault debounce depth / governor_mode_transition_counter threshold) - adjacent to the 
+work/tasks/027-cm848-naming-wave-2-followups.md:109: ...is the shared ETC timeout fault-debounce LIMIT in cm848_processGovernorModeTransition (bVar6 counts etc1_state_time
+work/tasks/027-cm848-naming-wave-2-followups.md:238: ...- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainC
+work/tasks/027-cm848-naming-wave-2-followups.md:239: ...- `governor_mode_transition_counter` → `etc1_output_shaft_speed_r
+work/tasks/045-cm848-fueling-state-enum.md:761: ...  - wrong `_cal` on ROM cells: `etc1_torque_mode_timeout_cal`, `fuel_demand_norm_zero_cal`
+work/tasks/045-cm848-fueling-state-enum.md:785: ...l 1 / 2 ambient temperature limits, medium); the `j1939_tsc1_override_state.proprietary_offset_value`
+work/tasks/045-cm848-fueling-state-enum.md:785: ...e limits, medium); the `j1939_tsc1_override_state.proprietary_offset_value`
+work/tasks/045-cm848-fueling-state-enum.md:854: ...- `etc1_torque_mode_timeout_cal` → `j1939_time_limited_node_r
+work/tasks/045-cm848-fueling-state-enum.md:855: ...- `j1939_tsc1_override_state` → `j1939_powertrain_control_
+work/tasks/045-cm848-fueling-state-enum.md:856: ...- `j1939_tsc1_override_state.proprietary_offset_value` → `
+work/tasks/045-cm848-fueling-state-enum.md:856: ...- `j1939_tsc1_override_state.proprietary_offset_value` → `j1939_powertrain_control_
+work/tasks/022-j1939-dbw-investigation.md:81: ...`j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)` @ cm848_rom:21333
+work/tasks/022-j1939-dbw-investigation.md:82: ...→ `torqueControlModeHandler(msg)` if `dest_address == j19
+work/tasks/022-j1939-dbw-investigation.md:87: ...#### `torqueControlModeHandler` @ ROM:0x00022d60 (cm848_rom:
+work/tasks/022-j1939-dbw-investigation.md:94: ...SA whitelist check: `cm848_governorSpeedControl(1, SA)` searches ROM table `e
+work/tasks/022-j1939-dbw-investigation.md:94: ..._governorSpeedControl(1, SA)` searches ROM table `etc1_config_entry_t_0005c3b4`
+work/tasks/022-j1939-dbw-investigation.md:98: ...- Sets `j1939_tsc1_override_state.governor_mode = 1`
+work/tasks/022-j1939-dbw-investigation.md:99: ...- Sets `etc1_capped_speed_target = min(requested_speed, 24000)
+work/tasks/022-j1939-dbw-investigation.md:100: ...- Sets `etc1_speed_control_mode = (byte[0] & 0x0c) >> 2`
+work/tasks/022-j1939-dbw-investigation.md:101: ...- Sets `etc1_active_state = 1`
+work/tasks/022-j1939-dbw-investigation.md:105: ...- `speed_request_filtered = etc1_capped_speed_target`
+work/tasks/022-j1939-dbw-investigation.md:129: ...| SA whitelist | `cm848_governorSpeedControl`, ROM `0x0005c3b4` | TSC1 par
+work/tasks/022-j1939-dbw-investigation.md:202: ...PGN 0 registered via `j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)`.
+work/tasks/022-j1939-dbw-investigation.md:203: ...Two sub-paths based on dest SA: primary SA → `torqueControlModeHandler`, secondary SA → `cm848_j1939
+work/tasks/022-j1939-dbw-investigation.md:206: ...**Speed parse**: `torqueControlModeHandler` reads SPN 898 from bytes[1-2
+work/tasks/022-j1939-dbw-investigation.md:244: ...- `cm848_j1939DispatchAddressHandler` → `cm848_dispatchTsc1ByDesti
+work/tasks/022-j1939-dbw-investigation.md:245: ...- `torqueControlModeHandler` → `processEngineTsc1Request`
+work/tasks/022-j1939-dbw-investigation.md:246: ...- `cm848_governorSpeedControl` → `cm848_findTsc1SourceConfi
+work/tasks/022-j1939-dbw-investigation.md:247: ...- `etc1_config_entry_t_0005c3b4` → `tsc1_source_configuration
+work/tasks/022-j1939-dbw-investigation.md:248: ...- `j1939_tsc1_override_state` → `j1939_powertrain_control_
+work/tasks/022-j1939-dbw-investigation.md:249: ...- `etc1_capped_speed_target` → `tsc1_requested_speed_capp
+work/tasks/022-j1939-dbw-investigation.md:250: ...- `etc1_speed_control_mode` → `tsc1_requested_speed_cont
+work/tasks/022-j1939-dbw-investigation.md:251: ...- `etc1_active_state` → `tsc1_controlling_data_lin

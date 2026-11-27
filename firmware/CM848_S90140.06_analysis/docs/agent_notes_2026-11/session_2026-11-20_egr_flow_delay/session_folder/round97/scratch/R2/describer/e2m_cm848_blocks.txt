@@ -1,0 +1,205 @@
+### block 1060
+1060 +0000 HSG_Proportional_Gain [MM3S/RPM] -> 0x406fb4 high_speed_governor_proportional_gain_base word; [HSPPGN] HSG PID proportional gain
+1060 +0002 HSG_Derivative_Gain [MM3S*SEC/RPM] -> 0x406fb6 high_speed_governor_derivative_gain_base word; [HSDVGN] HSG PID derivative gain
+1060 +0004 HSG_Integral_Gain [MM3S/RPM/SEC] -> 0x406fb8 high_speed_governor_integral_gain_base word; [HSITGN] HSG PID integrator gain
+1060 +0006 HSG_Error_Filter_Constant [UNITLESS] -> 0x406fba high_speed_governor_error_filter_coefficient_base word; [HSFTTC] HSG engine speed error filter time constant
+1060 +0008 HSG_Error_Filter_Gain [UNITLESS] -> 0x406fbc high_speed_governor_error_filter_gain i16; [HSFTGN] HSG engine speed error filter gain
+1060 +000A HSG_Filter_Clamp_Max [RPM] -> 0x406fbe high_speed_governor_filtered_error_maximum i16; [HSMXFTRF] HSG maximum filtered engine speed error
+1060 +000C HSG_Filter_Clamp_Min [RPM] -> 0x406fc0 high_speed_governor_filtered_error_minimum i16; [HSMNFTRF] HSG minimum filtered engine speed error
+1060 +000E HSG_Integrator_Clamp_Max [MM3S] -> 0x406fc2 high_speed_governor_integrator_maximum i16; [HSMXITFL] HSG maximum integrator fuel output
+1060 +0010 HSG_Integrator_Clamp_Min [MM3S] -> 0x406fc4 high_speed_governor_integrator_minimum i16; [HSMNITFL] HSG minimum integrator fuel output
+1060 +0012 HSG_Integrator_Reset [MM3S] -> 0x406fc6 high_speed_governor_integrator_reset_value i16; [HSCNRSFL] HSG integrator reset value used to adjust integrator under defined RPM/TVO limi
+1060 +0014 HSG_Reset_Rpm [RPM] -> 0x406fc8 high_speed_governor_integrator_reset_speed_offset i16; [HSITRSES] Engine speed below which the HSG integrator is reset
+1060 +0016 HSG_Reset_Fuel [MM3S] -> 0x406fca high_speed_governor_integrator_reset_fuel_demand_threshold word; [HSITRSFL] Engine fueling below which the HSG integrator may be reset
+1060 +0018 HSG_Integrator_Preset_Minimum [MM3S] -> 0x406fcc high_speed_governor_integrator_preset_minimum i16; [HSMNITPZ] HSG INTEGRATOR PRESET MINIMUM
+1060 +001A HSG_Integrator_Preset_Maximum [MM3S] -> 0x406fce high_speed_governor_integrator_preset_maximum i16; [HSMXITPZ] HSG INTEGRATOR PRESET MAXIMUM
+1060 +001C HSG_Fueling_Clamp_Max [MM3S] -> 0x406fd0 high_speed_governor_fueling_maximum word; [HSMXFLLM] HSG FUELING CLAMP MAX
+1060 +001E HSG_Fueling_Clamp_Min [MM3S] -> 0x406fd2 high_speed_governor_fueling_minimum word; [HSMNFLLM] HSG FUELING CLAMP MIN
+1060 +0020 HSG_Derivative_Gain_Adjustment_Enable [HEX] -> 0x406fd4 high_speed_governor_derivative_gain_adjustment_enable word; [HSDVAJEN] Flag to enable/disable the HSG derivative gain adjustment scheme.
+1060 +0022 HSG_Proportional_Gain_Adjustment_Enable [HEX] -> 0x406fd6 high_speed_governor_proportional_gain_adjustment_enable word; [HSPPAJEN] Flag to enable/disable the HSG proportional gain adjustment scheme.
+1060 +0024 HSG_Integral_Gain_Adjustment_Enable [HEX] -> 0x406fd8 high_speed_governor_integral_gain_adjustment_enable word; [HSITAJEN] Flag to enable/disable the HSG integral gain adjustment scheme.
+1060 +0026 HSG_Derivative_Clamp_Max [MM3S] -> 0x406fda high_speed_governor_derivative_term_maximum i16; [HSDVFLMX] HSG PID Derivative fueling contribution upper limit
+1060 +0028 HSG_Derivative_Clamp_Min [MM3S] -> 0x406fdc high_speed_governor_derivative_term_minimum i16; [HSDVFLMN] HSG PID Derivative fueling contribution lower limit
+1060 +002A HSG_Proportional_Clamp_Max [MM3S] -> 0x406fde high_speed_governor_proportional_term_maximum i16; [HSPPFLMX] HSG PID Proportional fueling contribution upper limit
+1060 +002C HSG_Proportional_Clamp_Min [MM3S] -> 0x406fe0 high_speed_governor_proportional_term_minimum i16; [HSPPFLMN] HSG PID Proportional fueling contribution lower limit
+1060 +002E HSG_Integrator_Reset_Offset [MM3S] -> 0x406fe2 high_speed_governor_integrator_preset_offset_limit i16; Offset limit on Integrator Fueling preset value.
+### block 13B4
+13B4 +0000 HSG_Comp_Filter_Coefficient_1 [UNITLESS] -> 0x05c948 high_speed_governor_compensator_filter_coefficient_1 word; Filter coefficient #1 from HSG lead/lag dynamic compensator
+13B4 +0002 HSG_Comp_Filter_Coefficient_2 [UNITLESS] -> 0x05c94a high_speed_governor_compensator_filter_coefficient_2 word; Filter coefficient #2 from HSG lead/lag dynamic compensator
+13B4 +0004 HSG_Comp_Transition_Coefficient [UNITLESS] -> 0x05c94c high_speed_governor_compensator_transition_coefficient word; Filter coefficient used by HSG lead/lag compensator for no-filtering case
+13B4 +0006 HSG_Comp_Gear_Ratio_Threshold [UNITLESS] -> 0x05c94e high_speed_governor_compensator_maximum_gear_ratio word; Maximim gear ratio value for permitting HSG lead/lag compensation
+### block 1290
+1290 +0000 HSG_Acceleration_Ref_Threshold [RPM/SEC] -> 0x05c314 high_speed_governor_transient_acceleration_threshold word; [HSACRFBP] HSG acceleration rate threshold for transient conditions
+1290 +0002 HSG_Acceleration_Ref_Time [SEC] -> 0x05c316 high_speed_governor_transient_gain_set_time_limit word; [HSACRFTM] HSG acceleration reference time for transient conditions
+1290 +0004 HSG_High_Ref_Speed_Threshold [RPM] -> 0x05c318 high_speed_governor_high_reference_speed_threshold word; [HSHIRFTD] HSG speed threshold for high reference speed region
+1290 +0006 HSG_High_Ref_Speed_Derivative_Gain [MM3S*SEC/RPM] -> 0x05c31a high_speed_governor_high_reference_speed_gain_set high_speed_governor_gain_set_t; [HSHRDVGN] HSG PID derivative gain for high reference speed region
+1290 +0008 HSG_High_Ref_Speed_Error_Filter_Constant [UNITLESS] -> 0x05c31c (no name) (no row); [HSHIFTTC] HSG engine speed error filter time constant for high ref speed conditions
+1290 +000A HSG_High_Ref_Speed_Integral_Gain [MM3S/RPM/SEC] -> 0x05c31e (no name) (no row); [HSHRITGN] HSG PID integrator gain for high reference speed region
+1290 +000C HSG_High_Ref_Speed_Proportional_Gain [MM3S/RPM] -> 0x05c320 (no name) (no row); [HSHRPPGN] HSG PID proportional gain for high reference speed region
+1290 +000E HSG_Low_Ref_Speed_Threshold [RPM] -> 0x05c322 high_speed_governor_low_reference_speed_threshold word; [HSLORFTD] HSG speed threshold for low reference speed region
+1290 +0010 HSG_Low_Ref_Speed_Derivative_Gain [MM3S*SEC/RPM] -> 0x05c324 high_speed_governor_low_reference_speed_gain_set high_speed_governor_gain_set_t; [HSLRDVGN] HSG PID derivative gain for low reference speed region
+1290 +0012 HSG_Low_Ref_Speed_Error_Filter_Constant [UNITLESS] -> 0x05c326 (no name) (no row); [HSLOFTTC] HSG engine speed error filter time constant for low ref speed conditions
+1290 +0014 HSG_Low_Ref_Speed_Integral_Gain [MM3S/RPM/SEC] -> 0x05c328 (no name) (no row); [HSLRITGN] HSG PID integrator gain for low reference speed region
+1290 +0016 HSG_Low_Ref_Speed_Proportional_Gain [MM3S/RPM] -> 0x05c32a (no name) (no row); [HSLRPPGN] HSG PID proportional gain for low reference speed region
+1290 +0018 HSG_Transient_Derivative_Gain [MM3S*SEC/RPM] -> 0x05c32c high_speed_governor_transient_gain_set high_speed_governor_gain_set_t; [HSTZDVGN] HSG PID derivative gain for transient conditions
+1290 +001A HSG_Transient_Error_Filter_Constant [UNITLESS] -> 0x05c32e (no name) (no row); [HSTZFTTC] HSG engine speed error filter time constant for transient conditions
+1290 +001C HSG_Transient_Integral_Gain [MM3S/RPM/SEC] -> 0x05c330 (no name) (no row); [HSTZITGN] HSG PID integrator gain for transient conditions
+1290 +001E HSG_Transient_Proportional_Gain [MM3S/RPM] -> 0x05c332 (no name) (no row); [HSTZPPGN] HSG PID proportional gain for transient conditions
+### block 1062
+1062 +0000 HSG_Ramp_Step [RPM/SEC] -> 0x406fe4 engine_speed_limit_ramp_up_step word; [HSRFRMRT] Incremental step in HSG reference used when reference is increased
+1062 +0002 HSG_Adj_Fueling_Clamp_Max [MM3S] -> 0x406fe6 engine_speed_limit_droop_fuel_clamp_maximum word; [HSMXDPFL] Maximum allowable fuel that may be used to determine HSG droop reference
+1062 +0004 HSG_Adj_Fueling_Clamp_Min [MM3S] -> 0x406fe8 engine_speed_limit_droop_fuel_clamp_minimum word; [HSMNDPFL] Minimum allowable fuel that may be used to determine HSG droop reference
+1062 +0006 HSG_Min_Derate_Speed [RPM] -> 0x406fea engine_speed_limit_minimum word; [HSMNRF] Lower limit of HSG_Ref_Speed_Before_Droop
+1062 +0008 HSG_Max_Derate_Speed [RPM] -> 0x406fec engine_speed_limit_maximum word; [HSMXRF] Upper limit of HSG_Ref_Speed_Before_Droop
+1062 +000A HSG_TC_Droop_On [UNITLESS] -> 0x406fee engine_speed_limit_torque_converter_droop_enable word; 1=HSG droop on for stall torque mgmt, 0 = droop off
+### block 1281
+### block 1170
+1170 +0000 ASG_Reset_State_X1 [RPM] -> 0x40a20a all_speed_governor_reset_state_speed_error_previous i16; [ASRSSTX1] ASG reset state X1
+1170 +0002 ASG_Reset_State_X2 [MM3S] -> 0x40a20c all_speed_governor_reset_state_integral i16; [ASRSSTX2] ASG reset state X2
+1170 +0004 ASG_Reset_State_X3 [RPM] -> 0x40a20e all_speed_governor_reset_state_engine_speed_previous word; [ASRSSTX3] ASG reset state X3
+1170 +0006 ASG_Reset_State_X4 [MM3S] -> 0x40a210 all_speed_governor_reset_state_pid_clamp_value i16; [ASRSSTX4] ASG reset state X4
+1170 +0008 ASG_Reset_State_X5 [MM3S] -> 0x40a212 all_speed_governor_reset_state_pid_integral_clamped i16; [ASRSSTX5] ASG reset state X5
+1170 +000A ASG_Reset_State_X6 [MM3S] -> 0x40a214 all_speed_governor_reset_state_fuel_demand_correction i16; [ASRSSTX6] ASG reset state X6
+1170 +000C ASG_As_Override_Mode [UNITLESS] -> 0x40a216 all_speed_governor_application_override_mode word; [ASAPODMD] ASG application specific reference override mode
+1170 +000E ASG_As_Reference_RPM [RPM] -> 0x40a218 all_speed_governor_application_reference_speed word; [ASAPRF] ASG application specific reference speed
+1170 +0010 ASG_Droop_Gain_1_As [UNITLESS] -> 0x40a21a all_speed_governor_application_droop_gain_1 word; [ASAP01DP] ASG application specific droop gain 1
+1170 +0012 ASG_Droop_Gain_2_As [UNITLESS] -> 0x40a21c all_speed_governor_application_droop_gain_2 word; [ASAP02DP] ASG application specific droop gain 2
+1170 +0014 ASG_Filter_Coef_As [UNITLESS] -> 0x40a21e all_speed_governor_application_reference_filter_coefficient word; [ASAPFTCF] ASG application specific reference filter coefficient
+1170 +0016 ASG_High_Fuel_Limit_As [MM3S] -> 0x40a220 all_speed_governor_application_fuel_demand_tracking_limit word; [ASAPHILM] ASG application specific fueling high limit
+1170 +0018 ASG_Lower_Fuel_Limit_As [MM3S] -> 0x40a222 all_speed_governor_application_fuel_demand_tracking_floor word; [ASAPLOLM] ASG application specific fueling lower limit
+1170 +001A ASG_Reset_As [UNITLESS] -> 0x40a224 all_speed_governor_application_reset_flag word; [ASAPRS] ASG application specific reset
+1170 +001C ASG_State_X1_As [RPM] -> 0x40a226 all_speed_governor_application_reset_state_speed_error_previous i16; [ASAPSTX1] ASG application specific state X1 reset value
+1170 +001E ASG_State_X2_As [MM3S] -> 0x40a228 all_speed_governor_application_reset_state_integral i16; [ASAPSTX2] ASG application specific state X2 reset value
+1170 +0020 ASG_State_X3_As [RPM] -> 0x40a22a all_speed_governor_application_reset_state_engine_speed_previous word; [ASAPSTX3] ASG application specific state X3 reset value
+1170 +0022 ASG_State_X4_As [MM3S] -> 0x40a22c all_speed_governor_application_reset_state_pid_clamp_value i16; [ASAPSTX4] ASG application specific state X4 reset value
+1170 +0024 ASG_State_X5_As [MM3S] -> 0x40a22e all_speed_governor_application_reset_state_pid_integral_clamped i16; [ASAPSTX5] ASG application specific state X5 reset value
+1170 +0026 ASG_State_X6_As [MM3S] -> 0x40a230 all_speed_governor_application_reset_state_fuel_demand_correction i16; [ASAPSTX6] ASG application specific state X6 reset value
+1170 +0028 ASG_Proportional_Gain_1_As [MM3S/RPM] -> 0x40a232 all_speed_governor_application_gain_set all_speed_governor_gain_set_t; [ASAP01PP] ASG application specific proportional gain 1
+1170 +002A ASG_Proportional_Gain_2_As [MM3S/RPM] -> 0x40a234 (no name) (no row); [ASAP02PP] ASG application specific proportional gain 2
+1170 +002C ASG_Integral_Gain_1_As [MM3S/RPM/SEC] -> 0x40a236 (no name) (no row); [ASAP01IT] ASG application specific integral gain 1
+1170 +002E ASG_Integral_Gain_2_As [MM3S/RPM/SEC] -> 0x40a238 (no name) (no row); [ASAP02IT] ASG application specific integral gain 2
+1170 +0030 ASG_Derivative_Gain_1_As [MM3S*SEC/RPM] -> 0x40a23a (no name) (no row); [ASAP01DV] ASG application specific derivative gain 1
+1170 +0032 ASG_Derivative_Gain_2_As [MM3S*SEC/RPM] -> 0x40a23c (no name) (no row); [ASAP02DV] ASG application specific derivative gain 2
+1170 +0034 ASG_Coefficient_1_As [UNITLESS] -> 0x40a23e (no name) (no row); [ASAP01CF] ASG application specific compensation filter coef. 1
+1170 +0036 ASG_Coefficient_2_As [UNITLESS] -> 0x40a240 (no name) (no row); [ASAP02CF] ASG application specific compensation filter coef. 2
+1170 +0038 ASG_Coefficient_3_As [UNITLESS] -> 0x40a242 (no name) (no row); [ASAP03CF] ASG application specific compensation filter coef. 3
+1170 +003A ASG_As_Feedback_Speed [RPM] -> 0x40a244 all_speed_governor_application_feedback_speed word; [ASAPFBES] Application specific feedback variable for ASG
+1170 +003C ASG_App_No_Load_RPM [RPM] -> 0x40a246 all_speed_governor_application_no_load_speed word; application defined no load speed
+1170 +003E ASG_No_Load_Fuel_Ref_Speed [RPM] -> 0x40a248 all_speed_governor_no_load_fuel_reference_speed word; application defined input reference speed for no load calculation
+### block 107C
+107C +0000 ASG_Derivative_Term [MM3S] -> 0x40a1aa all_speed_governor_derivative_term word; [ASDV] ASG derivative term
+107C +0002 ASG_Error_Difference [RPM] -> 0x40a1ac all_speed_governor_error_difference word; [ASERDC] ASG error difference
+107C +0004 ASG_Feedback_Difference [RPM] -> 0x40a1ae all_speed_governor_feedback_difference word; [ASFBDC] ASG feedback difference term
+107C +0006 ASG_Filtered_Reference [RPM] -> 0x40a1b0 governor_reference_speed_filtered word; [ASFTRF] ASG filtered reference speed
+107C +0008 ASG_Reset_State [UNITLESS] -> 0x40a1b2 all_speed_governor_reset_flag word; [ASRSST] ASG reset flag
+107C +000A ASG_100_Fueling [MM3S] -> 0x40a1b4 all_speed_governor_fueling word; [ASMXFL] Fueling from 4D tables using ASG_Selected_Speed, 100% throttle, and alpha
+107C +000A ASG_Fueling [MM3S] -> 0x40a1b4 all_speed_governor_fueling word; [ASFL] ASG FUELING
+107C +000C ASG_State_X1 [RPM] -> 0x40a1b6 all_speed_governor_state_speed_error i16; [ASSTX1] ASG state X1
+107C +000E ASG_State_X2 [MM3S] -> 0x40a1b8 all_speed_governor_state_integral word; [ASSTX2] ASG state X2
+107C +0010 ASG_State_X4 [MM3S] -> 0x40a1ba all_speed_governor_state_pid_clamp_value i16; [ASSTX4] ASG state X4
+107C +0012 ASG_State_X5 [MM3S] -> 0x40a1bc all_speed_governor_state_pid_integral_clamped i16; [ASSTX5] ASG state X5
+107C +0014 ASG_State_X6 [MM3S] -> 0x40a1be all_speed_governor_state_fuel_demand_correction i16; [ASSTX6] ASG state X6
+107C +0016 Selected_Throttle_Control [HEX] -> 0x40a1c0 variable_speed_governor_selected_flag word; [STUOTHGV] = (STCG_Enable & STCG_Switch) XOR User_Selected_Throttle_Control
+107C +0018 ASG_Droop_Compensated_Error [RPM] -> 0x40a1c2 (no name) (no row); [ASDPER] ASG Droop Compensated Error
+107C +001A ASG_QD_Adjustment [MM3S] -> 0x40a1c4 all_speed_governor_derivative_adjustment dword; [ASQDAJ] ASG Quadratic Derivative Adjustment
+107C +001E ASG_QD_Droop_Compensated_Error [RPM] -> 0x40a1c8 (no name) (no row); [ASQDDPER] QPID Adjusted ASG Droop Compensated Error-Derivative
+107C +0022 ASG_QI_Adjustment [MM3S] -> 0x40a1cc all_speed_governor_integral_adjustment i32; [ASQIAJ] ASG Quadratic Integral Adjustment
+107C +0026 ASG_QI_Droop_Compensated_Error [RPM] -> 0x40a1d0 (no name) (no row); [ASQIDPER] QPID Adjusted ASG Droop Compensated Error-Integral
+107C +002A ASG_QP_Adjustment [MM3S] -> 0x40a1d4 all_speed_governor_proportional_adjustment i32; [ASQPAJ] ASG Quadratic Proportional Adjustment
+107C +002E ASG_QP_Droop_Compensated_Error [RPM] -> 0x40a1d8 (no name) (no row); [ASQPDPER] QPID Adjusted ASG Droop Compensated Error-Proportional
+107C +0032 ASG_Coefficient_1_Selected [UNITLESS] -> 0x40a1dc all_speed_governor_compensation_filter_coefficient_1_selected word; [ASSL01CF] ASG selected compensation filter coef. 1
+107C +0034 ASG_Coefficient_2_Selected [UNITLESS] -> 0x40a1de all_speed_governor_compensation_filter_coefficient_2_selected word; [ASSL02CF] ASG selected compensation filter coef. 2
+107C +0036 ASG_Coefficient_3_Selected [UNITLESS] -> 0x40a1e0 all_speed_governor_compensation_filter_coefficient_3_selected word; [ASSL03CF] ASG selected compensation filter coef. 3
+107C +0038 ASG_Derivative_Gain_1_Selected [MM3S*SEC/RPM] -> 0x40a1e2 all_speed_governor_derivative_gain_1_selected word; [ASSL01DV] ASG selected derivative gain 1
+107C +003A ASG_Derivative_Gain_2_Selected [MM3S*SEC/RPM] -> 0x40a1e4 all_speed_governor_derivative_gain_2_selected word; [ASSL02DV] ASG selected derivative gain 2
+107C +003C ASG_Filter_Coef_Selected [UNITLESS] -> 0x40a1e6 all_speed_governor_reference_filter_coefficient_selected word; [ASSLFTCF] ASG selected reference filter coefficient
+107C +003E ASG_Integral_Gain_1_Selected [MM3S/RPM/SEC] -> 0x40a1e8 all_speed_governor_integral_gain_1_selected word; [ASSL01IT] ASG selected integral gain 1
+107C +0040 ASG_Integral_Gain_2_Selected [MM3S/RPM/SEC] -> 0x40a1ea all_speed_governor_integral_gain_2_selected word; [ASSL02IT] ASG selected integral gain 2
+107C +0042 ASG_Proportional_Gain_1_Selected [MM3S/RPM] -> 0x40a1ec all_speed_governor_proportional_gain_1_selected word; [ASSL01PP] ASG selected proportional gain 1
+107C +0044 ASG_Proportional_Gain_2_Selected [MM3S/RPM] -> 0x40a1ee all_speed_governor_proportional_gain_2_selected word; [ASSL02PP] ASG selected proportional gain 2
+107C +0046 ASG_Non_Linear_Filt_Out [RPM] -> 0x40a1f0 all_speed_governor_reference_non_linear_filter_output word; Output of non-linear filtered reference, before slew limits
+107C +0048 ASG_Ref_Negative_Slew_Active [UNITLESS] -> 0x40a1f2 all_speed_governor_reference_negative_slew_active_flag word; Flag that indicates conditions permit ASG ref slew limiting
+107C +0056 ASG_Delta [MM3S] -> 0x40a200 all_speed_governor_delta word; Calculated amount to add to ASG to eliminate LSG-ASG deadband
+107C +0058 Actual_RPM_Decel_Rate [RPM] -> 0x40a202 engine_rpm_delta word; Decrease in engine speed during one 20 msec period
+107C +005A Decel_Rate_I_Term [MM3S] -> 0x40a204 rpm_deceleration_limit_integral_term i16; Integral term of rpm decel limit control
+107C +005C Decel_Rate_P_Term [MM3S] -> 0x40a206 rpm_deceleration_limit_proportional_term i16; Proportional term of rpm decel limit control
+107C +005E Decel_Limit_Fuel [MM3S] -> 0x40a208 rpm_deceleration_limit_fuel i16; Calculated fuel required to maintain rpm decel target
+### block 107A
+107A +0000 ASG_Throttle_Reference_RPM [RPM] -> 0x40a24c speed_request_base word; [ASTHRFES] All Speed Governor reference speed based upon throttle position
+107A +0002 ASG_Selected_Speed [RPM] -> 0x40a24e speed_request_unfiltered word; [ASRF] Selected input reference speed used as input to the ASG
+107A +0004 ASG_Droop_Gain_1 [UNITLESS] -> 0x40a250 all_speed_governor_droop_gain_1 word; [ASDPGN01] ASG droop gain 1
+107A +0006 ASG_Droop_Gain_2 [UNITLESS] -> 0x40a252 all_speed_governor_droop_gain_2 word; [ASDPGN02] ASG droop gain 2
+107A +0008 ASG_Throttle_Droop_1 [UNITLESS] -> 0x40a254 all_speed_governor_throttle_droop_gain_1 word; [ASTH01DP] ASG throttle droop gain 1
+107A +000A ASG_Throttle_Droop_2 [UNITLESS] -> 0x40a256 all_speed_governor_throttle_droop_gain_2 word; [ASTH02DP] ASG throttle droop gain 2
+107A +000C ASG_Droop_Selected [RPM/MM3S] -> 0x40a258 all_speed_governor_droop word; [ASSLDP] ASG selected droop slope
+107A +000E ASG_Fuel_Hi_Limit [MM3S] -> 0x40a25a governor_fuel_demand_tracking_limit i16; [ASFLHILM] ASG fueling high limit
+107A +0010 ASG_Fuel_Low_Limit [MM3S] -> 0x40a25c governor_fuel_demand_tracking_floor i16; [ASFLLOLM] ASG fueling lower limit
+107A +0012 ASG_External_Reset [UNITLESS] -> 0x40a25e all_speed_governor_external_reset_flag word; [ASETRS] ASG external reset flag
+107A +0014 ASG_Filtered_Feedback_Speed [RPM] -> 0x40a260 governor_rpm_actual word; [ASFTFBES] General feedback variable for the ASG
+107A +0016 ASG_Min_RPM_Adjusted [RPM] -> 0x40a262 governor_speed_lower_limit word; Active ASG minimum RPM used in ASG throttle reference calculation
+### block 000E
+000E +0000 SWITCHES [HEX] -> 0x40c050 switch_input_state_bits switch_input_state_t; Value used for monitoring switch data.
+000E +0000 Switch_Data [HEX] -> 0x40c050 switch_input_state_bits switch_input_state_t; Value used for monitoring switch data.
+### block 13AB
+13AB +0000 HSG_Compensated_Engine_Speed [RPM] -> 0x40b706 high_speed_governor_compensated_engine_speed word; [HSDCES] Measured engine speed after HSG lead/lag filter
+13AB +0002 HSG_Compensation_Active [UNITLESS] -> 0x40b708 high_speed_governor_compensation_active_flag word; Indicates when HSG rpm signal is being lead/lag compensated
+13AB +0004 HSG_Comp_Filter_Coefficient_3 [UNITLESS] -> 0x40b70a high_speed_governor_compensator_filter_coefficient_3 word; Filter coefficient #3 from HSG lead/lag dynamic compensator
+### block 128F
+128F +0000 HSG_Application_Derivative_Gain [MM3S*SEC/RPM] -> 0x40a8ad high_speed_governor_derivative_gain_working word; [HSAPDVGN] Application-specified HSG PID derivative gain
+128F +0002 HSG_Application_Error_Filter_Constant [UNITLESS] -> 0x40a8af high_speed_governor_error_filter_coefficient_working word; [HSAPFTTC] Application-specified HSG engine speed error filter time constant
+128F +0004 HSG_Application_Gain_Set_Selected [UNITLESS] -> 0x40a8b1 high_speed_governor_working_gain_set_code word; [HSAPSESL] Defines HSG application-specific gain set that has been chosen
+128F +0006 HSG_Application_Integral_Gain [MM3S/RPM/SEC] -> 0x40a8b3 high_speed_governor_integral_gain_working word; [HSAPITGN] Application-specified HSG PID integrator gain
+128F +0008 HSG_Application_Proportional_Gain [MM3S/RPM] -> 0x40a8b5 high_speed_governor_proportional_gain_working word; [HSAPPPGN] Application-specified HSG PID proportional gain
+128F +000A HSG_Gain_Set_Selected [UNITLESS] -> 0x40a8b7 high_speed_governor_gain_set_code word; [HSGNSESL] Defines HSG gain set that has been chosen
+128F +000C HSG_Speed_Set_Proportional_Gain [MM3S/RPM] -> 0x40a8b9 high_speed_governor_proportional_gain_alternate word; [HSSSPPGN] HSG PID speed-dependant proportional gain
+128F +000E HSG_Speed_Set_Integral_Gain [MM3S/RPM/SEC] -> 0x40a8bb high_speed_governor_integral_gain_alternate word; [HSSSITGN] HSG PID speed-dependant integral gain
+128F +0010 HSG_Speed_Set_Derivative_Gain [MM3S*SEC/RPM] -> 0x40a8bd high_speed_governor_derivative_gain_alternate word; [HSSSDVGN] HSG PID speed-dependant derivative gain
+128F +0012 HSG_Speed_Set_Error_Filter_Constant [UNITLESS] -> 0x40a8bf high_speed_governor_error_filter_coefficient_alternate word; [HSSSFTTC] HSG speed-dependant engine speed error filter time constant
+### block 1061
+1061 +0000 HSG_Fueling [MM3S] -> 0x40a8c1 high_speed_governor_fueling word; [HSFL] Fueling output of the HSG
+1061 +0002 HSG_Filtered_Error_Term [RPM] -> 0x40a8c3 high_speed_governor_filtered_error i16; [HSER] HSG engine speed error
+1061 +0004 HSG_Proportional_Term [MM3S] -> 0x40a8c5 high_speed_governor_proportional_term i16; [HSPPFL] HSG PID proportional fueling contribution
+1061 +0006 HSG_Derivative_Term [MM3S] -> 0x40a8c7 high_speed_governor_derivative_term word; [HSDVFL] HSG PID derivative fueling contribution
+1061 +0008 HSG_Integral_Term [MM3S] -> 0x40a8c9 high_speed_governor_integral_term i16; [HSITFL] HSG PID integrator fueling contribution
+1061 +000A HSG_Active_Proportional_Gain [MM3S/RPM] -> 0x40a8cb high_speed_governor_proportional_gain word; [HSAEPPGN] HSG PID proportional gain
+1061 +000C HSG_Active_Integral_Gain [MM3S/RPM/SEC] -> 0x40a8cd high_speed_governor_integral_gain word; [HSAEITGN] HSG PID integrator gain
+1061 +000E HSG_Active_Derivative_Gain [MM3S*SEC/RPM] -> 0x40a8cf high_speed_governor_derivative_gain word; [HSAEDVGN] HSG PID derivative gain
+1061 +0010 HSG_Active_Error_Filter_Constant [UNITLESS] -> 0x40a8d1 high_speed_governor_error_filter_coefficient word; [HSACFTTC] HSG gain scheduling output; HSG engine speed error filter time constant
+1061 +001A HSG_Proportional_Gain_Adjusted [MM3S/RPM] -> 0x40a8db high_speed_governor_proportional_gain_adjusted word; [HSPPAJGN] HSG adjusted proportional gain.
+1061 +001C HSG_Derivative_Gain_Adjusted [MM3S*SEC/RPM] -> 0x40a8dd high_speed_governor_derivative_gain_adjusted word; [HSDVAJGN] HSG adjusted derivative gain.
+1061 +001E HSG_Integral_Gain_Adjusted [MM3S/RPM/SEC] -> 0x40a8df high_speed_governor_integral_gain_adjusted word; [HSITAJGN] HSG Adjusted Integral Gain.
+### block 1063
+1063 +0000 HSG_Ref_Speed_State [UNITLESS] -> 0x40a2f8 engine_speed_limit_arbitration engine_speed_limit_arbitration_t; [HSRFST] HSG REFERENCE SPEED STATE
+1063 +0002 HSG_Reference_Speed [RPM] -> 0x40a2fa engine_speed_limit_arbitration.applied_speed_limit (no row); [HSRF] Current reference speed being used by the HSG feature
+1063 +0004 HSG_Ref_Speed_Before_Droop [RPM] -> 0x40a2fc engine_speed_limit_arbitration.lowest_source_speed_limit (no row); [HSRFBEDP] Reference speed before droop calculation
+1063 +0006 HSG_Droop_Speed [RPM] -> 0x40a2fe engine_speed_limit_after_droop word; [HSDPRF] HSG reference speed after droop has been calculated
+1063 +0008 FSS_RPM_Derate [RPM] -> 0x40a300 fuel_pressure_fault_engine_speed_limit_working word; [APLMES] RPM derate supplied by application group.
+1063 +000A HSG_Active_Breakpoint [RPM] -> 0x40a302 engine_speed_limit_reference word; [HSBKRFAE] HSG base reference speed currently in use (ESP may select high HP if active)
+1063 +000C HSG_Active_No_Load_RPM [RPM] -> 0x40a304 engine_speed_limit_droop_no_load_speed word; [HSAENLRP] Point at which the HSG droop slope line intersects the no load fueling curve
+1063 +000E HSG_Active_Slope [RPM/MM3S] -> 0x40a306 engine_speed_limit_droop_slope i16; [HSDPSLAE] Slope of line defining droop for the HSG ref currently active (ESP can select)
+1063 +0010 HSG_Before_Droop_Speed [RPM] -> 0x40a308 engine_speed_limit_ramped word; [HSRFBFDP] The actual HSG derate speed used in HSG droop calculation
+1063 +0012 HSG_Droop_Flag [UNITLESS] -> 0x40a30a engine_speed_limit_droop_active_flag word; [HSDPFG] TRUE - Droop HSG; FALSE - Isochronous HSG
+1063 +0014 HSG_Ref_Speed_To_Gain_Sched [RPM] -> 0x40a30c engine_speed_limit_arbitrated word; [HSRFTOGS] Reference speed before droop sent hsg ref -> hsg gain sched
+1063 +0016 HSG_Active_Isochronous_Speed [RPM] -> 0x40a30e engine_speed_limit_droop_cap word; [HSISRFAE] HSG isochronous speed currently in use
+1063 +0018 TSG_Derate_RPM [RPM] -> 0x40a310 engine_speed_limit_source_10 word; [TALMES] Engine speed limit dictated by tailshaft governor during error conditions
+1063 +001A HSG_Active_Isochronous_Speed_State [UNITLESS] -> 0x40a312 engine_speed_limit_droop_cap_source_code word; [HSISSTAE] Indicator of which alg. is setting HSISRFAE
+1063 +001C HSG_Indicated_Isochronous_Speed [RPM] -> 0x40a314 engine_speed_limit_droop_cap_snapshot word; [HSISRFID] Winning Active Isochronous Speed
+1063 +001E HSG_Indicated_Isochronous_Speed_State [UNITLESS] -> 0x40a316 engine_speed_limit_droop_cap_source_code_snapshot word; [HSISIDST] Winning Active Isochronous Speed State
+1063 +0020 HSG_Indicated_Ref_Speed_State [UNITLESS] -> 0x40a318 engine_speed_limit_limiting_source_number_snapshot word; [HSINRFST] indicates which alg. controls the HSG, HSG_Indicated_Ref_Speed_State
+1063 +0024 HSG_Active_No_Load_Offset_Flag [HEX] -> 0x40a31c engine_speed_limit_droop_no_load_offset_enable_flag word; [HSNLOFFG] Flag indicating if Active No Load is offset based
+1063 +0026 HSG_Intermediate_Desired_Active_Breakpoint [RPM] -> 0x40a31e engine_speed_limit_reference_stored word; [HSIRDSBK] HSG Breakpoint manipulated by many algorithms
+1063 +0028 HSG_Intermediate_Max_Active_Breakpoint [RPM] -> 0x40a320 engine_speed_limit_reference_upper_bound word; [HSIRMXBK] HSG Max Breakpoint manipulated by many algorithms
+1063 +002A HSG_Intermediate_Min_Active_Breakpoint [RPM] -> 0x40a322 engine_speed_limit_reference_lower_bound word; [HSIRMNBK] HSG Min Breakpoint manipulated by many algorithms
+1063 +002C HSG_Max_Active_Breakpoint [RPM] -> 0x40a324 engine_speed_limit_reference_upper_bound_snapshot word; [HSMXBKRF] HSG Max Breakpoint
+1063 +002E HSG_Min_Active_Breakpoint [RPM] -> 0x40a326 engine_speed_limit_reference_lower_bound_snapshot word; [HSMNBKRF] HSG Min Breakpoint
+1063 +0030 HSG_Active_No_Load_Offset [RPM] -> 0x40a328 engine_speed_limit_droop_no_load_offset word; [HSAENLOF] ACTIVE HSG Droop Offset
+1063 +0032 HSG_Droop_Slope_Bypass [HEX] -> 0x40a32a engine_speed_limit_droop_slope_bypass_flag word; Flag indicates if HSG droop slope calculation should be bypass.
+1063 +0034 TC_Rock_Cycle_Derate_RPM [RPM] -> 0x40a32c engine_speed_limit_rock_cycle word; Engine speed limit during rock cycle maneuvers
+1063 +0022 HSG_Active_Breakpoint_State [UNITLESS] -> 0x40a31a engine_speed_limit_reference_clamp_state_code word; [HSBKST] Algorithm controlling Active Breakpoint Speed
+### block 109C
+109C +0000 No_Load_Fuel [MM3S] -> 0x40aeec no_load_fuel_quantity word; [NLFL] Fuel required to overcome friction
+109C +0002 No_Load_Fuel_At_HSG_Active_No_Load_RPM [MM3S] -> 0x40aeee engine_speed_limit_droop_no_load_fuel_quantity word; [FLAENLRP] No Load Fueling curve value at HSG_Active_No_Load_RPM
+109C +0004 Coolant_Fuel_Adjustment [MM3S] -> 0x40aef0 friction_fuel_adjustment_for_coolant_temperature word; [CLFLAJ] Friction fuel adjustment due to coolant temperature
+109C +0006 Friction_Fueling [MM3S] -> 0x40aef2 friction_fueling word; Fuel required to overcome friction
+109C +0008 AC_Fuel_Adjustment [MM3S] -> 0x40aef4 friction_fuel_adjustment_for_air_conditioning_clutch word; Friction fuel adjustment due to A/C clutch engagement.
+109C +000A Fan_Fuel_Adjustment [MM3S] -> 0x40aef6 friction_fuel_adjustment_for_radiator_fan word; Friction fuel adjustment due to viscous fan vs. engine speed.

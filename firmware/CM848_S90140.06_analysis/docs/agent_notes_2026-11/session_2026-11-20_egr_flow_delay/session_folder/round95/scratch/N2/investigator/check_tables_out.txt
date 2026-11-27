@@ -1,0 +1,208 @@
+OK      0x0006009e acceleration_noise_control_fuel_limit_axis word[10] (20 bytes) next e2m NZFLLMYA at 0x600b2 (+20); here ('NZFLLMXA', 'X')
+OK      0x000600b2 acceleration_noise_control_fuel_limit_values word[10] (20 bytes) next e2m NZTALMXA at 0x600c6 (+20); here ('NZFLLMYA', 'Y')
+OK      0x000600c6 acceleration_noise_control_timing_limit_axis word[10] (20 bytes) next e2m NZTALMYA at 0x600da (+20); here ('NZTALMXA', 'X')
+OK      0x000600da acceleration_noise_control_timing_limit_values word[10] (20 bytes) next e2m AFFLLMYA at 0x600ee (+20); here ('NZTALMYA', 'Y')
+OK      0x00807acc all_speed_governor_throttle_prefilter_coefficient_axis word[6] (12 bytes) next e2m ASTHPFYA at 0x807ad8 (+12); here ('ASTHPFXA', 'X')
+OK      0x00807ad8 all_speed_governor_throttle_prefilter_coefficient_values word[6] (12 bytes) next e2m ASQPCFXA at 0x807ae4 (+12); here ('ASTHPFYA', 'Y')
+OK      0x00807230 all_speed_governor_no_load_fuel_axis word[9] (18 bytes) next e2m ASNLFLYA at 0x807242 (+18); here ('ASNLFLXA', 'X')
+OK      0x00807242 all_speed_governor_no_load_fuel_values word[9] (18 bytes) next e2m ASCLNLXA at 0x807254 (+18); here ('ASNLFLYA', 'Y')
+OK      0x00807254 all_speed_governor_no_load_fuel_coolant_temperature_adjustment_axis word[10] (20 bytes) next e2m ASCLNLYA at 0x807268 (+20); here ('ASCLNLXA', 'X')
+          inside 0x80725a output_control_decrement_step: 0 abs refs 
+          inside 0x80725c diagnostic_fuel_override_param: 0 abs refs 
+          inside 0x80725e vp44_injection_timing_limit: 0 abs refs 
+          inside 0x807260 output_timing_interpolation_base_ptr: 0 abs refs 
+          inside 0x807262 output_control_fuel_threshold: 0 abs refs 
+          inside 0x807264 output_control_cycle_limit: 0 abs refs 
+          inside 0x807266 output_control_timing_reset_countdown: 0 abs refs 
+OK      0x00807268 all_speed_governor_no_load_fuel_coolant_temperature_adjustment_values word[10] (20 bytes) next e2m DGBTCKLL at 0x80727c (+20); here ('ASCLNLYA', 'Y')
+          inside 0x80726c output_sequence_rpm_threshold: 0 abs refs 
+          inside 0x80726e output_sequence_rpm_hysteresis: 0 abs refs 
+          inside 0x807270 output_control_rpm_offset: 0 abs refs 
+          inside 0x807272 throttle_position_threshold_for_output: 0 abs refs 
+          inside 0x807274 output_control_throttle_limit: 0 abs refs 
+          inside 0x807276 output_control_rpm_limit: 0 abs refs 
+OK      0x00060462 all_speed_governor_alternate_droop_axis word[8] (16 bytes) next e2m ASALDPYA at 0x60472 (+16); here ('ASALDPXA', 'X')
+OK      0x00060472 all_speed_governor_alternate_droop_values word[8] (16 bytes) next e2m ASDPTBXA at 0x60482 (+16); here ('ASALDPYA', 'Y')
+OK      0x00060482 all_speed_governor_droop_axis word[8] (16 bytes) next e2m ASDPTBYA at 0x60492 (+16); here ('ASDPTBXA', 'X')
+OK      0x00060492 all_speed_governor_droop_values word[8] (16 bytes) next e2m FSTQXA at 0x604a2 (+16); here ('ASDPTBYA', 'Y')
+OK      0x0006052a engine_brake_braking_torque_axis word[5] (10 bytes) next e2m JC1CTQYA at 0x60534 (+10); here ('JCBCRPXA', 'X')
+OK      0x00060566 engine_brake_6_cylinder_braking_torque_values word[5] (10 bytes) next e2m CABLSPT1 at 0x60570 (+10); here ('JC6CTQYA', 'Y')
+OK      0x00060596 cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis word[14] (28 bytes) next e2m CPCS01YA at 0x605b2 (+28); here ('CPCS01XA', 'X')
+OK      0x000605b2 cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values word[14] (28 bytes) next e2m CPCS02XA at 0x605ce (+28); here ('CPCS01YA', 'Y')
+OK      0x00060640 cylinder_pressure_maintenance_temperature_per_timing_degree_axis word[14] (28 bytes) next e2m CPCS03YA at 0x6065c (+28); here ('CPCS03XA', 'X')
+OK      0x0006065c cylinder_pressure_maintenance_temperature_per_timing_degree_values word[14] (28 bytes) next e2m CPDSXA at 0x60678 (+28); here ('CPCS03YA', 'Y')
+OK      0x008072f4 cylinder_balance_threshold_axis word[17] (34 bytes) next e2m CBDTT2 at 0x807316 (+34); here ('CBDTT1', 'X')
+OK      0x00807316 cylinder_balance_threshold_values word[17] (34 bytes) next e2m CBDCSV at 0x807338 (+34); here ('CBDTT2', 'Y')
+OK      0x00809e9e cylinder_balance_real_2_dynamics_compensation_values word[16] (32 bytes) next e2m CBDI2DCT at 0x809ebe (+32); here ('CBDDCT', 'T')
+OK      0x00809ebe cylinder_balance_imaginary_2_dynamics_compensation_values word[16] (32 bytes) next e2m SSECTMEA at 0x809ede (+32); here ('CBDI2DCT', 'T')
+OK      0x00807360 cylinder_balance_engine_speed_breakpoint_axis word[8] (16 bytes) next e2m CBDESBT at 0x807370 (+16); here ('CBDESBV', 'X')
+OK      0x00807370 cylinder_balance_engine_speed_breakpoint_values word[8] (16 bytes) next e2m CBDDFBV at 0x807380 (+16); here ('CBDESBT', 'Y')
+OK      0x00807380 cylinder_balance_delta_fueling_breakpoint_axis word[7] (14 bytes) next e2m CBDDFBT at 0x80738e (+14); here ('CBDDFBV', 'X')
+          inside 0x807386 rpm_derate_scale_factor: 0 abs refs 
+          inside 0x807388 rpm_derate_base_offset: 0 abs refs 
+          inside 0x80738a derate_rpm_adjustment_max: 0 abs refs 
+          inside 0x80738c derate_rpm_adjustment_min: 0 abs refs 
+OK      0x0080738e cylinder_balance_delta_fueling_breakpoint_values word[7] (14 bytes) next e2m CBDFFBV at 0x80739c (+14); here ('CBDDFBT', 'Y')
+          inside 0x807390 rpm_derate_percent_lower: 0 abs refs 
+          inside 0x807392 rpm_derate_lower_threshold: 0 abs refs 
+          inside 0x807394 rpm_derate_upper_threshold: 0 abs refs 
+          inside 0x807396 rpm_derate_calc_offset_1: 0 abs refs 
+          inside 0x807398 rpm_derate_calc_offset_2: 0 abs refs 
+          inside 0x80739a rpm_derate_calc_multiplier: 0 abs refs 
+OK      0x0080739c cylinder_balance_filtered_fueling_breakpoint_axis word[7] (14 bytes) next e2m CBDFFBT at 0x8073aa (+14); here ('CBDFFBV', 'X')
+          inside 0x80739e vp44_feedback_pulse_value: 0 abs refs 
+          inside 0x8073a0 vp44_can_200_response_byte_0: 0 abs refs 
+          inside 0x8073a1 vp44_can_200_response_byte_1: 0 abs refs 
+          inside 0x8073a2 derate_output_value: 0 abs refs 
+          inside 0x8073a8 lift_pump_fuel_scale_factor: 0 abs refs 
+OK      0x008073aa cylinder_balance_filtered_fueling_breakpoint_values word[7] (14 bytes) next e2m CBDFBV at 0x8073b8 (+14); here ('CBDFFBT', 'Y')
+          inside 0x8073ac lift_pump_timing_increase_limit: 0 abs refs 
+          inside 0x8073ae lift_pump_timing_decrease_limit: 0 abs refs 
+          inside 0x8073b0 vp44_can_msg_upper_threshold: 0 abs refs 
+          inside 0x8073b2 vp44_can_msg_lower_threshold: 0 abs refs 
+          inside 0x8073b4 vp44_fso_bit0_debounce_threshold: 0 abs refs 
+          inside 0x8073b5 fso_fault_debounce_threshold: 0 abs refs 
+          inside 0x8073b6 vp44_fso_bit0_fuel_threshold: 0 abs refs 
+OK      0x00060846 engine_warmup_protection_rifle_to_turbocharger_delay_time_axis word[10] (20 bytes) next e2m WPDYTMYA at 0x6085a (+20); here ('WPCQXA', 'X')
+OK      0x0006085a engine_warmup_protection_rifle_to_turbocharger_delay_time_values word[10] (20 bytes) next e2m 5DFL01XA at 0x6086e (+20); here ('WPDYTMYA', 'Y')
+OK      0x000607f2 engine_warmup_protection_fuel_limit_axis word[21] (42 bytes) next e2m WPFLDQYA at 0x6081c (+42); here ('WPESXA', 'X')
+OK      0x0006081c engine_warmup_protection_fuel_limit_values word[21] (42 bytes) next e2m WPCQXA at 0x60846 (+42); here ('WPFLDQYA', 'Y')
+OK      0x00807176 engine_protection_fuel_derate_axis word[25] (50 bytes) next e2m EPFLTB at 0x8071a8 (+50); here ('EPFLVSAI', 'X')
+          inside 0x8071a6 shutdown_limit_selector_param: 0 abs refs 
+OK      0x008071a8 engine_protection_fuel_derate_values word[25] (50 bytes) next e2m WSBLKSPT at 0x8071da (+50); here ('EPFLTB', 'Y')
+          inside 0x8071aa timer_capture_init_value: 0 abs refs 
+          inside 0x8071ac clutch_rpm_low_value: 0 abs refs 
+          inside 0x8071ae fuel_temp_throttle_threshold: 0 abs refs 
+          inside 0x8071b0 boost_pressure_offset_factor: 0 abs refs 
+          inside 0x8071b2 boost_pressure_interp_threshold: 0 abs refs 
+          inside 0x8071b4 boost_pressure_decrement_rate: 0 abs refs 
+          inside 0x8071b6 boost_pressure_stats_threshold_71b6: 0 abs refs 
+          inside 0x8071b8 boost_pressure_smoke_threshold: 0 abs refs 
+          inside 0x8071ba boost_pressure_state_6_threshold: 0 abs refs 
+          inside 0x8071bc boost_pressure_state_3_threshold: 0 abs refs 
+          inside 0x8071c6 derate_event_threshold_time: 0 abs refs 
+          inside 0x8071ca clutch_slip_threshold: 0 abs refs 
+          inside 0x8071ce fuel_temp_exceedance_threshold: 0 abs refs 
+          inside 0x8071d0 fuel_limit_near_threshold: 0 abs refs 
+          inside 0x8071d4 boost_pressure_stats_threshold_71d4: 0 abs refs 
+          inside 0x8071d6 vp44_derate_bit8_limit: 0 abs refs 
+          inside 0x8071d8 vp44_derate_bit4_limit: 0 abs refs 
+OK      0x000607d6 double_pulsing_fueling_mapping_axis word[7] (14 bytes) next e2m DPTVOTB at 0x607e4 (+14); here ('DPFPTB', 'Y')
+OK      0x000607e4 double_pulsing_fueling_mapping_values word[7] (14 bytes) next e2m WPESXA at 0x607f2 (+14); here ('DPTVOTB', 'X')
+OK      0x00808068 high_speed_governor_derivative_gain_adjustment_multiplier_axis word[14] (28 bytes) next e2m HSDVCFYA at 0x808084 (+28); here ('HSDVCFXA', 'X')
+OK      0x008080a0 high_speed_governor_proportional_gain_adjustment_multiplier_axis word[14] (28 bytes) next e2m HSPPCFYA at 0x8080bc (+28); here ('HSPPCFXA', 'X')
+OK      0x008080d8 high_speed_governor_integral_gain_adjustment_multiplier_axis word[14] (28 bytes) next e2m HSITCFYA at 0x8080f4 (+28); here ('HSITCFXA', 'X')
+OK      0x000611d0 engine_protection_oil_pressure_limit_axis word[7] (14 bytes) next e2m EPO2LOTB at 0x611de (+14); here ('EPO2VSAI', 'X')
+OK      0x000611de engine_protection_low_oil_pressure_limit_values word[7] (14 bytes) next e2m EPO2VLTB at 0x611ec (+14); here ('EPO2LOTB', 'Y')
+OK      0x000611ec engine_protection_very_low_oil_pressure_limit_values word[7] (14 bytes) next e2m NLFCFLXA at 0x611fa (+14); here ('EPO2VLTB', 'Y')
+OK      0x00808958 power_take_off_governor_speed_gain_adjustment_axis word[11] (22 bytes) next e2m PTGNTB at 0x80896e (+22); here ('PTSPAX', 'X')
+          inside 0x80895a retarder_torque_point_4_value: 0 abs refs 
+          inside 0x80895c retarder_torque_point_5_value: 0 abs refs 
+          inside 0x80895e vp44_sensor_value_2: 0 abs refs 
+          inside 0x808962 insite_parameter_table_start: 0 abs refs 
+OK      0x0080896e power_take_off_governor_speed_gain_adjustment_values word[11] (22 bytes) next e2m PTMXEGES at 0x808984 (+22); here ('PTGNTB', 'Y')
+OK      0x008088b0 power_take_off_governor_derivative_gain_adjustment_axis word[14] (28 bytes) next e2m PTGNQDTB at 0x8088cc (+28); here ('PTERQDAX', 'X')
+          inside 0x8088b2 pwm_output_period_multiplier: 0 abs refs 
+          inside 0x8088b3 pwm_output_channel_select: 0 abs refs 
+          inside 0x8088b4 pwm_output_enable_flag: 0 abs refs 
+          inside 0x8088c0 redundant_sensor_compare_threshold: 0 abs refs 
+          inside 0x8088c3 can_controller_1_status_byte: 0 abs refs 
+          inside 0x8088c5 can_controller_1_filter_byte_1: 0 abs refs 
+          inside 0x8088c7 can_controller_1_filter_byte_2: 0 abs refs 
+          inside 0x8088c9 can_controller_1_filter_byte_3: 0 abs refs 
+          inside 0x8088ca can_controller_1_baud_byte_0: 0 abs refs 
+          inside 0x8088cb can_controller_1_baud_byte_1: 0 abs refs 
+OK      0x008088e8 power_take_off_governor_integral_gain_adjustment_axis word[14] (28 bytes) next e2m PTGNQITB at 0x808904 (+28); here ('PTERQIAX', 'X')
+OK      0x00808920 power_take_off_governor_proportional_gain_adjustment_axis word[14] (28 bytes) next e2m PTGNQPTB at 0x80893c (+28); here ('PTERQPAX', 'X')
+          inside 0x808924 oil_pressure_rpm_limit_step: 0 abs refs 
+          inside 0x808926 oil_pressure_rate_limit_step: 0 abs refs 
+          inside 0x80892a rpm_range_upper_limit: 0 abs refs 
+          inside 0x80892c rpm_range_lower_limit: 0 abs refs 
+          inside 0x808932 oil_pressure_validation_threshold: 0 abs refs 
+          inside 0x808934 pwm_output_scaling_factor: 0 abs refs 
+          inside 0x808936 pwm_output_2_scaling_factor: 0 abs refs 
+          inside 0x808938 pwm_output_3_scaling_factor: 0 abs refs 
+          inside 0x80893a pwm_output_4_scaling_factor: 0 abs refs 
+OK      0x00060534 engine_brake_1_cylinder_braking_torque_values word[5] (10 bytes) next e2m JC2CTQYA at 0x6053e (+10); here ('JC1CTQYA', 'Y')
+OK      0x0006053e engine_brake_2_cylinder_braking_torque_values word[5] (10 bytes) next e2m JC3CTQYA at 0x60548 (+10); here ('JC2CTQYA', 'Y')
+OK      0x00060548 engine_brake_3_cylinder_braking_torque_values word[5] (10 bytes) next e2m JC4CTQYA at 0x60552 (+10); here ('JC3CTQYA', 'Y')
+OK      0x00060552 engine_brake_4_cylinder_braking_torque_values word[5] (10 bytes) next e2m JC5CTQYA at 0x6055c (+10); here ('JC4CTQYA', 'Y')
+OK      0x0006055c engine_brake_5_cylinder_braking_torque_values word[5] (10 bytes) next e2m JC6CTQYA at 0x60566 (+10); here ('JC5CTQYA', 'Y')
+OK      0x008071e0 wet_stack_timing_by_intake_manifold_temperature_axis word[11] (22 bytes) next e2m WSTATB at 0x8071f6 (+22); here ('WSIMAI', 'X')
+          inside 0x8071e2 vp44_smoke_limiter_threshold: 0 abs refs 
+          inside 0x8071e4 vp44_fault_counter_threshold_1: 0 abs refs 
+          inside 0x8071e6 vp44_fuel_temp_delta_threshold: 0 abs refs 
+          inside 0x8071e8 vp44_fault_tolerance_factor: 0 abs refs 
+          inside 0x8071ea vp44_throttle_threshold: 0 abs refs 
+          inside 0x8071ee vp44_fault_counter_limit_1: 0 abs refs 
+          inside 0x8071f0 vp44_table_compare_threshold: 0 abs refs 
+          inside 0x8071f2 vp44_protection_recovery_threshold: 0 abs refs 
+          inside 0x8071f4 vp44_clutch_rpm_delta_threshold: 0 abs refs 
+OK      0x008071f6 wet_stack_timing_by_intake_manifold_temperature_values word[11] (22 bytes) next e2m WSCLAI at 0x80720c (+22); here ('WSTATB', 'Y')
+          inside 0x8071f8 vp44_fault_counter_limit_2: 0 abs refs 
+          inside 0x807204 oil_pressure_throttle_threshold: 0 abs refs 
+          inside 0x807206 oil_pressure_debounce_threshold: 0 abs refs 
+OK      0x0080720c wet_stack_timing_by_coolant_temperature_axis word[9] (18 bytes) next e2m WSCLTATB at 0x80721e (+18); here ('WSCLAI', 'X')
+OK      0x000611fa no_load_fuel_axis word[10] (20 bytes) next e2m NLFCFLYA at 0x6120e (+20); here ('NLFCFLXA', 'X')
+OK      0x0006120e no_load_fuel_values word[10] (20 bytes) next e2m ADCLFLBP at 0x61222 (+20); here ('NLFCFLYA', 'Y')
+OK      0x00061222 no_load_fuel_coolant_temperature_adjustment_axis word[10] (20 bytes) next e2m NLCLFLYA at 0x61236 (+20); here ('ADCLFLBP', 'X')
+OK      0x00061236 no_load_fuel_coolant_temperature_adjustment_values word[10] (20 bytes) next e2m FLCDTPXA at 0x6124a (+20); here ('NLCLFLYA', 'Y')
+OK      0x00806d3a intake_manifold_temperature_linearization_axis word[26] (52 bytes) next e2m ADIMTPYA at 0x806d6e (+52); here ('ADIMTPXA', 'X')
+          inside 0x806d40 linearization_table_ch15_y_axis: 0 abs refs 
+          inside 0x806d46 linearization_table_ch16_x_axis: 0 abs refs 
+          inside 0x806d4c linearization_table_ch16_y_axis: 0 abs refs 
+          inside 0x806d52 linearization_table_ch17_x_axis: 0 abs refs 
+          inside 0x806d58 linearization_table_ch17_y_axis: 0 abs refs 
+          inside 0x806d5e linearization_table_ch18_x_axis: 0 abs refs 
+          inside 0x806d64 linearization_table_ch18_y_axis: 0 abs refs 
+          inside 0x806d6a linearization_table_ch19_x_axis: 0 abs refs 
+OK      0x00806d6e intake_manifold_temperature_linearization_values word[26] (52 bytes) next e2m ADFLTPXA at 0x806da2 (+52); here ('ADIMTPYA', 'Y')
+          inside 0x806d70 linearization_table_ch19_y_axis: 0 abs refs 
+          inside 0x806d76 linearization_table_ch20_x_axis: 0 abs refs 
+          inside 0x806d9c linearization_table_ch20_y_axis: 0 abs refs 
+OK      0x00806da2 fuel_temperature_linearization_axis word[22] (44 bytes) next e2m ADFLTPYA at 0x806dce (+44); here ('ADFLTPXA', 'X')
+          inside 0x806dc2 linearization_table_ch21_x_axis: 0 abs refs 
+OK      0x00806dce fuel_temperature_linearization_values word[22] (44 bytes) next e2m ADCVXA at 0x806dfa (+44); here ('ADFLTPYA', 'Y')
+          inside 0x806dd4 linearization_table_ch21_y_axis: 0 abs refs 
+          inside 0x806de6 linearization_table_ch22_x_axis: 0 abs refs 
+          inside 0x806dee linearization_table_ch22_y_axis: 0 abs refs 
+          inside 0x806df6 linearization_table_ch23_x_axis: 0 abs refs 
+OK      0x00806dfa coolant_level_linearization_axis word[9] (18 bytes) next e2m ADCVYA at 0x806e0c (+18); here ('ADCVXA', 'X')
+          inside 0x806dfc linearization_table_ch23_y_axis: 0 abs refs 
+          inside 0x806e02 linearization_table_ch24_x_axis: 0 abs refs 
+          inside 0x806e08 linearization_table_ch24_y_axis: 0 abs refs 
+OK      0x00806e0c coolant_level_linearization_values word[9] (18 bytes) next e2m ADFPLZXA at 0x806e1e (+18); here ('ADCVYA', 'Y')
+          inside 0x806e0e linearization_table_ch25_x_axis: 0 abs refs 
+          inside 0x806e14 linearization_table_ch25_y_axis: 0 abs refs 
+          inside 0x806e1a fuel_limit_rpm_error_offset: 0 abs refs 
+          inside 0x806e1c diagnostic_exit_limit: 0 abs refs 
+OK      0x00806e1e fuel_pressure_linearization_axis word[3] (6 bytes) next e2m ADFPLZYA at 0x806e24 (+6); here ('ADFPLZXA', 'X')
+OK      0x00806e2a oil_pressure_linearization_axis word[6] (12 bytes) next e2m ADOLPRYA at 0x806e36 (+12); here ('ADOLPRXA', 'X')
+OK      0x00806e42 boost_pressure_linearization_axis word[5] (10 bytes) next e2m ADBSPRYA at 0x806e4c (+10); here ('ADBSPRXA', 'X')
+OK      0x00806e56 coolant_temperature_linearization_axis word[26] (52 bytes) next e2m ADCLTPYA at 0x806e8a (+52); here ('ADCLTPXA', 'X')
+OK      0x00806ebe ambient_air_temperature_linearization_axis word[9] (18 bytes) next e2m ADAATYA at 0x806ed0 (+18); here ('ADAATXA', 'X')
+OK      0x00806ee2 power_steering_temperature_linearization_axis word[3] (6 bytes) next e2m ADPOTPYA at 0x806ee8 (+6); here ('ADPOTPXA', 'X')
+OK      0x00806eee exhaust_pressure_linearization_axis word[3] (6 bytes) next e2m ADEPLZYA at 0x806ef4 (+6); here ('ADEPLZXA', 'X')
+OK      0x00806efa sampled_throttle_linearization_axis word[7] (14 bytes) next e2m ADSATHYA at 0x806f08 (+14); here ('ADSATHXA', 'X')
+OK      0x00806f16 remote_throttle_linearization_axis word[7] (14 bytes) next e2m ADROTHYA at 0x806f24 (+14); here ('ADROTHXA', 'X')
+OK      0x00806f32 ambient_air_pressure_linearization_axis word[5] (10 bytes) next e2m ADAAPRYA at 0x806f3c (+10); here ('ADAAPRXA', 'X')
+OK      0x00806f46 battery_voltage_linearization_axis word[3] (6 bytes) next e2m ADBTVTYA at 0x806f4c (+6); here ('ADBTVTXA', 'X')
+OK      0x00806f52 engine_speed_sensor_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADESLZYA at 0x806f58 (+6); here ('ADESLZXA', 'X')
+OK      0x00806f5e throttle_position_sensor_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADTHLIYA at 0x806f64 (+6); here ('ADTHLIXA', 'X')
+OK      0x00806f6a vehicle_connector_sensor_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADVHLZYA at 0x806f70 (+6); here ('ADVHLZXA', 'X')
+OK      0x00806f76 engine_connector_sensor_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADECLZYA at 0x806f7c (+6); here ('ADECLZXA', 'X')
+OK      0x00806f82 frequency_throttle_input_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADFTLZYA at 0x806f88 (+6); here ('ADFTLZXA', 'X')
+OK      0x00806f8e cruise_control_switch_multiplexer_linearization_axis word[19] (38 bytes) next e2m ADCRLZYA at 0x806fb4 (+38); here ('ADCRLZXA', 'X')
+          inside 0x806fa0 timing_protection_flags_param: 0 abs refs 
+          inside 0x806fa2 timing_protection_blend_base: 0 abs refs 
+          inside 0x806fa4 timing_protection_blend_increment: 0 abs refs 
+          inside 0x806fa6 fuel_mode_transition_timeout_value: 0 abs refs 
+          inside 0x806fa8 fuel_timing_mode_arbitration_1: 0 abs refs 
+          inside 0x806fac fuel_timing_mode_arbitration_2: 0 abs refs 
+          inside 0x806fae fuel_source_mode_11_timeout_value: 0 abs refs 
+          inside 0x806fb2 timing_blend_threshold: 0 abs refs 
+OK      0x00806fda water_in_fuel_linearization_axis word[9] (18 bytes) next e2m ADWFLZYA at 0x806fec (+18); here ('ADWFLZXA', 'X')
+OK      0x00806ffe egr_current_feedback_linearization_axis word[4] (8 bytes) next e2m ADEGLZYA at 0x807006 (+8); here ('ADEGLZXA', 'X')
+OK      0x0080700e programming_pulse_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADPSLIYA at 0x807014 (+6); here ('ADPSLIXA', 'X')
+OK      0x0080701a high_side_gate_bias_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADHBLZYA at 0x807020 (+6); here ('ADHBLZXA', 'X')
+OK      0x00807026 operational_amplifier_and_comparator_supply_voltage_linearization_axis word[3] (6 bytes) next e2m ADOCLIYA at 0x80702c (+6); here ('ADOCLIXA', 'X')

@@ -1,0 +1,800 @@
+0	0	0	ram_image_word_error	fault 0: e2m 1036 RAM_Image_Word_Error (P0606)
+1	0	1	fuel_shutoff_command_high_control_error	fault 1: e2m 1036 FSO_Command_High_Control_Error
+2	0	2	fuel_shutoff_command_low_control_error	fault 2: e2m 1036 FSO_Command_Low_Control_Error
+3	0	3	turbocharger_wastegate_driver_1_high_control_error	fault 3: e2m 1036 TU_WG_Driver1_High_Control_Error
+4	0	4	turbocharger_wastegate_driver_1_low_control_error	fault 4: e2m 1036 TU_WG_Driver1_Low_Control_Error
+5	0	5	fault_5	fault 5 (P0341)
+6	0	6	air_fuel_control_low_boost_error	fault 6: e2m 1036 AFC_Low_Boost_Error; AFC: the air fuel control derate (cm848_calculateAirFuelControlFuelLimit; fueling state 16)
+7	0	7	fuel_pressure_idle_error	fault 7: e2m 1036 FP_Idle_Error (P0191)
+8	0	8	boost_pressure_high_error	fault 8: e2m 1036 Boost_Pressure_High_Error (P0238)
+9	0	9	boost_pressure_low_error	fault 9: e2m 1036 Boost_Pressure_Low_Error (P0237)
+10	0	10	sampled_throttle_high_error	fault 10: e2m 1036 Sampled_Throttle_High_Error (P2123)
+11	0	11	sampled_throttle_low_error	fault 11: e2m 1036 Sampled_Throttle_Low_Error (P2122)
+12	0	12	oil_pressure_high_error	fault 12: e2m 1036 Oil_Pressure_High_Error
+13	0	13	oil_pressure_low_error	fault 13: e2m 1036 Oil_Pressure_Low_Error
+14	0	14	high_pressure_common_rail_obd_negative_deviation_error	fault 14: e2m 1036 HPCR_OBD_Neg_Dev_Error
+15	0	15	high_pressure_common_rail_obd_positive_deviation_error	fault 15: e2m 1036 HPCR_OBD_Pos_Dev_Error
+16	1	0	coolant_temperature_high_error	fault 16: e2m 1036 Coolant_Temperature_High_Error (P0118)
+17	1	1	coolant_temperature_low_error	fault 17: e2m 1036 Coolant_Temperature_Low_Error (P0117)
+18	1	2	fault_18	fault 18
+19	1	3	intake_manifold_temperature_high_error	fault 19: e2m 1036 Intake_Manifold_Temperature_High_Error (P0113)
+20	1	4	intake_manifold_temperature_low_error	fault 20: e2m 1036 Intake_Manifold_Temperature_Low_Error (P0112)
+21	1	5	fault_21	fault 21
+22	1	6	fault_22	fault 22
+23	1	7	fault_23	fault 23
+24	1	8	fault_24	fault 24
+25	1	9	ambient_air_pressure_high_error	fault 25: e2m 1036 Ambient_Air_Pressure_High_Error (P0108)
+26	1	10	ambient_air_pressure_low_error	fault 26: e2m 1036 Ambient_Air_Pressure_Low_Error (P0107)
+27	1	11	overspeed_injector_shutoff_error	fault 27: e2m 1036 Overspeed_Injector_Shutoff_Error (P0219)
+28	1	12	fault_28	fault 28
+29	1	13	vss_signal_lost_error	fault 29: e2m 1036 VSS_Signal_Lost_Error (P0500)
+30	1	14	vss_tampering_error	fault 30: e2m 1036 VSS_Tampering_Error
+31	1	15	fault_31	fault 31
+32	2	0	fault_32	fault 32
+33	2	1	fuel_shutoff_control_error	fault 33: e2m 1036 FSO_Control_Error
+34	2	2	fault_34	fault 34
+35	2	3	turbocharger_wastegate_driver_2_high_control_error	fault 35: e2m 1036 TU_WG_Driver2_High_Control_Error
+36	2	4	turbocharger_wastegate_driver_2_low_control_error	fault 36: e2m 1036 TU_WG_Driver2_Low_Control_Error
+37	2	5	fault_37	fault 37: e2m 1036 CORS_Makeup_Valve_Driver_High_Control_Error; e2m CORS_Makeup_Valve_Driver_High_Control_Error has an abbreviation the code does not resolve (cors)
+38	2	6	fault_38	fault 38: e2m 1036 CORS_Makeup_Valve_Driver_Low_Control_Error; e2m CORS_Makeup_Valve_Driver_Low_Control_Error has an abbreviation the code does not resolve (cors)
+39	2	7	fault_39	fault 39
+40	2	8	fault_40	fault 40
+41	2	9	engine_brake_driver_1_high_control_error	fault 41: e2m 1036 Engine_Brake_Driver_1_High_Control_Error (P0478)
+42	2	10	engine_brake_driver_1_low_control_error	fault 42: e2m 1036 Engine_Brake_Driver_1_Low_Control_Error (P0477)
+43	2	11	engine_brake_driver_2_high_control_error	fault 43: e2m 1036 Engine_Brake_Driver_2_High_Control_Error
+44	2	12	engine_brake_driver_2_low_control_error	fault 44: e2m 1036 Engine_Brake_Driver_2_Low_Control_Error
+45	2	13	engine_brake_driver_3_high_control_error	fault 45: e2m 1036 Engine_Brake_Driver_3_High_Control_Error
+46	2	14	engine_brake_driver_3_low_control_error	fault 46: e2m 1036 Engine_Brake_Driver_3_Low_Control_Error
+47	2	15	fuel_temperature_high_error	fault 47: e2m 1036 Fuel_Temperature_High_Error
+48	3	0	fuel_temperature_low_error	fault 48: e2m 1036 Fuel_Temperature_Low_Error
+49	3	1	fault_49	fault 49
+50	3	2	fault_50	fault 50
+51	3	3	fault_51	fault 51
+52	3	4	frequency_throttle_low_error	fault 52: e2m 1036 Frequency_Throttle_Low_Error
+53	3	5	frequency_throttle_high_error	fault 53: e2m 1036 Frequency_Throttle_High_Error
+54	3	6	water_in_fuel_high_error	fault 54: e2m 1036 Water_In_Fuel_High_Error (P2267)
+55	3	7	water_in_fuel_low_error	fault 55: e2m 1036 Water_In_Fuel_Low_Error (P2266)
+56	3	8	water_in_fuel_error	fault 56: e2m 1036 Water_In_Fuel_Error (P2269)
+57	3	9	fault_57	fault 57 (P1221)
+58	3	10	fault_58	fault 58 (P1222)
+59	3	11	fault_59	fault 59
+60	3	12	fault_60	fault 60 (P1223)
+61	3	13	fault_61	fault 61
+62	3	14	throttle_validation_switch_low_error	fault 62: e2m 1036 Throttle_Validation_Switch_Low_Error (P2127)
+63	3	15	throttle_validation_process_error	fault 63: e2m 1036 Throttle_Validation_Process_Error (P2121)
+64	4	0	boost_in_range_high_error	fault 64: e2m 1036 Boost_In_Range_High_Error (P0236)
+65	4	1	fault_65	fault 65
+66	4	2	battery_voltage_low_error	fault 66: e2m 1036 Battery_Voltage_Low_Error (P0562)
+67	4	3	battery_voltage_high_error	fault 67: e2m 1036 Battery_Voltage_High_Error (P0563)
+68	4	4	throttle_validation_switch_high_error	fault 68: e2m 1036 Throttle_Validation_Switch_High_Error (P2128)
+69	4	5	fault_69	fault 69 (P1221)
+70	4	6	fault_70	fault 70 (P1222)
+71	4	7	fault_71	fault 71 (P1223)
+72	4	8	fault_72	fault 72
+73	4	9	increment_decrement_switch_error	fault 73: e2m 1036 Increment_Decrement_Switch_Error
+74	4	10	ram_overrun_error	fault 74: e2m 1036 Ram_Overrun_Error
+75	4	11	fault_75	fault 75
+76	4	12	fault_76	fault 76
+77	4	13	remote_throttle_high_error	fault 77: e2m 1036 Remote_Throttle_High_Error
+78	4	14	remote_throttle_low_error	fault 78: e2m 1036 Remote_Throttle_Low_Error
+79	4	15	fault_79	fault 79
+80	5	0	qspi_command_error	fault 80: e2m 1036 QSPI_Command_Error
+81	5	1	qspi_initialization_error	fault 81: e2m 1036 QSPI_Initialization_Error
+82	5	2	power_off_without_ignition_off_error	fault 82: e2m 1036 Power_Off_Without_Ignition_Off_Error (P2509)
+83	5	3	fault_83	fault 83
+84	5	4	flash_failure_error	fault 84: e2m 1036 Flash_Failure_Error
+85	5	5	fault_85	fault 85
+86	5	6	fault_86	fault 86
+87	5	7	fault_87	fault 87
+88	5	8	fault_88	fault 88
+89	5	9	power_down_data_lost_error	fault 89: e2m 1036 Powerdown_Data_Lost_Error (P2509)
+90	5	10	all_power_down_data_lost_error	fault 90: e2m 1036 All_Powerdown_Data_Lost_Error (P2509)
+91	5	11	power_off_command_ignored_error	fault 91: e2m 1036 Poweroff_Command_Ignored_Error (P0606)
+92	5	12	engine_position_sensor_main_channel_lost_error	fault 92: e2m 1036 EPS_Main_Channel_Lost_Error (P0335); EPS: faults 92 / 93 (P0335 / P0340) are set by cm848_updateEngineSpeedFromCrankSignal (main / backup sensor)
+93	5	13	engine_position_sensor_backup_channel_lost_error	fault 93: e2m 1036 EPS_Backup_Channel_Lost_Error (P0340); EPS: faults 92 / 93 (P0335 / P0340) are set by cm848_updateEngineSpeedFromCrankSignal (main / backup sensor)
+94	5	14	fault_94	fault 94
+95	5	15	fault_95	fault 95
+96	6	0	fault_96	fault 96
+97	6	1	fault_97	fault 97
+98	6	2	fault_98	fault 98
+99	6	3	fault_99	fault 99
+100	6	4	fault_100	fault 100
+101	6	5	fault_101	fault 101
+102	6	6	fault_102	fault 102
+103	6	7	fault_103	fault 103
+104	6	8	fault_104	fault 104
+105	6	9	fault_105	fault 105
+106	6	10	fault_106	fault 106
+107	6	11	fault_107	fault 107
+108	6	12	fault_108	fault 108
+109	6	13	fault_109	fault 109
+110	6	14	fault_110	fault 110
+111	6	15	j1939_link_cannot_transmit_error	fault 111: e2m 1036 J1939_Link_Cannot_Transmit_Error
+112	7	0	j1939_link_not_fast_enough_error	fault 112: e2m 1036 J1939_Link_Not_Fast_Enough_Error
+113	7	1	fault_113	fault 113
+114	7	2	fault_114	fault 114
+115	7	3	fault_115	fault 115
+116	7	4	fault_116	fault 116
+117	7	5	cam_crank_sync_mismatch_error	fault 117: e2m 1036 Cam_Crank_Sync_Mismatch_Error (P0016)
+118	7	6	fault_118	fault 118
+119	7	7	fault_119	fault 119
+120	7	8	fault_120	fault 120
+121	7	9	fan_clutch_1_pwm_control_error	fault 121: e2m 1036 Fan_Clutch_1_PWM_Control_Error (P0480)
+122	7	10	fault_122	fault 122
+123	7	11	fault_123	fault 123
+124	7	12	crank_sync_error	fault 124: e2m 1036 Crank_Sync_Error (P0336)
+125	7	13	fault_125	fault 125
+126	7	14	fault_126	fault 126
+127	7	15	j1939_multiplexed_accelerator_pedal_sensor_system_error	fault 127: e2m 1036 J1939_Mux_APS_System_Error
+128	8	0	j1939_multiplexed_pgn_timeout_error	fault 128: e2m 1036 J1939_Mux_PGN_Timeout_Error
+129	8	1	j1939_multiplexed_remote_throttle_data_error	fault 129: e2m 1036 J1939_Mux_Remote_Throttle_Data_Error
+130	8	2	j1939_multiplexed_configuration_error	fault 130: e2m 1036 J1939_Mux_Configuration_Error
+131	8	3	fault_131	fault 131
+132	8	4	engine_brake_driver_4_high_control_error	fault 132: e2m 1036 Engine_Brake_Driver_4_High_Control_Error
+133	8	5	engine_brake_driver_4_low_control_error	fault 133: e2m 1036 Engine_Brake_Driver_4_Low_Control_Error
+134	8	6	engine_brake_driver_5_high_control_error	fault 134: e2m 1036 Engine_Brake_Driver_5_High_Control_Error
+135	8	7	engine_brake_driver_5_low_control_error	fault 135: e2m 1036 Engine_Brake_Driver_5_Low_Control_Error
+136	8	8	transmission_variable_force_solenoid_battery_driver_high_control_error	fault 136: e2m 1036 Transmission_VFS_Battery_Driver_High_Control_Error (P0883)
+137	8	9	transmission_variable_force_solenoid_battery_driver_low_control_error	fault 137: e2m 1036 Transmission_VFS_Battery_Driver_Low_Control_Error (P0882)
+138	8	10	transmission_overdrive_driver_high_control_error	fault 138: e2m 1036 Engine_Alarm_Driver_High_Control_Error/Transmission_Overdrive_Driver_High_Control_Error (P0974); the P0974 alternative of Engine_Alarm_Driver_High_Control_Error/Transmission_Overdrive_Driver_High_Control_Error
+139	8	11	transmission_overdrive_driver_low_control_error	fault 139: e2m 1036 Engine_Alarm_Driver_Low_Control_Error/Transmission_Overdrive_Driver_Low_Control_Error (P0973); the P0973 alternative of Engine_Alarm_Driver_Low_Control_Error/Transmission_Overdrive_Driver_Low_Control_Error
+140	8	12	transmission_torque_converter_clutch_driver_high_control_error	fault 140: e2m 1036 Fan_Clutch_Control_Driver1_High_Control_Error/Transmission_TCC_Driver_High_Control_Error (P2770); the P2770 alternative of Fan_Clutch_Control_Driver1_High_Control_Error/Transmission_TCC_Driver_High_Control_Error
+141	8	13	transmission_torque_converter_clutch_driver_low_control_error	fault 141: e2m 1036 Fan_Clutch_Control_Driver1_Low_Control_Error/Transmission_TCC_Driver_Low_Control_Error (P2769); the P2769 alternative of Fan_Clutch_Control_Driver1_Low_Control_Error/Transmission_TCC_Driver_Low_Control_Error
+142	8	14	cruise_vent_driver_high_control_error	fault 142: e2m 1036 Cruise_Vent_Driver_High_Control_Error/Fan_Clutch_Control_Driver2_High_Control_Error (P0588); the P0588 alternative of Cruise_Vent_Driver_High_Control_Error/Fan_Clutch_Control_Driver2_High_Control_Error
+143	8	15	cruise_vent_driver_low_control_error	fault 143: e2m 1036 Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error (P0587); the P0587 alternative of Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error
+144	9	0	cruise_vacuum_driver_high_control_error	fault 144: e2m 1036 Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error (P0584); the P0584 alternative of Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error
+145	9	1	cruise_vacuum_driver_low_control_error	fault 145: e2m 1036 Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error (P0583); the P0583 alternative of Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error
+146	9	2	fault_146	fault 146: e2m 1036 Cruise_SC_Source_Driver_High_Control_Error (P0596); e2m Cruise_SC_Source_Driver_High_Control_Error has an abbreviation the code does not resolve (sc)
+147	9	3	fault_147	fault 147: e2m 1036 Cruise_SC_Source_Driver_Low_Control_Error (P0595); e2m Cruise_SC_Source_Driver_Low_Control_Error has an abbreviation the code does not resolve (sc)
+148	9	4	transmission_park_neutral_switch_error	fault 148: e2m 1036 Transmission_Park_Neutral_Switch_Error (P0850)
+149	9	5	transmission_governor_pressure_rationality_error	fault 149: e2m 1036 RE_Governor_Pressure_Rationality_Error (P1762)
+150	9	6	ambient_air_temperature_high_error	fault 150: e2m 1036 Ambient_Air_Temperature_High_Error (P0073)
+151	9	7	ambient_air_temperature_low_error	fault 151: e2m 1036 Ambient_Air_Temperature_Low_Error (P0072)
+152	9	8	transmission_overdrive_driver_2_high_control_error	fault 152: e2m 1036 Transmission_Overdrive_Driver_2_High_Control_Error
+153	9	9	transmission_overdrive_driver_2_low_control_error	fault 153: e2m 1036 Transmission_Overdrive_Driver_2_Low_Control_Error
+154	9	10	transmission_torque_converter_clutch_driver_2_high_control_error	fault 154: e2m 1036 Transmission_TCC_Driver_2_High_Control_Error
+155	9	11	transmission_torque_converter_clutch_driver_2_low_control_error	fault 155: e2m 1036 Transmission_TCC_Driver_2_Low_Control_Error
+156	9	12	fault_156	fault 156
+157	9	13	fault_157	fault 157
+158	9	14	fault_158	fault 158
+159	9	15	fault_159	fault 159
+160	10	0	fault_160	fault 160
+161	10	1	fault_161	fault 161
+162	10	2	fault_162	fault 162
+163	10	3	fault_163	fault 163
+164	10	4	fault_164	fault 164
+165	10	5	eeprom_write_error	fault 165: e2m 1036 EEPROM_Write_Error
+166	10	6	power_down_eeprom_checksum_error	fault 166: e2m 1036 Powerdown_EEPROM_Checksum_Error
+167	10	7	fault_167	fault 167
+168	10	8	fault_168	fault 168
+169	10	9	fault_169	fault 169
+170	10	10	fault_170	fault 170
+171	10	11	remote_throttle_enabled_low_error	fault 171: e2m 1036 RT_Low_Error; cm848_claimRemoteThrottleOverride copies fault 78 (Remote_Throttle_Low_Error) into it while algorithm_enable_flags_18_cal.remote_throttle_enable is set; RT = remote throttle; RT: fault 171 / 172 are set by cm848_claimRemoteThrottleOverride
+172	10	12	remote_throttle_enabled_high_error	fault 172: e2m 1036 RT_High_Error; cm848_claimRemoteThrottleOverride copies fault 77 (Remote_Throttle_High_Error) into it while the remote throttle is enabled; RT: fault 171 / 172 are set by cm848_claimRemoteThrottleOverride
+173	10	13	fault_173	fault 173
+174	10	14	fault_174	fault 174
+175	10	15	fault_175	fault 175
+176	11	0	fault_176	fault 176
+177	11	1	fault_177	fault 177
+178	11	2	fault_178	fault 178
+179	11	3	fault_179	fault 179
+180	11	4	fault_180	fault 180
+181	11	5	fault_181	fault 181
+182	11	6	fault_182	fault 182
+183	11	7	fault_183	fault 183
+184	11	8	fault_184	fault 184
+185	11	9	fault_185	fault 185
+186	11	10	fault_186	fault 186
+187	11	11	fault_187	fault 187
+188	11	12	fault_188	fault 188
+189	11	13	fault_189	fault 189
+190	11	14	fault_190	fault 190
+191	11	15	fault_191	fault 191
+192	12	0	fault_192	fault 192
+193	12	1	fault_193	fault 193
+194	12	2	fault_194	fault 194
+195	12	3	fault_195	fault 195
+196	12	4	throttle_sensor_supply_voltage_high_error	fault 196: e2m 1036 Throttle_Sensor_Supply_Voltage_High_Error (P0699)
+197	12	5	throttle_sensor_supply_voltage_low_error	fault 197: e2m 1036 Throttle_Sensor_Supply_Voltage_Low_Error (P0698)
+198	12	6	fault_198	fault 198
+199	12	7	fault_199	fault 199
+200	12	8	fault_200	fault 200
+201	12	9	fault_201	fault 201
+202	12	10	fault_202	fault 202
+203	12	11	fault_203	fault 203
+204	12	12	stop_lamp_driver_high_control_error	fault 204: e2m 1036 Stop_Lamp_Driver_High_Control_Error
+205	12	13	stop_lamp_driver_low_control_error	fault 205: e2m 1036 Stop_Lamp_Driver_Low_Control_Error
+206	12	14	fault_206	fault 206: e2m 1036 T2_High_Gear_Driver_High_Control_Error/T2_Shift_Driver_High_Control_Error; e2m 'T2_High_Gear_Driver_High_Control_Error/T2_Shift_Driver_High_Control_Error' names two applications and no DTC decides
+207	12	15	fault_207	fault 207: e2m 1036 T2_High_Gear_Driver_Low_Control_Error/T2_Shift_Driver_Low_Control_Error; e2m 'T2_High_Gear_Driver_Low_Control_Error/T2_Shift_Driver_Low_Control_Error' names two applications and no DTC decides
+208	13	0	fault_208	fault 208: e2m 1036 T2_Lamp_Driver_High_Control_Error; e2m T2_Lamp_Driver_High_Control_Error has an abbreviation the code does not resolve (t2)
+209	13	1	fault_209	fault 209: e2m 1036 T2_Lamp_Driver_Low_Control_Error; e2m T2_Lamp_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2)
+210	13	2	fault_210	fault 210: e2m 1036 T2_Lockout_Driver_High_Control_Error; e2m T2_Lockout_Driver_High_Control_Error has an abbreviation the code does not resolve (t2)
+211	13	3	fault_211	fault 211: e2m 1036 T2_Lockout_Driver_Low_Control_Error; e2m T2_Lockout_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2)
+212	13	4	fault_212	fault 212: e2m 1036 T2_Low_Gear_Driver_High_Control_Error; e2m T2_Low_Gear_Driver_High_Control_Error has an abbreviation the code does not resolve (t2)
+213	13	5	fault_213	fault 213: e2m 1036 T2_Low_Gear_Driver_Low_Control_Error; e2m T2_Low_Gear_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2)
+214	13	6	fault_214	fault 214: e2m 1036 T2_Neutral_Driver_High_Control_Error; e2m T2_Neutral_Driver_High_Control_Error has an abbreviation the code does not resolve (t2)
+215	13	7	fault_215	fault 215: e2m 1036 T2_Neutral_Driver_Low_Control_Error; e2m T2_Neutral_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2)
+216	13	8	fault_216	fault 216: e2m 1036 TAS_Lamp_Driver_High_Control_Error; e2m TAS_Lamp_Driver_High_Control_Error has an abbreviation the code does not resolve (tas)
+217	13	9	fault_217	fault 217: e2m 1036 TAS_Lamp_Driver_Low_Control_Error; e2m TAS_Lamp_Driver_Low_Control_Error has an abbreviation the code does not resolve (tas)
+218	13	10	wait_to_start_lamp_driver_high_control_error	fault 218: e2m 1036 Wait_To_Start_Lamp_Driver_High_Control_Error/Wait_To_Start_Lamp_High_Control_Error (P0381); the P0381 alternative of Wait_To_Start_Lamp_Driver_High_Control_Error/Wait_To_Start_Lamp_High_Control_Error
+219	13	11	wait_to_start_lamp_driver_low_control_error	fault 219: e2m 1036 Wait_To_Start_Lamp_Driver_Low_Control_Error/Wait_To_Start_Lamp_Low_Control_Error (P0381); the P0381 alternative of Wait_To_Start_Lamp_Driver_Low_Control_Error/Wait_To_Start_Lamp_Low_Control_Error
+220	13	12	warning_lamp_driver_high_control_error	fault 220: e2m 1036 Warning_Lamp_Driver_High_Control_Error
+221	13	13	warning_lamp_driver_low_control_error	fault 221: e2m 1036 Warning_Lamp_Driver_Low_Control_Error
+222	13	14	water_in_fuel_lamp_driver_high_control_error	fault 222: e2m 1036 Water_In_Fuel_Lamp_Driver_High_Control_Error
+223	13	15	water_in_fuel_lamp_driver_low_control_error	fault 223: e2m 1036 Water_In_Fuel_Lamp_Driver_Low_Control_Error
+224	14	0	fault_224	fault 224
+225	14	1	fault_225	fault 225
+226	14	2	fault_226	fault 226
+227	14	3	fault_227	fault 227
+228	14	4	overspeed_pump_shutoff_error	fault 228: e2m 1036 Overspeed_Pump_Shutoff_Error
+229	14	5	warning_lamp_driver_open_control_error	fault 229: e2m 1036 Warning_Lamp_Driver_Open_Control_Error
+230	14	6	stop_lamp_driver_open_control_error	fault 230: e2m 1036 Stop_Lamp_Driver_Open_Control_Error
+231	14	7	fault_231	fault 231
+232	14	8	maintenance_lamp_driver_open_control_error	fault 232: e2m 1036 Maintenance_Lamp_Driver_Open_Control_Error
+233	14	9	fault_233	fault 233
+234	14	10	fault_234	fault 234
+235	14	11	fault_235	fault 235
+236	14	12	fault_236	fault 236
+237	14	13	fault_237	fault 237
+238	14	14	fault_238	fault 238
+239	14	15	fault_239	fault 239
+240	15	0	fault_240	fault 240
+241	15	1	fault_241	fault 241
+242	15	2	fault_242	fault 242
+243	15	3	fault_243	fault 243
+244	15	4	fault_244	fault 244
+245	15	5	fault_245	fault 245
+246	15	6	fault_246	fault 246
+247	15	7	fault_247	fault 247
+248	15	8	fault_248	fault 248
+249	15	9	fault_249	fault 249
+250	15	10	fault_250	fault 250
+251	15	11	fault_251	fault 251
+252	15	12	fault_252	fault 252
+253	15	13	fault_253	fault 253
+254	15	14	fault_254	fault 254
+255	15	15	fault_255	fault 255
+256	16	0	fault_256	fault 256
+257	16	1	fault_257	fault 257
+258	16	2	fault_258	fault 258
+259	16	3	fault_259	fault 259
+260	16	4	fault_260	fault 260
+261	16	5	fault_261	fault 261
+262	16	6	fuel_temperature_rpm_error_active	fault 262: e2m 1036 Fuel_Temperature_RPM_Error_Active
+263	16	7	fuel_temperature_fueling_error_active	fault 263: e2m 1036 Fuel_Temperature_Fueling_Error_Active
+264	16	8	high_pressure_common_rail_cp3_low_current_error	fault 264: e2m 1036 HPCR_CP3_Low_Current_Error
+265	16	9	high_pressure_common_rail_cp3_high_current_error	fault 265: e2m 1036 HPCR_CP3_High_Current_Error
+266	16	10	fault_266	fault 266
+267	16	11	fault_267	fault 267
+268	16	12	injector_1_short_to_battery_error	fault 268: e2m 1036 Injector_1_Short_to_Vbatt_Error (P2146)
+269	16	13	injector_1_short_to_ground_error	fault 269: e2m 1036 Injector_1_Short_to_Ground_Error (P2146)
+270	16	14	injector_1_fast_decay_error	fault 270: e2m 1036 Injector_1_Fast_Decay_Error
+271	16	15	injector_5_short_to_battery_error	fault 271: e2m 1036 Injector_5_Short_to_Vbatt_Error (P2146)
+272	17	0	injector_5_short_to_ground_error	fault 272: e2m 1036 Injector_5_Short_to_Ground_Error (P2146)
+273	17	1	injector_5_fast_decay_error	fault 273: e2m 1036 Injector_5_Fast_Decay_Error
+274	17	2	injector_3_short_to_battery_error	fault 274: e2m 1036 Injector_3_Short_to_Vbatt_Error (P2146)
+275	17	3	injector_3_short_to_ground_error	fault 275: e2m 1036 Injector_3_Short_to_Ground_Error (P2146)
+276	17	4	injector_3_fast_decay_error	fault 276: e2m 1036 Injector_3_Fast_Decay_Error
+277	17	5	injector_6_short_to_battery_error	fault 277: e2m 1036 Injector_6_Short_to_Vbatt_Error (P2149)
+278	17	6	injector_6_short_to_ground_error	fault 278: e2m 1036 Injector_6_Short_to_Ground_Error (P2149)
+279	17	7	injector_6_fast_decay_error	fault 279: e2m 1036 Injector_6_Fast_Decay_Error
+280	17	8	injector_2_short_to_battery_error	fault 280: e2m 1036 Injector_2_Short_to_Vbatt_Error (P2149)
+281	17	9	injector_2_short_to_ground_error	fault 281: e2m 1036 Injector_2_Short_to_Ground_Error (P2149)
+282	17	10	injector_2_fast_decay_error	fault 282: e2m 1036 Injector_2_Fast_Decay_Error
+283	17	11	injector_4_short_to_battery_error	fault 283: e2m 1036 Injector_4_Short_to_Vbatt_Error (P2149)
+284	17	12	injector_4_short_to_ground_error	fault 284: e2m 1036 Injector_4_Short_to_Ground_Error (P2149)
+285	17	13	injector_4_fast_decay_error	fault 285: e2m 1036 Injector_4_Fast_Decay_Error
+286	17	14	injector_1_open_circuit_error	fault 286: e2m 1036 Injector_1_Open_Circuit_Error (P0201)
+287	17	15	injector_5_open_circuit_error	fault 287: e2m 1036 Injector_5_Open_Circuit_Error (P0202)
+288	18	0	injector_3_open_circuit_error	fault 288: e2m 1036 Injector_3_Open_Circuit_Error (P0203)
+289	18	1	injector_6_open_circuit_error	fault 289: e2m 1036 Injector_6_Open_Circuit_Error (P0204)
+290	18	2	fault_290	fault 290
+291	18	3	injector_2_open_circuit_error	fault 291: e2m 1036 Injector_2_Open_Circuit_Error (P0205)
+292	18	4	injector_4_open_circuit_error	fault 292: e2m 1036 Injector_4_Open_Circuit_Error (P0206)
+293	18	5	fault_293	fault 293
+294	18	6	cold_start_aid_1_low_control_error	fault 294: e2m 1036 Cold_Start_Aid_1_Low_Control_Error (P0541)
+295	18	7	cold_start_aid_1_high_control_error	fault 295: e2m 1036 Cold_Start_Aid_1_High_Control_Error (P0542)
+296	18	8	cold_start_aid_2_low_control_error	fault 296: e2m 1036 Cold_Start_Aid_2_Low_Control_Error (P2607)
+297	18	9	cold_start_aid_2_high_control_error	fault 297: e2m 1036 Cold_Start_Aid_2_High_Control_Error (P2608)
+298	18	10	transmission_oil_temperature_rationality_error	fault 298: e2m 1036 Transmission_Oil_Temperature_Rationality_Error (P0711)
+299	18	11	transmission_governor_pressure_high_error	fault 299: e2m 1036 Transmission_Governor_Pressure_High_Error (P0868)
+300	18	12	transmission_governor_pressure_low_error	fault 300: e2m 1036 Transmission_Governor_Pressure_Low_Error (P0869)
+301	18	13	transmission_oil_temperature_high_error	fault 301: e2m 1036 Transmission_Oil_Temperature_High_Error (P0713)
+302	18	14	transmission_oil_temperature_low_error	fault 302: e2m 1036 Transmission_Oil_Temperature_Low_Error (P0712)
+303	18	15	high_pressure_common_rail_pressure_too_high_error	fault 303: e2m 1036 HPCR_Pressure_Too_High_Error (P0088)
+304	19	0	fuel_rail_pressure_high_error	fault 304: e2m 1036 Fuel_Rail_Pressure_High_Error (P0193)
+305	19	1	fuel_rail_pressure_low_error	fault 305: e2m 1036 Fuel_Rail_Pressure_Low_Error (P0192)
+306	19	2	ecm_internal_temperature_low_error	fault 306: e2m 1036 ECM_Internal_Temperature_Low_Error
+307	19	3	ecm_internal_temperature_high_error	fault 307: e2m 1036 ECM_Internal_Temperature_High_Error
+308	19	4	fault_308	fault 308: e2m 1036 Chry_Dat42_Stuck_Error; e2m Chry_Dat42_Stuck_Error has an abbreviation the code does not resolve (chry; dat42)
+309	19	5	fault_309	fault 309
+310	19	6	fault_310	fault 310
+311	19	7	fault_311	fault 311
+312	19	8	fault_312	fault 312
+313	19	9	fault_313	fault 313
+314	19	10	fault_314	fault 314
+315	19	11	fault_315	fault 315
+316	19	12	fault_316	fault 316
+317	19	13	fault_317	fault 317
+318	19	14	fault_318	fault 318 (P0604)
+319	19	15	torque_converter_clutch_rationality_error	fault 319: e2m 1036 TCC_Rationality_Error (P1740)
+320	20	0	output_speed_sensor_rationality_error	fault 320: e2m 1036 OSS_Rationality_Error (P0720)
+321	20	1	fault_321	fault 321
+322	20	2	fault_322	fault 322
+323	20	3	fault_323	fault 323
+324	20	4	fault_324	fault 324
+325	20	5	fault_325	fault 325
+326	20	6	fault_326	fault 326
+327	20	7	fault_327	fault 327
+328	20	8	booster_capacitor_1_voltage_high_error	fault 328: e2m 1036 Booster_Cap_1_Voltage_High_Error (P0606)
+329	20	9	booster_capacitor_1_voltage_low_error	fault 329: e2m 1036 Booster_Cap_1_Voltage_Low_Error (P2146)
+330	20	10	booster_capacitor_2_voltage_high_error	fault 330: e2m 1036 Booster_Cap_2_Voltage_High_Error (P0606)
+331	20	11	booster_capacitor_2_voltage_low_error	fault 331: e2m 1036 Booster_Cap_2_Voltage_Low_Error (P2149)
+332	20	12	wastegate_high_boost_error	fault 332: e2m 1036 CWG_High_Boost_Error (P0234); CWG: fault 332 is set by cm848_monitorWastegateBoostPressure (P0234)
+333	20	13	cp3_pump_regulator_control_error	fault 333: e2m 1036 CP3_Pump_Regulator_Control_Error (P0251)
+334	20	14	pedal_position_sensor_conformance_error	fault 334: e2m 1036 PPS_Conformance_Error (P2121)
+335	20	15	speed_limp_home_error	fault 335: e2m 1036 Speed_Limp_Home_Error (P0336)
+336	21	0	water_in_fuel_too_long_error	fault 336: e2m 1036 WIF_Too_Long_Error (P0169)
+337	21	1	sensor_supply_1_voltage_low_error	fault 337: e2m 1036 Sensor_Supply_1_Voltage_Low_Error (P0642)
+338	21	2	sensor_supply_1_voltage_high_error	fault 338: e2m 1036 Sensor_Supply_1_Voltage_High_Error (P0643)
+339	21	3	ambient_air_temperature_rationality_error	fault 339: e2m 1036 Ambient_Air_Temperature_Rationality_Error (P0071)
+340	21	4	ambient_air_pressure_in_range_error	fault 340: e2m 1036 Ambient_Air_Pressure_In_Range_Error (P0106)
+341	21	5	low_oil_switch_error	fault 341: e2m 1036 Low_Oil_Switch_Error (P0521)
+342	21	6	fault_342	fault 342
+343	21	7	fault_343	fault 343
+344	21	8	vin_eeprom_not_entered_error	fault 344: e2m 1036 VIN_E2_Not_Entered_Error (P0630)
+345	21	9	odometer_eeprom_not_entered_error	fault 345: e2m 1036 Odometer_E2_Not_Entered_Error
+346	21	10	vehicle_theft_alarm_secret_key_eeprom_not_entered_error	fault 346: e2m 1036 VTA_Secret_Key_E2_Not_Entered_Error (P0633)
+347	21	11	pedal_position_sensor_1_low_error	fault 347: e2m 1036 Pedal_Position_Sensor_1_Low_Error (P2122)
+348	21	12	pedal_position_sensor_1_high_error	fault 348: e2m 1036 Pedal_Position_Sensor_1_High_Error (P2123)
+349	21	13	pedal_position_sensor_2_low_error	fault 349: e2m 1036 Pedal_Position_Sensor_2_Low_Error (P2127)
+350	21	14	pedal_position_sensor_2_high_error	fault 350: e2m 1036 Pedal_Position_Sensor_2_High_Error (P2128)
+351	21	15	transmission_variable_force_solenoid_pwm_driver_error	fault 351: e2m 1036 Transmission_VFS_PWM_Driver_Error (P0748)
+352	22	0	high_pressure_common_rail_cumulative_sum_leak_error	fault 352: e2m 1036 HPCR_Cusum_Leak_Error
+353	22	1	battery_temperature_rationality_error	fault 353: e2m 1036 Battery_Temperature_Rationality_Error (P0514)
+354	22	2	intake_manifold_temperature_rationality_error	fault 354: e2m 1036 Intake_Manifold_Temperature_Rationality_Error (P0111)
+355	22	3	j1850_open_circuit_no_message_error	fault 355: e2m 1036 J1850_Open_Ckt_No_Message_Error (P1652)
+356	22	4	j1939_tsc1_lost_fault	fault 356: e2m 1036 Jcomm_TSC_Lost_Fault; TSC: fault 356 is set by cm848_updateParkNeutralFlagAndTsc1Activity
+357	22	5	checksum_error	fault 357: e2m 1036 Checksum_Error (P0602)
+358	22	6	intake_manifold_temperature_key_on_rationality_error	fault 358: e2m 1036 Intake_Manifold_Temperature_Keyon_Ration_Error (P0111)
+359	22	7	battery_temperature_key_on_rationality_error	fault 359: e2m 1036 Battery_Temperature_Keyon_Rationality_Error (P0514)
+360	22	8	ambient_air_temperature_key_on_rationality_error	fault 360: e2m 1036 Ambient_Air_Temperature_Keyon_Rationality_Error (P0071)
+361	22	9	cylinder_1_misfire_error	fault 361: e2m 1036 Cylinder_1_Misfire_Error (P0301)
+362	22	10	cylinder_2_misfire_error	fault 362: e2m 1036 Cylinder_2_Misfire_Error (P0302)
+363	22	11	cylinder_3_misfire_error	fault 363: e2m 1036 Cylinder_3_Misfire_Error (P0303)
+364	22	12	cylinder_4_misfire_error	fault 364: e2m 1036 Cylinder_4_Misfire_Error (P0304)
+365	22	13	cylinder_5_misfire_error	fault 365: e2m 1036 Cylinder_5_Misfire_Error (P0305)
+366	22	14	cylinder_6_misfire_error	fault 366: e2m 1036 Cylinder_6_Misfire_Error (P0306)
+367	22	15	multiple_cylinders_misfire_error	fault 367: e2m 1036 Multiple_Cylinders_Misfire_Error (P0300)
+368	23	0	alternator_error	fault 368: e2m 1036 Alternator_Error (P2502)
+369	23	1	charging_system_high_error	fault 369: e2m 1036 Charging_System_High_Error (P2504)
+370	23	2	charging_system_low_error	fault 370: e2m 1036 Charging_System_Low_Error (P2503)
+371	23	3	air_conditioning_discrete_output_high_control_error	fault 371: e2m 1036 AC_Discrete_Output_High_Control_Error (P0647)
+372	23	4	air_conditioning_discrete_output_low_control_error	fault 372: e2m 1036 AC_Discrete_Output_Low_Control_Error (P0646)
+373	23	5	cruise_control_switch_multiplexed_high_error	fault 373: e2m 1036 Cruise_Control_Switch_Mux_High_Error (P0581)
+374	23	6	cruise_control_switch_multiplexed_low_error	fault 374: e2m 1036 Cruise_Control_Switch_Mux_Low_Error (P0580)
+375	23	7	engine_speed_sensor_supply_voltage_high_error	fault 375: e2m 1036 Engine_Speed_Sensor_SV_High_Error (P0338); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV)
+376	23	8	engine_speed_sensor_supply_voltage_low_error	fault 376: e2m 1036 Engine_Speed_Sensor_SV_Low_Error (P0337); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV)
+377	23	9	engine_connector_sensors_supply_voltage_high_error	fault 377: e2m 1036 Engine_Conn_Sensors_SV_High_Error (P0653); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV)
+378	23	10	engine_connector_sensors_supply_voltage_low_error	fault 378: e2m 1036 Engine_Conn_Sensors_SV_Low_Error (P0652); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV)
+379	23	11	battery_temperature_high_error	fault 379: e2m 1036 Battery_Temperature_High_Error (P0517)
+380	23	12	battery_temperature_low_error	fault 380: e2m 1036 Battery_Temperature_Low_Error (P0516)
+381	23	13	fuel_level_high_error	fault 381: e2m 1036 Fuel_Level_High_Error (P0463)
+382	23	14	fuel_level_low_error	fault 382: e2m 1036 Fuel_Level_Low_Error (P0462)
+383	23	15	j1850_system_bus_fault	fault 383: e2m 1036 J1850_System_Bus_Fault (P1652)
+384	24	0	air_conditioning_pressure_high_error	fault 384: e2m 1036 AC_Pressure_High_Error (P0533)
+385	24	1	air_conditioning_pressure_low_error	fault 385: e2m 1036 AC_Pressure_Low_Error (P0532)
+386	24	2	lift_pump_driver_high_control_error	fault 386: e2m 1036 Lift_Pump_Driver_High_Control_Error (P0629)
+387	24	3	lift_pump_driver_low_control_error	fault 387: e2m 1036 Lift_Pump_Driver_Low_Control_Error (P0628)
+388	24	4	watchdog_fueling_error	fault 388: e2m 1036 Watchdog_Fueling_Error (P0606)
+389	24	5	coolant_temperature_derate_aggressive_derate_error	fault 389: e2m 1036 CT_Derate_Agg_Derate_Error (P0217); CT: faults 389 / 390 are set by the coolant overheat monitors (P0217)
+390	24	6	coolant_temperature_derate_minimum_derate_error	fault 390: e2m 1036 CT_Derate_Min_Derate_Error (P0217); CT: faults 389 / 390 are set by the coolant overheat monitors (P0217)
+391	24	7	transmission_governor_pressure_zero_rationality_error	fault 391: e2m 1036 RE_Governor_Pr_Zero_Rationality_Error (P1757)
+392	24	8	transmission_governor_pressure_mid_rationality_error	fault 392: e2m 1036 RE_Governor_Pr_Mid_Rationality_Error (P1756)
+393	24	9	low_oil_pressure_error	fault 393: e2m 1036 Low_Oil_Pressure_Error (P0524)
+394	24	10	brake_switch_high_error	fault 394: e2m 1036 Brake_Switch_High_Error (P0573)
+395	24	11	brake_switch_low_error	fault 395: e2m 1036 Brake_Switch_Low_Error (P0572)
+396	24	12	alternator_field_driver_control_error	fault 396: e2m 1036 EVR_Driver_Control_Error (P0622); EVR: fault 396 = output 27; the alternator field; P0622 (the output read-back debounce)
+397	24	13	obd_fuel_level_low_error	fault 397: e2m 1036 OBD_Fuel_Level_Low_Error
+398	24	14	fuel_level_rationality_error	fault 398: e2m 1036 Fuel_Level_Rationality_Error (P0461)
+399	24	15	fuel_system_shutdown_hardware_error	fault 399: e2m 1036 FS_Shutdown_HW_Error (P0607)
+400	25	0	thermostat_system_error	fault 400: e2m 1036 Tstat_System_Error (P0128)
+401	25	1	coolant_temperature_in_range_error	fault 401: e2m 1036 Coolant_Temperature_In_Range_Error (P0116)
+402	25	2	fuel_temperature_in_range_error	fault 402: e2m 1036 Fuel_Temperature_In_Range_Error
+403	25	3	wastegate_pressure_control_driver_error	fault 403: e2m 1036 Wastegate_Pressure_Control_Driver_Error (P0243)
+404	25	4	transmission_receive_emissions_fault	fault 404: e2m 1036 Transmission_Rx_Emissions_Fault
+405	25	5	transmission_receive_message_fault	fault 405: e2m 1036 Transmission_Rx_Message_Fault
+406	25	6	transfer_case_switch_multiplexed_out_of_range_error	fault 406: e2m 1036 Tcase_Switch_Mux_OOR_Error (P0837)
+407	25	7	fan_speed_error	fault 407: e2m 1036 Fan_Speed_Error (P0483)
+408	25	8	high_pressure_common_rail_cumulative_sum_positive_error	fault 408: e2m 1036 HPCR_Cusum_Pos_Error (P0148)
+409	25	9	high_pressure_common_rail_cumulative_sum_negative_error	fault 409: e2m 1036 HPCR_Cusum_Neg_Error (P0148)
+410	25	10	fault_410	fault 410
+411	25	11	intake_air_heater_system_error	fault 411: e2m 1036 Intake_Air_Heater_System_Error (P2609)
+412	25	12	transfer_case_switch_multiplexed_high_error	fault 412: e2m 1036 Tcase_Switch_Mux_High_Error (P0839)
+413	25	13	transfer_case_switch_multiplexed_low_error	fault 413: e2m 1036 Tcase_Switch_Mux_Low_Error (P0838)
+414	25	14	fuel_pressure_key_on_rationality_error	fault 414: e2m 1036 Fuel_Pressure_Keyon_Rationality_Error (P0191)
+415	25	15	turbocharger_high_boost_error	fault 415: e2m 1036 Turbo_High_Boost_Error (P0234)
+416	26	0	cylinder_7_misfire_error	fault 416: e2m 1036 Cylinder_7_Misfire_Error
+417	26	1	cylinder_8_misfire_error	fault 417: e2m 1036 Cylinder_8_Misfire_Error
+418	26	2	injector_7_open_circuit_error	fault 418: e2m 1036 Injector_7_Open_Circuit_Error
+419	26	3	injector_8_open_circuit_error	fault 419: e2m 1036 Injector_8_Open_Circuit_Error
+420	26	4	injector_7_short_to_battery_error	fault 420: e2m 1036 Injector_7_Short_to_Vbatt_Error
+421	26	5	injector_8_short_to_battery_error	fault 421: e2m 1036 Injector_8_Short_to_Vbatt_Error
+422	26	6	injector_7_short_to_ground_error	fault 422: e2m 1036 Injector_7_Short_to_Ground_Error
+423	26	7	injector_8_short_to_ground_error	fault 423: e2m 1036 Injector_8_Short_to_Ground_Error
+424	26	8	injector_7_fast_decay_error	fault 424: e2m 1036 Injector_7_Fast_Decay_Error
+425	26	9	injector_8_fast_decay_error	fault 425: e2m 1036 Injector_8_Fast_Decay_Error
+426	26	10	fault_426	fault 426
+427	26	11	fault_427	fault 427
+428	26	12	fault_428	fault 428
+429	26	13	fault_429	fault 429
+430	26	14	fault_430	fault 430
+431	26	15	fault_431	fault 431
+432	27	0	can_general_network_error	fault 432: e2m 1036 CAN_General_Network_Error (P0653)
+433	27	1	implausible_air_conditioning_pressure_voltage_from_totally_integrated_power_module_error	fault 433: e2m 1036 Implausible_AC_Pressure_Voltage_From_TIPM_Error
+434	27	2	implausible_fuel_voltage_from_totally_integrated_power_module_error	fault 434: e2m 1036 Implausible_Fuel_Voltage_From_TIPM_Error
+435	27	3	implausible_ignition_off_timer_from_totally_integrated_power_module_error	fault 435: e2m 1036 Implausible_Ign_Off_Timer_From_TIPM_Error
+436	27	4	implausible_vehicle_speed_from_abs_error	fault 436: e2m 1036 Implausible_Vehicle_Speed_From_ABS_Error
+437	27	5	lost_communication_with_abs_error	fault 437: e2m 1036 Lost_Communication_With_ABS_Error
+438	27	6	lost_communication_with_totally_integrated_power_module_error	fault 438: e2m 1036 Lost_Communication_With_TIPM_Error
+439	27	7	vehicle_theft_alarm_invalid_key_error	fault 439: e2m 1036 VTA_Invalid_Key_Error
+440	27	8	fault_440	fault 440
+441	27	9	fault_441	fault 441
+442	27	10	fault_442	fault 442
+443	27	11	fault_443	fault 443
+444	27	12	fault_444	fault 444
+445	27	13	fault_445	fault 445
+446	27	14	fault_446	fault 446
+447	27	15	fault_447	fault 447
+448	28	0	fault_448	fault 448
+449	28	1	fault_449	fault 449
+450	28	2	fault_450	fault 450
+451	28	3	fault_451	fault 451
+452	28	4	fault_452	fault 452
+453	28	5	fault_453	fault 453
+454	28	6	fault_454	fault 454
+455	28	7	fault_455	fault 455
+456	28	8	fault_456	fault 456
+457	28	9	fault_457	fault 457
+458	28	10	fault_458	fault 458
+459	28	11	fault_459	fault 459
+460	28	12	fault_460	fault 460
+461	28	13	fault_461	fault 461
+462	28	14	fault_462	fault 462
+463	28	15	fault_463	fault 463
+464	29	0	fault_464	fault 464
+465	29	1	fault_465	fault 465
+466	29	2	fault_466	fault 466
+467	29	3	fault_467	fault 467
+468	29	4	fault_468	fault 468
+469	29	5	fault_469	fault 469
+470	29	6	fault_470	fault 470
+471	29	7	fault_471	fault 471
+472	29	8	fault_472	fault 472
+473	29	9	fault_473	fault 473
+474	29	10	fault_474	fault 474
+475	29	11	fault_475	fault 475
+476	29	12	fault_476	fault 476
+477	29	13	fault_477	fault 477
+478	29	14	fault_478	fault 478
+479	29	15	fault_479	fault 479
+480	30	0	fault_480	fault 480
+481	30	1	fault_481	fault 481
+482	30	2	fault_482	fault 482
+483	30	3	fault_483	fault 483
+484	30	4	fault_484	fault 484
+485	30	5	fault_485	fault 485
+486	30	6	fault_486	fault 486
+487	30	7	fault_487	fault 487
+488	30	8	fault_488	fault 488
+489	30	9	fault_489	fault 489
+490	30	10	fault_490	fault 490
+491	30	11	fault_491	fault 491
+492	30	12	fault_492	fault 492
+493	30	13	fault_493	fault 493
+494	30	14	fault_494	fault 494
+495	30	15	fault_495	fault 495
+496	31	0	fault_496	fault 496
+497	31	1	fault_497	fault 497
+498	31	2	fault_498	fault 498
+499	31	3	fault_499	fault 499
+500	31	4	fault_500	fault 500
+501	31	5	fault_501	fault 501
+502	31	6	fault_502	fault 502
+503	31	7	fault_503	fault 503
+504	31	8	fault_504	fault 504
+505	31	9	fault_505	fault 505
+506	31	10	fault_506	fault 506
+507	31	11	fault_507	fault 507
+508	31	12	fault_508	fault 508
+509	31	13	diagnostic_low_battery_voltage_error	fault 509: e2m 1036 Gen_Diag_Low_Battery_Voltage_Error
+510	31	14	obd_low_battery_voltage_error	fault 510: e2m 1036 OBD_Low_Battery_Voltage_Error
+511	31	15	fault_511	fault 511
+512	32	0	egr_orifice_temperature_rationality_error	fault 512: e2m 1036 EGR_Orifice_Temp_Rationality_Error
+513	32	1	egr_orifice_temperature_startup_error	fault 513: e2m 1036 EGR_Orifice_Temp_Startup_Error
+514	32	2	egr_valve_rationality_error	fault 514: e2m 1036 EGR_Valve_Rationality_Error
+515	32	3	egr_valve_response_time_error	fault 515: e2m 1036 EGR_Valve_Response_Time_Error
+516	32	4	fault_516	fault 516
+517	32	5	fault_517	fault 517
+518	32	6	boost_in_range_error	fault 518: e2m 1036 Boost_In_Range_Error
+519	32	7	variable_geometry_turbocharger_stuck_actuator_error	fault 519: e2m 1036 TVA_Stuck_Actuator_Error (B1976); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+520	32	8	variable_geometry_turbocharger_position_rationality_error	fault 520: e2m 1036 TVA_Position_Rationality_Error (B1972); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+521	32	9	variable_geometry_turbocharger_span_error	fault 521: e2m 1036 TVA_Span_Error (B1975); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+522	32	10	variable_geometry_turbocharger_autozero_error	fault 522: e2m 1036 TVA_AZ_Error (B1971); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+523	32	11	fault_523	fault 523
+524	32	12	fault_524	fault 524
+525	32	13	variable_geometry_turbocharger_motor_over_current_error	fault 525: e2m 1036 TVA_Motor_Overcurrent_Error; TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+526	32	14	variable_geometry_turbocharger_electrical_fault	fault 526: e2m 1036 TVA_Electrical_Fault; TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+527	32	15	charge_pressure_in_range_error	fault 527: e2m 1036 Charge_Press_IR_Error; IR: fault 527 is set by cm848_updateChargePressureInRangeFaultCount
+528	33	0	fault_528	fault 528
+529	33	1	fault_529	fault 529
+530	33	2	fault_530	fault 530
+531	33	3	fault_531	fault 531
+532	33	4	fault_532	fault 532
+533	33	5	fault_533	fault 533
+534	33	6	fault_534	fault 534
+535	33	7	fault_535	fault 535
+536	33	8	fault_536	fault 536
+537	33	9	fault_537	fault 537
+538	33	10	fault_538	fault 538
+539	33	11	fault_539	fault 539
+540	33	12	fault_540	fault 540
+541	33	13	fault_541	fault 541
+542	33	14	fault_542	fault 542
+543	33	15	fault_543	fault 543
+544	34	0	fault_544	fault 544
+545	34	1	fault_545	fault 545
+546	34	2	fault_546	fault 546
+547	34	3	fault_547	fault 547
+548	34	4	fault_548	fault 548
+549	34	5	fault_549	fault 549
+550	34	6	fault_550	fault 550
+551	34	7	fault_551	fault 551
+552	34	8	fault_552	fault 552
+553	34	9	fault_553	fault 553
+554	34	10	fault_554	fault 554
+555	34	11	fault_555	fault 555
+556	34	12	fault_556	fault 556
+557	34	13	fault_557	fault 557
+558	34	14	fault_558	fault 558
+559	34	15	fault_559	fault 559
+560	35	0	fault_560	fault 560
+561	35	1	fault_561	fault 561
+562	35	2	fault_562	fault 562
+563	35	3	fault_563	fault 563
+564	35	4	fault_564	fault 564
+565	35	5	fault_565	fault 565
+566	35	6	fault_566	fault 566
+567	35	7	fault_567	fault 567
+568	35	8	fault_568	fault 568
+569	35	9	fault_569	fault 569
+570	35	10	fault_570	fault 570
+571	35	11	fault_571	fault 571
+572	35	12	fault_572	fault 572
+573	35	13	fault_573	fault 573
+574	35	14	fault_574	fault 574
+575	35	15	fault_575	fault 575
+576	36	0	fault_576	fault 576
+577	36	1	fault_577	fault 577
+578	36	2	fault_578	fault 578
+579	36	3	fault_579	fault 579
+580	36	4	fault_580	fault 580
+581	36	5	fault_581	fault 581
+582	36	6	fault_582	fault 582
+583	36	7	fault_583	fault 583
+584	36	8	fault_584	fault 584
+585	36	9	fault_585	fault 585
+586	36	10	fault_586	fault 586
+587	36	11	fault_587	fault 587
+588	36	12	fault_588	fault 588
+589	36	13	fault_589	fault 589
+590	36	14	fault_590	fault 590
+591	36	15	fault_591	fault 591
+592	37	0	fault_592	fault 592
+593	37	1	fault_593	fault 593
+594	37	2	fault_594	fault 594
+595	37	3	fault_595	fault 595
+596	37	4	oil_pressure_error	fault 596: e2m 1036 Oil_Pressure_Error
+597	37	5	oil_pressure_high_postprocessed_error	fault 597: e2m 1036 Oil_Pressure_High_Postprocessed_Error
+598	37	6	fault_598	fault 598
+599	37	7	fault_599	fault 599
+600	37	8	fault_600	fault 600
+601	37	9	fault_601	fault 601
+602	37	10	fault_602	fault 602
+603	37	11	fault_603	fault 603
+604	37	12	fault_604	fault 604
+605	37	13	fault_605	fault 605
+606	37	14	fault_606	fault 606
+607	37	15	fault_607	fault 607
+608	38	0	fault_608	fault 608
+609	38	1	fault_609	fault 609
+610	38	2	fault_610	fault 610
+611	38	3	turbocharger_speed_high_error	fault 611: e2m 1036 Turbo_Speed_High_Error (P2581)
+612	38	4	fault_612	fault 612
+613	38	5	turbocharger_speed_low_error	fault 613: e2m 1036 Turbo_Speed_Low_Error (P2580)
+614	38	6	fault_614	fault 614
+615	38	7	fault_615	fault 615
+616	38	8	fault_616	fault 616
+617	38	9	fault_617	fault 617
+618	38	10	turbocharger_speed_in_range_error	fault 618: e2m 1036 Turbo_Speed_In_Range_Error (P2579)
+619	38	11	fault_619	fault 619: e2m 1036 /; e2m '/' names two applications and no DTC decides
+620	38	12	fault_620	fault 620 (B1934)
+621	38	13	fault_621	fault 621
+622	38	14	fault_622	fault 622
+623	38	15	fault_623	fault 623
+624	39	0	fault_624	fault 624
+625	39	1	fault_625	fault 625
+626	39	2	fault_626	fault 626
+627	39	3	fault_627	fault 627
+628	39	4	fault_628	fault 628
+629	39	5	fault_629	fault 629
+630	39	6	fault_630	fault 630
+631	39	7	fault_631	fault 631
+632	39	8	fault_632	fault 632
+633	39	9	fault_633	fault 633
+634	39	10	fault_634	fault 634
+635	39	11	fault_635	fault 635
+636	39	12	fault_636	fault 636
+637	39	13	fault_637	fault 637
+638	39	14	fault_638	fault 638
+639	39	15	fault_639	fault 639
+640	40	0	fault_640	fault 640
+641	40	1	fault_641	fault 641
+642	40	2	egr_position_before_autozero_high_error	fault 642: e2m 1036 EGR_Position_Before_Autozero_High_Error
+643	40	3	egr_position_before_autozero_low_error	fault 643: e2m 1036 EGR_Position_Before_Autozero_Low_Error
+644	40	4	fault_644	fault 644
+645	40	5	fault_645	fault 645
+646	40	6	fault_646	fault 646
+647	40	7	fault_647	fault 647
+648	40	8	boost_pressure_absolute_high_error	fault 648: e2m 1036 Boost_Pressure_Absolute_High_Error
+649	40	9	boost_pressure_absolute_low_error	fault 649: e2m 1036 Boost_Pressure_Absolute_Low_Error
+650	40	10	fault_650	fault 650
+651	40	11	fault_651	fault 651
+652	40	12	fault_652	fault 652
+653	40	13	fault_653	fault 653
+654	40	14	fault_654	fault 654
+655	40	15	fault_655	fault 655
+656	41	0	fault_656	fault 656
+657	41	1	fault_657	fault 657
+658	41	2	exhaust_throttle_position_high_error	fault 658: e2m 1036 Exhaust_Throttle_Position_High_Error
+659	41	3	exhaust_throttle_position_low_error	fault 659: e2m 1036 Exhaust_Throttle_Position_Low_Error
+660	41	4	fault_660	fault 660
+661	41	5	fault_661	fault 661
+662	41	6	fault_662	fault 662
+663	41	7	fault_663	fault 663
+664	41	8	fault_664	fault 664
+665	41	9	fault_665	fault 665
+666	41	10	fault_666	fault 666
+667	41	11	fault_667	fault 667
+668	41	12	fault_668	fault 668
+669	41	13	fault_669	fault 669
+670	41	14	variable_geometry_turbocharger_closed_adjustment_error	fault 670: e2m 1036 VGT_Closed_Adjustment_Error
+671	41	15	variable_geometry_turbocharger_span_adjustment_error	fault 671: e2m 1036 VGT_Span_Adjustment_Error
+672	42	0	exhaust_pressure_sensor_high_error	fault 672: e2m 1036 Exhaust_Pressure_Sensor_High_Error
+673	42	1	exhaust_pressure_sensor_low_error	fault 673: e2m 1036 Exhaust_Pressure_Sensor_Low_Error
+674	42	2	fault_674	fault 674
+675	42	3	fault_675	fault 675
+676	42	4	fault_676	fault 676
+677	42	5	fault_677	fault 677
+678	42	6	fault_678	fault 678
+679	42	7	fault_679	fault 679
+680	42	8	fault_680	fault 680
+681	42	9	fault_681	fault 681
+682	42	10	fault_682	fault 682
+683	42	11	fault_683	fault 683
+684	42	12	fault_684	fault 684
+685	42	13	fault_685	fault 685
+686	42	14	fault_686	fault 686
+687	42	15	fault_687	fault 687
+688	43	0	fault_688	fault 688
+689	43	1	fault_689	fault 689
+690	43	2	egr_delta_pressure_sensor_high_error	fault 690: e2m 1036 EGR_Delta_P_Sensor_High_Error
+691	43	3	egr_delta_pressure_sensor_low_error	fault 691: e2m 1036 EGR_Delta_P_Sensor_Low_Error
+692	43	4	fault_692	fault 692
+693	43	5	fault_693	fault 693
+694	43	6	fault_694	fault 694
+695	43	7	fault_695	fault 695
+696	43	8	fault_696	fault 696
+697	43	9	fault_697	fault 697
+698	43	10	fault_698	fault 698
+699	43	11	fault_699	fault 699
+700	43	12	fault_700	fault 700
+701	43	13	fault_701	fault 701
+702	43	14	fault_702	fault 702
+703	43	15	fault_703	fault 703
+704	44	0	fault_704	fault 704
+705	44	1	fault_705	fault 705
+706	44	2	fault_706	fault 706
+707	44	3	fault_707	fault 707
+708	44	4	fault_708	fault 708
+709	44	5	fault_709	fault 709: e2m 1036 VGT_Position_PP_High_Error; e2m VGT_Position_PP_High_Error has an abbreviation the code does not resolve (pp)
+710	44	6	fault_710	fault 710: e2m 1036 VGT_Position_PP_Low_Error; e2m VGT_Position_PP_Low_Error has an abbreviation the code does not resolve (pp)
+711	44	7	fault_711	fault 711
+712	44	8	fault_712	fault 712
+713	44	9	fault_713	fault 713
+714	44	10	fault_714	fault 714
+715	44	11	fault_715	fault 715
+716	44	12	fault_716	fault 716
+717	44	13	fault_717	fault 717
+718	44	14	egr_valve_autozero_error	fault 718: e2m 1036 EGR_Valve_Autozero_Error
+719	44	15	egr_delta_pressure_autozero_error	fault 719: e2m 1036 EGR_Delta_P_Autozero_Error
+720	45	0	egr_valve_actuator_fault_h_bridge_1_a	fault 720: e2m 1036 EGA_Fault_HB1A; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+721	45	1	egr_valve_actuator_fault_h_bridge_1_b	fault 721: e2m 1036 EGA_Fault_HB1B; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+722	45	2	egr_valve_actuator_fault_h_bridge_1_over_current_high	fault 722: e2m 1036 EGA_Fault_HB1_OC_HI; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+723	45	3	egr_valve_actuator_fault_h_bridge_1_over_current_low	fault 723: e2m 1036 EGA_Fault_HB1_OC_LO; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+724	45	4	egr_valve_actuator_fault_h_bridge_1_inrush	fault 724: e2m 1036 EGA_Fault_HB1_Inrush; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+725	45	5	egr_valve_actuator_control_error	fault 725: e2m 1036 EGA_Control_Error; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+726	45	6	egr_valve_actuator_electrical_fault	fault 726: e2m 1036 EGA_Electrical_Fault; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+727	45	7	egr_valve_actuator_driver_over_current	fault 727: e2m 1036 EGA_Driver_Over_Current; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+728	45	8	egr_valve_actuator_over_temperature	fault 728: e2m 1036 EGA_Over_Temperature; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family
+729	45	9	boost_in_range_low_error	fault 729: e2m 1036 Boost_In_Range_Low_Error (P0299)
+730	45	10	fault_730	fault 730
+731	45	11	fault_731	fault 731
+732	45	12	fault_732	fault 732
+733	45	13	fault_733	fault 733
+734	45	14	fault_734	fault 734
+735	45	15	fault_735	fault 735
+736	46	0	fault_736	fault 736
+737	46	1	fault_737	fault 737
+738	46	2	variable_geometry_turbocharger_actuator_fault_h_bridge_0_a	fault 738: e2m 1036 VGA_Fault_HB0A; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+739	46	3	variable_geometry_turbocharger_actuator_fault_h_bridge_0_b	fault 739: e2m 1036 VGA_Fault_HB0B; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+740	46	4	variable_geometry_turbocharger_actuator_fault_h_bridge_0_over_current_high	fault 740: e2m 1036 VGA_Fault_HB0_OC_HI; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+741	46	5	variable_geometry_turbocharger_actuator_fault_h_bridge_0_over_current_low	fault 741: e2m 1036 VGA_Fault_HB0_OC_LO; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+742	46	6	variable_geometry_turbocharger_actuator_fault_h_bridge_0_inrush	fault 742: e2m 1036 VGA_Fault_HB0_Inrush; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+743	46	7	variable_geometry_turbocharger_actuator_control_error	fault 743: e2m 1036 VGA_Control_Error; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+744	46	8	variable_geometry_turbocharger_actuator_electrical_fault	fault 744: e2m 1036 VGA_Electrical_Fault (B1978); VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+745	46	9	variable_geometry_turbocharger_actuator_driver_over_current	fault 745: e2m 1036 VGA_Driver_Over_Current; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+746	46	10	variable_geometry_turbocharger_actuator_over_temperature	fault 746: e2m 1036 VGA_Over_Temperature; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family
+747	46	11	fault_747	fault 747
+748	46	12	fault_748	fault 748
+749	46	13	fault_749	fault 749
+750	46	14	fault_750	fault 750
+751	46	15	fault_751	fault 751
+752	47	0	fault_752	fault 752
+753	47	1	fault_753	fault 753
+754	47	2	fault_754	fault 754
+755	47	3	fault_755	fault 755
+756	47	4	fault_756	fault 756
+757	47	5	fault_757	fault 757
+758	47	6	fault_758	fault 758
+759	47	7	fault_759	fault 759
+760	47	8	fault_760	fault 760
+761	47	9	fault_761	fault 761
+762	47	10	fault_762	fault 762
+763	47	11	fault_763	fault 763
+764	47	12	fault_764	fault 764
+765	47	13	fault_765	fault 765
+766	47	14	fault_766	fault 766
+767	47	15	fault_767	fault 767
+768	48	0	fault_768	fault 768
+769	48	1	fault_769	fault 769
+770	48	2	fault_770	fault 770
+771	48	3	fault_771	fault 771
+772	48	4	fault_772	fault 772
+773	48	5	fault_773	fault 773
+774	48	6	egr_delta_pressure_in_range_error	fault 774: e2m 1036 EGR_DP_In_Range_Error
+775	48	7	egr_delta_pressure_in_range_high_error	fault 775: e2m 1036 EGR_DP_In_Range_High_Error
+776	48	8	egr_delta_pressure_in_range_low_error	fault 776: e2m 1036 EGR_DP_In_Range_Low_Error
+777	48	9	egr_delta_pressure_startup_error	fault 777: e2m 1036 EGR_DP_Startup_Error
+778	48	10	boost_ambient_delta_error	fault 778: e2m 1036 Boost_Ambient_Delta_Error (P0069)
+779	48	11	fault_779	fault 779
+780	48	12	fault_780	fault 780
+781	48	13	fault_781	fault 781
+782	48	14	fault_782	fault 782
+783	48	15	fault_783	fault 783
+784	49	0	fault_784	fault 784
+785	49	1	fault_785	fault 785
+786	49	2	fault_786	fault 786
+787	49	3	fault_787	fault 787
+788	49	4	variable_geometry_turbocharger_sampled_position_high_error	fault 788: e2m 1036 TVA_Sampled_Position_High_Error (B1973); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+789	49	5	variable_geometry_turbocharger_sampled_position_low_error	fault 789: e2m 1036 TVA_Sampled_Position_Low_Error (B1974); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position
+790	49	6	fault_790	fault 790
+791	49	7	fault_791	fault 791
+792	49	8	fault_792	fault 792
+793	49	9	fault_793	fault 793
+794	49	10	fault_794	fault 794
+795	49	11	fault_795	fault 795
+796	49	12	egr_orifice_temperature_high_error	fault 796: e2m 1036 EGR_Orifice_Temperature_High_Error
+797	49	13	egr_orifice_temperature_low_error	fault 797: e2m 1036 EGR_Orifice_Temperature_Low_Error
+798	49	14	fault_798	fault 798
+799	49	15	fault_799	fault 799

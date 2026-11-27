@@ -1,0 +1,14 @@
+cm848: round 28 closing - task 046, the session archive, verify
+
+- task 046, the round 28 section:
+  - stages A and B;
+  - two leads checked and closed: the 11D5 slew rates are already dwords, and TouCAN B has no code users;
+  - still open: the boot kernel transport's message parameter (six callers to read).
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round28/: the flag scan, the worklist / spec / apply scripts, the proof checks, the maps and the
+    commit messages;
+  - the large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

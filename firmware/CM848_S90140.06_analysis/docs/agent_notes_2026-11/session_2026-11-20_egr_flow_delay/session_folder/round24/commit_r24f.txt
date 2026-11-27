@@ -1,0 +1,24 @@
+cm848: round 24 stage F - sensor channels 1-4 flat like their neighbours, the throttle dword split (types)
+
+- sensor_readings_t (0x40baf2) was a 4-word struct over sensor_channel_filtered_output slots 1-4, while every other
+  slot is a flat '<channel>_sensor_filtered' word. The struct goes, and the four words are named the same way:
+  - intake_manifold_pressure_sensor_filtered;
+  - coolant_temperature_sensor_filtered (coolant_temp spelled out);
+  - barometric_pressure_sensor_filtered;
+  - battery_voltage_sensor_filtered.
+  200 renders. cm848_selectSensorValuesInUse's ((sensor_readings_t *)pwVar1)->intake_manifold_pressure is now
+  *pwVar1, like the temperature line above it.
+- throttle_fuel_enable_flag (dword 0x3fa6f0) is two words, each read with lhz and written with sth (5 + 3 pieces):
+  - throttle_sensor_fault_flag: set from the registered Sampled_Throttle_High / Low_Error faults (bits 10 / 11) and
+    fault 197, Throttle_Sensor_Supply_Voltage_Low_Error. It zeroes the calculated commanded throttle and stops the
+    Throttle_Min learning.
+  - commanded_throttle_previous: the previous pass's commanded throttle, for commanded_throttle_delta.
+  The old offset alias row throttle_fuel_enable_flag+2 goes.
+- Comments: the qualified references, firmware/CLAUDE.md's sensor channel table (rename refresh) and stage B's
+  phrases about the dword's halves.
+
+Proof (prove_tokens.py): both .cpp files, with each reference mapped to an address token and the removed cast
+allowed for, are identical after normalization (1969 functions). Pieces 500 -> 492, the dword's 8. Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

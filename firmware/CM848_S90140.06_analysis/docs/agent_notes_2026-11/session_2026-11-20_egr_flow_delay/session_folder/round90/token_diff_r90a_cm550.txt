@@ -1,0 +1,6 @@
+0x00010e16: 4 token changes: * ( dword * ) ( & DAT_00035224 + ( uint ) => parameter_id_table [ | * 8 ) => ] . address_ram_refresh_disabled | * ( dword * ) ( & DAT_00035228 + ( uint ) => parameter_id_table [ | * 8 ) => ] . address_ram_refresh_enabled
+---- census of distinct changes
+   1 * ( dword * ) ( & DAT_00035224 + ( uint ) => parameter_id_table [
+   1 * 8 ) => ] . address_ram_refresh_disabled
+   1 * ( dword * ) ( & DAT_00035228 + ( uint ) => parameter_id_table [
+   1 * 8 ) => ] . address_ram_refresh_enabled

@@ -1,0 +1,56 @@
+0x00007608: 2 token changes: word counter_value ; =>  |  => ; word counter_value
+0x0050f680: 2 token changes: DAT_00304518 => tpu_b_channel_1_parameters . _8_4_ | DAT_00304518 => tpu_b_channel_1_parameters . _8_4_
+0x0050f6c4: 3 token changes: DAT_00304512 => tpu_b_channel_1_parameters . PARAM1 | DAT_00304516 => tpu_b_channel_1_parameters . PARAM3 | DAT_00304518 => tpu_b_channel_1_parameters . _8_4_
+0x00515d78: 6 token changes: DAT_00304592 => tpu_b_channel_9_parameters . PARAM1 | DAT_00304596 => tpu_b_channel_9_parameters . PARAM3 | DAT_00304598 => tpu_b_channel_9_parameters . _8_4_ | DAT_00304592 => tpu_b_channel_9_parameters . PARAM1 | DAT_00304596 => tpu_b_channel_9_parameters . PARAM3 | DAT_00304598 => tpu_b_channel_9_parameters . _8_4_
+0x00516274: 3 token changes: DAT_00304598 => tpu_b_channel_9_parameters . _8_4_ | DAT_00304598 => tpu_b_channel_9_parameters | _0_2_ => PARAM4
+0x005162ec: 30 token changes: short sVar1 ; =>  | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | sVar1 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | sVar1 => wVar1 | DAT_00304592 => tpu_b_channel_9_parameters . PARAM1 | sVar1 => wVar1 | DAT_00304596 => tpu_b_channel_9_parameters . PARAM3 | DAT_00304598 => tpu_b_channel_9_parameters . _8_4_ | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wVar1 | wVar2 => wV
+0x00527050: 10 token changes: ; undefined2 uVar2 =>  | DAT_00304522 => tpu_b_channel_2_parameters . PARAM1 | DAT_00304526 => tpu_b_channel_2_parameters . PARAM3 | DAT_00304528 => tpu_b_channel_2_parameters . _8_4_ | DAT_00304522 => tpu_b_channel_2_parameters . PARAM1 | DAT_00304526 => tpu_b_channel_2_parameters . PARAM3 | DAT_00304528 => tpu_b_channel_2_parameters . _8_4_ | uVar2 => wVar1 | DAT_00304522 => tpu_b_channel_2_parameters . PARAM1 | ( ushort ) uVar2 => wVar1
+0x005280a4: 2 token changes: DAT_003041a2 => tpu_a_channel_10_parameters . PARAM1 | DAT_003041a6 => tpu_a_channel_10_parameters . PARAM3
+0x00528508: 1 token changes: DAT_00304152 => tpu_a_channel_5_parameters . PARAM1
+0x005289d4: 11 token changes: DAT_00304138 => tpu_a_channel_3_parameters . PARAM4 | DAT_0030413a => tpu_a_channel_3_parameters . PARAM5 | DAT_0030413c => tpu_a_channel_3_parameters . PARAM6 | DAT_0030413e => tpu_a_channel_3_parameters . PARAM7 | DAT_00304146 => tpu_a_channel_4_parameters . _6_4_ | DAT_0030414a => tpu_a_channel_4_parameters . PARAM5 | DAT_0030414c => tpu_a_channel_4_parameters . PARAM6 | short => word | DAT_0030414e => tpu_a_channel_4_parameters . PARAM7 | DAT_0030412e => tpu_a_channel_2_parameters . PARAM7 | DAT_0030417e => tpu_a_channel_7_parameters . PARAM7
+0x00528b90: 7 token changes: DAT_00304152 => tpu_a_channel_5_parameters . PARAM1 | DAT_00304154 => tpu_a_channel_5_parameters . PARAM2 | DAT_00304156 => tpu_a_channel_5_parameters . PARAM3 | DAT_00304158 => tpu_a_channel_5_parameters . PARAM4 | DAT_0030415a => tpu_a_channel_5_parameters . PARAM5 | DAT_0030415c => tpu_a_channel_5_parameters . PARAM6 | DAT_0030415e => tpu_a_channel_5_parameters . PARAM7
+0x00529284: 2 token changes: DAT_00304162 => tpu_a_channel_6_parameters . PARAM1 | DAT_00304166 => tpu_a_channel_6_parameters . PARAM3
+0x00529994: 4 token changes: DAT_00304162 => tpu_a_channel_6_parameters . PARAM1 | DAT_00304166 => tpu_a_channel_6_parameters . PARAM3 | DAT_00304162 => tpu_a_channel_6_parameters . PARAM1 | DAT_00304166 => tpu_a_channel_6_parameters . PARAM3
+0x00529d1c: 2 token changes: DAT_00304162 => tpu_a_channel_6_parameters . PARAM1 | DAT_00304166 => tpu_a_channel_6_parameters . PARAM3
+---- census of distinct changes
+  23 wVar2 => wVar1
+   4 DAT_00304598 => tpu_b_channel_9_parameters . _8_4_
+   4 DAT_00304162 => tpu_a_channel_6_parameters . PARAM1
+   4 DAT_00304166 => tpu_a_channel_6_parameters . PARAM3
+   3 DAT_00304518 => tpu_b_channel_1_parameters . _8_4_
+   3 DAT_00304592 => tpu_b_channel_9_parameters . PARAM1
+   3 DAT_00304596 => tpu_b_channel_9_parameters . PARAM3
+   3 sVar1 => wVar1
+   3 DAT_00304522 => tpu_b_channel_2_parameters . PARAM1
+   2 DAT_00304526 => tpu_b_channel_2_parameters . PARAM3
+   2 DAT_00304528 => tpu_b_channel_2_parameters . _8_4_
+   2 DAT_00304152 => tpu_a_channel_5_parameters . PARAM1
+   1 word counter_value ; => 
+   1  => ; word counter_value
+   1 DAT_00304512 => tpu_b_channel_1_parameters . PARAM1
+   1 DAT_00304516 => tpu_b_channel_1_parameters . PARAM3
+   1 DAT_00304598 => tpu_b_channel_9_parameters
+   1 _0_2_ => PARAM4
+   1 short sVar1 ; => 
+   1 ; undefined2 uVar2 => 
+   1 uVar2 => wVar1
+   1 ( ushort ) uVar2 => wVar1
+   1 DAT_003041a2 => tpu_a_channel_10_parameters . PARAM1
+   1 DAT_003041a6 => tpu_a_channel_10_parameters . PARAM3
+   1 DAT_00304138 => tpu_a_channel_3_parameters . PARAM4
+   1 DAT_0030413a => tpu_a_channel_3_parameters . PARAM5
+   1 DAT_0030413c => tpu_a_channel_3_parameters . PARAM6
+   1 DAT_0030413e => tpu_a_channel_3_parameters . PARAM7
+   1 DAT_00304146 => tpu_a_channel_4_parameters . _6_4_
+   1 DAT_0030414a => tpu_a_channel_4_parameters . PARAM5
+   1 DAT_0030414c => tpu_a_channel_4_parameters . PARAM6
+   1 short => word
+   1 DAT_0030414e => tpu_a_channel_4_parameters . PARAM7
+   1 DAT_0030412e => tpu_a_channel_2_parameters . PARAM7
+   1 DAT_0030417e => tpu_a_channel_7_parameters . PARAM7
+   1 DAT_00304154 => tpu_a_channel_5_parameters . PARAM2
+   1 DAT_00304156 => tpu_a_channel_5_parameters . PARAM3
+   1 DAT_00304158 => tpu_a_channel_5_parameters . PARAM4
+   1 DAT_0030415a => tpu_a_channel_5_parameters . PARAM5
+   1 DAT_0030415c => tpu_a_channel_5_parameters . PARAM6
+   1 DAT_0030415e => tpu_a_channel_5_parameters . PARAM7

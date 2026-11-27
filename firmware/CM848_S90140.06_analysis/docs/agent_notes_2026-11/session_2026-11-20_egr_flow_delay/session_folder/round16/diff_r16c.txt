@@ -1,0 +1,238 @@
+2c2
+< // Generated: Sat Nov 21 20:51:14 MST 2026
+---
+> // Generated: Sat Nov 21 20:55:35 MST 2026
+15193,15196c15193,15195
+<   if ((((switch_input_state_bits.switches_0_to_7 & 0x80) != 0) &&
+<       ((switch_input_state_bits.switches_8_to_15 & 1) == 0)) ||
+<      (((switch_input_state_bits.switches_0_to_7 & 0x80) == 0 &&
+<       ((switch_input_state_bits.switches_8_to_15 & 1) != 0)))) {
+---
+>   if ((((switch_input_state_bits.switches_0_to_7 & 0x80) != 0) && ((switch_input_state_bits.switches_8_to_15 & 1) == 0))
+>      || (((switch_input_state_bits.switches_0_to_7 & 0x80) == 0 && ((switch_input_state_bits.switches_8_to_15 & 1) != 0)
+>          ))) {
+15343,15345c15342,15343
+<   if (((((switch_input_state_bits.switches_0_to_7 & 0x80) == 0) ||
+<        ((switch_input_state_bits.switches_8_to_15 & 1) != 0)) ||
+<       (DAT_0005c2a6 < fuel_demand_override_counter)) ||
+---
+>   if (((((switch_input_state_bits.switches_0_to_7 & 0x80) == 0) || ((switch_input_state_bits.switches_8_to_15 & 1) != 0)
+>        ) || (DAT_0005c2a6 < fuel_demand_override_counter)) ||
+16109,16110c16107,16108
+<   if ((engine_speed_state.filtered_engine_speed == 0) &&
+<      ((switch_input_state_bits.switches_0_to_7 & 1) == 0)) {
+---
+>   if ((engine_speed_state.filtered_engine_speed == 0) && ((switch_input_state_bits.switches_0_to_7 & 1) == 0))
+>   {
+19682c19680
+<   bVar1 = switch_input_state_bits.switches_0_to_7 & 1;
+---
+>   bVar1 = (switch_input_state_bits.switches_0_to_7 & 1);
+24610,24611c24608,24609
+<          ((j1939_ccvs1_switch_logic_option_cal != 0 &&
+<           ((switch_input_state_bits.switches_24_to_31 & 0x80) != 0)))) {
+---
+>          ((j1939_ccvs1_switch_logic_option_cal != 0 && ((switch_input_state_bits.switches_24_to_31 & 0x80) != 0)
+>           ))) {
+24639,24640c24637,24638
+<          ((j1939_ccvs1_switch_logic_option_cal != 0 ||
+<           ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)))) goto LAB_00024514;
+---
+>          ((j1939_ccvs1_switch_logic_option_cal != 0 || ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)
+>           ))) goto LAB_00024514;
+28215,28220c28213,28217
+<            ((transmission_park_or_neutral_flag == 0 ||
+<             ((switch_input_state_bits.switches_8_to_15 & 8) != 0)))) ||
+<           ((((switch_input_state_bits.switches_0_to_7 & 4) != 0 ||
+<             ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 || (vehicle_speed != 0)))) ||
+<            (high_pressure_safety_valve_test_maximum_engine_speed <
+<             engine_speed_state.filtered_engine_speed)))) {
+---
+>            ((transmission_park_or_neutral_flag == 0 || ((switch_input_state_bits.switches_8_to_15 & 8) != 0)))
+>            ) || ((((switch_input_state_bits.switches_0_to_7 & 4) != 0 ||
+>                   ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 || (vehicle_speed != 0)
+>                    ))) || (high_pressure_safety_valve_test_maximum_engine_speed <
+>                            engine_speed_state.filtered_engine_speed)))) {
+28228,28229c28225,28226
+<   if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
+<      ((switch_input_state_bits.switches_0_to_7 & 4) == 0)) {
+---
+>   if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) && ((switch_input_state_bits.switches_0_to_7 & 4) == 0)
+>      ) {
+30060,30061c30057,30058
+<   if (((switch_input_state_bits.switches_24_to_31 & 0x80) == 0) &&
+<      ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+---
+>   if (((switch_input_state_bits.switches_24_to_31 & 0x80) == 0) && ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)
+>      ) {
+30088c30085
+<   switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 | 0x80;
+---
+>   (switch_input_state_bits.switches_24_to_31 & 0x80) = 1;
+30155c30152
+<     switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 & 0x7f;
+---
+>     (switch_input_state_bits.switches_24_to_31 & 0x80) = 0;
+30158c30155
+<   switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 & 0x7f;
+---
+>   (switch_input_state_bits.switches_24_to_31 & 0x80) = 0;
+30169c30166
+<   psVar4->switches_24_to_31 = bVar2;
+---
+>   psVar4->field_0x3 = bVar2;
+30172c30169
+<   if (((psVar4->switches_24_to_31 & 0x80) != 0) || ((psVar4->switches_24_to_31 & 0x80) != 0)) {
+---
+>   if ((psVar4->unwired_switch != 0) || (psVar4->unwired_switch != 0)) {
+30199c30196
+<       switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 & 0x7f;
+---
+>       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ & 0x7f;
+30202c30199
+<       switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 | 0x80;
+---
+>       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ | 0x80;
+30207c30204
+<       switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 & 0x7f;
+---
+>       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ & 0x7f;
+30210c30207
+<       switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 | 0x80;
+---
+>       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ | 0x80;
+30213,30214c30210
+<   if (((engine_state == ENGINE_STATE_STOPPED) &&
+<       ((switch_input_state_bits.switches_0_to_7 & 1) != 0)) &&
+---
+>   if (((engine_state == ENGINE_STATE_STOPPED) && ((switch_input_state_bits.switches_0_to_7 & 1) != 0)) &&
+30217c30213
+<       switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 | 0x80;
+---
+>       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ | 0x80;
+30220c30216
+<       switch_input_state_bits.switches_24_to_31 = switch_input_state_bits.switches_24_to_31 | 0x80;
+---
+>       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ | 0x80;
+30223,30224c30219
+<   if (((switch_31_on_time_fault_enable == 0) ||
+<       ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) ||
+---
+>   if (((switch_31_on_time_fault_enable == 0) || ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) ||
+30266,30267c30261
+<      (wVar1 = variable_speed_governor_default_cal,
+<      (switch_input_state_bits.switches_24_to_31 & 0x80) != 0)) {
+---
+>      (wVar1 = variable_speed_governor_default_cal, (switch_input_state_bits.switches_24_to_31 & 0x80) != 0)) {
+40612c40606
+<       switch_input_state_bits.switches_8_to_15 = switch_input_state_bits.switches_8_to_15 | 0x20;
+---
+>       switch_input_state_bits._1_1_ = switch_input_state_bits._1_1_ | 0x20;
+40615c40609
+<       switch_input_state_bits.switches_8_to_15 = switch_input_state_bits.switches_8_to_15 & 0xdf;
+---
+>       switch_input_state_bits._1_1_ = switch_input_state_bits._1_1_ & 0xdf;
+44542,44546c44536,44539
+<       (((switch_input_state_bits.switches_8_to_15 & 0x80) == 0 ||
+<        ((governor_feature_config_word & 0x40) == 0)))) &&
+<      (((service_brake_delayed_active_flag == 1 ||
+<        (algorithm_enable_flags_18_cal.reserved_bit_14 == 0)) ||
+<       (engine_retarder_limit_source_code == 2)))) {
+---
+>       (((switch_input_state_bits.switches_8_to_15 & 0x80) == 0 || ((governor_feature_config_word & 0x40) == 0)))
+>       ) && (((service_brake_delayed_active_flag == 1 ||
+>              (algorithm_enable_flags_18_cal.reserved_bit_14 == 0)) ||
+>             (engine_retarder_limit_source_code == 2)))) {
+44583,44584c44576,44577
+<      (((switch_input_state_bits.switches_8_to_15 & 0x80) == 0 ||
+<       ((governor_feature_config_word & 0x40) == 0)))) {
+---
+>      (((switch_input_state_bits.switches_8_to_15 & 0x80) == 0 || ((governor_feature_config_word & 0x40) == 0))))
+>   {
+45292,45293c45285
+<      (rear_axle_ratio = rear_axle_ratio_high_cal,
+<      (switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+---
+>      (rear_axle_ratio = rear_axle_ratio_high_cal, (switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+48664,48665c48656
+<     if (((switch_input_state_bits.switches_0_to_7 & 1) == 0) && (key_off_shutdown_inhibit_flag == 0)
+<        ) {
+---
+>     if (((switch_input_state_bits.switches_0_to_7 & 1) == 0) && (key_off_shutdown_inhibit_flag == 0)) {
+48744,48745c48735,48736
+<       if (((switch_input_state_bits.switches_0_to_7 & 1) != 0) ||
+<          (key_off_shutdown_inhibit_flag == 1)) goto LAB_0004800c;
+---
+>       if (((switch_input_state_bits.switches_0_to_7 & 1) != 0) || (key_off_shutdown_inhibit_flag == 1))
+>       goto LAB_0004800c;
+54686c54677
+<         if (((uint)(&switch_input_state_bits.switches_0_to_7)[iVar4] & 1 << uVar5) == 0) {
+---
+>         if (((uint)(byte)(&switch_input_state_bits.field_0x0)[iVar4] & 1 << uVar5) == 0) {
+54711,54712c54702,54703
+<         (&switch_input_state_bits.switches_0_to_7)[iVar4] =
+<              (&switch_input_state_bits.switches_0_to_7)[iVar4] & bVar2;
+---
+>         (&switch_input_state_bits.field_0x0)[iVar4] =
+>              (&switch_input_state_bits.field_0x0)[iVar4] & bVar2;
+54717,54718c54708,54709
+<         (&switch_input_state_bits.switches_0_to_7)[iVar4] =
+<              (&switch_input_state_bits.switches_0_to_7)[iVar4] | bVar2;
+---
+>         (&switch_input_state_bits.field_0x0)[iVar4] =
+>              (&switch_input_state_bits.field_0x0)[iVar4] | bVar2;
+54727c54718
+<     (&switch_input_state_bits.switches_0_to_7)[uVar6] =
+---
+>     (&switch_input_state_bits.field_0x0)[uVar6] =
+54732c54723
+<          (&switch_input_state_bits.switches_0_to_7)[uVar6];
+---
+>          (&switch_input_state_bits.field_0x0)[uVar6];
+54762,54763c54753
+<     (&switch_input_state_bits.switches_0_to_7)[uVar2] = j1939_switch_input_default_state_bits[uVar2]
+<     ;
+---
+>     (&switch_input_state_bits.field_0x0)[uVar2] = j1939_switch_input_default_state_bits[uVar2];
+73446c73436
+<           switch_input_state_bits.switches_0_to_7 = switch_input_state_bits.switches_0_to_7 & 0xfb;
+---
+>           switch_input_state_bits._0_1_ = switch_input_state_bits._0_1_ & 0xfb;
+73449c73439
+<           switch_input_state_bits.switches_0_to_7 = switch_input_state_bits.switches_0_to_7 | 4;
+---
+>           switch_input_state_bits._0_1_ = switch_input_state_bits._0_1_ | 4;
+82886,82887c82876,82877
+<          (switch_input_state_bits.switches_24_to_31 & 2) != 0 | bVar5 | bVar4 | bVar8 | bVar6 |
+<          bVar3 | bVar7;
+---
+>          (switch_input_state_bits.switches_24_to_31 & 2) != 0 | bVar5 | bVar4 | bVar8 | bVar6
+>          | bVar3 | bVar7;
+86724,86725c86714
+<     if ((two_speed_axle_enable_cal == 0) ||
+<        ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+---
+>     if ((two_speed_axle_enable_cal == 0) || ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+86820,86821c86809
+<     if ((two_speed_axle_enable_cal == 0) ||
+<        ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+---
+>     if ((two_speed_axle_enable_cal == 0) || ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0)) {
+88027,88028c88015,88016
+<   if ((((switch_input_state_bits.switches_0_to_7 & 1) == 0) && (key_off_shutdown_inhibit_flag == 0))
+<      || (engine_shutdown_command_flag == 1)) {
+---
+>   if ((((switch_input_state_bits.switches_0_to_7 & 1) == 0) && (key_off_shutdown_inhibit_flag == 0)) ||
+>      (engine_shutdown_command_flag == 1)) {
+97430,97431c97418,97419
+<       if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
+<          (cruise_control_switches_learned_flag != 0)) {
+---
+>       if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) && (cruise_control_switches_learned_flag != 0)
+>          ) {
+97436,97437c97424,97425
+<       if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
+<          (cruise_control_switches_learned_flag != 0)) {
+---
+>       if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) && (cruise_control_switches_learned_flag != 0)
+>          ) {

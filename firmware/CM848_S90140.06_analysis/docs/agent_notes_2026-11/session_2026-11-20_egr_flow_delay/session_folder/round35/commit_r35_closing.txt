@@ -1,0 +1,12 @@
+cm848: round 35 closing - task 046, the session archive, verify
+
+- task 046, the round 35 section: stages A-C and their proofs, plus the round 36 leads (the boot response
+  sender's request parameter, round 33's leftovers).
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round35/: the apply scripts, the maps / tokens and the commit messages. The .cpp copies are left
+    out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

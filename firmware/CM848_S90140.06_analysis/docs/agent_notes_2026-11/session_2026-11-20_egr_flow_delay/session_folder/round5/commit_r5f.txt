@@ -1,0 +1,14 @@
+cm848: round 5 - the injection hardware initialization, the fuel system hardware shutdown monitor; docs
+
+- cm848_tpu_interrupt_flag_init -> cm848_initializeInjectionHardware: it (re)initializes the TPU-A injection
+  channel set and the injector driver PWMs 16-19 and counts the restart in
+  fuel_system_hardware_shutdown_error_count_cal.
+- cm848_protection_timer_init -> cm848_monitorFuelSystemHardwareShutdown (the e2m 8041 +28 / +2A FS_HW_Shutdown
+  thresholds, 8C61 error count).
+- cm848_initGovernorLoadStateWrapper -> cm848_initializeLowSpeedGovernorGainSelection (resets the aggressive
+  gain logic and copies the default gain set into the override set).
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Docs: task 046 (round 5 and the open leads), firmware/CLAUDE.md (round 5), tpu_mios_channel_map.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

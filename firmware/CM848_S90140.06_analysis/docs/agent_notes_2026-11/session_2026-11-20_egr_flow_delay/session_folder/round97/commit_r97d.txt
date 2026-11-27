@@ -1,0 +1,20 @@
+both firmwares: round 97 stage D - the last 11 struct types with abbreviations spell their words out
+
+can_std_rx_desc_t -> can_standard_receive_descriptor_t, diag_service_request_t -> diagnostic_service_request_t,
+diag_tp_state_t -> diagnostic_transport_protocol_state_t, diag_transfer_state_t -> diagnostic_transfer_state_t,
+j1939_tx_msg_buffer_t -> j1939_transmit_message_buffer_t, j1939_vp44_msg_t -> j1939_vp44_message_t,
+param_lookup_args_t -> parameter_lookup_arguments_t, sensor_config_t -> sensor_configuration_t (CM550);
+diag_clear_flags_t -> diagnostic_clear_flags_t, diag_write_request_state_t -> diagnostic_write_request_state_t,
+sensor_channel_config_t -> sensor_channel_configuration_t (CM848; 36 sensor channel configuration rows use it).
+A word-bounded rename of the type over every CSV column of both firmwares and the current-state docs (firmware/CLAUDE.md
+three lines, two CM550 docs), as round 96 stage C did; no history note holds a new name. The default-label-derived
+instance name diag_clear_flags_t_003fedfc keeps its name (a lead: its own name is still to choose). The round 97
+workflow's batch results will be remapped to the new type names before their apply.
+
+Proof: CM848 and CM550 built twice each, deterministic, in a copy of the firmware folder (base = HEAD de66d286); no
+import failure, no SCRIPT ERROR. Label-only in both: with the 11 types mapped, no other token changes, statement counts
+and pieces are equal, no old name is left in the code; unaff_ / extraout_ / in_ / CONCAT counts are equal. Headers
+regenerated (g++ 0 errors in both); the _cal audit is 0 hard / 0 soft; the five Python suites and the 109 JUnit tests
+pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

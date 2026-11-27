@@ -1,0 +1,40 @@
+cm848: round 69 stage A - the calibration image header at ROM 0x8100 typed by e2m's blocks; the checksum region table
+
+mpc555_verifyDownloadedCalibration read the header as PTR_DAT_00008104 / DAT_00008116 / PTR_DAT_0000811a /
+DAT_0000811e. e2m names it as separate blocks, so separate source objects, and the asm and ROM bytes give the layout:
+- 0x8100 smart_boot_indicator = e2m 1235 +0 Smart_Boot_Indicator (0x98765432 here; no reader found).
+- 0x8104 checksum_table_descriptor_t = e2m 1236 (10 bytes): checksum_table_pointer (Checksum_Table_Ptr) and the two
+  "Dummy" range words.
+- 0x810e flash_operational_code_entry_pointer (e2m 1198) stays as it is.
+- 0x8112 block_data_structure_t = e2m 002E +0 Block_Data_Structure (60 bytes), the download blocks. Each array
+  follows its own word count (4 here). The verifier finds block_length at 0x811e + 8 x download_block_count, which is
+  exactly that layout. Nothing reads the counts, so they are reserved_<offset>, with their values in the comments.
+  - download_block_count: the verifier requires eeprom_block_tracking.block_count to equal it.
+  - block_start_address: 0x8000 / 0x40000 / 0x500000 / 0x1000080.
+  - block_capacity: 0x38000 / 0x30000 / 0x40000 / 0x1f7e. The first three match the flash geometry; the last is
+    unexplained.
+  - block_length: 0x38000 / 0x2fc64 / 0x3ea6e / 0x19c0, the image's length in each block (the ROM is 0xff from
+    0x6fc64, where module B's ends). The verifier compares each recorded end address with it, so the check can only
+    fail for the first block.
+- 0xb752 checksum_region_table_t (not in e2m): a word count (2) then two 10-byte regions {expected_sum /
+  start_address / end_address}.
+  - checksum_table_descriptor.checksum_table_pointer is typed as it, so the verifier's walk now reads
+    region->start_address / end_address / expected_sum and steps region + 1.
+  - Region 1 (0xb76a-0x591f6) sums to 0xd501 in the ROM dump, which proves the layout, end included.
+  - Region 2 (Bank 2, 0x500000-0x53ea6c) runs past both flash2 dumps (they end at 0x53d4e9 and 0x53dfff), so it is
+    unchecked.
+- 0x53ea6c bank2_image_last_word. The region's end_address made Ghidra label it, so cm848_lookupParameterIdAddress's
+  last-bucket bound (one past parameter_id_table's 1886 records) had rendered as &DAT_0053ea6c.
+- Field-coordinate rows for the named fields, so the e2m resolver names 1236 +4 / +6.
+- The verifier's plate names the new symbols.
+
+Proof (prove_r69.py): 4 of 1968 functions differ:
+- mpc555_verifyDownloadedCalibration: 13 -> 8 casts. Its block check reads download_block_list[i].start_address !=
+  block_data_structure.block_start_address[i], and region + 1 steps one 10-byte region, so the packed layout holds;
+- cm848_lookupParameterIdAddress: &bank2_image_last_word;
+- two local declaration-order moves (mpc555_areBootModeStrapPinsHigh / mpc555_tickTransferTimeoutAndRuntimeCounter).
+verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed; locals Skipped 8 (the same warnings as
+round 66). Headers regenerated (0 g++ errors), tests pass (the e2m resolver now names 1235 / 1236 / 002E), lookup
+tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

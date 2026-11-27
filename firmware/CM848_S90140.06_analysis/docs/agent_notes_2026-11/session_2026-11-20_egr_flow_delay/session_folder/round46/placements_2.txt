@@ -1,0 +1,13 @@
+== 8C2A at 0x408b6c (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 12 releases)
+   +00 0x408b6c TC_Rock_Cycle_Engine_Speed [N2] dump 6800: engine speed to send HSG during rock cycle derate
+        row: park_neutral_exit_engine_speed_limit word | Value (6800 = 850 rpm per the CSV comment of the active flag) that cm848_calculateParkNeutralExitEngineSpeedLi
+   +02 0x408b6e TC_Rock_Cycle_Commanded_Throttle_Min [N2] dump 0: commanded throttle minimum for allowing rock cycle torque mgmt
+        row: park_neutral_exit_minimum_commanded_throttle word | cm848_calculateParkNeutralExitEngineSpeedLimit holds park_neutral_exit_engine_speed_limit only while commanded
+   +04 0x408b70 TC_Rock_Cycle_Commanded_Throttle_Max [N2] dump 400: commanded throttle maximum for allowing rock cycle torque mgmt
+        row: park_neutral_exit_maximum_commanded_throttle word | cm848_calculateParkNeutralExitEngineSpeedLimit: ... and at most this. ROM-copied (RAM = ROM + 0x39a3e6; the ru
+   +06 0x408b72 TC_Rock_Cycle_Road_Speed_Max [N2] dump 30720: Maximum MPH for rock cycle torque management to be allowed
+        row: park_neutral_exit_maximum_vehicle_speed word | cm848_calculateParkNeutralExitEngineSpeedLimit: ... and while vehicle_speed is below this. ROM-copied (RAM = R
+   +08 0x408b74 TC_Rock_Cycle_Ramp_Rate [N2] dump 800: Ramp Rate after Rock Cycle Torque Management
+        row: park_neutral_exit_engine_speed_limit_ramp_step word | Added per call to the source 15 word after the window closes (the ramp back to the default 3750 rpm)
+   +0A 0x408b76 TC_Rock_Cycle_Active_Too_Long_Time [N2] dump 250: Maximum time that rock cycle torque mgmt can be active
+        row: park_neutral_exit_window_duration word | cm848_calculateParkNeutralExitEngineSpeedLimit: the park / neutral exit window stays open while park_neutral_e

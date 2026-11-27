@@ -1,0 +1,34 @@
+cm848: round 54 stage B - five boot-time functions named from their bodies, the calibration ID characters 4-9
+
+Five legacy names with no plate, none of them in CM550:
+- protection_speed_limit_initialize -> cm848_initializeRailPressureShortfallFuelLimit (the limit's cache and its
+  0x1700 no-limit ramp).
+- initDiagnosticShadowFlags -> cm848_initializeEngineOilPressureProcessing (the low oil pressure monitor and the oil
+  pressure model: the boot twin of cm848_processEngineOilPressure).
+- initFuelCorrectionTableParams -> cm848_initializeOilChangeMonitorLookups (its lookup caches).
+- configurationValidationCheck -> cm848_updateEepromCalibrationIdentifier.
+- j1939_fault_processor_initialize -> cm848_initializeObdServiceState (the OBD-II DTC / VIN / calibration ID response
+  state).
+
+The calibration ID '1504 2RSAO' is at EEPROM 0x46. The ECU uses only characters 4-9 (EEPROM 0x4a-0x4f, mirror
+0x3fd4cc):
+- cm848_updateEepromCalibrationIdentifier rewrites them from the running calibration's own characters when they
+  differ;
+- cm848_sciLookupEepromSettingAddress maps SCI EEPROM settings 1-6 onto them;
+- they are now the byte[6] row calibration_identifier_characters_4_to_9_cal.
+- The ROM side, calibration_id_byte0-5 (' 2RS' / 'AO'), is ROM-copied; its comments said EEPROM-loaded and now name
+  the character each byte is.
+
+Proof (prove_r54.sh: the function renames applied to the old .cpp, the casts and two char literals folded, then
+prove_caches.py):
+- 1964 of 1968 functions match.
+- Two differ only in the order of their local declarations: mpc555_areBootModeStrapPinsHigh and
+  cm848_checkPciMessageTimeouts.
+- The other two show the new byte[6] row, read by hand:
+  - cm848_updateEepromCalibrationIdentifier: DAT_003fd4cc-d1 become calibration_identifier_characters_4_to_9_cal[0-5];
+  - cm848_sciLookupEepromSettingAddress: &DAT_003fd4cc becomes the array.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

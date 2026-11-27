@@ -1,0 +1,12 @@
+cm848: round 6 stage 0 - delete the orphan etc1_state_t and governor_control_t struct definitions
+
+Both described the TSC1 / ETC1 control state at 0x40ae00 and 0x40adf4. The live instance is
+j1939_tsc1_override_state (etc1_governor_state_t) at 0x40adf8, which both overlap.
+- etc1_state_t rendered nowhere. Deleting it changes nothing but the timestamp line.
+- governor_control_t rendered nowhere either, but it still laid symbols over the globals at 0x40adf4 / 0x40adf6.
+  Deleting it drops the underscore from j1939_governor_source_index (16 renders to 0) and etc1_control_word_cached
+  (1 to 0), and removes 7 "Globals starting with '_' overlap smaller symbols" warnings.
+- Proof (diff_underscore_fix.py): once those two names are normalized, 0 lines differ.
+- The headers are regenerated (firmware_types.hpp loses the two types), and g++ -fsyntax-only is clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

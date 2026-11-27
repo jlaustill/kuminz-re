@@ -1,0 +1,1 @@
+CM550's .cpp is unchanged past the Generated line (neither enum rendered anywhere or typed any row); the regenerated header no longer declares them (0 g++ errors); CM550 verify byte-identical with stage B's WARNING lines.

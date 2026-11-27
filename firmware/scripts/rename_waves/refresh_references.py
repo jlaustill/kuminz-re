@@ -59,7 +59,9 @@ def main():
 
         def sub(m):
             nonlocal count
-            before = text[max(0, m.start() - 120):m.start()]
+            # the whole text before the name: a long 'were a / b / c' list stays history to its end (PR #53 round 91:
+            # a 120-character window let the later names of a long list be refreshed)
+            before = text[:m.start()]
             if HISTORY.search(before[-14:]):
                 return m.group(0)
             hist = max(before.rfind("was "), before.rfind("were "), before.rfind("(was"))

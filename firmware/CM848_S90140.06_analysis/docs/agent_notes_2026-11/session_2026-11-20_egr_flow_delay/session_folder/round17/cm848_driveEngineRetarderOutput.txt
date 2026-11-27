@@ -1,0 +1,65 @@
+=== cm848_driveEngineRetarderOutput (lines 44903-44973, 64 non-blank)
+// Function: cm848_driveEngineRetarderOutput @ 0x00041fd4
+//
+/* Turns the arbitrated retarder request into the retarder output: engine_retarder_request_percent
+   takes engine_retarder_arbitrated_request_percent unless the shift hold flag freezes it. Below 50
+   percent it clears the engaged flag and logical output 11 (per engine_retarder_output_mode_flags
+   bits 1 and 0); at 50 percent or more for engine_retarder_request_on_delay_passes passes it sets
+   engine_retarder_engaged_flag and logical output 11, which is cleared again above
+   engine_retarder_output_maximum_engine_speed when both mode bits are set, and while fault bit 101
+   is detected. Also saves the previous request percent and the wired switch percent copy (was
+   cm848_processFuelEfficiencyTrim). */
+void cm848_driveEngineRetarderOutput(void)
+{
+  ushort uVar1;
+  engine_retarder_request_percent_previous = engine_retarder_request_percent;
+  uVar1 = engine_retarder_arbitrated_request_percent;
+  if (engine_retarder_request_shift_hold_flag != 0) {
+    uVar1 = engine_retarder_request_percent;
+  }
+  engine_retarder_request_percent = uVar1;
+  if (uVar1 < 0x32) {
+    if ((engine_retarder_output_mode_flags & 1) != 0) {
+      cm848_clearLogicalOutputRequest(0xb,0);
+    }
+    if ((engine_retarder_output_mode_flags & 2) != 0) {
+      engine_retarder_engaged_flag = 0;
+    }
+    engine_retarder_request_on_delay_counter = 0;
+  }
+  else {
+    engine_retarder_request_on_delay_counter = engine_retarder_request_on_delay_counter + 1;
+  }
+  if ((engine_retarder_request_on_delay_counter < engine_retarder_request_on_delay_passes) ||
+     (engine_retarder_request_percent < 0x32)) goto LAB_00042130;
+  if (((engine_retarder_output_mode_flags & 1) == 0) ||
+     ((engine_retarder_output_mode_flags & 2) == 0)) {
+    if ((engine_retarder_output_mode_flags & 1) != 0) goto LAB_00042100;
+    if ((engine_retarder_output_mode_flags & 2) != 0) {
+      engine_retarder_engaged_flag = 1;
+    }
+  }
+  else {
+    engine_retarder_engaged_flag = 1;
+    if (engine_retarder_output_maximum_engine_speed < engine_speed_state.filtered_engine_speed) {
+      cm848_clearLogicalOutputRequest(0xb,0);
+    }
+    else {
+LAB_00042100:
+      cm848_setLogicalOutputRequest(0xb,0);
+    }
+  }
+  engine_retarder_request_on_delay_counter = engine_retarder_request_on_delay_passes;
+LAB_00042130:
+  if ((system_status_flags_t_003fe974.fault_detected_bits_96_to_111 & 0x20) != 0) {
+    cm848_clearLogicalOutputRequest(0xb,0);
+  }
+  if (switch_input_state_bits.exhaust_brake_switch == 0) {
+    engine_retarder_switch_percent_2 = 0;
+  }
+  else {
+    engine_retarder_switch_percent_2 = 100;
+  }
+  return;
+}
+//

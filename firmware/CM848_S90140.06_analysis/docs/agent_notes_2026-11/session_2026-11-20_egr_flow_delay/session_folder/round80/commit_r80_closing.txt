@@ -1,0 +1,15 @@
+cm550: round 80 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 80" records stage A (18d684a1) and its proof: the chip select 2 watchdog service
+  register, the EEPROM log's indexes, and the 82527s' identical bit timing.
+- Leads:
+  - the 182 rows inside the EEPROM log range. None has an access in the dumped ROM; check them against the code above
+    0x40000 before removing them;
+  - chip select 2's other registers;
+  - which bus each 82527 carries;
+  - the earlier leads.
+- The PR body: the Round 80 bullet, "Beyond CM848" for rounds 72-80, and the test plan line.
+- work/todo.md, the session README, session_folder/round80/, the large-files tarball (the round's verify log),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

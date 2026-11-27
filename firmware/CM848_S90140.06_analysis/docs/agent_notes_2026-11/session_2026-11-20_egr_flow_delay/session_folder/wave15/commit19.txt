@@ -1,0 +1,8 @@
+docs: round 4 of task 046 - the wave 15 session archive, todo 046, the build / verify logs
+
+The session README gets the wave 15 section (the pool, the brief, the apply and its checks, the hand
+worklists, the repair of the e2m prefixes, the types, how to regenerate all.dis); the large-files tarball
+gets build15-20.log and verify4.log (it restores byte-identically); todo 046 summarizes round 4; the PR
+text is updated.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

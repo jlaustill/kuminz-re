@@ -1,0 +1,31 @@
+cm848: round 20 stage D - 17 algorithm enable flags words as bitfields (types)
+
+algorithm_enable_flags_<N>_t word bitfields on words 1, 2, 5, 6, 13, 19, 20, 21, 25, 27, 28, 29, 31, 32, 40, 42 and
+43. Every code use of those words was a single-bit masked read; the 200 reads now name the bit, e.g.
+algorithm_enable_flags_42_cal.fuel_pressure_tracking_error_monitor_enable. Word 0 stays a word, because the engine
+protection loops index the block from it. Each bit's comment carries its e2m 106B record, its readers and its value on
+this truck.
+
+Naming tiers, enforced by apply_r20d.py:
+- 117 read bits are named. 113 take their record's name, and the reader agrees with it. 4 have no record and are named
+  from their behaviour: word 29 0x1000 (the PGN 65263 fuel delivery pressure byte), word 40 0x4000 / 0x8000 (the
+  retarder fault mask / PTO inhibit), and word 42 0x1000 (the gear ratio torque management; the e2m's
+  Torque_Mgmt_GR_Enable sits on 0x800, which nothing reads).
+- 50 unread bits are named from their record, each with exactly one record whose description spells the words out.
+- 105 bits are reserved_bit_N, with the record in the comment. This covers the unrecorded bits and the never-spelled
+  initialisms SS / CSE / VGA / QPID / OOG / TVA. Word 21 bit 15 and word 29 bits 0 / 1 are read but stay reserved,
+  with their readers in the comment.
+- Where two records share a bit (word 19 0x200 / 0x2000), the reader picks. Word 32's Equivalent_Throttle_Enable
+  (mask 7) goes by its value list, where ENABLE = 4, and the code tests 4.
+- The dump agrees with the truck: word 40 j1850_communication_enable (the PCI bus), word 43
+  vacuum_throttle_cruise_enable and wastegate_solenoid_driver_enable, word 6 transmission_control_enable (the 48RE).
+
+Also cold_delta_fuel_cached_axis_offsets (0x3fb35c, word[2]), the lookup cache of cold_delta_fuel_grid.
+
+Proof: normalize_r20d.py rewrites each field read back to its mask (the map comes from structure_definitions.csv). Its
+count gate passes: per word and per mask, old masked reads = new field reads, and no masked read or piece is left.
+cast_normalized_diff.py then shows two changes. mpc555_initFuelDemandOffsetFilter writes the cache as [0] / [1]
+(intended). mpc555_tickTransferTimeoutAndRuntimeCounter only reorders a local declaration. The piece count stays
+464 -> 464. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,35 @@
+411 unnamed addresses read; 34 resolve to a default-e2m record through the dumped table
+10A0 (2/2) +E 0x3ff06c C_TSE_Charge_Press_Derate [UNITLESS U4 x1] <- cm848_calculateAltitudeDerateFuelLimit: Bitmapped indicating if derate is enabled for charge press sensor faults
+1104 (11/11) +12 0x5c35a Jcomm_Tau_0_Derated_Breakpoint [RPM U2 x0.125] <- cm848_updateJ1939EngineConfigurationTorqueCurve: [JCT0P2RP] Jcomm RPM low hp pt. 2 in engine config. when torque derate
+1104 (11/11) +14 0x5c35c Jcomm_Tau_0_Derated_Fueling_at_Point_2 [MM3S U2 x0.06793478400] <- cm848_updateJ1939EngineConfigurationTorqueCurve: [JCT0P2FL] Jcomm fueling low hp value at pt. 2 in engine config. when torque der
+1104 (11/11) +16 0x5c35e Jcomm_Tau_0_Point_5_Intersection_Speed [RPM U2 x0.125] <- cm848_updateJ1939EngineConfigurationTorqueCurve: [JCT0P5IN] when Derate_Speed < this point, low hp hsg ref. line left of pt. 5
+1104 (11/11) +18 0x5c360 Jcomm_Tau_1_Derated_Breakpoint [RPM U2 x0.125] <- cm848_updateJ1939EngineConfigurationTorqueCurve: [JCT1P2RP] Jcomm RPM hi hp pt. 2 in engine config. when torque derate
+1104 (11/11) +1A 0x5c362 Jcomm_Tau_1_Derated_Fueling_at_Point_2 [MM3S U2 x0.06793478400] <- cm848_updateJ1939EngineConfigurationTorqueCurve: [JCT1P2FL] Jcomm fueling hi hp value at pt. 2 in engine config. when torque dera
+111C (1/1) +0 0x5c2bc DC_Mon_High_Cutoff_RPM [RPM U2 x0.125] <- cm848_updateDutyCycleMonitorLoadHistogram: [DCMNHIES] Duty Cycle Mon High RPM Limit for Load Fact. Calc
+111F (2/2) +2 0x40a64a DC_Mon_Operating_Region [UNITLESS U1 x1.0] <- cm848_updateDutyCycleMonitorLoadHistogram: [DCMNOPRN] Duty Cycle Monitor Current Operating Map Region
+11D7 (2/2) +0 0x40ad6c J1939_Engine_Name [UNITLESS U8 x1] <- cm848_copyROMCalibrationToRAM: [JCEGNM] J1939 network name for ECM as engine node
+11D7 (2/2) +A 0x40ad76 J1939_Retarder_Name [UNITLESS U8 x1] <- cm848_copyROMCalibrationToRAM: [JCRDNM] J1939 network name for ECM as engine retarder node
+18E8 (1/1) +2 0x40a606 Compressor_Inlet_Density_Source [UNITLESS U2 x0003] <- cm848_calculateCompressorInletDensity: Compressor inlet density source quality
+1965 (3/3) +4 0x405d4e C_TFC_Texhaust_Lim [DEG_F U2 x0.5] <- cm848_calculateTemperatureHeadroomFuelCap: Exhaust_Temperature TFC limit
+19C2 (2/2) +4 0x40a620 Coolant_Tmptr_State [UNITLESS U2 xFFFF] <- cm848_selectCoolantTemperature: Coolant Temperature State
+1A0C (2/2) +4 0x40a60c Compressor_Inlet_Tmptr_State [UNITLESS U2 xFFFF] <- cm848_selectCompressorInletTemperature: Compressor Inlet Temperature State
+8041 (18/18) +1C 0x4090bc HPCR_Continuous_Rchg_Interval [USEC U4 x0.4] <- cm848_loadInjectorDriverCalibration: Interval between recharge while in continuous recharge mode
+8A2B (13/14) +2 0x5c78a IAH_Fuel_Threshold [MM3S U2 x0.06793478400] <- cm848_updateIntakeAirHeaterPostheat: IAH postheat terminated if fuel > this parameter for time > IHFLTM
+8A2B (13/14) +14 0x5c79c IAH_Postheat_Coolant_Temperature_Limit [DEG_F S2 x0.015625] <- cm848_updateIntakeAirHeaterPostheat: disable postheat if coolant temp > cal AND postheat temp > IHPHITTH
+8A2B (13/14) +20 0x5c7a8 IAH_Crank_Off_RPM [RPM U2 x0.125] <- cm848_updateIntakeAirHeaterCrankPhase: If RPM < this cal for IHCKLOTM, turns grids off
+8A2B (13/14) +22 0x5c7aa IAH_Crank_On_RPM [RPM U2 x0.125] <- cm848_updateIntakeAirHeaterCrankPhase: If RPM > this cal, turns grids on during cranking
+8A14 (22/24) +30 0x4086ca AC_Driver_ON_Max_Time [SEC U2 x0.1] <- fuel_demand_timing_initialize: Max time ac should run to guarantee a slugging event in next drive cycle
+1982 (7/8) +C 0x40af74 Exhaust_Saturation_Tmptr_Source [UNITLESS U2 x1] <- cm848_calculateWaterVaporAndSaturationTemperatures: Exhaust Saturation Temperature Source
+10E3 (7/10) +A 0x5a476 J1939_Default_Engine_Name [UNITLESS U8 x1] <- cm848_copyROMCalibrationToRAM: [JCDFEGNM] Default J1939 network name for ECM as engine node
+10E3 (7/10) +12 0x5a47e J1939_Default_Retarder_Name [UNITLESS U8 x1] <- cm848_copyROMCalibrationToRAM: [JCDFRDNM] Default J1939 network name for ECM as retarder node upon power-up
+10E3 (7/10) +1A 0x5a486 Command_Security_Flags [UNITLESS U4 x1] <- j1939_diagServiceDispatch: [JCCZSUFG] bit-mapped parameter determining access restriction of commands
+0024 (0/0) +0 0x5985a Fault_Code_Assignment_Table [HEX U1600 x1.0] <- cm848_isDtcStoredOtherThanFault, cm848_processFaultScanGroup: [DGFUCATB] FAULT CODE ASSIGNMENT TABLE
+10B4 (0/0) +0 0x5c2ec Fueling_Index_Ramp_Rate [SEC U2 x/0.00390625] <- cm848_calculateFaultDerateFuelLimit: [EPFLIXRT] Time to reach full derate during engine protection fueling fault
+10B9 (0/0) +0 0x5c2f4 Shutdown_Max_Limit [UNITLESS U2 x1.0] <- cm848_checkEngineProtectionRestartLimitation, cm848_examineEngineProtectionBefor: [EPSOMXLM] MAX NUMBER OF SHUTDOWNS BEFORE RESTART IS NOT ALLOWED.
+11FA (0/0) +0 0x5b6d0 MIL_Fault_Indicator [HEX U22 x1.0] <- cm848_latchNewlyActiveFault: [DGMIFUIN] Indicates whether MIL is to be turned on for a part. fault (64 bytes 
+1228 (0/0) +A 0x5a496 DM4_Manuf_Specific_Params [HEX U6 x1] <- cm848_j1939BuildDm4FreezeFrame: Length of param and contents of man specific DM4 data
+1253 (0/0) +2 0x5a4aa Fault_Data_J1939_111 [HEX U4 x1.0] <- cm848_j1939BuildDm4FreezeFrame, cm848_j1939HandlePgn65227Dm2PreviousDtc, j1939Ha: [DG0111JC] ECM Internal Failure, Mission Disabling, Hardware. SPN 629. Red.
+1275 (0/0) +0 0x408b80 Chrysler_SCI_Data_Plate [HEX U32 x1] <- cm848_sciCommand42Callback: [SIDX01] SCI 2A command data plate table
+8042 (0/0) +0 0x5f14e HPCR_Bank_Number [UNITLESS U8 x1] <- engine_injectionAngle_selectCylinderInjector, engine_injectionAngle_tpuUpdate: Bank number for the correponding cylinder number
+8043 (0/0) +0 0x5f156 HPCR_Injection_Injector_Number [UNITLESS U8 x1] <- engine_injectionAngle_selectCylinderInjector: Injector number for injection for correponding cylinder
+8044 (0/0) +0 0x5f15e HPCR_Recharge_Injector_Number [UNITLESS U8 x1] <- engine_injectionAngle_selectCylinderInjector: Injector number for recharge for correponding cylinder

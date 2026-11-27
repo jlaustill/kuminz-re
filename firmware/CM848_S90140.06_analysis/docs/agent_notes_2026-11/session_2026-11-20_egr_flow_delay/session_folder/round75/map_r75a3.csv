@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x00016d4e,cm550_startJ1708Transmission,mc68k_tpuTransmissionTrigger,function,1
+0x00029130,cm550_initializeJ1708Datalink,mc68k_FUN_00029130,function,1

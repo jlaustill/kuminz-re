@@ -1,0 +1,45 @@
+cm848: round 63 stage C - the boot kernel's PGN 61184 services: BOOT_DIAGNOSTIC_SERVICE, fixed read prototypes
+
+The boot kernel's twin of stages A / B. Its handlers dispatch through cm848_dispatchDiagnosticService, which already
+takes a j1939_rx_msg_t *request.
+
+- BOOT_DIAGNOSTIC_SERVICE (16 members). It is its own enum because the boot kernel's 7 downloads a calibration,
+  where the application's 7 exits development mode. It holds the 14 services the boot kernel registers and the
+  0x0c / 0x0d responses (cm848_sendDiagServiceResponse sends the same bytes as the application's sender).
+  Typed on cm848_registerDiagnosticService's service_id (all 14 registrations render member names, values and
+  handlers unchanged in order), on boot_diagnostic_service_entry_t.service_id and on the dispatcher's service local.
+- Wrong prototypes fixed:
+  - The read handler (0x1b48) was (address uint, length ushort, response_ptr byte*). The body reads its first
+    parameter as the request (+6 / +4 / +0 / +2 / +3) and compares the third with the 1764 cap. It is (request,
+    address, length) now. Its CONCAT22(in_register_00000010, length) is gone, and the 0x4a handler passes the full
+    address instead of its low half (wStack_e).
+  - The read-by-ID worker (0x1cf8) named its third parameter reserved and its fourth offset. Its add r31,r4,r31
+    adds the third to the address, and the fourth goes on as the length. It is (request, parameter_id, offset,
+    length) now, and the (short)iVar1 truncation is gone.
+  - The write twins and the 8 memory and address handlers take the request too.
+- 23 functions renamed on the application's scheme with "Boot". CM550 has none of the old names.
+  - The 5 registrars: their old names had "init", "Diag" and "Standard".
+  - The 12 handlers, e.g. cm848_handleBootReadByParameterIdLongLengthService, was
+    cm848_diagService67_memoryReadOffset: the 4 bytes are the length. Service 0x19 is
+    cm848_handleBootExecuteAtAddressService: it calls the request's address once the positive response has left the
+    CAN ring.
+  - The 6 workers.
+- boot_kernel_rom_end's comment: the boot read reply table starts there (45 00 00 47 00 49 00 4b 00 4d in
+  cm848_rom.bin). The name stays for the image copy loop's bound.
+- firmware/CLAUDE.md: the reference refresh changed two renamed names in the kernel flash driver note
+  (cm848_writeDiagMemory / cm848_lookupMemoryRegionType -> cm848_writeBootDiagnosticMemory /
+  cm848_lookupBootMemoryRegionType).
+
+Proof (prove_r63.sh with the 23 renames): 22 of 1968 functions differ.
+- differing.py (plates excluded) lists the 19 predicted functions plus 4 cosmetic ones: three local
+  declaration-order moves (cm848_validateWriteAuth, mpc555_tickTransferTimeoutAndRuntimeCounter,
+  mpc555_areBootModeStrapPinsHigh) and cm848_getBootMemoryServiceHeaderLength's first plate.
+- review_typed.py on the 13 typed and dispatcher functions: 41 casts and 57 placeholder names removed, none added.
+- artifacts.py: the read handler lost its 3 artifacts. The 0x41 handler keeps the 3 CAN ID builders that its
+  application twin has too.
+
+verify is byte-identical; thunks 18 / 14; prototype rows 0 failed; local variables 0 failed. Headers regenerated
+(0 g++ errors), tests pass (Python 4 suites, Java 89), audit_cal_suffixes.py HARD 0 / MISSING 219,
+lookup_tables.py 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

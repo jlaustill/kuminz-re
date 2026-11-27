@@ -1,0 +1,260 @@
+=== cm848_dispatchJ1939ReceivedMessages
+void cm848_dispatchJ1939ReceivedMessages(void)
+{
+  uint uVar1;
+  bool bVar2;
+  word wVar3;
+  uint uVar4;
+  int iVar5;
+  ushort uVar6;
+  j1939_receive_handler_entry_t *pjVar7;
+  byte *pbVar8;
+  byte bVar9;
+  undefined2 local_20;
+  uVar4 = TBLr;
+  uVar4 = uVar4 >> 7 & 0xffff;
+  if (algorithm_enable_flags_11_cal.j1939_communication_enable != 0) {
+    uVar1 = TBLr;
+    iVar5 = (uVar1 >> 7 & 0xffff) - uVar4;
+    while ((iVar5 < 9 &&
+           ((can_receive_queue_write_pointer != can_receive_queue_read_pointer ||
+            (can_receive_queue_full_flag == 1))))) {
+      bVar9 = can_receive_queue_read_pointer[1];
+      local_20 = *(ushort *)(can_receive_queue_read_pointer + 1);
+      if (bVar9 == 0) {
+        if (((j1939_source_address & 0xff) != (ushort)(byte)can_receive_queue_read_pointer[2]) &&
+           ((j1939_engine_retarder_source_address & 0xff) !=
+            (ushort)(byte)can_receive_queue_read_pointer[2])) {
+LAB_00539000:
+          if ((char)local_20 != -1) goto LAB_00539014;
+        }
+LAB_0053900c:
+        local_20 = (ushort)bVar9 << 8;
+      }
+      else if (bVar9 < 0xf0) {
+        if ((bVar9 == 0xdf) && (algorithm_enable_flags_29_cal.dm13_enable != 0)) {
+          cm848_onJ1939Dm13SeenOnBus();
+        }
+        if ((local_20 & 0xff) != (j1939_source_address & 0xff)) goto LAB_00539000;
+        goto LAB_0053900c;
+      }
+LAB_00539014:
+      j1939_received_source_address = can_receive_queue_read_pointer[3];
+      pbVar8 = j1939_receive_source_address_whitelist;
+      bVar2 = false;
+      do {
+        if ((*pbVar8 == 0xfe) || (j1939_receive_source_address_whitelist + 3 < pbVar8))
+        goto LAB_00539060;
+        bVar9 = *pbVar8;
+        pbVar8 = pbVar8 + 1;
+      } while (bVar9 != j1939_received_source_address);
+      bVar2 = true;
+LAB_00539060:
+      if (!bVar2) {
+        pjVar7 = j1939_receive_handler_table;
+        bVar9 = 0;
+        if (j1939_receive_handler_count != 0) {
+          do {
+            if (pjVar7->pgn_key == local_20) {
+              (*(code *)pjVar7->handler)(can_receive_queue_read_pointer);
+              break;
+            }
+            pjVar7 = pjVar7 + 1;
+            bVar9 = bVar9 + 1;
+          } while (bVar9 < j1939_receive_handler_count);
+        }
+      }
+      can_receive_queue_read_pointer = can_receive_queue_read_pointer + 0x12;
+      if (&can_receive_queue_last_entry < can_receive_queue_read_pointer) {
+        can_receive_queue_read_pointer = &can_receive_queue_buffer;
+      }
+      if (can_receive_queue_full_flag == 1) {
+        can_receive_queue_full_flag = 0;
+        iVar5 = 1 << (j1939_transmit_message_object_number & 0x3f);
+        for (uVar6 = j1939_transmit_message_object_number;
+            (uVar6 & 0xff) < j1939_last_receive_message_object_number; uVar6 = (uVar6 & 0xff) + 1) {
+          wVar3 = toucan_a.IMASK;
+          toucan_a.IMASK = (ushort)iVar5 | wVar3;
+          iVar5 = iVar5 * 2;
+        }
+      }
+      uVar1 = TBLr;
+      iVar5 = (uVar1 >> 7 & 0xffff) - uVar4;
+    }
+  }
+  return;
+}
+=== cm848_endRetarderShiftAssistAboveFuelDemandLimit
+void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
+{
+  if ((((algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable != 0) &&
+       (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL)) &&
+      (engine_retarder_control_device_indicator == J1939_CONTROL_DEVICE_TRANSMISSION)) &&
+     (((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_CONTROL &&
+       (engine_control_device_indicator == J1939_CONTROL_DEVICE_TRANSMISSION)) &&
+      (engine_retarder_shift_assist_fuel_demand_limit <= engine_operating_mode_fuel_demand)))) {
+    engine_retarder_override_control_mode = TSC1_OVERRIDE_OFF;
+    engine_retarder_torque_limit_percent = 0x7d;
+    j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer = 0;
+    j1939_powertrain_control_state.retarder_tsc1_speed_control_flag = 0;
+  }
+  return;
+}
+=== cm848_runJ1939PeriodicTransmitQueues
+void cm848_runJ1939PeriodicTransmitQueues(void)
+{
+  byte bVar1;
+  int iVar2;
+  if (algorithm_enable_flags_11_cal.j1939_communication_enable != 0) {
+    if (((datalink_broadcast_enable_flags & 4) != 0) &&
+       ((j1939_dm13_broadcast_enable_flags & 4) != 0)) {
+      iVar2 = 0x3fd2e2;
+      bVar1 = 0;
+      if (j1939_periodic_queue0_count != 0) {
+        do {
+          if (j1939_periodic_queue0_current_tick == *(word *)(iVar2 + 4)) {
+            *(word *)(iVar2 + 4) = *(word *)(iVar2 + 4) + *(short *)(iVar2 + 2);
+            (**(code **)(iVar2 + 6))();
+          }
+          iVar2 = iVar2 + 10;
+          bVar1 = bVar1 + 1;
+        } while (bVar1 < j1939_periodic_queue0_count);
+      }
+      j1939_periodic_queue0_current_tick = j1939_periodic_queue0_current_tick + 1;
+    }
+    if (((datalink_broadcast_enable_flags & 8) != 0) &&
+       ((j1939_dm13_broadcast_enable_flags & 8) != 0)) {
+      iVar2 = 0x3fd3aa;
+      bVar1 = 0;
+      if (j1939_periodic_queue1_count != 0) {
+        do {
+          if (j1939_periodic_queue1_current_tick == *(word *)(iVar2 + 4)) {
+            *(word *)(iVar2 + 4) = *(word *)(iVar2 + 4) + *(short *)(iVar2 + 2);
+            (**(code **)(iVar2 + 6))();
+          }
+          iVar2 = iVar2 + 10;
+          bVar1 = bVar1 + 1;
+        } while (bVar1 < j1939_periodic_queue1_count);
+      }
+      j1939_periodic_queue1_current_tick = j1939_periodic_queue1_current_tick + 1;
+    }
+  }
+  return;
+}
+=== cm848_buildJ1939LampStatusByte
+uint cm848_buildJ1939LampStatusByte(void)
+{
+  uint uVar1;
+  uVar1 = 0;
+  if (mil_on_request_flag == 1) {
+    uVar1 = 0x40;
+  }
+  if (stop_fault_lamp_flag == 1) {
+    uVar1 = uVar1 | 0x10;
+  }
+  if (warning_fault_lamp_flag == 1) {
+    uVar1 = uVar1 | 4;
+  }
+  if (maintenance_fault_lamp_flag == 1) {
+    uVar1 = uVar1 | 1;
+  }
+  return uVar1;
+}
+=== cm848_registerJ1939MemoryWriteServices
+void cm848_registerJ1939MemoryWriteServices(void)
+{
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,
+             cm848_handleJ1939WriteByParameterIdService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,
+             cm848_handleJ1939WriteByParameterIdLongLengthService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,handleJ1939WriteMemoryService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,
+             handleJ1939WriteMemoryLongLengthService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,
+             cm848_handleJ1939WriteByParameterIdShortOffsetService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,
+             cm848_handleJ1939WriteByParameterIdLongOffsetService);
+  return;
+}
+=== cm848_handleJ1939WriteByParameterIdService
+undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
+{
+  undefined1 uVar1;
+  ushort local_10 [2];
+  uint local_c;
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  local_c = (uint)request->data_pointer[3];
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c);
+  return uVar1;
+}
+=== cm848_handleJ1939WriteByParameterIdLongLengthService
+undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
+{
+  undefined1 uVar1;
+  ushort local_10 [2];
+  dword local_c [2];
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  cm848_memcpyBytes(local_c,request->data_pointer + 3,4);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c[0]);
+  return uVar1;
+}
+=== cm848_handleJ1939WriteByParameterIdShortOffsetService
+undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request)
+{
+  undefined1 uVar1;
+  ushort local_10 [2];
+  uint local_c;
+  uint local_8;
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  local_c = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  local_8 = (uint)request->data_pointer[5];
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
+  return uVar1;
+}
+=== cm848_handleJ1939WriteByParameterIdLongOffsetService
+undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request)
+{
+  undefined1 uVar1;
+  ushort local_10 [2];
+  dword local_c;
+  dword local_8;
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  cm848_memcpyBytes(&local_c,request->data_pointer + 3,4);
+  cm848_memcpyBytes(&local_8,request->data_pointer + 7,4);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
+  return uVar1;
+}
+=== cm848_writeJ1939DiagnosticMemoryByParameterId
+byte cm848_writeJ1939DiagnosticMemoryByParameterId
+               (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
+{
+  char cVar1;
+  byte bVar2;
+  int local_10;
+  cVar1 = cm848_lookupParameterIdAddress(parameter_id,&local_10);
+  if (cVar1 == '\0') {
+    bVar2 = writeJ1939DiagnosticMemory(request,(byte *)(local_10 + offset),length);
+  }
+  else {
+    bVar2 = 8;
+  }
+  return bVar2;
+}
+=== cm848_resetEngineRetarderTsc1Request
+void cm848_resetEngineRetarderTsc1Request(void)
+{
+  engine_retarder_override_control_mode = TSC1_OVERRIDE_OFF;
+  engine_retarder_control_device_indicator = J1939_CONTROL_DEVICE_NONE;
+  engine_retarder_torque_limit_percent = 0x7d;
+  j1939_powertrain_control_state.retarder_tsc1_request_timeout_count = 0;
+  j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer = 0;
+  j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer = 0;
+  j1939_powertrain_control_state.retarder_tsc1_speed_control_flag = 0;
+  return;
+}

@@ -1,0 +1,41 @@
+cm550 + scripts: round 89 stage C - the 25 A/D runtime records as sensor_state_t; their Calterm names
+
+- sensor_debounce_state_t -> sensor_state_t: the 22-byte record is the A/D channel's whole runtime state (filter,
+  filtered / unfiltered values, debounce, raw counts), the pair of sensor_config_t. Field lookup_result ->
+  unfiltered_value: Calterm names +10 "unfiltered and linearized" (...UF) and +8 "filtered and linearized" (...FT).
+  reserved_18 is one dword (it was byte[4]): with the records typed, the decompiler made the byte array the base of
+  byte arithmetic, so insiteCommandByteDispatcher's indexed read of channel n's filtered value printed
+  intake_manifold_temperature_sensor_state.reserved_18 + 22 x n - 10; it now prints
+  (&intake_manifold_temperature_sensor_state.filtered_value)[11 x n].
+- 25 instances <channel>_sensor_state at 0x80a2aa + 22 x k (e2m block 1004; the ECU's parameter ID table maps 0x1004
+  to 0x80a2aa). Each replaces the channel's ema_filter_state_t row at +0 (now the field filter) and the e2m-named rows
+  at +8 / +10 / +16 (74 rows; now filtered_value / unfiltered_value / adc_raw_value). The names follow the config
+  instance of the same channel. Consumers read coolant_temperature_sensor_state.filtered_value (31 renders; was
+  _filtered_and_linearized_coolant_temperature_50_to_293, untyped, so it printed with an underscore).
+  - CM848 keeps 10 of the old filter record names (its filters are standalone ema_filter_state_t globals outside its
+    12-byte sensor_channel_state_t records): a counterpart layout; each instance comment says so.
+- The Calterm names: e2m-analysis/originals/v64t6_s.e2m's block 1003 / 1004 layout agrees with every J90350.00 global
+  that had an e2m name before this round (410 of 447; the rest are the round 88 renames, ambient air temperature's
+  older ADTT mnemonics and nine misplaced ADBSPRXA / ADBSPRYA rows that stage B removed). The sensor_config_t field
+  comments get back their Calterm suffixes (stage B had dropped them), each instance names its stem and its filtered
+  value's e2m unit / scale / minimum / range, and the new docs/analog_sensor_channels.md lists every channel's names.
+- The A/D loops: in cm550_initializeAnalogSensorChannels the three start-up loops now share one sensor_state_t * and
+  one sensor_config_t * typed by the decompiler; round 88's peVar3 (ema_filter_state_t *) and its garbled
+  ((int)&peVar3[2].accumulator + 2) stride are gone. Its two local rows (round 88's walker row and a new config row)
+  are removed: committing either split the pointer between the loops (build C2), as round 88's row had. In
+  mc68k_processAnalogSensorChannels both rows apply whole: channel_record and channel_config.
+- ApplyLocalVariables builds T[N] array types (ScriptUtils.parseArrayType, as ImportAnalysis does for globals).
+  Before, its name lookup found an array only when something else had created the same array type, so
+  validateSecurityKey's byte[4] local (hour_meter_bytes) stopped applying when reserved_18 stopped being byte[4].
+  CM848 has no array-typed local rows.
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed / added; the 39 changed functions are the two A/D loops and the
+  37 readers of the replaced rows (field renders, word-typed temporaries, (short) casts where a reader takes a filtered
+  value as signed, insiteCommandByteDispatcher's indexed read); caller artifacts unchanged (unaff_ 13, extraout_ 19,
+  in_ 14, CONCAT 72); only the two A/D walker rows render differently (the cast and the field rename); no new build
+  warning (74 fewer untyped rows).
+- CM848: verify DETERMINISTIC and byte-identical to the stage B output (the shared-script change).
+- Script tests 109 / 109; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

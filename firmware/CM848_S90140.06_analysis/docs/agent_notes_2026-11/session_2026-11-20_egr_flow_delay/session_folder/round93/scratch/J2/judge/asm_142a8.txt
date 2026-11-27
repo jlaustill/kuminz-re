@@ -1,0 +1,16 @@
+0142a8: 322f0004                 move.w (0x4,a7),d1
+0142ac: b23900060f83             cmp.b (0x60f83).l,d1
+0142b2: 6604                     bne.s 0x142b8
+0142b4: 7001                     moveq #1,d0
+0142b6: 4e75                     rts
+0142b8: b23900060f85             cmp.b (0x60f85).l,d1
+0142be: 6604                     bne.s 0x142c4
+0142c0: 7002                     moveq #2,d0
+0142c2: 4e75                     rts
+0142c4: b23900060f87             cmp.b (0x60f87).l,d1
+0142ca: 6604                     bne.s 0x142d0
+0142cc: 7003                     moveq #3,d0
+0142ce: 4e75                     rts
+0142d0: 7004                     moveq #4,d0
+0142d2: 4e75                     rts
+0142d4: 4e56fffc                 link a6,#-4

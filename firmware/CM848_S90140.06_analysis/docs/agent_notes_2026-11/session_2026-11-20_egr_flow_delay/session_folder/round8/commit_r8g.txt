@@ -1,0 +1,57 @@
+cm848: round 8 stage F - e2m 8C18 (48RE ROM cals) and the exhaust brake lockup aid; stage E corrected (label-only)
+
+A review asked for the e2m description at 8C17 +4A before accepting stage E's "converter clutch engagement
+monitor". The description is 'Used to time ebrake TCC inhibit timeout limit', and it led to e2m 8C18. That block
+aligns word by word at 0x4082f4.
+- **8C18 (ROM cals) at 0x4082f4, +00..+98.** From +9A the rows are a table axis. Rows named before from their code
+  use confirm it: +0E RE_ERPM_WOT_Target (stage E's WOT upshift target, 24600), +16 RE_Lockup_Boost (the pressure
+  state 0x10 target), +1E RE_Low_Range_Max, +20..+24 RE_Max_2 / 3 / 4_Ratio, +26..+54 the overdrive and
+  over-temperature light temperatures, +62 RE_Road_Speed_Filter_Constant, and +70 RE_OSS_Accel_Method (the method
+  switch of cm848_calculateOutputShaftAcceleration). 71 globals are named, each checked against its row's users, among
+  them:
+  - the engine acceleration default / maximum / minimum, normal and low range (were protection_load_scaled_*_cal);
+  - the WOT upshift target low / high band and the shift lag step (were protection_rpm_peak_* /
+    governor_pressure_learned_gain_step);
+  - the predicted 1-2 / 2-3 shift delay limits (were governor_pressure_learned_gain_gear1 / 2_maximum / _minimum);
+  - the lockup, overheat lockup and relock delays (were protection_*_lockout_* / *_countdown_* cals), and the new row
+    transmission_overheat_lockup_delay_4_3_time at 0x408370;
+  - the throttle detent and WOT thresholds (were protection_fuel_demand_status10 / 80_*);
+  - the overheat protection temperatures (were hot_mode_*) and the governor pressure override (state 0x17);
+  - governor_pressure_lockup_boost / _2nd_gear_lockup_boost (were governor_pressure_high_gear_target /
+    _gear2_locked_target).
+- **The exhaust brake lockup aid (corrects stage E).**
+  - The records: 8C17 +4A RE_E_Brake_Inhibit_Timer, 8C18 +88..+92 RE_EB_Lockup_Range_* ('If ERPM/OSS > this ratio,
+    Set RE_E_Brake_Inhibit_LU = FALSE'), 8C18 +96 RE_E_Brake_Inhibit_Timeout and 8C19 +16 RE_E_Brake_Inhibit_LU ('Flag
+    set to inhibit Exhaust Brake to allow TCC lockup').
+  - The code: cm848_updateEngineRetarderEnableState reads bit 0 of 0x40b0fe as its torque converter lockup disengaged
+    input, and the exhaust brake sets that bit entering 2nd gear and after a 4-3 downshift.
+  - The renames: cm848_updateExhaustBrakeLockupInhibit (was cm848_monitorConverterClutchEngagement),
+    exhaust_brake_lockup_flags (was converter_clutch_transition_state), exhaust_brake_lockup_inhibit_timer /
+    _timeout / _previous and exhaust_brake_lockup_speed_ratio_2nd / 3rd / 4th_gear_minimum / _maximum.
+  - 8C17 drifts from +4C, not +4A. e2m 8C19 (the RE flag bytes) aligns at 0x40b0e8, the
+    protection_condition_flags_t struct. Its bits are the next lead.
+- **The lockup boost:** cm848_selectGovernorPressureLockupBoost (was stage E's cm848_selectGovernorPressureHighGear).
+  Pressure state 0x10 is RE_Lockup_Boost, 'Gov pressure target during lockup, to prevent downshift'.
+- **Switch 12 is the exhaust brake switch.** exhaust_brake_transmission_features_inhibit (RE_Ebrake_Inhibit, was
+  protection_fuel_check_bypass_flag) gates its alternate shift lines.
+- **Review fixes:**
+  - The cm848_calculateOutputShaftAcceleration plate gives both methods. Method 0 is the plain sample-period
+    difference; method 1 is a 27-word ring plus a filter.
+  - Its sampler words are named.
+  - Ordinals are 3rd / 1st / 2nd, where they were third / first / second.
+  - The low_range_hold_timer field status is verified.
+- **CSV repair:** three global_variables.csv comments that earlier scripts wrote with Python's csv module (round 7's
+  0x3fd900 / 0x3feb50, stage E's 0x40b0fe, which also had a fragment of the old comment appended) are unquoted. The
+  importer splits that file with split(",", 4), so quotes stay literal. Stage C's comment fix on the gear ratio table
+  had not matched (the phrase holds a comma), and it lands now.
+- **Docs:** task 046 (stage F, stage E corrected, the 8C17 / 8C18 / 8C19 alignments, the "53" wording, leads),
+  firmware/CLAUDE.md (alignments, the lockup aid, the CSV trap, a stale naming wave 2 line), the README and the PR
+  body.
+- **Proofs:**
+  - reverse_names.py EQUIVALENT: label-only, and the 2 functions it lists differ only in one local declaration's
+    position;
+  - width_check_r8.py: every aligned 8BBC / 8C17 / 8C18 / 8C53 record has a row of its size, except two words
+    nothing reads;
+  - lookup_tables.py: 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

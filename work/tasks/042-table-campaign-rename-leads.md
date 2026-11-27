@@ -47,20 +47,20 @@ applied and proved the waves are in `firmware/scripts/rename_waves/`.
 - `governor_adjustment_input` = altitude in feet; `governor_adjustment_rpm_axis_cal` is an altitude axis (bins 07 / 08; the altitude table matches the standard atmosphere).
 - `sensor_channelGeneric_*` = the coolant temperature channel (slot 2); `fuel_demand_boost_input` = that coolant value (bins 17 / 18).
 - `sensor_channel9_pressure_value` / `_default_value` = intake manifold temperature (bin 16).
-- `governor_torque_output` (0x40bb00) = the remote accelerator pedal position (bin 16).
+- `governor_torque_output` (0x40bb00) = the remote accelerator pedal position (bin 16). Done in PR #53 round 24: `remote_accelerator_pedal_sensor_filtered` (EEC2 byte 4, SPN 974).
 - `cruise_speed_current_a` / `_b` (0x40bbb2 / 0x40bbb4) = the two accelerator pedal tracks (bin 15).
 - `battery_voltage_prev` (0x40b26e) = the charging voltage target (bin 15).
 - `fuel_timing_sensor_value` = slot 4 = battery voltage (P0563 / P0562); `governor_speed_input_value` = slot 75 (sensor unknown).
 - `cruise_state_machine_index` / `cruise_prev_state_index` / `cruise_voltage_*` = the alternator regulator state (bin 08; task 029).
-- `protection_iat_scaled`, `governor_cold_start_iat_correction`, `iat_fuel_trim_*` use barometric pressure, not intake air temperature (bins 12 / 14).
+- `protection_iat_scaled` (`initial_ambient_air_pressure` since PR #53 round 15), `governor_cold_start_iat_correction` (`low_speed_governor_altitude_speed_target` since PR #53 round 14), `iat_fuel_trim_*` use barometric pressure, not intake air temperature (bins 12 / 14).
 - `fuel_correction_upper_limit` = a maximum fuel quantity limit; `timing_limit_lower` (ROM 0x5c306 = 5888) is its no-limit value (bin 09).
 - `cold_start_*` / `fuel_coldStart_*` at 0x5139b8-0x513ddc = a coolant-overheat derate (bin 14).
 - `injection_timing_factor_cyl2/3/4_*` / `injection_timing_demand_cyl*` = the intake-temperature / coolant / boost / barometric components, not cylinders (bin 05).
 
 ## Duplicate names in global_variables.csv
 
-- `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a (bin 13).
-- `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a (bin 16).
+- `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a (bin 13). (0x40a550 is injection_timing_torque_to_fuel_adjustment since rename wave 5, PR #50; 0x40b22a is cold_delta_fuel, e2m 8A9F Cold_Delta_Fuel, since PR #53 round 20.)
+- `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a (PR #53 round 15: the channel 7 one at 0x40be3a is fuel_temperature_sensor_fault_status) (bin 16).
 
 ## Vocabulary the table names follow (change them together)
 
@@ -143,7 +143,7 @@ Five read-only agents verified the leads above against the code (RAM-dump reprod
 - [G1b] Snapshot neighbours (angle workers' area): cm848_fuel_demand_state_capture copies injection_load_snapshot (0x3fd082), injection_timing_pressure_snapshot (0x3fd084) and injection_timing_aux_offset_snapshot (0x3fd086) into injection_period_capture_a / cam_sync_period_reference_a / cam_sync_period_reference_b, which engine_injectionAngle_computeLoadCh6 multiplies by -5 into DAT_0040b871 / b873 / b87d = the main / pilot 
 - [G1b] Event order and units verified: pilot (slot 4) < main (slot 8) < auxiliary (slot 12) in crank angle (the pilot and third-pulse tests both require the later start minus the earlier start to be positive); on-time unit 0.4 us per tick (e2m HPCR_Duration_*); the pilot-to-main interval and main-to-auxiliary interval globals are in 3.2 us counts (ticks >> 3). In the RAM dump (engine off) the interaction correction grids ma
 - [G2] Fault decode (ROM 0x5985a slot table, then obd_dtc_code_table; fault n = word n / 16 bit n % 16): bit 57 (word 3 mask 0x200) = slot 162 = P1221, 58 (0x400) = slot 163 = P1222, 59 (0x800) = slot 158 (code 0000), 60 (0x1000) = slot 164 = P1223, 303 = slot 90 = P0088. The meanings of P1221-P1223 are not established. The other bits set by 0x49264 (290, 315, 316, 317, 323, 324) are slot 170: no OBD slot. 317 / 290 / 324 (
-- [G2] Sibling function, not in my lead list: engine_camTiming_speedWindow_update (0x52a9ac) is the third monitor of this group (fault 57 = P1221). It is switched off in this calibration (byte 0x409aa0 = 0); when enabled, with engine speed within governor_speed_limit_output +/- 160 counts, vehicle_speed_copy 0, cold_start_phase at the governor setpoint, coolant 180-205 F and no related faults, it debounces (80 net passes) f
+- [G2] Sibling function, not in my lead list: engine_camTiming_speedWindow_update (0x52a9ac) is the third monitor of this group (fault 57 = P1221). It is switched off in this calibration (byte 0x409aa0 = 0); when enabled, with engine speed within governor_speed_limit_output (low_speed_governor_base_reference_speed_cal since PR #53 round 13) +/- 160 counts, vehicle_speed_copy 0, cold_start_phase at the governor setpoint, coolant 180-205 F and no related faults, it debounces (80 net passes) f
 - [G2] Sibling functions: hpcr_register_state_save (0x52a910) is the init of the setpoint calculator (cam_timing_transition_state = 1, winning term code = 1, the 2-D lookup cache words 0x3fd0ca-0x3fd0e8 = 2): suggested cm848_initFuelPressureSetpointState (cam_timing_advance_table_interp_states 0x3fd0ca is the first of those cache words). cm848_calibration_group28_load (0x52b998) only calls the three monitors (suggested cm84
 - [G2] hpcr_camTimingMonitor (0x531d34, its reset hpcr_camTimingReset 0x532208) is a rail pressure tracking monitor, not cam timing: each cycle it integrates (fuel_pressure_setpoint - fuel_pressure_feedback_previous) / the ROM divisor at 0x64420 into cam_timing_advance_accumulator (0x40b9d8) and, negated, cam_timing_retard_accumulator (0x40b9dc) via cam_timing_delta_per_cycle (0x40b9e0); above the ROM limits 0x6440e / 0x644
 - [G2] Support code around cm848_processEnginePositionDiagnostics, names suspect: cm848_updateEngineDiagnosticCounters (0x49a54) holds the two debounce counters of the diagnostics and also the fuel metering feedback circuit check (faults 264 / 265, fuel_metering_feedback_fault_code); cm848_initEngineDiagnosticData (0x4a258) initialises these variables and the seven lookup cache words cam_sync_filter_init_state_0-6 (0x3fb6ce
@@ -200,7 +200,7 @@ Also still open from the list above: the struct fields (`rpm_governor_state_t.de
   `crank_sync_threshold` (CM550 0x80707a), `fuel_timing_blend_factor` (0x80c9aa), `j1939FormatMultiFrameResponse`
   (0x2f632). Check the CM550 counterparts before renaming them to the CM848 names.
 - **Duplicate names that predate this wave (not fixed):** globals `cruise_speed_setpoint_b`,
-  `cruise_speed_target_working`, `engine_data_log_buffer`, `engine_data_log_read_ptr`, `fuel_demand_mode_code`,
+  `cruise_speed_target_working` (`cruise_resume_speed` since PR #53 round 16), `engine_data_log_buffer`, `engine_data_log_read_ptr`, `fuel_demand_mode_code`,
   `fuel_demand_rate_output`, `fuel_demand_rpm_factor`, `governor_setpoint_table_ptr`, `governor_speed_error_delta`,
   `injection_timing_compensation_lower_cal`, `j1939_tsc1_active_flag`, `protection_confirm_counter_a` / `_b`,
   `switchD`, `USIU_PITR`, `USIU_RTCAL`; functions `cm848_addCoolantCalEntry`, `cm848_emptyStubFunction`,
@@ -505,7 +505,7 @@ the VGT loop (`cm848_calculateFuelDemandLimits`, probably the EGR valve).
 - [W6 air_vgt] FOR THE APPLIER: (1) 10 global rows carry "old": "" because the CSV row exists with an empty name (0x3fcce8, 0x3fccf6, 0x3fcd18, 0x3fcd20 filter states; 0x40777a, 0x4077ba, 0x4077d4, 0x4077d6 filter coefficients; 0x59656 / 0x40a12e channel 101 config / state): fill in the name and keep type and comment. (2) Four rows are "+2" sub-rows of dwords (0x3fb06a, 0x
 - [W6 air_vgt] STALE CITATIONS (rows not renamed here whose comment still cites a name renamed here or in wave 5, or engine-load wording; refresh when the rows are applied): function_renames.csv (6): 0x2e250 cm848_runVariableGeometryTurbochargerClosedStopSeek [actuator_e_end_margin, actuator E wording]; 0x2e4cc cm848_runVariableGeometryTurbochargerOpenStopSeek [actuator E 
 - [W6 governor] SCOPE: seven rows override names applied in wave 4 (global 0x406fba, 0x40a8d1, 0x40a8af, 0x40a8bf, 0x40a8d3, 0x406fbc, 0x40a8c3, all marked CORRECTION: the fuel_demand_filter_* words are the error filter of the high speed governor PID, in the same coefficient set as the lead rows fuel_ema_coeff_1-3); six functions (0x1f40c, 0x1f34c, 0x1fa20, 0x1f98c, 0x422c0
-- [W6 governor] UNCERTAIN 0x003fd910 (no CSV row, word, EEPROM 0x48e = 0 in the dump): the earlier lead says it is the speed offset added to cruise_speed_command in both users, but the second user is governorCruiseStateMachine (.cpp ~80393), which passes it as param_1 of governor_cruise_rampScale_calc (result = param_1 x 1024 / the fuel demand span, capped 0x22c8) into crui
+- [W6 governor] UNCERTAIN 0x003fd910 (no CSV row, word, EEPROM 0x48e = 0 in the dump): the earlier lead says it is the speed offset added to cruise_speed_command in both users, but the second user is governorCruiseStateMachine (.cpp ~80393), which passes it as param_1 of governor_cruise_rampScale_calc (result = param_1 x 1024 / the fuel demand span, capped 0x22c8) into crui (PR #53 round 16: governor_cruise_rampScale_calc is cm848_calculateBottomDroopGain, and 0x3fd910 is cruise_bottom_droop_width_cal, e2m 1185 +2.)
 - [W6 governor] LABEL CHECK result for 0x3fb54c / 0x3fb54e (outcome of the wave 4 note): the CSV rows are right (0x3fb54c engine_retarder_request_on_delay_counter, 0x3fb54e tc_lockup_disengage_state) but the current .cpp still prints them crossed. Lines 41136 / 41139 / 41165 / 41204 (cm848_updateEngineRetarderEnableState, the torque converter lockup state at 0x3fb54e, disas
 - [W6 governor] Engage delay chain facts (cm848_updateEngineRetarderActiveState, rows above): bVar1 = fault bit 8 / 9 / 64 = P0238 / P0237 / P0236 (boost pressure sensor circuit high / low / range). A new request is the pass where the arbitrated percent goes from 0 to nonzero. With bVar1 and the hold passes nonzero the hold flag is set on that pass and cleared once the age 
 - [W6 governor] HIGH SPEED GOVERNOR (the answer to the fuel_ema coefficient 1-3 rows): cm848_processTorqueLimitTiming is a PID on the engine speed error, not a fuel demand filter and not injection timing compensation. Code: error = (arbitrated engine speed limit torque_limit_arb_t.limit_source, an rpm x 8 value capped at 36000 in cm848_selectTorqueLimit) minus governor_fuel
@@ -698,7 +698,7 @@ Three agents worked the wave-8 leftovers, applied in two stages.
 - [W9 gear_down] `torque_limit_init_flag` (0x0040a280): Still uncertain, no name. xref_addr.py: 0 reads / 1 write, a single sth r10 at 0x204a0 in cm848_initializeEngineSpeedLimitDefaults (width WORD); 0x40a282 has no reference at all. So the dword type of 
 - [W9 gear_down] `fuel_demand_minimum_tracked` (0x0040afb2): Uncertain, no name. e2m Torque_Derate_Fueling_2 'smallest derate fueling value among group 2 (AH) derate algorithms' sits at the matching +6 of the same block; the two writers here are cm848_trackMini
 - [W9 gear_down] `timing_limit_upper` (0x0005c30c): Uncertain, no name: ROM word 0 here, read as lha / lhz by cm848_selectFuelDemandSource (2), cm848_calculateDualAxisFuelLimit (2), cm848_processActiveFaultList, cm848_calculateFuelDemandWithTrim; by th
-- [W9 gear_down] `governor_cruise_speedError_torqueAdj` (0x00525134): Uncertain, no rename. It is a proportional term: governor_cruise_speed_error_net x cruise_pid_rate_gain_working / 1000 (at least one count of the right sign when the error is nonzero) x cruise_pid_rat
+- [W9 gear_down] `governor_cruise_speedError_torqueAdj` (0x00525134): Uncertain, no rename. It is a proportional term: governor_cruise_speed_error_net x cruise_pid_rate_gain_working / 1000 (at least one count of the right sign when the error is nonzero) x cruise_pid_rat (PR #53 round 16: cm848_calculateCruiseGovernorEngineSpeedError.)
 - [W9 charge_turbo] `governor_target_speed_c_working` (0x003fa7ae): Checked again, still no name: the only access is the boot store in cm848_clearEgrValveHBridgeFaultState (between egr_valve_h_bridge_inrush_fault_counter 0x3fa7aa and egr_valve_h_bridge_fault_reset_fla
 - [W9 charge_turbo] `governor_target_speed_d_working` (0x003fa7b0): Same as 0x3fa7ae: one boot store (cm848_clearEgrValveHBridgeFaultState), no read, no boot-ROM user; not a timer half (see 0x3fa7ae); role unknown; the old governor name is wrong.
 
@@ -720,6 +720,7 @@ Three agents worked the wave-8 leftovers, applied in two stages.
 - [W9 charge_turbo] EXHAUST TEMPERATURE / EGR ORIFICE TEMPERATURE CHAIN (settles the cooler monitor): the EGR cooler effectiveness (cm848_calculateEgrCoolerEfficiency) = (exhaust_temperature x 32 - egr_orifice_temperature) x 10000 / (exhaust_temperature x 32 - coolant temperature): the hot side is the ESTIMATED exhaust temperature (intake manifold temperature + combustion tempe
 - [W9 charge_turbo] MONITOR COMPLETION DECODE (lead 4), all from the ROM slot table 0x5985a and obd_dtc_code_table 0x5b57c: fault 64 (bit 0 of fault_detected_bits_64_to_79) = slot 48 = P0236; fault 729 (mask 0x200 of fault_detected_bits_720_to_735) = slot 160 = P0299; fault 778 (mask 0x400 of fault_detected_bits_768_to_783) = slot 149 = P0069; faults 774-777 (0x40 / 0x80 / 0x10
 - [W9 charge_turbo] OTHER LEFT-OVERS (not renamed, with the reason): (a) boost_pressure_current_raw 0x40a7d0 / boost_pressure_baseline_cal 0x40675a / map_fuel_correction_factor 0x40a42e: map_fuel_correction_factor is the boost (charge) pressure (its change is the boost lead term of the turbocharger speed estimate and its ratio to boost_fuel_scale_divisor 0x40a19e, the ambient p
+  - 2026-11-20 (task 046): `boost_pressure_current_raw` (0x40a7d0) is e2m 1A5D +0 Exhaust_Press, now `exhaust_pressure` (written by `cm848_calculateExhaustPressure`, was `phase_group_a_validateEngineSync`).
 - [W9 charge_turbo] RENDER / APPLY NOTES: every global above in 0x3F9800-0x3FDB30 (0x3fcbfe-0x3fcc1e, 0x3fd7f0, 0x3fd8ac-0x3fd8b2, 0x3fa150-0x3fa15e, 0x3fae3c-0x3fae42) was scanned in the boot ROM 0x0-0x7F5F: no user. The only type changes are 0x3fae3c byte -> word (one sth, no other access), 0x40a688 / 0x40a68e dword -> i16 and the new row 0x40a690 i16 (sth stores, lha loads, 
 - [W9 charge_turbo] EXACT ROW CHANGES FOR THE APPLIER, global_variables.csv (address,name,type); the comment of every row is the evidence / comment text of its row above with (was <old>) appended where the row had a name; rows of kind new_global are unnamed addresses with no row today, except 0x40a68a and 0x40a690 which replace the label rows deleted first (see the DELETE notes
 - [W9 charge_turbo] EXACT ROW CHANGES FOR THE APPLIER, function_renames.csv (address,name; the plate comment is plate_comment of the function row above): 0x00011170,cm848_transformChargeSystemErrors | 0x0050f4c0,cm848_updateTurbochargerSpeedSensor | 0x0050eeb0,cm848_diagnoseTurbochargerSpeedSensorFrequency | 0x0050f110,cm848_selectTurbochargerSpeedSensorSignalMode | 0x0050f178,
@@ -734,3 +735,34 @@ Three agents worked the wave-8 leftovers, applied in two stages.
 - [W9 governor] '+2' LABEL ROW (lead 6): global_variables.csv line 1291 0x003fa892,timing_compensation_accumulator+2,, must follow the rename of 0x3fa890: EXACT ROW 0x003fa892,high_speed_governor_integrator+2,, (a label-only sub-row like 0x40a206 fuel_demand_integrator_b+2; no type, no comment). align_results.py drops '+N' rows from the results, so it has to be edited by ha
 - [W9 governor] ROW-75 LIST (lead 6), item by item. (1) governor_speed_* / channel 75 deviation words near 0x507214: DONE by wave 8 - 0x507214 is cm848_evaluateEgrValvePositionControlDiagnosticConditions (was cm848_calculateSensorChannel75DeviationDiagnosticConditions) and its body now uses only egr_valve_* words; the 'PID output' it pairs with the channel 75 feedback is eg
 - [W9 governor] DROOP GAIN PROSE (lead 2): after the renames the comments of 0x40a254 / 0x40a256 and the plates of 0xff04 / 0xea00 still call the pair the integral / proportional gains. EXACT ROWS: 0x0040a254,all_speed_governor_throttle_droop_gain_1,word,CODE: write-only (0 reads, both banks) copy of all_speed_governor_droop_gain_1: cm848_calculateGovernorCompensatorCoeffic
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `sensor_channel9_pressure_value` → `intake_manifold_temperature_sensor_value`
+- `governor_setpoint_table_ptr` → `low_speed_governor_gain_set_pointer`
+- `governor_speed_error_delta` → `low_speed_governor_filtered_speed_error`
+- `cm848_calculateAmbientAirDensity` → `cm848_calculateCompressorInletDensity`
+- `engine_load_ramp_rate_upper` → `compressor_inlet_density_positive_rate_limit`
+- `ambient_air_density` → `compressor_inlet_density`
+- `fuel_demand_integrator_gain_a_cal` → `rpm_deceleration_limit_integral_gain`
+- `engine_operating_mode_restore_speed_error_previous` → `all_speed_governor_application_reset_state_speed_error_previous`
+- `cm848_restoreEngineOperatingMode` → `cm848_selectAllSpeedGovernorApplicationMode`
+- `torque_limit_init_flag` → `programmable_power_active_selection`
+- `cm848_setEngineOperatingMode5` → `cm848_selectUserCommandedFueling`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `governorCruiseStateMachine` → `cm848_initializeCruiseControlDroopGains`
+- `cm848_initEngineOperatingMode` → `cm848_selectVariableSpeedGovernorMode`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `torqueControlModeHandler` → `processEngineTsc1Request`
+
+## Resolved by PR #53 round 10 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 10 (the text above keeps its wording):
+- `cm848_initProtectionFilterValues` → `cm848_initializeAlternatorFieldControl`

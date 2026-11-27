@@ -1,0 +1,32 @@
+cm550: round 94 stage A - one sign rule for round 93's typed rows; the EEPROM image is 4 KB in the address tool
+
+Sign rule. Round 93's two typing passes decided signedness differently: pass 1 by the code's casts, pass 2 by
+Calterm's flag alone. One rule now, applied to every typed row (sign_rule_r94.py, both_views_r94.py):
+- the code decides when its uses agree. A row typed unsigned shows its signed uses as (short) / (int) casts and its
+  unsigned uses plain; typed signed, the reverse - so both renders are needed, and a cast that only packs a byte into a
+  message ((char)((ushort)x >> 8)), builds a fixed-point value ((uint)(ushort)x << 0x10) or truncates an addition is
+  not a use (cast_contexts_r94.py);
+- mixed uses, or none, leave it to Calterm's S / U flag; with no plain record, unsigned.
+Result: 3 rows word -> i16 (engine_protection_active_fault_index, jcomm_peak_fueling..., jcomm_no_load_torque...),
+5 rows i16 -> word (the_upper_limit_clamp..., hsg_pid_fuel_output_previous, crank_high / crank_low intake manifold
+temperature, output_of_the_misfire_timing_limit_table...), and active_fault_list_count i16 -> word (4 signed and 2
+unsigned uses; only a block record). A first attempt from one view turned four more rows signed; typed i16 they showed
+unsigned compares (minimum_fueling_value_0_100: 2 signed, 7 unsigned), so they are mixed and stay word.
+
+EEPROM image. e2m_block_addresses.py translated only EEPROM offsets below 0x64C (the part the bulk commit, service 21,
+writes back) to CM550's RAM image at 0x803B0A + offset. The memory services translate every EEPROM address with no
+upper bound (0x224b6 / the tool write path 0x2d30a), and 12 parameter ID table entries point at EEPROM 0x64E-0xF10 whose
+RAM images the code uses. The tool now translates the whole 4 KB, and 7 more table entries resolve to their rows
+(fault_freeze_frame_entries = e2m 107F DGFUSITB, 1920 bytes = 40 x 48; j1939_input_signal_timeouts = 12F6 MXMNFMTR;
+j1708_link_timeout_counter; cyl_balance_trim_array; ...). The fault_freeze_frame_entries comment said "No e2m record"
+(round 93); it now names DGFUSITB. Whether RAM above 0x804155 is reloaded from the EEPROM at start-up is not proved,
+so the _cal window (audit_cal_suffixes.py) is unchanged.
+
+Proof:
+- CM550 verify DETERMINISTIC; 0 functions removed / added; 13 changed, by casts only (14 fewer); statement counts
+  equal; caller artifacts unchanged (in_ 5, CONCAT 15); no new build warning.
+- test_e2m_block_addresses (the test that pinned EEPROM 0x720 as untranslated now expects 0x80422a; two tests added) /
+  test_e2m_name_audit / test_rename_waves / test_lookup_tables / test_disasm_tools pass; headers 0 g++ errors; _cal
+  HARD 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,453 @@
+[
+ {
+  "firmware": "CM550",
+  "address": "0x008057c2",
+  "current_name": "severity_index_for_epf_coolant_level_fault_0_0_1_0",
+  "proposed_name": "engine_protection_channel_history_table[0].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 0 (coolant level), field +0x2 engine_speed_severity_index: e2m 10B2 +2 EPCVRPIX 'SEVERITY INDEX FOR EPF COOLANT LEVEL FAULT.'.",
+  "evidence": "Channel 0 record = 0x8057c0 + 30 x 0 = 0x8057c0 (e2m block 10B2 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008057d8",
+  "current_name": "index_into_epf_fault_log_for_coolant_level_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[0].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 0 (coolant level), field +0x18 fueling_fault_log_index: e2m 10B2 +18 EPCVFLIN 'INDEX INTO EPF FAULT LOG FOR COOLANT LEVEL FUELING'.",
+  "evidence": "Channel 0 record = 0x8057c0 + 30 x 0 = 0x8057c0 (e2m block 10B2 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008057dc",
+  "current_name": "index_into_epf_fault_log_for_coolant_level_rpm_0_4",
+  "proposed_name": "engine_protection_channel_history_table[0].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 0 (coolant level), field +0x1c engine_speed_fault_log_index: e2m 10B2 +1C EPCVRPIN 'INDEX INTO EPF FAULT LOG FOR COOLANT LEVEL RPM'.",
+  "evidence": "Channel 0 record = 0x8057c0 + 30 x 0 = 0x8057c0 (e2m block 10B2 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008057e0",
+  "current_name": "severity_index_for_epf_coolant_temperature_fault_0_0_1_0",
+  "proposed_name": "engine_protection_channel_history_table[1].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 1 (coolant temperature), field +0x2 engine_speed_severity_index: e2m 1140 +2 EPCQRPIX 'SEVERITY INDEX FOR EPF COOLANT TEMPERATURE FAULT.'.",
+  "evidence": "Channel 1 record = 0x8057c0 + 30 x 1 = 0x8057de (e2m block 1140 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008057f6",
+  "current_name": "index_into_epf_fault_log_for_coolant_temp_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[1].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 1 (coolant temperature), field +0x18 fueling_fault_log_index: e2m 1140 +18 EPCQFLIN 'INDEX INTO EPF FAULT LOG FOR COOLANT TEMP FUELING'.",
+  "evidence": "Channel 1 record = 0x8057c0 + 30 x 1 = 0x8057de (e2m block 1140 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008057fa",
+  "current_name": "index_into_epf_fault_log_for_coolant_temp_rpm_0_4",
+  "proposed_name": "engine_protection_channel_history_table[1].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 1 (coolant temperature), field +0x1c engine_speed_fault_log_index: e2m 1140 +1C EPCQRPIN 'INDEX INTO EPF FAULT LOG FOR COOLANT TEMP RPM'.",
+  "evidence": "Channel 1 record = 0x8057c0 + 30 x 1 = 0x8057de (e2m block 1140 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805814",
+  "current_name": "index_into_epf_fault_log_for_intake_temp_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[2].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 2 (intake manifold temperature), field +0x18 fueling_fault_log_index: e2m 1141 +18 EPIMFLIN 'INDEX INTO EPF FAULT LOG FOR INTAKE TEMP FUELING'.",
+  "evidence": "Channel 2 record = 0x8057c0 + 30 x 2 = 0x8057fc (e2m block 1141 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805818",
+  "current_name": "index_into_epf_fault_log_for_intake_temp_rpm_0_4",
+  "proposed_name": "engine_protection_channel_history_table[2].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 2 (intake manifold temperature), field +0x1c engine_speed_fault_log_index: e2m 1141 +1C EPIMRPIN 'INDEX INTO EPF FAULT LOG FOR INTAKE TEMP RPM'.",
+  "evidence": "Channel 2 record = 0x8057c0 + 30 x 2 = 0x8057fc (e2m block 1141 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080581c",
+  "current_name": "severity_index_for_epf_oil_pressure_fault_0_0_1_0",
+  "proposed_name": "engine_protection_channel_history_table[3].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x2 engine_speed_severity_index: e2m 1142 +2 EPO2RPIX 'SEVERITY INDEX FOR EPF OIL PRESSURE FAULT.'.",
+  "evidence": "Channel 3 record = 0x8057c0 + 30 x 3 = 0x80581a (e2m block 1142 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805832",
+  "current_name": "index_into_epf_fault_log_for_oil_pressure_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[3].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x18 fueling_fault_log_index: e2m 1142 +18 EPO2FLIN 'INDEX INTO EPF FAULT LOG FOR OIL PRESSURE FUELING'.",
+  "evidence": "Channel 3 record = 0x8057c0 + 30 x 3 = 0x80581a (e2m block 1142 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805836",
+  "current_name": "index_into_epf_fault_log_for_oil_pressure_rpm_0_4",
+  "proposed_name": "engine_protection_channel_history_table[3].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x1c engine_speed_fault_log_index: e2m 1142 +1C EPO2RPIN 'INDEX INTO EPF FAULT LOG FOR OIL PRESSURE RPM'.",
+  "evidence": "Channel 3 record = 0x8057c0 + 30 x 3 = 0x80581a (e2m block 1142 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080583a",
+  "current_name": "severity_index_for_epf_water_in_fuel_fault_0_0_0_1",
+  "proposed_name": "engine_protection_channel_history_table[4].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 4 (water in fuel), field +0x2 engine_speed_severity_index: e2m 1143 +2 EPWFRPIX 'SEVERITY INDEX FOR EPF WATER IN FUEL FAULT'.",
+  "evidence": "Channel 4 record = 0x8057c0 + 30 x 4 = 0x805838 (e2m block 1143 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805850",
+  "current_name": "index_into_epf_fault_log_for_water_in_fuel_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[4].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 4 (water in fuel), field +0x18 fueling_fault_log_index: e2m 1143 +18 EPWFFLIN 'INDEX INTO EPF FAULT LOG FOR WATER IN FUEL FUELING'.",
+  "evidence": "Channel 4 record = 0x8057c0 + 30 x 4 = 0x805838 (e2m block 1143 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805854",
+  "current_name": "index_into_epf_fault_log_for_water_in_fuel_0_4",
+  "proposed_name": "engine_protection_channel_history_table[4].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 4 (water in fuel), field +0x1c engine_speed_fault_log_index: e2m 1143 +1C EPWFRPIN 'INDEX INTO EPF FAULT LOG FOR WATER IN FUEL'.",
+  "evidence": "Channel 4 record = 0x8057c0 + 30 x 4 = 0x805838 (e2m block 1143 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805858",
+  "current_name": "severity_index_for_epf_boost_pressure_fault_0_0_0_1",
+  "proposed_name": "engine_protection_channel_history_table[5].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 5 (boost pressure), field +0x2 engine_speed_severity_index: e2m 1144 +2 EPBSRPIX 'SEVERITY INDEX FOR EPF BOOST PRESSURE FAULT'.",
+  "evidence": "Channel 5 record = 0x8057c0 + 30 x 5 = 0x805856 (e2m block 1144 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080586e",
+  "current_name": "index_into_epf_fault_log_for_boost_pressure_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[5].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 5 (boost pressure), field +0x18 fueling_fault_log_index: e2m 1144 +18 EPBSFLIN 'INDEX INTO EPF FAULT LOG FOR BOOST PRESSURE FUELING'.",
+  "evidence": "Channel 5 record = 0x8057c0 + 30 x 5 = 0x805856 (e2m block 1144 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805872",
+  "current_name": "index_into_epf_fault_log_for_boost_pressure_0_4",
+  "proposed_name": "engine_protection_channel_history_table[5].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 5 (boost pressure), field +0x1c engine_speed_fault_log_index: e2m 1144 +1C EPBSRPIN 'INDEX INTO EPF FAULT LOG FOR BOOST PRESSURE'.",
+  "evidence": "Channel 5 record = 0x8057c0 + 30 x 5 = 0x805856 (e2m block 1144 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805876",
+  "current_name": "severity_index_for_epf_engine_sync_fuel_pressure_fault_0_0_0_1",
+  "proposed_name": "engine_protection_channel_history_table[6].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 6 (engine sync fuel pressure), field +0x2 engine_speed_severity_index: e2m 1145 +2 EPFPRPIX 'SEVERITY INDEX FOR EPF ENGINE SYNC FUEL PRESSURE FAULT'.",
+  "evidence": "Channel 6 record = 0x8057c0 + 30 x 6 = 0x805874 (e2m block 1145 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080588c",
+  "current_name": "index_into_epf_fault_log_for_engine_sync_fuel_pressure_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[6].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 6 (engine sync fuel pressure), field +0x18 fueling_fault_log_index: e2m 1145 +18 EPFPFLIN 'INDEX INTO EPF FAULT LOG FOR ENGINE SYNC FUEL PRESSURE FUELING'.",
+  "evidence": "Channel 6 record = 0x8057c0 + 30 x 6 = 0x805874 (e2m block 1145 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00805890",
+  "current_name": "index_into_epf_fault_log_for_engine_sync_fuel_pressure_0_4",
+  "proposed_name": "engine_protection_channel_history_table[6].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 6 (engine sync fuel pressure), field +0x1c engine_speed_fault_log_index: e2m 1145 +1C EPFPRPIN 'INDEX INTO EPF FAULT LOG FOR ENGINE SYNC FUEL PRESSURE'.",
+  "evidence": "Channel 6 record = 0x8057c0 + 30 x 6 = 0x805874 (e2m block 1145 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008058aa",
+  "current_name": "index_into_epf_fault_log_for_fuel_temperature_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[7].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 7 (fuel temperature), field +0x18 fueling_fault_log_index: e2m 1146 +18 EPFTFLIN 'INDEX INTO EPF FAULT LOG FOR FUEL TEMPERATURE FUELING'.",
+  "evidence": "Channel 7 record = 0x8057c0 + 30 x 7 = 0x805892 (e2m block 1146 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008058ae",
+  "current_name": "index_into_epf_fault_log_for_fuel_temperature_rpm_errors_0_4",
+  "proposed_name": "engine_protection_channel_history_table[7].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 7 (fuel temperature), field +0x1c engine_speed_fault_log_index: e2m 1146 +1C EPFTRPIN 'INDEX INTO EPF FAULT LOG FOR FUEL TEMPERATURE RPM ERRORS'.",
+  "evidence": "Channel 7 record = 0x8057c0 + 30 x 7 = 0x805892 (e2m block 1146 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008058b2",
+  "current_name": "severity_index_for_epf_ambient_air_pressure_fault_0_0_0_1",
+  "proposed_name": "engine_protection_channel_history_table[8].engine_speed_severity_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 8 (ambient air pressure), field +0x2 engine_speed_severity_index: e2m 1147 +2 EPAARPIX 'SEVERITY INDEX FOR EPF AMBIENT AIR PRESSURE FAULT'.",
+  "evidence": "Channel 8 record = 0x8057c0 + 30 x 8 = 0x8058b0 (e2m block 1147 resolves there); field +0x2: word written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4 with a2 = 0x8057c0 + 30n) and read by rampEngineProtectionSeverityIndex (move.w (0x2,a1) at 0x186d4), processDiagnosticLimitStatus (tst.w (0x8057c2 + 30n) at 0x190a6) and logEngineProtectionChannelFaults (tst.w (0x2,a0) at 0x19600).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008058c8",
+  "current_name": "index_into_epf_fault_log_for_ambient_air_pressure_fueling_0_4",
+  "proposed_name": "engine_protection_channel_history_table[8].fueling_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 8 (ambient air pressure), field +0x18 fueling_fault_log_index: e2m 1147 +18 EPAAFLIN 'INDEX INTO EPF FAULT LOG FOR AMBIENT AIR PRESSURE FUELING'.",
+  "evidence": "Channel 8 record = 0x8057c0 + 30 x 8 = 0x8058b0 (e2m block 1147 resolves there); field +0x18: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x18,a0),d3 at 0x1934c, a0 = engine_protection_current_history = 0x8057c0 + 30n) as the entry index of the fueling log; cm550_closeEngineProtectionFaultLogEntry takes history + 24 (0x19448) and advances it modulo 5 (addq.w / divsl #5 at 0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008058cc",
+  "current_name": "index_into_epf_fault_log_for_ambient_air_pressure_0_4",
+  "proposed_name": "engine_protection_channel_history_table[8].engine_speed_fault_log_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_history_table engine_protection_channel_history_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_history_table (0x8057c0, engine_protection_channel_history_t[9]): delete this flat row. It is channel 8 (ambient air pressure), field +0x1c engine_speed_fault_log_index: e2m 1147 +1C EPAARPIN 'INDEX INTO EPF FAULT LOG FOR AMBIENT AIR PRESSURE'.",
+  "evidence": "Channel 8 record = 0x8057c0 + 30 x 8 = 0x8058b0 (e2m block 1147 resolves there); field +0x1c: word read by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d3 at 0x1936c) as the entry index of the engine speed log; cm550_closeEngineProtectionFaultLogEntry takes history + 28 (0x19468) and advances it modulo 5 (0x19518-0x19524).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080704c",
+  "current_name": "fault_index_indicating_epf_coolant_level_fuel_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[0].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 0 (coolant level), field +0x1a fueling_fault_index: e2m 10B7 +1A EPCVFLFU 'FAULT INDEX INDICATING EPF COOLANT LEVEL FUEL ERROR FOUND'.",
+  "evidence": "Channel 0 record = 0x807032 + 36 x 0 = 0x807032 (e2m block 10B7 resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080704e",
+  "current_name": "fault_index_indicating_epf_coolant_level_rpm_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[0].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 0 (coolant level), field +0x1c engine_speed_fault_index: e2m 10B7 +1C EPCVRPFU 'FAULT INDEX INDICATING EPF COOLANT LEVEL RPM ERROR FOUND'.",
+  "evidence": "Channel 0 record = 0x807032 + 36 x 0 = 0x807032 (e2m block 10B7 resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807070",
+  "current_name": "fault_index_indicating_epf_coolant_temp_fuel_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[1].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 1 (coolant temperature), field +0x1a fueling_fault_index: e2m 112B +1A EPCQFLFU 'FAULT INDEX INDICATING EPF COOLANT TEMP FUEL ERROR FOUND'.",
+  "evidence": "Channel 1 record = 0x807032 + 36 x 1 = 0x807056 (e2m block 112B resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807072",
+  "current_name": "fault_index_indicating_epf_coolant_temp_rpm_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[1].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 1 (coolant temperature), field +0x1c engine_speed_fault_index: e2m 112B +1C EPCQRPFU 'FAULT INDEX INDICATING EPF COOLANT TEMP RPM ERROR FOUND'.",
+  "evidence": "Channel 1 record = 0x807032 + 36 x 1 = 0x807056 (e2m block 112B resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807094",
+  "current_name": "fault_index_indicating_epf_imt_fuel_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[2].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 2 (intake manifold temperature), field +0x1a fueling_fault_index: e2m 112C +1A EPIMFLFU 'FAULT INDEX INDICATING EPF IMT FUEL ERROR FOUND'.",
+  "evidence": "Channel 2 record = 0x807032 + 36 x 2 = 0x80707a (e2m block 112C resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807096",
+  "current_name": "fault_index_indicating_epf_imt_rpm_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[2].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 2 (intake manifold temperature), field +0x1c engine_speed_fault_index: e2m 112C +1C EPIMRPFU 'FAULT INDEX INDICATING EPF IMT RPM ERROR FOUND'.",
+  "evidence": "Channel 2 record = 0x807032 + 36 x 2 = 0x80707a (e2m block 112C resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008070a4",
+  "current_name": "time_to_reach_full_derate_during_oil_pressure_engine_prot_0_0039_256_70a4",
+  "proposed_name": "engine_protection_channel_configuration_table[3].fueling_ramp_rate",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x6 fueling_ramp_rate: e2m 112D +6 EPO2FLIC 'TIME TO REACH FULL DERATE DURING OIL PRESSURE ENGINE PROT'.",
+  "evidence": "Channel 3 record = 0x807032 + 36 x 3 = 0x80709e (e2m block 112D resolves there); field +0x6: word read by rampEngineProtectionSeverityIndex as the fueling severity step (move.w (0x6,a2),d3 at 0x186ce, a2 = 0x807032 + 36n).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008070a6",
+  "current_name": "time_to_reach_full_derate_during_oil_pressure_engine_prot_0_0039_256_70a6",
+  "proposed_name": "engine_protection_channel_configuration_table[3].engine_speed_ramp_rate",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x8 engine_speed_ramp_rate: e2m 112D +8 EPO2RPIC 'TIME TO REACH FULL DERATE DURING OIL PRESSURE ENGINE PROT'.",
+  "evidence": "Channel 3 record = 0x807032 + 36 x 3 = 0x80709e (e2m block 112D resolves there); field +0x8: word read by rampEngineProtectionSeverityIndex as the engine speed severity step (move.w (0x8,a2),d3 at 0x186e0).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008070b8",
+  "current_name": "fault_index_indicating_epf_oil_pressure_fuel_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[3].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x1a fueling_fault_index: e2m 112D +1A EPO2FLFU 'FAULT INDEX INDICATING EPF OIL PRESSURE FUEL ERROR FOUND'.",
+  "evidence": "Channel 3 record = 0x807032 + 36 x 3 = 0x80709e (e2m block 112D resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008070ba",
+  "current_name": "fault_index_indicating_epf_oil_pressure_rpm_error_found_0_ffff",
+  "proposed_name": "engine_protection_channel_configuration_table[3].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 3 (oil pressure), field +0x1c engine_speed_fault_index: e2m 112D +1C EPO2RPFU 'FAULT INDEX INDICATING EPF OIL PRESSURE RPM ERROR FOUND'.",
+  "evidence": "Channel 3 record = 0x807032 + 36 x 3 = 0x80709e (e2m block 112D resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008070dc",
+  "current_name": "fault_when_epf_water_in_fuel_fuel_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[4].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 4 (water in fuel), field +0x1a fueling_fault_index: e2m 112E +1A EPWFFLFU 'FAULT WHEN EPF WATER IN FUEL FUEL ERROR FOUND'.",
+  "evidence": "Channel 4 record = 0x807032 + 36 x 4 = 0x8070c2 (e2m block 112E resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008070de",
+  "current_name": "fault_when_epf_water_in_fuel_rpm_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[4].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 4 (water in fuel), field +0x1c engine_speed_fault_index: e2m 112E +1C EPWFRPFU 'FAULT WHEN EPF WATER IN FUEL RPM ERROR FOUND'.",
+  "evidence": "Channel 4 record = 0x807032 + 36 x 4 = 0x8070c2 (e2m block 112E resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807100",
+  "current_name": "fault_when_epf_boost_pressure_fuel_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[5].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 5 (boost pressure), field +0x1a fueling_fault_index: e2m 112F +1A EPBSFLFU 'FAULT WHEN EPF BOOST PRESSURE FUEL ERROR FOUND'.",
+  "evidence": "Channel 5 record = 0x807032 + 36 x 5 = 0x8070e6 (e2m block 112F resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807102",
+  "current_name": "fault_when_epf_engine_boost_pressure_rpm_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[5].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 5 (boost pressure), field +0x1c engine_speed_fault_index: e2m 112F +1C EPBSRPFU 'FAULT WHEN EPF ENGINE BOOST PRESSURE RPM ERROR FOUND'.",
+  "evidence": "Channel 5 record = 0x807032 + 36 x 5 = 0x8070e6 (e2m block 112F resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807124",
+  "current_name": "fault_when_epf_engine_sync_fuel_pressure_fuel_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[6].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 6 (engine sync fuel pressure), field +0x1a fueling_fault_index: e2m 1130 +1A EPFPFLFU 'FAULT WHEN EPF ENGINE SYNC FUEL PRESSURE FUEL ERROR FOUND'.",
+  "evidence": "Channel 6 record = 0x807032 + 36 x 6 = 0x80710a (e2m block 1130 resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807126",
+  "current_name": "fault_when_epf_engine_sync_fuel_pressure_rpm_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[6].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 6 (engine sync fuel pressure), field +0x1c engine_speed_fault_index: e2m 1130 +1C EPFPRPFU 'FAULT WHEN EPF ENGINE SYNC FUEL PRESSURE RPM ERROR FOUND'.",
+  "evidence": "Channel 6 record = 0x807032 + 36 x 6 = 0x80710a (e2m block 1130 resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807134",
+  "current_name": "time_to_reach_full_derate_w_fuel_temperature_engine_prot_0_0039_256_7134",
+  "proposed_name": "engine_protection_channel_configuration_table[7].fueling_ramp_rate",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 7 (fuel temperature), field +0x6 fueling_ramp_rate: e2m 1131 +6 EPFTFLIC 'TIME TO REACH FULL DERATE W/ FUEL TEMPERATURE ENGINE PROT'.",
+  "evidence": "Channel 7 record = 0x807032 + 36 x 7 = 0x80712e (e2m block 1131 resolves there); field +0x6: word read by rampEngineProtectionSeverityIndex as the fueling severity step (move.w (0x6,a2),d3 at 0x186ce, a2 = 0x807032 + 36n).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807136",
+  "current_name": "time_to_reach_full_derate_w_fuel_temperature_engine_prot_0_0039_256_7136",
+  "proposed_name": "engine_protection_channel_configuration_table[7].engine_speed_ramp_rate",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 7 (fuel temperature), field +0x8 engine_speed_ramp_rate: e2m 1131 +8 EPFTRPIC 'TIME TO REACH FULL DERATE W/ FUEL TEMPERATURE ENGINE PROT'.",
+  "evidence": "Channel 7 record = 0x807032 + 36 x 7 = 0x80712e (e2m block 1131 resolves there); field +0x8: word read by rampEngineProtectionSeverityIndex as the engine speed severity step (move.w (0x8,a2),d3 at 0x186e0).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080716c",
+  "current_name": "fault_when_epf_ambient_air_pressure_fuel_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[8].fueling_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 8 (ambient air pressure), field +0x1a fueling_fault_index: e2m 1132 +1A EPAAFLFU 'FAULT WHEN EPF AMBIENT AIR PRESSURE FUEL ERROR FOUND'.",
+  "evidence": "Channel 8 record = 0x807032 + 36 x 8 = 0x807152 (e2m block 1132 resolves there); field +0x1a: word read as the fueling fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1a,a0),d2 at 0x19352, a0 = engine_protection_current_configuration = 0x807032 + 36n; the bit is set in 0x806000 / 0x806040 at 0x193da / 0x193ea) and cm550_closeEngineProtectionFaultLogEntry (0x19452).",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080716e",
+  "current_name": "fault_when_epf_ambient_air_pressure_rpm_error_found_0_65535",
+  "proposed_name": "engine_protection_channel_configuration_table[8].engine_speed_fault_index",
+  "proposed_type": "(delete the row: a word field of the struct array engine_protection_channel_configuration_table engine_protection_channel_configuration_t[9])",
+  "comment": "Absorbed by the struct array engine_protection_channel_configuration_table (0x807032, engine_protection_channel_configuration_t[9]): delete this flat row. It is channel 8 (ambient air pressure), field +0x1c engine_speed_fault_index: e2m 1132 +1C EPAARPFU 'FAULT WHEN EPF AMBIENT AIR PRESSURE RPM ERROR FOUND'.",
+  "evidence": "Channel 8 record = 0x807032 + 36 x 8 = 0x807152 (e2m block 1132 resolves there); field +0x1c: word read as the engine speed fault bit number by cm550_recordEngineProtectionFaultLogEntry (move.w (0x1c,a0),d2 at 0x19372) and cm550_closeEngineProtectionFaultLogEntry (0x19472).",
+  "confidence": "high"
+ }
+]
+45

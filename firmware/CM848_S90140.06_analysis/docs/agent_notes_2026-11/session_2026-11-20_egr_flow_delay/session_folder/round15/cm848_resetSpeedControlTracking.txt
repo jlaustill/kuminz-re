@@ -1,0 +1,11 @@
+=== cm848_resetSpeedControlTracking (lines 27522-27536, 10 non-blank)
+// Function: cm848_resetSpeedControlTracking @ 0x000285e4
+//
+void cm848_resetSpeedControlTracking(void)
+{
+  cm848_initGovernorTimerCountersWrapper();
+  governor_speed_low_clamp = 0;
+  governor_speed_error_prev_snapshot = 0;
+  return;
+}
+//

@@ -1,0 +1,14 @@
+cm848: round 19 stage C - the ANC pass-through into the combustion limits input (label-only)
+
+The ANC timing stage (e2m 10A4, enables in 106B +8) is compiled out of this build: its RAM words 0x40a04a-0x40a05c
+have no access. Its output ANC_SOI (10A4 +14, 'Timing output of anc_time; input to CBL') is
+injection_timing_combustion_limits_input (was injection_timing_compensated_reference_previous; the combustion limits
+step reads it). cm848_passCompensatedTimingToCombustionLimits (was cm848_storeFuelDemandPreviousValues) fills it each
+pass from the off-nominal compensated reference (1711 +8 CBO_SOI_Ref), with its write-only copy and source words
+(0x3fa700 / 0x3fa702, were fuel_correction_output_b_working / fuel_correction_timer_counter; the source is 25,
+COMBUSTION_REFERENCE). 'ANC' is not spelled out in the e2m, so the names use the role.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT. Headers regenerated (0 g++
+errors), the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

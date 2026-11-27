@@ -1,0 +1,20 @@
+docs: round 3 of task 046 - the TPE / exhaust / delta pressure and engine speed names, the signedness sweep, the session archive
+
+- Task 046: the Done section for stages 5-8, the naming lesson (keep
+  struct field names distinct from global names: the proof's global
+  reversal rewrites .field too), the pruned leads (the engine speed
+  module's functions, the sweep's has-lhz / no-load remainder, the
+  low-overlap rows).
+- todo 046: round 3.
+- firmware/CLAUDE.md: the TPE charge pressure estimate, the exhaust
+  pressure sensor, the engine speed block (819B) and the signedness
+  sweep as a technique; the live data table names 0x0040B7BA
+  engine_speed_state.filtered_engine_speed.
+- docs/service_0x4a_protocol.md: the same name for 0x0040B7BA.
+- Session archive: the stage 5-8 scripts and mappings, the investigation
+  helpers (symbol_e2m_table.py, use_lines.py, fault_dtc.py), the sweep's
+  classifier and its result signed_loads.csv, the cast-normalized
+  proof, commit messages 9-12, the PR text, and build8-14 / verify3 in
+  the tar.xz (checked to restore byte-identically).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

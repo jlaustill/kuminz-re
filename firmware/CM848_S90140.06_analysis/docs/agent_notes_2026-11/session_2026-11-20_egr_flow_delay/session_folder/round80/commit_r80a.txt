@@ -1,0 +1,28 @@
+cm550: round 80 stage A - the chip select 2 device's watchdog service register; the EEPROM log's indexes typed; the 82527s' bit timing recorded
+
+From round 79's leads:
+- 0xFFD00F CS2_WATCHDOG_SERVICE. Every watchdog service writes SIM_SWSR = 0x55 / 0xaa and then the same pair here (64
+  + 64 writes). The device on chip select 2 (SIM_CSBAR2 = 0xffd0) is an output driver: its 0xFFD004 / 0xFFD006 take
+  the warning lamp driver enable bit and the commanded driver state. Its other registers stay unnamed because the part
+  is not identified.
+- The EEPROM log, from round 76's parameter buffer lead:
+  - cm550_parameterCircularBufferWrite stores entry i as a word at 0x80BDA8 + 2 i and a byte at 0x80C7A8 + i (i
+    modulo 0x500), and the QSPI path sends entries through QSM_TR4 / QSM_TR5.
+  - Its read index 0x80CCA8 (new: eeprom_circular_buffer_read_index), write index 0x80CCAA and pending count 0x80CCAC
+    are words (move.w / addq.w / tst.w). The write index and the count drop their '_' prefixes.
+  - Not changed, recorded as a lead: 182 global rows lie inside the log's 0x80BDA8-0x80CCA7. None renders, and none has
+    an absolute access in the dumped ROM. They look like old misnames of log contents, but CM550's dump ends at 256 KB,
+    so the code above 0x40000 is not seen.
+- The 82527s' bit timing, from the RAM dump, goes into the four bit timing rows' comments: CPU interface 0x41 (DSC 1),
+  BTR0 0x01, BTR1 0x1c on both controllers, which is XTAL / 64 = 250 kbit/s with a 16 MHz crystal. The bit rate does not
+  tell the two buses apart. CS5's 11-bit identifiers still rule out J1939 there.
+
+Proof:
+- CM550 verify is DETERMINISTIC.
+- The .cpp changes are the 128 watchdog writes (DAT_00ffd00f -> CS2_WATCHDOG_SERVICE), the log indexes losing their
+  '_' prefixes (and _DAT_0080cca8 -> eeprom_circular_buffer_read_index), one underscore-overlap warning gone, and one
+  local declaration reordered.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_lookup_tables and
+  test_rename_waves pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

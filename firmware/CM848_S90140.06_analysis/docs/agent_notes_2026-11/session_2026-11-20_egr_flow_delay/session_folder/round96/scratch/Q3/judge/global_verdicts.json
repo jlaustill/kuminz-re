@@ -1,0 +1,1266 @@
+[
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807ce4",
+  "verdict": "CONFIRMED",
+  "final_name": "accelerator_pedal_highest_valid_minimum",
+  "final_type": "word",
+  "reason": "e2m 1048 +6 CTHISATH, no row; 4 move.w reads (0x10a50 / 0x10c76 / 0x10c94 in vp44_derateThresholdMonitorAndFaultController, 0x10e06); CM848 0x5c294 same record and name; not EEPROM."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80052c",
+  "verdict": "CONFIRMED",
+  "final_name": "friction_fuel_coolant_temperature_correction",
+  "final_type": "word",
+  "reason": "No e2m record; only refs 0x143d6 move.w write (0x143b6, the coolant correction lookup result) and 0x1430a add.w read (0x142d4); word. CM848 keeps the value in throttle_demand_offset_cal_working."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807d4c",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_peak_fueling_tau_0",
+  "final_type": "word",
+  "reason": "e2m 10DF+A JCMXT0FL (e2m 2 bytes unsigned); 6 absolute refs, all at the width of word; name unique in CM550; replaces 'jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807d4e",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_rated_speed_tau_0",
+  "final_type": "word",
+  "reason": "e2m 10DF+C JCRTT0RP (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; replaces 'shutdown_protection_step_2'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807d50",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_speed_breakpoint_3_tau_0",
+  "final_type": "word",
+  "reason": "e2m 10DF+E JCT0RP03 (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; replaces 'shutdown_protection_step_1'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807d52",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_speed_breakpoint_4_tau_0",
+  "final_type": "word",
+  "reason": "e2m 10DF+10 JCT0RP04 (e2m 2 bytes unsigned); 4 absolute refs, all at the width of word; name unique in CM550; replaces 'engine_running_timer_threshold'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807d54",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_speed_breakpoint_5_tau_0",
+  "final_type": "word",
+  "reason": "e2m 10DF+12 JCT0RP05 (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; replaces 'frictional_load_torque_table_value'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80bc82",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_friction_load_fueling_at_low_idle",
+  "final_type": "word",
+  "reason": "e2m 10E2+E JCFCLDIS (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; replaces 'frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80bc84",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_friction_load_fueling_at_rated_speed",
+  "final_type": "word",
+  "reason": "e2m 10E2+10 JCFCBKRR (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; replaces 'frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80bc86",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_friction_load_fueling_at_breakpoint_3",
+  "final_type": "word",
+  "reason": "e2m 10E2+12 JCFCBK03 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; replaces 'frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80bc88",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_friction_load_fueling_at_breakpoint_4",
+  "final_type": "word",
+  "reason": "e2m 10E2+14 JCFCBK04 (e2m 2 bytes unsigned); 8 absolute refs, all at the width of word; name unique in CM550; replaces 'frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80bc8a",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_friction_load_fueling_at_breakpoint_5",
+  "final_type": "word",
+  "reason": "e2m 10E2+16 JCFCBK05 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; replaces 'frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80de78",
+  "verdict": "CONFIRMED",
+  "final_name": "diagnostic_fault_to_erase",
+  "final_type": "word",
+  "reason": "e2m 1080+0 FLT2ERAS (e2m 2 bytes unsigned); 4 absolute refs, all at the width of word; name unique in CM550; replaces 'fault_to_erase_none'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f3e",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_low_speed_governor_intercept_fueling",
+  "final_type": "word",
+  "reason": "e2m 12BA+0 EPLSINFL (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; replaces 'intercept_fueling_between_lsg_ref_and_the_epf_curve_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f40",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_high_speed_governor_intercept_fueling",
+  "final_type": "word",
+  "reason": "e2m 12BA+2 EPHSINFL (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; replaces 'intercept_fueling_between_hsg_brkpt_and_the_epf_curve_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f42",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_engine_speed_point_2",
+  "final_type": "word",
+  "reason": "e2m 12BA+4 EPRPP2 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f44",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_engine_speed_point_3",
+  "final_type": "word",
+  "reason": "e2m 12BA+6 EPRPP3 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f46",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_engine_speed_point_4",
+  "final_type": "word",
+  "reason": "e2m 12BA+8 EPRPP4 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f48",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_engine_speed_point_5",
+  "final_type": "word",
+  "reason": "e2m 12BA+A EPRPP5 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f4a",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_priority_bit_position",
+  "final_type": "word",
+  "reason": "e2m 12BA+C EPTQPZ (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807f4c",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_curve_clamp_priority_mask",
+  "final_type": "word",
+  "reason": "e2m 12BA+E EPTQCG (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80060c",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_torque_curve_priority_bit",
+  "final_type": "word",
+  "reason": "no e2m record; 5 absolute refs, all at the width of word; name unique in CM550; replaces 'epf_source_bitmask'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80d0da",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_pgn65251_speed_points_request_flags",
+  "final_type": "word",
+  "reason": "e2m 12BB+0 EPAERPST (e2m 2 bytes unsigned); 8 absolute refs, all at the width of word; name unique in CM550; replaces 'state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80d286",
+  "verdict": "CONFIRMED",
+  "final_name": "fault_derate_active_flag",
+  "final_type": "word",
+  "reason": "e2m 10B1+C EPFLLMSS (e2m 2 bytes unsigned); 6 absolute refs, all at the width of word; name unique in CM550; replaces 'indicator_from_engine_protection_that_fuel_derate_1_active_0_inact'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80daf4",
+  "verdict": "CONFIRMED",
+  "final_name": "low_speed_governor_droop_selected_slope",
+  "final_type": "i16",
+  "reason": "e2m 1065+16 LSDPSE (e2m 2 bytes signed); 3 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x808010",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_pgn65251_speed_at_point_1_low_speed_governor_offset",
+  "final_type": "i16",
+  "reason": "e2m 12BD+0 JCLSRFOF (e2m range -3600..3600; the only read sign-extends it, ext.l at 0x1c858); 3 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x808014",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_pgn65251_speed_at_point_3",
+  "final_type": "word",
+  "reason": "e2m 12BD+4 PPTHES03 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x808016",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_pgn65251_speed_at_point_4",
+  "final_type": "word",
+  "reason": "e2m 12BD+6 PPTHES04 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x808018",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_pgn65251_speed_at_point_5",
+  "final_type": "word",
+  "reason": "e2m 12BD+8 PPTHES05 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80801a",
+  "verdict": "CONFIRMED",
+  "final_name": "throttle_100_fueling_point_clamp_bitmap",
+  "final_type": "word",
+  "reason": "e2m 12BD+A FSMXTHCG (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; replaces 'bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80801c",
+  "verdict": "CONFIRMED",
+  "final_name": "throttle_100_priority_bit_index",
+  "final_type": "word",
+  "reason": "e2m 12BD+C FSMXMNCG (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; replaces 'bitmap_indicating_which_algorithms_wish_to_set_rpms_0_15'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8006e6",
+  "verdict": "CONFIRMED",
+  "final_name": "throttle_100_speed_points_request_bit",
+  "final_type": "word",
+  "reason": "no e2m record; 2 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_feature_bitmask'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8006e8",
+  "verdict": "CONFIRMED",
+  "final_name": "throttle_100_speed_points_request_bit_initialized_flag",
+  "final_type": "word",
+  "reason": "no e2m record; 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da38",
+  "verdict": "AMENDED",
+  "final_name": "j1939_torque_curve_speed_at_point_1",
+  "final_type": "word",
+  "final_comment": "e2m 1102 +22 JCTQRPP1 'torque curve speed at breakpoint 1 (LSG reference)': written by the torque curve requesters cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints and cm550_setThrottle100J1939TorqueCurveSpeedPoints and by vp44State2TransitionHandler (0xfa06: the LSG reference less the droop term at the idle fueling), a helper (directly and through 0xfa68) of the torque curve update vp44_fuelLimitExceedanceStatisticsAccumulator (0xfb26, the second call of buildPgn65251EngineConfiguration1Payload); those vp44_ names are old automatic names, not evidence of VP44 code. The same record and name as CM848 0x40adac.",
+  "reason": "Name and word type CONFIRMED (e2m 1102 +22, 11 word refs; CM848 0x40adac same name). AMENDED comment: 'the VP44 derate code' rests on current names only; the writers at 0xfa0c-0xfefe are vp44State2TransitionHandler / 0xfa68 / cm550_calculateGovernorDroopSpeed, all called only by vp44_fuelLimitExceedanceStatisticsAccumulator, which buildPgn65251EngineConfiguration1Payload calls right after the fault derate step (the place of CM848's cm848_updateJ1939EngineConfigurationTorqueCurve)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da3a",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_speed_at_point_2",
+  "final_type": "word",
+  "reason": "e2m 1102+24 JCTQRPP2 (e2m 2 bytes unsigned); 6 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da3c",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_speed_at_point_3",
+  "final_type": "word",
+  "reason": "e2m 1102+26 JCTQRPP3 (e2m 2 bytes unsigned); 6 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_speed_at_breakpoint_3_0_5000'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da3e",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_speed_at_point_4",
+  "final_type": "word",
+  "reason": "e2m 1102+28 JCTQRPP4 (e2m 2 bytes unsigned); 9 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_speed_at_breakpoint_4_0_5000'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da40",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_speed_at_point_5",
+  "final_type": "word",
+  "reason": "e2m 1102+2A JCTQRPP5 (e2m 2 bytes unsigned); 6 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_speed_at_breakpoint_5_0_5000'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da42",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_fueling_at_point_1",
+  "final_type": "word",
+  "reason": "e2m 1102+2C JCTQFLP1 (e2m 2 bytes unsigned); 12 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_fueling_at_idle_speed_breakpoint_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da44",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_fueling_at_point_2",
+  "final_type": "word",
+  "reason": "e2m 1102+2E JCTQFLP2 (e2m 2 bytes unsigned); 8 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_fueling_at_point_2_speed_breakpoint_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da46",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_fueling_at_point_3",
+  "final_type": "word",
+  "reason": "e2m 1102+30 JCTQFLP3 (e2m 2 bytes unsigned); 13 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_fueling_at_point_3_speed_breakpoint_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da48",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_fueling_at_point_4",
+  "final_type": "word",
+  "reason": "e2m 1102+32 JCTQFLP4 (e2m 2 bytes unsigned); 12 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_fueling_at_point_4_speed_breakpoint_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80da4a",
+  "verdict": "CONFIRMED",
+  "final_name": "j1939_torque_curve_fueling_at_point_5",
+  "final_type": "word",
+  "reason": "e2m 1102+34 JCTQFLP5 (e2m 2 bytes unsigned); 9 absolute refs, all at the width of word; name unique in CM550; replaces 'torque_curve_fueling_at_point_5_speed_breakpoint_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80061e",
+  "verdict": "CONFIRMED",
+  "final_name": "engine_protection_power_up_shutdown_channel",
+  "final_type": "i16",
+  "reason": "Refs 0x192e0 move.w write and 0x1927e cmp.w only (word); copy of engine_protection_active_fault_index (i16); CM848 0x3fbd3a same name i16."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80d33e",
+  "verdict": "CONFIRMED",
+  "final_name": "four_dimensional_fueling",
+  "final_type": "word",
+  "reason": "e2m 1053+0 5DFL (e2m 2 bytes unsigned); 4 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80d340",
+  "verdict": "AMENDED",
+  "final_name": "four_dimensional_fueling_interpolation_factor",
+  "final_type": "word",
+  "final_comment": "e2m 1053 +2 FLINML 'interpolation factor for 4-D fueling, max fueling calculation' (the alpha, Q14: 0x4000 = steady state table, 0 = transient): written by calculateAlpha, by cm550_updateElectronicSmartPowerTau (0x4000 minus its tau value while electronic smart power is enabled, move.w at 0x1addc) and at start-up by cm550_initializeFourDimensionalFuelingInterpolationFactor; read by the 4D fueling, cm550_calculateBlendedTableValue, vp44_fuelLimitExceedanceStatisticsAccumulator and the governors (selectEngineSpeedLimit, cm550_governorFuelPidController). A fueling factor, not a timing one. The same record and name as CM848 0x40a889.",
+  "reason": "Name and word type CONFIRMED (e2m 1053 +2 FLINML, 10 word refs; CM848 0x40a889 same name). AMENDED comment: the proposal listed calculateAlpha and the start-up init as the writers, but cm550_updateElectronicSmartPowerTau also writes it (0x1addc move.w d0,(0x80d340): timing_alpha_blend_factor = 0x4000 - tau)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80d342",
+  "verdict": "CONFIRMED",
+  "final_name": "four_dimensional_fueling_user_maximum",
+  "final_type": "i16",
+  "reason": "e2m 1053+4 5DIRMXFL (e2m 2 bytes unsigned); 3 absolute refs, all at the width of i16; name unique in CM550; replaces 'maximum_user_fueling_allowed_0_100'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x803f3a",
+  "verdict": "CONFIRMED",
+  "final_name": "four_dimensional_fueling_increment_cal",
+  "final_type": "i16",
+  "reason": "e2m 125A+C 5DFLAJ (e2m 2 bytes signed); 4 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80a254",
+  "verdict": "CONFIRMED",
+  "final_name": "engine_protection_fuel_temperature",
+  "final_type": "word",
+  "reason": "e2m 81FA+0 EPFLTP (e2m 2 bytes unsigned); 5 absolute refs, all at the width of word; name unique in CM550; replaces 'vp44_fuel_temperature_value'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80784a",
+  "verdict": "CONFIRMED",
+  "final_name": "engine_protection_fuel_temperature_source",
+  "final_type": "word",
+  "reason": "e2m 81F9+2 EPFTFG (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; replaces 'dzg_pressure_max_limit'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80d686",
+  "verdict": "CONFIRMED",
+  "final_name": "injector_fault_engine_speed_limit",
+  "final_type": "word",
+  "reason": "e2m 10C4+0 ZILMES (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072c0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_enable_flag",
+  "final_type": "word",
+  "reason": "e2m 823C+34 CBDEN (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072dc",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_start_tooth",
+  "final_type": "word",
+  "reason": "e2m 823C+50 CBDST (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80728e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_delta_speed_threshold",
+  "final_type": "word",
+  "reason": "e2m 823C+2 CBDDST (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807290",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_upper_speed_limit",
+  "final_type": "word",
+  "reason": "e2m 823C+4 CBDUSL (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807292",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_lower_speed_limit",
+  "final_type": "word",
+  "reason": "e2m 823C+6 CBDLSL (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807296",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_magnitude_gain_2",
+  "final_type": "word",
+  "reason": "e2m 823C+A CBDMG2 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x807298",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_magnitude_gain_3",
+  "final_type": "word",
+  "reason": "e2m 823C+C CBDMG3 (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80729a",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_error_filter_coefficient",
+  "final_type": "word",
+  "reason": "e2m 823C+E CBDEFCN (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072a0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_maximum",
+  "final_type": "word",
+  "reason": "e2m 823C+14 CBDFTMX (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072a2",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_minimum",
+  "final_type": "i16",
+  "reason": "e2m 823C+16 CBDFTMN (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072be",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_motoring_fuel_threshold",
+  "final_type": "word",
+  "reason": "e2m 823C+32 CBDMFT (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072c2",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_1_cylinder_1_real",
+  "final_type": "i16",
+  "reason": "e2m 823C+36 CBDR1C1R (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072c4",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_1_cylinder_1_imaginary",
+  "final_type": "i16",
+  "reason": "e2m 823C+38 CBDR1C1I (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072c6",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_1_cylinder_5_real",
+  "final_type": "i16",
+  "reason": "e2m 823C+3A CBDR1C5R (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072c8",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_1_cylinder_5_imaginary",
+  "final_type": "i16",
+  "reason": "e2m 823C+3C CBDR1C5I (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072ca",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_1_cylinder_3_real",
+  "final_type": "i16",
+  "reason": "e2m 823C+3E CBDR1C3R (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072cc",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_1_cylinder_3_imaginary",
+  "final_type": "i16",
+  "reason": "e2m 823C+40 CBDR1C3I (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072ce",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_2_cylinder_1_real",
+  "final_type": "i16",
+  "reason": "e2m 823C+42 CBDR2C1R (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072d0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_2_cylinder_1_imaginary",
+  "final_type": "i16",
+  "reason": "e2m 823C+44 CBDR2C1I (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072d2",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_2_cylinder_5_real",
+  "final_type": "i16",
+  "reason": "e2m 823C+46 CBDR2C5R (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072d4",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_2_cylinder_5_imaginary",
+  "final_type": "i16",
+  "reason": "e2m 823C+48 CBDR2C5I (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072d6",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_2_cylinder_3_real",
+  "final_type": "i16",
+  "reason": "e2m 823C+4A CBDR2C3R (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072d8",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_2_cylinder_3_imaginary",
+  "final_type": "i16",
+  "reason": "e2m 823C+4C CBDR2C3I (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072da",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_reference_3",
+  "final_type": "word",
+  "reason": "e2m 823C+4E CBDR3 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072de",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_compensation_enable",
+  "final_type": "word",
+  "reason": "e2m 823C+52 CBDCEN (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072e0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_dynamic_compensation_reset_enable",
+  "final_type": "word",
+  "reason": "e2m 823C+54 CBDDCR (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072e4",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_gain_1_small",
+  "final_type": "word",
+  "reason": "e2m 823C+58 CBDTG1S (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072e6",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_gain_2_small",
+  "final_type": "word",
+  "reason": "e2m 823C+5A CBDTG2S (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072e8",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_gain_3_small",
+  "final_type": "word",
+  "reason": "e2m 823C+5C CBDTG3S (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072ea",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_coolant_temperature_threshold",
+  "final_type": "word",
+  "reason": "e2m 823C+5E CBDCLTP (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072ec",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_intake_manifold_temperature_threshold",
+  "final_type": "word",
+  "reason": "e2m 823C+60 CBDIMTP (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072ee",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_cutout_disable_time",
+  "final_type": "word",
+  "reason": "e2m 823C+62 CBDDSTM (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072f0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_limit_mode",
+  "final_type": "word",
+  "reason": "e2m 823C+64 CBDLMMD (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8072f2",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_update_maximum_road_speed",
+  "final_type": "word",
+  "reason": "e2m 823C+66 CBDVSTD (e2m 2 bytes unsigned); 1 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8091e8",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_filtered_fueling",
+  "final_type": "word",
+  "reason": "e2m 823D+0 CBDFFL (e2m 2 bytes unsigned); 6 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8091ea",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_speed_buffer_1",
+  "final_type": "dword",
+  "reason": "e2m 823D+2 CBDSB1 (e2m 4 bytes signed); 2 absolute refs, all at the width of dword; name unique in CM550; replaces 'intake_manifold_temp_raw'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809206",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_real_component_1",
+  "final_type": "i32",
+  "reason": "e2m 823D+1E CBDFRC1 (e2m 4 bytes signed); 5 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80920a",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_imaginary_component_1",
+  "final_type": "i32",
+  "reason": "e2m 823D+22 CBDFIC1 (e2m 4 bytes signed); 5 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80920e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_real_component_2",
+  "final_type": "i32",
+  "reason": "e2m 823D+26 CBDFRC2 (e2m 4 bytes signed); 3 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809212",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_imaginary_component_2",
+  "final_type": "i32",
+  "reason": "e2m 823D+2A CBDFIC2 (e2m 4 bytes signed); 2 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809216",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_real_component_3",
+  "final_type": "i32",
+  "reason": "e2m 823D+2E CBDFRC3 (e2m 4 bytes signed); 1 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80922e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_stop_compensation_flag",
+  "final_type": "word",
+  "reason": "e2m 823D+46 CBDSCF (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809230",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_threshold",
+  "final_type": "word",
+  "reason": "e2m 823D+48 CBDFT (e2m 2 bytes unsigned); 4 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809232",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_magnitude_1",
+  "final_type": "word",
+  "reason": "e2m 823D+4A CBDFM1 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809234",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_magnitude_2",
+  "final_type": "word",
+  "reason": "e2m 823D+4C CBDFM2 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809236",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fourier_magnitude_3",
+  "final_type": "word",
+  "reason": "e2m 823D+4E CBDFM3 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809246",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_1",
+  "final_type": "i16",
+  "reason": "e2m 823D+5E CBDDFO1 (e2m 2 bytes signed); 9 absolute refs, all at the width of i16; name unique in CM550; replaces 'cyl_balance_correction_array'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809248",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_2",
+  "final_type": "i16",
+  "reason": "e2m 823D+60 CBDDFO2 (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80924a",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_3",
+  "final_type": "i16",
+  "reason": "e2m 823D+62 CBDDFO3 (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80924c",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_4",
+  "final_type": "i16",
+  "reason": "e2m 823D+64 CBDDFO4 (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80924e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_5",
+  "final_type": "i16",
+  "reason": "e2m 823D+66 CBDDFO5 (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809250",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_fueling_trim_6",
+  "final_type": "i16",
+  "reason": "e2m 823D+68 CBDDFO6 (e2m 2 bytes signed); 1 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80925e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_limits_exceeded_flag",
+  "final_type": "word",
+  "reason": "e2m 823D+76 CBDTLE (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809260",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_index_1",
+  "final_type": "word",
+  "reason": "e2m 823D+78 CBDTI1 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809262",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_index_2",
+  "final_type": "word",
+  "reason": "e2m 823D+7A CBDTI2 (e2m 2 bytes unsigned); 2 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809264",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_index_3",
+  "final_type": "word",
+  "reason": "e2m 823D+7C CBDTI3 (e2m 2 bytes unsigned); 4 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80926e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_increment_1",
+  "final_type": "word",
+  "reason": "e2m 823D+86 CBDTINC1 (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; replaces 'throttle_position_raw'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809270",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_increment_2",
+  "final_type": "word",
+  "reason": "e2m 823D+88 CBDTINC2 (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809272",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_trim_increment_3",
+  "final_type": "word",
+  "reason": "e2m 823D+8A CBDTINC3 (e2m 2 bytes unsigned); 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809276",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_adjusted_real_component_2",
+  "final_type": "i16",
+  "reason": "e2m 823D+8E CBDARC2 (e2m 2 bytes signed); 9 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809278",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_adjusted_imaginary_component_2",
+  "final_type": "i16",
+  "reason": "e2m 823D+90 CBDAIC2 (e2m 2 bytes signed); 9 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80927a",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_adjusted_real_component_3",
+  "final_type": "i16",
+  "reason": "e2m 823D+92 CBDARC3 (e2m 2 bytes signed); 5 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809288",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_acceleration_buffer_2",
+  "final_type": "i32",
+  "reason": "e2m 823D+A0 CBDAXB2 (e2m 4 bytes signed); 5 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80928c",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_acceleration_buffer_3",
+  "final_type": "i32",
+  "reason": "e2m 823D+A4 CBDAXB3 (e2m 4 bytes signed); 3 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809290",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_acceleration_buffer_4",
+  "final_type": "i32",
+  "reason": "e2m 823D+A8 CBDAXB4 (e2m 4 bytes signed); 5 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809294",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_acceleration_buffer_5",
+  "final_type": "i32",
+  "reason": "e2m 823D+AC CBDAXB5 (e2m 4 bytes signed); 5 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x809298",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_acceleration_buffer_6",
+  "final_type": "i32",
+  "reason": "e2m 823D+B0 CBDAXB6 (e2m 4 bytes signed); 3 absolute refs, all at the width of i32; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8092e0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_component_3_adjustment",
+  "final_type": "i16",
+  "reason": "e2m 823D+F8 CBDC3ADJ (e2m 2 bytes signed); 2 absolute refs, all at the width of i16; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8092e2",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_active_trim_gain",
+  "final_type": "word",
+  "reason": "e2m 823D+FA CBDATG (e2m 2 bytes unsigned); 8 absolute refs, all at the width of word; name unique in CM550; replaces 'cyl_balance_gain_percent'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8092e4",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_speed_buffer_ready_flag",
+  "final_type": "word",
+  "reason": "e2m 823D+FC CBDSBRF (e2m 2 bytes unsigned); 4 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x804158",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_saved_fueling_trims_cal",
+  "final_type": "i16[6]",
+  "reason": "e2m 8241 CBDDFTO1-6 (2 bytes S each) at 0x804158-0x804163, inside the EEPROM image 0x803b0a-0x804f93 (round 94) so _cal; indexed word accesses in 0x127c2 and 0x133fe; no named row inside."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80a1ac",
+  "verdict": "CONFIRMED",
+  "final_name": "balanced_cylinder_fueling_offsets",
+  "final_type": "i16[6]",
+  "reason": "No e2m record (801A +38 FLTADC ends at 0x80a1ab); 6 move.w writes 0x13340-0x133d6 + clear loop base 0x133e2; values FLFLAJCn (i16) + signed trim; no named row inside; no reader in the dumped ROM."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002a4",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_segment_index",
+  "final_type": "word",
+  "reason": "no e2m record; 1 absolute refs, all at the width of word; name unique in CM550; replaces 'load_trending_table_1_ptr'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002a6",
+  "verdict": "AMENDED",
+  "final_name": "cylinder_balance_segment_period_sum",
+  "final_type": "dword",
+  "final_comment": "The running sum of main_engine_position_sensor_period over the current cylinder segment (4 periods) in mc68k_fillCylinderBalanceSpeedBuffers. The undefined row 0x8002a8 (fuel_timing_blend_rpm_input_1) lies inside this dword and has no reference (no absolute reference, no decompiler use, no pointer in the RAM dumps): drop it.",
+  "reason": "Role and dword width CONFIRMED (clr.l 0x126ae / add.l 0x126c4 / move.l 0x12700, 0x12718 / clr.l 0x12764, all in 0x1266e), but the dword swallows the named row 0x8002a8 fuel_timing_blend_rpm_input_1, which the comment did not list: AMENDED comment says to drop it (0 refs)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002aa",
+  "verdict": "AMENDED",
+  "final_name": "cylinder_balance_segment_period_count",
+  "final_type": "word",
+  "final_comment": "Periods summed into the current cylinder segment (0..4) in mc68k_fillCylinderBalanceSpeedBuffers: one per primary speed interrupt, i.e. per period measurement (3 teeth per period in this dump, ESTTIP), cleared at the start tooth and after each stored segment.",
+  "reason": "AMENDED name: the word counts calls of mc68k_fillCylinderBalanceSpeedBuffers (addq.w #1 at 0x126ca, one per TPU channel 10 interrupt = one period of ESTTIP = 3 teeth), compared with 4 at 0x126d0; the proposal's own comment says periods, so tooth_count is wrong. Refs 0x126b4 clr.w / 0x126ca addq.w / 0x126d0 cmpi.w / 0x1275e clr.w, all word, all in 0x1266e; no e2m record. New name unique in CM550."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x800322",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_segment_periods",
+  "final_type": "dword[7]",
+  "reason": "dword[7] 0x800322-0x80033d: indexed store base 0x126fc, copy loop base 0x12722 (7 x move.l), slot 6 movea 0x12712, slot 0 store 0x12750; inner rows 0x80032a / 0x800332 / 0x80033a have no other reference (listed for dropping)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x80033e",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_speed_buffer_processed_flag",
+  "final_type": "word",
+  "reason": "no e2m record; 3 absolute refs, all at the width of word; name unique in CM550; replaces 'oil_pressure_mode_init_flag'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002c6",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_engine_speed_previous",
+  "final_type": "word",
+  "reason": "no e2m record; 2 absolute refs, all at the width of word; name unique in CM550; replaces 'load_trending_table_6_ptr'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002c8",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_engine_speed_change",
+  "final_type": "word",
+  "reason": "no e2m record; 3 absolute refs, all at the width of word; name unique in CM550; new row."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002ca",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_absolute_fourier_real_component_1",
+  "final_type": "word",
+  "reason": "no e2m record; 4 absolute refs, all at the width of word; name unique in CM550; replaces 'peak_torque_engine_mode_input'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002cc",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_absolute_fourier_imaginary_component_1",
+  "final_type": "word",
+  "reason": "no e2m record; 4 absolute refs, all at the width of word; name unique in CM550; replaces 'engine_operating_mode_previous'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002ce",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_absolute_adjusted_real_component_2",
+  "final_type": "word",
+  "reason": "no e2m record; 4 absolute refs, all at the width of word; name unique in CM550; replaces 'engine_mode_previous_0'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002d0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_absolute_adjusted_imaginary_component_2",
+  "final_type": "word",
+  "reason": "word: tst / neg / move.w pair at 0x12f28-0x12f48 and cmp.w 0x12f50; the byte row 0x8002d1 inside has no reference (listed for dropping)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002d2",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_absolute_adjusted_real_component_3",
+  "final_type": "word",
+  "reason": "no e2m record; 3 absolute refs, all at the width of word; name unique in CM550; replaces 'engine_mode_previous_state_2d2'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002d4",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_power_up_fueling_trims",
+  "final_type": "i16[6]",
+  "reason": "i16[6] 0x8002d4-0x8002df: copy loop base 0x13542 (0x133fe) and restore loop base 0x13236 (0x127c2); the 7 inner rows have no reference (listed for dropping)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x8002e0",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_real_2_dynamics_compensation_previous_values",
+  "final_type": "word[16]",
+  "reason": "word[16] 0x8002e0-0x8002ff (16-pass loop in 0x133fe), bin / bin+1 bases in the learning code; the 11 inner rows: only 0x8002e2 is referenced, as the bin+1 base (listed); none in the RAM dumps."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x800300",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_imaginary_2_dynamics_compensation_previous_values",
+  "final_type": "word[16]",
+  "reason": "word[16] 0x800300-0x80031f, same pattern; 0x800302 is the bin+1 base; inner rows 0x800304 / 0x800306 unreferenced (listed)."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x800320",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_engine_speed_bin_index",
+  "final_type": "i16",
+  "reason": "no e2m record; 18 absolute refs, all at the width of i16; name unique in CM550; replaces 'rpm_speed_bin_index'."
+ },
+ {
+  "kind": "global",
+  "firmware": "CM550",
+  "address": "0x800220",
+  "verdict": "CONFIRMED",
+  "final_name": "cylinder_balance_cutout_disable_timer",
+  "final_type": "word",
+  "reason": "no e2m record; 5 absolute refs, all at the width of word; name unique in CM550; replaces 'manifold_temp_table_3_x_ptr'."
+ }
+]

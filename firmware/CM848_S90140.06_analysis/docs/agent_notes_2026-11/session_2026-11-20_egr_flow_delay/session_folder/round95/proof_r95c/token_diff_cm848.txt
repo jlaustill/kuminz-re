@@ -1,0 +1,29 @@
+0x00007608: 2 token changes:  => word counter_value ; | ; word counter_value => 
+0x00038ac8: 2 token changes:  => byte all_transmits_overdue ; | ; byte all_transmits_overdue => 
+0x00054ec4: 2 token changes: modulus_period_value => modulus_start_value | modulus_start_value => modulus_period_value
+0x00538c8c: 24 token changes: undefined4 => byte | int param_1 => J1939_PERIODIC_TRANSMIT_QUEUE queue_index | undefined2 param_2 => word pgn_key | int param_3 => dword interval_milliseconds | int param_4 => dword first_send_offset_milliseconds | undefined4 param_5 => void * builder | undefined2 => word | puVar2 => pwVar2 | param_1 => queue_index | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | puVar2 => pwVar2 | undefined2 => word | puVar2 => pwVar2 | undefined2 => word | puVar2 => pwVar2 | param_2 => pgn_key | puVar2 => pwVar2 | param_4 => ( int ) first_send_offset_milliseconds | puVar2 => pwVar2 | short => word | param_3 =>
+0x00539190: 19 token changes: 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 1 => J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER | 1 => J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE | 0 => J1939_PERIODIC_TRAN
+---- census of distinct changes
+  18 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE
+   7 puVar2 => pwVar2
+   3 undefined2 => word
+   2 1 => J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER
+   1  => word counter_value ;
+   1 ; word counter_value => 
+   1  => byte all_transmits_overdue ;
+   1 ; byte all_transmits_overdue => 
+   1 modulus_period_value => modulus_start_value
+   1 modulus_start_value => modulus_period_value
+   1 undefined4 => byte
+   1 int param_1 => J1939_PERIODIC_TRANSMIT_QUEUE queue_index
+   1 undefined2 param_2 => word pgn_key
+   1 int param_3 => dword interval_milliseconds
+   1 int param_4 => dword first_send_offset_milliseconds
+   1 undefined4 param_5 => void * builder
+   1 param_1 => queue_index
+   1 param_2 => pgn_key
+   1 param_4 => ( int ) first_send_offset_milliseconds
+   1 short => word
+   1 param_3 => ( int ) interval_milliseconds
+   1 undefined4 => void *
+   1 param_5 => builder

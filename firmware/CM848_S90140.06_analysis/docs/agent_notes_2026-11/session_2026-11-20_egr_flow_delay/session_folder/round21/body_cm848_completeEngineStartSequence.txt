@@ -1,0 +1,19 @@
+=== cm848_completeEngineStartSequence (lines 66787-66809, 18 non-blank)
+66787: // Function: cm848_completeEngineStartSequence @ 0x00508de8
+66788: //
+66790: void cm848_completeEngineStartSequence(void)
+66792: {
+66793:   engine_protection_shutdown_approaching_flag = 0;
+66794:   engine_shutdown_command_flag = 0;
+66795:   DAT_003fbd3a = engine_protection_shutdown_active_channel_cal;
+66796:   governor_faultDerate_latch = 0;
+66797:   governor_faultDerate_prev_rpm = 0;
+66798:   fuel_temperature_derate_fuel_shutdown_time_count = 0;
+66799:   fuel_temperature_derate_rpm_shutdown_time_count = 0;
+66800:   engine_protection_shutdown_override_request_flag = 0;
+66801:   DAT_0040a78b = 0;
+66802:   DAT_0040a78c = 0;
+66803:   engine_protection_timer_state = 0;
+66804:   return;
+66805: }
+66809: //

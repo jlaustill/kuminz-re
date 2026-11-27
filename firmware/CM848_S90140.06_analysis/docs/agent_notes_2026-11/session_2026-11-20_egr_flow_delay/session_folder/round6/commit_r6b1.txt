@@ -1,0 +1,23 @@
+cm848: round 6 stage B1 - e2m 10E8 / 10E6 are the Jcomm control state: three fields and the device indicators
+
+e2m block 10E8 ("Jcomm", 0x40adf4-0x40ae1f) and 10E6 (0x40ad5a-0x40ad5d) are Cummins' own layout of the J1939
+powertrain control state. They confirm the stage A names: Jcomm_Engine_Control_Mode, Jcomm_High_Idle_Override,
+Jcomm_Out_of_Gear, Jcomm_Engine_Speed_Limit_RPM, Jcomm_Engine_Torque_Command, Jcomm_Reference_RPM,
+Jcomm_Torque_Derate_Fueling, Jcomm_Fueling_Command, Jcomm_Engine_Control_Network_Type (0 = J1922, 1 = J1939),
+Jcomm_OOG_Valid_Flag, J1939_Powerup_Faults_Inhibit, TSC_Lost_Flag and the rest. Every field the block covers now
+cites its record (the struct starts at 10E8 +4).
+They correct five names:
+- etc1_out_of_gear_latch -> out_of_gear_network_type (10E8 +1C Jcomm_Out_of_Gear_Network_Type: the network that set
+  the out of gear flag).
+- time_limited_node_status_bits -> j1939_blocked_message_bits (10E8 +24 J1939_Block_Message: bit 0 TSC1 to the
+  engine, bit 1 TSC1 to the retarder, bit 2 ETC1).
+- proprietary_offset_value -> engine_net_output_torque (10E8 +28 Jcomm_Engine_Output_Net_Torque, ft lb, actual
+  minus friction).
+- j1939_governor_source_index -> engine_control_device_indicator (10E8 +2) and
+  engine_retarder_controlling_source_index -> engine_retarder_control_device_indicator (10E6 +2): 0 none / 1
+  transmission / 2 ABS / 3 ASR / 4 unknown.
+- cm848_lookupJ1939SourceAddressIndex -> cm848_lookupJ1939ControlDevice. It returns exactly those codes (1 / 2 / 3 / 4
+  for the transmission / ABS / ASR / any other source address).
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

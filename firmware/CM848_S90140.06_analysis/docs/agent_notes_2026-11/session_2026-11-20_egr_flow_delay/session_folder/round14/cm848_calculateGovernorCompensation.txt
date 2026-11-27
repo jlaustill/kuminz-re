@@ -1,0 +1,22 @@
+=== cm848_calculateGovernorCompensation (lines 28323-28349, 21 non-blank)
+// Function: cm848_calculateGovernorCompensation @ 0x00029b38
+//
+void cm848_calculateGovernorCompensation(void)
+{
+  word wVar1;
+  word wVar2;
+  wVar1 = lookupTableInterpolation
+                    (&friction_fuel_by_engine_speed_cached_axis_offset,governor_speed_error_computed
+                     ,friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
+  wVar2 = lookupTableInterpolation
+                    (&governor_interp_table_state_b,fuel_demand_control_t_0040a57a.calculated,
+                     governor_fuel_demand_axis_cal,governor_fuel_demand_output_cal,0);
+  governor_output_t_0040aec2.fuel_feed_forward_quantity = fuel_demand_base_offset;
+  if ((low_speed_governor_final_gain_state != 0) && (low_speed_governor_final_gain_state != 1)) {
+    governor_output_t_0040aec2.fuel_feed_forward_quantity =
+         friction_fuel_adjustment_for_coolant_temperature + wVar1 + wVar2 +
+         governor_speed_target_trim;
+  }
+  return;
+}
+//

@@ -1,0 +1,42 @@
+ 42  word@+4 [word]
+       0x3870 0xb688 0xb6e8 0xc80e 0xd1a4 0xd4ae 0xed34 0x1025c 0x13616 0x13ed8 0x142a8 0x144bc 0x146b4 0x14720 0x14f42 0x19332 0x19436 0x1e056 0x1e086 0x1ec3c 0x1edae 0x1fdc0 0x201d6 0x20210 0x2024a 0x202d8 0x20310 0x20348 0x20890 0x21964 0x23130 0x23870 0x23a3c 0x24b4e 0x25806 0x26272 0x2cf7e 0x2f606 0x2fd90 0x2fddc 0x34bba 0x34bf8
+  8  word@+4 [word]; word@+6 [word]
+       0x142d4 0x1cb76 0x1e79a 0x239d2 0x2fe38 0x31ace 0x333d6 0x33460
+  6  long@+4 [long]; word@+8 [word]
+       0x3792 0x1192a 0x165f2 0x1a95a 0x31b22 0x3216a
+  6  word@+4 [low byte]
+       0x21f4e 0x21fac 0x238ec 0x24c5a 0x24cd2 0x27cd0
+  3  no argument read in the body (not a callee-argument case)
+       0xfbe4 0x14fae 0x1b4c2
+  3  word@+4 [word]; long@+6 [long]
+       0x10e16 0x34e9a 0x34f8a
+  3  long@+4 [long]; long@+8 [long]; word@+12 [word]
+       0x16c3c 0x18f86 0x26a64
+  3  word@+4 [word]; word@+6 [word]; word@+8 [word]
+       0x18708 0x192f2 0x23820
+  2  long@+4 [long]; word@+8 [low byte]
+       0x1bfa2 0x1ffd6
+  2  word@+4 [low byte]; word@+6 [word]
+       0x229ea 0x22a58
+  1  word@+4 [word]; word@+6 [low byte]
+       0xfaa6
+  1  long@+4 [&addr@+7, byte 3 of long(rw), long]; word@+8 [word]
+       0x11da6
+  1  callee reads only (no direct caller in the dump): r 4@+4, r 2@+8, r 2@+10, r 2@+12
+       0x16628
+  1  long@+4 [long]; long@+8 [long]; long@+12 [long]; word@+16 [word]
+       0x186ae
+  1  long@+4 [long]; long@+8 [long]; word@+12 [word]; word@+14 [word]
+       0x18968
+  1  word@+4 [low byte]; word@+6 [low byte]; word@+8 [low byte]; word@+10 [word]
+       0x22ad8
+  1  word@+4 [word]; word@+6 [low byte]; word@+8 [word]
+       0x238ac
+  1  callee reads only (no direct caller in the dump): r 4@+4, rw 1@+7, r 2@+8
+       0x2cf52
+  1  callee reads only (no direct caller in the dump): r 4@+4
+       0x2f4be
+  1  word@+4 [low byte]; word@+6 [&addr@+6]
+       0x32b38
+  1  callee reads only (no direct caller in the dump): r 2@+4, r 4@+6
+       0x34f00

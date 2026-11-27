@@ -1,0 +1,10 @@
+docs: round 87 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 87" (stages A 9e2ddc7d / B f0ebe1d5, the proofs, the firmware/CLAUDE.md edits, and the
+  round 88 leads: the verified filter library group, the agents' unverified misnames, a twin lead, struct and enum
+  leads, the clearWorkingRam local rows); work/todo.md's 046 line.
+- Session archive: session_folder/round87/ (the audit workflow's proposals and verdicts, the apply, proof and refresh
+  scripts, the maps and proof outputs; no .cpp / .hpp / .log), the four round 87 verify logs in the large-files
+  tarball, the README section and the PR body copy.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

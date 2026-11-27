@@ -1,0 +1,78 @@
+===== N = 37
+  li r31,37 @0xc748 [executiveFrameInterruptHandler@0xc0a0] no sth found
+  cmpwi r29,37 @0xea3c [cm848_runOperatingModeSpeedGovernor@0xea00]
+  cmpwi r4,37 @0x208fc [cm848_calculateDriverDemandPercentTorque@0x20860]
+  cmplwi r3,37 @0x25930 [sendPgn61444ElectronicEngineController1Message@0x2588c]
+  cmpwi r6,37 @0x2bc04 [cm848_selectPowerTakeOffOrUserFueling@0x2bbe8]
+  cmpwi r30,37 @0x407b8 [cm848_arbitrateGovernedFueling@0x4043c]
+  cmpwi r7,37 @0x412c4 [cm848_selectCruiseOrUserFueling@0x411b0]
+  cmpwi r12,37 @0x521188 [cm848_sciCommand37Callback@0x520b14]
+  cmpwi r31,37 @0x5253f4 [cm848_presetCruiseAndRoadSpeedGovernor@0x5251e4]
+  cmpwi r24,37 @0x5255c4 [cm848_runCruiseAndRoadSpeedGovernor@0x525504]
+===== N = 38
+  li r31,38 @0xc764 [executiveFrameInterruptHandler@0xc0a0] no sth found
+  cmpwi r4,38 @0x20904 [cm848_calculateDriverDemandPercentTorque@0x20860]
+  cmpwi r6,38 @0x2bc0c [cm848_selectPowerTakeOffOrUserFueling@0x2bbe8]
+  cmpwi r30,38 @0x407c0 [cm848_arbitrateGovernedFueling@0x4043c]
+  cmpwi r7,38 @0x412cc [cm848_selectCruiseOrUserFueling@0x411b0]
+  li r3,38 @0x510f40 [cm848_initializeAirConditioningClutchControl@0x510f34] no sth found
+  li r3,38 @0x511040 [cm848_controlAirConditioningClutchForBrTruck@0x510fa0] no sth found
+  li r3,38 @0x51105c [cm848_controlAirConditioningClutchForBrTruck@0x510fa0] no sth found
+  li r3,38 @0x511874 [cm848_controlAirConditioningClutchForDrTruck@0x511078] no sth found
+  li r3,38 @0x511884 [cm848_controlAirConditioningClutchForDrTruck@0x511078] no sth found
+  li r3,38 @0x514160 [cm848_applyDiscreteOutputOverrides@0x514108] no sth found
+  li r4,38 @0x51e530 [cm848_stopAllSciOutputTests@0x51e514] no sth found
+  li r4,38 @0x51e754 [cm848_updateSciOutputTests@0x51e6e0] no sth found
+  li r4,38 @0x51eb3c [cm848_sciCommand19OutputTestCallback@0x51e914] no sth found
+  cmpwi r12,38 @0x52121c [cm848_sciCommand37Callback@0x520b14]
+  cmpwi r31,38 @0x5253fc [cm848_presetCruiseAndRoadSpeedGovernor@0x5251e4]
+  cmpwi r24,38 @0x5255cc [cm848_runCruiseAndRoadSpeedGovernor@0x525504]
+  li r3,38 @0x52fd40 [cm848_runEndOfLineOutputTestStep@0x52fa34] no sth found
+  li r3,38 @0x52fdc0 [cm848_runEndOfLineOutputTestStep@0x52fa34] no sth found
+  li r3,38 @0x52ffe4 [cm848_runEndOfLineOutputTestStep@0x52fa34] no sth found
+  li r3,38 @0x53840c [cm848_monitorDiscreteOutputReadBack@0x538278] no sth found
+===== N = 49
+  cmpwi r29,49 @0xee74 [cm848_runOperatingModeSpeedGovernor@0xea00]
+  cmpwi r30,49 @0xf548 [cm848_runOperatingModeSpeedGovernor@0xea00]
+  cmplwi r0,49 @0x4fac0 [mpc555_driveOutputLineHigh@0x4f6f0]
+  cmplwi r0,49 @0x51428 [mpc555_driveOutputLineLow@0x51038]
+===== N = 50
+  cmpwi r25,50 @0x51c [mpc555_verifyDownloadedCalibration@0x428]
+  cmpwi r25,50 @0x878 [mpc555_verifyDownloadedCalibration@0x428]
+  li r9,50 @0x1610 [mpc555_initHardwareConfig@0x1454] sth @0x1614 -> 0x3fdc38
+  li r11,50 @0xe040 [cm848_calculateAirFuelControlFuelLimit@0xdcdc] no sth found
+  cmpwi r31,50 @0x1d0dc [cm848_clearDiagnosticState@0x1d01c]
+  cmpwi r8,50 @0x1d9ac [cm848_buildFaultConditionMask@0x1d8f8]
+  cmpwi r31,50 @0x1da14 [diagnosticMainStateProcessor@0x1d9b8]
+  cmpwi r7,50 @0x1da24 [diagnosticMainStateProcessor@0x1d9b8]
+  cmpwi r31,50 @0x1da48 [diagnosticMainStateProcessor@0x1d9b8]
+  cmpwi r11,50 @0x1da68 [diagnosticMainStateProcessor@0x1d9b8]
+  li r31,50 @0x23660 [cm848_selectEngineRetarderStagePercent@0x234a4] no sth found
+  cmpwi r10,50 @0x2c644 [cm848_checkSwitch31OnTimeFault@0x2c4fc]
+  cmpwi r11,50 @0x42024 [cm848_driveEngineRetarderOutput@0x41fd4]
+  cmpwi r12,50 @0x4209c [cm848_driveEngineRetarderOutput@0x41fd4]
+  li r6,50 @0x6e36c [cm848_saveRegisters27To31@0x575a0] no sth found
+  li r11,50 @0x50b7a8 [receivePgn61441ElectronicBrakeController1Message@0x50b77c] sth @0x50b7ac -> 0x3feaa6
+  li r11,50 @0x50b7e0 [receivePgn61441ElectronicBrakeController1Message@0x50b77c] sth @0x50b7e4 -> 0x3feaa8
+  li r11,50 @0x50b818 [receivePgn61441ElectronicBrakeController1Message@0x50b77c] sth @0x50b81c -> 0x3feaaa
+  li r11,50 @0x50b850 [receivePgn61441ElectronicBrakeController1Message@0x50b77c] sth @0x50b854 -> 0x3feaac
+  li r11,50 @0x50b888 [receivePgn61441ElectronicBrakeController1Message@0x50b77c] sth @0x50b88c -> 0x3feaae
+  li r11,50 @0x50ba04 [receivePgn65264PowerTakeoffInformationMessage@0x50b9d8] sth @0x50ba08 -> 0x3feaba
+  li r11,50 @0x50ba3c [receivePgn65264PowerTakeoffInformationMessage@0x50b9d8] sth @0x50ba40 -> 0x3feabc
+  li r11,50 @0x50ba74 [receivePgn65264PowerTakeoffInformationMessage@0x50b9d8] sth @0x50ba78 -> 0x3feabe
+  li r11,50 @0x50baac [receivePgn65264PowerTakeoffInformationMessage@0x50b9d8] sth @0x50bab0 -> 0x3feac0
+  li r11,50 @0x50baf8 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bafc -> 0x3feac2
+  li r11,50 @0x50bb30 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bb34 -> 0x3feac4
+  li r11,50 @0x50bb68 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bb6c -> 0x3feac6
+  li r11,50 @0x50bba0 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bba4 -> 0x3feac8
+  li r11,50 @0x50bbd8 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bbdc -> 0x3feaca
+  li r11,50 @0x50bc10 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bc14 -> 0x3feacc
+  li r11,50 @0x50bc48 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bc4c -> 0x3feace
+  li r11,50 @0x50bc80 [receivePgn65265CruiseControlVehicleSpeedMessage@0x50bacc] sth @0x50bc84 -> 0x3fead0
+  li r9,50 @0x51def8 [cm848_sciHighSpeedTable248And249Callback@0x51dea8] no sth found
+  li r11,50 @0x51df24 [cm848_sciHighSpeedTable248And249Callback@0x51dea8] no sth found
+  li r7,50 @0x522230 [cm848_sciCommand50ReportProtectionEventDtcs@0x522224] no sth found
+  cmpwi r26,50 @0x52a48c [cm848_calculateFuelPressureSetpoint@0x529f58]
+  li r5,50 @0x539318 [cm848_j1939_system_init@0x539190] no sth found
+  li r6,50 @0x53935c [cm848_j1939_system_init@0x539190] no sth found
+  li r6,50 @0x5394bc [cm848_j1939_system_init@0x539190] no sth found

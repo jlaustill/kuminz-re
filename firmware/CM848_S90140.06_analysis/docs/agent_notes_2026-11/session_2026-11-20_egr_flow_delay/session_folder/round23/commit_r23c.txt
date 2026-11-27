@@ -1,0 +1,23 @@
+cm848: round 23 stage C - SENSOR_VALUE_SOURCE beyond word globals, a stale label (types, review)
+
+The advisor's review of round 23: stage B's scan only took word globals named *_source, but the ambient function still
+compared charge_flow_estimate_terms.fresh_air_flow_source with a bare 2 / 1, right next to the new enum names.
+- exhaust_temperature_source (i16; e2m 17A1 +A, PRIMARY / BACKUP / DEFAULT; the code uses 0 / 1) and the struct fields
+  charge_flow_estimate_terms_t.charge_flow_source / .fresh_air_flow_source (e2m 177D +C / 177B +2, PRIMARY / BACKUP;
+  the code uses 0 / 1, and compares fresh_air_flow_source with 2, DEFAULT, too) are SENSOR_VALUE_SOURCE now. The
+  struct importer takes enum names for fields (CONTROL_NETWORK).
+- source_scan.py now covers every type and the struct fields. It matches a value list in any order or its PRIMARY /
+  BACKUP subset, skips the dotted alias rows of struct fields, and takes source_values.py's path as an argument. Its
+  first version took word globals and one list order only, and printed 7 of stage B's 10. Rerun now, it finds 24
+  words typed, 8 with other value sets (the retarder command sources, the timing intermediate source, the fan and fuel
+  metering words), and none left to type.
+- Two comments still named 0x40a1a6 by its Ghidra label, DAT_0040a1a6, though it has been barometric_altitude_source
+  since round 19: the plate of cm848_calculateAmbientAndCompressorInletConditions and barometric_pressure_reference_
+  source's comment. Both are refreshed. A sweep of the CSV comments finds 276 Ghidra labels whose address now has a
+  name, but some are deliberate history ('it rendered as ...'), so the rest is a lead and needs a per-hit review.
+
+Proof: check_enum_proof3.py (SENSOR_VALUE_SOURCE) leaves one function differing, and only in its refreshed plate; the
+enum's uses go 153 -> 170, no bare fresh_air_flow_source == 1 / 2 is left, and the piece count stays 464. Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

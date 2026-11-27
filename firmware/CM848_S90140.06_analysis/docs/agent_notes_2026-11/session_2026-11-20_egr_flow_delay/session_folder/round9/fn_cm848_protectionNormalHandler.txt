@@ -1,0 +1,28 @@
+=== cm848_protectionNormalHandler (lines 32582-32614, 27 non-blank)
+32582: // Function: cm848_protectionNormalHandler @ 0x0002f860
+32583: //
+32585: void cm848_protectionNormalHandler(void)
+32587: {
+32588:   word wVar1;
+32589:   word wVar2;
+32590:   byte bVar3;
+32592:   wVar1 = lookupTableInterpolation
+32593:                     (&DAT_003fb146,transmission_output_speed_in_use,
+32594:                      protection_threshold_l1_axis_b_cal,protection_threshold_l1_output_b_cal,0);
+32595:   wVar2 = lookupTableInterpolation
+32596:                     (&DAT_003fb148,transmission_output_speed_in_use,
+32597:                      protection_threshold_l2_axis_b_cal,protection_threshold_l2_output_b_cal,0);
+32598:   if (wVar1 < fuel_demand_control_t_0040a57a.calculated) {
+32599:     bVar3 = 2;
+32600:   }
+32601:   else {
+32602:     if (wVar2 <= fuel_demand_control_t_0040a57a.calculated) {
+32603:       return;
+32604:     }
+32605:     bVar3 = 4;
+32606:   }
+32607:   protection_condition_flags_t_0040b0e8.condition_eval =
+32608:        protection_condition_flags_t_0040b0e8.condition_eval | bVar3;
+32609:   return;
+32610: }
+32614: //

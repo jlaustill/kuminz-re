@@ -1,0 +1,30 @@
+0x003fd482 eeprom_mirror | 000B +0000 ECM_STAT [HEX] -> EEPROM 0x0 = 0x3fd482 eeprom_mirror byte; Indicator as to the calibration status of the ECM
+0x003fd707 vehicle_vin_string | NO RECORD
+0x003fd882 governor_speed_target_trim | NO RECORD
+0x003fd902 j1939_governor_feature_byte | NO RECORD
+0x003fdb88 sensor_validation_startup_accumulator | NO RECORD
+0x003fdc58 qadc_adc_enable_flag | NO RECORD
+0x003fdd6a eeprom_checksummed_block_start | NO RECORD
+0x003fdd6c lifetime_distance_pulses | 117F +0000 Total_Distance [MI] -> 0x3fdd6c lifetime_distance_pulses dword; [TIT2MI] The total non-resetable distance this engine has traveled
+0x003fdd74 trip_average_fuel_economy | 117F +0008 Trip_Average_Fuel_Economy [MPG] -> 0x3fdd74 trip_average_fuel_economy word; [TIT3AVFE] Average Fuel Economy over the current trip
+0x003fdd76 lifetime_fuel_used_at_governed_speed | 117F +000A Total_Idle_Fuel_Used [GAL] -> 0x3fdd76 lifetime_fuel_used_at_governed_speed dword; [TIT2ISFU] ACCUMULATED AMOUNT OF FUEL USED DURING VEHICLE OPERATION WHILE UNDER I
+0x003fdda8 ignition_key_off_count | 1329 +0000 Key_Off_Count [UNITLESS] -> 0x3fdda8 ignition_key_off_count word; [SSPWCU] Counter of key off cycles
+0x003fe122 fault_list_iteration_counter | NO RECORD
+0x003feaa0 governor_mode_code_diag_snapshot | NO RECORD
+0x003feb92 fault_status_array | NO RECORD
+0x003feb93 fault_status_word_array | NO RECORD
+0x003fee00 cruise_control_switches_learned_flag | NO RECORD
+0x003fee02 supervisor_watchdog_serious_error_events | NO RECORD
+0x003fee2f immobilizer_secret_key_byte_3 | NO RECORD
+0x003fee50 lifetime_distance_8_mile_record | NO RECORD
+0x003fee58 lifetime_fuel_used | NO RECORD
+0x003fee5c lifetime_time_at_governed_speed | NO RECORD
+0x003fee60 lifetime_engine_run_time | NO RECORD
+0x003fee64 trip_counter_status_flags | NO RECORD
+0x003fee66 trip_and_lifetime_overflow_flags | NO RECORD
+0x003fee68 trip_fuel_used | NO RECORD
+0x003fee6c trip_fuel_used_at_governed_speed | NO RECORD
+0x003fee70 trip_time_at_governed_speed | NO RECORD
+0x003fee74 trip_engine_run_time | NO RECORD
+0x003feeb6 temperature_rationality_coolant_soak_reference | 1930 +0010 P_Coolant_Temperature_Previous [DEG_F] -> 0x3feeb6 temperature_rationality_coolant_soak_reference i16; Minimum coolant temp to run the temp sensor key on rat
+0x003feebc protection_b_fault_active_flag | 1930 +0016 BTR_Numerator [UNITLESS] -> 0x3feebc protection_b_fault_active_flag word; Increments when BTR monitor either passes or fails.

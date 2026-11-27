@@ -1,0 +1,31 @@
+cm550: round 84 stage A - the boot block image and its updater named; the image's nine function copies named after their originals
+
+placeholder_hardware_functions.py lists the CM550 functions that still have placeholder names but drive named hardware
+(29). Its clearest cluster was a second start-up selector at 0x2CC88. With callees and addresses aligned, it matches
+mc68k_hardwareInitAndStartup line for line.
+- ROM 0x291F4-0x2CE63 is byte-for-byte ROM 0x0-0x3C6F (15472 bytes): boot_block_image.
+- 0x2ce64 cm550_FUN_0002ce64 -> cm550_updateBootBlockFromImage. It reprograms the boot block from the image when
+  boot_block_version (ROM 0x16) is non-zero and _this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none is
+  0xbad1 with an older version, or 0x1d1d with a different version. It enables boot block programming, erases the
+  sector, and copies the image through a 256-byte RAM buffer into flash at address 0 (cm550_flashProgramFromRam).
+- Both versions are dwords (0x02020300 in this dump; the ASCII date "040798" precedes them). They match, so the
+  updater leaves the boot block alone.
+- The nine functions Ghidra found inside the image are copies of the boot block's and are named
+  <original>ImageCopy (mc68k_hardwareInitAndStartupImageCopy, mc68k_checkSerialEepromSignatureImageCopy, ...).
+  - Their PC-relative references show the original's 0x8000 / 0x8062 / 0x80339E as 0x311F4 / 0x31256 / 0x82C592.
+  - Correction to round 83: the "signature record at 0x311F4 / 0x31256" is the image copy's view of ROM 0x8000 /
+    0x8062, where the boot block's start-up looks for the application's signature (0x98765432 / 0x98765433) and
+    entry pointer. tpu_microcode_image's comment says so; the array keeps stopping at 0x311F4, because a full-length
+    array would mislead in the copy's render.
+- 0x395a cm550_FUN_0000395a -> cm550_waitForChipSelect2InputBit0High. It services both watchdogs, then waits for five
+  consecutive 1 samples of bit 0 of the chip select 2 device's register 0 (0xFFD000). That is the same pattern as
+  CM848's cm848_waitForStableIgnitionKeyOn, but the signal is not identified.
+
+Proof:
+- CM550 verify is DETERMINISTIC after both steps.
+- label_only_check.py strips the comments, applies the eleven renames and diffs the full text. The differing lines are
+  all in cm550_updateBootBlockFromImage: the image and the two versions are named, and one long line wraps differently.
+- The version dwords render without the '_' prefix that the first build's word type left.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

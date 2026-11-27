@@ -1,0 +1,68 @@
+cm550: round 85 stage A - the prefix rule audit: 23 functions renamed for what they do, 9 spurious function records deleted
+
+A workflow audited the 31 CM550 functions that touch MC68336 or chip select device registers without the mc68k_
+prefix (round 84's prefix_rule_check.py), plus cm550_FUN_0001c484. Six read-only investigators, one per subsystem,
+proposed a name for each from its code and the ROM bytes; six skeptics, one per group, tried to refute each proposal.
+Every proposal survived.
+
+The rule applied is commit 16143a5c's: a function whose only hardware access is the inline watchdog kick (SIM_SWSR /
+CS2_WATCHDOG_SERVICE) is generic code, not mc68k_. hardware_access_kinds.py splits each body's accesses into the kick
+and everything else, unnamed 0xFFxxxx addresses included, so 12 of the proposed mc68k_ names keep cm550_ instead.
+Twins keep their shared names (main_loop, initQadcModule). relocation_map.csv is the historical J90280.05 -> J90350.00
+map, not CM550 -> CM848.
+
+Renamed, with real register access (mc68k_):
+- 0x14fca injectorTimingCalculation -> mc68k_sampleAndDebounceDiscreteInputs (the chip select 2 input bytes and
+  SIM_PORTE0 / F0; nothing about injector timing)
+- 0x19acc / 0x19e90 / 0x1a52c / 0x1a8a4 -> mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 / 1 / 2 / 3 (the
+  primary speed sensor's TPU channel 10 handlers, one per speed_measurement_mode; mode 1 runs in the dumped ECU)
+- 0x2dde8 oilPressureRpmFaultMonitor -> mc68k_monitorPwmOutputReadBackFaults (PWM read-back pins vs the commanded
+  duty; nothing about oil pressure)
+- 0x27f9c -> mc68k_runPowerDownSequence; 0x284e8 -> mc68k_applicationMain
+- 0x15f8e diagnosticCommandDispatcher -> mc68k_dispatchJ1708ReceivedMessages
+- 0x1e5f0 -> mc68k_queueCanCs4ReceiveMessage; 0x28b80 initDiagnosticBufferPointers -> mc68k_initializeJ1939Datalink
+- 0x1c31a cm550_flashEraseWithWatchdog -> mc68k_flashEraseBlock (it polls 0xFFD000)
+- 0x34bba cm550_watchdogServiceLoop -> mc68k_delayTimeBaseTicksWithWatchdogService; 0x34bf8 (its byte-identical
+  copy) -> mc68k_delayTimeBaseTicksWithWatchdogService2
+
+Renamed, watchdog kick only (cm550_):
+- 0x10e80 / 0x10f32 -> cm550_loadParameterBlock1FromFlash / 2; 0x10fe0 / 0x1125a -> cm550_saveParameterBlock1ToFlash
+  / 2 (flash blocks 0x4000 / 0x6000, sums in EEPROM 0x8 / 0xA)
+- 0x117ec -> cm550_copyCalibrationFromRomToRam (2401 dwords into RAM 0x80654A-0x808ACD, which holds 1757 named
+  calibration rows)
+- 0x1c484 -> cm550_flashEraseFromRam (the erase twin of cm550_flashProgramFromRam); 0x1c4ba ->
+  cm550_flashProgramAndVerifyWords
+- 0x27af0 vp44StatusInitAndWait -> cm550_restartOnKeyOnDuringPowerDown; 0x27cd0 -> cm550_savePowerDownDataToFlashBank
+
+Deleted (deleted_functions.csv, rows removed). Each record is a mid-function point with no reference anywhere in
+the dumped ROM (references_to.py: 32-bit values, every PC-relative branch / jsr / lea / pea form, CPU32 (bd,pc)). The
+rows came from the J90280.05 relocation map:
+- 0x15e06 clearModuleSyncFlag: 22 bytes into mc68k_FUN_00015df0, after its movem.l a2-a4 prologue.
+- 0x28508, 0x2874a, 0x28792, 0x28816, 0x28828, 0x28936, 0x28990: inside mc68k_applicationMain, each right after
+  move.l a0,sp or a jsr.
+- 0x28e32 cm550_mainCanTransmissionLoop: inside mc68k_initializeJ1939Datalink.
+0x28978 stays: the restart entry, jumped to through a pointer.
+
+Also:
+- cm550_flashEraseFromRam's prototype: the second argument is the suspend-check flag, not an end address, and it
+  returns the erase result. 0x1e5f0's argument is the 82527 message object.
+- mc68k_waitForChipSelect2InputBit0High's plate comment now gives the right reason for its prefix: the 0xFFD000
+  poll, not the watchdog kick.
+
+Proof:
+- CM550 verify is DETERMINISTIC.
+- function_set_check.py compares the builds function by function, with comments stripped and the 23 renames applied:
+  9 functions removed (exactly the deleted records), 0 added, 7 changed.
+  - The parents of the deleted records do not change: each spurious record had only shown a duplicate of its
+    parent's tail.
+  - cm550_flashEraseFromRam: the new prototype (block_address, suspend_check_disabled; it returns the RAM routine's
+    result).
+  - Its three callers (the two parameter block savers and cm550_updateBootBlockFromImage): the result variable is a
+    dword (the importer maps int to dword), and the temporaries are renumbered.
+  - mc68k_queueCanCs4ReceiveMessage: the argument is named message_object.
+  - One caller line rewraps, and one local declaration moves with the same lines.
+- The build log has no new warning. Three function-name-mismatch warnings are gone.
+- The headers regenerate with 0 g++ errors (758 functions). The _cal audit reports HARD 0 and MISSING 31.
+  test_rename_waves.py: ALL PASS.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

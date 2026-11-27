@@ -1,0 +1,12 @@
+cm848: round 59 closing - task 046, the session archive, the PR body
+
+- task 046, round 59:
+  - the 29 struct types removed (4 superseded, 25 with no CM848 home) and the 3 kept as table leads;
+  - round 58's scan claim corrected;
+  - the proof;
+  - leads: type the parameter ID table and the two dispatch tables, CM550's unused copies, 69 unprefixed functions.
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 218.
+- PR body, README, todo, memory, and the round 59 session folder (the orphan finder, the stage scripts, the verbatim
+  record of the removed types, the closing scripts, the verify log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

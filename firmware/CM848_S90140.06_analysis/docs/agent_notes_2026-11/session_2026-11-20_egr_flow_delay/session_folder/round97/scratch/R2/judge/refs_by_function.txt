@@ -1,0 +1,124 @@
+0x800182: cm550_calculateGovernorDroopSpeed@faa6 x1, vp44_fuelLimitExceedanceStatisticsAccumulator@fb26 x4
+0x800716: runHighSpeedGovernorPid@1ce7c x2, presetHighSpeedGovernorIntegrator@1d252 x1
+0x808040: runHighSpeedGovernorPid@1ce7c x2
+0x808042: runHighSpeedGovernorPid@1ce7c x2
+0x808044: runHighSpeedGovernorPid@1ce7c x2, initializeHighSpeedGovernorGainSet@1d2e4 x1
+0x808046: runHighSpeedGovernorPid@1ce7c x2
+0x808048: runHighSpeedGovernorPid@1ce7c x1
+0x80804a: runHighSpeedGovernorPid@1ce7c x1
+0x80804c: runHighSpeedGovernorPid@1ce7c x1
+0x80804e: presetHighSpeedGovernorIntegrator@1d252 x1
+0x808050: presetHighSpeedGovernorIntegrator@1d252 x1
+0x808052: runHighSpeedGovernorPid@1ce7c x2
+0x808054: runHighSpeedGovernorPid@1ce7c x2
+0x808058: runHighSpeedGovernorPid@1ce7c x1
+0x80805a: runHighSpeedGovernorPid@1ce7c x1
+0x80805c: runHighSpeedGovernorPid@1ce7c x1
+0x80805e: runHighSpeedGovernorPid@1ce7c x2
+0x808060: runHighSpeedGovernorPid@1ce7c x2
+0x808062: runHighSpeedGovernorPid@1ce7c x2
+0x808064: runHighSpeedGovernorPid@1ce7c x2
+0x808066: presetHighSpeedGovernorIntegrator@1d252 x2
+0x808110: cm550_tableLookup2D@35088(+20b4) x1, cm550_tableLookup2D@35088(+20b8) x1
+0x808112: 
+0x808114: 
+0x808116: 
+0x808118: selectHighSpeedGovernorGainSet@1d392 x1, cm550_tableLookup2D@35088(+1794) x1, cm550_tableLookup2D@35088(+1798) x1
+0x80811a: selectHighSpeedGovernorGainSet@1d392 x2
+0x80811c: selectHighSpeedGovernorGainSet@1d392 x2
+0x808120: selectHighSpeedGovernorGainSet@1d392 x2
+0x808126: selectHighSpeedGovernorGainSet@1d392 x2
+0x80812a: selectHighSpeedGovernorGainSet@1d392 x2
+0x808132: selectHighSpeedGovernorGainSet@1d392 x1
+0x808138: selectEngineSpeedLimit@1d5a0 x1, cm550_tableLookup2D@35088 x2
+0x80813a: 
+0x80813c: 
+0x80813e: selectEngineSpeedLimit@1d5a0 x2
+0x808140: selectEngineSpeedLimit@1d5a0 x2
+0x808506: cm550_tableLookup2D@35088(+171c) x1, cm550_tableLookup2D@35088(+1720) x1
+0x80a932: cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_tableLookup2D@35088(+e94) x1, cm550_tableLookup2D@35088(+e98) x1
+0x80a934: cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a936: cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a938: cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a93a: cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a93e: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a940: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a942: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a944: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a948: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a94a: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a94c: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a94e: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a950: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a952: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a954: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a956: cm550_diagnosticDataCopyHandler@d0e2 x1
+0x80a96c: cm550_runAllSpeedGovernor@c962 x6, cm550_tableLookup2D@35088 x2
+0x80a96e: cm550_runAllSpeedGovernor@c962 x7
+0x80a970: cm550_runAllSpeedGovernor@c962 x5
+0x80a972: cm550_dzgTimingAndPressureControlStateMachine@c8a0 x2, cm550_runAllSpeedGovernor@c962 x8
+0x80a978: cm550_runAllSpeedGovernor@c962 x5
+0x80a97a: cm550_runAllSpeedGovernor@c962 x2
+0x80a97c: cm550_runAllSpeedGovernor@c962 x5
+0x80a97e: cm550_runAllSpeedGovernor@c962 x6
+0x80a980: cm550_runAllSpeedGovernor@c962 x5
+0x80a990: cm550_dzgTimingAndPressureControlStateMachine@c8a0 x2, cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_diagnosticState2Initializer@d218 x1, cm550_dualTableLookupSum@d23c x1, cm550_diagnosticMode10FuelController@d3e6 x2, cm550_diagnosticState7Setter@d584 x1
+0x80a992: cm550_runAllSpeedGovernor@c962 x3, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_diagnosticStatus2Initializer@d1a4 x1, cm550_diagnosticMode10FuelController@d3e6 x1
+0x80a994: cm550_runAllSpeedGovernor@c962 x3, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_diagnosticStatus2Initializer@d1a4 x1, cm550_diagnosticMode10FuelController@d3e6 x1
+0x80a996: cm550_diagnosticMode10FuelController@d3e6 x1
+0x80a998: cm550_diagnosticMode10FuelController@d3e6 x1
+0x80a99a: cm550_diagnosticMode10FuelController@d3e6 x1, cm550_calculateAllSpeedGovernorDroopFueling@f716 x1
+0x80a99c: cm550_runAllSpeedGovernor@c962 x2, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_diagnosticStatus2Initializer@d1a4 x1, cm550_selectVariableSpeedGovernorMode@d4ae x1
+0x80a99e: cm550_runAllSpeedGovernor@c962 x2, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_diagnosticStatus2Initializer@d1a4 x1, cm550_selectVariableSpeedGovernorMode@d4ae x1
+0x80a9a0: cm550_runAllSpeedGovernor@c962 x1, cm550_diagnosticDataCopyHandler@d0e2 x1, cm550_diagnosticStatus2Initializer@d1a4 x1, cm550_selectVariableSpeedGovernorMode@d4ae x1
+0x80a9a2: cm550_acceleratorThrottleFaultDetector@d2be x1, cm550_initializeAllSpeedGovernorReferenceSpeedSets@d3b2 x1, cm550_diagnosticMode10FuelController@d3e6 x2
+0x80a9a4: cm550_acceleratorThrottleFaultDetector@d2be x1
+0x80a9a6: cm550_acceleratorThrottleFaultDetector@d2be x1
+0x80bcdb: mc68k_sampleAndDebounceDiscreteInputs@14fca x1, mc68k_ioDriverStrobeHandler@159ee x1
+0x80d60e: 
+0x80d612: selectHighSpeedGovernorGainSet@1d392 x1
+0x80d614: selectHighSpeedGovernorGainSet@1d392 x2
+0x80d61a: initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x1
+0x80d622: selectHighSpeedGovernorGainSet@1d392 x3
+0x80d626: runHighSpeedGovernorPid@1ce7c x1, presetHighSpeedGovernorIntegrator@1d252 x1
+0x80d628: runHighSpeedGovernorPid@1ce7c x4, presetHighSpeedGovernorIntegrator@1d252 x1
+0x80d62c: runHighSpeedGovernorPid@1ce7c x2, presetHighSpeedGovernorIntegrator@1d252 x1, initializeHighSpeedGovernorGainSet@1d2e4 x1, selectEngineSpeedLimit@1d5a0 x1
+0x80d62e: runHighSpeedGovernorPid@1ce7c x2, initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x5
+0x80d630: runHighSpeedGovernorPid@1ce7c x2, initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x1
+0x80d632: runHighSpeedGovernorPid@1ce7c x2, initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x1
+0x80d63e: runHighSpeedGovernorPid@1ce7c x1
+0x80d640: runHighSpeedGovernorPid@1ce7c x4
+0x80d642: runHighSpeedGovernorPid@1ce7c x4
+0x80d644: vp44_fuelLimitExceedanceStatisticsAccumulator@fb26 x4, cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints@184c6 x1, selectEngineSpeedLimit@1d5a0 x1, initializeEngineSpeedLimitDefaults@1d94e x1, cm550_tableLookup2D@35088 x2
+0x80d646: runHighSpeedGovernorPid@1ce7c x2, selectEngineSpeedLimit@1d5a0 x1, cm550_diagnosticMessage46Builder@1f2d0 x1
+0x80d64e: vp44_fuelLimitExceedanceStatisticsAccumulator@fb26 x1, selectEngineSpeedLimit@1d5a0 x5, buildPgn65251EngineConfiguration1Payload@3320e x1
+0x80d650: selectEngineSpeedLimit@1d5a0 x2, initializeEngineSpeedLimitDefaults@1d94e x1, buildPgn65251EngineConfiguration1Payload@3320e x1
+0x80d652: cm550_calculateGovernorDroopSpeed@faa6 x2, cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints@184c6 x1, selectEngineSpeedLimit@1d5a0 x5, cm550_calculateEngineLoadPercentages@26cc8 x2, buildPgn65251EngineConfiguration1Payload@3320e x1
+0x80d656: selectEngineSpeedLimit@1d5a0 x4, cm550_calculateEngineLoadPercentages@26cc8 x1
+0x80d658: selectHighSpeedGovernorGainSet@1d392 x4, selectEngineSpeedLimit@1d5a0 x1
+0x80d65a: selectEngineSpeedLimit@1d5a0 x6
+0x80db1e: selectEngineSpeedLimit@1d5a0 x2
+0x808036: initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x2, cm550_tableLookup2D@35088 x2
+0x808038: initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x2
+0x80803a: initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x2
+0x80803c: initializeHighSpeedGovernorGainSet@1d2e4 x1, selectHighSpeedGovernorGainSet@1d392 x2
+0x80803e: runHighSpeedGovernorPid@1ce7c x1
+0x80d624: runHighSpeedGovernorPid@1ce7c x3, cm550_tableLookup2D@35088 x2
+0x80d62a: runHighSpeedGovernorPid@1ce7c x4
+0x80d610: selectHighSpeedGovernorGainSet@1d392 x1, cm550_tableLookup2D@35088(+178c) x1, cm550_tableLookup2D@35088(+1790) x1
+0x80d616: selectHighSpeedGovernorGainSet@1d392 x1
+0x80d618: selectHighSpeedGovernorGainSet@1d392 x1
+0x80d61c: selectHighSpeedGovernorGainSet@1d392 x3
+0x80d61e: selectHighSpeedGovernorGainSet@1d392 x3
+0x80d620: selectHighSpeedGovernorGainSet@1d392 x3
+0x80d64a: selectEngineSpeedLimit@1d5a0 x4
+0x808142: selectEngineSpeedLimit@1d5a0 x2
+0x80d60a: runHighSpeedGovernorPid@1ce7c x1, cm550_tableLookup2D@35088(+206c) x1, cm550_tableLookup2D@35088(+2070) x1
+0x80a974: cm550_runAllSpeedGovernor@c962 x3
+0x80071c: runHighSpeedGovernorPid@1ce7c x2, presetHighSpeedGovernorIntegrator@1d252 x1
+0x80071a: runHighSpeedGovernorPid@1ce7c x2
+0x80074a: selectHighSpeedGovernorGainSet@1d392 x3
+0x800748: selectHighSpeedGovernorGainSet@1d392 x3
+0x803f46: initializeEngineSpeedLimitDefaults@1d94e x1
+0x803f42: selectEngineSpeedLimit@1d5a0 x4
+0x80d666: selectEngineSpeedLimit@1d5a0 x1, initializeEngineSpeedLimitDefaults@1d94e x1

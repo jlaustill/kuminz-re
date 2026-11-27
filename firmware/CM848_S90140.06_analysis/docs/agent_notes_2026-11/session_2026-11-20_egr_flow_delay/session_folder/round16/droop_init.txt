@@ -1,0 +1,87 @@
+=== cm848_initializeCruiseControlDroopGains (lines 85731-85823, 86 non-blank)
+// Function: cm848_initializeCruiseControlDroopGains @ 0x00524df4
+//
+/* Boot pass (cm848_applicationMain): the power-up cruise and road speed governor droop gains and
+   offsets (e2m 1187), the zone code and the deadband / zone transition flags (was
+   governorCruiseStateMachine) */
+void cm848_initializeCruiseControlDroopGains(void)
+{
+  word wVar1;
+  undefined2 uVar2;
+  int iVar3;
+  uint uVar4;
+  int iVar5;
+  undefined2 local_30;
+  undefined2 local_2e;
+  DAT_003fcffe = 2;
+  cruise_zone_transition_flag = 0;
+  cruise_droop_speed_error_delta = 0;
+  cruise_deadband_active_flag = 0;
+  cruise_speed_zone_code = 1;
+  local_30 = 2;
+  local_2e = 2;
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_droop_reference_speed - cruise_top_droop_width_cal,
+                     rear_axle_ratio_low_cal);
+  cruise_top_droop_gain_for_rear_axle_ratio_low =
+       governor_cruise_tableLimit_calc
+                 (cruise_top_droop_width_cal,&local_30,uVar2,
+                  four_dimensional_fueling_transient_x_axis,400,
+                  four_dimensional_fueling_transient_y_axis,four_dimensional_fueling_transient_grid,
+                  4);
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_droop_reference_speed - road_speed_governor_top_droop_width_cal,
+                     rear_axle_ratio_low_cal);
+  road_speed_governor_top_droop_gain_for_rear_axle_ratio_low =
+       governor_cruise_tableLimit_calc
+                 (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
+                  four_dimensional_fueling_transient_x_axis,400,
+                  four_dimensional_fueling_transient_y_axis,four_dimensional_fueling_transient_grid,
+                  4);
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_INDUCTIVE) {
+    cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
+    road_speed_governor_top_droop_gain = road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;
+  }
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_droop_reference_speed - cruise_top_droop_width_cal,
+                     rear_axle_ratio_high_cal);
+  DAT_003fcff2 = governor_cruise_tableLimit_calc
+                           (cruise_top_droop_width_cal,&local_30,uVar2,
+                            four_dimensional_fueling_transient_x_axis,400,
+                            four_dimensional_fueling_transient_y_axis,
+                            four_dimensional_fueling_transient_grid,4);
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_droop_reference_speed - road_speed_governor_top_droop_width_cal,
+                     rear_axle_ratio_high_cal);
+  DAT_003fcff6 = governor_cruise_tableLimit_calc
+                           (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
+                            four_dimensional_fueling_transient_x_axis,400,
+                            four_dimensional_fueling_transient_y_axis,
+                            four_dimensional_fueling_transient_grid,4);
+  wVar1 = cruise_bottom_droop_offset;
+  if ((uint)governor_cruise_fuel_demand_min < (uint)cruise_bottom_droop_offset) {
+    uVar4 = (uint)cruise_bottom_droop_offset - (uint)governor_cruise_fuel_demand_min;
+    iVar5 = (uVar4 & 0xffff) * 0x22c8;
+    iVar3 = 0x410000;
+    uVar2 = governor_cruise_rampScale_calc(cruise_bottom_droop_width_cal,iVar5,uVar4);
+    *(undefined2 *)(iVar3 + -0x4964) = uVar2;
+    road_speed_governor_bottom_droop_gain =
+         governor_cruise_rampScale_calc(road_speed_governor_bottom_droop_width_cal,iVar5,uVar4);
+  }
+  else {
+    cruise_bottom_droop_gain = 0;
+    road_speed_governor_bottom_droop_gain = 0;
+  }
+  vehicle_speed_limit_fueling_top_droop_offset = cruise_speed_offset_default;
+  cruise_control_fueling_top_droop_offset = cruise_speed_offset_default;
+  vehicle_speed_limit_fueling_bottom_droop_offset = wVar1;
+  cruise_control_fueling_bottom_droop_offset = wVar1;
+  cruise_control_fueling_top_droop_gain = 0;
+  cruise_control_fueling_bottom_droop_gain = 0;
+  vehicle_speed_limit_fueling_bottom_droop_gain = road_speed_governor_bottom_droop_gain;
+  vehicle_speed_limit_fueling_top_droop_gain = road_speed_governor_top_droop_gain;
+  cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
+  road_speed_governor_top_droop_gain = road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;
+  return;
+}
+//

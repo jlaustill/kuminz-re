@@ -1,0 +1,10 @@
+cm848: round 8 stage E closing - resolved-name notes, the final verify, the logs
+
+- Old-name sweep for stage E's 17 names (old_names_r8e.txt, grep_old_r8e.txt). The hits that are left are history:
+  wrapped "(was ...)" plates. Tasks 025 and 027 get stage E's names added to their "Resolved by PR #53 round 8"
+  sections (close_r8e.py).
+- ./analyze.sh verify on the final state: the two builds are byte-identical. The large-files tarball gets the
+  stage E build and verify logs (update_large_tar_r8e.sh).
+- The PR body: commit hashes for stages C / E and the closing commit.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,18 @@
+cm848: round 27 closing - task 046, the session archive, verify
+
+- task 046, the round 27 section:
+  - stages A / C / B;
+  - the channel 88 finding: disabled channel 88 (exhaust throttle position) writes the fuel temperature outputs each
+    main-loop cycle;
+  - the measured trade of the fault bitfields;
+  - the leads: word 0's named bits, the fault_<n> bits with unresolved e2m abbreviations, channel 88, and the older
+    TouCAN B / Can2 / kernel transport / diag_clear_flags_t items.
+  - The round 24 "named fault bits" lead is marked done.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round27/: the census / identity / generator / apply / proof scripts, the worklist, the label
+    table, the fault field names, the maps, the commit messages;
+  - the large tarball: the build logs (stage A, C, the bitfield pilot, the flat and nested layouts) and verify.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,2162 @@
+{
+ "batch": "Q1",
+ "proposal": {
+  "batch": "Q1",
+  "summary": "Both firmwares register 19 periodic J1939 broadcasts at start-up with scheduleJ1939PeriodicMessage. cm550_runJ1939PeriodicTransmitQueues / cm848_runJ1939PeriodicTransmitQueues call each builder when its 10 ms tick comes (queue 0 is the engine node; queue 1 is the retarder node, gated by datalink_broadcast_enable_flags bit 3). Most builders are also registered as PGN 59904 request responders (CM550 registrar 0x2f47e, CM848 cm848_j1939RegisterPgnHandler). Each builder fills the payload buffer that its initializer gave the j1939_tx_msg_t descriptor and calls cm550_sendCanMessage / cm848_sendJ1939Message. Paired by PGN: five builders are step-for-step twins (EEC1 61444, EEC2 61443, EEC3 65247, EC1 65251, VEP1 65271). Twelve are counterparts whose CM848 version adds fault tests, enable gates or fields (CCVS, ERC1, RC, ET1, EFL/P1, PTO, AMB, IC1, the DM1 task, FD1, EBC1, WFI). Only CM550 sends LFE 65266 and SHUTDN 65252, and only CM848 sends AUXIO1 65241 and Proprietary B 65504. The four CM550 builders with no function row (0x3229a DM1, 0x339fe FD1, 0x32bbc EBC1, 0x34496 WFI) are small bodies that end in rts and are reached only through their schedule pointer.",
+  "functions": [
+   {
+    "address": "0x00031c84",
+    "current_name": "j1939HandlePgn65265CruiseVehicleSpeed",
+    "proposed_name": "cm550_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "role": "Fills the eight CCVS bytes at 0x801ee2 from the switch bytes, the road speed, the cruise reference speed and the PTO state, then sends PGN 65265.",
+    "discriminator": "It is the only body that writes 0x801ee3-0x801ee9 and sends j1939_pgn65265_tx_message. Its initializer cm550_initializePgn65265CruiseControlVehicleSpeedHandler only sets the descriptor and byte 1 = 0xf3 and registers this body for request PGN 0xfef1. It handles no received message.",
+    "relation": "counterpart",
+    "cm848_address": "0x00024178",
+    "cm848_current_name": "cm848_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "plate_comment": "Builds and sends the ECM's CCVS broadcast (PGN 65265 Cruise Control/Vehicle Speed, 8 bytes at 0x801ee2; queue 0 every 100 ms from 70 ms, and the PGN 59904 request responder that cm550_initializePgn65265CruiseControlVehicleSpeedHandler registers). Byte 1 is 0xf3, or 0xf7 when bit 6 of the cruise switch byte 0x80bcd4 is set (SPN 70 parking brake). When 0x803d48 (e2m 1180 +E VSRXRASP) is 1, its SPN 69 two-speed axle field comes from the rear axle ratio switch (bit 2 of 0x80bcd0). Bytes 2-3 are the wheel-based vehicle speed (SPN 84) = the filtered road speed 0x80a9d0, clamped at 156 mph, x 412 / 256, low byte first. Byte 4 holds cruise active, the cruise on switch, brake and clutch (SPN 595-598); byte 5 the set / coast / resume / accelerate switches of 0x80bcd4 (SPN 599-602); byte 6 the set speed from the cruise reference speed 0x80a9c6 (e2m 117D +2 CRRF, SPN 86); byte 7 the PTO state byte 0x80dc2b (e2m 109E +6 PTDXSS, SPN 976) plus cruise state 1 while cruise is active (SPN 527); byte 8 the idle increment / decrement and test switches of 0x80bccf (SPN 968 / 967 / 966). Then cm550_sendCanMessage(j1939_pgn65265_tx_message).",
+    "evidence": "asm 0x31c84-0x31ed0: a3 = 0x801ee2 and a4 = 0x80bcce. 0x31ca2 (0x6,a4)&0x40 gives 0xf7/0xf3 to 0x801ee2. 0x31cca cmpi.w #1,(0x803d48) then andi.b #0xfc/#0xfd from (0x2,a4)&4. 0x31cf4 0x80a9d0 clamp 0x9c00, x412 (shift chain) >>8, move.b to (1,a3)/(2,a3). 0x31d52 0x40 clutch (0x1,a4)&4 / 0x31d76 0x10 brake &8 / 0x31d92 4 for 0x80bcd4&0x10 / 0x31da2 1 for 0x80a9c4==1. 0x31dbe..0x31e10 byte 5 = 0x40 for bit 1, 0x10 for bit 0, 4 for bit 3, 1 for bit 2 (e2m E+6 CRACELSW / CRRESUSW / CRCOASSW / CRSETSW). 0x31e16 0x80a9c6 x412>>8>>8 to (5,a3). 0x31e44 0x20 for cruise active, or.b 0x80dc2b into (6,a3). 0x31e72..0x31eb6 0xd0/0xc0, |0xc4, |0xc1 from 0x80bccf bits 7/6/5 (e2m DSTESWSS / DSDTSWSS / DSICSWSS). 0x31ebc pea 0x801ed4 + jsr 0x104e8. Refs: pea at 0x28c5c (schedule) and 0x31f1e (registrar 0x2f47e, PGN 0xfef1). CM848 0x24178 does it differently: it reports a datalink-sourced switch as 3 (switch_input_datalink_source_bits_cal), gates on cruise_control_enable / power_take_off_enable / two_speed_axle_switch_present_cal / vehicle_speed_sensor_type_cal (0xff / 0xffff forms) and sends no parking brake. So the steps differ: counterpart. Uniqueness checked.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00032c76",
+    "current_name": "sendPgn61444ElectronicEngineController1Message",
+    "proposed_name": "sendPgn61444ElectronicEngineController1Message",
+    "role": "Fills EEC1 (torque mode, driver demand and actual percent torque, engine speed) at 0x803492 and sends PGN 61444 every 20 ms.",
+    "discriminator": "It is the only body that writes the five EEC1 bytes 0x803492-0x803496 and the only one that maps final_fueling_state / the TSC1 control device to SPN 899 torque mode codes 0xf0-0xfe.",
+    "relation": "twin",
+    "cm848_address": "0x0002588c",
+    "cm848_current_name": "sendPgn61444ElectronicEngineController1Message",
+    "plate_comment": "Builds and sends the ECM's EEC1 broadcast (PGN 61444, 5 bytes at 0x803492; queue 0 every 20 ms). Byte 1 is the engine torque mode (SPN 899, high nibble 0xf). During a TSC1 override in the TSC1 fueling states 1 / 2 / 20 it is 0xf6 / 0xf5 / 0xf7 for control device 1 / 3 / 2 (transmission / ASR / ABS). Otherwise it comes from final_fueling_state: 0xf1 for the accelerator states (0xfb remote accelerator when the selected alternate throttle priority 0x80aa94 equals 0x8089a4), 0xf3 PTO, 0xf2 cruise, 0xf4 road speed, 0xf0 low speed, 0xf9 high speed governor, 0xfa engine brake, 0xf8 for the derate states, else 0xfe. Byte 2 is the driver demand percent torque + 125 (0x80da18 after cm550_paramSystemModeController, SPN 512); byte 3 is the actual engine percent torque + 125 (0x80da16 after cm550_param_lookup_1, SPN 513; 0xfe while j1939_torque_and_load_not_available_flag is 1); bytes 4-5 are engine_rpm_primary, low byte first (SPN 190). Twin of CM848 0x2588c.",
+    "evidence": "asm 0x32c76-0x32e06: 0x32c90 tst.w 0x80da50, then states 2/1/20 and indicator 0x80da4e 1/3/2 give 0xf6/0xf5/0xf7. Jump table 0x32d04 (index = state-1, 41 entries): 1 2 3 7 8 30 37 give 0xf1/0xfb (0x32d5c cmp 0x80aa94 vs 0x8089a4), 4 0xf3, 9 0xf2, 10 0xf4, 11 0xf0, 12 0xf9, 24 0xfa, 13-21 28 29 31 33-36 38-41 0xf8, the rest 0xfe. jsr 0xf796, 0x80da18>>8 +0x7d to (1,a3). jsr 0xf8c6, 0x80da16>>8 +0x7d to (2,a3), 0xfe when 0x80d358==1. 0x80ccf6 low/high to (3,a3)/(4,a3). pea 0x80349a. CM848 0x2588c: the same TSC1 part (states 2/1/20, indicators 1/2/3), the same state-to-mode map (1 2 3 7 8 30 37 / 4 / 9 / 10 / 11 / 12 / 24), the same +125 bytes, the 0xfe override and the speed bytes. It differs only in two places: 0xf8 comes from torque_derate_fuel_source_code == final_fueling_state, and there is no 0xfb. Both are the 2nd schedule call (queue 0, 61444, 20, 0). The shared name was verified at stage 9b; it is kept as method versioning of one function.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00032e4c",
+    "current_name": "j1939HandlePgn61443Eec2",
+    "proposed_name": "buildPgn61443ElectronicEngineController2Message",
+    "role": "Fills EEC2 (low idle and kickdown switches, accelerator position, percent load, remote accelerator position, bytes 5-8 0xff) at 0x8034aa and sends PGN 61443.",
+    "discriminator": "It is the only body that writes 0x8034aa-0x8034b1 and sends j1939_pgn61443_tx_message. Its initializer 0x33064 sets the descriptor and registers this body for request PGN 0xf003. It handles no received message.",
+    "relation": "twin",
+    "cm848_address": "0x00025b10",
+    "cm848_current_name": "cm848_buildPgn61443ElectronicEngineController2Message",
+    "plate_comment": "Builds and sends the ECM's EEC2 broadcast (PGN 61443; data length 5 of the 8-byte buffer 0x8034aa; queue 0 every 50 ms from 10 ms on CM550, every 20 ms on CM848; also the PGN 59904 request responder that the EEC2 initializer registers). Byte 1 is the kickdown field: 0xf4 when the commanded throttle is above the kickdown threshold 0x80818e, else 0xf0; 0xf8 on a throttle fault. To it is added the low idle switch field: 3 while algorithm_enable_flags_13_cal.idle_switch_override_enable is set, 2 on an idle validation switch fault, 1 while accelerator_off_idle is 0 (SPN 558 / 559). Byte 2 is the accelerator pedal position = throttle x 5 / 8 (SPN 91; 0xff while sampled_throttle_override_enable, 0xfe on a throttle fault). Byte 3 is the percent load at current speed from 0x80da1a after cm550_param_lookup_3 (SPN 92; 0xfe while not available). Byte 4 is the remote accelerator position x 5 / 8 (SPN 974; 0xff unless remote_throttle_enable without remote_throttle_override_enable, 0xfe on a remote throttle fault). Bytes 5-8 are 0xff; only byte 5 is sent. Then cm550_sendCanMessage(j1939_pgn61443_tx_message). Twin of CM848 0x25b10.",
+    "evidence": "asm CM550 0x32e4c-0x33062 vs CM848 0x25b10-0x25d5c, step for step. (1) four throttle fault tests (CM550 status word 0x806008 bits 0x20/8/2/4, each with its 0x806ac4 enable bit; CM848 fault_detected_cal w3 b15 / w4 b4 / w0 b10 / w0 b11) give 0xf8, else throttle (0x80aa82 / 0x40b812) > threshold (0x80818e / ROM 0x5c392) gives 0xf4, else 0xf0. (2) override bit 7 (0x803cae / 0x3fdbce) gives |3, else switch high/low faults (8,0x10 / w4b4,w3b14) give |2, else off-idle word==0 (0x80aa86 / 0x40a57e) gives |1. (3) the same 4 faults give 0xfe, else an override (0x803c9e&0x400 / 0x3fda68&0x2000) gives 0xff, else t>>1 + t>>3. (4) jsr 0xf930 / bl 0x20a58, high byte of 0x80da1a / 0x40ad8e, 0xfe when 0x80d358 / 0x40a336 == 1. (5) !(0x803cb8&0x1000 / 0x3fd5c0&0x1000, the same algorithm_enable_flags_18 bit 12) or the remote override gives 0xff, a remote fault pair gives 0xfe, else remote>>1 + >>3. (6) four 0xff stores to +4..+7. (7) send 0x8034b2 / 0x3fadb0. Both initializers (0x33064 / cm848_initPgn61443Eec2Handler) set length 5, call a stub (0xf99a / cm848_emptyStubFunction7) and register the builder for 0xf003. Both are the 3rd schedule call. Only the fault and override storage differs.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x000330c4",
+    "current_name": "vp44_configParamCanBuilder",
+    "proposed_name": "buildPgn65247ElectronicEngineController3Message",
+    "role": "Fills EEC3 (nominal friction percent torque, desired operating speed, its asymmetry adjustment) at 0x8034c2 and sends PGN 65247.",
+    "discriminator": "It is the only body that writes the four bytes 0x8034c2-0x8034c5 and sends j1939_pgn65247_tx_message. Nothing in it touches the VP44: it is a J1939 broadcast.",
+    "relation": "twin",
+    "cm848_address": "0x00025de8",
+    "cm848_current_name": "cm848_buildPgn65247ElectronicEngineController3Message",
+    "plate_comment": "Builds and sends the ECM's EEC3 broadcast (PGN 65247, 4 bytes at 0x8034c2; queue 0 every 250 ms from 30 ms on CM550, every 50 ms on CM848). It runs the nominal friction calculation 0xf99c and stores the high byte of 0x80da1c plus 125 in byte 1 (SPN 514). Bytes 2-3 are j1939_pgn65247_desired_operating_speed (e2m 10E7 +0 JCEGDSRP), low byte first (SPN 515). Byte 4 is the low byte of 0x808180 (e2m 10E7 +2 JCEGOPRP, SPN 519). Then cm550_sendCanMessage(j1939_pgn65247_tx_message). Twin of CM848 0x25de8.",
+    "evidence": "asm CM550 0x330c4-0x3311e: jsr 0xf99c; move.w 0x80da1c, asr #8, move.b d0,(a3) then addi.b #0x7d,(a3); 0x80817e low/high to (1,a2)/(2,a2); move.b 0x808181,(3,a2); pea 0x8034ca; jsr 0x104e8. CM848 0x25de8-0x25e58: bl 0x20af0 (cm848_calculateNominalFrictionPercentTorque); lhz 0x40ad90 >>8, stb, addi 125, stb again (the same double store); lhz ROM 0x5c382 low/high to +1/+2; lhz 0x5c384 low byte to +3; bl 0x539fc with 0x3fadc8. Identical steps, constants and order. Both are the 4th schedule call (65247, offset 30); only the interval differs (250 / 50).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0003366a",
+    "current_name": "sendPgn65251EngineConfiguration1Message",
+    "proposed_name": "sendPgn65251EngineConfiguration1Message",
+    "role": "When no transport session is running, it rebuilds the 28-byte EC1 payload and sends PGN 65251.",
+    "discriminator": "It tests j1939_pgn65251_transmit_status & 0xf0 before it rebuilds through buildPgn65251EngineConfiguration1Payload; it is also the send step of sendPgn65251EngineConfiguration1OnChange.",
+    "relation": "twin",
+    "cm848_address": "0x0001b730",
+    "cm848_current_name": "sendPgn65251EngineConfiguration1Message",
+    "plate_comment": "Sends the EC1 broadcast (PGN 65251 Engine Configuration 1, 28 bytes at 0x8034f2 through the transport protocol; queue 0 every 5000 ms from 110 ms). Only while j1939_pgn65251_transmit_status has no bit of 0xf0 set (no transport session in progress) does it rebuild the payload with buildPgn65251EngineConfiguration1Payload and send j1939_pgn65251_tx_message with cm550_sendCanMessage. It is also the last step of sendPgn65251EngineConfiguration1OnChange. Twin of CM848 0x1b730.",
+    "evidence": "CM550 0x3366a: status & 0xf0 == 0, then buildPgn65251EngineConfiguration1Payload(0x8034f2) and cm550_sendCanMessage(0x80352a); jsr from 0x33660 (the on-change test) and pea at 0x28cb6 (5th schedule call: 65251, 5000, 110). CM848 0x1b730: the same test, the same two calls, the same schedule. Round 95 twin confirmed.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000338ea",
+    "current_name": "cm550_dutyCycleMonitorAltIsrHandler",
+    "proposed_name": "cm550_buildPgn61440ElectronicRetarderController1Message",
+    "role": "Fills ERC1 (retarder torque mode and enable switch bits, actual retarder percent torque) at 0x80356a and sends PGN 61440 from the retarder node.",
+    "discriminator": "It is the only body that writes 0x80356a / 0x80356b and sends j1939_pgn61440_tx_message (retarder queue 1). It is no ISR and monitors no duty cycle.",
+    "relation": "counterpart",
+    "cm848_address": "0x00026238",
+    "cm848_current_name": "cm848_buildPgn61440ElectronicRetarderController1Message",
+    "plate_comment": "Builds and sends the ERC1 broadcast (PGN 61440, 2 bytes at 0x80356a, from the retarder source address; retarder queue 1 every 100 ms from 50 ms). Byte 1 starts with 0x40 when algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable is set (SPN 572) and adds 0x10 when 0x80a9ca (e2m 117D +6 EBSWSS) is not 0 (SPN 571). It then adds the retarder torque mode (SPN 900) from the command source 0x80a9cc (e2m 117D +8 EBCOAG): sources 1 and 4 (J1939, J1939 limit) give 6 / 5 / 7 / 14 for engine_retarder_j1939_control_device 1 / 3 / 2 / other, 2 (cruise) gives 2 and 3 (switch) gives 1. Byte 2 is 0xff when the engine brake driver count 0x8081fe is 0, else 125 minus the high byte of the retarder torque 0x80aa14 after cm550_ioControlBasedFuelCalculator (SPN 520). Then cm550_sendCanMessage(j1939_pgn61440_tx_message).",
+    "evidence": "asm 0x338ea-0x339ae: 0x803c98&0x1000 gives 0x40/0; tst.w 0x80a9ca gives |0x10; jump table 0x33936 on 0x80a9cc (0 none, 1 and 4 to 0x3394c, 2 |2, 3 |1); device word 0x80a9da 1/3/2 gives |6/|5/|7, else |0xe; tst.w 0x8081fe gives 0xff, else jsr 0xff6c and 125 - (0x80aa14>>8); pea 0x803572. Only ref: pea 0x28ccc (6th schedule call, queue 1, 61440, 100, 50). CM848 0x26238 adds the datalink_broadcast_enable_flags bit 3 gate (0xff), starts from 0xc0/0xd0 (shift assist not available, brake assist from engine_retarder_selection_percent_fault_masked) and skips the mode when the output level is 0. Different steps: counterpart. Name unique.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033b40",
+    "current_name": "cm550_fuelEconomyDataBuilder",
+    "proposed_name": "cm550_buildPgn65266FuelEconomyLiquidMessage",
+    "role": "Fills LFE (fuel rate, instantaneous and average fuel economy) at 0x8035b4 and sends PGN 65266.",
+    "discriminator": "It is the only body that writes 0x8035b4-0x8035b9 and sends j1939_pgn65266_tx_message; the initializer cm550_fuelEconomyPGN_65266_Builder only sets the descriptor.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Builds and sends the LFE broadcast (PGN 65266 Fuel Economy (Liquid), 6 bytes at 0x8035b4; queue 0 every 100 ms from 90 ms; CM848 has no such message and schedules PGN 65241 instead). Bytes 1-2 are the fuel rate 0x80de62 converted by cm550_scaleByRatio (x 0x39c2c3 / 0x3840e, then x 3600 / 1000000) to L/h, capped at 3212, times 20 (SPN 183, 0.05 L/h per bit). Bytes 3-4 and 5-6 are the instantaneous fuel economy 0x804fb0 and the trip average fuel economy 0x804fb2 (e2m 117F +10 TIMP / +12 TIMPT3, 1/256 mpg), each times 8502 / 10000 (SPN 184 / 185, 1/512 km/L) and low byte first. Then cm550_sendCanMessage(j1939_pgn65266_tx_message).",
+    "evidence": "asm 0x33b40-0x33c26: jsr 0x35064 twice (scaleByRatio with 0x39c2c3/0x3840e then 0xe10/0xf4240), cmpi.l #0xc8c clamp, x20 (lsl 2, add, lsl 2); move.b low/high to 0x8035b4/(1,a2). 0x804fb0 and 0x804fb2 each x8502 (shift chain 33,133,1063,4251 x2) then divu.l #10000 to (2,a2)/(3,a2) and (4,a2)/(5,a2); pea 0x8035bc. e2m TIMP / TIMPT3 have scale 0.00390625 mpg, and 1 mpg = 217.7 units of 1/512 km/L, so x 0.8502. Only ref: pea 0x28ce8 (7th schedule call). No CM848 builder for 65266 exists. Name unique.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0003407a",
+    "current_name": "vp44CanMessage100ResponseBuilder",
+    "proposed_name": "cm550_buildPgn65249RetarderConfigurationMessage",
+    "role": "Fills the 19-byte RC payload at 0x803630 and sends PGN 65249 from the retarder node when no transport session is running.",
+    "discriminator": "It is the only body that writes 0x803630-0x803641 and sends j1939_pgn65249_tx_message; it has nothing to do with VP44 message 0x100.",
+    "relation": "counterpart",
+    "cm848_address": "0x00026650",
+    "cm848_current_name": "cm848_buildPgn65249RetarderConfigurationMessage",
+    "plate_comment": "Builds and sends the RC broadcast (PGN 65249 Retarder Configuration, 19 bytes at 0x803630 through the transport protocol, from the retarder source address; retarder queue 1 every 5000 ms from 301 ms). It runs only while j1939_pgn65249_transmit_status has no 0xf0 bit set. Byte 1 is 3 for two or more engine brake drivers (0x8081fe), else 0x14. Its compare compiles as an assignment that writes 1 to 0x8081fe, so a count of 0 also gives 0x14. Byte 2 is the control method 0xff / 6 / 3 / 2 / 1 for 0 / 1 / 2 / 3 / 6 cylinders per driver (0x808200). Then come the five speed points (engine_retarder_configuration_idle_speed, the maximum speed 0x8089ba, points 3 and 4 at 0x8089ae / 0x8089b0, peak torque at 0x8089ac), each low byte first and followed by 125 minus its percent torque, and the reference torque 0x8089a6 in bytes 17-18. Byte 19 (SPN 555) is never written and stays 0xff from cm550_initializePgn65249RetarderConfigurationBuffer.",
+    "evidence": "asm 0x3407a-0x341e4: 0x803652&0xf0 bne to exit. cmpi.w #1,(0x8081fe) bls, then 0x340b6 move.w #1,(0x8081fe) and beq (never taken), so 0x14; else 3. 0x808200 0/1/2/3/6 gives 0xff/6/3/2/1. Speed words 0x8089aa/0x8089ba/0x8089ae/0x8089b0/0x8089ac to +2/+5/+8/+0xb/+0xe (low byte first). 125 - high byte of 0x8089b2/b4/b6/b8 to +4/+7/+0xa/+0xd. 0x8089a6 to +0x10/+0x11. pea 0x803644. The initializer 0x3422a writes move.b #0xff,(0x12,a0). Only ref: pea 0x28cfe (8th call, queue 1, 5000, 301). CM848 0x26650 tests ==1 (0x14 else 0xff) and also writes percent_torque_at_peak_torque_point_5, so it has one more step and a different byte 1: counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000337c4",
+    "current_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "proposed_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "role": "Fills ET1 coolant and fuel temperature (deg C + 40) and oil temperature 0xffff and sends PGN 65262.",
+    "discriminator": "It writes j1939_pgn65262_engine_coolant_temperature / _fuel_temperature / _engine_oil_temperature with no fault test; it is the only sender of j1939_pgn65262_tx_message.",
+    "relation": "counterpart",
+    "cm848_address": "0x00026024",
+    "cm848_current_name": "cm848_buildPgn65262EngineTemperature1Message",
+    "plate_comment": "Builds and sends the ET1 broadcast (PGN 65262, 8 bytes at 0x803560; queue 0 every 1000 ms from 430 ms, and the PGN 59904 request responder that cm550_engineTemperaturePGN_65262_Builder registers). Byte 1 is the coolant temperature and byte 2 vp44_fuel_temperature, both in deg C + 40 clamped 0..250 (SPN 110 / 174). Bytes 3-4 (SPN 175 oil temperature) are 0xffff. Then cm550_sendCanMessage(j1939_pgn65262_tx_message).",
+    "evidence": "Decompile and round 95 rows; pea 0x28d16 (9th call, 1000, 430) and pea 0x338d8 (registrar, 0xfeee). CM848 0x26024 tests the coolant / fuel / oil temperature faults (0xfe) and computes the oil temperature. Different steps: counterpart; the name is right.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033d38",
+    "current_name": "cm550_buildPgn65252ShutdownMessage",
+    "proposed_name": "cm550_buildPgn65252ShutdownMessage",
+    "role": "Fills SHUTDN bytes 1-4 (idle shutdown states, timer function, A/C high pressure fan switch, wait to start lamp) and sends PGN 65252.",
+    "discriminator": "It is the only reader of idle_shutdown_state that writes 0x8035f6-0x8035f9 and sends j1939_pgn65252_tx_message.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Builds and sends the ECM's SHUTDN broadcast (PGN 65252, 8 bytes at 0x8035f6; queue 0 every 1000 ms from 110 ms, and the PGN 59904 request responder). Byte 1 comes from idle_shutdown_state: RESET 0, COUNT 0x40 (SPN 590 timer active), WARNING 0x44 (plus SPN 594 driver alert), DELAY unchanged, OVERRIDE 0x10 (SPN 592), SHUTDOWN 1 (SPN 593). Byte 2 is 0x7f / 0x3f from algorithm_enable_flags_3_cal.idle_shutdown_enable (SPN 591). Byte 3 is 0xfd / 0xfc from air_conditioner_pressure_switch_state bit 0 (SPN 985). Byte 4 is 0xfd / 0xfc from bit 0 of the lamp command byte 0x80bcf6 (SPN 1081 wait to start lamp). Then cm550_sendCanMessage(j1939_pgn65252_tx_message); CM848 only receives PGN 65252.",
+    "evidence": "asm 0x33d38-0x33df8: jump table 0x33d5a on 0x80d674 (0..5: clr / 0x40 / 0x44 / unchanged / 0x10 / 1); 0x803c9a&2 gives 0x7f/0x3f to (1,a1); 0x80bcd7&1 gives 0xfd/0xfc to (2,a1); 0x80bcf6&1 gives 0xfd/0xfc to (3,a1); pea 0x8035e8. Refs: pea 0x28d30 (10th call) and 0x2f588 (registrar, 0xfee4). CM848 has receivePgn65252ShutdownMessage only. Name right (round 94).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033164",
+    "current_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "proposed_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "role": "Fills the EFL/P1 oil pressure byte and sends PGN 65263.",
+    "discriminator": "It writes only byte 4, j1939_pgn65263_engine_oil_pressure, and sends j1939_pgn65263_tx_message.",
+    "relation": "counterpart",
+    "cm848_address": "0x00025eb4",
+    "cm848_current_name": "cm848_buildPgn65263EngineFluidLevelPressure1Message",
+    "plate_comment": "Builds and sends the EFL/P1 broadcast (PGN 65263, 8 bytes at 0x8034e8; queue 0 every 500 ms from 130 ms, and the PGN 59904 request responder). Byte 4 is the engine oil pressure (oil_pressure_sensor_state.filtered_value >> 7) x 6906 / 1000 >> 2 (SPN 100, 4 kPa per bit). The other bytes keep their initializer values: 0xff for bytes 1, 2 and 8 and 0xffff for bytes 5-6. Then cm550_sendCanMessage(j1939_pgn65263_tx_message).",
+    "evidence": "Decompile; pea 0x28d46 (11th call, 500, 130) and 0x2f5a0 (registrar, 0xfeef). CM848 0x25eb4 also sends the fuel delivery pressure (enable bit and faults) and the coolant pressure (enable bit): counterpart, name right (round 95).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033f5a",
+    "current_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "proposed_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "role": "Fills the PTO set speed and switch bytes and sends PGN 65264.",
+    "discriminator": "It writes j1939_pgn65264_power_take_off_set_speed and the two switch bytes from power_take_off_switch_state_bits / 0x80bcd0 with no enable gate.",
+    "relation": "counterpart",
+    "cm848_address": "0x0002bd58",
+    "cm848_current_name": "cm848_buildPgn65264PowerTakeOffInformationMessage",
+    "plate_comment": "Builds and sends the PTO broadcast (PGN 65264, 8 bytes at 0x803626; queue 0 every 100 ms from 150 ms, and the PGN 59904 request responder). Bytes 4-5 are power_take_off_requested_engine_speed, byte swapped (SPN 187). Byte 6 is 0xcc / 0xdc from the remote PTO switch (bit 4 of 0x80bcd0, SPN 978), plus 1 for the PTO on switch (SPN 980). Byte 7 is 0xcc / 0xdc for resume (SPN 982), plus 1 for set (SPN 984), from power_take_off_switch_state_bits. Then cm550_sendCanMessage(j1939_pgn65264_tx_message).",
+    "evidence": "Decompile; pea 0x28d5c (12th call, 100, 150) and 0x2f5ac (registrar, 0xfef0). CM848 0x2bd58 gates the whole message on power_take_off_enable (0xffff / 0xff) and reports datalink-sourced switches as 0xfc / 3: counterpart, name right (round 95).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00031bce",
+    "current_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "proposed_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "role": "Fills the AMB barometric pressure byte and sends PGN 65269.",
+    "discriminator": "It writes only j1939_pgn65269_barometric_pressure (no fault test, no air temperature) and sends j1939_pgn65269_tx_message.",
+    "relation": "counterpart",
+    "cm848_address": "0x00023e8c",
+    "cm848_current_name": "cm848_buildPgn65269AmbientConditionsMessage",
+    "plate_comment": "Builds and sends the AMB broadcast (PGN 65269, 8 bytes at 0x801eca; queue 0 every 1000 ms from 170 ms, and the PGN 59904 request responder). Byte 1 is the barometric pressure (ambient_air_pressure_sensor_state.filtered_value x 2) x 6906 / 1000 >> 7 (SPN 108, 0.5 kPa per bit). Then cm550_sendCanMessage(j1939_pgn65269_tx_message).",
+    "evidence": "Decompile; pea 0x28d76 (13th call, 1000, 170) and 0x2f5b8 (registrar, 0xfef5). CM848 0x23e8c adds the pressure fault test (0xfe) and the ambient air temperature word: counterpart, name right.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033e58",
+    "current_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "proposed_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "role": "Fills the IC1 boost pressure and intake manifold temperature and sends PGN 65270.",
+    "discriminator": "It writes j1939_pgn65270_boost_pressure and _intake_manifold_temperature with no fault test.",
+    "relation": "counterpart",
+    "cm848_address": "0x000264d8",
+    "cm848_current_name": "cm848_buildPgn65270InletExhaustConditions1Message",
+    "plate_comment": "Builds and sends the IC1 broadcast (PGN 65270, 8 bytes at 0x80360e; queue 0 every 500 ms from 190 ms, and the PGN 59904 request responder). Byte 2 is the boost pressure cm550_scaleByRatio(boost, 6906, 128000) >> 1 (SPN 102, 2 kPa per bit). Byte 3 is the intake manifold temperature in deg C + 40, clamped 0..250 (SPN 105). The other bytes stay 0xff from the initializer. Then cm550_sendCanMessage(j1939_pgn65270_tx_message).",
+    "evidence": "Decompile; pea 0x28d8c (14th call, 500, 190) and 0x2f5c4 (registrar, 0xfef6). CM848 0x264d8 has the fault tests (0xfe) and no clamp: counterpart, name right.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000342f0",
+    "current_name": "cm550_retarderDataBuilder",
+    "proposed_name": "buildPgn65271VehicleElectricalPower1Message",
+    "role": "Converts the filtered battery voltage to 0.05 V per bit, stores it byte swapped as VEP1 bytes 5-6 and sends PGN 65271.",
+    "discriminator": "It is the only writer of payload +4 (0x80367e) and the only sender of j1939_pgn65271_tx_message. It has nothing to do with the retarder.",
+    "relation": "twin",
+    "cm848_address": "0x00026cf0",
+    "cm848_current_name": "cm848_j1939HandlePgn65271VehicleElectrical",
+    "plate_comment": "Builds and sends the VEP1 broadcast (PGN 65271 Vehicle Electrical Power 1, 8 bytes at 0x80367a; queue 0 every 1000 ms from 210 ms, and the PGN 59904 request responder that cm550_diagnosticDataDump registers). Bytes 5-6 are battery_voltage_sensor_state.filtered_value (e2m 1004 +126 ADBTVTFT) x 20 >> 3, swapped into J1939 byte order with byteSwap16 (SPN 168 battery potential, 0.05 V per bit). Bytes 1-4 and 7-8 stay 0xff from the initializer 0x34334. Then cm550_sendCanMessage(j1939_pgn65271_tx_message). Twin of CM848 0x26cf0; it handles no received message.",
+    "evidence": "asm CM550 0x342f0-0x34332: move.w 0x80a3d0; d0=x, lsl #2, add x, lsl #2 (20x), lsr #3 (Ghidra prints x*5>>1); pea local; jsr 0x218fe (byteSwap16); move.w d0,(0x80367e); pea 0x80366c; jsr 0x104e8. CM848 0x26cf0-0x26d3c: lhz 0x40baf8; mulli 20; srwi 3; bl 0x50b58c (cm848_reverseByteOrder16); sth 0x3faef2 (payload +4); bl 0x539fc with 0x3faee0. The same constants and steps. Both initializers (0x34334 / cm848_initJ1939VehicleElectricalBuffer) set length 8 and payload +0 0xff, +1 0xff, +2 0xffff, +6 0xffff. Both are the 15th schedule call (65271, 1000, 210) and PGN 59904 responders (0x2f5d0 / j1939_pgn_dispatch_table).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0003229a",
+    "current_name": "",
+    "proposed_name": "cm550_broadcastPgn65226Dm1WhileFaultsActive",
+    "role": "The periodic DM1 task: it calls the DM1 sender only while the active fault list is not empty.",
+    "discriminator": "j1939HandlePgn65226Dm1ActiveDtc always builds and sends DM1. This body gates it on the count byte of active_dtc_list and holds no other state.",
+    "relation": "counterpart",
+    "cm848_address": "0x00024d78",
+    "cm848_current_name": "cm848_processDm1FaultBroadcast",
+    "plate_comment": "The periodic DM1 task (PGN 65226 Active Diagnostic Trouble Codes; queue 0 every 1000 ms from 500 ms). When the count byte of active_dtc_list (0x8058d4) is not 0, it calls the DM1 sender j1939HandlePgn65226Dm1ActiveDtc and pushes a 0 that the sender never reads. With no active fault it sends nothing. The code is 0x3229a-0x322ad (rts at 0x322ac); nothing branches into it, and its only reference is the builder pointer of the 16th scheduleJ1939PeriodicMessage call in mc68k_initializeJ1939Datalink. Counterpart of cm848_processDm1FaultBroadcast, which also sends one DM1 with no codes after the list empties (no row before; was LAB_0003229a).",
+    "evidence": "asm 0x3229a tst.b (0x8058d4).l; 0x322a0 beq.s 0x322ac; 0x322a2 clr.l -(a7); 0x322a4 jsr (0x322ae).l; 0x322aa addq.l #4,a7; 0x322ac rts. 0x32298 is the rts of cm550_diagnosticDM11PGN_65234_Builder and 0x322ae starts j1939HandlePgn65226Dm1ActiveDtc. The only occurrence of 0x0003229a in the ROM is the pea at 0x28dbc (raw 4-byte search). A PC-relative branch scan finds only its own beq into 0x322ac. The sender 0x322ae reads no stack argument (movem of 7 registers and no (n,a7) read). CM848 0x24d78: count (0x3fe05a) != 0 calls 0x24be8 and sets j1939_dm1_broadcast_pending_flag=1; count 0 calls it only if the flag is set, then sets flag=0. Different steps: counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000339fe",
+    "current_name": "",
+    "proposed_name": "cm550_buildPgn65213FanDrive1Message",
+    "role": "Writes the FD1 fan drive state byte (combined fan state with the reserved nibble set) and sends PGN 65213.",
+    "discriminator": "It is the only writer of 0x803583 and the only sender of j1939_pgn65213_tx_message; initializePgn65213FanDrive1Buffer only sets the descriptor.",
+    "relation": "counterpart",
+    "cm848_address": "0x0002641c",
+    "cm848_current_name": "cm848_buildPgn65213FanDrive1Message",
+    "plate_comment": "Builds and sends the ECM's FD1 broadcast (PGN 65213 Fan Drive 1, 2 bytes at 0x803582; queue 0 every 1000 ms from 50 ms). Byte 2 is the low byte of the combined fan state word 0x80a9f2 (e2m 117D +2E FCST, 1-10) ORed with 0xf0 (SPN 977 fan drive state, reserved nibble set). Byte 1 (SPN 975 estimated percent fan speed) is never written and is 0 in the dump. Then cm550_sendCanMessage(j1939_pgn65213_tx_message). The code is 0x339fe-0x33a1d (rts at 0x33a1c) and is entered only through the builder pointer of the 17th schedule call. Counterpart of cm848_buildPgn65213FanDrive1Message, which also sends the fan speed and 0xfe above state 15 (no row before; was LAB_000339fe).",
+    "evidence": "asm 0x339fe move.b (0x80a9f3).l,d0; 0x33a04 ori.b #0xf0,d0; 0x33a08 move.b d0,(0x803583).l; 0x33a0e pea (0x80358a).l; 0x33a14 jsr (0x104e8).l; 0x33a1a addq.l #4,a7; 0x33a1c rts. 0x339fc is the rts of the ERC1 initializer 0x339b0 and 0x33a1e starts initializePgn65213FanDrive1Buffer (data pointer 0x803582, length 2). The only ROM reference is the pea at 0x28dd2, with no relative branch into it. e2m: 117D +2E FCST to 0x80a9f2. RAM dump 0x803582: 00 f0. CM848 0x2641c writes byte 1 (x5>>9) and tests the state < 16: counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00032bbc",
+    "current_name": "",
+    "proposed_name": "cm550_buildPgn61441ElectronicBrakeController1Message",
+    "role": "Writes EBC1 byte 4 (remote accelerator enable and accelerator interlock switch fields) and byte 5 (engine retarder selection) and sends PGN 61441.",
+    "discriminator": "It is the only writer of 0x80347d / 0x80347e and the only sender of j1939_pgn61441_tx_message; cm550_initializePgn61441ElectronicBrakeController1Buffer only sets the descriptor and bytes 1 and 3 = 0xff.",
+    "relation": "counterpart",
+    "cm848_address": "0x0002567c",
+    "cm848_current_name": "cm848_j1939BuildEngineControlByte",
+    "plate_comment": "Builds and sends the ECM's EBC1 broadcast (PGN 61441 Electronic Brake Controller 1, 5 bytes at 0x80347a; queue 0 every 100 ms from 20 ms). Byte 4 is 0x40 while switch 20 (bit 3 of 0x80bcd0, e2m DS20SWSS) is on (SPN 969 remote accelerator enable switch), plus 1 while the accelerator interlock switch (bit 1 of 0x80bccf, e2m DSACILSS) is on (SPN 972); the engine derate and auxiliary shutdown fields stay 0. Byte 5 is the low byte of 0x80a9f0 (e2m 117D +2C EBSWLV, commanded brake level 0-100 percent), sent without the 0.4 percent per bit scaling (SPN 973). Then cm550_sendCanMessage(j1939_pgn61441_tx_message). The code is 0x32bbc-0x32c21 (rts at 0x32c20) and is entered only through the builder pointer of the 18th schedule call. Counterpart of cm848_j1939BuildEngineControlByte (no row before; was LAB_00032bbc).",
+    "evidence": "asm 0x32bbc movea.l #0x80347a,a1; movea.l #0x80bcce,a0; 0x32bc8 move.b (0x2,a0) andi #8, then 0x32be0 move.b #0x40,(0x3,a1) / 0x32be8 clr.b (0x3,a1); 0x32bec move.b (0x1,a0) andi #2, then 0x32c04 ori.b #1,(0x3,a1); 0x32c0a move.b (0x80a9f1).l,(0x4,a1); 0x32c12 pea 0x803482; jsr 0x104e8; 0x32c20 rts. 0x32bba is the rts of the DM8 initializer and 0x32c22 starts cm550_initializePgn61441ElectronicBrakeController1Buffer (length 5, data 0x80347a). The only ROM reference is the pea at 0x28de8, with no relative branch into it. e2m E+2 bit 3 DS20SWSS, E+1 bit 1 DSACILSS, EBSWLV scale 1 percent 0-100. CM848 0x2567c fills all four fields with datalink-source and enable gates (3 = not available) and scales byte 5 by x5>>1: counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00034496",
+    "current_name": "",
+    "proposed_name": "cm550_sendPgn65279WaterInFuelIndicatorMessage",
+    "role": "Writes the one-byte water in fuel indicator from the water in fuel lamp command and sends PGN 65279.",
+    "discriminator": "It is the only writer of j1939_pgn65279_water_in_fuel_indicator_byte and the only sender of j1939_pgn65279_tx_message; cm550_initializePgn65279WaterInFuelIndicatorBuffer only sets the descriptor.",
+    "relation": "counterpart",
+    "cm848_address": "0x00026e90",
+    "cm848_current_name": "cm848_sendPgn65279WaterInFuelIndicatorMessage",
+    "plate_comment": "Builds and sends the water in fuel indicator (PGN 65279, 1 byte at 0x8036ac; queue 0 every 10000 ms from 40 ms). j1939_pgn65279_water_in_fuel_indicator_byte is 1 while the water in fuel lamp command (bit 2 of the lamp output byte 0x80bcf6, e2m LCWFLP) is on, else 0 (SPN 97 in bits 1-2, bits 3-8 left 0). Then cm550_sendCanMessage(j1939_pgn65279_tx_message). The code is 0x34496-0x344cd (rts at 0x344cc) and is entered only through the builder pointer of the 19th schedule call. Counterpart of cm848_sendPgn65279WaterInFuelIndicatorMessage (0xff when disabled, 0xfd / 0xfc from the fault bit) (no row before; was LAB_00034496).",
+    "evidence": "asm 0x34496 movea.l #0x8036ac,a0; 0x3449c move.b (0x80bcf6).l,d0; andi.l #4; sne; cmp; 0x344b6 move.b #1,(a0) / 0x344bc clr.b (a0); 0x344be pea (0x8036b4).l; 0x344c4 jsr (0x104e8).l; 0x344cc rts. 0x34494 is the rts of cm550_initializePgn65260VehicleIdentificationHandler and 0x344ce starts cm550_initializePgn65279WaterInFuelIndicatorBuffer. The only ROM reference is the pea at 0x28e02, with no relative branch into it. CM848 0x26e90 tests water_in_fuel_enable (0xff) and fault_detected_cal.water_in_fuel_error (0xfd/0xfc): counterpart. It uses the word send because the CM848 counterpart does.",
+    "confidence": "high"
+   }
+  ],
+  "cm848_functions": [
+   {
+    "address": "0x0002567c",
+    "current_name": "cm848_j1939BuildEngineControlByte",
+    "proposed_name": "cm848_buildPgn61441ElectronicBrakeController1Message",
+    "role": "Fills EBC1 byte 4 (four engine switch fields) and byte 5 (engine retarder selection) and sends PGN 61441.",
+    "discriminator": "It is the only writer of 0x3fad7b / 0x3fad7c and the only sender of j1939_pgn61441_tx_message; cm848_initializePgn61441ElectronicBrakeController1Buffer sets the descriptor and bytes 1-3 = 0xff. It builds the whole EBC1 message, not one control byte.",
+    "plate_comment": "Builds and sends the ECM's EBC1 broadcast (PGN 61441 Electronic Brake Controller 1, 5 bytes at 0x3fad78; queue 0 every 100 ms from 20 ms). Byte 4 holds four 2-bit switch fields (0 off / 1 on / 3 not available). Bits 7-8 are the remote accelerator enable switch (SPN 969) from switch 31, 3 when switch 31 is datalink-sourced or algorithm_enable_flags_18_cal.remote_throttle_enable is clear. Bits 5-6 are the engine auxiliary shutdown switch (SPN 970) from switch 31. Bits 3-4 are the engine derate switch (SPN 971) from switch 31 while torque_derate_override_enable is set. Bits 1-2 are the accelerator interlock switch (SPN 972) from throttle_interlock_switch (switch 26) while accelerator_interlock_enable is set. Byte 5 is the engine retarder selection (SPN 973, 0.4 percent per bit) = engine_retarder_selection_percent x 5 >> 1, 0xff when engine_retarder_switch_level_override is set or bit 3 of datalink_broadcast_enable_flags is clear. Counterpart of CM550 0x32bbc (was cm848_j1939BuildEngineControlByte).",
+    "evidence": "Decompile 0x2567c: j1939_status_byte_a = 0xc0 / 0x40 / 0, then |0x30 / |0x10, |0xc / |4, |3 / |1 from switch_input_datalink_source_bits_cal[3] & 0x80 (switch 31) and [3] & 4 (switch 26) and the enable bits named; DAT_003fad7c = selection*5>>1 or 0xff; cm848_sendJ1939Message(&j1939_pgn61441_tx_message). The descriptor (0xf00100, length 5, data 0x3fad78) is set by 0x25824. Only ref: the 18th schedule call (61441, 100, 20). The byte layout matches J1939-71 EBC1 (Mongo PGN 61441 4.1 SPN 972, 4.3 SPN 971, 4.5 SPN 970, 4.7 SPN 969, byte 5 SPN 973 0.4 %/bit). Name unique.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000269f4",
+    "current_name": "cm848_j1939HandlePgn65504ProprietaryB",
+    "proposed_name": "cm848_buildPgn65504ProprietaryBMessage",
+    "role": "Fills the Proprietary B payload (engine speed, net torque, injection timing scrambled with a time base key) and sends PGN 65504.",
+    "discriminator": "It is the only writer of j1939_pgn65504_payload and the only builder that scrambles a value with the time base (TBLr). It parses no received message; the PGN 59904 dispatcher and the schedule only trigger a send.",
+    "plate_comment": "Builds and sends the ECM's Proprietary B broadcast PGN 65504 (j1939_pgn65504_payload, 8 bytes; queue 0 every 200 ms from 250 ms, and the PGN 59904 request responder through j1939_pgn_dispatch_table). With the engine stopped all fields are 0. Otherwise it stores the filtered engine speed and j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f in J1939 byte order, a scramble key from the time base (TBLr >> 7), and the injection timing ((main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125) XOR the key, spread over three bytes with time base noise in the other bits. Then cm848_sendJ1939Message(&j1939_pgn65504_tx_message); CM550 has no such message (was cm848_j1939HandlePgn65504ProprietaryB).",
+    "evidence": "Decompile 0x269f4: an engine_speed_state.filtered_engine_speed == 0 branch zeroes six fields; else CONCAT11 byte-order swaps, three TBLr reads, the 0x52/0xad, 0x41/0xbe and 0x1a<<3/0x2f masks; cm848_sendJ1939Message(&j1939_pgn65504_tx_message). Schedule: cm848_j1939_system_init call 15 (0xffe0, 200, 0xfa). Name unique.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00024d78",
+    "current_name": "cm848_processDm1FaultBroadcast",
+    "proposed_name": "cm848_broadcastPgn65226Dm1UntilFaultsClear",
+    "role": "The periodic DM1 task: sends DM1 while faults are active and once more after the list empties.",
+    "discriminator": "Compared with its sibling j1939HandlePgn65226Dm1ActiveDtc (the DM1 sender), this body adds the gate on active_dtc_list_cal.count and the one-shot j1939_dm1_broadcast_pending_flag that sends a final DM1 with no codes.",
+    "plate_comment": "The periodic DM1 task (PGN 65226; queue 0 every 1000 ms from 500 ms). While active_dtc_list_cal.count is not 0 it sends DM1 with j1939HandlePgn65226Dm1ActiveDtc and sets j1939_dm1_broadcast_pending_flag. When the list is empty it sends one more DM1 (with no codes) only if the flag was set, then clears the flag. Counterpart of CM550 0x3229a, which stops sending as soon as no fault is active (was cm848_processDm1FaultBroadcast).",
+    "evidence": "asm 0x24d78-0x24dd4: lbz 0x3fe05a (count); bne gives bl 0x24be8 and li r3,1; else lbz 0x3fabcb, beq skip, bl 0x24be8; li r3,0; stb r3 to 0x3fabcb. Only ref: the 16th schedule call (0xfeca, 1000, 500). The old name is vague (process); the new one states the gate. Name unique.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x00024028",
+    "current_name": "cm848_buildPgn65241AuxiliaryInputOutputStatus1Message",
+    "proposed_name": "cm848_buildPgn65241AuxiliaryInputOutputStatus1Message",
+    "role": "Fills the one-byte AUXIO1 payload (four 2-bit auxiliary I/O states) and sends PGN 65241.",
+    "discriminator": "It is the only writer of j1939_auxiliary_input_output_status_1_byte and the only sender of j1939_pgn65241_tx_message.",
+    "plate_comment": "Builds and sends the ECM's AUXIO1 message (PGN 65241, 1 byte; queue 0 every 250 ms from 200 ms; CM550 has no such message). It holds four 2-bit fields (0 off / 1 on / 3 not available): bits 7-8 SPN 701 auxiliary I/O 1 = switch 19 (remote PTO switch), bits 5-6 SPN 702 = switch 11 (brake), bits 3-4 SPN 703 = switch 2 (the second brake signal), and bits 1-2 SPN 704 fixed at 3. A field reads 3 when its switch has no hardware input line. Then cm848_sendJ1939Message(&j1939_pgn65241_tx_message).",
+    "evidence": "Decompile 0x24028: the 0xc0 / 0x43 / 3 base plus |0x30 / |0x10 and |0xc / |4 from remote_power_take_off_switch, brake_switch and not_brake_switch with the hardware line words; send. Schedule call 9 (0xfed9, 0xfa, 200). Matches the Mongo PGN 65241 layout (1.7 SPN 701, 1.5 SPN 702, 1.3 SPN 703, 1.1 SPN 704). The name is right.",
+    "confidence": "high"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee2",
+    "current_name": "ccvs_message_byte_0",
+    "proposed_name": "j1939_pgn65265_two_speed_axle_and_parking_brake_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65265 (CCVS) byte 1: 0xf3, or 0xf7 when bit 6 of the cruise switch byte 0x80bcd4 is set (bits 3-4, SPN 70 parking brake switch). When 0x803d48 (e2m 1180 +E VSRXRASP, two-speed axle switch present) is 1, bits 1-2 (SPN 69 two-speed axle switch) are 0 / 1 from the rear axle ratio switch (bit 2 of 0x80bcd0, e2m DSRARASW). Written by cm550_buildPgn65265CruiseControlVehicleSpeedMessage; set to 0xf3 at start-up and the data pointer of j1939_pgn65265_tx_message.",
+    "evidence": "0x31cb8 / 0x31cc2 move.b #0xf7 / #0xf3,(0x801ee2); 0x31ce0 / 0x31cea andi.b #0xfc / #0xfd; 0x31f14 move.b #0xf3 (initializer); data_pointer 0x801ee2 (0x31f04). Users: only the builder and the initializer. RAM dump f3.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee3",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65265_wheel_based_vehicle_speed",
+    "proposed_type": "byte[2]",
+    "comment": "PGN 65265 (CCVS) bytes 2-3, SPN 84 wheel-based vehicle speed (1/256 km/h), low byte first: the filtered road speed 0x80a9d0 (mph / 256) clamped at 156 mph, x 412 / 256. Written bytewise by cm550_buildPgn65265CruiseControlVehicleSpeedMessage.",
+    "evidence": "0x31d2e move.b (-1,a6),(1,a3) and 0x31d34 move.b (-2,a6),(2,a3) with a3 = 0x801ee2, after the x412 >> 8 chain at 0x31d14-0x31d28; no other access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee5",
+    "current_name": "ccvs_message_byte_3",
+    "proposed_name": "j1939_pgn65265_cruise_brake_and_clutch_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65265 (CCVS) byte 4: 0x40 clutch switch (bit 2 of 0x80bccf, SPN 598) | 0x10 service brake switch (bit 3, SPN 597) | 4 cruise on switch (bit 4 of 0x80bcd4, SPN 596) | 1 cruise active (cruise_control_active_flag = 1, SPN 595). Written by cm550_buildPgn65265CruiseControlVehicleSpeedMessage.",
+    "evidence": "0x31d52 move.b #0x40 / 0x31d5a clr.b (3,a3); 0x31d76 ori.b #0x10; 0x31d92 ori.b #4; 0x31da2 ori.b #1 (0x80a9c4 == 1). e2m E+1 bit 2 DSCHSWSS clutch, bit 3 DSBRSWSS brake, E+6 bit 4 CRONSW. RAM dump 0x50.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee6",
+    "current_name": "ccvs_message_byte_4",
+    "proposed_name": "j1939_pgn65265_cruise_set_and_resume_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65265 (CCVS) byte 5 from the cruise switch byte 0x80bcd4: 0x40 accelerate (bit 1, SPN 602) | 0x10 resume (bit 0, SPN 601) | 4 coast (bit 3, SPN 600) | 1 set (bit 2, SPN 599). Written by cm550_buildPgn65265CruiseControlVehicleSpeedMessage.",
+    "evidence": "0x31dbe move.b #0x40,(a1) / clr.b (a1) with a1 = 0x801ee6; 0x31ddc ori.b #0x10; 0x31df6 ori.b #4; 0x31e10 ori.b #1. e2m E+6 CRACELSW bit 1, CRRESUSW bit 0, CRCOASSW bit 3, CRSETSW bit 2.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee7",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65265_cruise_control_set_speed",
+    "proposed_type": "byte",
+    "comment": "PGN 65265 (CCVS) byte 6, SPN 86 cruise control set speed (km/h): the high byte of the cruise reference speed 0x80a9c6 (e2m 117D +2 CRRF, mph / 256) x 412 / 256. Written by cm550_buildPgn65265CruiseControlVehicleSpeedMessage.",
+    "evidence": "0x31e16 move.w 0x80a9c6, x412 chain, lsr #8, andi 0xffff, asr #8, 0x31e36 move.b d0,(5,a3). RAM dump 0x68 (104 km/h).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee8",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65265_power_take_off_and_cruise_control_states_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65265 (CCVS) byte 7: bits 6-8 SPN 527 cruise control state, 1 (0x20) while cruise_control_active_flag is 1, else 0; ORed with the J1939 PTO state byte 0x80dc2b (the low byte of e2m 109E +6 PTDXSS, SPN 976 in bits 1-5). Written by cm550_buildPgn65265CruiseControlVehicleSpeedMessage.",
+    "evidence": "0x31e44 move.b #0x20,(6,a3) / 0x31e4c clr.b (6,a3); 0x31e50 move.b 0x80dc2b,d0; or.b d0,(6,a3). e2m 109E +6 PTDXSS 'J1939 DEFINED PTO STATES' at 0x80dc2a.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801ee9",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65265_idle_and_test_mode_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65265 (CCVS) byte 8 from 0x80bccf: 0xc0, or 0xd0 with the diagnostic test switch (bit 7, SPN 966 bits 5-6) | 0xc4 idle decrement switch (bit 6, SPN 967) | 0xc1 idle increment switch (bit 5, SPN 968); bits 7-8 (SPN 1237 shutdown override) stay 3. Written by cm550_buildPgn65265CruiseControlVehicleSpeedMessage.",
+    "evidence": "0x31e72 move.b #0xd0 / 0x31e7a #0xc0,(7,a3); 0x31e98 ori.b #0xc4; 0x31eb6 ori.b #0xc1. e2m E+1 DSTESWSS bit 7, DSDTSWSS bit 6, DSICSWSS bit 5.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803492",
+    "current_name": "vp44_torque_speed_control_status",
+    "proposed_name": "j1939_pgn61444_engine_torque_mode_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 61444 (EEC1) byte 1: SPN 899 engine torque mode in the low nibble with the high nibble 0xf (0xf0 low speed governor / 0xf1 accelerator / 0xf2 cruise / 0xf3 PTO / 0xf4 road speed / 0xf5 / 0xf6 / 0xf7 TSC1 from ASR / transmission / ABS / 0xf8 derate / 0xf9 high speed governor / 0xfa engine brake / 0xfb remote accelerator / 0xfe), written by sendPgn61444ElectronicEngineController1Message; the data pointer of j1939_pgn61444_tx_message. Nothing VP44 in it. CM848 equivalent: j1939_eec1_engine_torque_mode_byte.",
+    "evidence": "Every store in 0x32cc6-0x32d9a is move.b #0xfX,(a2) with a2 = 0x803492; the EEC1 initializer 0x32e3a uses it as data_pointer. Users: only these two. RAM dump 0xfe.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803493",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61444_driver_demand_percent_torque",
+    "proposed_type": "byte",
+    "comment": "PGN 61444 (EEC1) byte 2, SPN 512 driver's demand engine percent torque (offset -125): the high byte of 0x80da18 (e2m 1102 +2 JCDRIDTQ) + 125 after cm550_paramSystemModeController, written by sendPgn61444ElectronicEngineController1Message.",
+    "evidence": "0x32da6 move.w 0x80da18, asr #8, addi.b #0x7d, 0x32db2 move.b d0,(1,a3). RAM dump 0x7d.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803494",
+    "current_name": "vp44_timing_expected_init",
+    "proposed_name": "j1939_pgn61444_actual_engine_percent_torque",
+    "proposed_type": "byte",
+    "comment": "PGN 61444 (EEC1) byte 3, SPN 513 actual engine percent torque (offset -125): the high byte of 0x80da16 (e2m 1102 +0 JCEGIDTQ) + 125 after cm550_param_lookup_1, 0xfe while j1939_torque_and_load_not_available_flag is 1; written by sendPgn61444ElectronicEngineController1Message. It has no VP44 timing role.",
+    "evidence": "0x32dbe move.w 0x80da16, asr #8, addi.b #0x7d, 0x32dca move.b d0,(2,a3); 0x32dd8 move.b #0xfe,(2,a3) when 0x80d358 == 1. Users: only the builder. RAM dump 0xfe.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803495",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61444_engine_speed",
+    "proposed_type": "byte[2]",
+    "comment": "PGN 61444 (EEC1) bytes 4-5, SPN 190 engine speed (0.125 rpm per bit), low byte first: engine_rpm_primary, written bytewise by sendPgn61444ElectronicEngineController1Message.",
+    "evidence": "0x32dde move.w 0x80ccf6,(-2,a6); 0x32de6 move.b (-1,a6),(3,a3); 0x32dec move.b (-2,a6),(4,a3).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034aa",
+    "current_name": "vp44_feedback_pulse_low_fault_counter",
+    "proposed_name": "j1939_pgn61443_low_idle_and_kickdown_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 61443 (EEC2) byte 1: the kickdown field (SPN 559) 0xf4 above the kickdown threshold / 0xf0 / 0xf8 on a throttle fault, plus the accelerator low idle switch field (SPN 558) 3 override / 2 idle validation fault / 1 at idle; bits 5-8 stay 1. Written by buildPgn61443ElectronicEngineController2Message; the data pointer of j1939_pgn61443_tx_message. It is not a VP44 counter. CM848 equivalent: j1939_eec2_low_idle_and_kickdown_byte.",
+    "evidence": "0x32eb6 / 0x32eca / 0x32ed0 move.b #0xf8 / #0xf0 / #0xf4,(a5); 0x32ee0 / 0x32f0e / 0x32f1c ori.b #3 / #2 / #1,(a5); a5 = 0x8034aa. The EEC2 initializer 0x33098 uses it as data_pointer. RAM dump 0xf9.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034ab",
+    "current_name": "vp44_feedback_pulse_high_fault_counter",
+    "proposed_name": "j1939_pgn61443_accelerator_pedal_position_1",
+    "proposed_type": "byte",
+    "comment": "PGN 61443 (EEC2) byte 2, SPN 91 accelerator pedal position 1 (0.4 percent per bit): commanded throttle x 5 / 8 (>>1 + >>3); 0xff while algorithm_enable_flags_5_cal.sampled_throttle_override_enable is set, 0xfe on a throttle fault. Written by buildPgn61443ElectronicEngineController2Message.",
+    "evidence": "0x32f70 move.b #0xfe,(1,a2); 0x32f84 move.b #0xff,(1,a2); 0x32f8c-0x32fa2 0x80aa82 >>3 + >>1 to (1,a2). RAM dump 0xfe.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034ac",
+    "current_name": "lift_pump_timing_smoothed",
+    "proposed_name": "j1939_pgn61443_engine_percent_load_at_current_speed",
+    "proposed_type": "byte",
+    "comment": "PGN 61443 (EEC2) byte 3, SPN 92 engine percent load at current speed: the high byte of jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 after cm550_param_lookup_3, 0xfe while j1939_torque_and_load_not_available_flag is 1. Written by buildPgn61443ElectronicEngineController2Message; no lift pump role.",
+    "evidence": "0x32fa6 jsr 0xf930; 0x32fae move.w 0x80da1a, asr #8, move.b d0,(2,a2); 0x32fc4 move.b #0xfe,(2,a2). Users: only the builder.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034ad",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61443_remote_accelerator_pedal_position",
+    "proposed_type": "byte",
+    "comment": "PGN 61443 (EEC2) byte 4, SPN 974 remote accelerator pedal position (0.4 percent per bit): remote_throttle_sensor_state.filtered_value x 5 / 8; 0xff unless algorithm_enable_flags_18_cal.remote_throttle_enable is set and remote_throttle_override_enable is clear, 0xfe on a remote throttle fault. Written by buildPgn61443ElectronicEngineController2Message.",
+    "evidence": "0x32fe6 move.b #0xff,(3,a2); 0x3301a move.b #0xfe,(3,a2); 0x33022-0x33034 0x80a3a4 >>3 + >>1 to (3,a2).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034ae",
+    "current_name": "derate_threshold_previous",
+    "proposed_name": "j1939_pgn61443_accelerator_pedal_position_2",
+    "proposed_type": "byte",
+    "comment": "PGN 61443 (EEC2) byte 5, SPN 29 accelerator pedal position 2: always 0xff (not available), stored on every pass by buildPgn61443ElectronicEngineController2Message. It is the last byte sent (data length 5). No derate role.",
+    "evidence": "0x33038 move.b #0xff,(4,a2); descriptor length 5 (0x33092 move.w #5,(4,a2)). Users: only the builder.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034af",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61443_payload_byte_6",
+    "proposed_type": "byte",
+    "comment": "Byte 6 of the 8-byte EEC2 buffer: buildPgn61443ElectronicEngineController2Message stores 0xff on every pass, but the descriptor's data length is 5, so it is never sent (CM848 does the same).",
+    "evidence": "0x3303e move.b #0xff,(5,a2); data_length 5.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034b0",
+    "current_name": "fso_fault_previous_value",
+    "proposed_name": "j1939_pgn61443_payload_byte_7",
+    "proposed_type": "byte",
+    "comment": "Byte 7 of the 8-byte EEC2 buffer: 0xff on every pass from buildPgn61443ElectronicEngineController2Message, never sent (data length 5). It has no fuel shutoff role.",
+    "evidence": "0x33044 move.b #0xff,(6,a2); the only user is the builder.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034b1",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61443_payload_byte_8",
+    "proposed_type": "byte",
+    "comment": "Byte 8 of the 8-byte EEC2 buffer (0x8034aa-0x8034b1, right before j1939_pgn61443_tx_message): 0xff on every pass, never sent (data length 5).",
+    "evidence": "0x3304a move.b #0xff,(7,a2).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034c2",
+    "current_name": "fso_range_fault_high_counter",
+    "proposed_name": "j1939_pgn65247_payload_nominal_friction_percent_torque",
+    "proposed_type": "byte",
+    "comment": "PGN 65247 (EEC3) byte 1, SPN 514 nominal friction percent torque (offset -125): the high byte of jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125 + 125 after the friction calculation 0xf99c, written by buildPgn65247ElectronicEngineController3Message; the data pointer of j1939_pgn65247_tx_message. The payload_ prefix keeps the EEC3 transmit bytes apart from the input word j1939_pgn65247_desired_operating_speed. Not a fuel shutoff counter.",
+    "evidence": "0x330e8 move.b d0,(a3) / 0x330ea addi.b #0x7d,(a3) with a3 = 0x8034c2; the initializer 0x33152 uses it as data_pointer. RAM dump 0x82.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034c3",
+    "current_name": "fso_range_fault_clear_counter",
+    "proposed_name": "j1939_pgn65247_payload_desired_operating_speed_low_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65247 (EEC3) byte 2, SPN 515 engine's desired operating speed, low byte: from j1939_pgn65247_desired_operating_speed (e2m 10E7 +0 JCEGDSRP), written by buildPgn65247ElectronicEngineController3Message.",
+    "evidence": "0x330ee move.w 0x80817e,(-2,a6); 0x330f6 move.b (-1,a6),(1,a2). RAM dump 0xe0 (12000 = 1500 rpm with the next byte).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034c4",
+    "current_name": "vp44_timing_status_fault_counter",
+    "proposed_name": "j1939_pgn65247_payload_desired_operating_speed_high_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65247 (EEC3) byte 3, SPN 515 engine's desired operating speed, high byte, written by buildPgn65247ElectronicEngineController3Message. No VP44 role.",
+    "evidence": "0x330fc move.b (-2,a6),(2,a2). RAM dump 0x2e.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034c5",
+    "current_name": "vp44_timing_mode_3_high_counter",
+    "proposed_name": "j1939_pgn65247_payload_desired_operating_speed_asymmetry_adjustment",
+    "proposed_type": "byte",
+    "comment": "PGN 65247 (EEC3) byte 4, SPN 519 engine's desired operating speed asymmetry adjustment: the low byte of 0x808180 (e2m 10E7 +2 JCEGOPRP), written by buildPgn65247ElectronicEngineController3Message.",
+    "evidence": "0x33102 move.b (0x808181).l,(3,a2). RAM dump 0x7d (125).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080356a",
+    "current_name": "retarder_tsc_status_byte",
+    "proposed_name": "j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 61440 (ERC1) byte 1: bits 7-8 SPN 572 shift assist (0x40 when algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable), bits 5-6 SPN 571 brake assist (0x10 when 0x80a9ca EBSWSS is not 0) and bits 1-4 SPN 900 retarder torque mode from the command source 0x80a9cc (EBCOAG). Written by cm550_buildPgn61440ElectronicRetarderController1Message; the data pointer of j1939_pgn61440_tx_message.",
+    "evidence": "0x3390c move.b #0x40 / 0x33912 clr.b (a2); 0x3391c ori.b #0x10; ori.b #1 / #2 / #6 / #5 / #7 / #0xe in 0x33940-0x33970; a2 = 0x80356a. RAM dump 0x40.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080356b",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61440_actual_retarder_percent_torque",
+    "proposed_type": "byte",
+    "comment": "PGN 61440 (ERC1) byte 2, SPN 520 actual retarder percent torque (offset -125): 125 minus the high byte of jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125 after cm550_ioControlBasedFuelCalculator, 0xff with no engine brake driver. Written by cm550_buildPgn61440ElectronicRetarderController1Message.",
+    "evidence": "0x3397c move.b #0xff,(1,a4); 0x33984 jsr 0xff6c; 0x3398c 125 - (0x80aa14 >> 8), move.b d1,(1,a4). RAM dump 0x7d.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035b4",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65266_engine_fuel_rate",
+    "proposed_type": "byte[2]",
+    "comment": "PGN 65266 (LFE) bytes 1-2, SPN 183 engine fuel rate (0.05 L/h per bit), low byte first: the fuel rate 0x80de62 converted to L/h, capped at 3212, x 20. Written bytewise by cm550_buildPgn65266FuelEconomyLiquidMessage; the data pointer of j1939_pgn65266_tx_message.",
+    "evidence": "0x33ba6 move.b (1,a4),(0x8035b4); 0x33bae move.b (a3),(1,a2); data_pointer 0x8035b4 (0x33c5a).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035b6",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65266_engine_instantaneous_fuel_economy",
+    "proposed_type": "byte[2]",
+    "comment": "PGN 65266 (LFE) bytes 3-4, SPN 184 engine instantaneous fuel economy (1/512 km/L), low byte first: TIMP 0x804fb0 (e2m 117F +10, mpg / 256) x 8502 / 10000. Written by cm550_buildPgn65266FuelEconomyLiquidMessage.",
+    "evidence": "0x33bb4-0x33bde: 0x804fb0 x8502, divu.l #10000, move.b to (2,a2)/(3,a2).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035b8",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65266_engine_average_fuel_economy",
+    "proposed_type": "byte[2]",
+    "comment": "PGN 65266 (LFE) bytes 5-6, SPN 185 engine average fuel economy (1/512 km/L), low byte first: TIMPT3 0x804fb2 (e2m 117F +12, the trip average, mpg / 256) x 8502 / 10000. Written by cm550_buildPgn65266FuelEconomyLiquidMessage.",
+    "evidence": "0x33be4-0x33c0e: 0x804fb2 x8502, divu.l #10000, move.b to (4,a2)/(5,a2). RAM dump 5e 09.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803630",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65249_payload",
+    "proposed_type": "j1939_pgn65249_payload_t",
+    "comment": "The RC (PGN 65249 Retarder Configuration) payload: 19 bytes built by cm550_buildPgn65249RetarderConfigurationMessage (bytes 1-18) and the initializer (byte 19 = 0xff), the data pointer of j1939_pgn65249_tx_message. The layout is the one of CM848's j1939_pgn65249_payload_t (0x3fae50), byte for byte. Copy that type's 19 one-byte field rows to CM550's structure_definitions.csv (retarder_type_and_location .. percent_torque_at_peak_torque_point_5), with CM550 comments.",
+    "evidence": "Stores at +0..+0x11 in 0x340ac-0x341cc in CM848's field order (type / method / idle speed lo hi / 125-torque / max speed lo hi / 125-torque / point 3 / point 4 / peak speed / reference torque lo hi); the initializer 0x3422a writes +0x12 = 0xff; length 19 (0x34218). Only 0x803631 has a row inside. RAM dump 14 06 40 1f 46 e0 60 19 a0 28 42 60 3b 2a e0 60 86 01 ff.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803631",
+    "current_name": "engine_brake_cylinders_per_step",
+    "proposed_name": "j1939_pgn65249_payload.retarder_control_method",
+    "proposed_type": "",
+    "comment": "A field row of j1939_pgn65249_payload, written in CM848's form with an empty type column; it can also simply be deleted. RC byte 2, SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for 0 / 1 / 2 / 3 / 6 cylinders per engine brake driver (0x808200, e2m 13D8 +2 JCDR1NCY), written by cm550_buildPgn65249RetarderConfigurationMessage.",
+    "evidence": "0x340da..0x34122 move.b #0xff / #6 / #3 / #2 / #1,(1,a2) by 0x808200 == 0 / 1 / 2 / 3 / 6. The only user is the builder.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035f6",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65252_idle_shutdown_states_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65252 (SHUTDN) byte 1 from idle_shutdown_state: 0 / 0x40 (SPN 590 timer active) / 0x44 (plus SPN 594 driver alert) / 0x10 (SPN 592 override) / 1 (SPN 593 has shut down the engine); DELAY leaves it unchanged. Written by cm550_buildPgn65252ShutdownMessage; the data pointer of j1939_pgn65252_tx_message.",
+    "evidence": "Jump table 0x33d5a: 0x33d66 clr.b (a0), 0x33d6a #0x40, 0x33d70 #0x44, 0x33d76 #0x10, 0x33d7c #1 with a0 = 0x8035f6; data_pointer 0x8035f6 (0x33e2a).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035f7",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65252_idle_shutdown_timer_function_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65252 (SHUTDN) byte 2: 0x7f when algorithm_enable_flags_3_cal.idle_shutdown_enable is set, else 0x3f (bits 7-8 = SPN 591 idle shutdown timer function enabled / disabled). Written by cm550_buildPgn65252ShutdownMessage.",
+    "evidence": "0x33d8c move.b #0x7f,(1,a1) / 0x33d94 #0x3f after 0x803c9a & 2. RAM dump 0x3f.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035f8",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65252_air_conditioner_high_pressure_fan_switch_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65252 (SHUTDN) byte 3: 0xfd / 0xfc from bit 0 of air_conditioner_pressure_switch_state (SPN 985 A/C high pressure fan switch in bits 1-2). Written by cm550_buildPgn65252ShutdownMessage.",
+    "evidence": "0x33db4 move.b #0xfd,(2,a1) / 0x33dbc #0xfc after 0x80bcd7 & 1. RAM dump 0xfd.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035f9",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65252_wait_to_start_lamp_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65252 (SHUTDN) byte 4: 0xfd / 0xfc from bit 0 of the lamp command byte 0x80bcf6 (SPN 1081 engine wait to start lamp in bits 1-2). Written by cm550_buildPgn65252ShutdownMessage.",
+    "evidence": "0x33ddc move.b #0xfd,(3,a1) / 0x33de4 #0xfc after 0x80bcf6 & 1. RAM dump 0xfc.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008034e8",
+    "current_name": "vp44_fso_rpm_fault_counter",
+    "proposed_name": "j1939_pgn65263_engine_fuel_delivery_pressure",
+    "proposed_type": "byte",
+    "comment": "PGN 65263 (EFL/P1) byte 1, SPN 94 engine fuel delivery pressure: set to 0xff (not available) by the initializer vp44_engineFluidLevelPGN_65263_Builder and never written again; the data pointer of j1939_pgn65263_tx_message. No fuel shutoff counter. CM848 sends a measured value here (j1939_pgn65263_payload.fuel_delivery_pressure).",
+    "evidence": "0x331f2 move.b #0xff,(0x8034e8).l and 0x331de data_pointer = a1 = 0x8034e8; absolute references only 0x331b0 / 0x331f6. Mongo PGN 65263 byte 1 is Engine Fuel Delivery Pressure. RAM dump 0xff.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803614",
+    "current_name": "derate_percentage_active",
+    "proposed_name": "j1939_pgn65270_exhaust_gas_temperature_high_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65270 (IC1) byte 7, the high byte of SPN 173 exhaust gas temperature (bytes 6-7): 0xff (not available) from the initializer cm550_intakeManifoldPGN_65526_Builder, never written again. It has no derate role.",
+    "evidence": "0x33f4c move.b #0xff,(0x6,a1) with a1 = 0x80360e; no other access. Mongo PGN 65270 bytes 6-7 are SPN 173.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080367a",
+    "current_name": "eeprom_calibration_write_state",
+    "proposed_name": "j1939_pgn65271_net_battery_current",
+    "proposed_type": "byte",
+    "comment": "PGN 65271 (VEP1) byte 1, SPN 114 net battery current: 0xff (not available) from the initializer cm550_electronicBrakePGN_65527_Builder, never written again; the data pointer of j1939_pgn65271_tx_message. It has no EEPROM role. Same name in CM848 (0x3faeee).",
+    "evidence": "0x34378 move.b #0xff,(0x80367a).l; 0x34364 data_pointer = a1 = 0x80367a; absolute references only 0x34336 / 0x3437c.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080367b",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65271_alternator_current",
+    "proposed_type": "byte",
+    "comment": "PGN 65271 (VEP1) byte 2, SPN 115 alternator current: 0xff (not available) from the initializer, never written again.",
+    "evidence": "0x34380 move.b #0xff,(0x1,a1).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080367c",
+    "current_name": "eeprom_calibration_check_value_1",
+    "proposed_name": "j1939_pgn65271_charging_system_potential",
+    "proposed_type": "word",
+    "comment": "PGN 65271 (VEP1) bytes 3-4, SPN 167 charging system potential: 0xffff (not available) from the initializer, never written again. It has no EEPROM role.",
+    "evidence": "0x34386 move.w #0xffff,(0x2,a1); no other access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080367e",
+    "current_name": "loop_termination_flag",
+    "proposed_name": "j1939_pgn65271_battery_potential",
+    "proposed_type": "word",
+    "comment": "PGN 65271 (VEP1) bytes 5-6, SPN 168 battery potential (0.05 V per bit): battery_voltage_sensor_state.filtered_value x 20 >> 3 in J1939 byte order (byteSwap16), written by buildPgn65271VehicleElectricalPower1Message. It is not a loop flag. Same name in CM848 (0x3faef2).",
+    "evidence": "0x3431a move.w d0,(0x80367e).l after jsr 0x218fe; the only absolute reference. RAM dump 09 01 (0x0109 = 265 x 0.05 = 13.25 V).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803680",
+    "current_name": "protection_flag_source_1",
+    "proposed_name": "j1939_pgn65271_keyswitch_battery_potential",
+    "proposed_type": "word",
+    "comment": "PGN 65271 (VEP1) bytes 7-8, SPN 158 keyswitch battery potential: 0xffff (not available) from the initializer, never written again.",
+    "evidence": "0x3438c move.w #0xffff,(0x6,a1); no other access.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803582",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65213_estimated_percent_fan_speed",
+    "proposed_type": "byte",
+    "comment": "PGN 65213 (FD1) byte 1, SPN 975 estimated percent fan speed: no code writes it (0 in the dump); the data pointer of j1939_pgn65213_tx_message set by initializePgn65213FanDrive1Buffer. CM848 sends a value here.",
+    "evidence": "0x33a50 move.l #0x803582,(6,a0) is the only reference; RAM dump 0x00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803583",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65213_fan_drive_state_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 65213 (FD1) byte 2: the low byte of the combined fan state word 0x80a9f2 (e2m 117D +2E FCST) | 0xf0 (SPN 977 fan drive state in bits 1-4), written by cm550_buildPgn65213FanDrive1Message.",
+    "evidence": "0x33a08 move.b d0,(0x803583).l after ori.b #0xf0; the only reference. RAM dump 0xf0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080347b",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_brake_pedal_position",
+    "proposed_type": "byte",
+    "comment": "PGN 61441 (EBC1) byte 2, SPN 521 brake pedal position: no CM550 code writes it, so it goes out as 0 (the dump holds 0). CM848's initializer sets its byte 2 to 0xff.",
+    "evidence": "No access in the ROM (abs refs none; no base+1 store in the builder 0x32bbc or the initializer 0x32c22); data_pointer 0x80347a, length 5. RAM dump ff 00 ff 01 00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080347d",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_accelerator_and_engine_switches_byte",
+    "proposed_type": "byte",
+    "comment": "PGN 61441 (EBC1) byte 4: 0x40 while switch 20 (bit 3 of 0x80bcd0, e2m DS20SWSS) is on (bits 7-8, SPN 969 remote accelerator enable switch) | 1 while the accelerator interlock switch (bit 1 of 0x80bccf, e2m DSACILSS) is on (bits 1-2, SPN 972); the derate (SPN 971) and auxiliary shutdown (SPN 970) fields stay 0. Written by cm550_buildPgn61441ElectronicBrakeController1Message.",
+    "evidence": "0x32be0 move.b #0x40,(3,a1) / 0x32be8 clr.b (3,a1); 0x32c04 ori.b #1,(3,a1); a1 = 0x80347a. RAM dump 0x01.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080347e",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_engine_retarder_selection",
+    "proposed_type": "byte",
+    "comment": "PGN 61441 (EBC1) byte 5, SPN 973 engine retarder selection: the low byte of 0x80a9f0 (e2m 117D +2C EBSWLV, the commanded brake level from the operator switches, 0-100 percent), sent without the 0.4 percent per bit scaling. Written by cm550_buildPgn61441ElectronicBrakeController1Message.",
+    "evidence": "0x32c0a move.b (0x80a9f1).l,(4,a1); e2m EBSWLV unit %, scale 1, range 0-100. RAM dump 0x00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad90",
+    "current_name": "j1939_engine_status_byte",
+    "proposed_name": "j1939_eec1_engine_torque_mode_byte",
+    "proposed_type": "byte",
+    "comment": "EEC1 (PGN 61444) byte 1: SPN 899 engine torque mode with the high nibble 0xf (0xf0 low speed governor / 0xf1 accelerator / 0xf2 cruise / 0xf3 PTO / 0xf4 road speed / 0xf5 / 0xf6 / 0xf7 TSC1 from ASR / transmission / ABS / 0xf8 torque derate / 0xf9 high speed governor / 0xfa engine brake / 0xfe), written by sendPgn61444ElectronicEngineController1Message; the data pointer of j1939_pgn61444_tx_message (cm848_initEec1TxDescriptor). It is the torque mode, not a status (was j1939_engine_status_byte).",
+    "evidence": "0x25a30 stb r3,0(r31) with r31 = 0x3fad90 after the li r3,0xfX branches; users: the builder and cm848_initEec1TxDescriptor only. Neighbours j1939_eec1_* at 0x3fad91-0x3fad94.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fada9",
+    "current_name": "j1939_eec2_accel_pedal_byte",
+    "proposed_name": "j1939_eec2_accelerator_pedal_position_1_byte",
+    "proposed_type": "byte",
+    "comment": "EEC2 (PGN 61443) byte 2, SPN 91 accelerator pedal position 1: all_speed_governor_equivalent_throttle x 5 / 8, 0xff while the throttle channel takes its held value (sensor_channel_held_value_enable_bits_cal[0] & 0x2000), 0xfe on a throttle fault. Written by buildPgn61443ElectronicEngineController2Message. accel is a banned short form (was j1939_eec2_accel_pedal_byte).",
+    "evidence": "0x25c88 stb r4,1(r30) with r30 = 0x3fada8 (0xfe / 0xff / t>>1 + t>>3); the only user is the builder.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fadac",
+    "current_name": "",
+    "proposed_name": "j1939_eec2_accelerator_pedal_position_2_byte",
+    "proposed_type": "byte",
+    "comment": "EEC2 (PGN 61443) byte 5, SPN 29 accelerator pedal position 2: always 0xff (not available), stored on every pass by buildPgn61443ElectronicEngineController2Message; the last byte sent (data length 5).",
+    "evidence": "0x25d2c stb r31,4(r30) with r31 = 0xff; cm848_initPgn61443Eec2Handler sets data_length 5.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fadad",
+    "current_name": "",
+    "proposed_name": "j1939_eec2_payload_byte_6",
+    "proposed_type": "byte",
+    "comment": "Byte 6 of the 8-byte EEC2 buffer: 0xff on every pass, never sent (data length 5).",
+    "evidence": "0x25d30 stb r31,5(r30).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fadae",
+    "current_name": "",
+    "proposed_name": "j1939_eec2_payload_byte_7",
+    "proposed_type": "byte",
+    "comment": "Byte 7 of the 8-byte EEC2 buffer: 0xff on every pass, never sent (data length 5).",
+    "evidence": "0x25d34 stb r31,6(r30).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fadaf",
+    "current_name": "",
+    "proposed_name": "j1939_eec2_payload_byte_8",
+    "proposed_type": "byte",
+    "comment": "Byte 8 of the 8-byte EEC2 buffer (0x3fada8-0x3fadaf, right before j1939_pgn61443_tx_message): 0xff on every pass, never sent (data length 5).",
+    "evidence": "0x25d38 stb r31,7(r30).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad78",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_payload_byte_1",
+    "proposed_type": "byte",
+    "comment": "EBC1 (PGN 61441) byte 1, the brake system status bits (SPNs 561 / 562 / 563 / 1121): 0xff (not available), set only by cm848_initializePgn61441ElectronicBrakeController1Buffer; the data pointer of j1939_pgn61441_tx_message. Same name as CM550 0x80347a.",
+    "evidence": "cm848_initializePgn61441ElectronicBrakeController1Buffer: DAT_003fad78 = 0xff and data_pointer = &DAT_003fad78; no other user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad79",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_brake_pedal_position",
+    "proposed_type": "byte",
+    "comment": "EBC1 (PGN 61441) byte 2, SPN 521 brake pedal position: 0xff (not available), set only by cm848_initializePgn61441ElectronicBrakeController1Buffer.",
+    "evidence": "DAT_003fad79 = 0xff in the initializer; no other user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad7a",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_payload_byte_3",
+    "proposed_type": "byte",
+    "comment": "EBC1 (PGN 61441) byte 3 (SPNs 575 / 576 / 577 / 1238): 0xff (not available), set only by cm848_initializePgn61441ElectronicBrakeController1Buffer. Same name as CM550 0x80347c.",
+    "evidence": "DAT_003fad7a = 0xff in the initializer; no other user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad7b",
+    "current_name": "j1939_status_byte_a",
+    "proposed_name": "j1939_pgn61441_accelerator_and_engine_switches_byte",
+    "proposed_type": "byte",
+    "comment": "EBC1 (PGN 61441) byte 4: bits 7-8 SPN 969 remote accelerator enable switch, 5-6 SPN 970 engine auxiliary shutdown switch, 3-4 SPN 971 engine derate switch (all from switch 31) and 1-2 SPN 972 accelerator interlock switch (switch 26); each 3 when its switch is datalink-sourced or its feature is disabled. Written by cm848_buildPgn61441ElectronicBrakeController1Message (was j1939_status_byte_a).",
+    "evidence": "Decompile 0x2567c: j1939_status_byte_a = 0xc0 / 0x40 / 0, then |= 0x30 / 0x10, 0xc / 4, 3 / 1; the only user. Mongo PGN 61441 byte 4 SPNs 972 / 971 / 970 / 969.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad7c",
+    "current_name": "",
+    "proposed_name": "j1939_pgn61441_engine_retarder_selection",
+    "proposed_type": "byte",
+    "comment": "EBC1 (PGN 61441) byte 5, SPN 973 engine retarder selection (0.4 percent per bit) = engine_retarder_selection_percent x 5 >> 1; 0xff when algorithm_enable_flags_13_cal.engine_retarder_switch_level_override is set or bit 3 of datalink_broadcast_enable_flags is clear. Written by cm848_buildPgn61441ElectronicBrakeController1Message.",
+    "evidence": "Decompile 0x2567c: DAT_003fad7c = (selection * 5) >> 1 or 0xff; the only user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003faeee",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65271_net_battery_current",
+    "proposed_type": "byte",
+    "comment": "VEP1 (PGN 65271) byte 1, SPN 114 net battery current: 0xff (not available) from cm848_initJ1939VehicleElectricalBuffer, never written again; the data pointer of j1939_pgn65271_tx_message. Same name as CM550 0x80367a.",
+    "evidence": "cm848_initJ1939VehicleElectricalBuffer: data_pointer = &DAT_003faeee, DAT_003faeee = 0xff; no other user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003faeef",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65271_alternator_current",
+    "proposed_type": "byte",
+    "comment": "VEP1 (PGN 65271) byte 2, SPN 115 alternator current: 0xff (not available) from cm848_initJ1939VehicleElectricalBuffer.",
+    "evidence": "DAT_003faeef = 0xff in the initializer; no other user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003faef0",
+    "current_name": "j1939_pgn65271_field1_init_word",
+    "proposed_name": "j1939_pgn65271_charging_system_potential",
+    "proposed_type": "word",
+    "comment": "VEP1 (PGN 65271) bytes 3-4, SPN 167 charging system potential: 0xffff (not available) from cm848_initJ1939VehicleElectricalBuffer, never written again (was j1939_pgn65271_field1_init_word).",
+    "evidence": "j1939_pgn65271_field1_init_word = 0xffff in the initializer; no other user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003faef2",
+    "current_name": "j1939_pgn65271_voltage_tx_word",
+    "proposed_name": "j1939_pgn65271_battery_potential",
+    "proposed_type": "word",
+    "comment": "VEP1 (PGN 65271) bytes 5-6, SPN 168 battery potential (0.05 V per bit): battery_voltage_sensor_filtered x 20 >> 3 in J1939 byte order (cm848_reverseByteOrder16), written by buildPgn65271VehicleElectricalPower1Message (was j1939_pgn65271_voltage_tx_word).",
+    "evidence": "0x26d20 sth r3,-20750(r10) = 0x3faef2 after mulli 20 / srwi 3 / bl 0x50b58c; the only user.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003faef4",
+    "current_name": "j1939_pgn65271_field2_init_word",
+    "proposed_name": "j1939_pgn65271_keyswitch_battery_potential",
+    "proposed_type": "word",
+    "comment": "VEP1 (PGN 65271) bytes 7-8, SPN 158 keyswitch battery potential: 0xffff (not available) from cm848_initJ1939VehicleElectricalBuffer, never written again (was j1939_pgn65271_field2_init_word).",
+    "evidence": "j1939_pgn65271_field2_init_word = 0xffff in the initializer; no other user.",
+    "confidence": "high"
+   }
+  ],
+  "enum_members": [],
+  "skipped": [],
+  "notes": "Scratch notes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q1/investigator/ (notes.md, notes_part2.md, body dumps, branch_refs.py, raw_pointer_search.py, uses.py, payload_globals.py, check_names.py, peek.py). Every proposed function and global name was checked as unique in both firmwares' CSVs.\n(1) Judgment calls. EEC1 61444 keeps its shared name: it is the same steps and the same state-to-mode map, but CM550 lists the derate states (0xf8) where CM848 compares torque_derate_fuel_source_code, and only CM550 has 0xfb (remote accelerator). EEC2 61443 is called a twin because the asm matches step for step; only each firmware's fault and override storage differs. If the reviewer wants identical inputs, fall back to cm550_ / cm848_buildPgn61443ElectronicEngineController2Message. EEC3 65247 and VEP1 65271 are identical (VEP1: Ghidra prints CM550's x20>>3 as x5>>1).\n(2) The CM550 65249 builder has a compiled assignment-for-compare at 0x340b6: move.w #1,(0x8081fe) writes 1 to the engine brake driver count, which the ERC1 builder also reads at 0x33974.\n(3) The j1939 Mongo docs for 65249 / 65262 / 65264 / 65270 / 65271 / 65279 are empty or carry shifted names (the doc labelled 65264 holds 65266's SPNs). For those I used the standard J1939-71 layouts; they agree with the code offsets and the CM848 rows.\n(4) CM550 65249 struct: copy CM848's j1939_pgn65249_payload_t rows (19 one-byte fields) to CM550's structure_definitions.csv. The old row 0x803631 becomes a field row (empty type, CM848's form) or is deleted.\n(5) Leads for later rounds:\n- CM550 0xf99a / 0xf99c line up with cm848_emptyStubFunction7 / cm848_calculateNominalFrictionPercentTorque (the same call slots in the EEC2 initializer and the EEC3 builder).\n- These callees take the same call slots: 0xf796 cm550_paramSystemModeController with cm848_calculateDriverDemandPercentTorque; 0xf8c6 cm550_param_lookup_1 with cm848_calculateActualEnginePercentTorque; 0xf930 cm550_param_lookup_3 with cm848_calculateEnginePercentLoadAtCurrentSpeed; 0xff6c cm550_ioControlBasedFuelCalculator with cm848_calculateEngineRetarderTorque.\n- CM550 0x80da16 = e2m 1102 +0 JCEGIDTQ and 0x80da18 = 1102 +2 JCDRIDTQ: the same records as CM848's actual_engine_percent_torque_times_256 / driver_demand_percent_torque_times_256.\n- CM550 0x2f47e (no row) registers the PGN 59904 request responders (counterpart of cm848_j1939RegisterPgnHandler); cm550_FUN_0002f4be is the request dispatcher.\n- Unnamed CM550 inputs: 0x80a9c6 CRRF cruise reference speed; 0x803d48 VSRXRASP, which is in the EEPROM window and matches CM848's two_speed_axle_switch_present_cal; 0x80dc2a PTDXSS; 0x80a9ca EBSWSS; 0x80a9cc EBCOAG, which could take CM848's ENGINE_RETARDER_COMMAND_SOURCE enum; 0x80a9f0 EBSWLV; 0x80a9f2 FCST.\n- 0x80bcd4 (switch_status_cruise_coast_switch_bit_3_on_off) is the whole cruise switch byte.\n- The CM550 descriptor initializers still have old automatic names (vp44Command0x100Builder, vp44_cumminsProprietaryDM_983_Builder, vp44_secondaryParamPGN_65247_Builder, cm550_cumminsProprietaryTSC_PGN_15728640_Builder, cm550_fuelEconomyPGN_65266_Builder, cm550_j1939MessageSetup_PGN_65265, vp44_engineFluidLevelPGN_65263_Builder, cm550_intakeManifoldPGN_65526_Builder, cm550_cruiseControlPGN_65264_Builder, cm550_electronicBrakePGN_65527_Builder, cm550_engineCoolantPGN_65226_Builder, cm550_engineTemperaturePGN_65262_Builder).\n- CM550 vp44CanMessage100ResponseBuilder decompiles with in_D0 and a uint return that no caller reads, so a void(void) prototype would clean it.\n- The shared DM1 sender j1939HandlePgn65226Dm1ActiveDtc also has a Handle name; it builds and sends DM1 and needs its own twin check.\n- CM848 ET1 payload rows use the banned short form temp (j1939_et1_coolant_temp_byte / _fuel_temp_byte), and j1939_pgn65262_field1_init_word is SPN 176 turbocharger oil temperature."
+ },
+ "blind": {
+  "batch": "Q1",
+  "roles": [
+   {
+    "address": "CM550 0x00031c84",
+    "role": "CCVS1 builder (PGN 65265, 8 bytes at 0x801ee2, descriptor j1939_pgn65265_tx_message). Byte 1 = 0xf3, or 0xf7 when 0x80bcd4 bit 6 (parking brake, SPN 70) is set. Its bits 1-2 become 00 / 01 from switch 19 (0x80bcd0 bit 2, DSRARASW) only when word 0x803d48 (VSRXRASP, two-speed axle switch present) = 1. Bytes 2-3 = min(road speed 0x80a9d0, 0x9c00) x 412 >> 8, low byte first (SPN 84; Ghidra prints x103>>6). Byte 4: clutch switch 11 -> 0x40, brake switch 12 -> 0x10, cruise on (0x80bcd4 bit 4) -> 4, cruise_control_active_flag = 1 -> 1. Byte 5: accelerate / resume / coast / set from 0x80bcd4 bits 1 / 0 / 3 / 2. Byte 6 = set speed from word 0x80a9c6 (CRRF), km/h. Byte 7 = 0x20 (cruise hold) while active, ORed with the PTO state byte 0x80dc2b (PTDXSS, SPN 976). Byte 8 = 0xc0, | 0x10 test switch 16, | 4 decrement switch 15, | 1 increment switch 14. Sends with cm550_sendCanMessage. It runs every 100 ms from 70 ms on queue 0 and is also the PGN 65265 request responder (0x31ed2 pushes 0x31c84 / 0xfef1 to 0x2f47e). It handles no received message.",
+    "discriminator": "The only writer of 0x801ee2..0x801ee9 and the only PGN 65265 sender. It reads the cruise switch byte 0x80bcd4 and switches 11/12/14/15/16/19, with no datalink-source tests and no enable gates.",
+    "suggested_name": "cm550_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65265CruiseControlVehicleSpeedMessage @ 0x24178 - counterpart. Same 8-byte layout and the same 412/256 speed scale, but CM848 gates every field on two_speed_axle_switch_present_cal, switch_input_datalink_source_bits_cal and the algorithm_enable_flags_3_cal cruise / PTO enables, and writes 0xff / 0xc0 / 0x30 not-available codes. CM550 has none of those steps."
+   },
+   {
+    "address": "CM550 0x00032e4c",
+    "role": "EEC2 builder (PGN 61443; descriptor j1939_pgn61443_tx_message, 5 of the 8 bytes at 0x8034aa are sent). Byte 1 = 0xf4 / 0xf0 (kickdown, word 0x80818e JCTHKCTD < commanded_throttle) or 0xf8 on the 4 pedal fault bits (status word 4 bits 5/3/1/2). It then ORs 3 when algorithm_enable_flags_13_cal.idle_switch_override_enable is set, 2 on fault bits 3/4, or 1 when accelerator_off_idle = 0 (SPN 558). Byte 2 = commanded_throttle x 0.625 (>>1 + >>3), 0xff when sampled_throttle_override_enable is set, 0xfe on a fault (SPN 91). It calls cm550_param_lookup_3. Byte 3 = word 0x80da1a (JCINPCLD) >> 8, or 0xfe when j1939_torque_and_load_not_available_flag = 1 (SPN 92). Byte 4 = remote throttle x 0.625 / 0xff / 0xfe (SPN 974). Bytes 5-8 = 0xff. Sends. Every 50 ms from 10 ms. Also the PGN 61443 request responder (0x33064 registers it at 0x330ae).",
+    "discriminator": "The only writer of 0x8034aa..0x8034b1. It reads commanded_throttle_state and the remote throttle channel.",
+    "suggested_name": "cm550_buildPgn61443ElectronicEngineController2Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn61443ElectronicEngineController2Message @ 0x25b10 - counterpart. Same 6 steps and the same constants (0xf4/0xf0/0xf8, |3/|2/|1, x0.625, 0xff/0xfe). But the inputs differ: CM848 reads all_speed_governor_equivalent_throttle instead of commanded_throttle, gates the low-idle bits with switch_input_datalink_source_bits_cal[0] & 0x80 instead of idle_switch_override_enable (DSIVSWUO), and uses held-value bits 0x2000 / 0x100 instead of algorithm_enable_flags_5 bits 10/11. Its load helper floors at -125 % where CM550's floors at 0."
+   },
+   {
+    "address": "CM550 0x000330c4",
+    "role": "EEC3 builder (PGN 65247, 4 bytes at 0x8034c2, descriptor j1939_pgn65247_tx_message). Calls 0xf99c (nominal friction percent x256 into word 0x80da1c JCINFCTQ). Byte 1 = (0x80da1c >> 8) + 125 (stored, then addi.b #0x7d in place; SPN 514). Bytes 2-3 = j1939_pgn65247_desired_operating_speed (0x80817e), low byte first through a stack temporary (SPN 515). Byte 4 = byte 0x808181, the low byte of word 0x808180 (e2m 10E7 +2 JCEGOPRP; SPN 519). Then cm550_sendCanMessage. Every 250 ms from 30 ms. Not a request responder. Nothing in it concerns the VP44.",
+    "discriminator": "The only writer of 0x8034c2..0x8034c5 and the only reader of 0x80817e / 0x808181 besides 0x1f288.",
+    "suggested_name": "buildPgn65247ElectronicEngineController3Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65247ElectronicEngineController3Message @ 0x25de8 - TWIN at the instruction level. bl friction calculation; lhz >> 8 stb; addi 125 stb again (the same store-then-add); speed halfword through a stack temporary, bytes 9/8 to +1/+2; asymmetry low byte to +3; bl send. Same order and constants, same schedule slot, neither firmware registers it as a responder. Only the callee friction helpers differ (CM550 0xf99c floors at 0, CM848 cm848_calculateNominalFrictionPercentTorque at -125 %). Both rows take the shared name."
+   },
+   {
+    "address": "CM848 0x00025de8",
+    "role": "EEC3 builder: calls cm848_calculateNominalFrictionPercentTorque. Byte 1 = j1939_nominal_friction_percent_torque_times_256 >> 8 + 125. Bytes 2-3 = ROM word 0x5c382 (desired operating speed), low byte first. Byte 4 = low byte of 0x5c384 (asymmetry). Sends j1939_pgn65247_tx_message (4 bytes) every 50 ms from 30 ms.",
+    "discriminator": "The only writer of j1939_eec3_* (0x3fadc0..c3).",
+    "suggested_name": "buildPgn65247ElectronicEngineController3Message",
+    "confidence": "high",
+    "cm848_counterpart": "(this row) TWIN of CM550 0x330c4 vp44_configParamCanBuilder: identical instruction sequence (see the CM550 row); shared name"
+   },
+   {
+    "address": "CM550 0x000338ea",
+    "role": "ERC1 builder (PGN 61440, 2 bytes at 0x80356a, retarder source address, retarder queue 1 every 100 ms from 50 ms). Byte 1 = 0x40 when algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable is set (SPN 572), else 0. It ORs 0x10 when word 0x80a9ca (e2m 117D +6 EBSWSS) is non-zero (SPN 571 brake assist). The low nibble is SPN 900, through a jump table on word 0x80a9cc (e2m 117D +8 EBCOAG, the engine brake command source): 1 or 4 -> 6 / 5 / 7 / 14 for engine_retarder_j1939_control_device 1 / 3 / 2 / other, 2 -> 2 (cruise), 3 -> 1 (operator), 0 -> 0. Byte 2 = 0xff when word 0x8081fe (engine brake output driver count) is 0. Otherwise it calls cm550_ioControlBasedFuelCalculator (0xff6c), then byte 2 = 125 - (word 0x80aa14 >> 8) (SPN 520). Sends j1939_pgn61440_tx_message. No duty cycle, no ISR.",
+    "discriminator": "The only writer of 0x80356a / 0x80356b and the only reader of 0x80a9ca / 0x80a9cc in the dumped ROM.",
+    "suggested_name": "cm550_buildPgn61440ElectronicRetarderController1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn61440ElectronicRetarderController1Message @ 0x26238 - counterpart. CM848 writes 0xff when broadcast flag bit 3 is clear, uses a 0xc0 base (shift assist 'not available') and engine_retarder_selection_percent_fault_masked for SPN 571, maps the command source by enum compares with an output-level test, and gates byte 2 on the broadcast flag too."
+   },
+   {
+    "address": "CM550 0x00033b40",
+    "role": "LFE builder (PGN 65266 Fuel Economy (Liquid), 6 bytes at 0x8035b4, descriptor j1939_pgn65266_tx_message set up by 0x33c28). Bytes 1-2 = word 0x80de62 scaled by 0x39c2c3 / 0x3840e, then by 3600 / 1000000 (both through 0x35064), clamped at 3212, then x 20 (0.05 L/h per bit, SPN 183), low byte first. Bytes 3-4 = word 0x804fb0 (117F +10 TIMP, instantaneous MPG, 1/256 mpg) x 8502 / 10000 (1/512 km/L, SPN 184). Bytes 5-6 = word 0x804fb2 (117F +12 TIMPT3, average fuel economy since the trip reset) x 0.8502 (SPN 185). Then cm550_sendCanMessage. Every 100 ms from 90 ms. Not a request responder.",
+    "discriminator": "The only writer of 0x8035b4..0x8035b9 and the only PGN 65266 sender.",
+    "suggested_name": "cm550_buildPgn65266FuelEconomyLiquidMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none - CM848 has no PGN 65266 code (no 0xfef2 in its cpp). Its schedule slot holds 65241 cm848_buildPgn65241AuxiliaryInputOutputStatus1Message instead."
+   },
+   {
+    "address": "CM550 0x0003407a",
+    "role": "RC builder (PGN 65249 Retarder Configuration, 19 bytes at 0x803630, retarder source address, sent through the transport protocol; retarder queue 1 every 5000 ms from 3010 ms). It runs only when (0x803652 status & 0xf0) = 0. Byte 1 = 3 (compression release) when word 0x8081fe EBNUOUDR is above 1. Otherwise 0x340b6 executes move.w #1,(0x8081fe), a store where a compare was intended, and the beq after it is never taken, so byte 1 = 0x14 (exhaust brake) and the 0xff branch at 0x340ca is unreachable. The calibration RAM copy becomes 1. Byte 2 from word 0x808200 (JCDR1NCY): 0 -> 0xff, 1 -> 6, 2 -> 3, 3 -> 2, 6 -> 1 (SPN 557). Bytes 3-18: idle / maximum / point 3 / point 4 speeds low byte first, each with 125 - (percent >> 8) (10FC records 0x8089aa/b2, ba/b4, ae/b6, b0/b8), then the peak torque speed 0x8089ac and the reference torque 0x8089a6. Byte 19 is not written: its set-up 0x341e6 stores 0xff once. Sends through 0x104e8.",
+    "discriminator": "The only writer of 0x803630..0x803641 and the only reader of 0x8089ac / 0x8089ae / 0x8089b0.",
+    "suggested_name": "cm550_buildPgn65249RetarderConfigurationMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65249RetarderConfigurationMessage @ 0x26650 - counterpart. CM848 compares count == 1, so its 0xff path is reachable, and it fills byte 19 from engine_retarder_configuration_peak_torque_percent (10FC +0x16, a record CM550's block lacks)."
+   },
+   {
+    "address": "CM550 0x000342f0",
+    "role": "VEP1 builder (PGN 65271, 8 bytes at 0x80367a). Word = battery_voltage_sensor_state.filtered_value x 20 >> 3: the code at 0x34300 is lsl 2 / add / lsl 2 / lsr 3, which Ghidra prints as x5>>1. With 0.125 V per count this gives 0.05 V/bit. It goes through a stack temporary that first holds the raw value, is byte-swapped by 0x218fe and stored at 0x80367e (bytes 5-6, SPN 168 battery potential / power input 1). Then it sends j1939_pgn65271_tx_message. Its set-up 0x34334 leaves 0xff in bytes 1-2 (SPN 114/115) and 0xffff in bytes 3-4 (SPN 167) and 7-8 (SPN 158). Every 1000 ms from 210 ms, and the PGN 65271 request responder (cm550_diagnosticDataDump, 0x2f5ce). Nothing in it concerns a retarder.",
+    "discriminator": "The only writer of 0x80367e and the only PGN 65271 sender.",
+    "suggested_name": "buildPgn65271VehicleElectricalPower1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65271VehicleElectrical @ 0x26cf0 - TWIN at the instruction level. lhz battery; sth to the temporary; mulli 20; srwi 3; sth to the temporary; byte-swap call; sth 0x3faef2; send. Same constants, steps, slot and responder role, so it takes one shared name. CM848's A/D scale is 1/16 V per count (e2m ADBTVTYA 0.0625), so the unchanged x20>>3 puts twice the battery voltage on the bus (CM848 RAM: 0x00c0 = 12.0 V -> payload e0 01 = 24.0 V)."
+   },
+   {
+    "address": "CM848 0x00026cf0",
+    "role": "VEP1 builder: battery_voltage_sensor_filtered x 20 >> 3, byte-swapped by cm848_reverseByteOrder16 into 0x3faef2 (bytes 5-6, SPN 168). Sends j1939_pgn65271_tx_message (8 bytes, the other fields 0xff from cm848_initJ1939VehicleElectricalBuffer). Every 1000 ms from 210 ms, and registered in j1939_pgn_dispatch_table as the PGN 65271 request responder. It handles no received message. Because its input is 1/16 V per count, it reports double the voltage.",
+    "discriminator": "The only writer of 0x3faef2.",
+    "suggested_name": "buildPgn65271VehicleElectricalPower1Message",
+    "confidence": "high",
+    "cm848_counterpart": "(this row) TWIN of CM550 0x342f0 cm550_retarderDataBuilder; shared name"
+   },
+   {
+    "address": "CM550 0x0003229a",
+    "role": "NEW FUNCTION ROW. The periodic DM1 step: tst.b 0x8058d4 (active_dtc_list[0], the active fault count); beq 0x322ac; clr.l -(a7); jsr 0x322ae (j1939HandlePgn65226Dm1ActiveDtc, which does not read the pushed 0); addq.l #4,a7; rts. It runs every 1000 ms from 500 ms. It sends DM1 only while at least one fault is active, so no all-clear DM1 goes out when the count reaches 0. Extent: 0x3229a-0x322ad, ending with the rts at 0x322ac. It starts right after the rts at 0x32298 of cm550_diagnosticDM11PGN_65234_Builder; the next function is 0x322ae. Nothing else enters it: the only reference is the pea at 0x28dba in mc68k_initializeJ1939Datalink (linear sweep and BE-address search), and a brute-force branch scan finds only its own beq. The PGN 65226 request responder is 0x322ae itself (registered by 0x323be).",
+    "discriminator": "The only caller of the DM1 sender that tests the active fault count first.",
+    "suggested_name": "cm550_processDm1FaultBroadcast",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_processDm1FaultBroadcast @ 0x24d78 - counterpart. CM848 also sends one DM1 after the count drops to 0, through j1939_dm1_broadcast_pending_flag. Both call the shared sender j1939HandlePgn65226Dm1ActiveDtc. The CM550 name follows CM848's; a descriptive alternative is cm550_sendDm1WhileFaultsActive."
+   },
+   {
+    "address": "CM550 0x000339fe",
+    "role": "NEW FUNCTION ROW. FD1 builder (PGN 65213, 2 bytes at 0x803582). Byte 2 (0x803583) = byte 0x80a9f3 | 0xf0. 0x80a9f3 is the low byte of word 0x80a9f2 (e2m 117D +2E FCST 'combined fan state', the record CM848 names fan_drive_state_code), giving SPN 977 in bits 1-4 and the reserved nibble set. Then it sends j1939_pgn65213_tx_message through 0x104e8. Byte 1 (0x803582, SPN 975) is written by no code (0 in the RAM dump). Every 1000 ms from 50 ms. Extent: 0x339fe-0x33a1d, ending with the rts at 0x33a1c. It follows the rts at 0x339fc of cm550_cumminsProprietaryTSC_PGN_15728640_Builder; the next function is 0x33a1e initializePgn65213FanDrive1Buffer. It is straight-line code; the only reference is the pea at 0x28dd0, and the branch scan finds none.",
+    "discriminator": "The only writer of 0x803583 and the only reader of 0x80a9f2/f3.",
+    "suggested_name": "cm550_buildPgn65213FanDrive1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65213FanDrive1Message @ 0x2641c - counterpart. CM848 also writes byte 1 (fan percent x5 >> 9) and sends 0xfe when the state is 16 or more. The set-ups are the shared twin initializePgn65213FanDrive1Buffer."
+   },
+   {
+    "address": "CM550 0x00032bbc",
+    "role": "NEW FUNCTION ROW. EBC1 builder (PGN 61441, 5 bytes at 0x80347a). Byte 4 (0x80347d) = 0x40 when 0x80bcd0 bit 3 (RMTHSW, the remote throttle switch = switch 20; SPN 969 remote accelerator enable, bits 7-8) is set, else 0. It ORs 1 when 0x80bccf bit 1 (DSACILSS, accelerator interlock; SPN 972 bits 1-2) is set; bits 3-6 stay 00. Byte 5 (0x80347e) = byte 0x80a9f1, the low byte of word 0x80a9f0 (117D +2C EBSWLV 'commanded brake level from operator switches', 1 % per count). It is copied unscaled into SPN 973 (0.4 %/bit), so 100 % reads as 40 %. Then it sends j1939_pgn61441_tx_message. Byte 2 (0x80347b, SPN 521) is written by no code; dump ff 00 ff 01 00. Every 100 ms from 20 ms. Extent: 0x32bbc-0x32c21, ending with the rts at 0x32c20. It follows the rts at 0x32bba of vp44_diagnosticDM8PGN_65232_Builder; the next function is 0x32c22. Its only reference is the pea at 0x28de6, and its only branches are internal (0x32bde/0x32be6/0x32c02).",
+    "discriminator": "The only writer of 0x80347d / 0x80347e and the only reader of 0x80a9f1.",
+    "suggested_name": "cm550_buildPgn61441ElectronicBrakeController1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939BuildEngineControlByte @ 0x2567c - counterpart. CM848 fills all four byte-4 fields (SPNs 969/970/971/972) with datalink-source and enable gates. Its byte 5 = engine_retarder_selection_percent x 5 >> 1, or 0xff on the override bit or a clear broadcast flag. Its set-up also writes byte 2 = 0xff."
+   },
+   {
+    "address": "CM848 0x0002567c",
+    "role": "EBC1 builder (PGN 61441, 5 bytes at 0x3fad78). Byte 4 (j1939_status_byte_a) holds four 2-bit fields: remote accelerator enable (bits 7-8: 0 / 0x40, or 0xc0 when the switch is datalink-sourced or remote_throttle_enable is clear), auxiliary shutdown (bits 5-6), engine derate (bits 3-4, gated by torque_derate_override_enable) and accelerator interlock (bits 1-2, gated by accelerator_interlock_enable and the throttle interlock switch). Byte 5 (0x3fad7c) = engine_retarder_selection_percent x 5 >> 1 (SPN 973, 0.4 %/bit), or 0xff when algorithm_enable_flags_13_cal.engine_retarder_switch_level_override is set or broadcast flag bit 3 is clear. Then it sends j1939_pgn61441_tx_message. Every 100 ms from 20 ms. It builds a whole message, not one 'engine control byte'.",
+    "discriminator": "The only writer of 0x3fad7b / 0x3fad7c.",
+    "suggested_name": "cm848_buildPgn61441ElectronicBrakeController1Message",
+    "confidence": "high",
+    "cm848_counterpart": "(this row) CM550 counterpart 0x32bbc (no row yet), which has fewer fields and an unscaled byte 5"
+   },
+   {
+    "address": "CM550 0x00034496",
+    "role": "NEW FUNCTION ROW. Water-in-fuel sender (PGN 65279, 1 byte). j1939_pgn65279_water_in_fuel_indicator_byte (0x8036ac) = 1 when 0x80bcf6 bit 2 (e2m E +28 LCWFLP, the commanded water-in-fuel lamp) is set, else 0 (SPN 97, bits 3-8 = 0). Then it sends j1939_pgn65279_tx_message. Every 10000 ms from 40 ms. Extent: 0x34496-0x344cd, ending with the rts at 0x344cc. It follows the rts at 0x34494 of cm550_initializePgn65260VehicleIdentificationHandler; the next function is 0x344ce cm550_initializePgn65279WaterInFuelIndicatorBuffer. Its only reference is the pea at 0x28e00, and its only branches are internal (0x344b4/0x344ba).",
+    "discriminator": "The only writer of 0x8036ac.",
+    "suggested_name": "cm550_sendPgn65279WaterInFuelIndicatorMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_sendPgn65279WaterInFuelIndicatorMessage @ 0x26e90 - counterpart: CM848 sends 0xff when water_in_fuel_enable is clear, else 0xfd / 0xfc from the water-in-fuel fault bit. The name follows CM848's 'send'."
+   },
+   {
+    "address": "CM848 0x000269f4",
+    "role": "Proprietary B builder (PGN 65504, 8 bytes, j1939_pgn65504_payload). At 0 rpm every field is 0. Otherwise it writes the engine speed byte-swapped, engine_net_output_torque + 0x7d7f byte-swapped, a scramble key = TBL >> 7, and three injection-timing bytes: (main_injection_timing + TDC offset) x 120 >> 10 + 125, XORed with the key and mixed with fresh TBL bits under masks 0x52/0xad, 0x41/0xbe and 0x1a<<3/0x2f. Then it sends. Every 200 ms from 250 ms, and the PGN 65504 request responder (cm848_initJ1939ProtocolHandlers). It handles no received message.",
+    "discriminator": "The only writer of j1939_pgn65504_payload and the only builder that reads the timebase register.",
+    "suggested_name": "cm848_buildPgn65504ProprietaryBMessage",
+    "confidence": "high",
+    "cm848_counterpart": "(this row) CM550: none (no 0xffe0 PGN in its ROM)"
+   },
+   {
+    "address": "CM550 0x00032c76",
+    "role": "EEC1 builder and sender (PGN 61444, 5 bytes at 0x803492, every 20 ms from 0). Byte 1 is the torque mode from tsc1_override_control_mode / engine_control_device_indicator and final_fueling_state. Bytes 2 and 3 are (0x80da18 >> 8) + 125 and (0x80da16 >> 8) + 125 after two helper calls; byte 3 is 0xfe when j1939_torque_and_load_not_available_flag = 1. Bytes 4-5 = engine_rpm_primary, low byte first.",
+    "discriminator": "The only writer of 0x803492..0x803496.",
+    "suggested_name": "sendPgn61444ElectronicEngineController1Message",
+    "confidence": "medium",
+    "cm848_counterpart": "sendPgn61444ElectronicEngineController1Message @ 0x2588c - listed as a twin, but the bodies are not identical. In states 1/2/3/7/8/30/37 CM550 sends 0xfb (remote accelerator) when selected_alternate_throttle_priority equals 0x8089a4 (CTRMTHPZ); CM848 has no 0xfb case. CM550 sends 0xf8 directly for states 13-21/28/29/31/33-36/38-41; CM848 sends 0xf8 only when torque_derate_fuel_source_code equals final_fueling_state and 0xfe for those states otherwise. The rest is the same. By the identical-code rule this is a counterpart; the shared name dates from stage 9b. Judge's call."
+   },
+   {
+    "address": "CM550 0x0003366a",
+    "role": "EC1 sender: when (j1939_pgn65251_transmit_status & 0xf0) = 0 it calls buildPgn65251EngineConfiguration1Payload(0x8034f2) and sends j1939_pgn65251_tx_message (28 bytes). Every 5000 ms from 110 ms; also called from 0x33660.",
+    "discriminator": "The periodic EC1 entry point.",
+    "suggested_name": "sendPgn65251EngineConfiguration1Message",
+    "confidence": "high",
+    "cm848_counterpart": "sendPgn65251EngineConfiguration1Message @ 0x1b730 - twin, confirmed (same test and the same two calls); keep the name"
+   },
+   {
+    "address": "CM550 0x000337c4",
+    "role": "ET1 builder (PGN 65262): byte 1 coolant temperature (SPN 110, deg C + 40, clamped 0-250), byte 2 fuel temperature from vp44_fuel_temperature (SPN 174), bytes 3-4 0xffff (SPN 175). Then it sends. Every 1000 ms from 430 ms; request responder (0x338d8).",
+    "discriminator": "Coolant and fuel temperature only, with no fault gating.",
+    "suggested_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65262EngineTemperature1Message @ 0x26024 - counterpart (fault-bit gating, oil temperature filled); keep both names"
+   },
+   {
+    "address": "CM550 0x00033164",
+    "role": "EFL/P1 builder (PGN 65263): byte 4 oil pressure = (filtered >> 7) x 6906 / 1000 >> 2 (SPN 100). The other bytes keep the 0xff from the set-up. Then it sends. Every 500 ms from 130 ms; request responder (0x2f5a0).",
+    "discriminator": "Oil pressure only.",
+    "suggested_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65263EngineFluidLevelPressure1Message @ 0x25eb4 - counterpart (adds fuel delivery and coolant pressure with enables); keep"
+   },
+   {
+    "address": "CM550 0x00033f5a",
+    "role": "PTO builder (PGN 65264): bytes 4-5 = power_take_off_requested_engine_speed byte-swapped (SPN 187). Byte 6 = 0xcc / 0xdc from switch 21 (SPN 978), | 1 from power_take_off_switch_state_bits bit 4 (SPN 980). Byte 7 = 0xcc / 0xdc from bit 0 (SPN 982), | 1 from bit 2 (SPN 984). Then it sends. Every 100 ms from 150 ms; request responder.",
+    "discriminator": "No enable or datalink-source gates.",
+    "suggested_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65264PowerTakeOffInformationMessage @ 0x2bd58 - counterpart (power_take_off_enable gate, datalink-source 0xfc / 3 codes); keep"
+   },
+   {
+    "address": "CM550 0x00031bce",
+    "role": "AMB builder (PGN 65269): byte 1 barometric pressure = (filtered x 2) x 6906 / 1000 >> 7 (SPN 108), then it sends. Every 1000 ms from 170 ms; request responder.",
+    "discriminator": "Barometric pressure only.",
+    "suggested_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65269AmbientConditionsMessage @ 0x23e8c - counterpart (fault gating, ambient air temperature); keep"
+   },
+   {
+    "address": "CM550 0x00033e58",
+    "role": "IC1 builder (PGN 65270): byte 2 boost = scaleByRatio(boost, 6906, 128000) >> 1 (SPN 102), byte 3 intake manifold temperature deg C + 40, clamped 0-250 (SPN 105). Then it sends. Every 500 ms from 190 ms; request responder.",
+    "discriminator": "Boost and IMT with no fault gating.",
+    "suggested_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65270InletExhaustConditions1Message @ 0x264d8 - counterpart (0xfe on fault bits); keep"
+   },
+   {
+    "address": "CM550 0x00033d38",
+    "role": "SHUTDN builder (PGN 65252, 8 bytes at 0x8035f6). Byte 1 from idle_shutdown_state: 0 / 0x40 / 0x44 / unchanged / 0x10 / 0x01. Byte 2 = 0x7f / 0x3f from idle_shutdown_enable (SPN 591). Byte 3 = 0xfd / 0xfc from 0x80bcd7 bit 0 (SPN 985). Byte 4 = 0xfd / 0xfc from 0x80bcf6 bit 0 (SPN 1081). Then it sends. Every 1000 ms from 110 ms; request responder (0x2f588).",
+    "discriminator": "The only PGN 65252 sender.",
+    "suggested_name": "cm550_buildPgn65252ShutdownMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none - CM848 only receives PGN 65252 (receivePgn65252ShutdownMessage); keep the name"
+   },
+   {
+    "address": "CM848 0x00024028",
+    "role": "AUXIO1 builder (PGN 65241, 1 byte): four 2-bit fields, from the remote PTO switch, the brake switch and the second brake signal, plus #04 fixed at 3. Each reads 3 when its hardware line is 0. Every 250 ms from 200 ms; this is the slot CM550 uses for 65266.",
+    "discriminator": "The only PGN 65241 sender.",
+    "suggested_name": "cm848_buildPgn65241AuxiliaryInputOutputStatus1Message",
+    "confidence": "high",
+    "cm848_counterpart": "(this row) CM550: none (no 0xfed9 anywhere); keep"
+   },
+   {
+    "address": "CM848 0x00024d78",
+    "role": "Periodic DM1 step: with active faults it calls j1939HandlePgn65226Dm1ActiveDtc and sets j1939_dm1_broadcast_pending_flag. With none it sends once more if the flag was set, then clears the flag. Every 1000 ms from 500 ms.",
+    "discriminator": "Adds the all-clear DM1 that CM550 0x3229a lacks.",
+    "suggested_name": "cm848_processDm1FaultBroadcast",
+    "confidence": "high",
+    "cm848_counterpart": "(this row) CM550 counterpart 0x3229a; keep the name"
+   },
+   {
+    "address": "CM848 0x00024178 / 0x00025b10 / 0x00026238 / 0x00026650 / 0x00026024 / 0x00025eb4 / 0x0002bd58 / 0x00023e8c / 0x000264d8 / 0x0002641c / 0x00026e90 / 0x0002588c / 0x0001b730",
+    "role": "The remaining CM848 builders (CCVS1, EEC2, ERC1, RC, ET1, EFL/P1, PTO, AMB, IC1, FD1, WFI, EEC1, EC1). I read each body; each fills the payload its current name says and sends it with cm848_sendJ1939Message.",
+    "discriminator": "One PGN each, as in the schedule.",
+    "suggested_name": "",
+    "confidence": "high",
+    "cm848_counterpart": "keep all these names (no change proposed); twin status as in the CM550 rows"
+   },
+   {
+    "address": "CM550 0x00801ee2",
+    "role": "Global: CCVS1 byte 1 (row ccvs_message_byte_0, the payload base and data pointer): SPN 69 bits 1-2, SPN 70 bits 3-4, bits 5-8 = 1111. CCVS1 bytes 2-8 follow at 0x801ee3..e9 (rows 0x801ee5 ccvs_message_byte_3 / 0x801ee6 ccvs_message_byte_4, the rest DAT): 0x801ee3 j1939_pgn65265_wheel_based_vehicle_speed byte[2]; 0x801ee5 j1939_pgn65265_cruise_brake_and_clutch_switches_byte; 0x801ee6 j1939_pgn65265_cruise_set_coast_resume_accelerate_switches_byte; 0x801ee7 j1939_pgn65265_cruise_control_set_speed; 0x801ee8 j1939_pgn65265_power_take_off_and_cruise_control_states_byte; 0x801ee9 j1939_pgn65265_idle_and_test_switches_byte. Only 0x31c84 and its set-up touch them.",
+    "discriminator": "The bit positions in CCVS1.",
+    "suggested_name": "j1939_pgn65265_two_speed_axle_and_parking_brake_switches_byte",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 j1939_ccvs1_* bytes"
+   },
+   {
+    "address": "CM550 0x008034aa",
+    "role": "Global: EEC2 payload, wrong rows. 0x8034aa vp44_feedback_pulse_low_fault_counter = byte 1 (SPN 558/559). Proposed names for the rest: 0x8034ab (vp44_feedback_pulse_high_fault_counter) j1939_pgn61443_accelerator_pedal_position_1; 0x8034ac (lift_pump_timing_smoothed) j1939_pgn61443_engine_percent_load_at_current_speed; 0x8034ad j1939_pgn61443_remote_accelerator_pedal_position; 0x8034ae (derate_threshold_previous) j1939_pgn61443_accelerator_pedal_position_2 (0xff, the last byte sent); 0x8034af..b1 (fso_fault_previous_value at 0x8034b0) j1939_pgn61443_unsent_bytes byte[3] (0xff, beyond data_length 5). No other code references them.",
+    "discriminator": "The EEC2 byte positions.",
+    "suggested_name": "j1939_pgn61443_accelerator_pedal_switches_byte",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 j1939_eec2_* (0x3fada8..ab)"
+   },
+   {
+    "address": "CM550 0x008034c2",
+    "role": "Global: EEC3 payload of the twin builder (rows fso_range_fault_high_counter / 0x8034c3 fso_range_fault_clear_counter / 0x8034c4 vp44_timing_status_fault_counter / 0x8034c5 vp44_timing_mode_3_high_counter). Proposed: 0x8034c2 nominal friction percent torque (SPN 514); 0x8034c3 j1939_pgn65247_desired_operating_speed_bytes byte[2] (SPN 515); 0x8034c5 j1939_pgn65247_desired_operating_speed_asymmetry_byte (SPN 519). The input word 0x808180 (e2m 10E7 +2 JCEGOPRP) is CM848's j1939_pgn65247_desired_operating_speed_asymmetry_adjustment.",
+    "discriminator": "The EEC3 byte positions.",
+    "suggested_name": "j1939_pgn65247_nominal_friction_percent_torque_byte",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 j1939_eec3_* (0x3fadc0..c3), 0x5c384"
+   },
+   {
+    "address": "CM550 0x0080356a",
+    "role": "Global: ERC1 byte 1 (row retarder_tsc_status_byte), with SPN 900 / 571 / 572; 0x80356b = byte 2 j1939_pgn61440_actual_retarder_percent_torque (SPN 520). The input word 0x80a9cc (e2m 117D +8 EBCOAG) is CM848's engine_retarder_command_source (enum below).",
+    "discriminator": "The ERC1 byte positions.",
+    "suggested_name": "j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 j1939_erc1_torque_mode_and_enable_byte / j1939_erc1_actual_retarder_percent_torque_byte"
+   },
+   {
+    "address": "CM550 0x008035b4",
+    "role": "Global: LFE payload, no rows: 0x8035b4 j1939_pgn65266_engine_fuel_rate byte[2] (SPN 183); 0x8035b6 j1939_pgn65266_instantaneous_fuel_economy byte[2] (SPN 184); 0x8035b8 j1939_pgn65266_average_fuel_economy byte[2] (SPN 185). Inputs: 0x804fb0 (TIMP) instantaneous_fuel_economy and 0x804fb2 (TIMPT3) average_fuel_economy_since_trip_reset, also read at 0xf386 / 0xf3d4. Priority word 0x803f74 (1254 +26 JCFEPZ, EEPROM image) j1939_pgn65266_priority_cal.",
+    "discriminator": "LFE fields.",
+    "suggested_name": "j1939_pgn65266_engine_fuel_rate",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "CM550 0x00803630",
+    "role": "Global: the 19-byte RC payload in exactly CM848's j1939_pgn65249_payload_t layout (builder offsets +0..+0x11, set-up +0x12 = 0xff). Row 0x803631 engine_brake_cylinders_per_step is its retarder_control_method field (SPN 557, the step count). The struct row must be added to CM550's structure_definitions. Unnamed inputs: 0x8089ac / 0x8089ae / 0x8089b0 (10FC +6/+8/+A, read only by the RC builder) = CM848 engine_retarder_configuration_peak_torque_speed / _point_3_speed / _point_4_speed.",
+    "discriminator": "The RC payload.",
+    "suggested_name": "j1939_pgn65249_payload",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 j1939_pgn65249_payload @ 0x3fae50"
+   },
+   {
+    "address": "CM550 0x008035f6",
+    "role": "Global: SHUTDN payload, no rows: 0x8035f6 byte 1 (SPN 590/592/593/594); 0x8035f7 j1939_pgn65252_idle_shutdown_timer_function_byte (SPN 591); 0x8035f8 j1939_pgn65252_air_conditioner_high_pressure_fan_switch_byte (SPN 985); 0x8035f9 j1939_pgn65252_wait_to_start_lamp_byte (SPN 1081); 0x8035fa..fd 0xff.",
+    "discriminator": "SHUTDN byte positions.",
+    "suggested_name": "j1939_pgn65252_idle_shutdown_status_byte",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "CM550 0x0080367a",
+    "role": "Global: VEP1 payload of the twin builder; the old names are wrong. 0x80367a (eeprom_calibration_write_state) is byte 1 (SPN 114, 0xff). The others: 0x80367b j1939_pgn65271_alternator_current (0xff); 0x80367c (eeprom_calibration_check_value_1) j1939_pgn65271_charging_system_potential word 0xffff; 0x80367e (loop_termination_flag) j1939_pgn65271_battery_potential word (SPN 168, the value sent); 0x803680 (protection_flag_source_1) j1939_pgn65271_keyswitch_battery_potential word 0xffff. The same five names fit CM848 0x3faeee / 0x3faeef / 0x3faef0 (j1939_pgn65271_field1_init_word) / 0x3faef2 (j1939_pgn65271_voltage_tx_word) / 0x3faef4 (j1939_pgn65271_field2_init_word).",
+    "discriminator": "VEP1 byte positions.",
+    "suggested_name": "j1939_pgn65271_net_battery_current",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x3faeee..f4"
+   },
+   {
+    "address": "CM550 0x00803582",
+    "role": "Global: FD1 byte 1 (SPN 975), written by no code (no row). 0x803583 = byte 2 j1939_pgn65213_fan_drive_state_byte (SPN 977 | 0xf0). Input word 0x80a9f2 (e2m 117D +2E FCST) = CM848 fan_drive_state_code.",
+    "discriminator": "FD1 byte positions.",
+    "suggested_name": "j1939_pgn65213_estimated_percent_fan_speed",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 j1939_fan_drive_1_estimated_fan_speed_byte / j1939_fd1_fan_drive_state_byte"
+   },
+   {
+    "address": "CM550 0x0080347d",
+    "role": "Global: EBC1 byte 4 (SPN 969-972). 0x80347e = byte 5 j1939_pgn61441_engine_retarder_selection (SPN 973). Input word 0x80a9f0 (117D +2C EBSWLV) = CM848 engine_retarder_selection_percent; priority word 0x803f90 (1254 +42 JCEBDFPZ, EEPROM) = j1939_pgn61441_priority_cal. The same two byte names fit CM848 0x3fad7b (j1939_status_byte_a) and 0x3fad7c (DAT).",
+    "discriminator": "EBC1 byte positions.",
+    "suggested_name": "j1939_pgn61441_engine_and_accelerator_switches_byte",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x3fad7b / 0x3fad7c"
+   },
+   {
+    "address": "CM550 0x00803492",
+    "role": "Global: EEC1 payload (5 bytes; only 0x32c76 and its set-up 0x32e08 touch it). 0x803492 (vp44_torque_speed_control_status) = byte 1 torque mode (SPN 899). Proposed for the rest: 0x803493 j1939_pgn61444_driver_demand_percent_torque (SPN 512); 0x803494 (vp44_timing_expected_init) j1939_pgn61444_actual_engine_percent_torque (SPN 513); 0x803495 j1939_pgn61444_engine_speed byte[2] (SPN 190). CM848 0x3fad90 j1939_engine_status_byte is the same torque mode byte.",
+    "discriminator": "EEC1 byte positions.",
+    "suggested_name": "j1939_pgn61444_engine_torque_mode",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x3fad90..94"
+   },
+   {
+    "address": "CM550 0x008034f2",
+    "role": "Global: the 28-byte EC1 payload of the twin sendPgn65251 / buildPgn65251EngineConfiguration1Payload. Its set-up writes +0x11/+0x12 = 0xff and +0x1a = 0x7d, which is CM848's j1939_pgn65251_payload_t. A second instance at 0x80350e (j1939_pgn65251_payload_previous) gets the same set-up writes. The rows inside, 0x8034f8 can_message_buffer_start / 0x8034fa calibration_validation_buffer / 0x803500 / 0x803502 calibration_checksum_expected_1/2, have no references.",
+    "discriminator": "The EC1 payload.",
+    "suggested_name": "j1939_pgn65251_payload",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 j1939_pgn65251_payload @ 0x3fa7f8 / _previous @ 0x3fa814"
+   },
+   {
+    "address": "CM550 0x00803d48",
+    "role": "Global inputs of the CCVS1 builder: 0x803d48 (e2m 1180 +E VSRXRASP, EEPROM image) = CM848 two_speed_axle_switch_present_cal; 0x80a9c6 (117D +2 CRRF) = CM848 cruise_speed_command; 0x80dc2a (109E +6 PTDXSS) = CM848 power_take_off_governor_j1939_state (the builder ORs its low byte 0x80dc2b into byte 7).",
+    "discriminator": "The same e2m records as the CM848 names.",
+    "suggested_name": "two_speed_axle_switch_present_cal",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x3fd536 / 0x40a26a / 0x40af52"
+   }
+  ],
+  "enum_roles": [
+   {
+    "enum_name": "ENGINE_RETARDER_COMMAND_SOURCE",
+    "value": 0,
+    "meaning": "NONE (e2m NOT_COMM): the CM550 ERC1 jump table sends torque mode 0",
+    "evidence": "CM550 word 0x80a9cc = e2m 117D +8 EBCOAG '0=NOT_COMM,1=J_COMM,2=CRUISE,3=SWITCH,4=JC_LIM,5=NOT_S' (range 0-4). The jump table at 0x33936 routes 0 to 0x33974. Copy CM848's enum, whose e2m record is the same, and type 0x80a9cc with it."
+   },
+   {
+    "enum_name": "ENGINE_RETARDER_COMMAND_SOURCE",
+    "value": 1,
+    "meaning": "J1939_OVERRIDE (J_COMM): torque mode 6 / 5 / 7 / 14 by engine_retarder_j1939_control_device",
+    "evidence": "jump table entry 1 -> 0x3394c (the TSC1 requester compares)"
+   },
+   {
+    "enum_name": "ENGINE_RETARDER_COMMAND_SOURCE",
+    "value": 2,
+    "meaning": "CRUISE: torque mode 2",
+    "evidence": "entry 2 -> 0x33946 ori.b #2"
+   },
+   {
+    "enum_name": "ENGINE_RETARDER_COMMAND_SOURCE",
+    "value": 3,
+    "meaning": "SWITCH (operator selection): torque mode 1",
+    "evidence": "entry 3 -> 0x33940 ori.b #1"
+   },
+   {
+    "enum_name": "ENGINE_RETARDER_COMMAND_SOURCE",
+    "value": 4,
+    "meaning": "J1939_LIMIT (JC_LIM): the same TSC1 requester modes as 1",
+    "evidence": "entry 4 -> 0x3394c; values above 4 skip (bhi 0x33974)"
+   },
+   {
+    "enum_name": "ENGINE_RETARDER_COMMAND_SOURCE",
+    "value": 5,
+    "meaning": "NOT_SET",
+    "evidence": "e2m text only ('5=NOT_S', cut off); outside the jump table, so no torque mode bits"
+   }
+  ],
+  "notes": "Notes and scratch scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q1/describer/notes.md, find_refs.py, entries_into.py, find_bytes.py, cm550_full_disasm.txt.\n\nTWINS. Two new twins, checked at the instruction level:\n- EEC3: CM550 0x330c4 and CM848 0x25de8. The two bodies use the same store-then-add of 125 and the same stack-temporary byte swap.\n- VEP1: CM550 0x342f0 and CM848 0x26cf0. Ghidra prints CM550's scale as x5>>1, but the code is x20>>3, the same as CM848's mulli 20 / srwi 3.\nThe existing shared EEC1 name (0x32c76 / 0x2588c) is NOT identical code: CM550 has a 0xfb remote accelerator case and maps the derate states straight to 0xf8; CM848 has no 0xfb case and sends 0xf8 only when torque_derate_fuel_source_code matches. By the identical-code rule this pair is a counterpart. EEC2 is a counterpart (different pedal input and gates). EC1 is a twin (confirmed).\n\nFIRMWARE BUGS FOUND:\n1. CM550 RC builder: at 0x340b6, move.w #1,(0x8081fe) stores where a compare was intended. The 0xff 'no engine brake' branch is unreachable, and the engine brake driver count's RAM copy becomes 1. 0x8081fe is also read at 0x1fcee, 0x2f800 and by the ERC1 builder.\n2. CM848 VEP1: the same x20>>3 code runs on a 1/16 V input, so SPN 168 reports double the battery voltage (RAM: 12.0 V sent as 24.0 V).\n3. CM550 EBC1: byte 5 sends the 1 %-per-count EBSWLV unscaled as SPN 973 (0.4 %/bit). Byte 2 is written by no code.\n4. CM550 FD1: byte 1 is written by no code.\n5. CM550 DM1: no all-clear DM1 is sent.\n\nFOUR NEW CM550 FUNCTION ROWS (each is reached only by its pea in mc68k_initializeJ1939Datalink):\n- 0x3229a-0x322ad (rts 0x322ac)\n- 0x32bbc-0x32c21 (rts 0x32c20)\n- 0x339fe-0x33a1d (rts 0x33a1c)\n- 0x34496-0x344cd (rts 0x344cc)\n\nLEAD FOR ANOTHER BATCH: CM550 0x2f47e (FUN_0002f47e, 23 callers) has no function row. It is the PGN-request responder registration: 32 x 6-byte entries at 0x801d5a, count at 0x801e1a, returns 1 when full. This is the same logic as CM848 cm848_j1939RegisterPgnHandler.\n\nMONGO: the J1939-71 docs for 65262-65279 are misaligned, and the docs for 65264 / 65271 / 65279 have no layout. I used the J1939-71 layouts from memory for those."
+ },
+ "verdict": {
+  "batch": "Q1",
+  "overall": "Q1 judged: 19 CM550 builders (four of them new rows), 4 CM848 rows and 62 payload globals. The investigator proposed no prototypes and no enum members, and skipped[] is empty, so nothing stays skipped. Every builder's role, schedule slot, request-responder registration, payload layout and entry point was re-derived from the asm (m68k.py / disasm_func.py), the ROM pointer scans (judge/entries.py: the only way into 0x3229a / 0x32bbc / 0x339fe / 0x34496 is the pea in mc68k_initializeJ1939Datalink at 0x28dbc / 0x28de8 / 0x28dd2 / 0x28e02, with no PC-relative entry from outside) and the J1939 layouts (Mongo EBC1 / EEC1 / EEC2 / EEC3 / ERC1 / AUXIO1 / SHUTDN / LFE1, and IC1 under its mislabelled 65270 doc). All names are unique in their firmware, and no payload address has an e2m record. Changes to the proposals: (1) EEC2 61443 is NOT a twin. CM550 sends commanded_throttle_state.commanded_throttle (e2m 1047 +0) as SPN 91 and compares it with the kickdown threshold. CM848 uses all_speed_governor_equivalent_throttle (e2m 81AA +0) for both, even though it has its own 1047 record at 0x40a57a. Its low idle and override gates also come from different calibration words. So CM550 0x32e4c becomes cm550_buildPgn61443ElectronicEngineController2Message, CM848 0x25b10 keeps cm848_buildPgn61443ElectronicEngineController2Message, and the EEC2 payload comments (CM550 0x8034aa-0x8034b0, CM848 0x3fada9 / 0x3fadac) now name the prefixed builders. (2) EEC1 keeps its stage 9b shared name, but the two bodies are not identical. CM550 has a 0xfb remote accelerator case and lists the 0xf8 states in jump table 0x32d04; CM848 tests torque_derate_fuel_source_code == final_fueling_state instead. Under this round's identical-code rule the pair would be a counterpart, so a later round may split it into cm550_ / cm848_sendPgn61444ElectronicEngineController1Message. Its plate comment is corrected: an active override outside the TSC1 states gives 0xfe. (3) Comment-only fixes: RC (point 5's percent torque is byte 19, which is never written), EFL/P1 (no code writes bytes 3 and 7), EBC1 and DM1 (they now name the renamed CM848 counterparts), the RC payload rows (no applier instructions in the comments), CM848 0x3faef2 (finding: the shared VEP1 code runs on CM848's 1/16 V battery word, so SPN 168 reads twice the voltage; in the RAM dump 192 = 12.0 V goes out as 0x01e0 = 24.0 V). Apply notes: the type j1939_pgn65249_payload_t needs CM848's 19 one-byte field rows (retarder_type_and_location .. percent_torque_at_peak_torque_point_5) copied into CM550's structure_definitions.csv. The 0x803631 row becomes the field row j1939_pgn65249_payload.retarder_control_method; ApplyGlobalVariableTypes skips dotted rows, and deleting the row is the equivalent alternative. These comments still reference renamed functions: CM550 0x31ed2 and the algorithm_enable_flags_14/16 type rows (j1939HandlePgn65265CruiseVehicleSpeed); the algorithm_enable_flags_5/13/18 type rows and j1939_torque_and_load_not_available_flag (j1939HandlePgn61443Eec2); j1939_pgn65247_desired_operating_speed (vp44_configParamCanBuilder); the algorithm_enable_flags_2 type row and engine_retarder_j1939_control_device (cm550_dutyCycleMonitorAltIsrHandler); 0x341e6, engine_retarder_configuration_idle_speed and engine_retarder_configuration_maximum_speed (vp44CanMessage100ResponseBuilder); CM848 algorithm_enable_flags_1/12/13/18 type rows, cm848_calculateEngineRetarderSelectionPercent and engine_retarder_selection_percent (cm848_j1939BuildEngineControlByte); j1939_powertrain_control_state_t and injection_timing_top_dead_center_offset (cm848_j1939HandlePgn65504ProprietaryB); j1939HandlePgn65226Dm1ActiveDtc 0x24be8 (cm848_processDm1FaultBroadcast); j1939_pgn65247_desired_operating_speed and j1939_nominal_friction_percent_torque_times_256 (cm848_buildPgn65247ElectronicEngineController3Message). Leads for other batches: the shared DM1 sender j1939HandlePgn65226Dm1ActiveDtc (CM550 0x322ae / CM848 0x24be8) still has a Handle name and needs its own twin check. CM550 0x803613 (IC1 byte 6, the SPN 173 low byte, 0xff from the set-up) has no row. CM550 0x80a9cc (e2m 117D +8 EBCOAG) could take CM848's ENGINE_RETARDER_COMMAND_SOURCE enum. A void(void) prototype for CM550 0x3407a would remove its in_D0 / uint return. The RC '=' bug at 0x340b6 overwrites 0x8081fe with 1, and the ERC1 builder and the other users of 0x8081fe read that value. Judge notes: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q1/judge/notes.md (scripts uniq.py, entries.py).",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00031c84",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "final_relation": "counterpart",
+    "own_role": "Fills the 8-byte CCVS1 payload at 0x801ee2 and sends PGN 65265. Byte 1 is 0xf3/0xf7 from bit 6 of 0x80bcd4, with SPN 69 from DSRARASW when 0x803d48 = 1. Bytes 2-3 are the road speed, clamped at 0x9c00 and x412>>8, low byte first. Byte 4 holds the clutch, brake, cruise on and cruise active bits; byte 5 the accelerate, resume, coast and set bits of 0x80bcd4; byte 6 the set speed from CRRF; byte 7 the 0x20 hold state ORed with 0x80dc2b; byte 8 0xc0 with the test, decrement and increment bits. It also answers PGN 65265 requests.",
+    "reason": "asm 0x31c84-0x31ed0 matches the role: a3 = 0x801ee2, a4 = 0x80bcce, and every byte store is as described; pea 0x801ed4 + jsr 0x104e8. ROM refs: the schedule pea at 0x28c5c and the 0x2f47e registration at 0x31f1e (PGN 0xfef1). It handles no received message. CM848 0x24178 gates each field on two_speed_axle_switch_present_cal, the datalink-source bits and the cruise / power take-off enables, with 0xff / 0xc0 / 0x30 forms, and sends no parking brake. Different code, so a counterpart with the same base name. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00032c76",
+    "verdict": "AMENDED",
+    "final_name": "sendPgn61444ElectronicEngineController1Message",
+    "final_cm848_address": "0x0002588c",
+    "final_relation": "twin",
+    "own_role": "Fills EEC1 at 0x803492 (5 bytes) and sends PGN 61444 every 20 ms. Byte 1 is the torque mode: during a TSC1 override, 0xf6 / 0xf5 / 0xf7 by control device 1 / 3 / 2 in fueling states 1 / 2 / 20, else 0xfe; with no override, from final_fueling_state via jump table 0x32d04. Byte 2 is the driver demand percent torque + 125, byte 3 the actual percent torque + 125 (0xfe when not available), bytes 4-5 engine_rpm_primary, low byte first.",
+    "reason": "Name kept. It has been shared with CM848 0x2588c since stage 9b. Both bodies have the same TSC1 step (states 1 / 2 / 20, devices 1 / 3 / 2), the same +125 torque bytes, the same 0xfe not-available override, the same speed bytes, the same 2nd schedule slot (61444, 20, 0) and data length 5. They are not identical: CM550's jump table sends 0xf1 or 0xfb by comparing 0x80aa94 with 0x8089a4, and sends 0xf8 for states 13-21 28 29 31 33-36 38-41 (decoded by hand); CM848 sends 0xf8 only when torque_derate_fuel_source_code == final_fueling_state and has no 0xfb. So the comment no longer claims a plain twin. The proposal comment also said the mode comes from final_fueling_state 'otherwise' after the TSC1 case. An active override outside the TSC1 states gives 0xfe (0x32ce6), so that sentence is corrected. Splitting the shared name is left to a later round (see overall).",
+    "final_comment": "Builds and sends the ECM's EEC1 broadcast (PGN 61444 Electronic Engine Controller 1, 5 bytes at 0x803492; queue 0 every 20 ms from 0 ms). Byte 1 is the engine torque mode (SPN 899, high nibble 0xf). While tsc1_override_control_mode is not 0 it is 0xf6 / 0xf5 / 0xf7 for engine_control_device_indicator 1 / 3 / 2 (transmission / ASR / ABS) in the TSC1 fueling states 1 / 2 / 20, else 0xfe. With no override it comes from final_fueling_state through the jump table at 0x32d04: 0xf1 for the states 1 2 3 7 8 30 37 (0xfb remote accelerator when commanded_throttle_state.selected_alternate_throttle_priority equals the remote throttle priority 0x8089a4), 0xf3 power take-off (4), 0xf2 cruise control (9), 0xf4 road speed governor (10), 0xf0 low speed governor (11), 0xf9 high speed governor (12), 0xfa engine brake (24), 0xf8 torque limiting for the states 13-21 28 29 31 33-36 38-41, else 0xfe. Byte 2 is the driver demand percent torque, the high byte of 0x80da18 (e2m 1102 +2 JCDRIDTQ) + 125 after cm550_paramSystemModeController (SPN 512). Byte 3 is the actual engine percent torque, the high byte of 0x80da16 (e2m 1102 +0 JCEGIDTQ) + 125 after cm550_param_lookup_1 (SPN 513; 0xfe while j1939_torque_and_load_not_available_flag is 1). Bytes 4-5 are engine_rpm_primary, low byte first (SPN 190). Then cm550_sendCanMessage(j1939_pgn61444_tx_message). One name with CM848 0x2588c since stage 9b, the same function with code changes: CM848 has no 0xfb case and sends 0xf8 only when torque_derate_fuel_source_code equals final_fueling_state; the TSC1, torque and speed steps are the same."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00032e4c",
+    "verdict": "AMENDED",
+    "final_name": "cm550_buildPgn61443ElectronicEngineController2Message",
+    "final_relation": "counterpart",
+    "own_role": "Fills EEC2 at 0x8034aa and sends 5 bytes of it as PGN 61443 every 50 ms. Byte 1: kickdown 0xf8 / 0xf4 / 0xf0 from four throttle faults and commanded throttle > 0x80818e, ORed with the low idle field 3 / 2 / 1. Byte 2: the commanded throttle x5/8 (0xff override / 0xfe fault). Byte 3: the percent load high byte (0xfe when not available). Byte 4: the remote throttle x5/8 (0xff / 0xfe). Bytes 5-8: 0xff. It is also the PGN 61443 request responder.",
+    "reason": "The role is right and the name is unique, but the twin claim fails. The steps and constants match CM848 0x25b10 (0xf8 / 0xf4 / 0xf0, |3 / |2 / |1, 0xfe / 0xff, >>1 + >>3, four 0xff stores, length 5, stub + 0xf003 registration in the set-up), but the inputs are not the same code. CM550 reads 0x80aa82 = e2m 1047 +0 THROTTLE (commanded throttle) for SPN 91 and the kickdown test; CM848 reads 0x40b812 = e2m 81AA +0 ASG_Equivalent_Throttle (lhz -18414 at 0x25b7c / 0x25c78), although CM848 has its own 1047 record at 0x40a57a and uses that record's accelerator_off_idle. The gates also come from different calibration words: CM550 algorithm_enable_flags_13 bit 7 (DSIVSWUO) and flags_5 bits 10 / 11 (ADSATHOD / ADROTHOD); CM848 switch_input_datalink_source_bits_cal[0] & 0x80 and sensor_channel_held_value_enable_bits_cal[0] & 0x2000 / 0x100. CM848 sends a different signal on the bus, so this is a counterpart (the describer agrees). The CM550 row takes the prefixed form of CM848's name; CM848 keeps cm848_buildPgn61443ElectronicEngineController2Message.",
+    "final_comment": "Builds and sends the ECM's EEC2 broadcast (PGN 61443 Electronic Engine Controller 2; data length 5 of the 8-byte buffer 0x8034aa; queue 0 every 50 ms from 10 ms, and the PGN 59904 request responder that the EEC2 descriptor set-up vp44_cumminsProprietaryDM_983_Builder registers). Byte 1 is the kickdown field (SPN 559): 0xf8 on a throttle fault (status word 0x806008 bits 0x20 / 8 / 2 / 4, each with its fault_processing_enable_flags[4] bit), else 0xf4 when commanded_throttle_state.commanded_throttle (e2m 1047 +0) is above the kickdown threshold 0x80818e (e2m 10E7 +10 JCTHKCTD), else 0xf0. The low idle switch field (SPN 558) is ORed in: 3 while algorithm_enable_flags_13_cal.idle_switch_override_enable is set, 2 on an idle validation switch fault, 1 while accelerator_off_idle is 0. Byte 2 is the accelerator pedal position 1 = commanded throttle x 5 / 8 (SPN 91; 0xff while sampled_throttle_override_enable is set, 0xfe on a throttle fault). Byte 3 is the percent load at current speed, the high byte of 0x80da1a after cm550_param_lookup_3 (SPN 92; 0xfe while j1939_torque_and_load_not_available_flag is 1). Byte 4 is the remote accelerator position = remote_throttle_sensor_state.filtered_value x 5 / 8 (SPN 974; 0xff unless remote_throttle_enable is set and remote_throttle_override_enable is clear, 0xfe on a remote throttle fault). Bytes 5-8 are 0xff; only byte 5 (SPN 29) is sent. Then cm550_sendCanMessage(j1939_pgn61443_tx_message). It handles no received message. Counterpart of cm848_buildPgn61443ElectronicEngineController2Message: the same steps and constants, but CM848 sends all_speed_governor_equivalent_throttle (e2m 81AA +0) where CM550 sends the commanded throttle, gates the low idle field on switch_input_datalink_source_bits_cal and the overrides on sensor_channel_held_value_enable_bits_cal, and is scheduled every 20 ms."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000330c4",
+    "verdict": "CONFIRMED",
+    "final_name": "buildPgn65247ElectronicEngineController3Message",
+    "final_cm848_address": "0x00025de8",
+    "final_relation": "twin",
+    "own_role": "Runs the nominal friction calculation. It stores the high byte of e2m 1102 +6 and then adds 125 in place (byte 1, SPN 514), copies the desired operating speed word e2m 10E7 +0 low / high into bytes 2-3 (SPN 515) and the low byte of e2m 10E7 +2 into byte 4 (SPN 519), then sends the 4-byte EEC3 (PGN 65247).",
+    "reason": "The two bodies are instruction-level identical. CM550 0x330c4: jsr 0xf99c; move.w 0x80da1c, asr #8, move.b to (a3), addi.b #0x7d,(a3); 0x80817e through the stack temporary to +1 / +2; move.b 0x808181 to +3; send 0x8034ca. CM848 0x25de8: bl 0x20af0; lhz 0x40ad90 >>8, stb, addi 125, stb again; lhz 0x5c382 through sth 8(r1), lbz 9 / 8 to +1 / +2; low byte of 0x5c384 to +3; bl 0x539fc. The inputs are the same e2m records in both (1102 +6 JCINFCTQ, 10E7 +0 JCEGDSRP, 10E7 +2 JCEGOPRP). Both are the 4th schedule call (65247, offset 30); only the interval (250 / 50 ms) and the callee's floor differ. Nothing VP44. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0003366a",
+    "verdict": "CONFIRMED",
+    "final_name": "sendPgn65251EngineConfiguration1Message",
+    "final_cm848_address": "0x0001b730",
+    "final_relation": "twin",
+    "own_role": "While no transport session is in progress (status & 0xf0 = 0), it rebuilds the 28-byte EC1 payload 0x8034f2 with buildPgn65251EngineConfiguration1Payload and sends j1939_pgn65251_tx_message. It is the 5th schedule call and the last step of the on-change sender.",
+    "reason": "Both decompiles have the same test and the same two calls, and both are the 5th schedule call (65251, 5000, 110). ROM refs: the schedule pea at 0x28cb6 and the jsr at 0x33660 from sendPgn65251EngineConfiguration1OnChange. This is the round 95 twin; nothing new contradicts it.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000338ea",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn61440ElectronicRetarderController1Message",
+    "final_relation": "counterpart",
+    "own_role": "Fills ERC1 (2 bytes at 0x80356a) and sends it from the retarder node every 100 ms. Byte 1 is the shift assist 0x40, the brake assist 0x10 (EBSWSS not 0) and the retarder torque mode from EBCOAG via jump table 0x33936. Byte 2 is 0xff with no engine brake driver, else 125 minus the retarder torque high byte.",
+    "reason": "Jump table 0x33936 decoded by hand: 0 skips; 1 and 4 go to the device compares (1/3/2 give 6/5/7, else 14); 2 gives |2; 3 gives |1. Then tst 0x8081fe, jsr 0xff6c, 125 - (0x80aa14 >> 8). The only ref is the schedule pea at 0x28ccc (queue 1). It is no ISR and monitors no duty cycle. CM848 0x26238 adds the datalink_broadcast_enable_flags bit 3 gate, a 0xc0 / 0xd0 base and an output-level skip, so it is a counterpart. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033b40",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65266FuelEconomyLiquidMessage",
+    "final_relation": "standalone",
+    "own_role": "Fills LFE (6 bytes at 0x8035b4) and sends PGN 65266 every 100 ms. Bytes 1-2 are the fuel rate: JC39FLRT scaled twice by cm550_scaleByRatio to L/h, capped at 3212, x20. Bytes 3-4 and 5-6 are TIMP and TIMPT3 x8502/10000, each low byte first.",
+    "reason": "asm 0x33b40-0x33c26 matches (two jsr 0x35064, cmpi.l #0xc8c, the x20 shift chain, the x8502 chain and divu.l #10000). The only ref is the schedule pea at 0x28ce8. CM848 has no 0xfef2 anywhere. Mongo names PGN 65266 'Fuel Economy (Liquid)'. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0003407a",
+    "verdict": "AMENDED",
+    "final_name": "cm550_buildPgn65249RetarderConfigurationMessage",
+    "final_relation": "counterpart",
+    "own_role": "While no transport session runs, fills bytes 1-18 of the 19-byte RC payload 0x803630: type / location 3 or 0x14, the control method, the four speed / percent torque points, the peak torque speed and the reference torque. Then it sends PGN 65249 from the retarder node every 5000 ms.",
+    "reason": "The name is right and unique; the comment needed a fix. 0x340b6 is opcode 0x33fc, move.w #1,(0x8081fe), a store. The beq after it is never taken, so a count of 0 or 1 gives 0x14 and the count is overwritten with 1. Stores land at +0..+0x11 in CM848's j1939_pgn65249_payload_t order; the set-up 0x341e6 writes +0x12 = 0xff. The only ref is the schedule pea at 0x28cfe. CM848 0x26650 compares ==1 and fills percent_torque_at_peak_torque_point_5, so it is a counterpart. The proposal comment said each of the five speed points, peak torque included, is followed by 125 minus its percent torque, which contradicts its own next sentence: the peak torque speed is followed by the reference torque, and its percent torque would be byte 19, never written.",
+    "final_comment": "Builds and sends the RC broadcast (PGN 65249 Retarder Configuration, 19 bytes at 0x803630 through the transport protocol, from the retarder source address; retarder queue 1 every 5000 ms from 301 ms). It runs only while j1939_pgn65249_transmit_status has no 0xf0 bit set. Byte 1 (SPN 901 / 902) is 3 (compression release at the engine) for two or more engine brake drivers (total_number_of_engine_brake_output_drivers_at_the_ecm_0_255, 0x8081fe), else 0x14 (exhaust brake). The compare at 0x340b6 compiles as an assignment (move.w #1,(0x8081fe)): the count is overwritten with 1, a count of 0 also gives 0x14 and the 0xff branch is unreachable. Byte 2 (SPN 557) is the control method 0xff / 6 / 3 / 2 / 1 for 0 / 1 / 2 / 3 / 6 cylinders per driver (0x808200, e2m 13D8 +2 JCDR1NCY); other counts leave it. Bytes 3-14 are the first four speed points, each low byte first and followed by 125 minus the high byte of its percent torque: engine_retarder_configuration_idle_speed with 0x8089b2, engine_retarder_configuration_maximum_speed with 0x8089b4, point 3 0x8089ae with 0x8089b6 and point 4 0x8089b0 with 0x8089b8. Bytes 15-16 are the peak torque speed 0x8089ac and bytes 17-18 the reference torque 0x8089a6. Byte 19 (SPN 555, percent torque at peak torque) is never written and stays 0xff from cm550_initializePgn65249RetarderConfigurationBuffer. Then cm550_sendCanMessage(j1939_pgn65249_tx_message). Counterpart of cm848_buildPgn65249RetarderConfigurationMessage, which compares the count with 1 (0x14, else 0xff) and also fills byte 19."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000337c4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "final_relation": "counterpart",
+    "own_role": "Converts the coolant temperature and vp44_fuel_temperature from deg F to deg C + 40, clamped 0..250, into ET1 bytes 1-2. It stores 0xffff in bytes 3-4 and sends PGN 65262 every 1000 ms; it also answers PGN 65262 requests.",
+    "reason": "The decompile matches. The set-up 0x33880 sets length 8, writes 0xffff at +4 and 0xff at +6 / +7, and registers 0x337c4 for 0xfeee (pea at 0x338d8); the schedule pea is at 0x28d16. CM848 0x26024 adds fault 0xfe forms and the oil temperature, so it is a counterpart. Round 95 name; the comment is accurate.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033d38",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65252ShutdownMessage",
+    "final_relation": "standalone",
+    "own_role": "Fills SHUTDN bytes 1-4 and sends PGN 65252 every 1000 ms; it also answers PGN 65252 requests. Byte 1 comes from idle_shutdown_state through jump table 0x33d5a (0 / 0x40 / 0x44 / unchanged / 0x10 / 1). Byte 2 is 0x7f / 0x3f from the enable bit, bytes 3 and 4 are 0xfd / 0xfc from DSAKPRSW and LCWTSRLP.",
+    "reason": "Jump table 0x33d5a decoded by hand (entries 0x0c 0x10 0x16 0x26 0x1c 0x22). The field order matches Mongo SHUTDN (593 594 592 590 / 591 / 985 / 1081). The set-up 0x33dfa sets length 8 and 0xff at +4..+7. Refs: the schedule pea at 0x28d30 and 0x2f588 in cm550_diagnosticDataDump. CM848 only receives 65252 (registerJ1939ReceiveHandler 0xfee4). Name and comment are right.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033164",
+    "verdict": "AMENDED",
+    "final_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "final_relation": "counterpart",
+    "own_role": "Stores the oil pressure (filtered >> 7) x 6906 / 1000 >> 2 in EFL/P1 byte 4 and sends PGN 65263 every 500 ms; it also answers PGN 65263 requests.",
+    "reason": "The name is right. The set-up 0x331ae writes 0xff at +0, +1 and +7 and 0xffff at +4. No code writes +2 or +6 (RAM ff ff 00 56 ff ff 00 ff). The proposal comment said all the other bytes keep initializer values, but bytes 3 and 7 have none. The round 95 comment had this right, so the correction restores it.",
+    "final_comment": "Builds and sends the ECM's EFL/P1 broadcast (PGN 65263 Engine Fluid Level/Pressure 1, 8 bytes at 0x8034e8; queue 0 every 500 ms from 130 ms, and the PGN 59904 request responder that cm550_diagnosticDataDump registers). Byte 4 is the engine oil pressure (oil_pressure_sensor_state.filtered_value >> 7) x 6906 / 1000 >> 2 (SPN 100, 4 kPa per bit). Bytes 1, 2 and 8 keep the 0xff and bytes 5-6 the 0xffff that the descriptor set-up vp44_engineFluidLevelPGN_65263_Builder stores; no code writes bytes 3 and 7 (SPN 98 oil level / SPN 109 coolant pressure, 0 in the RAM dump). Then cm550_sendCanMessage(j1939_pgn65263_tx_message). Counterpart of cm848_buildPgn65263EngineFluidLevelPressure1Message, which also sends the fuel delivery and coolant pressures."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033f5a",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "final_relation": "counterpart",
+    "own_role": "Stores power_take_off_requested_engine_speed in J1939 byte order in PTO bytes 4-5 (byteSwap16). Byte 6 is 0xcc / 0xdc from the remote PTO switch DSRXSWSS (0x80bcd0 bit 4), | 1 for the on switch; byte 7 is 0xcc / 0xdc for resume, | 1 for set. Then it sends PGN 65264 every 100 ms; it also answers PGN 65264 requests.",
+    "reason": "asm 0x33f5a-0x34018 matches. e2m E+2 bit 4 is DSRXSWSS 'REMOTE PTO SWITCH INPUT'. The set-up 0x3401a sets length 8 and 0xff at +0 / +1 / +2 / +7. Refs: the schedule pea at 0x28d5c and 0x2f5ac. CM848 0x2bd58 adds the power_take_off_enable gate and datalink-source forms, so it is a counterpart. Round 95 name.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00031bce",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "final_relation": "counterpart",
+    "own_role": "Stores the barometric pressure (filtered x2) x 6906 / 1000 >> 7 in AMB byte 1 and sends PGN 65269 every 1000 ms; it also answers PGN 65269 requests.",
+    "reason": "The decompile matches. The set-up 0x31c1a sets length 8 and 0xff / 0xffff in bytes 2-8. Refs: the schedule pea at 0x28d76 and 0x2f5b8. CM848 0x23e8c adds the fault test and the ambient air temperature, so it is a counterpart. Round 95 name.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033e58",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "final_relation": "counterpart",
+    "own_role": "Stores the boost pressure scaleByRatio(boost, 6906, 128000) >> 1 in IC1 byte 2 and the intake manifold temperature in deg C + 40 (clamped 0..250) in byte 3. Then it sends PGN 65270 every 500 ms; it also answers PGN 65270 requests.",
+    "reason": "The decompile matches. The set-up 0x33eee writes 0xff at +0 and +3..+7 (RAM ff 00 56 ff ff ff ff ff), so 'the other bytes stay 0xff' is right. Refs: the schedule pea at 0x28d8c and 0x2f5c4. CM848 has the fault forms, so it is a counterpart. Round 95 name.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000342f0",
+    "verdict": "CONFIRMED",
+    "final_name": "buildPgn65271VehicleElectricalPower1Message",
+    "final_cm848_address": "0x00026cf0",
+    "final_relation": "twin",
+    "own_role": "Converts the filtered battery voltage word x20>>3, byte-swaps it into VEP1 bytes 5-6 (payload +4, SPN 168) and sends the 8-byte PGN 65271 every 1000 ms; it also answers PGN 65271 requests. Bytes 1-4 and 7-8 keep the set-up's 0xff / 0xffff.",
+    "reason": "The two bodies are instruction-level identical. CM550 0x342fa-0x3432c: the word through the temporary, x4 + x, <<2, >>3 (= x20>>3; Ghidra prints x5>>1), the temporary, jsr byteSwap16, move.w to 0x80367e, send 0x80366c. CM848 0x26cf0: lhz 0x40baf8, sth temporary, mulli 20, srwi 3, sth temporary, bl cm848_reverseByteOrder16, sth 0x3faef2, bl 0x539fc. The set-ups write the same layout, both are the 15th schedule call, and both answer requests (CM550 0x2f5d0). Nothing retarder about it, and it handles no received message. Finding: on CM848's 1/16 V input the same code doubles SPN 168 (see global 0x3faef2). Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0003229a",
+    "verdict": "AMENDED",
+    "final_name": "cm550_broadcastPgn65226Dm1WhileFaultsActive",
+    "final_relation": "counterpart",
+    "own_role": "The periodic DM1 task (16th schedule call, every 1000 ms from 500 ms). If the count byte of active_dtc_list (0x8058d4) is not 0, it pushes a 0 and calls the DM1 sender at 0x322ae; otherwise it sends nothing. It is 0x3229a-0x322ad and ends with the rts at 0x322ac.",
+    "reason": "New row, confirmed. asm: tst.b 0x8058d4 / beq 0x322ac / clr.l -(a7) / jsr 0x322ae / addq / rts. The previous function ends with the rts at 0x32298 and 0x322ae starts the sender. judge/entries.py finds only the pea at 0x28dbc and no outside PC-relative entry. The sender reads no stack argument (movem of 7 registers, no (n,a7) read). The name states the gate that separates it from the sender, and it is unique. The comment is amended only because its CM848 counterpart is renamed in this batch (cm848_broadcastPgn65226Dm1UntilFaultsClear, confirmed).",
+    "final_comment": "The periodic DM1 task (PGN 65226 Active Diagnostic Trouble Codes; queue 0 every 1000 ms from 500 ms). When the count byte of active_dtc_list (0x8058d4) is not 0, it calls the DM1 sender j1939HandlePgn65226Dm1ActiveDtc and pushes a 0 that the sender never reads. With no active fault it sends nothing, so no DM1 reports the cleared list. The code is 0x3229a-0x322ad (rts at 0x322ac); nothing branches into it, and its only reference is the builder pointer of the 16th scheduleJ1939PeriodicMessage call in mc68k_initializeJ1939Datalink. Counterpart of cm848_broadcastPgn65226Dm1UntilFaultsClear, which also sends one DM1 with no codes after the list empties (no row before; was LAB_0003229a)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000339fe",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65213FanDrive1Message",
+    "final_relation": "counterpart",
+    "own_role": "Stores byte 0x80a9f3 (the low byte of the FCST fan state word) | 0xf0 in FD1 byte 2 (0x803583) and sends the 2-byte PGN 65213 every 1000 ms. Byte 1 is never written. It is 0x339fe-0x33a1d and ends with the rts at 0x33a1c.",
+    "reason": "New row, confirmed. asm: move.b 0x80a9f3,d0 / ori.b #0xf0 / move.b d0,0x803583 / pea 0x80358a / jsr 0x104e8 / addq / rts. The previous rts is at 0x339fc and 0x33a1e starts initializePgn65213FanDrive1Buffer (length 2, data 0x803582). The only entry is the pea at 0x28dd2 (entries.py). e2m 117D +2E FCST resolves to 0x80a9f2; RAM 00 f0. CM848 0x2641c also writes byte 1 and 0xfe for states of 16 and up, so it is a counterpart. The comment is accurate. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00032bbc",
+    "verdict": "AMENDED",
+    "final_name": "cm550_buildPgn61441ElectronicBrakeController1Message",
+    "final_relation": "counterpart",
+    "own_role": "Fills EBC1 byte 4 (0x80347d): 0x40 when DS20SWSS (0x80bcd0 bit 3) is on, | 1 when DSACILSS (0x80bccf bit 1) is on. Byte 5 (0x80347e) is the raw low byte of EBSWLV 0x80a9f0. Then it sends the 5-byte PGN 61441 every 100 ms. It is 0x32bbc-0x32c21 and ends with the rts at 0x32c20.",
+    "reason": "New row; the name is confirmed. asm 0x32bbc-0x32c20; the previous rts is at 0x32bba and 0x32c22 starts the EBC1 set-up (length 5, 0xff at +0 / +2). The only entry is the pea at 0x28de8 (entries.py). The bit positions match Mongo EBC1 (4.1 SPN 972, 4.7 SPN 969, 5 SPN 973); RAM ff 00 ff 01 00. The comment named the counterpart as cm848_j1939BuildEngineControlByte, which this batch renames, so the comment is amended (and now notes byte 2).",
+    "final_comment": "Builds and sends the ECM's EBC1 broadcast (PGN 61441 Electronic Brake Controller 1, 5 bytes at 0x80347a; queue 0 every 100 ms from 20 ms). Byte 4 is 0x40 while switch 20 (bit 3 of 0x80bcd0, e2m DS20SWSS) is on (SPN 969 remote accelerator enable switch), plus 1 while the accelerator interlock switch (bit 1 of 0x80bccf, e2m DSACILSS) is on (SPN 972); the engine derate and auxiliary shutdown fields stay 0. Byte 5 is the low byte of 0x80a9f0 (e2m 117D +2C EBSWLV, commanded brake level 0-100 percent), sent without the 0.4 percent per bit scaling (SPN 973). Bytes 1 and 3 keep the 0xff of cm550_initializePgn61441ElectronicBrakeController1Buffer and no code writes byte 2 (SPN 521, 0 in the dump). Then cm550_sendCanMessage(j1939_pgn61441_tx_message). The code is 0x32bbc-0x32c21 (rts at 0x32c20) and is entered only through the builder pointer of the 18th schedule call. Counterpart of cm848_buildPgn61441ElectronicBrakeController1Message, which fills all four byte 4 fields with datalink-source and enable gates and scales byte 5 by x 5 >> 1 (no row before; was LAB_00032bbc)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00034496",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_sendPgn65279WaterInFuelIndicatorMessage",
+    "final_relation": "counterpart",
+    "own_role": "Sets j1939_pgn65279_water_in_fuel_indicator_byte (0x8036ac) to 1 while LCWFLP (0x80bcf6 bit 2) is on, else 0, and sends the 1-byte PGN 65279 every 10000 ms. It is 0x34496-0x344cd and ends with the rts at 0x344cc.",
+    "reason": "New row, confirmed. asm 0x34496-0x344cc; the previous rts is at 0x34494 and 0x344ce starts the set-up (length 1, data 0x8036ac, no request registration). The only entry is the pea at 0x28e02 (entries.py). e2m E+28 bit 2 is LCWFLP. 'send' follows CM848's cm848_sendPgn65279WaterInFuelIndicatorMessage (0xff / 0xfc / 0xfd from the enable and fault bits), a counterpart. Unique; the comment is accurate.",
+    "final_comment": ""
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0002567c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_buildPgn61441ElectronicBrakeController1Message",
+    "final_relation": "counterpart",
+    "own_role": "Fills EBC1 byte 4 (0x3fad7b) with SPN 969 / 970 / 971 from switch 31 and SPN 972 from switch 26 (throttle interlock), each 3 when datalink-sourced or its feature is disabled. Byte 5 (0x3fad7c) is engine_retarder_selection_percent x5>>1, or 0xff on the override bit or a clear broadcast flag bit 3. Then it sends PGN 61441 (5 bytes, the descriptor from cm848_initializePgn61441ElectronicBrakeController1Buffer).",
+    "reason": "The decompile matches the claimed fields, and the bit order matches Mongo EBC1. The owner scan shows j1939_status_byte_a and DAT_003fad7c are used only here. It builds the whole EBC1 message, not one control byte, so the old name is wrong. It is the 18th schedule call (61441, 100, 20) and a counterpart of CM550 0x32bbc. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x000269f4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_buildPgn65504ProprietaryBMessage",
+    "final_relation": "standalone",
+    "own_role": "Fills the 8-byte j1939_pgn65504_payload (engine speed and net torque + 0x7d7f in J1939 byte order, a TBLr >> 7 scramble key and three injection timing bytes XORed with it and mixed with time base noise; all 0 at 0 rpm) and sends PGN 65504 every 200 ms; it is also the PGN 65504 request responder.",
+    "reason": "The decompile matches, and the descriptor cm848_initJ1939ProprietaryPgn65504Buffer has length 8. The schedule entry is call 15 (0xffe0, 200, 250). It parses no received message (the dispatcher and the schedule only trigger a send), so the Handle name is wrong. CM550 has no 0xffe0. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00024d78",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_broadcastPgn65226Dm1UntilFaultsClear",
+    "final_relation": "counterpart",
+    "own_role": "The periodic DM1 task. While active_dtc_list_cal.count (0x3fe05a) is not 0 it calls j1939HandlePgn65226Dm1ActiveDtc and sets j1939_dm1_broadcast_pending_flag. When the count is 0 it calls the sender once more if the flag was set, then clears the flag, so it sends one DM1 after the list empties.",
+    "reason": "asm 0x24d78-0x24dd4: lbz 0x3fe05a, bne to bl 0x24be8 / li 1; else lbz 0x3fabcb, beq, bl 0x24be8, li 0; stb to 0x3fabcb. It is the 16th schedule call. The new name says what the old vague 'process' did not: the PGN and the gate (it keeps broadcasting up to and including the clear). The plate spells out the one final DM1 that separates it from CM550's WhileFaultsActive. It does not claim more than the code shows, and it is unique. The comment of j1939HandlePgn65226Dm1ActiveDtc 0x24be8 still names cm848_processDm1FaultBroadcast.",
+    "final_comment": ""
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00024028",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_buildPgn65241AuxiliaryInputOutputStatus1Message",
+    "final_relation": "standalone",
+    "own_role": "Fills the one-byte AUXIO1 payload: bits 7-8 from remote_power_take_off_switch, bits 5-6 from brake_switch, bits 3-4 from not_brake_switch, each 3 when the switch has no hardware line, and bits 1-2 fixed 3. Then it sends PGN 65241 every 250 ms from 200 ms (the slot where CM550 sends 65266).",
+    "reason": "The decompile matches. The fields match Mongo AUXIO1 (1.7 SPN 701, 1.5 SPN 702, 1.3 SPN 703, 1.1 SPN 704). CM550 has no 0xfed9. Name kept; the comment is accurate.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee2",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_two_speed_axle_and_parking_brake_switches_byte",
+    "final_type": "byte",
+    "reason": "Byte-wide accesses only (move.b #0xf7 / #0xf3, andi.b #0xfc / #0xfd at 0x31cb8-0x31cea; the set-up stores 0xf3 at 0x31f14 and uses the address as the data pointer). Only the CCVS builder and its set-up touch it. CCVS1 byte 1 is SPN 69 (bits 1-2) and SPN 70 (bits 3-4). No e2m record; RAM 0xf3. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee3",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_wheel_based_vehicle_speed",
+    "final_type": "byte[2]",
+    "reason": "Written bytewise by move.b (-1,a6),(1,a3) and (-2,a6),(2,a3), low byte first, after the x412 >> 8 chain. The address is odd, so the field cannot be a word. No other access and no row inside. This is SPN 84. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee5",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_cruise_brake_and_clutch_switches_byte",
+    "final_type": "byte",
+    "reason": "(3,a3) byte stores at 0x31d52-0x31da2: 0x40 from DSCHSWSS, 0x10 from DSBRSWSS, 4 from CRONSW, 1 when cruise_control_active_flag = 1. These are SPN 598 / 597 / 596 / 595. RAM 0x50 matches 0x80bccf = 0x0e. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee6",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_cruise_set_and_resume_switches_byte",
+    "final_type": "byte",
+    "reason": "(a1) = a3 + 4 byte stores at 0x31dbe-0x31e10 from CRACELSW / CRRESUSW / CRCOASSW / CRSETSW (SPN 602 / 601 / 600 / 599). The set-and-resume shorthand matches CM848's j1939_ccvs1_cruise_set_resume_byte and CM550's j1939_pgn65264_set_and_resume_switches_byte; the comment lists all four fields. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee7",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_cruise_control_set_speed",
+    "final_type": "byte",
+    "reason": "move.b d0,(5,a3) at 0x31e36 = ((0x80a9c6 x 412) >> 8) >> 8 (CRRF; SPN 86). RAM 0x68, which matches 0x80a9c6 = 0x4100. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee8",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_power_take_off_and_cruise_control_states_byte",
+    "final_type": "byte",
+    "reason": "move.b #0x20 / clr.b (6,a3) from cruise_control_active_flag, then or.b of 0x80dc2b, the low byte of PTDXSS (SPN 527 bits 6-8, SPN 976 bits 1-5). Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801ee9",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65265_idle_and_test_mode_switches_byte",
+    "final_type": "byte",
+    "reason": "(7,a3) byte stores 0xd0 / 0xc0, | 0xc4, | 0xc1 from DSTESWSS / DSDTSWSS / DSICSWSS (SPN 966 / 967 / 968; SPN 1237 stays 3). RAM 0xc0. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803492",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61444_engine_torque_mode_byte",
+    "final_type": "byte",
+    "reason": "move.b #0xfX,(a2) stores with a2 = 0x803492 in the EEC1 builder, and the EEC1 set-up 0x32e3a uses it as the data pointer. Those are its only users. It is SPN 899 and has no VP44 role. RAM 0xfe. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803493",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61444_driver_demand_percent_torque",
+    "final_type": "byte",
+    "reason": "move.b d0,(1,a3) at 0x32db2 = (0x80da18 >> 8) + 0x7d, where 0x80da18 is e2m 1102 +2 JCDRIDTQ (SPN 512). RAM 0x7d. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803494",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61444_actual_engine_percent_torque",
+    "final_type": "byte",
+    "reason": "move.b d0,(2,a3) at 0x32dca = (0x80da16 >> 8) + 0x7d (e2m 1102 +0 JCEGIDTQ), and 0xfe at 0x32dd8 when 0x80d358 = 1 (SPN 513). Builder only; the old VP44 timing name has no basis.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803495",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61444_engine_speed",
+    "final_type": "byte[2]",
+    "reason": "(-1,a6) to (3,a3) and (-2,a6) to (4,a3), from engine_rpm_primary, low byte first (SPN 190). Bytewise at an odd address. No row inside.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034aa",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_low_idle_and_kickdown_switches_byte",
+    "final_type": "byte",
+    "reason": "The name and type are right (move.b #0xf8 / #0xf0 / #0xf4 and ori.b #3 / #2 / #1 to (a5) = 0x8034aa; the EEC2 set-up's data pointer; RAM 0xf9). The comment named the builder by the rejected twin name; it now names cm550_buildPgn61443ElectronicEngineController2Message.",
+    "final_comment": "PGN 61443 (EEC2) byte 1: the kickdown field (SPN 559, bits 3-4) 0xf4 above the kickdown threshold / 0xf0 / 0xf8 on a throttle fault, plus the accelerator low idle switch field (SPN 558, bits 1-2) 3 override / 2 idle validation fault / 1 at idle; bits 5-8 stay 1. Written by cm550_buildPgn61443ElectronicEngineController2Message; the data pointer of j1939_pgn61443_tx_message. It is not a VP44 counter. CM848 equivalent: j1939_eec2_low_idle_and_kickdown_byte."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034ab",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_accelerator_pedal_position_1",
+    "final_type": "byte",
+    "reason": "move.b to (1,a2): 0xfe (0x32f70), 0xff (0x32f84), or 0x80aa82 >>3 + >>1 (SPN 91). Builder only. The comment now names the prefixed builder.",
+    "final_comment": "PGN 61443 (EEC2) byte 2, SPN 91 accelerator pedal position 1 (0.4 percent per bit): the commanded throttle x 5 / 8 (>>1 + >>3); 0xff while algorithm_enable_flags_5_cal.sampled_throttle_override_enable is set, 0xfe on a throttle fault. Written by cm550_buildPgn61443ElectronicEngineController2Message."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034ac",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_engine_percent_load_at_current_speed",
+    "final_type": "byte",
+    "reason": "move.b d0,(2,a2) = 0x80da1a >> 8 after jsr 0xf930, and 0xfe when 0x80d358 = 1 (SPN 92). Builder only, no lift pump role. The comment now names the prefixed builder.",
+    "final_comment": "PGN 61443 (EEC2) byte 3, SPN 92 engine percent load at current speed: the high byte of jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 after cm550_param_lookup_3, 0xfe while j1939_torque_and_load_not_available_flag is 1. Written by cm550_buildPgn61443ElectronicEngineController2Message; no lift pump role."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034ad",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_remote_accelerator_pedal_position",
+    "final_type": "byte",
+    "reason": "move.b to (3,a2): 0xff (0x32fe6), 0xfe (0x3301a), or 0x80a3a4 >>3 + >>1 (SPN 974). Builder only. The comment now names the prefixed builder.",
+    "final_comment": "PGN 61443 (EEC2) byte 4, SPN 974 remote accelerator pedal position (0.4 percent per bit): remote_throttle_sensor_state.filtered_value x 5 / 8; 0xff unless algorithm_enable_flags_18_cal.remote_throttle_enable is set and remote_throttle_override_enable is clear, 0xfe on a remote throttle fault. Written by cm550_buildPgn61443ElectronicEngineController2Message."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034ae",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_accelerator_pedal_position_2",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(4,a2) on every pass. It is the 5th and last byte sent (move.w #5 in the set-up) and matches Mongo EEC2 byte 5, SPN 29. Builder only. The comment now names the prefixed builder.",
+    "final_comment": "PGN 61443 (EEC2) byte 5, SPN 29 accelerator pedal position 2: always 0xff (not available), stored on every pass by cm550_buildPgn61443ElectronicEngineController2Message. It is the last byte sent (data length 5). No derate role."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034af",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_payload_byte_6",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(5,a2), never sent (data length 5). The name follows j1939_pgn61441_payload_byte_1 / _3. The comment now names the prefixed builder.",
+    "final_comment": "Byte 6 of the 8-byte EEC2 buffer: cm550_buildPgn61443ElectronicEngineController2Message stores 0xff on every pass, but the descriptor's data length is 5, so it is never sent (CM848 does the same)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034b0",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn61443_payload_byte_7",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(6,a2), never sent; the builder is its only user. The comment now names the prefixed builder.",
+    "final_comment": "Byte 7 of the 8-byte EEC2 buffer: 0xff on every pass from cm550_buildPgn61443ElectronicEngineController2Message, never sent (data length 5). It has no fuel shutoff role."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034b1",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61443_payload_byte_8",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(7,a2) at 0x3304a, the last byte before the descriptor at 0x8034b2, never sent. The comment names no builder.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034c2",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65247_payload_nominal_friction_percent_torque",
+    "final_type": "byte",
+    "reason": "move.b d0,(a3) and addi.b #0x7d,(a3) with a3 = 0x8034c2; the EEC3 set-up's data pointer (0x33152). The only users are those two functions. SPN 514; RAM 0x82. The payload_ prefix avoids confusion with the input row j1939_pgn65247_desired_operating_speed. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034c3",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65247_payload_desired_operating_speed_low_byte",
+    "final_type": "byte",
+    "reason": "move.b (-1,a6),(1,a2) = the low byte of 0x80817e (SPN 515). Split low / high like the twin's CM848 rows j1939_eec3_desired_operating_speed_low_byte / _high_byte. RAM 0xe0.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034c4",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65247_payload_desired_operating_speed_high_byte",
+    "final_type": "byte",
+    "reason": "move.b (-2,a6),(2,a2) = the high byte (RAM 0x2e; 0x2ee0 = 1500 rpm). Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034c5",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65247_payload_desired_operating_speed_asymmetry_adjustment",
+    "final_type": "byte",
+    "reason": "move.b (0x808181).l,(3,a2), the low byte of e2m 10E7 +2 JCEGOPRP (SPN 519). RAM 0x7d. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080356a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte",
+    "final_type": "byte",
+    "reason": "Byte ops on (a2) = 0x80356a in the ERC1 builder (0x40 / clr, |0x10, |1 / 2 / 5 / 6 / 7 / 0xe); the ERC1 set-up's data pointer. SPN 900 / 571 / 572 per Mongo ERC1. RAM 0x40.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080356b",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61440_actual_retarder_percent_torque",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(1,a4) or 125 - (0x80aa14 >> 8) after jsr 0xff6c (SPN 520). RAM 0x7d. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035b4",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65266_engine_fuel_rate",
+    "final_type": "byte[2]",
+    "reason": "move.b (1,a4),(0x8035b4).l and move.b (a3),(1,a2), low byte first; the LFE set-up's data pointer (length 6). SPN 183. No row inside.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035b6",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65266_engine_instantaneous_fuel_economy",
+    "final_type": "byte[2]",
+    "reason": "(2,a2) / (3,a2) byte stores of TIMP x 8502 / 10000 (SPN 184; 1/256 mpg x 0.8503 = 1/512 km/L). Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035b8",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65266_engine_average_fuel_economy",
+    "final_type": "byte[2]",
+    "reason": "(4,a2) / (5,a2) byte stores of TIMPT3 x 8502 / 10000 (SPN 185). RAM 5e 09. Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803630",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn65249_payload",
+    "final_type": "j1939_pgn65249_payload_t",
+    "reason": "The struct is proven. The builder stores +0x00..+0x11 in CM848's field order (type, method, idle speed lo / hi, 125-torque, maximum speed lo / hi, 125-torque, point 3, point 4, peak speed lo / hi, reference torque lo / hi). The set-up writes +0x12 = 0xff, sets length 19 and makes the address the data pointer. abs_refs: only 0x34084 / 0x340b0 / 0x340c4 / 0x340ce (builder) and 0x341ee (set-up). The 19 bytes end before the descriptor at 0x803644 and swallow only the 0x803631 row, which becomes a field row. To apply, copy CM848's 19 one-byte j1939_pgn65249_payload_t rows into CM550's structure_definitions.csv. The comment is amended because the proposal comment held applier instructions.",
+    "final_comment": "The RC (PGN 65249 Retarder Configuration) payload: 19 bytes in the j1939_pgn65249_payload_t layout that CM848 uses at 0x3fae50, byte for byte. cm550_buildPgn65249RetarderConfigurationMessage writes bytes 1-18 (+0x00 to +0x11) and cm550_initializePgn65249RetarderConfigurationBuffer stores 0xff in byte 19 (percent_torque_at_peak_torque_point_5, never written again); the data pointer of j1939_pgn65249_tx_message (data length 19, sent through the transport protocol). RAM dump: 14 06 40 1f 46 e0 60 19 a0 28 42 60 3b 2a e0 60 86 01 ff."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803631",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn65249_payload.retarder_control_method",
+    "final_type": "",
+    "reason": "move.b #0xff / 6 / 3 / 2 / 1,(1,a2) by 0x808200 = 0 / 1 / 2 / 3 / 6 (SPN 557). The builder is its only user. It becomes a field row in CM848's form (empty type; ApplyGlobalVariableTypes skips dotted names). The comment is amended to drop the 'can also be deleted' note.",
+    "final_comment": "RC byte 2, SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for 0 / 1 / 2 / 3 / 6 cylinders per engine brake driver (0x808200, e2m 13D8 +2 JCDR1NCY), written by cm550_buildPgn65249RetarderConfigurationMessage; a field of j1939_pgn65249_payload (was engine_brake_cylinders_per_step)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035f6",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65252_idle_shutdown_states_byte",
+    "final_type": "byte",
+    "reason": "Byte stores to (a0) = 0x8035f6 from jump table 0x33d5a (clr / 0x40 / 0x44 / unchanged / 0x10 / 1); the SHUTDN set-up's data pointer. SPN 593 / 594 / 592 / 590. RAM 0x00.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035f7",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65252_idle_shutdown_timer_function_byte",
+    "final_type": "byte",
+    "reason": "move.b #0x7f / #0x3f,(1,a1) from bit 1 of 0x803c9a (SPN 591, bits 7-8). RAM 0x3f.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035f8",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65252_air_conditioner_high_pressure_fan_switch_byte",
+    "final_type": "byte",
+    "reason": "move.b #0xfd / #0xfc,(2,a1) from DSAKPRSW (0x80bcd7 bit 0; SPN 985 bits 1-2). RAM 0xfd.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035f9",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65252_wait_to_start_lamp_byte",
+    "final_type": "byte",
+    "reason": "move.b #0xfd / #0xfc,(3,a1) from bit 0 of 0x80bcf6, which is e2m LCWTSRLP (SPN 1081). RAM 0xfc.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008034e8",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65263_engine_fuel_delivery_pressure",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(0x8034e8).l at 0x331f2 and the data pointer at 0x331de; only the EFL/P1 set-up touches it. Mongo EFL/P1 byte 1 is Engine Fuel Delivery Pressure. No fuel shutoff counter.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803614",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65270_exhaust_gas_temperature_high_byte",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(6,a1) with a1 = 0x80360e in the IC1 set-up; nothing else accesses it. IC1 bytes 6-7 are SPN 173 (Mongo, under the mislabelled 65270 doc), so +6 is the high byte. The low byte 0x803613 has no row (lead). No derate role.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080367a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_net_battery_current",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(0x80367a).l and the data pointer (a1) in the VEP1 set-up; abs refs only 0x34336 / 0x3437c. SPN 114. Same name as the twin's CM848 row 0x3faeee.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080367b",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_alternator_current",
+    "final_type": "byte",
+    "reason": "move.b #0xff,(1,a1) only. SPN 115.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080367c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_charging_system_potential",
+    "final_type": "word",
+    "reason": "move.w #0xffff,(2,a1), a word at an even address; no other access. SPN 167.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080367e",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_battery_potential",
+    "final_type": "word",
+    "reason": "move.w d0,(0x80367e).l after byteSwap16, the only access. SPN 168. RAM 09 01 = 0x0109 = 13.25 V from the battery word 106 x 0.125 V. Not a loop flag.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803680",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_keyswitch_battery_potential",
+    "final_type": "word",
+    "reason": "move.w #0xffff,(6,a1) only. SPN 158.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803582",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65213_estimated_percent_fan_speed",
+    "final_type": "byte",
+    "reason": "Its only reference is the data pointer store move.l #0x803582,(6,a0) at 0x33a50. No code writes it (RAM 0x00). FD1 byte 1 is SPN 975.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803583",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65213_fan_drive_state_byte",
+    "final_type": "byte",
+    "reason": "move.b d0,(0x803583).l at 0x33a08 (FCST low byte | 0xf0), the only reference. SPN 977. RAM 0xf0.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080347b",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_brake_pedal_position",
+    "final_type": "byte",
+    "reason": "No absolute or base-relative access in the EBC1 builder (0x32bbc) or its set-up (0x32c22 writes +0 / +2 only); it goes out as 0 (RAM ff 00 ff 01 00). Mongo EBC1 byte 2 is SPN 521. It completes the named payload next to j1939_pgn61441_payload_byte_1 / _3.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080347d",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_accelerator_and_engine_switches_byte",
+    "final_type": "byte",
+    "reason": "move.b #0x40 / clr.b and ori.b #1 on (3,a1) with a1 = 0x80347a in the new EBC1 builder (DS20SWSS / DSACILSS). Byte 4 holds SPN 972 / 971 / 970 / 969. RAM 0x01.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080347e",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_engine_retarder_selection",
+    "final_type": "byte",
+    "reason": "move.b (0x80a9f1).l,(4,a1), the raw EBSWLV low byte (SPN 973). Builder only.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad90",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_eec1_engine_torque_mode_byte",
+    "final_type": "byte",
+    "reason": "stb at 0x25a30 (r31 = 0x3fad90) after the li 0xfX branches. The owner scan shows only sendPgn61444ElectronicEngineController1Message and cm848_initEec1TxDescriptor (data pointer). This is SPN 899, not a status. It matches the j1939_eec1_* neighbours. Unique.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fada9",
+    "verdict": "AMENDED",
+    "final_name": "j1939_eec2_accelerator_pedal_position_1_byte",
+    "final_type": "byte",
+    "reason": "stb r4,1(r30) at 0x25c88 (0xfe / 0xff / ASG throttle >>1 + >>3); the only user is the EEC2 builder. The rename spells out 'accel'. The comment named the builder by the rejected twin name; CM848 keeps cm848_buildPgn61443ElectronicEngineController2Message.",
+    "final_comment": "EEC2 (PGN 61443) byte 2, SPN 91 accelerator pedal position 1: all_speed_governor_equivalent_throttle x 5 / 8, 0xff while the throttle channel takes its held value (sensor_channel_held_value_enable_bits_cal[0] & 0x2000), 0xfe on a throttle fault. Written by cm848_buildPgn61443ElectronicEngineController2Message (was j1939_eec2_accel_pedal_byte)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fadac",
+    "verdict": "AMENDED",
+    "final_name": "j1939_eec2_accelerator_pedal_position_2_byte",
+    "final_type": "byte",
+    "reason": "stb r31,4(r30) with r31 = 0xff at 0x25d2c, the 5th and last byte sent (data_length 5); SPN 29. The comment now names the CM848 builder by its kept name.",
+    "final_comment": "EEC2 (PGN 61443) byte 5, SPN 29 accelerator pedal position 2: always 0xff (not available), stored on every pass by cm848_buildPgn61443ElectronicEngineController2Message; the last byte sent (data length 5)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fadad",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_eec2_payload_byte_6",
+    "final_type": "byte",
+    "reason": "stb r31,5(r30) at 0x25d30, never sent. One use in the decompile.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fadae",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_eec2_payload_byte_7",
+    "final_type": "byte",
+    "reason": "stb r31,6(r30) at 0x25d34, never sent.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fadaf",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_eec2_payload_byte_8",
+    "final_type": "byte",
+    "reason": "stb r31,7(r30) at 0x25d38, the last byte before j1939_pgn61443_tx_message (0x3fadb0), never sent.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad78",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_payload_byte_1",
+    "final_type": "byte",
+    "reason": "DAT_003fad78 = 0xff and the data pointer in cm848_initializePgn61441ElectronicBrakeController1Buffer, its only users. Same name as CM550 0x80347a. Unique in CM848.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad79",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_brake_pedal_position",
+    "final_type": "byte",
+    "reason": "DAT_003fad79 = 0xff in the EBC1 set-up only (SPN 521).",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad7a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_payload_byte_3",
+    "final_type": "byte",
+    "reason": "DAT_003fad7a = 0xff in the EBC1 set-up only. Same name as CM550 0x80347c.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad7b",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_accelerator_and_engine_switches_byte",
+    "final_type": "byte",
+    "reason": "Six byte uses, all in the EBC1 builder (owner scan): 0xc0 / 0x40 / 0, then |0x30 / 0x10, |0xc / 4, |3 / 1. This is EBC1 byte 4 (SPN 972 / 971 / 970 / 969 per Mongo).",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad7c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn61441_engine_retarder_selection",
+    "final_type": "byte",
+    "reason": "Written only by the EBC1 builder: selection x5 >> 1, or 0xff (SPN 973, 0.4 percent per bit).",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003faeee",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_net_battery_current",
+    "final_type": "byte",
+    "reason": "stb 0xff and the data pointer (0x26d78 / 0x26d98) in cm848_initJ1939VehicleElectricalBuffer only. SPN 114. Same name as the twin's CM550 row.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003faeef",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_alternator_current",
+    "final_type": "byte",
+    "reason": "stb 0xff at 0x26d9c only. SPN 115.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003faef0",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_charging_system_potential",
+    "final_type": "word",
+    "reason": "sth 0xffff at 0x26da8 only (SPN 167). The old name field1_init_word described no role.",
+    "final_comment": ""
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003faef2",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn65271_battery_potential",
+    "final_type": "word",
+    "reason": "sth r3,-20750(r10) at 0x26d20 after mulli 20 / srwi 3 / bl 0x50b58c, the only user (SPN 168). The comment is amended with a finding. CM848's battery_voltage_sensor_filtered is 1/16 V per count, while the shared code was made for CM550's 0.125 V per count. RAM: 0x40baf8 = 0x00c0 = 12.0 V and payload e0 01 = 0x01e0 = 24.0 V, so the bus value is doubled.",
+    "final_comment": "VEP1 (PGN 65271) bytes 5-6, SPN 168 battery potential (0.05 V per bit): battery_voltage_sensor_filtered x 20 >> 3 in J1939 byte order (cm848_reverseByteOrder16), written by buildPgn65271VehicleElectricalPower1Message. The code is CM550's, made for a 0.125 V per count battery word, but CM848's battery word is 1/16 V per count, so the bus value is twice the battery voltage (RAM dump: 192 = 12.0 V sent as 0x01e0 = 24.0 V) (was j1939_pgn65271_voltage_tx_word)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003faef4",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65271_keyswitch_battery_potential",
+    "final_type": "word",
+    "reason": "sth 0xffff at 0x26dac only (SPN 158).",
+    "final_comment": ""
+   }
+  ]
+ }
+}

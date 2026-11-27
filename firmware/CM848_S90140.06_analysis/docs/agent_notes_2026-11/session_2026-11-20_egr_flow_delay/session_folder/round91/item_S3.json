@@ -1,0 +1,344 @@
+{
+ "proposal": {
+  "item": "S3",
+  "summary": "The CM550 all-speed governor (ASG) gain set is 18 bytes holding 9 signed words: proportional gains 1-2, integral gains 1-2, derivative gains 1-2 and compensation filter coefficients 1-3. cm550_runAllSpeedGovernor (0xc962) is its main reader and reads it only through the pointer at 0x80a9a8, in the same order and arithmetic roles as CM848's all_speed_governor_gain_set_t. Every load is signed (move.w + ext.l or muls.w), apart from the sign-neutral cmp.w of +12 / +14. The dumped ROM has exactly three stores to the pointer, and these give the three instance families. They are the throttle-mode set at 0x807be0 (e2m 107B, variable speed governor, fueling state 7), the four TSC1 speed-control-condition sets at 0x807b92 (e2m 10B6, stride 18, state 2) and the application-specific set at 0x80a95a (e2m 1170, state 30). The e2m holds no other ASG gain set family and the code holds no default set. Proposal: add the twin type as a CM550 type-only template and retype 0x807b92 to all_speed_governor_gain_set_t[4]. Give the two single instances and the pointer their CM848 twin names and types, and remove the 16 flat rows inside the two single instances.",
+  "structs": [
+   {
+    "firmware": "cm550",
+    "struct_name": "all_speed_governor_gain_set_t",
+    "size": 18,
+    "fields": [
+     {
+      "offset": 0,
+      "name": "proportional_gain_1",
+      "type": "short",
+      "size": 2,
+      "comment": "+0: e2m ASPP01GN / ASJ1nnPP / ASAP01PP 'ASG proportional gain 1' (%F/R 8.29282E-6 per count; signed). cm550_runAllSpeedGovernor multiplies (this + integral_gain_1) by asg_error_difference (move.w (a3) + ext.l @ 0xcd86) (PR #53 round 91)"
+     },
+     {
+      "offset": 2,
+      "name": "proportional_gain_2",
+      "type": "short",
+      "size": 2,
+      "comment": "+2: e2m ASPP02GN / ASJ2nnPP / ASAP02PP 'ASG proportional gain 2' (%F/R; signed). cm550_runAllSpeedGovernor subtracts asg_feedback_difference_term x this from the PI sum (muls.w (2;a3) = c1eb 0002 @ 0xcdc2) (PR #53 round 91)"
+     },
+     {
+      "offset": 4,
+      "name": "integral_gain_1",
+      "type": "short",
+      "size": 2,
+      "comment": "+4: e2m ASIT01GN / ASJ1nnIT / ASAP01IT 'ASG integral gain 1' (F/RS 0.000414641 per count; signed). cm550_runAllSpeedGovernor: the reference preset divides by asg_droop_gain_2 x (this + integral_gain_2) (move.w (4;a0) + ext.l @ 0xc9b8); the PI sum uses (proportional_gain_1 + this) and (this + integral_gain_2) (move.w (a2) + ext.l @ 0xcd8a / 0xcda2 with a2 = pointer + 4) (PR #53 round 91)"
+     },
+     {
+      "offset": 6,
+      "name": "integral_gain_2",
+      "type": "short",
+      "size": 2,
+      "comment": "+6: e2m ASIT02GN / ASJ2nnIT / ASAP02IT 'ASG integral gain 2' (F/RS; signed). cm550_runAllSpeedGovernor: the reference preset (move.w (6;a0) + ext.l @ 0xc9c4) and (integral_gain_1 + this) x the previous speed error X1 in the PI sum (move.w (6;a3) + ext.l @ 0xcda6) (PR #53 round 91)"
+     },
+     {
+      "offset": 8,
+      "name": "derivative_gain_1",
+      "type": "short",
+      "size": 2,
+      "comment": "+8: e2m ASDV01GN / ASJ1nnDV / ASAP01DV 'ASG derivative gain 1' (FS/R 3.31713E-7 per count; signed). cm550_runAllSpeedGovernor: derivative term = (asg_error_difference x this - asg_feedback_difference_term x derivative_gain_2) >> 13 (muls.w (8;a0) = c1e8 0008 @ 0xce16) (PR #53 round 91)"
+     },
+     {
+      "offset": 10,
+      "name": "derivative_gain_2",
+      "type": "short",
+      "size": 2,
+      "comment": "+10: e2m ASDV02GN / ASJ2nnDV / ASAP02DV 'ASG derivative gain 2' (FS/R; signed). cm550_runAllSpeedGovernor subtracts asg_feedback_difference_term x this in the derivative term (muls.w (10;a0) = c1e8 000a @ 0xce28) (PR #53 round 91)"
+     },
+     {
+      "offset": 12,
+      "name": "compensation_filter_coefficient_1",
+      "type": "short",
+      "size": 2,
+      "comment": "+12: e2m AS01CF / ASJ1nnCF / ASAP01CF 'ASG compensation filter coef. 1' (0.00390625 per count; signed). cm550_runAllSpeedGovernor: state X6 = (X5 x this - previous X5 x coefficient 2 + previous X6 x coefficient 3) >> 8 (muls.w (12;a2) = c1ea 000c @ 0xcfea); in the state preset this equal to coefficient 2 (cmp.w (14;a0) @ 0xcbce) gives a zero preset and otherwise the preset divides by this - coefficient 2 (move.w (12;a2) + ext.l @ 0xcbfa / 0xcc58) (PR #53 round 91)"
+     },
+     {
+      "offset": 14,
+      "name": "compensation_filter_coefficient_2",
+      "type": "short",
+      "size": 2,
+      "comment": "+14: e2m AS02CF / ASJ2nnCF / ASAP02CF 'ASG compensation filter coef. 2' (signed). cm550_runAllSpeedGovernor: the previous X5 term of X6 (muls.w (14;a2) = c1ea 000e @ 0xcff2; subtracted) and the preset compare and divisor (cmp.w (14;a0) @ 0xcbce; move.w (14;a2) + ext.l @ 0xcc00 / 0xcc5e) (PR #53 round 91)"
+     },
+     {
+      "offset": 16,
+      "name": "compensation_filter_coefficient_3",
+      "type": "short",
+      "size": 2,
+      "comment": "+16: e2m AS03CF / ASJ3nnCF / ASAP03CF 'ASG compensation filter coef. 3' (signed). cm550_runAllSpeedGovernor: the previous X6 term of X6 (muls.w (16;a2) = c1ea 0010 @ 0xcffa) and the preset factor 0x100 - this (move.w (16;a2) + ext.l @ 0xcc0a / 0xcc68) (PR #53 round 91)"
+     }
+    ],
+    "evidence": "Type-only template (empty address column) for CM550 structure_definitions.csv, with a header comment such as: '# all_speed_governor_gain_set_t: one all-speed governor gain set (18 bytes = 9 signed words); the layout and field names of CM848's all_speed_governor_gain_set_t; instances are global_variables.csv rows (PR #53 round 91)'. LAYOUT, from the machine code of cm550_runAllSpeedGovernor (0xc962-0xd0e1). Every pointer use is movea.l (0x80a9a8).l,aN, at 9 sites: 0xc9b2 / 0xc9be / 0xcbbe / 0xcbc8 / 0xcbf2 / 0xcd7c / 0xce0a / 0xce1c / 0xcfde. The displacements read are exactly +0 / +2 / +4 / +6 / +8 / +10 / +12 / +14 / +16, all words. Signedness: +0 move.w (a3) + ext.l @ 0xcd86. +2 muls.w (2,a3) (c1eb 0002) @ 0xcdc2. +4 move.w (4,a0) + ext.l @ 0xc9b8, and move.w (a2) + ext.l @ 0xcd8a / 0xcda2 with a2 = a3 + 4 (addq.l #4 @ 0xcd84). +6 move.w (6,a0) + ext.l @ 0xc9c4 and move.w (6,a3) + ext.l @ 0xcda6. +8 muls.w (8,a0) (c1e8 0008) @ 0xce16. +10 muls.w (10,a0) (c1e8 000a) @ 0xce28. +12 / +14: move.w (12,a0) + cmp.w (14,a0) (b068 000e) @ 0xcbc4 / 0xcbce, move.w + ext.l @ 0xcbfa / 0xcc00 and 0xcc58 / 0xcc5e, muls.w (c1ea 000c / 000e) @ 0xcfea / 0xcff2. +16: move.w + ext.l @ 0xcc0a / 0xcc68 and muls.w (c1ea 0010) @ 0xcffa. So all nine words are signed, which matches e2m column S on all 54 records (2 bytes each). The only direct reader outside the pointer is cm550_diagnosticMode10FuelController (0xd3e6), on the throttle-mode instance: move.w (4,a5) / add.w (6,a5) @ 0xd44c / 0xd450 with a5 = 0x807be0, then mulu.w (a3),d2 (c4d3) @ 0xd454 by asg_selected_droop_slope. That is an unsigned 16-bit sum. CM848's twin cm848_calculateGovernorCompensatorCoefficients does the same with (ushort) casts, and the fields stay short there, so short stays here too. TWIN PROOF: the arithmetic is the same as cm848_runOperatingModeSpeedGovernor's, field for field. (1) The preset divides by droop gain 2 x (integral_gain_1 + integral_gain_2). (2) The PI sum is error difference x (proportional_gain_1 + integral_gain_1) + previous error x (integral_gain_1 + integral_gain_2) - feedback difference x proportional_gain_2, then >> 9 and a clamp of plus or minus 0xe6000. (3) The derivative is error difference x derivative_gain_1 - feedback difference x derivative_gain_2. CM550 shifts it >> 13; CM848 divides by 4 and shifts >> 11. (4) The compensation filter: coefficient_1 == coefficient_2 gives a zero preset, otherwise the preset scales by (0x100 - coefficient_3) / (coefficient_1 - coefficient_2), and X6 = (X5 x coefficient_1 - X5 previous x coefficient_2 + X6 previous x coefficient_3) >> 8. STRIDE: cm550_diagnosticStatus2Initializer computes condition x 18 (move.l d0,d1 / lsl.l #3 / add.l d1,d0 / add.l d0,d0 @ 0xd1c4-0xd1ca) and adds it to 0x807b92. ORDER IN THE e2m, the same in all three blocks: PP1 / PP2 / IT1 / IT2 / DV1 / DV2 / CF1 / CF2 / CF3 at 107B +6..+16, 10B6 +6..+16 / +18..+28 / +2A..+3A / +3C..+4C, and 1170 +28..+38."
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "cm550",
+    "address": "0x00807b92",
+    "current_name": "j1939_tsc1_speed_control_condition_gain_sets",
+    "proposed_name": "j1939_tsc1_speed_control_condition_gain_sets",
+    "proposed_type": "all_speed_governor_gain_set_t[4]",
+    "comment": "The four all-speed governor gain sets of J1939 TSC1 speed control, one per requested speed control condition (TSC1 byte 1 bits 3-4, SPN 696: processEngineTsc1Request stores (byte & 0xc) >> 2 in 0x80da66, so 0-3). e2m 10B6 +6 to +4C: set n (mode 00 / 01 / 10 / 11) = ASJ1nnPP ASJ2nnPP ASJ1nnIT ASJ2nnIT ASJ1nnDV ASJ2nnDV ASJ1nnCF ASJ2nnCF ASJ3nnCF, 18 bytes a set. cm550_diagnosticStatus2Initializer (0xd1a4, the TSC1 speed control mode select, fueling state 2) points all_speed_governor_gain_set_pointer at set [condition] (condition x 18 by lsl.l #3 / add.l / add.l @ 0xd1c4-0xd1ca, move.l a0 @ 0xd1d4); that is the only direct reference to these bytes. Dump (P1 P2 I1 I2 D1 D2 CF1 CF2 CF3): 4823 482 145 145 0 0 256 209 209 / 5426 0 48 48 7537 0 256 209 209 / 4823 0 96 96 10551 0 256 209 209 / 1809 0 72 24 7537 0 256 209 209. Outside the EEPROM mirror, no _cal. Same name and type as the CM848 twin (0x5c1d6). (typed i16[36] in round 90; struct array PR #53 round 91)",
+    "evidence": "Retype only, 72 bytes either way. No other row lies in 0x807b94-0x807bd9: the CSV goes 0x807b92 then 0x807bda, and e2m_block_addresses.py reports '(no row)' for all 35 inner 10B6 records. ROM references into 0x807b92-0x807bd9: only movea.l #0x807b92,a0 @ 0xd1cc. The stride is 18 (lsl.l #3 + add.l d1 + add.l d0,d0 @ 0xd1c4-0xd1ca). The index is 2 bits: (torque_control_message_byte_0 & 0xc) >> 2 in processEngineTsc1Request (0x2f128), so [4]."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807be0",
+    "current_name": "asg_proportional_gain_1_calibration_0_0_135",
+    "proposed_name": "all_speed_governor_throttle_mode_gain_set",
+    "proposed_type": "all_speed_governor_gain_set_t",
+    "comment": "e2m 107B +6 to +16 (ASPP01GN ASPP02GN ASIT01GN ASIT02GN ASDV01GN ASDV02GN AS01CF AS02CF AS03CF; the AS0nCF records say 'ASG throttle mode'): the all-speed governor gain set of the variable speed governor (throttle mode, fueling state 7). cm550_FUN_0000d4ae (0xd4ae, the variable speed governor mode select) points all_speed_governor_gain_set_pointer at it when state 7 starts from a state other than 7 or 3 (move.l #0x807be0 @ 0xd550). cm550_diagnosticMode10FuelController (0xd3e6, the throttle droop gains) reads integral_gain_1 + integral_gain_2 through a5 = 0x807be0 (move.w (4,a5) / add.w (6,a5) @ 0xd44c, then mulu.w by asg_selected_droop_slope_0_30 @ 0xd454: an unsigned use, as in the CM848 twin). Dump 1206 / 0 / 241 / 24 / 7537 / 0 / 256 / 209 / 209. Outside the EEPROM mirror, no _cal. Same name and type as the CM848 twin (0x3ff6da). (was asg_proportional_gain_1_calibration_0_0_135; the rows ASPP02GN .. AS03CF at +2 .. +16 became its fields; PR #53 round 91)",
+    "evidence": "ROM references into 0x807be0-0x807bf1 are only the base address, at two sites. One is move.l #0x807be0,(0x80a9a8).l @ 0xd550 in cm550_FUN_0000d4ae, after cmpi.w #7 / #3 on the previous state @ 0xd544 / 0xd54a. The other is movea.l #0x807be0,a5 @ 0xd400 in cm550_diagnosticMode10FuelController, which reads only (4,a5) and (6,a5). The instance ends at 0x807bf1 and the next row starts at 0x807bf2 (offset_to_low_idle_reference_speed...). The CM848 twin 0x3ff6da has the same role: cm848_selectVariableSpeedGovernorMode points the pointer at it."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a95a",
+    "current_name": "asg_application_specific_proportional_gain_1_0_0_135",
+    "proposed_name": "all_speed_governor_application_gain_set",
+    "proposed_type": "all_speed_governor_gain_set_t",
+    "comment": "e2m 1170 +28 to +38 (ASAP01PP ASAP02PP ASAP01IT ASAP02IT ASAP01DV ASAP02DV ASAP01CF ASAP02CF ASAP03CF) 'ASG application specific' gains. cm550_diagnosticDataCopyHandler (0xd0e2, which falls into cm550_fuelDeliverySystemInit at 0xd0fc) points all_speed_governor_gain_set_pointer at it, with the rest of the application specific set, while the application specific reference override mode is set (move.l #0x80a95a @ 0xd11a; fueling state 30). No direct store in the dumped ROM (0x0-0x3FFFF). Block 1170 is a parameter_id_table entry (ROM 0x35f1c), so a service tool can write it by parameter ID. Dump all 0. Same name and type as the CM848 twin (0x40a232). (was asg_application_specific_proportional_gain_1_0_0_135; the 8 rows after it became its fields; PR #53 round 91)",
+    "evidence": "ROM references into 0x80a95a-0x80a96b: only the immediate of move.l #0x80a95a,(0x80a9a8).l @ 0xd11a. cm550_diagnosticDataCopyHandler @ 0xd0e2 falls through into 0xd0fc, so the .cpp shows this one store in both functions (lines 2673 / 2705). The instance ends at 0x80a96b and the next row is 0x80a96c asg_derivative_deadband_output. The extended RAM dump (address - 0x809242) reads 9 zero words."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a9a8",
+    "current_name": "asg_governor_gains_ptr",
+    "proposed_name": "all_speed_governor_gain_set_pointer",
+    "proposed_type": "all_speed_governor_gain_set_t *",
+    "comment": "Points at the all-speed governor gain set in use. cm550_runAllSpeedGovernor (0xc962) loads it 9 times (0xc9b2-0xcfde) and reads +0 to +16 through it, every word signed (move.w + ext.l, or muls.w). The dumped ROM has three stores: all_speed_governor_application_gain_set (cm550_fuelDeliverySystemInit @ 0xd11a, fueling state 30), j1939_tsc1_speed_control_condition_gain_sets + condition (cm550_diagnosticStatus2Initializer @ 0xd1d4, state 2) and all_speed_governor_throttle_mode_gain_set (cm550_FUN_0000d4ae @ 0xd550, state 7). No default set: the dump reads 0, so no all-speed governor state has run since the boot. Same name and type as the CM848 twin (0x40a1fc). (was asg_governor_gains_ptr; PR #53 round 91)",
+    "evidence": "The ROM holds the absolute address 0x0080a9a8 exactly 12 times, all in code. Nine are movea.l (0x80a9a8).l,a0/a2/a3 loads in cm550_runAllSpeedGovernor and three are move.l stores (#0x80a95a @ 0xd11a, a0 @ 0xd1d4, #0x807be0 @ 0xd550). No pointer table holds it, and it is not an e2m record. The 4-byte long fits before the next row at 0x80a9c2. CM848's all_speed_governor_gain_set_pointer is set by the same three selectors (cm848_selectAllSpeedGovernorApplicationMode / cm848_selectVariableSpeedGovernorMode / cm848_selectTsc1SpeedControlMode) and is read by the governor."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a93c",
+    "current_name": "all_speed_governor_reset_state_fuel_demand_correction",
+    "proposed_name": "all_speed_governor_reset_state_fuel_demand_correction",
+    "proposed_type": "i16",
+    "comment": "e2m 1170 +A ASRSSTX6 (ASG_Reset_State_X6): the reset value of all-speed governor state X6, the PID fuel correction. In the asg_external_reset_flag_true_false branch cm550_runAllSpeedGovernor uses it as the previous X6 (move.w @ 0xcb84 into d5, times all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3 by muls.w (16,a2) @ 0xcffa), and cm550_diagnosticDataCopyHandler (its tail cm550_fuelDeliverySystemInit) copies ASAPSTX6 into it; signed word, dump 0; same record and role as CM848 0x40a214. (was ASRSSTX6; PR #53 round 90; multiply address corrected round 91)",
+    "evidence": "Comment-only refresh, with no name or type change. The old comment says 'muls.w by gains[8] @ 0xcff8'. 0xcff8 is move.w d5,d0 and the multiply is c1ea 0010 = muls.w (16,a2),d0 @ 0xcffa. d5 is loaded from 0x80a93c @ 0xcb84 in the reset branch. gains[8] becomes the field name once the pointer is typed."
+   }
+  ],
+  "rows_to_remove": [
+   {
+    "firmware": "cm550",
+    "address": "0x00807be2",
+    "name": "ASPP02GN",
+    "reason": "Inside all_speed_governor_throttle_mode_gain_set: +2 = proportional_gain_2 (e2m 107B +8 ASPP02GN). No reference in the dumped ROM or the .cpp; reached only through all_speed_governor_gain_set_pointer."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807be4",
+    "name": "asg_integral_gain_1_calibration_0_6_75",
+    "reason": "Becomes its own field integral_gain_1 (+4, e2m 107B +A ASIT01GN). Its one reader cm550_diagnosticMode10FuelController (0xd3e6) reads it as that field: move.w (4,a5) @ 0xd44c with a5 = 0x807be0."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807be6",
+    "name": "asg_integral_gain_2_calibration_0_6_75",
+    "reason": "Becomes its own field integral_gain_2 (+6, e2m 107B +C ASIT02GN). Read by 0xd3e6 as that field: add.w (6,a5) @ 0xd450 with a5 = 0x807be0."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807be8",
+    "name": "asg_derivative_gain_1_calibration_0_0_0025",
+    "reason": "Inside the throttle mode set: +8 = derivative_gain_1 (107B +E ASDV01GN). No direct user (0 .cpp references; no ROM address reference)."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807bea",
+    "name": "ASDV02GN",
+    "reason": "Inside the throttle mode set: +10 = derivative_gain_2 (107B +10 ASDV02GN). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807bec",
+    "name": "AS01CF",
+    "reason": "Inside the throttle mode set: +12 = compensation_filter_coefficient_1 (107B +12 AS01CF). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807bee",
+    "name": "AS02CF",
+    "reason": "Inside the throttle mode set: +14 = compensation_filter_coefficient_2 (107B +14 AS02CF). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00807bf0",
+    "name": "AS03CF",
+    "reason": "Inside the throttle mode set: +16 = compensation_filter_coefficient_3 (107B +16 AS03CF). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a95c",
+    "name": "asg_application_specific_proportional_gain_2_0_0_135",
+    "reason": "Inside all_speed_governor_application_gain_set: +2 = proportional_gain_2 (e2m 1170 +2A ASAP02PP). No direct user; reached only through the pointer."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a95e",
+    "name": "asg_application_specific_integral_gain_1_0_6_75",
+    "reason": "Inside the application set: +4 = integral_gain_1 (1170 +2C ASAP01IT). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a960",
+    "name": "asg_application_specific_integral_gain_2_0_6_75",
+    "reason": "Inside the application set: +6 = integral_gain_2 (1170 +2E ASAP02IT). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a962",
+    "name": "asg_application_specific_derivative_gain_1_0_0_0025",
+    "reason": "Inside the application set: +8 = derivative_gain_1 (1170 +30 ASAP01DV). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a964",
+    "name": "asg_application_specific_derivative_gain_2_0_0_0025",
+    "reason": "Inside the application set: +10 = derivative_gain_2 (1170 +32 ASAP02DV). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a966",
+    "name": "asg_application_specific_compensation_filter_coef_1_0_10",
+    "reason": "Inside the application set: +12 = compensation_filter_coefficient_1 (1170 +34 ASAP01CF). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a968",
+    "name": "asg_application_specific_compensation_filter_coef_2_0_10",
+    "reason": "Inside the application set: +14 = compensation_filter_coefficient_2 (1170 +36 ASAP02CF). No direct user."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080a96a",
+    "name": "asg_application_specific_compensation_filter_coef_3_0_10",
+    "reason": "Inside the application set: +16 = compensation_filter_coefficient_3 (1170 +38 ASAP03CF). No direct user."
+   }
+  ],
+  "functions": [],
+  "local_rows": [],
+  "notes": "Scope of \"every store\": the dumped ROM 0x0-0x3FFFF only, because CM550 code above 0x40000 is not dumped. In that ROM the absolute address 0x0080a9a8 occurs exactly 12 times: 9 loads plus 3 stores (0xd11a / 0xd1d4 / 0xd550). The .cpp agrees: its 4 store lines are 3 instructions, since 0xd0e2 falls into 0xd0fc. A scan for every 32-bit constant in 0x807b00-0x807c3f and 0x80a900-0x80a9c1 found no base register into the instance interiors. The only exception is a5 = 0x807be0 @ 0xd400, which reads +4 / +6. The other hits are direct word accesses outside the instances, filter coefficient pointers (0x807b8c / 0x807bda / 0x80a946, each read only at +0) and parameter_id_table entries (0x3594c / 0x35774 / 0x35f1c).\n\nNo default or other set: the e2m holds ASG gain set records only in 107B (9), 10B6 (36) and 1170 (9). The 107C / 1387 hits (ASQPAJ, ASQPDPER, ASQPEN) are quadratic-PID adjustment terms. The dump holds the pointer at 0, and nothing in the dumped ROM initializes it. No ROM copy of the set values exists in the 256 KB image.\n\nMachine code: the llvm-mc m68k decoder fails on cmp/moveq/tst/clr/pea/addq/immediate forms and on muls.w (d16,An). The scratch wrapper /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S3/tools/dis68k.py decodes those by hand. Its fallback printed 'and(opmode 7)' for c1eb/c1e8/c1ea, which are muls.w (line C, opmode 7). The evidence above cites muls.w and its bytes. Listing: scratch/S3/asg_full.txt. Draft: scratch/S3/proposal_draft.json.\n\nExpected renders after a build: cm550_runAllSpeedGovernor reads all_speed_governor_gain_set_pointer->field (the _asg_governor_gains_ptr underscore goes away). cm550_diagnosticStatus2Initializer reads j1939_tsc1_speed_control_condition_gain_sets + condition, as on CM848. cm550_diagnosticMode10FuelController reads all_speed_governor_throttle_mode_gain_set.integral_gain_1 / _2, probably with (ushort) casts like CM848's cm848_calculateGovernorCompensatorCoefficients. None of the five functions has local_variables.csv rows, so no local row can move.\n\nNo CM848 row changes. The struct (9 shorts, the same names), 0x5c1d6, 0x3ff6da (all_speed_governor_throttle_mode_gain_set), 0x40a232 (all_speed_governor_application_gain_set) and 0x40a1fc (all_speed_governor_gain_set_pointer) already carry these names and types. Run generate_headers for CM550 after the change.\n\nLeads, not proposed (outside S3):\n(a) The selectors are misnamed. 0xd1a4 is the TSC1 speed control mode select (counterpart of cm848_selectTsc1SpeedControlMode). 0xd4ae is the variable speed governor mode select (cm848_selectVariableSpeedGovernorMode). 0xd0e2 / 0xd0fc are the application mode select (cm848_selectAllSpeedGovernorApplicationMode). 0xd3e6 computes the throttle droop gains (CM848 cm848_calculateGovernorCompensatorCoefficients, which also reads the compensation coefficients). The CM848 selectors also copy the set into the *_selected mirror words and CM550's do not, so these are counterparts (cm550_ prefix), not twins.\n(b) The CM550 enum J1939_THROTTLE_ENABLE has members J1939_THROTTLE_ENABLE_AS01CF / _AS02CF / _AS03CF built from these e2m names. No global uses it. Left untouched."
+ },
+ "verdict": {
+  "item": "S3",
+  "verdicts": [
+   {
+    "element": "struct all_speed_governor_gain_set_t",
+    "verdict": "CONFIRMED",
+    "reason": "I disassembled cm550_runAllSpeedGovernor (0xc962-0xd0e2) with capstone m68k; every word decoded. The pointer is loaded only by movea.l (0x80a9a8).l at the 9 cited sites, and the only displacements read through it are +0/+2/+4/+6/+8/+10/+12/+14/+16, all .w. Signed uses: +0 move.w (a3) + ext.l @ 0xcd86; +2 muls.w (2,a3) @ 0xcdc2; +4 move.w (4,a0) + ext.l @ 0xc9b8 and (a2) + ext.l @ 0xcd8a / 0xcda2 with a2 = a3 + 4 (addq @ 0xcd84); +6 (6,a0) + ext.l @ 0xc9c4 and (6,a3) + ext.l @ 0xcda6; +8 muls.w @ 0xce16; +10 muls.w @ 0xce28; +12 / +14 cmp.w @ 0xcbce (sign-neutral), then move.w + ext.l @ 0xcbfa / 0xcc00 / 0xcc58 / 0xcc5e and muls.w @ 0xcfea / 0xcff2; +16 move.w + ext.l @ 0xcc0a / 0xcc68 and muls.w @ 0xcffa. The other a0 read in the function (0xcaf0) goes through the reference filter coefficient pointer 0x80a984, not the set. The roles match cm848_runOperatingModeSpeedGovernor field for field: the preset droop2 x (I1 + I2); the PI sum de x (P1 + I1) + e_prev x (I1 + I2) - dfb x P2, >> 9, clamped to +-0xe6000; D1 / D2 on de / dfb (CM550 >> 13, CM848 /4 then >> 11); the CF1 == CF2 zero preset; (0x100 - CF3) / (CF1 - CF2); X6 = (X5 x CF1 - X5prev x CF2 + X6prev x CF3) >> 8. All 54 e2m records (107B / 10B6 / 1170) are type N, 2 bytes, S, in this order. The CM848 template has the same 9 short names in the same order. ApplyStructures maps short to ShortDataType (signed). No CM550 type or global uses the name. The field comments contain no commas."
+   },
+   {
+    "element": "global 0x00807b92",
+    "verdict": "CONFIRMED",
+    "reason": "Retype only: 36 x 2 = 4 x 18 = 72 bytes, and 0x807b92 + 0x48 = 0x807bda is the next CSV row, with nothing in between. Stride: d0 = word (0x80da66), then lsl.l #3 / add.l d1 / add.l d0,d0 (x18) @ 0xd1c4-0xd1ca, + 0x807b92 @ 0xd1cc, stored @ 0xd1d4. Index bound: the only writer of 0x80da66 is 0x2f34c inside processEngineTsc1Request (0x2f128-0x2f4bd): (byte 0x801d4c torque_control_message_byte_0 & 0xc) >> 2. It is cleared at 0x1f5d8 / 0x1f9a6, so it is 0-3 and [4] holds. A raw scan of every 32-bit ROM value in 0x807b92-0x807bd9 finds only 0xd1cc. The four dump sets match the comment. The e2m 10B6 +6..+4C order matches, and so does the CM848 twin 0x5c1d6."
+   },
+   {
+    "element": "global 0x00807be0",
+    "verdict": "CONFIRMED",
+    "reason": "e2m 107B (base 0x807bda) +6..+16 = ASPP01GN..AS03CF in struct order. The instance ends at 0x807bf1 and the next row is 0x807bf2. A raw ROM scan of 0x807be0-0x807bf1 finds only the base, at two sites. One is move.l #0x807be0,(0x80a9a8) @ 0xd550, after cmpi.w #7 / #3 on the previous state @ 0xd544 / 0xd54a. The other is movea.l #0x807be0,a5 @ 0xd400, which reads only (4,a5) @ 0xd44c and add.w (6,a5) @ 0xd450, then mulu.w (a3) with a3 = 0x80a99a @ 0xd454. That unsigned 16-bit sum matches CM848's (ushort) casts in cm848_calculateGovernorCompensatorCoefficients. The dump reads 1206 0 241 24 7537 0 256 209 209. CM848 twin 0x3ff6da has the same role (cm848_selectVariableSpeedGovernorMode). Nit: the comment cites 0xd44c for both instructions; the add.w is at 0xd450."
+   },
+   {
+    "element": "global 0x0080a95a",
+    "verdict": "CONFIRMED",
+    "reason": "e2m 1170 +28..+38 = ASAP01PP..ASAP03CF in struct order. The instance ends at 0x80a96b; the previous row 0x80a958 (i16) ends at 0x80a959 and the next row is 0x80a96c. A raw ROM scan of 0x80a95a-0x80a96b finds only the immediate of move.l #0x80a95a,(0x80a9a8) @ 0xd11a. 0xd0e2 tests 0x80a93e (override mode), requires request word 0x80a98e == 0, sets it to 0x1e and falls into 0xd0fc with no rts. 0xd0fc has no branch or call of its own (whole-ROM branch-target sweep). The parameter ID table holds the block base 0x80a932 at 0x35f1c. The extended RAM dump reads 9 zero words. CM848 twin 0x40a232."
+   },
+   {
+    "element": "global 0x0080a9a8",
+    "verdict": "AMENDED",
+    "reason": "The name and type are right. The ROM holds the value 0x0080a9a8 exactly 12 times (no 0x80a9a9-0x80a9ab): 9 movea.l loads in the governor and 3 move.l stores (0xd11a #0x80a95a, 0xd1d4 a0, 0xd550 #0x807be0). No immediate base register reaches it, and the 4-byte long fits before 0x80a9c2. CM550 already types a struct pointer this way: insite_parameter_table_pointer, insite_parameter_schedule_entry_t *. One comment sentence claims more than the code shows. The governor also runs in fueling state 3 (cmpi.w #3 @ 0xc982), and no store of 3 to user_fueling_state (0x80ded4) was found in the dumped ROM. The writers found store 0x1e @ 0xd19e, 2 @ 0xd1b8, 7 @ 0xd53c, 8 @ 0x1c63a, 6 @ 0x25848, 1 @ 0x34554 and 5 @ 0x3457c, and clr @ 0x34594. So a pointer of 0 shows only that the three selectors have not run, not that no all-speed governor state has. Dump: user_fueling_state 6, previous 6, request 0x80a98e 7, and the reference filter's coefficient pointer at 0x80a984 is also 0.",
+    "amendment": "Keep the name all_speed_governor_gain_set_pointer and the type all_speed_governor_gain_set_t * as proposed. Change only the comment. Replace the sentence 'No default set: the dump reads 0, so no all-speed governor state has run since the boot.' with 'No default set: the dump reads 0, as does all_speed_governor_reference_filter_state.coefficient (0x80a984), which the same three selectors set, so none of them has run since the boot (the dump's user_fueling_state is 6). The governor also runs in fueling state 3 (cmpi.w #3 @ 0xc982), but no store of 3 to user_fueling_state was found in the dumped ROM; cm550_FUN_0000d4ae keeps the pointer when state 7 follows state 3.'"
+   },
+   {
+    "element": "global 0x0080a93c",
+    "verdict": "CONFIRMED",
+    "reason": "Comment-only refresh, and the correction is right. The branch is cmpi.w #1,(0x80a9a0) @ 0xcb46 / bne @ 0xcb4e, and it loads move.w (0x80a93c),d5 @ 0xcb84. Then 0xcff8 is move.w d5,d0 and 0xcffa is muls.w (16,a2),d0 (c1ea 0010) with a2 = the gain set pointer @ 0xcfde. d5 is the previous X6 (the other sources are 0xccc8 preset and 0xccec state 0x80a980). 0xd160 copies 0x80a958 (ASAPSTX6) into it. The name and type are unchanged."
+   },
+   {
+    "element": "remove 0x00807be2",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +2 = proportional_gain_2 (e2m 107B +8 ASPP02GN). No ROM value, base register or .cpp line references it."
+   },
+   {
+    "element": "remove 0x00807be4",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +4 = integral_gain_1 (107B +A ASIT01GN). Its only user is move.w (4,a5),d2 @ 0xd44c with a5 = 0x807be0 (0xd400), which becomes this instance's own field."
+   },
+   {
+    "element": "remove 0x00807be6",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +6 = integral_gain_2 (107B +C ASIT02GN). Its only user is add.w (6,a5),d2 @ 0xd450 with a5 = 0x807be0, which becomes this instance's own field."
+   },
+   {
+    "element": "remove 0x00807be8",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +8 = derivative_gain_1 (107B +E ASDV01GN). It has no direct user."
+   },
+   {
+    "element": "remove 0x00807bea",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +10 = derivative_gain_2 (107B +10 ASDV02GN). It has no direct user."
+   },
+   {
+    "element": "remove 0x00807bec",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +12 = compensation_filter_coefficient_1 (107B +12 AS01CF). It has no direct user. The J1939_THROTTLE_ENABLE_AS01CF enum member is not rendered anywhere."
+   },
+   {
+    "element": "remove 0x00807bee",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +14 = compensation_filter_coefficient_2 (107B +14 AS02CF). It has no direct user."
+   },
+   {
+    "element": "remove 0x00807bf0",
+    "verdict": "CONFIRMED",
+    "reason": "Throttle set +16 = compensation_filter_coefficient_3 (107B +16 AS03CF). It has no direct user. The instance ends at 0x807bf1, before 0x807bf2."
+   },
+   {
+    "element": "remove 0x0080a95c",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +2 = proportional_gain_2 (1170 +2A ASAP02PP). The raw ROM scan of 0x80a95a-0x80a96b finds only the base at 0xd11a, and nothing in the .cpp references it."
+   },
+   {
+    "element": "remove 0x0080a95e",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +4 = integral_gain_1 (1170 +2C ASAP01IT). It has no direct user."
+   },
+   {
+    "element": "remove 0x0080a960",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +6 = integral_gain_2 (1170 +2E ASAP02IT). It has no direct user."
+   },
+   {
+    "element": "remove 0x0080a962",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +8 = derivative_gain_1 (1170 +30 ASAP01DV). It has no direct user."
+   },
+   {
+    "element": "remove 0x0080a964",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +10 = derivative_gain_2 (1170 +32 ASAP02DV). It has no direct user."
+   },
+   {
+    "element": "remove 0x0080a966",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +12 = compensation_filter_coefficient_1 (1170 +34 ASAP01CF). It has no direct user."
+   },
+   {
+    "element": "remove 0x0080a968",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +14 = compensation_filter_coefficient_2 (1170 +36 ASAP02CF). It has no direct user."
+   },
+   {
+    "element": "remove 0x0080a96a",
+    "verdict": "CONFIRMED",
+    "reason": "Application set +16 = compensation_filter_coefficient_3 (1170 +38 ASAP03CF). It has no direct user. The instance ends at 0x80a96b, before 0x80a96c."
+   }
+  ],
+  "overall": "I re-checked the proposal from scratch and it holds: 21 elements confirmed, 1 amended, none refuted. The only change is one comment sentence on the pointer at 0x80a9a8; its name and type stay as proposed.\n\nHow it was checked:\n- **Machine code:** capstone 5.0.7 (m68k) in a scratch venv decoded every word of the governor.\n- **References:** raw 32-bit scans over the pointer and both instance ranges, an immediate-base-register scan and a whole-ROM branch-target sweep.\n- **Data:** the dumps read at the given offsets. The extended-RAM mapping was checked independently: 0x80de1e reads 0x6133f, record 27 of the InSite schedule table at 0x612ee.\n- **e2m:** the raw v64t6_s.e2m records and e2m_block_addresses.py.\n- **CM848:** its .cpp and CSVs, to compare the twin.\n\nResults:\n- **Layout:** 18 bytes, 9 signed words, in the same order and arithmetic roles as CM848's all_speed_governor_gain_set_t.\n- **Instances:** the three families (107B, 10B6 x 4, 1170) are the only ASG gain sets in the e2m. Nothing in the parameter ID table points inside an instance.\n- **Rows:** only 0x807be4 / 0x807be6 have a user, and they become fields of their own instance.\n- **Locals:** none of the five functions has local_variables.csv rows.\n\nScope: \"every store\" covers the dumped ROM 0x0-0x3FFFF only. The governor also runs in fueling state 3, and no store of 3 to user_fueling_state was found in the dumped ROM, so a state-3 selector, if one exists, is outside the dump. That is why the pointer comment is amended.\n\nNit, no change needed: the 0x807be0 comment cites 0xd44c for both reads; the add.w is at 0xd450.\n\nScratch files are in /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S3_skeptic/: the scripts in scripts/, the listing asg.txt and verdicts_draft.md."
+ }
+}

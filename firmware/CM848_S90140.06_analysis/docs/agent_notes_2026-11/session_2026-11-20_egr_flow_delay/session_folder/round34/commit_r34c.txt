@@ -1,0 +1,38 @@
+cm848: round 34 stage C - the J1939 connection mode transmit session and the transport prototypes (types)
+
+- The application's RTS / CTS transmit session (flat j1939_multiframe_tx_* rows from 0x3fbdc7) has exactly the
+  28-byte layout of the boot kernel's j1939_transport_transmit_session_t, and its code is the boot code's twin
+  (bytes 1-2 of the identifier & 0xff00 into the first word, and so on).
+  - It is now that type's application instance, j1939_transport_transmit_session: transported_pgn /
+    total_packet_count / next_packet_number / granted_packet_count / frame_queue_status / message_size /
+    message_data_pointer / session_status_pointer / timeout_timer / frame_can_id / frame_data_length /
+    transmit_frame_pointer. These replace dest_addr_word / cts_start_packet / packets_remaining / send_result /
+    total_bytes / PTR_DAT_003fbdcf / status_ptr / cts_timeout / can_header / frame_len / buf_ptr.
+  - The active flag and destination before it stay flat, like the boot kernel's two bytes before its instance.
+    j1939_multiframe_tx_active is a name shared with CM550 and is unchanged.
+  - The rows inside became untyped dotted documentation rows; the unnamed data pointer row went.
+  - Its frame buffer is j1939_transport_transmit_frame_buffer (0x3fbde7), and the boot one is
+    boot_j1939_transport_transmit_frame_buffer (0x30306d).
+- The type's three pointer fields are byte* (were dword). The status writes in both kernels lose their casts
+  (*j1939_transport_transmit_session.session_status_pointer = 9, was *(undefined1 *)...).
+- Prototypes:
+  - initiateJ1939TransportProtocol(j1939_tx_msg_t *msg): msg->header.data_length / msg->data_pointer /
+    *msg->status_pointer = 8, were *(word *)(param_1 + 1) / *(undefined **)((int)param_1 + 6) /
+    **(undefined1 **)((int)param_1 + 10).
+  - mpc555_sendJ1939SingleFrame(can_id, data_length (ushort: every caller passes a 16-bit length), data, result).
+  - These fix stage B's one bad argument: &j1939_broadcast_transmit_sessions[param_1].frame_queue_status.
+  - cm848_sendDataCollectorBuffer's buffer local is now a j1939_tx_msg_t * (msg->data_pointer,
+    *msg->status_pointer == 0x10 / 0x11 / 5: its wait loop confirms the broadcast status codes). Its two
+    byte-level identifier edits now go through casts on can_id.
+  - The PF / PS byte reads in the initiator stay pieces of can_id.
+- sendJ1939Message's local takes the parameter's name data_length (word) from the new prototype, so its
+  local_variables.csv row (uVar1 -> message_data_length) matched nothing and became a # note.
+
+Proof: prove_tokens.py with the map's tokens (flattened copies) gives 1949 of 1969 functions token-equal. Two of
+the rest only reorder their declarations. The other 18 were read as label-substituted unified diffs: every change
+is a field / parameter name, a removed cast, byte for undefined1, or the propagated names above.
+- Casts: (undefined1 *) 100 -> 80, (byte *) 183 -> 178, no new (uint).
+- Pieces 1412 -> 1412. "1 failed (in code)" and the thunk counts are unchanged.
+- Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

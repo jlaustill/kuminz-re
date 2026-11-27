@@ -142,11 +142,13 @@ constexpr uint32_t CM550_RAM_SIZE = 0x000091C2;  // ~37KB
 
 /**
  * @brief CM550 EEPROM region (calibration data).
- * Contains calibration parameters. 4KB total.
+ * The EEPROM image J90350.00 loads into RAM at start-up: 0x148A bytes
+ * (mc68k_initializeSerialEepromDriverAndLoadMirror, 0x26854). The memory services read that RAM image
+ * (RAM = 0x803B0A + offset), so a read past it would return RAM, not EEPROM.
  */
 constexpr uint32_t CM550_EEPROM_START = 0x01000000;
-constexpr uint32_t CM550_EEPROM_END = 0x01000FFF;
-constexpr uint32_t CM550_EEPROM_SIZE = 0x00001000;  // 4KB
+constexpr uint32_t CM550_EEPROM_END = 0x01001489;
+constexpr uint32_t CM550_EEPROM_SIZE = 0x0000148A;  // 5,258 bytes
 
 /**
  * @brief CM550 hardware register region.

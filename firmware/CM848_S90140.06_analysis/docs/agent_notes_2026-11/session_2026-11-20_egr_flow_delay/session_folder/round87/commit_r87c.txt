@@ -1,0 +1,23 @@
+cm550 + cm848: round 87 stage C - the marker check's fault is 318 (P0604), not 462; cm550_emptyStubFunction4
+
+From an advisor review of stages A-B:
+- Stage B (f0ebe1d5, its commit message and rows) said the working RAM end marker check sets fault 462, with no DTC
+  slot. That was wrong. The store is sth r11,38(r3) at 0x5279cc off the fault word base, and the piece offset in
+  fault_detected_cal._38_2_ is a DECIMAL byte offset: byte 38 = word 19, bit 14 = fault 318 = P0604 (internal control
+  module RAM error), which fits a RAM marker check. Stage B had matched the e2m "+38" of word 28, a hex offset.
+  working_ram_end_marker_error now names fault 318 (was fault_318); word 28 bit 14 is fault_462 again. The 0x52796c
+  plate and the 0x41428e comment say fault 318.
+- CM550 0x15f8c emptyStubFunction4 -> cm550_emptyStubFunction4. Its old name was shared with CM848 0x26f78, which
+  stage A made ignoreCanTransmitInterrupt, the twin of CM550 0xc80c (one bl at 0x53acc and no pointer in either CM848
+  image reach 0x26f78). 0x15f8c is another empty stub, called once from mc68k_sampleAndDebounceDiscreteInputs, so the
+  prefix rule gives it cm550_.
+- CM550 0x1192a's plate now states what its body does: the 500-tick queue waits, the two hour meter saves (waiting
+  for the mirror only while ram_refresh_enable is on, otherwise 250 ticks), the acknowledge, the 50000-tick wait, the
+  output strobe and the jump through the ROM vector at 0x8.
+
+Proof:
+- CM550 and CM848: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); the
+  corrected plates render (fault 318 at 0x52796c, no "fault 462" left in the CM848 .cpp; the 0x1192a and 0x15f8c
+  plates); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,16 @@
+223c223
+<   - The 2026-11-12 "has no reader" conclusion came from a name search. The channel reads the value through `state_ptr` + 6, which never names the address.
+---
+>   - The 2026-11-12 "has no reader" conclusion came from a name search. The channel reads the value through `state_pointer` + 6, which never names the address.
+475c475
+<   `(sensor_channel_config_t *config_ptr, sensor_channel_state_t *state_ptr, word *cached_axis_offset, word *x_axis, word *y_data, int flags, ema_filter_state_t *filter_state_ptr, uint channel_index, uint high_fault_bit, uint low_fault_bit, word *value_output_ptr, word *default_value_output_ptr, word *fault_status_output_ptr)`.
+---
+>   `(sensor_channel_config_t *configuration_pointer, sensor_channel_state_t *state_pointer, word *cached_axis_offset, word *x_axis, word *y_data, int flags, ema_filter_state_t *filter_state_pointer, uint channel_index, uint high_fault_bit, uint low_fault_bit, word *value_output_pointer, word *default_value_output_pointer, word *fault_status_output_pointer)`.
+481c481
+< - **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `charge_pressure` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
+---
+> - **Outputs (renamed 2026-11-16):** `value_output_pointer` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_pointer` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `charge_pressure` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
+502c502
+< - **Type B sensor channels (2026-11-15):** `cm848_processUnsignedSensorChannel` / `_update` pass their parameters 2-5 straight to `lookupTableInterpolation(cached_axis_offset, state_ptr[5], x_axis, y_data, flags)`. The old prototype called them `table_interp_args_t *` / "unused" table / axes / mode pointers; the struct (ported from CM550) is gone.
+---
+> - **Type B sensor channels (2026-11-15):** `cm848_processUnsignedSensorChannel` / `_update` pass their parameters 2-5 straight to `lookupTableInterpolation(cached_axis_offset, state_pointer[5], x_axis, y_data, flags)`. The old prototype called them `table_interp_args_t *` / "unused" table / axes / mode pointers; the struct (ported from CM550) is gone.

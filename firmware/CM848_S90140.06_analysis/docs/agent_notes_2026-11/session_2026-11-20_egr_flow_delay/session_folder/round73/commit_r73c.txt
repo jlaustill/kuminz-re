@@ -1,0 +1,30 @@
+cm550: round 73 stage C - CM550's own parameter ID table settles not_safe_to_program_flag (block 000D) and development_mode (block 1328)
+
+The closing review read CM550's parameter_id_lookup_table.csv. Its param_id is the e2m block id, as in CM848's
+parameter ID table:
+- 000D SAFE2PRG -> 0x80dc92;
+- 0010 RUN_LOC -> 0x80dc90 (stage B's run_location);
+- 10C7 RAM_Refresh_Enable -> 0x80dc6c (stage B's ram_refresh_enable);
+- 1328 Development_Mode -> 0x80de30.
+
+- 0x80dc92 -> not_safe_to_program_flag (word: cmpi.w / move.w / clr.w), CM848's name by its block.
+  - 1 = not safe to program; the twins return 7 on it.
+  - CM550 also writes 2 (cm550_fuel_limit_arbitrator: stopped with a switch bit set). Every '== 1' test treats 2 as
+    safe; the comment records this CM550 extension.
+- 0x80de30 = development_mode, a word (move.w #1 / clr.w / tst.w / cmpi.w #1).
+  - A 256-byte j1708_multipacket_msg_t instance at 0x80ddc6 covers it. 13 e2m blocks map inside that span, so the
+    template is misapplied (a lead).
+  - Its field count_106 becomes development_mode (DEVELOPMENT_MODE_STATE, CM848's enum, 2 bytes here as in CM848).
+  - The row there, 'calibration_write_pending_flag', is renamed too.
+- CM550's J90280.05-era notes read 0x80dc6c as a 'calibration bank selector', commands 0x40 / 0x41 as bank switches,
+  and 0x80dc92 as 'calibration_write_protect_state'. They are annotated with the block ids. Those enum members render
+  nowhere; renaming them is a lead.
+- The twin plates, the 0x07 comments, README.md's 0x07 row and the service 0x4B doc's name map name the flags.
+
+Proof (prove_r73c_cm550.py): CM550 6 of 775 functions differ after the renames: the three development mode twins, the
+lookup, cm550_memoryPatchingSystem and vp44_FUN_00027f9c - each now names DEVELOPMENT_MODE_ON / DEVELOPMENT_MODE_OFF (8
+renders; no count_106 left; not_safe_to_program_flag renders 11 times). CM550 verify byte-identical with stage B's
+WARNING lines; CM848 unchanged by this stage. Headers regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py
+CM550 HARD 0 / MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

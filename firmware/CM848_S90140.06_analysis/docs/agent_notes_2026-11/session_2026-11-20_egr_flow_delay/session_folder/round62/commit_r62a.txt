@@ -1,0 +1,45 @@
+cm848: round 62 stage A - the J1939 registration functions, the DM7 test identifier, a startup fault delay, four Bank 2 helpers
+
+Named from their code; none of the old names is in CM550 or either CLAUDE.md.
+
+The registration functions cm848_j1939_system_init calls:
+- j1939_diag_request_batch_init -> cm848_registerJ1939ParameterAndBroadcastServices: PGN 61184 services 0x0f / 0x10,
+  get parameters by ID, and 4 / 5, disable / enable broadcast.
+- j1939_diag_request_batch_44to49 -> cm848_registerJ1939MemoryWriteServices (0x44 / 0x45 / 0x4b / 0x4d / 0x47 / 0x49).
+- j1939_diag_request_batch_43to48 -> cm848_registerJ1939MemoryReadServices (0x43 / 0x4a / 0x4c / 0x46 / 0x48).
+- j1939_diag_request_41_handler -> cm848_registerJ1939GetAddressByParameterIdService (0x41).
+- j1939_pgn_handler_init_batch -> cm848_registerJ1939InputMessageHandlers: the six j1939_receivePgn<N>Handler input
+  handlers, and it starts the delay below.
+- cm848_initJ1939Dm1RequestHandler -> cm848_registerJ1939Dm7Handler: it registers the PGN 58112 (DM7) handler.
+
+Globals:
+- j1939_dm1_request_mode_byte -> j1939_dm7_test_identifier: DM7's first byte is the Test Identifier, SPN 1224 (from
+  the local J1939 database). 0 answers with the intake air heater monitor result and 1 with the misfire monitor result
+  (DM8).
+- governor_table_check_startup_delay -> j1939_input_fault_start_delay: set to 1000 at registration and counted down
+  by cm848_tickJ1939InputSupervision. While it is nonzero, the J1939 input processors clear their data error and
+  timeout faults instead of setting them.
+- the pedal fault mode engine speed filter state and its ROM coefficient (two type-only rows named);
+- combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets (word[2], new): the cache of
+  cm848_calculateNetCombustionTorque's second lookup of that grid.
+
+Bank 2 helpers with vague legacy names:
+- fuel_boostTrim_ramVars_init -> cm848_initializeTorqueLookupCaches;
+- fuel_demandLimit_calPtrs_init -> cm848_initializeOxygenLimitLookupCaches;
+- governor_speedRatio_etcFuelCorrection_calc -> cm848_calculateFrictionTorquePercentAndNetOutputTorque: the indicated
+  friction torque percent, then the J1939 net output torque (e2m 10E8 +28);
+- fuel_demand_periodSnapshot_save -> cm848_presetPedalFaultModeFuelDemand.
+
+Also:
+- cm848_validateJ1939DiagnosticRequest's plate says the key check runs when the key "is not 0xff" (round 61's lead).
+- Not typed: the J1939 service ID as EF00_SERVICE_ID. The enum covers all 24 registered IDs, but its members are
+  placeholders or abbreviations, and the handler names already say more.
+
+Proof (prove_r62.sh; the 2-D cache mapped with dims 2):
+- 0 of 1968 functions differ, and no old name is left in the .cpp beyond each function's own plate note.
+- check_history_r44b.py: both renamed rows keep their (was ...) note.
+- verify is byte-identical; thunks 18 / 14; no name-mismatch warning.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py HARD 0 /
+  MISSING 219.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

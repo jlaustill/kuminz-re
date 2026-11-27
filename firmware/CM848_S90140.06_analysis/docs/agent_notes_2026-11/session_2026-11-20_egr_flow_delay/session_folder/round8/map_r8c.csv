@@ -1,0 +1,3 @@
+address,name,old_label,kind
+0x000331cc,cm848_initializeTransmissionShiftLogic,mpc555_initProtectionFilterVariables,function
+,transmission_vehicle_inertia_default,DAT_0040781c,global

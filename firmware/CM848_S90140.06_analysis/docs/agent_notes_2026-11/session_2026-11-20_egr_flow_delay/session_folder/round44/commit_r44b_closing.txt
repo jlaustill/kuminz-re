@@ -1,0 +1,18 @@
+cm848: round 44 stage B closing - task 046 corrected and extended, the session archive, the PR body
+
+- task 046, round 44:
+  - Stage B: the nine blocks and their gaps, the soot unit proof, the sources and the proof.
+  - Stage A's evidence bullet is corrected. Its "no e2m record describes the pedal block" came from search output
+    read through head.
+  - Stage A's oil change monitor lead (CHR_B2's FOD model "does not transfer") is replaced. CHR_CC's own OCM blocks
+    name the accumulator.
+  - Stage B resolves task 042's [G4] soot table lead and round 43's "engine power" accumulator lead.
+  - New leads: the time-shared OCM rows' types versus e2m 8B50's sizes, cruise_out_of_gear_disable, and 8B13 (not
+    placed).
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 221.
+- PR body, README, todo, memory, and the round 44 session folder:
+  - apply_r44b.py, map_r44b.csv;
+  - align_blocks.py and its output, candidate_blocks.txt, col5_neighbours.txt;
+  - check_history_r44b.py, the closing scripts, and the build / verify logs.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

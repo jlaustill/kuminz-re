@@ -1,0 +1,20 @@
+cm848: round 9 stage C - TRANSMISSION_PRESSURE_STATE, the 27-word output speed ring, the unclamped controller output
+
+- **TRANSMISSION_PRESSURE_STATE** is the type of transmission_pressure_state_t.pressure_state (e2m 8C53 +0
+  RE_Trans_Pressure_State; the e2m gives no value labels).
+  - Every value the code stores (1..24) is one mode handler's target, read from the table or word it loads just
+    before. These are the stage A / B names: 1 NORMAL_CURVE, 2 FUEL_ECONOMY_CURVE, 3 CRUISE_CURVE, 4 COLD_CURVE,
+    5 / 6 WIDE_OPEN_THROTTLE(_COLD)_CURVE, 7-10 the WOT 1-2 / 2-3 holds and boosts, 11-15 LOW_RANGE_CURVE and its
+    holds / boosts, 16 LOCKUP_BOOST, 17 2ND_GEAR_LOCKUP_BOOST, 18-21 the anti-hunt boosts and holds,
+    22 MANUAL_2ND_CURVE, 23 OVERRIDE, 24 EXHAUST_BRAKE_CURVE.
+  - The only compares are with 0x11 and 0x18, so every member is proved by its store.
+  - Checked with check_enum_proof2.py (fueling state session): the 12 mode functions differ only by the enum
+    substitution, and no value renders as an OR of members.
+- **transmission_output_speed_history** (0x3fb192, word[27]) is the method 1 ring of
+  cm848_calculateOutputShaftAcceleration. The code read `(&DAT_003fb192)[i]` and now reads
+  `transmission_output_speed_history[i]`. This is the one other function that changed.
+- **governor_pressure_controller_output_unclamped** (0x3fcf12, was throttle_setpoint_limit_arg) is typed dword. Its
+  one access is a 32-bit store (stw @ 0x51c9d0), so the word row rendered `_throttle_setpoint_limit_arg`; the
+  underscore is gone.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,12 @@
+=== cm848_updateGovernorSpeedLimits (lines 28307-28322, 11 non-blank)
+// Function: cm848_updateGovernorSpeedLimits @ 0x00029afc
+//
+void cm848_updateGovernorSpeedLimits(void)
+{
+  governor_speed_debounce_limit = shift_in_process_hold_off_time_limit * 5;
+  cm848_updateSpeedLimitFromCoolant();
+  cm848_calculateProtectionSpeedLimits();
+  cm848_applySpeedLimitConstraints();
+  return;
+}
+//

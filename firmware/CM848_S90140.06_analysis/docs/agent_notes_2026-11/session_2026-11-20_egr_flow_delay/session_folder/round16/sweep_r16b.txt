@@ -1,0 +1,36 @@
+work/tasks/046-cm848-egr-flow-estimate.md:237: ...    `cm848_runCruiseAndVehicleSpeedLimitGovernor`, `cm848_monitorFuelSystemHar
+work/tasks/046-cm848-egr-flow-estimate.md:714: ... bitfield unit. Bytes 0 / 1 / 3 are byte fields (`switches_0_to_7` / `_8_to_15` / `_24_to_31`),
+work/tasks/046-cm848-egr-flow-estimate.md:737: ...  - **`cruise_setpoint_interp_prev`** (0x3fd006) is a value look
+work/tasks/046-cm848-egr-flow-estimate.md:936: ...    `j1939_cruise_speed_setpoint`) / `maximum_road_speed_trim_
+work/tasks/046-cm848-egr-flow-estimate.md:938: ...    `cruise_speed_limit_working`) is the trim lowered by the 
+work/tasks/046-cm848-egr-flow-estimate.md:949: ...    `cm848_protectionFuelRateRamp` / `Step`).
+work/tasks/046-cm848-egr-flow-estimate.md:985: ...*` working words of the cruise governor (and its `governor_cruise_zone_table_ptr`):
+work/tasks/025-cm848-naming-wave-followups.md:505: ...rveValue (0x3e42c) computes the road speed limit (cruise_speed_limit_working / cruise_speed_high_limit). (
+work/tasks/042-table-campaign-rename-leads.md:203: ...  `cruise_speed_target_working` (`cruise_resume_speed` since
+work/tasks/042-table-campaign-rename-leads.md:508: ...hine (.cpp ~80393), which passes it as param_1 of governor_cruise_rampScale_calc (result = param_1 x 1024 / th
+work/tasks/042-table-campaign-rename-leads.md:508: ... span, capped 0x22c8) into crui (PR #53 round 16: governor_cruise_rampScale_calc is cm848_calculateBottomDroop
+work/tasks/042-table-campaign-rename-leads.md:701: ...- [W9 gear_down] `governor_cruise_speedError_torqueAdj` (0x00525134): Uncertain, no 
+work/tasks/042-table-campaign-rename-leads.md:701: ... Uncertain, no rename. It is a proportional term: governor_cruise_speed_error_net x cruise_pid_rate_gain_workin
+work/tasks/042-table-campaign-rename-leads.md:701: ...portional term: governor_cruise_speed_error_net x cruise_pid_rate_gain_working / 1000 (at least one count of
+work/tasks/042-table-campaign-rename-leads.md:757: ...- `governorCruiseStateMachine` → `cm848_initializeCruiseControlDroopGains`
+work/tasks/027-cm848-naming-wave-2-followups.md:94: ...ervo-side cruise helpers still named protection*: cm848_protectionFuelRateStep/Ramp cm848_calculateProtectio
+work/tasks/027-cm848-naming-wave-2-followups.md:94: ...ed protection*: cm848_protectionFuelRateStep/Ramp cm848_calculateProtectionFuelLimit protectionRampRateControl pro
+work/tasks/027-cm848-naming-wave-2-followups.md:101: ...- cm848_validateFuelRateTarget (0x40d74) actually validates 
+work/tasks/027-cm848-naming-wave-2-followups.md:101: ...74) actually validates the cruise SET speed (sets cruise_set_speed_valid_flag when the working set speed is
+work/tasks/027-cm848-naming-wave-2-followups.md:102: ...- protection_fuel_rate_step_a_param_cal / _step_b / _ramp_param_cal +
+work/tasks/027-cm848-naming-wave-2-followups.md:102: ...te_step_a_param_cal / _step_b / _ramp_param_cal + cm848_protectionFuelRateStep / Ramp + cm848_calculateProte
+work/tasks/027-cm848-naming-wave-2-followups.md:102: ...param_cal + cm848_protectionFuelRateStep / Ramp + cm848_calculateProtectionFuelLimit drive the CRUISE_DECELERATE/A
+work/tasks/027-cm848-naming-wave-2-followups.md:102: ...mp + cm848_calculateProtectionFuelLimit drive the CRUISE_DECELERATE/ACCELERATE fuel-rate step and
+work/tasks/027-cm848-naming-wave-2-followups.md:110: ...y are called ONLY from that cruise state machine: cm848_calculateProtectionFuelLimit / cm848_protectionFuelRateSte
+work/tasks/027-cm848-naming-wave-2-followups.md:110: ...ate machine: cm848_calculateProtectionFuelLimit / cm848_protectionFuelRateStep / cm848_protectionFuelRateRam
+work/tasks/027-cm848-naming-wave-2-followups.md:232: ...- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
+work/tasks/027-cm848-naming-wave-2-followups.md:233: ...- `protectionOutputActuatorControl` → `cm848_runCruiseAndVehicleSpeedLimitGovernor`
+work/tasks/045-cm848-fueling-state-enum.md:37: ...| 10 | `FUELING_STATE_VEHICLE_SPEED_LIMIT` | code: the limit fuel from 
+work/tasks/045-cm848-fueling-state-enum.md:37: ...usted` (= `vehicle_speed`, rate limited) against `cruise_speed_limit_working`; `protectionRampRateControl`
+work/tasks/045-cm848-fueling-state-enum.md:61: ...  `governor_fuel_demand_mode_prev`, 0x3fd048 `cruise_fuel_demand_mode_prev`.
+work/tasks/045-cm848-fueling-state-enum.md:130: ...| 0x40f80 | `cm848_calculateVehicleSpeedLimitFueling` | `cm848_processProtectionRa
+work/tasks/045-cm848-fueling-state-enum.md:144: ...| 0x40b674 | `vehicle_speed_limit_fueling` | `cruise_fuel_demand_setpoi
+work/tasks/045-cm848-fueling-state-enum.md:156: ...- `cruise_speed_limit_working`: both the cruise control and
+work/tasks/045-cm848-fueling-state-enum.md:810: ...und the arbitration** (renamed in stage 3 except `cruise_speed_limit_working`; still open: the rest of the
+work/tasks/045-cm848-fueling-state-enum.md:812: ...    = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit (`
+work/tasks/045-cm848-fueling-state-enum.md:849: ...- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`

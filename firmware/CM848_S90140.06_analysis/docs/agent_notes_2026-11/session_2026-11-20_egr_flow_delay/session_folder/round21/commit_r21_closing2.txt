@@ -1,0 +1,13 @@
+cm848: round 21 closing after the review - docs, the session archive, verify
+
+- task 046, the round 21 section:
+  - stage E (the signed thresholds);
+  - stage D's positive control;
+  - two more leads: the module's init chain (cm848_completeEngineStartSequence, cm848_initSensorChannelDataStructures,
+    exception_resetProtectionModeState), and function_definitions.csv's int parameters rendering as dword.
+- PR body: stage E, the stage D control, the test line.
+- README and todo line 046.
+- The session archive: round 21's stage E scripts, the positive control's and stage E's build logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

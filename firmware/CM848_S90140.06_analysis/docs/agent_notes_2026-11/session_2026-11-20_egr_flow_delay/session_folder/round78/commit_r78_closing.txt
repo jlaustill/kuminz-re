@@ -1,0 +1,12 @@
+cm550: round 78 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 78" records stage A (b9de2fc1): the last 16 CM550 structs with a separate address per
+  field row removed, their globals and the neighbors they covered typed from their accesses, and
+  io_control_bit0_state as a dword. It also records the proof.
+- Leads: the io_control_* names at 0x80D038-0x80D046 (older guesses), the diagnostic receive buffer past 0x808D00, and
+  the earlier rounds' leads.
+- The PR body: the Round 78 bullet, "Beyond CM848" for rounds 72-78, and the test plan line.
+- work/todo.md, the session README, session_folder/round78/, the large-files tarball (the round's 3 verify logs),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

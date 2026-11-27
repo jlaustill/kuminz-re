@@ -1,0 +1,41 @@
+cm848: round 68 stage A - the application's EEPROM mirror words at 0x3fee18 typed from e2m (fuel level, intake air heater, engine-off time)
+
+The boot kernel's eeprom_header_t ("eeprom_shadow_header", 0x3fee08) ran to 0x3fee29 over words that the application
+reads as its own EEPROM mirror (RAM 0x3fd482 + EEPROM offset). So 13 application functions rendered the fuel level,
+intake air heater and engine-off time words as eeprom_shadow_header.calibration_block1[N] / eeprom_status_flags /
+cal_word2 / cal_word3. e2m names the words (EEPROM 0x1996-0x19a1), and the asm gives their widths: lbz at
+0x3fee18 / 19 / 1a, and lhz / sth at 0x3fee1c / 1e / 20 / 22.
+- eeprom_header_t ends at 0x3fee17 (config_word).
+- fuel_level_saved_values_t at 0x3fee18 = e2m 8A24. Its fields are in_range_filtered_percent, last_valid_percent,
+  percent_tank_full_average (sent by PCI TX[13] header 0xA4) and dummy_byte_1. e2m calls that last byte its own
+  "space filler to prevent compiler complaints", so the source has a struct here.
+- intake_air_heater_saved_values_t at 0x3fee1c = e2m 8A36: inhibit_postheat_start_count and
+  redundant_preheat_request. The end-of-line start step's single sth (0x19, 25 engine starts) had rendered as two byte
+  stores.
+- engine_off_time_saved_values_t at 0x3fee20 = e2m 8C36 (Chry_Dat42_Previous / _Stuck_Times): previous_trip_value
+  and unchanged_trip_count, cm848_latchAndCheckEngineOffTime's check of the PCI engine-off time.
+- The boot kernel time-shares these words: its copies of EEPROM 0x4a-0x4f and 0x50-0x54 land there. Three boot
+  plates now say where the application's names render: mpc555_verifyDownloadedCalibration, cm848_beginSerialReflash,
+  and cm848_loadCalibrationFromEeprom, which gets its first plate.
+- 0x3fee24 / 0x3fee26 are boot only and become boot_serial_reflash_unlock_request / boot_eeprom_status_block. The old
+  field name "serial_number" was wrong: the word is a copy of EEPROM 0x0c, and the serial number is EEPROM 0x8e.
+- cm848_lookupEepromParameterAddress gets a prototype (byte * / parameter) and a plate. Once a struct started at
+  0x3fee1c, its one path returning that address made Ghidra type its return as the struct pointer and cast the other
+  paths. Its only caller casts the result to byte *.
+- firmware/CLAUDE.md line 146: the reference refresh renamed eeprom_shadow_header.serial_reflash_unlock_request to
+  boot_serial_reflash_unlock_request (a factual rename).
+
+Proof (prove_r68.py: the old .cpp gets the renames as exact string replacements): 6 of 1968 functions differ:
+- cm848_runEndOfLineTestStartStep: its single sth to 0x3fee1c is one word store (inhibit_postheat_start_count =
+  0x19), not two byte stores;
+- cm848_updateIntakeAirHeaterPostheat: the _4_2_ piece is the field;
+- cm848_loadCalibrationFromEeprom / mpc555_systemInitialization: four RAM destinations of mpc555_eepromReadWords
+  render as their symbols;
+- cm848_lookupEepromParameterAddress: its byte * prototype. The local shows the struct pointer (see its plate);
+  typing it byte * split the variable in two, so that row was dropped;
+- cm848_processDiagnosticResponseCallback: its (byte *) cast on the lookup's result went.
+No old field name renders. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed; locals
+Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 0 sizing
+problems, audit_cal_suffixes.py HARD 0 / MISSING 212 (was 216), history notes intact, leftovers 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

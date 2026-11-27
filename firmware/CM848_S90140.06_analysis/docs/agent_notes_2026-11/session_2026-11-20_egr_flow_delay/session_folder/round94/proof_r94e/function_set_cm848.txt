@@ -1,0 +1,40 @@
+removed 0: 
+added 0: 
+changed 3
+  0x0001e4e8 cm848_convertTorqueDerateTorqueLimitToFuelLimit: 3 lines
+      -               (longlong)(ulonglong)maximum_torque_at_current_engine_speed) + (uint)no_load_fuel_quantity;
+      +               (longlong)(ulonglong)maximum_torque_at_current_engine_speed) +
+      +          (uint)no_load_fuel_quantity;
+  0x0050638c cm848_updateDutyCycleMonitorLoadHistogram: 7 lines
+      -    uVar3 = DAT_0005c2ea;
+      +    uVar3 = duty_cycle_monitor_load_axis[0xb];
+      -        if (engine_speed_state.filtered_engine_speed <= *(ushort *)(uVar9 * 2 + 0x5c2c0)) {
+      +        if (engine_speed_state.filtered_engine_speed <= duty_cycle_monitor_engine_speed_axis[uVar9])
+      +        {
+      -        if (fuel_demand_histogram_load_ratio <= *(ushort *)(uVar9 * 2 + 0x5c2d4)) {
+      +        if (fuel_demand_histogram_load_ratio <= duty_cycle_monitor_load_axis[uVar9]) {
+  0x00539190 cm848_j1939_system_init: 24 lines
+      -  scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message)
+      -  ;
+      +  scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message);
+      -  scheduleJ1939PeriodicMessage
+      -            (0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
+      +  scheduleJ1939PeriodicMessage(0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
+      -  scheduleJ1939PeriodicMessage
+      -            (1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
+      -  scheduleJ1939PeriodicMessage
+      -            (0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
+      +  scheduleJ1939PeriodicMessage(1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
+      +  scheduleJ1939PeriodicMessage(0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
+      -  scheduleJ1939PeriodicMessage
+      -            (0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
+      -  scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage)
+      -  ;
+      -  scheduleJ1939PeriodicMessage
+      -            (0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
+      +  scheduleJ1939PeriodicMessage(0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
+      +  scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
+      +  scheduleJ1939PeriodicMessage(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
+      -  scheduleJ1939PeriodicMessage
+      -            (0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
+      +  scheduleJ1939PeriodicMessage(0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);

@@ -1,0 +1,176 @@
+0x127c2 vp44_FUN_000127c2: statements 261 -> 258, lines 463 -> 459
+     @@ -5,16 +5,16 @@
+     -  word wVar3;
+     -  uint uVar4;
+     -  uint uVar5;
+     -  int iVar6;
+     -  ushort uVar7;
+     -  undefined *puVar8;
+     -  dword dVar9;
+     -  short sVar10;
+     -  ushort *puVar11;
+     -  int *piVar12;
+     -  dword *pdVar13;
+     -  byte *pbVar14;
+     -  word *pwVar15;
+0x1666c cm550_multiPacketTransmitHandler: statements 69 -> 70, lines 99 -> 100
+     @@ -4,2 +4,3 @@
+     -  dword dVar2;
+     -  char cVar3;
+     +  byte bVar2;
+     +  int iVar3;
+     +  byte *pbVar4;
+     @@ -7,3 +8,2 @@
+     -  int iVar4;
+     -  MEMORY_REGION_TYPE MVar6;
+     -  byte bVar7;
+     +  char cVar6;
+     +  MEMORY_REGION_TYPE MVar7;
+     @@ -11,0 +12 @@
+     +  byte bVar10;
+0x16dd4 cm550_runEngineWarmupProtection: statements 55 -> 59, lines 124 -> 131
+     @@ -1 +1 @@
+     -uint cm550_runEngineWarmupProtection(void)
+     +ushort cm550_runEngineWarmupProtection(void)
+     @@ -3,2 +3,3 @@
+     -  ushort uVar1;
+     -  uint uVar2;
+     +  word wVar1;
+     +  word wVar2;
+     +  ushort uVar3;
+     @@ -15 +16 @@
+     -  uVar2 = (uint)((ushort)algorithm_enable_flags_18_cal & 2);
+     +  uVar3 = (ushort)algorithm_enable_flags_18_cal & 2;
+     @@ -22 +23 @@
+     -      uVar2 = (uint)engine_warmup_protection_oil_drain_back_timer;
+0x183cc cm550_FUN_000183cc: statements 30 -> 27, lines 51 -> 53
+     @@ -1 +1 @@
+     -ushort cm550_FUN_000183cc(void)
+     +void cm550_FUN_000183cc(void)
+     @@ -3,27 +3,29 @@
+     -  ushort uVar1;
+     -  ushort uVar2;
+     -  ushort uVar3;
+     -  ushort uVar4;
+     -  ushort uVar5;
+     -  ushort uVar6;
+     -  _epf_fuel_limit_table_x_input = torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+     -  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
+     -  _epf_fuel_limit_table_x_input = torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000;
+     -  uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
+0x19702 cm550_FUN_00019702: statements 46 -> 47, lines 108 -> 110
+     @@ -3,2 +3,3 @@
+     -  ushort uVar2;
+     -  short sVar3;
+     +  short sVar2;
+     +  ushort uVar3;
+     +  word wVar4;
+     @@ -6 +6,0 @@
+     -  uint uVar4;
+     @@ -8 +8,2 @@
+     -  ushort uVar6;
+     +  uint uVar6;
+     +  ushort uVar7;
+     @@ -14,3 +15,3 @@
+     -  uVar5 = 0x70;
+0x1c65e cm550_fuelDemandTableBlendCalculator: statements 38 -> 36, lines 61 -> 56
+     @@ -3,0 +4 @@
+     +  ushort uVar1;
+     @@ -5,6 +6,4 @@
+     -  word wVar2;
+     -  word extraout_D0w;
+     -  ushort uVar3;
+     -  ushort uVar4;
+     -  uint uVar1;
+     -  uVar3 = (ushort)((uint)in_D0 >> 0x10);
+     +  word wVar3;
+     +  word wVar4;
+     +  uint uVar2;
+     +  uVar1 = (ushort)((uint)in_D0 >> 0x10);
+     @@ -13,2 +12,2 @@
+0x1d5a0 selectEngineSpeedLimit: statements 71 -> 70, lines 166 -> 167
+     @@ -4,2 +4,2 @@
+     -  short sVar2;
+     -  short sVar3;
+     +  word wVar2;
+     +  word wVar3;
+     @@ -7 +6,0 @@
+     -  word wVar4;
+     @@ -100 +99 @@
+     -        no_load_fueling_curve_rpm_input =
+     +        friction_fuel_by_engine_speed_lookup.x_input =
+     @@ -102,4 +101,6 @@
+     -        _DAT_0080db34 = coolant_temperature_sensor_state.filtered_value;
+     -        sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db2e);
+     -        sVar3 = lookupTableInterpolation((table_interp_args_t *)&no_load_fueling_curve_descriptor);
+0x1f4e8 cm550_FUN_0001f4e8: statements 103 -> 102, lines 173 -> 172
+     @@ -3 +3 @@
+     -  char cVar1;
+     +  byte bVar1;
+     @@ -5,5 +5,4 @@
+     -  byte bVar3;
+     -  ushort uVar4;
+     -  char cVar5;
+     -  word wVar7;
+     -  tsc1_source_configuration_t *ptVar6;
+     +  ushort uVar3;
+     +  char cVar4;
+     +  word wVar6;
+     +  tsc1_source_configuration_t *ptVar5;
+     @@ -11 +10 @@
+0x1f8bc cm550_engineFluidLevelDataBuilder: statements 85 -> 84, lines 152 -> 151
+     @@ -3,2 +3 @@
+     -  char cVar1;
+     -  byte bVar2;
+     +  byte bVar1;
+     @@ -6,3 +5,3 @@
+     -  char cVar3;
+     -  word wVar5;
+     -  tsc1_source_configuration_t *ptVar4;
+     +  char cVar2;
+     +  word wVar4;
+     +  tsc1_source_configuration_t *ptVar3;
+     @@ -13,4 +12,4 @@
+     -  cVar1 = *(char *)j1708_receive_buffer_pointer_2_32_dcaa;
+     -  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+0x277e6 cm550_FUN_000277e6: statements 75 -> 76, lines 110 -> 112
+     @@ -5,2 +5,3 @@
+     -  undefined *puVar3;
+     -  undefined *puVar4;
+     +  byte *pbVar3;
+     +  byte *pbVar4;
+     +  undefined *puVar5;
+     @@ -19 +20 @@
+     -      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar2 + 0x803dcc);
+     +      *(byte *)insite_response_write_pointer = component_identification_make_cal[(short)uVar2];
+     @@ -31 +32 @@
+     -      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar2 + 0x803dd1);
+     +      *(byte *)insite_response_write_pointer = component_identification_model_cal[(short)uVar2];
+     @@ -43 +44,2 @@
+     -      *(undefined1 *)insite_response_write_pointer = *(undefined1 *)((short)uVar2 + 0x803de2);
+0x2d9d2 cm550_presetPowerTakeOffGovernorOnEngagement: statements 22 -> 23, lines 42 -> 43
+     @@ -2,0 +3 @@
+     +  word wVar2;
+     @@ -15,3 +16,3 @@
+     -    _DAT_00801c14 = closed_loop_rpm_snapshot;
+     -    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c0e);
+     -    local_8 = (uVar1 & 0xffff) << 9;
+     +    power_take_off_gain_adjustment_lookup.x_input = closed_loop_rpm_snapshot;
+     +    wVar2 = cm550_lookupTableInterpolation(&power_take_off_gain_adjustment_lookup);
+     +    local_8 = (uint)wVar2 << 9;
+0x35088 cm550_tableLookup2D: statements 77 -> 67, lines 130 -> 121
+     @@ -1 +1 @@
+     -undefined8 cm550_tableLookup2D(word *table_args)
+     +word cm550_tableLookup2D(table_lookup_2d_arguments_t *lookup)
+     @@ -3,3 +3,3 @@
+     -  short *psVar1;
+     -  short *psVar2;
+     -  undefined4 in_D0;
+     +  word *pwVar1;
+     +  word *pwVar2;
+     +  ushort uVar3;
+     @@ -7,2 +6,0 @@
+     -  uint uVar3;
+     -  undefined4 in_D1;
+     @@ -11,3 +9,3 @@
+12 functions with a different statement count

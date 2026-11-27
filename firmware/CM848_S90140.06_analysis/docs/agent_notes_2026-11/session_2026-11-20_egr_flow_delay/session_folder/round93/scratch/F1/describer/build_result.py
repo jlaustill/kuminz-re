@@ -1,0 +1,665 @@
+"""Describer F1: builds the structured result (scratch copy of what is returned to the workflow).
+usage: build_result.py <output json>"""
+import json
+import sys
+
+roles = []
+
+
+def role(address, text, discriminator, name, confidence, cm848=""):
+    roles.append({"address": address, "role": text, "discriminator": discriminator, "suggested_name": name,
+                  "confidence": confidence, "cm848_counterpart": cm848})
+
+
+# ---------------------------------------------------------------- the fuel limit (derate) chain
+role("0x0000b3b2",
+     "Derate chain step: when the acceleration noise control fuel limit 0x80a28c (e2m 10A4 +0 NZFLLM 'fueling limit as "
+     "determined by the ANC feature') is below the running derate minimum 0x80dec8 (105D +0 FSLMFL) it copies the limit "
+     "there and stores 17 (move.w #0x11 at 0xb3c6) into torque_derate_fuel_source_code 0x80deca. Unsigned word compare, "
+     "no gate.",
+     "The only limiter that reads NZFLLM and the only store of state 17 in the dumped ROM (so 17, not 21 as the old name "
+     "says). Third call of the chain 0x30c3c, after the power take-off torque limit 0x2d9a8 and before the air fuel "
+     "control step 0xc2a0. Its timing sibling 0xb4ce caps the timing with NZTALM instead of fuel.",
+     "cm550_applyAccelerationNoiseControlFuelLimit", "high",
+     "none - cm848_processProtectionLimits @ 0x0004280c has no ANC step and CM848's FUELING_STATE has no member 17; the "
+     "ANC limiters are compiled out there (cm848_passCompensatedTimingToCombustionLimits @ 0x00017b54 only passes the "
+     "timing through the ANC stage's variables).")
+
+role("0x0000c2a0",
+     "Group 2 (air handling) chain step: when the air fuel control fuel limit 0x80a8f6 (104C +0 AFFL 'fueling limit as "
+     "calculated by AFC fueling algorithm') is below the group 2 running minimum 0x80dece (105D +6 FLLMAHFL) it copies "
+     "it there and stores 16 (FUELING_STATE_AIR_FUEL_CONTROL_DERATE) into fuel_demand_minimum_tracked_state 0x80ded0 "
+     "(105D +8 FSLMAHST).",
+     "The only chain step that writes the group 2 pair 0x80dece / 0x80ded0 and not the derate pair 0x80dec8 / 0x80deca; "
+     "no gate; fourth call of 0x30c3c. It is not a 'shutdown minimum'.",
+     "applyAirFuelControlFuelLimit", "high",
+     "cm848_applyAirFuelControlFuelLimit @ 0x0000e0c4 - twin: the same three steps (unsigned compare of 104C +0 AFFL "
+     "with 105D +6, copy, constant 16 into 105D +8), the same e2m record behind every operand, and the same place in "
+     "the chain runner (after the power take-off torque limit, before the altitude step).")
+
+role("0x0000c742",
+     "Derate chain step: when the altitude derate fuel limit 0x80a922 (109F +0 ATFLLM) is below the running derate "
+     "minimum 0x80dec8 it copies it there and stores 15 (FUELING_STATE_ALTITUDE_DERATE) into "
+     "torque_derate_fuel_source_code.",
+     "Reads ATFLLM and stamps 15; no gate; fifth call of 0x30c3c.",
+     "applyAltitudeDerateFuelLimit", "high",
+     "cm848_applyAltitudeDerateFuelLimit @ 0x00502af4 - twin: same compare / copy / constant 15 on the same records "
+     "(109F +0 Altitude_Derate_Fueling into 105D +0 / +2), same place in the chain (after the air fuel control step, "
+     "before the engine protection limit).")
+
+role("0x00017120",
+     "Derate chain step: only while engine_state is 3 (RUNNING) and the flag 0x80ccb2 (11EA +0 WPLMFG 'fuel is being "
+     "limited by engine warmup protection when 1') is non-zero, it takes the limit 0x80ccc6 (11EA +14 WPTQLM "
+     "'calculated torque limit of engine startup speed limit algorithm') as the running derate minimum when it is "
+     "smaller and stores 33 (move.w #0x21 at 0x17146, Calterm ESUOILLM) into torque_derate_fuel_source_code.",
+     "The only limiter gated by the engine state and by a feature flag, and the only store of 33. Ninth call of "
+     "0x30c3c, the last one in the dumped ROM. Its limit comes from the warm-up protection state machine 0x16dd4 "
+     "(rifle oil pressure threshold and oil drain-back timers, an engine speed table; enable = "
+     "algorithm_enable_flags_18_cal bit 1 WPEAFG), which holds it at the maximum fueling 0x808004 while inactive. "
+     "Nothing about high rpm.",
+     "cm550_applyEngineWarmupProtectionFuelLimit", "high",
+     "none - CM848's chain has no such step, its enum no member 33 and its flags word 18 no WPEAFG bit.")
+
+role("0x000196e4",
+     "Derate chain step: when the engine protection fuel limit 0x80d284 (10B1 +A EPFLLM 'maximum fueling permitted by "
+     "the engine protection features') is below the running derate minimum it copies it there and stores 29 "
+     "(FUELING_STATE_FAULT_DERATE, Calterm EPFDERAT) into torque_derate_fuel_source_code.",
+     "Reads EPFLLM and stamps 29 - not 18 (EPF), the state the trip statistics count as engine protection time. No "
+     "gate; sixth call of 0x30c3c.",
+     "applyFaultDerateFuelLimit", "high",
+     "cm848_applyFaultDerateFuelLimit @ 0x00509510 - twin: same compare / copy / constant 29 on the same record "
+     "(10B1 +A Engine_Protection_Derate_Fueling), same place (after the altitude step, before the TSC1 limit).")
+
+role("0x0001ce58",
+     "Starts both fuel limit chains from the fueling at 100 percent throttle 0x80d368 (105A +0 FSMXTHFL): the running "
+     "derate minimum 0x80dec8 = it with source 19 (FUELING_STATE_MAXIMUM_THROTTLE), the group 2 minimum 0x80dece = it "
+     "with state 40 (FUELING_STATE_NO_DERATE).",
+     "Four unconditional stores and no compare; first call of 0x30c3c, so every limiter after it lowers one of the "
+     "two minimums.",
+     "initializeFuelLimitChains", "high",
+     "cm848_initializeFuelLimitChains @ 0x0001f318 - twin: the same four stores in the same order with the same "
+     "constants 19 and 40 from the same record (105A +0 Throttle_100_Fueling), and the first call of the chain runner "
+     "in both. The scored candidate initProtectionStateWithFuelDemand @ 0x1f318 is this function's old name: verified.")
+
+role("0x0002d9a8",
+     "While the power take-off status 0x80dc26 (109E +2 PTSS) is 1, lowers the torque limit 0x80d338 (1051 +A TQDQTQ "
+     "'min torque limit in foot-pounds') to the power take-off maximum engine load 0x80400e (1268 PTMXEGLD, EEPROM "
+     "mirror) when that is smaller and stores 34 (move.w #0x22, FUELING_STATE_POWER_TAKE_OFF_DERATE) into the limit's "
+     "state 0x80d33a (1051 +C TQDQTQST).",
+     "The only chain step that writes the torque limit pair 0x80d338 / 0x80d33a - a torque in foot-pounds that "
+     "0x1c0d4 turns into fuel after the chain - and no fuel minimum. Second call of 0x30c3c.",
+     "applyPowerTakeOffTorqueLimit", "high",
+     "cm848_applyPowerTakeOffTorqueLimit @ 0x0002a918 - twin: same gate (PTSS == 1), same unsigned compare of PTMXEGLD "
+     "with TQDQTQ, same constant 34 into TQDQTQST, second call of the chain runner. The scored candidate "
+     "checkProtectionParamLimit @ 0x2a918 is this function's old name: verified.")
+
+role("0x00030bf6",
+     "Derate chain step: when the fuel system specific fuel derate 0x80decc (105D +4 FSAPLMFL 'fuel system specific "
+     "fuel derate that is input to the core system') is below the running derate minimum it copies it there and "
+     "stores 28 (FUELING_STATE_FUEL_SYSTEM_DERATE) into torque_derate_fuel_source_code.",
+     "Reads FSAPLMFL and stamps 28; no gate; eighth call of 0x30c3c (bsr at 0x30c62). In the dumped ROM the only "
+     "store to 0x80decc is its start-up value, the maximum fueling 0x808004 (move.w at 0x30c90; dump 5888 = no limit).",
+     "applyFuelSystemDerateFuelLimit", "high",
+     "cm848_applyFuelPressureFaultFuelLimit @ 0x0004279c - twin: same compare / copy / constant 28 on the same record "
+     "(105D +4 FSS_Fueling_Derate), same place in the chain and the same ROM neighbourhood (this limiter, the TSC1 "
+     "limiter, the chain runner, in that order, in both ROMs). CM848's name describes its common rail writer, so the "
+     "shared name should use the record's own term (fuel system derate).")
+
+role("0x00030c14",
+     "Derate chain step: only while the datalink control mode 0x80da50 (10E8 +4 JCEGMD '0 disable 1 speed 2 torque 3 "
+     "limit') is 3, it takes the datalink torque limit fueling 0x80da62 (10E8 +16 JCTQLMFL) as the running derate "
+     "minimum when it is smaller and stores 20 (FUELING_STATE_TSC1_TORQUE_LIMIT) into torque_derate_fuel_source_code.",
+     "The only limiter gated by the control mode word (== 3); stamps 20; seventh call of 0x30c3c (bsr at 0x30c60).",
+     "applyTsc1TorqueLimit", "high",
+     "cm848_applyTsc1TorqueLimit @ 0x000427cc - twin: same gate (control mode == 3), same compare / copy / constant 20 "
+     "on the same records (10E8 Jcomm_Engine_Control_Mode / Jcomm_Torque_Derate_Fueling), same place (after the "
+     "engine protection limit, before the fuel system derate).")
+
+role("0x00030c3c",
+     "Runs the fuel limit chains: the initializer 0x1ce58, then the limiters power take-off torque limit 0x2d9a8 (34 "
+     "on the torque limit), ANC 0xb3b2 (17), air fuel control 0xc2a0 (16, group 2), altitude 0xc742 (15), engine "
+     "protection 0x196e4 (29), TSC1 limit 0x30c14 (20), fuel system derate 0x30bf6 (28), engine warm-up protection "
+     "0x17120 (33), then 0x45252 and 0x455c8, which lie above the dumped ROM.",
+     "Eleven calls and nothing else. It leaves the smallest fuel limit in 0x80dec8 with its source in 0x80deca (105D "
+     "+0 / +2) and the group 2 minimum in 0x80dece / 0x80ded0. Called only by 0x1c152 (jsr at 0x1c18a) and only while "
+     "the torque derate override bit is clear; the torque limit conversion 0x1c0d4 follows it. The other chain of the "
+     "module, 0x30b34, limits timing.",
+     "runFuelLimitChains", "medium",
+     "cm848_processProtectionLimits @ 0x0004280c - the same runner: same caller condition (torque derate override "
+     "clear), same ROM position right after the fuel system and TSC1 limiters, and the seven shared steps in the same "
+     "order (initialize, power take-off, air fuel control, altitude, engine protection, TSC1, fuel system). The lists "
+     "differ by build: CM550 adds ANC, warm-up protection and two undumped steps; CM848 adds coolant overheat 46, "
+     "torque management 45, 42, net torque 59, 61 and 62. By the strict rule that makes it a counterpart "
+     "(cm550_runFuelLimitChains); as the same function of the same module one shared name fits, and CM848's "
+     "'processProtectionLimits' says protection without saying of what.")
+
+# ---------------------------------------------------------------- the arbitration / final fueling
+role("0x0001c152",
+     "Arbitrates the derated fuel and selects the final fueling in one pass. It fills the derate minimum 0x80dec8 / "
+     "source 0x80deca from the chain 0x30c3c plus the torque limit conversion 0x1c0d4 (or from 0x803f2a with state 13 "
+     "while algorithm_enable_flags_1_cal bit 4 is set), sets the requested fueling 0x80d332 / state 0x80d334 to the "
+     "smaller of the governed fuel 0x80a8f0 and the derate minimum, then sets the final fueling 0x80d32e (1051 +0 "
+     "FSFNFL) and final_fueling_state by engine_state: 26 stopped (fuel 0), 27 shutdown (minimum fueling), 25 "
+     "overspeed, 23 user override, 24 engine brake, 22 cranking / jump start and as a floor in reentry, 11 for the "
+     "low speed governor under a TSC1 limit, else cm550_diagnosticFuelLimitInterpolator - clamped between 0x80800a "
+     "and 0x808004. Last it folds the group 2 minimum into the derate pair, latches the entry into state 11 in "
+     "0x80a908 and saves final_fueling_state_prev.",
+     "The only writer of final_fueling_state_prev and of the requested fueling pair and the only caller of the chain "
+     "0x30c3c. Nothing in it reads oil pressure or timing. Called once per pass from cm550_periodicTaskSet_fuelTiming "
+     "(jsr at 0x1b5fe).",
+     "cm550_selectFinalFueling", "high",
+     "counterpart, not twin: CM848 splits the same steps over cm848_arbitrateRequestedFueling @ 0x0001e5a4 (override "
+     "13 or chain + torque conversion, requested fueling, the group 2 arbitration and fold, the low speed governor "
+     "under a TSC1 limit case) and cm848_selectFinalFueling @ 0x0001e22c (the engine_state selection with the same "
+     "states 26 / 27 / 25 / 23 / 24 / 22, the clamp, the state 11 latch, final_fueling_state_prev), with the "
+     "combustion reference stage between them and CM848-only branches (41 immobilizer, master / slave first).")
+
+# ---------------------------------------------------------------- the timing modification chain
+role("0x00030b34",
+     "Runs the timing advance modification chain on 0x80d346 (103B +2 TSOI 'start of injection, timing advance used "
+     "by each modification'): misfire floor 0x26af0, air fuel control increment 0xc2ee, cylinder pressure maintenance "
+     "increment 0x12484, wet stack floor 0x34dba, ANC limit 0xb4ce, maximum limit 0x30b10, cranking timing 0x17cf0, "
+     "then the undumped 0x49f32.",
+     "Eight calls and nothing else; every member works on the timing word and the timing state 0x80d348, none on "
+     "fuel - it is the timing limit chain. Its only caller is the final timing selection 0x30b62 (bsr at 0x30b7e), "
+     "which then picks the final timing 0x80de6a / state 0x80d34c by final_fueling_state.",
+     "cm550_runTimingAdvanceModifications", "high",
+     "none - CM848 builds its main timing in cm848_calculateMainInjectionTiming / cm848_selectMainInjectionTiming; at "
+     "the place of CM550's timing chain and final timing selection (just before the fuel system derate limiter in "
+     "both ROMs) CM848 has only cm848_copyMainInjectionTiming @ 0x00042784.")
+
+role("0x00026af0",
+     "Timing modification step: while algorithm_enable_flags_32_cal bit 0 (misfire timing limit enable) is set and "
+     "the intermediate timing state 0x80d348 is 0 (4D timing), it saves the timing advance into "
+     "injection_timing_before_misfire_limit 0x80a270 (818E +2 BSTABELM) and, when the misfire limit 0x80a26e (818E +0 "
+     "BSTAMNLM 'output of the misfire timing limit table') is larger, raises the timing to it, clears bit 0 of the "
+     "timing increment flags 0x80d34a and stores 11 (label MISFIRE) into the timing state.",
+     "A floor (raises only), gated by an enable bit and by timing state 0; stamps 11; first call of 0x30b34. The "
+     "other floor, 0x34dba (wet stack), has no gate and stamps 1 / 13.",
+     "cm550_applyMisfireTimingLimit", "high",
+     "counterpart, not twin: the misfire step inside cm848_calculateMainInjectionTiming @ 0x0004ae20 (raises "
+     "injection_timing_demand to injection_timing_main_misfire_limit and stamps source 11); CM848 has no separate "
+     "function for it.")
+
+role("0x0000c2ee",
+     "Timing modification step: adds the signed air fuel control timing increment 0x80de68 (105B +0 AFCNICTA 'timing "
+     "advance added to base timing anytime AFC is limiting fueling') to the timing advance 0x80d346 with a floor of 0 "
+     "(no upper clamp), then replaces bit 2 (mask 4) of the timing increment flags 0x80d34a (103B +6 TSSTIC) with the "
+     "word 0x8000d6.",
+     "An unconditional add: no compare with a limit and no timing state stamp; second call of 0x30b34. Its inputs "
+     "come from cm550_diagnosticTimingIncrementController 0xc2be: increment = AFICTA 0x808a6e and flag word 4 while "
+     "final_fueling_state is 16 (AFC derate), else both 0. The sibling 0x12484 adds the cylinder pressure increment "
+     "with a 0..1024 clamp and bit 3.",
+     "cm550_addAirFuelControlTimingIncrement", "high",
+     "none - CM848's e2m still has 105B +0 AFC_Timing_Increment / 105C +0 but their addresses (0x40a2e4 / 0x5c670) "
+     "have no row and no code reference. The scored candidate 0x37f28 is "
+     "cm848_monitorChargingSystemVoltageHighAndLow: unrelated.")
+
+role("0x00012484",
+     "Timing modification step: copies the timing advance into 0x80aaa4 (1090 +8 TSAJ4DTA 'sum of 4D, AFC, user and "
+     "coolant advances'), adds the signed cylinder pressure maintenance increment 0x80aa9e (1090 +2 CPTAIC, -20..20 "
+     "degrees) with the sum clamped to 0..0x400 (1024 counts), then replaces bit 3 (mask 8) of the timing increment "
+     "flags 0x80d34a with the word 0x80021c.",
+     "The only chain step with an upper clamp at 0x400 and a before-snapshot in block 1090; third call of 0x30b34. "
+     "0x80021c is 8 while the cylinder pressure maintenance code just before it (ends at 0x12482) is in state 2 "
+     "(0x80aaa2), else 0.",
+     "cm550_addCylinderPressureMaintenanceTimingIncrement", "high",
+     "none found - no CM848 row on 1090 +2 and no step of CM848's timing path adds such an increment.")
+
+role("0x00034dba",
+     "Timing modification step: saves the timing advance into 0x80dee6 (1077 +2 TSBEWSTA 'timing command just before "
+     "wet stack modification'), then raises it to the wet stack timing 0x80dee4 (1077 +0 WSTA) when that is larger "
+     "and copies the wet stack state word 0x8036e2 into the intermediate timing state 0x80d348.",
+     "A floor with no gate whose state stamp is a variable, not a constant: 0x8036e2 is 1 (label WETSTACK, the intake "
+     "manifold temperature table won) or 13 (WTSTCOOL, the coolant temperature table won), set at 0x34cc4. Fourth "
+     "call of 0x30b34; WSTA itself is computed by 0x34d52.",
+     "cm550_applyWetStackTimingFloor", "high",
+     "none - CM848 has no wet stack timing code (only the e2m record 105E +A Crank_Wet_Stack_Timing, without a row).")
+
+role("0x0000b4ce",
+     "Timing modification step: saves the timing advance 0x80d346 into 0x80a29e (10A4 +12 TSBENZTA 'timing advance "
+     "limit as just before modification by ANC timing'), then lowers it to the ANC timing limit 0x80a28e (10A4 +2 "
+     "NZTALM) when the limit is smaller and stores 3 (label ANC) into the intermediate timing state 0x80d348.",
+     "A cap (lowers only) on the timing word - it does not touch a fuel demand limit; stamps 3; always writes its "
+     "before-snapshot. Fifth call of 0x30b34, after the wet stack floor and before the maximum limit 0x30b10.",
+     "cm550_applyAccelerationNoiseControlTimingLimit", "high",
+     "none - the ANC timing limiter is compiled out in CM848: cm848_passCompensatedTimingToCombustionLimits @ "
+     "0x00017b54 fills the ANC stage's output (10A4 +14 ANC_SOI) with a plain copy and 10A4 +0 ANC_Timing has no "
+     "code reference.")
+
+role("0x00030b10",
+     "Timing modification step: when the timing advance 0x80d346 exceeds the maximum allowable timing advance "
+     "0x808a74 (105C +6 TSMXTA) it saves the timing into 0x80de70 (105B +8 TSBEMLTA 'just before modification by max "
+     "limit'), lowers it to the maximum and stores 4 (label MAX) into the intermediate timing state 0x80d348.",
+     "A cap against a calibration constant, not a computed limit; stamps 4; writes its before-snapshot only when it "
+     "limits. Sixth call of 0x30b34 (bsr at 0x30b52), directly before the cranking timing step 0x17cf0. Timing only: "
+     "no fuel demand limit, no selector 4.",
+     "cm550_applyMaximumTimingAdvanceLimit", "high",
+     "none - 105C +6 Maximum_Timing_Advance (0x5c676) and 105B +6 SOI_Before_Max_Limit have no row and no code "
+     "reference in CM848.")
+
+# ---------------------------------------------------------------- the other functions of the batch
+role("0x0001ca54",
+     "Commands the fuel shutoff driver: clears bit 5 (0x20) of 0x80bcfb (e2m 000E +2D DRFSEA 'controls fuel shut off "
+     "driver, enable = FSO on') when the key switch bit (0x80bcce bit 0, DSKYSWSS) is off, or 0x80d34e (1091 +0 "
+     "FSAPFSCO, shutoff asked by the fuel system specific code) is non-zero, or the engine retarder is active with "
+     "algorithm_enable_flags_0_cal bit 6 (EBODEN), or engine_state is OVERSPEED with algorithm_enable_flags_12_cal "
+     "bit 1 (EPOSFSO); otherwise it sets the bit. Either write happens only while the driver's override priority "
+     "slot 0x80bd47 is 0.",
+     "It writes one bit only - bit 5 of 0x80bcfb, as (5,a1) from the base 0x80bcf6; no fuel limit and no state stamp. Its entry is "
+     "0x1ca54 (move.l a2,-(a7)); the row vp44_canPinVp44StatusController 0x1ca5c is its third instruction (no "
+     "reference to 0x1ca5c in the ROM), not a function. Called from the even phase task set (jsr at 0x1b63c) after "
+     "the final timing selection. The slot is also labelled VPENPZ 'VP44 pump enable', so a vp44_ prefix is arguable.",
+     "cm550_commandFuelShutoffDriver", "high",
+     "none - no CM848 code reads Engine_Brake_Override (flags word 0 bit 6) or overspeed_fuel_shutoff_enable (its "
+     "struct comment: no reader in either bank) and CM848 has no fuel shutoff global. The scored candidate 0x6ab8 is "
+     "mpc555_sciPollDuringEepromWrite: unrelated.")
+
+role("0x0002658c",
+     "Start-up initializer of the idle speed adjustment: with algorithm_enable_flags_12_cal bit 0 (LSISSVEN, idle "
+     "speed save) set it loads the adjustment 0x801a82 from the saved value 0x805f0a (1073 +0 LSICBKRF 'rpm added to "
+     "LSG reference'), otherwise it zeroes both; it clears 0x80db08 (1049 +6 LSCIOD cold idle override flag), raises "
+     "the idle range trim 0x803fca (131E +2 LSMNRFTN) to at least 0x808342 (LSMNRF) and lowers 0x803fcc (131E +4 "
+     "LSMXRFTN) to at most 0x808344 (LSMXRF).",
+     "Runs once from the initializer list of mc68k_applicationMain (jsr at 0x287d4). It is the pair of the idle "
+     "increment / decrement switch handler 0x26474, which adds the step 0x808332 to 0x801a82 and saves it to "
+     "0x805f0a. No fuel demand, no limit selection. The row vp44_initVP44StatusFlags 0x2659a lies inside this body.",
+     "cm550_initializeIdleSpeedAdjustment", "high",
+     "none - CM848's idle_speed_save_enable (flags word 12 bit 0) and idle_speed_adjust_enable have no reader in "
+     "either bank.")
+
+role("0x00030ade",
+     "Start-up initializer of the trip information working values: clears the trip information engine state "
+     "0x80de64 (1215 +12 TIEGST), copies the saved integrated fuel 0x80619a (1216 +74 TIITFU, 4 bytes) into its "
+     "previous-sample copy 0x801e82, and the saved lifetime and trip average loads 0x806186 / 0x806188 (TIEGAVLD / "
+     "TIAVLD) into the running averages 0x801e92 / 0x801e94.",
+     "Four stores and no condition; called once from the initializer list of mc68k_applicationMain (jsr at 0x287f2). "
+     "The periodic users are the trip statistics 0x304f4 (the two running averages - loads, not rpm) and the trip "
+     "information task 0x306ca (the fuel delta at 0x308a8).",
+     "cm550_initializeTripInformation", "medium",
+     "none found - CM848's trip counters are a different implementation (cm848_updateTripAndLifetimeCounters, block "
+     "8B6C).")
+
+role("0x00030b0e",
+     "Empty function: a single rts. Called once from the initializer list of mc68k_applicationMain (jsr at 0x28774, "
+     "right after mc68k_scheduler_init).",
+     "Nothing in the body to name. The code before it, 0x30b04, is an empty interrupt handler (saves and restores "
+     "d0 / d1 / a0 / a1, then rte) with no reference in the ROM; both look like the stubs of a module left out of "
+     "this build, and nothing shows which module. Missing: any operand. If a name is wanted it can only say 'empty "
+     "start-up initializer'.",
+     "", "high", "")
+
+role("0x00034512",
+     "Advances the two hour meters by one count: the engine run time 0x80ccee (11BC +0 CMEGTR 'time that the engine "
+     "is not in stop state', 4 bytes) unless engine_state is 1 (STOPPED), and key_on_hour_meter 0x80bda4 (0004 +0 "
+     "CMECTR) always.",
+     "Two addq.l #1 and one compare; the last task of phase 0 of the 40-phase executive (jsr at 0x1b974 in "
+     "executiveFrameInterruptHandler), so once per 40 frames. It only reads the engine state. The next function "
+     "0x3452a loads both counters from the EEPROM mirror (0x803b3e / 0x803b50).",
+     "advanceHourMeters", "high",
+     "cm848_advanceHourMeters @ 0x00506780 - twin: the same steps in the same order (engine_state != 1 -> +1 to the "
+     "11BC +0 Engine_Run_Time counter, then +1 to the 0004 +0 ECM_Run_Time counter) and the same slot, the last task "
+     "of phase 0 of executiveFrameInterruptHandler, in both.")
+
+# ---------------------------------------------------------------- globals of the two chains
+role("0x0080dec8",
+     "GLOBAL (now fuel_limit_shutdown_minimum, word): the running minimum of the derate chain - e2m 105D +0 FSLMFL "
+     "'smallest derate fueling value produced by the derate algorithm'. 0x1ce58 starts it at the 100 percent throttle "
+     "fueling, each limiter lowers it, 0x1c0d4 lowers it to the torque limit's fuel and 0x1c152 compares it with the "
+     "governed fuel. Dump 1236.",
+     "Nothing about shutdown. Paired with its source code 0x80deca (105D +2); the group 2 minimum is the separate "
+     "word 0x80dece.",
+     "torque_derate_fuel_quantity", "high",
+     "torque_derate_fuel_quantity @ 0x0040afac - the same record (105D +0 Torque_Derate_Fueling) with the same role; "
+     "the five words of block 105D (+0 .. +8) have the same layout in both firmwares.")
+
+role("0x0080dece",
+     "GLOBAL (now smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100): the running minimum of the "
+     "group 2 (air handling) limiters - e2m 105D +6 FLLMAHFL. Started by 0x1ce58, lowered by the air fuel control "
+     "step 0xc2a0, folded into the derate pair and compared with the requested fueling by 0x1c152 / 0x1c03c. Dump "
+     "1236 with state 16.",
+     "Its state word 0x80ded0 already carries CM848's name fuel_demand_minimum_tracked_state.",
+     "fuel_demand_minimum_tracked", "high",
+     "fuel_demand_minimum_tracked @ 0x0040afb2 - the same record (105D +6 Torque_Derate_Fueling_2).")
+
+role("0x0080a28c",
+     "GLOBAL (now anc_fuel_limit_value): the acceleration noise control fuel limit - e2m 10A4 +0 NZFLLM 'fueling "
+     "limit as determined by the ANC feature' (NZFLAGEN: 'enable for fuel limiting of the acceleration noise control "
+     "algorithm'). Read by the limiter 0xb3b2; set to the maximum fueling at 0xb632. Dump 5888 (no limit).",
+     "The fuel limit of the ANC family; the timing limit is 0x80a28e.",
+     "acceleration_noise_control_fuel_limit", "high",
+     "none - CM848's block 10A4 has no NZFLLM record and no row with code besides +14 ANC_SOI (ANC compiled out).")
+
+role("0x0080ccc6",
+     "GLOBAL (now high_rpm_fuel_limit_value): the engine warm-up protection fuel limit - e2m 11EA +14 WPTQLM. The "
+     "warm-up protection state machine 0x16dd4 sets it from an engine speed table while the feature limits and to "
+     "the maximum fueling 0x808004 otherwise; the limiter 0x17120 reads it. Dump 5888.",
+     "Not a high rpm limit: the table output only applies after a start, until the oil pressure timers finish.",
+     "engine_warmup_protection_fuel_limit", "high",
+     "none (no WP family in CM848).")
+
+role("0x0080ccb2",
+     "GLOBAL (now high_rpm_fuel_limit_active): the engine warm-up protection active flag - e2m 11EA +0 WPLMFG 'fuel "
+     "is being limited by engine warmup protection when 1'. Set and cleared by 0x16dd4 and its initializer 0x1709e; "
+     "tested by the limiter 0x17120 (tst.w at 0x17136). Dump 1.",
+     "A 0 / 1 word next to the limit value 0x80ccc6; 0x80ccb4 (11EA +2 WPSSFG) is the algorithm-completed flag.",
+     "engine_warmup_protection_fuel_limit_active_flag", "high",
+     "none.")
+
+role("0x0080a8f6",
+     "GLOBAL (now afc_derate_fuel_adjustment): the air fuel control fuel limit - e2m 104C +0 AFFL 'fueling limit as "
+     "calculated by AFC fueling algorithm'. Read by the group 2 step 0xc2a0. Dump 1236.",
+     "A limit, not an adjustment.",
+     "air_fuel_control_fuel_limit", "high",
+     "air_fuel_control_fuel_limit @ 0x0040a158 - the same record (104C +0 AFC_Fueling).")
+
+role("0x0080a922",
+     "GLOBAL (now altitude_derate_fuel_limit_0_100): the altitude derate fuel limit - e2m 109F +0 ATFLLM. Read by "
+     "the limiter 0xc742. Dump 5888.",
+     "Only the name's range suffix differs from CM848's.",
+     "altitude_derate_fuel_limit", "high",
+     "altitude_derate_fuel_limit @ 0x0040a18c - the same record (109F +0 Altitude_Derate_Fueling).")
+
+role("0x0080d284",
+     "GLOBAL (now engine_protection_fuel_limit): e2m 10B1 +A EPFLLM 'maximum fueling permitted by the engine "
+     "protection features'. Read by the limiter 0x196e4 (state 29); written at 0x18694 / 0x198f0 / 0x19938 / 0x1998a. "
+     "Dump 5888.",
+     "The record CM848 names fault_derate_fuel_limit; the stamped state is FUELING_STATE_FAULT_DERATE in both.",
+     "fault_derate_fuel_limit", "medium",
+     "fault_derate_fuel_limit @ 0x0040a77c - the same record (10B1 +A Engine_Protection_Derate_Fueling).")
+
+role("0x0080da62",
+     "GLOBAL (now jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100): e2m 10E8 +16 JCTQLMFL 'JCOMM "
+     "torque derate fueling, maximum allowed fuel as per link user'. Read by the limiter 0x30c14 while the control "
+     "mode 0x80da50 is 3. Dump 0.",
+     "CM848 keeps the record as a field of j1939_powertrain_control_state (at +14 of block 10E8 there, +16 here), so "
+     "the struct cannot be shared as it is.",
+     "tsc1_torque_limit_fueling", "medium",
+     "j1939_powertrain_control_state.tsc1_torque_limit_fueling (0x0040adf8 + 0x10) - the same record "
+     "(Jcomm_Torque_Derate_Fueling).")
+
+role("0x0080decc",
+     "GLOBAL (now fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100): e2m 105D +4 FSAPLMFL. Read "
+     "by the limiter 0x30bf6 (state 28); the only store in the dumped ROM is the start-up value = maximum fueling "
+     "(0x30c90). Dump 5888.",
+     "CM848's name for the record (fuel_pressure_fault_fuel_limit_working) describes its common rail writer and does "
+     "not fit the VP44 build.",
+     "fuel_system_derate_fuel_limit", "medium",
+     "fuel_pressure_fault_fuel_limit_working @ 0x0040afb0 - the same record (105D +4 FSS_Fueling_Derate), another "
+     "writer.")
+
+role("0x0080d368",
+     "GLOBAL (now fueling_value_at_100_throttle_0_100): e2m 105A +0 FSMXTHFL 'fueling value at 100% throttle'. The "
+     "starting value of both chains in 0x1ce58. Dump 1619.",
+     "The chain's upper bound (state 19 MAXIMUM_THROTTLE).",
+     "throttle_100_fueling", "high",
+     "throttle_100_fueling @ 0x0040a897 - the same record (105A +0 Throttle_100_Fueling).")
+
+role("0x0080d338",
+     "GLOBAL (now torque_demand_fuel_limit): the torque limit of the derate chain in foot-pounds - e2m 1051 +A TQDQTQ "
+     "'min torque limit in foot-pounds'. 0x2d9a8 lowers it to the power take-off maximum load; 0x1c0d4 converts it "
+     "into fuel (x (FSMTFLNP - no-load fuel) / maximum torque + no-load fuel) and then resets it to 0xffff. Dump "
+     "0xffff.",
+     "A torque, not a fuel quantity and not a demand.",
+     "torque_derate_torque_limit", "high",
+     "torque_derate_torque_limit @ 0x0040a2d8 - the same record (1051 +A Torque_Derate_Torque).")
+
+role("0x0080d33a",
+     "GLOBAL (now indicates_origin_of_tqdqta_value_0_10): the state of the torque limit - e2m 1051 +C TQDQTQST. "
+     "Stores: 34 by 0x2d9a8, 40 by 0x1c0d4 and by 0x1c308; 0x1c0d4 copies it into torque_derate_fuel_source_code when "
+     "the torque limit's fuel wins. Dump 40.",
+     "Holds FUELING_STATE values (34 POWER_TAKE_OFF_DERATE / 40 NO_DERATE), so it wants the FUELING_STATE type like "
+     "CM848's row.",
+     "torque_derate_torque_limit_state", "high",
+     "torque_derate_torque_limit_state @ 0x0040a2da (FUELING_STATE) - the same record (1051 +C "
+     "Torque_Derate_Torque_State).")
+
+role("0x0080400e",
+     "GLOBAL (no row): the power take-off maximum engine load in foot-pounds - e2m 1268 +2 PTMXEGLD 'maximum engine "
+     "load allowed during PTO operation', inside the EEPROM mirror (0x803B0A + 0x504). Read twice by 0x2d9a8. Dump "
+     "1200.",
+     "EEPROM mirror, so _cal.",
+     "power_take_off_maximum_torque_cal", "high",
+     "power_take_off_maximum_torque_cal @ 0x003fd89e - the same record (1268 PTO_Max_Engine_Load [PTMXEGLD]).")
+
+role("0x0080dc26",
+     "GLOBAL (now closed_loop_governor_active_flag): the power take-off status - e2m 109E +2 PTSS 'status of the PTO "
+     "algorithm based on switch activation'. 0x2d9a8 applies the torque limit while it is 1; five more compares with "
+     "1 (0x1f218, 0x2d3e0, 0x2dc00, 0x2dcfe, 0x3079e) and its store at 0x2d994. Dump 0.",
+     "A power take-off flag, not a generic closed loop governor flag.",
+     "power_take_off_governor_active_flag", "high",
+     "power_take_off_governor_active_flag @ 0x0040af4e - the same record (109E +2 PTO_Status).")
+
+role("0x00803f2a",
+     "GLOBAL (no row): the torque derate override fueling - e2m 125E +0 FSTQDQUO 'engineering torque derate fueling "
+     "override', EEPROM mirror. 0x1c152 copies it into the derate minimum with state 13 while "
+     "algorithm_enable_flags_1_cal bit 4 is set.",
+     "EEPROM mirror, so _cal; its neighbour 0x803f2c (125E +2 FSUOFL) is CM848's user_override_fueling_cal.",
+     "torque_derate_override_fuel_quantity_cal", "high",
+     "torque_derate_override_fuel_quantity_cal @ 0x003fd802 - the same record (125E +0 Torque_Derate_Override).")
+
+role("0x0080d32e",
+     "GLOBAL (now current_fuel_demand): the final fueling - e2m 1051 +0 FSFNFL 'final fueling value'. 0x1c152 writes it "
+     "(0 when stopped, the minimum fueling in shutdown, else the clamped selection: stores at 0x1c1ca - 0x1c2ba).",
+     "The output of the final fueling selection, next to final_fueling_state 0x80d330 (1051 +2).",
+     "final_fueling", "high",
+     "final_fueling @ 0x0040a2ce - the same record (1051 +0 Final_Fueling).")
+
+role("0x0080d332",
+     "GLOBAL (now desired_engine_fueling_after_derate_without_air_handl_derate_0_100): the requested fueling - e2m "
+     "1051 +4 FSLMDSFL. 0x1c152 sets it to the smaller of the governed fuel and the derate minimum; its state is "
+     "requested_fueling_state 0x80d334. Dump 1619.",
+     "Value half of the pair whose state half already has CM848's name.",
+     "requested_fueling", "high",
+     "requested_fueling @ 0x0040a2d2 - the same record (1051 +4 Requested_Fueling).")
+
+role("0x0080a8f0",
+     "GLOBAL (now lsg_governor_fuel_demand): the governed fueling - e2m 1045 +0 FSGVFL 'fueling as limited by "
+     "limiting governors (LSG, HSG)'. 0x1c152 compares it with the derate minimum and uses it as the final fuel in "
+     "state 11; its state is adjusted_user_fueling_state 0x80a8f2. Dump 2061.",
+     "Not only the low speed governor's demand: the output of both limiting governors.",
+     "adjusted_user_fueling", "high",
+     "adjusted_user_fueling @ 0x0040a152 - the same record (1045 +0 Adjusted_User_Fueling).")
+
+role("0x0080ccee",
+     "GLOBAL (now time_that_the_engine_is_not_in_stop_state_0_2_29, 4 bytes): the engine hour meter - e2m 11BC +0 "
+     "CMEGTR. 0x34512 adds 1 per 40 frames unless the engine is stopped; 0x3452a loads it from the EEPROM mirror "
+     "0x803b50. Dump 226203089.",
+     "The engine-running counter next to key_on_hour_meter 0x80bda4.",
+     "engine_hour_meter", "high",
+     "engine_hour_meter @ 0x0040a794 - the same record (11BC +0 Engine_Run_Time [CMEGTR]).")
+
+role("0x0080a28e",
+     "GLOBAL (now anc_timing_limit_interpolated_value): the ANC timing advance limit - e2m 10A4 +2 NZTALM 'timing "
+     "advance limit as determined by ANC'. The cap of 0xb4ce. Dump 1024.",
+     "The timing limit of the ANC family; the fuel limit is 0x80a28c.",
+     "acceleration_noise_control_timing_limit", "high",
+     "none with code (CM848's 10A4 +0 ANC_Timing has no reference).")
+
+role("0x00808a74",
+     "GLOBAL (now fuel_limit_floor_value): the maximum allowable timing advance - e2m 105C +6 TSMXTA 'maximum "
+     "allowable timing advance value for the system'. The cap of 0x30b10. Dump 631.",
+     "A timing maximum, neither a fuel limit nor a floor.",
+     "maximum_timing_advance", "high",
+     "none with code (CM848's 105C +6 Maximum_Timing_Advance at 0x5c676 has no row).")
+
+role("0x0080a26e",
+     "GLOBAL (now output_of_the_misfire_timing_limit_table_60_to_60): the misfire timing limit - e2m 818E +0 BSTAMNLM. "
+     "The floor of 0x26af0; written at 0x26ae6 from a table lookup. Dump 478.",
+     "The floor value; its before-snapshot is injection_timing_before_misfire_limit 0x80a270.",
+     "misfire_timing_limit", "medium",
+     "counterpart injection_timing_main_misfire_limit (e2m 8A3D Misfire_Timing_Limit): the same role, another record.")
+
+role("0x0080dee4",
+     "GLOBAL (now wet_stack_adjusted_timing_floor_0_120): the wet stack timing advance - e2m 1077 +0 WSTA 'timing "
+     "advance as commanded by wet stack'. Computed by 0x34d52 (the temperature table output 0x80dee8 reduced above a "
+     "fueling threshold, not below WSTAMN); the floor of 0x34dba. Dump 444.",
+     "The value 0x34dba raises the timing to; its state word is 0x8036e2 (1 / 13).",
+     "wet_stack_timing_advance", "medium",
+     "none.")
+
+role("0x0080de68",
+     "GLOBAL (now timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120, word): the AFC timing "
+     "increment - e2m 105B +0 AFCNICTA. 0xc2be sets it to AFICTA 0x808a6e while final_fueling_state is 16, else 0; "
+     "0xc2ee adds it (signed) to the timing.",
+     "The working increment; the calibration value is 0x808a6e (105C +0).",
+     "air_fuel_control_timing_increment", "high",
+     "none with code (CM848's 105B +0 AFC_Timing_Increment at 0x40a2e4 has no row).")
+
+role("0x0080aa9e",
+     "GLOBAL (now increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20): the cylinder pressure "
+     "maintenance timing increment - e2m 1090 +2 CPTAIC, signed. Written by the code at 0x12328-0x1246c; 0x12484 adds "
+     "it to the timing. Dump 0.",
+     "Signed (ext.l after the add); the flag word that goes with it is 0x80021c (0 / 8).",
+     "cylinder_pressure_maintenance_timing_increment", "high",
+     "none.")
+
+role("0x00801a82",
+     "GLOBAL (now rpm_averaging_accumulator_1): the operator's idle speed adjustment in rpm counts. 0x26474 adds or "
+     "subtracts the step 0x808332 on the idle increment / decrement switches (0x80bccf bits 5 / 6, DSICSWSS / DSDTSWSS), clamps it to the idle range trims minus "
+     "the base idle speed and saves it to 0x805f0a (1073 +0 LSICBKRF); 0x2658c restores it at start. Dump 600 (= "
+     "0x805f0a).",
+     "No e2m record of its own; it is not an accumulator of an average.",
+     "idle_speed_adjustment", "medium",
+     "none.")
+
+role("0x0080a98e",
+     "GLOBAL (now asg_quadratic_integral_adjustment_500_500): the all speed governor reference state - e2m 107A +2 "
+     "ASRFST 'indicator used to show which algorithm is in control of the ASG reference', range 2,3,7,30,37. First "
+     "claim wins: 30 at 0xd0f8, 2 at 0xd22c, 7 at 0xd598 (each with its reference speed into 0x80a990); the user "
+     "fueling state selectors compare it with 30 / 2 (0xd194 / 0xd1ae) and 0xf72a with 7.",
+     "The address resolves to two records; the code uses it as ASRFST (FUELING_STATE values), not as ASQIAJ. It is "
+     "the evidence that states 3 and 37 are all speed governor reference sources.",
+     "all_speed_governor_reference_state", "medium",
+     "none found by record (CM848's 107A +2 is ASG_Selected_Speed).")
+
+enum_roles = [
+    {"enum_name": "FUELING_STATE", "value": 17,
+     "meaning": "FUELING_STATE_ACCELERATION_NOISE_CONTROL_DERATE (CM550 only): the acceleration noise control fuel "
+                "limit is the smallest derate.",
+     "evidence": "Stored by 0xb3b2 (move.w #0x11,(0x80deca) at 0xb3c6) when 0x80a28c (e2m 10A4 +0 NZFLLM 'fueling "
+                 "limit as determined by the ANC feature') is below the running derate minimum 0x80dec8. ANC = "
+                 "acceleration noise control: NZFLAGEN 'enable for fuel limiting of the acceleration noise control "
+                 "algorithm'. Calterm ANCDERAT. EEC1 torque mode class: torque limiting (0xf8)."},
+    {"enum_name": "FUELING_STATE", "value": 33,
+     "meaning": "FUELING_STATE_ENGINE_WARMUP_PROTECTION (CM550 only): the engine warm-up protection fuel limit is the "
+                "smallest derate (the label reads engine start-up oil limit).",
+     "evidence": "Stored by 0x17120 (move.w #0x21,(0x80deca) at 0x17146) while engine_state is RUNNING, 0x80ccb2 "
+                 "(11EA +0 WPLMFG 'fuel is being limited by engine warmup protection') is set and 0x80ccc6 (11EA +14 "
+                 "WPTQLM 'calculated torque limit of engine startup speed limit algorithm') is below the running "
+                 "minimum. The limit is made by the state machine 0x16dd4 (rifle oil pressure and oil drain-back "
+                 "timers; enable algorithm_enable_flags_18_cal bit 1 WPEAFG). Calterm ESUOILLM."},
+    {"enum_name": "FUELING_STATE", "value": 18,
+     "meaning": "FUELING_STATE_ENGINE_PROTECTION (CM550 only): the fueling is under control of engine protection. "
+                "Tested only - no dumped code stores it (the engine protection limit EPFLLM is stamped 29 by 0x196e4), "
+                "so medium confidence.",
+     "evidence": "cmpi.w #0x12,(0x80d330) at 0x306b4 in the trip statistics 0x304f4: while final_fueling_state is 18 "
+                 "it adds 1 to 0x806192 = e2m 1216 +6C TIT3DQTM 'time the fueling has been under control of engine "
+                 "protection since last reset' (cleared with the other trip values at 0x3077a; dump 0). Calterm EPF. "
+                 "EEC1 class: torque limiting."},
+    {"enum_name": "FUELING_STATE", "value": 37,
+     "meaning": "FUELING_STATE_TOP2_SPEED_CONTROL (both firmwares): the Top2 transmission feature controls the engine "
+                "speed through the all speed governor. Tested only - no selector stores it in either dump - so "
+                "medium confidence.",
+     "evidence": "CM848: cm848_runOperatingModeSpeedGovernor @ 0xea00 runs the all speed governor only in states 7 / "
+                 "2 / 30 / 37; 37 and 38 stand next to the TSC1 states 1 / 2 in cm848_selectPowerTakeOffOrUserFueling "
+                 "@ 0x2bbe8 (power take-off bypass), cm848_selectCruiseOrUserFueling @ 0x411b0, "
+                 "cm848_arbitrateGovernedFueling @ 0x4043c, cm848_calculateDriverDemandPercentTorque @ 0x20860 and "
+                 "the cruise preset code 0x5251e4 / 0x525504. CM550: only the EEC1 jump table 0x32d04, entry 37 -> "
+                 "0x32d5c (accelerator / operator, with 1, 2, 3, 7, 8, 30). e2m 107A +2 ASRFST 'which algorithm is "
+                 "in control of the ASG reference' lists 2,3,7,30,37. T2 = Top2: T2HGSXDR 'TOP2 SPICER TRANSMISSION "
+                 "HIGH GEAR DRIVER SOLENOID', T2LGSXDR, T2NUSXDR, T2SISXDR '0 = 1 gear down or below / 1 = top "
+                 "gear', group TOP208 'TOP2 CALIBRATIONS AND DATA' (v64t6_s.e2m). Calterm T2SPD."},
+    {"enum_name": "FUELING_STATE", "value": 38,
+     "meaning": "FUELING_STATE_TOP2_TORQUE_CONTROL (both firmwares): the Top2 transmission feature commands the "
+                "fueling directly (no governor). Tested only, medium confidence.",
+     "evidence": "CM848: tested with 37 next to the TSC1 states 1 / 2 in the six functions listed for 37, but NOT in "
+                 "the all speed governor gate at 0xea00 (so it is the torque, not the speed, mode). CM550: EEC1 jump "
+                 "table entry 38 -> 0x32d88 (0xf8, torque limiting). Top2 from the T2 e2m records as for 37. Calterm "
+                 "T2TORQ."},
+    {"enum_name": "FUELING_STATE", "value": 39,
+     "meaning": "FUELING_STATE_TOP2_DERATE (CM550 only) - by the label and the T2 records only: no limiter in the "
+                "dumped ROM stores it. Low confidence; otherwise it stays UNIDENTIFIED_39.",
+     "evidence": "Only the EEC1 jump table 0x32d04, entry 39 -> 0x32d88 (0xf8, torque limiting, the class of every "
+                 "derate state). It may be stored by the undumped chain steps 0x45252 / 0x455c8. T2 = Top2 as for 37. "
+                 "Calterm T2DERAT."},
+    {"enum_name": "FUELING_STATE", "value": 36,
+     "meaning": "FUELING_STATE_POWERTRAIN_PROTECTION_DERATE (CM550 only) - by the label and the PTP records only: no "
+                "limiter in the dumped ROM stores it. Low confidence; otherwise it stays UNIDENTIFIED_36.",
+     "evidence": "Only the EEC1 jump table 0x32d04, entry 36 -> 0x32d88 (0xf8, torque limiting). PTP = powertrain "
+                 "protection: group PTP_07 'electronic constants for powertrain protection', CM848's e2m PTP_Enable "
+                 "[TCEN] 'Powertrain Protection Enable' and its label 0x39 JCPTPDER. The enable bit "
+                 "algorithm_enable_flags_25_cal bit 1 has no reader in the dumped ROM. Calterm PTPDERAT."},
+    {"enum_name": "FUELING_STATE", "value": 3,
+     "meaning": "NOT PROVED - stays FUELING_STATE_UNIDENTIFIED_3. The code proves only the class: a user fueling "
+                "state in which the all speed governor runs on a reference speed supplied by another algorithm, "
+                "treated like the pedal states for the driver demand. The reading 'progressive shift speed control' "
+                "rests on the label alone.",
+     "evidence": "Tested, never stored: cmpi.w #3,(0x80ded4) at 0xc982 (cm550_runAllSpeedGovernor gate 7 / 3 / 2 / "
+                 "30, with the filtered reference 0x80a990 as for 2 and 30); 0x2dcb0 (power take-off bypass 1 / 2 / "
+                 "30 / 3); 0xf796 (driver demand keeps the 4D fueling in 8 / 3 / 7); EEC1 entry 3 -> accelerator "
+                 "(also case 3 of CM848's EEC1 switch). The selectors run by 0x3458c store only 30, 1, 2, 5, 6, 7, 8, "
+                 "and ASRFST 0x80a98e (range 2,3,7,30,37) is stored only 30 / 2 / 7. PS = 'Prog. Shift' only by "
+                 "PSAGEN (106B +2 bit 5, group PRGSHFT2 'PROGRESSIVE SHIFT GROUP'), a bit no dumped code reads."},
+    {"enum_name": "FUELING_STATE", "value": 49,
+     "meaning": "CM848 only: NOT PROVED - stays FUELING_STATE_UNIDENTIFIED_49 (label OFCSTATE). The code shows only "
+                "its class: a final fueling state in which a limit holds the fuel below the governor's demand, like "
+                "16 and 19. No code stores it; this build stores 58 for the oxygen limit.",
+     "evidence": "cm848_runOperatingModeSpeedGovernor @ 0xea00 only: with the deadband compensation flag it keeps "
+                 "the integrator in final states 11 / 12 / 16 / 19 / 2 / 49, and in 16 / 19 / 49 it computes the "
+                 "governor delta from final_fueling. e2m OFC_Fuel_Limit 'upper fuel limit above which oxygen is "
+                 "limited'."},
+    {"enum_name": "FUELING_STATE", "value": 50,
+     "meaning": "CM848 only: NOT PROVED - stays FUELING_STATE_UNIDENTIFIED_50 (label AFRSTATE). The code shows only "
+                "its class: an air-limited final fueling state, with 16 and 58. No code stores it.",
+     "evidence": "cm848_calculateFuelPressureSetpoint @ 0x529f58 only: the setpoint offset slews toward its target "
+                 "while final_fueling_state is 16 (AFC derate), 58 (combustion oxygen limit) or 50 and the coolant "
+                 "and intake manifold temperatures are above their minimums."},
+]
+
+notes = (
+    "Method: every function read in the decompilation and in m68k.py disassembly; every operand resolved with "
+    "e2m_block_addresses.py (v64t6_s.e2m for CM550, CHR_CC_11.45.01.07 for CM848); the CM848 twins disassembled with "
+    "disasm_func.py; RAM values read at the declared width. Scratch: "
+    "/home/linux/.claude/jobs/374b0424/tmp/w15/r93/scratch/F1/describer/ (notes.txt, ctx.py, ramread.py, "
+    "build_result.py, result.json). "
+    "CHAIN, step by step. CM550 0x30c3c: 0x1ce58 init - 0x2d9a8 power take-off torque limit (34) - 0xb3b2 ANC (17) - "
+    "0xc2a0 air fuel control (16, group 2) - 0xc742 altitude (15) - 0x196e4 engine protection (29) - 0x30c14 TSC1 "
+    "limit (20) - 0x30bf6 fuel system derate (28) - 0x17120 warm-up protection (33) - 0x45252 - 0x455c8 (undumped). "
+    "CM848 0x4280c: 0x1f318 - 0x2a918 - 0xe0c4 - 0x502af4 - 0x509510 - 0x427cc - 0x4279c - then 46 / 45 / 42 / 59 / "
+    "61 / 62. CM848 has the same small functions, not one big one: seven are instruction-for-instruction twins, and "
+    "block 105D (+0 FSLMFL, +2 FSLMFLST, +4 FSAPLMFL, +6 FLLMAHFL, +8 FSLMAHST) has the same five words in both "
+    "(CM550 0x80dec8-0x80ded0, CM848 0x40afac-0x40afb4). The same module in both ROMs: CM550 0x30b10 maximum timing "
+    "limit, 0x30b34 timing chain, 0x30b62 final timing selection, 0x30bf6, 0x30c14, 0x30c3c, 0x30c78 initializer; "
+    "CM848 0x42784 cm848_copyMainInjectionTiming, 0x4279c, 0x427cc, 0x4280c, 0x4285c initializer. "
+    "SECOND CHAIN: 0x30b34 limits the injection timing (TSOI), not fuel. Its timing state stamps match the label "
+    "list of TSTPTAST / TSFNTAST (0 FOUR_D, 1 WETSTACK, 2 USERCOMD, 3 ANC, 4 MAX, 5 CRANK, 7 USEROVRD, 8 STOP, 9 "
+    "OVERSPED, 10 SHUTDOWN, 11 MISFIRE, 13 WTSTCOOL). "
+    "OUTSIDE THE BATCH, seen on the way: 0x1c0d4 (cm550_FUN_0001c0d4) is the twin of "
+    "cm848_calculateProtectionRateLimited @ 0x1e4e8 (torque limit to fuel, same operands) plus the reset of the "
+    "torque limit pair to 0xffff / 40 that CM848 does in the caller; 0x1c308 is that pair's start-up initializer; "
+    "0x3452a (cm550_FUN_0003452a) is the twin of cm848_loadHourMetersFromEeprom @ 0x5067bc; 0x16dd4 "
+    "(cm550_highRpmEngineProtectionStateMachine) is the engine warm-up protection state machine and 0x1709e "
+    "(cm550_fuelTemperatureLimitingSecondary) its initializer; 0x26474 (cm550_engineModeTimingAdjuster) is the idle "
+    "increment / decrement switch handler; 0xc2be selects the AFC timing increment; 0x34cc4 / 0x34d52 compute the wet "
+    "stack timing; 0x30c78 (cm550_masterSubsystemInit) initializes the chain inputs. Rows inside another function's "
+    "body: 0x1ca5c (in 0x1ca54), 0x2659a vp44_initVP44StatusFlags (in 0x2658c), 0x3061a (in 0x304f4). "
+    "Other operands of 0x1c152 that are CM848 records: 0x80800a = fuel_demand_minimum (1052 +6 FSMNFL), 0x808004 = "
+    "fuel_demand_maximum (1052 +0 FSMXFL), 0x808008 = engine_overspeed_fueling (FSOSFL), 0x808006 = "
+    "engine_brake_fueling (EBFL), 0x80d098 = crank_fuel (CKFL), 0x803f2c = user_override_fueling_cal (FSUOFL), "
+    "0x80a908 = alpha_low_speed_governor_state_detected_flag (104A +10 FSLSSTFG); timing: 0x80d348 = CM848's "
+    "injection_timing_intermediate_source_code (103B +4 TSTPTAST), 0x80d34a = injection_timing_increment_flags (103B "
+    "+6 TSSTIC). "
+    "SCORED CANDIDATES: 0x1f318 and 0x2a918 are right (the twins' old names); 0x37f28 (charging system voltage "
+    "monitor) and 0x6ab8 (mpc555_sciPollDuringEepromWrite) are wrong. "
+    "ENUM: 17 and 33 are proved by a store with its limit; 18 by a test with a named counter; 37 / 38 by CM848's "
+    "tests plus the e2m meaning of T2 (Top2); 36 / 39 rest on labels and the EEC1 class only; 3 and CM848's 49 / 50 "
+    "are tested but not provable to a feature. CM848 members above 41: only 49 and 50 are UNIDENTIFIED. "
+)
+
+result = {"batch": "F1", "roles": roles, "enum_roles": enum_roles, "notes": notes}
+with open(sys.argv[1], "w") as handle:
+    json.dump(result, handle, indent=1)
+print(len(roles), "roles;", len(enum_roles), "enum roles;", len(json.dumps(result)), "bytes")
+names = [r["suggested_name"] for r in roles if r["suggested_name"]]
+assert len(names) == len(set(names)), "duplicate suggested names"

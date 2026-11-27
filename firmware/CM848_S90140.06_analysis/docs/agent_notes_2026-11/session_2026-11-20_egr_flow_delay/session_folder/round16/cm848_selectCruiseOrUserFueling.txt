@@ -1,0 +1,51 @@
+=== cm848_selectCruiseOrUserFueling (lines 44393-44449, 50 non-blank)
+// Function: cm848_selectCruiseOrUserFueling @ 0x000411b0
+//
+/* Sets the user fueling governor_fuel_demand_working and its state
+   governor_fuel_demand_working_mode: cruise_control_fueling with FUELING_STATE_CRUISE_CONTROL while
+   cruise control is engaged - unless the accelerator asks for more fuel than cruise
+   (fuel_demand_control.calculated above governor_override_fuel_threshold_cal) or TSC1 / mode 5 / 37
+   / 38 controls - else the operating mode governor output and its mode_code (was
+   cm848_calculateProtectionLevelLimit) */
+void cm848_selectCruiseOrUserFueling(void)
+{
+  ushort uVar1;
+  uint uVar2;
+  uVar2 = ((uint)cruise_speed_margin_cal * (uint)cruise_speed_margin_scale_cal >> 8) +
+          (uint)vehicle_speed_rise_limited;
+  if (0xffff < uVar2) {
+    uVar2 = 0xffff;
+  }
+  uVar1 = cruise_control_fueling;
+  if (((cruise_control_engaged_flag == 0) ||
+      ((uint)cruise_governor_reference_speed <= (uVar2 & 0xffff))) &&
+     (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) {
+    uVar1 = adjusted_user_fueling;
+  }
+  if ((((cruise_control_engaged_flag == 0) ||
+       ((((uVar1 < operating_mode_governor_output.fuel_demand &&
+          (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
+         ((cruise_speed_command != cruise_speed_limit_working ||
+          (cruise_control_fueling != vehicle_speed_limit_fueling)))) ||
+        ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
+         (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)))))) ||
+      (operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_37)) ||
+     ((operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_38 ||
+      (operating_mode_governor_output.mode_code == FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)))) {
+    governor_fuel_demand_working_mode = operating_mode_governor_output.mode_code;
+    governor_fuel_demand_working = operating_mode_governor_output.fuel_demand;
+  }
+  else {
+    governor_fuel_demand_working_mode = FUELING_STATE_CRUISE_CONTROL;
+    governor_fuel_demand_working = cruise_control_fueling;
+    if (adjusted_user_fueling <= cruise_control_fueling) {
+      governor_fuel_demand_working = adjusted_user_fueling;
+      cruise_control_fueling = adjusted_user_fueling;
+    }
+  }
+  if (torque_derate_fuel_quantity + 0x3a < (uint)governor_fuel_demand_working) {
+    governor_fuel_demand_working = torque_derate_fuel_quantity + 0x3a;
+  }
+  return;
+}
+//

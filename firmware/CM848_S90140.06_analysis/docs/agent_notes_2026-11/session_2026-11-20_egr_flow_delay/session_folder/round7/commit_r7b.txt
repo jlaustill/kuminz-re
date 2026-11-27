@@ -1,0 +1,29 @@
+cm848: round 7 stage B - the J1939 monitor's control session record as a struct, the drivetrain cals and gear range
+
+- **j1939_control_session_t** (24 bytes; e2m 10FD / 10FE / 10FF "see j1939mon specification"):
+  - **Fields:** session_kind (0 engine / 1 retarder; 0xFE empty), controlling_source_address, control_device
+    (J1939_CONTROL_DEVICE), override_control_mode_count, override_control_modes[5] (TSC1_OVERRIDE_MODE), start_time,
+    duration (key_on_hour_meter, 0.2 s counts).
+  - **The layout** comes from cm848_startJ1939ControlSession / cm848_trackJ1939ControlSessions /
+    cm848_storeJ1939ControlSessionInHistoryTable (12 words per record) and the EEPROM image. Each block sits behind a
+    length word: 0x78 at 0x3fead4, 0x18 at 0x3feb4e and 0x3feb68.
+  - **Instances:** j1939_control_session_history_cal[5] (0x3fead6), j1939_active_engine_control_session_cal
+    (0x3feb50), j1939_active_retarder_control_session_cal (0x3feb6a), plus the two record length words. Every record
+    in the image is empty.
+  - **Rows:** the four etc1_governor_* / governor_mode_* member rows are gone. The control source words are typed
+    J1939_CONTROL_DEVICE, the retarder's previous mode TSC1_OVERRIDE_MODE.
+- **The history table's length word** is also j1939_input_signal_timeouts[24]. The supervision tick's loop covers 25
+  words (addi r3 = r4 + 48 / cmplw / bge @ 0x50bd9c-0x50bdc4), so it would count the word down, but its enable
+  (j1939_input_processing_enable_cal bit 0x400) is 0 in this calibration. Documented on the array.
+- **The drivetrain ratio cals** (e2m 106D): drivetrain_ratio_tolerance (Gear_Ratio_Tolerance),
+  drivetrain_ratio_maximum_limit (Gear_Ratio_Max_Limit), drivetrain_ratio_when_loaded_minimum_fueling
+  (Gear_Ratio_Final_Fueling) and drivetrain_ratio_out_of_gear_tolerance (Gear_Ratio_OOG_Tolerance). All are read with
+  lhz.
+- **gear_down_gear_ratio_cal** (0x3fd900, lhz): e2m 8B8B Gear_Down_Gear_Ratio. That block is not in the parameter ID
+  table, so the address comes from the code (scaled like top_gear_ratio_cal; 1.0 against 0.8).
+- **DRIVETRAIN_GEAR_RANGE** (top gear / one gear down / lower) on drivetrain_gear_range.
+- **The history store's locals** are named (session_record, history_entry, source_word, history_word,
+  copied_word_count). The record local keeps the struct pointer type: as word * or byte *, Ghidra rendered
+  the copy start longer than &session_record[-1].duration + 2.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

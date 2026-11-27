@@ -1,0 +1,42 @@
+J2 describer notes (round 93) - orientation findings
+====================================================
+"ROM table 0x1b4da-0x1b4e9": NOT a table. It is the code of the function at 0x1b4d8 (a chain of jsr abs.l = opcode 4EB9
++ 4-byte target): jsr 0x212b2 / jsr 0x23244 / jsr 0x22070 / jsr 0x230ee / jsr 0x21edc / jsr 0x21070 / jsr 0x420bc / rts.
+The hits 0x1b4da / 0x1b4e0 / 0x1b4e6 are the JSR operands. executiveFrameInterruptHandler (0x1b876) calls 0x1b4d8 with
+bsr.w in each EVEN phase (20 of the 40 phases) and 0x1b504 in each ODD phase.  The caller scan missed it because two
+rows share the name vp44_evenPhaseSchedulerTaskSet (0x1b4d8 and 0x1b62a - the second is a mid-function label inside
+periodicTaskSet_fuelDemand's JSR chain); the script's dict kept only the 0x1b62a body.
+
+CM848 phase group A (0xb7b4) order: dispatchJ1939ReceivedMessages / runJ1939PowertrainControlTimeouts /
+trackJ1939ControlSessions / serviceJ1939TransportSessions / tickJ1939InputSupervision / processJ1939SwitchAndRequestInputs /
+endRetarderShiftAssistAboveFuelDemandLimit / runJ1939PeriodicTransmitQueues ...
+CM550 even set 0x1b4d8: 0x212b2 / 0x23244 / 0x22070 / 0x230ee / 0x21edc / 0x21070 / 0x420bc
+CM550 odd set 0x1b504: 0x2142c / 0x1ff38 / 0x23920
+
+e2m (v64t6_s.e2m) records, EEPROM-tagged (RAM = 0x803b0a + offset):
+ 1101 JC22CU +0 0x804164 control count; JC22TM +2 0x804166 time of last J1922 control; JC22LMCU +6 0x80416a limit mode
+ count; JC22LMTM +8 0x80416c; JC22RPCU +C 0x804170 speed control mode count; JC22RPTM +E 0x804172; JC22TQCU +12 0x804176
+ torque control mode count; JC22TQTM +14 0x804178
+ 10FD JCHSTB 0x80417c (length word) history table data 0x80417e 5 x 24 bytes
+ 10FE JCAEEG 0x8041f6 (length word) active engine record 0x8041f8
+ 10FF JCAERD 0x804210 (length word) active retarder record 0x804212
+ 1100 JCEGCOSS 0x80422a / JCRDCOSS 0x80422c / JCEGCOSA 0x80422e / JCRDCOSA 0x804230 / JCHSTBPO 0x804232
+
+CM848 counterparts found (frozen function_renames.csv):
+ 0x50be6c cm848_storeJ1939ControlSessionInHistoryTable  <-> CM550 0x21f4e
+ 0x50beec cm848_startJ1939ControlSession                <-> CM550 0x21fac
+ 0x50bff4 cm848_trackJ1939ControlSessions               <-> CM550 0x22070
+ 0x2715c  cm848_runJ1939PowertrainControlTimeouts       <-> CM550 0x23244 (counterpart; CM848 has ETC1/ETC2/output shaft
+          steps and TSC1 lost management, CM550 has the J1922 monitor counts and the 0x803d4a == 4 / 5 timers)
+ 0x27118  cm848_resetEngineRetarderTsc1Request          <-> CM550 0x23216 (same 7 stores)
+ 0x26f80  cm848_runTsc1LostManagement                   <-> CM550 0x231da (CM550: plain reset + J1922 count)
+ 0x53d3c  cm848_addEngineTsc1IgnoredRequestEntry        <-> CM550 0x238ac (5 entries vs 10)
+ 0x53d84  cm848_addRetarderTsc1IgnoredRequestEntry      <-> CM550 0x238ec (4-byte entries, one argument, vs 6-byte, two)
+ 0x50aec0 cm848_endRetarderShiftAssistAboveFuelDemandLimit <-> CM550 0x2142c
+ 0x538d3c cm848_runJ1939PeriodicTransmitQueues          <-> CM550 0x1ff38 (CM848 adds the DM13 bits)
+ 0x538ef4 cm848_dispatchJ1939ReceivedMessages           <-> CM550 0x212b2 (CM848 adds DM13, TouCAN vs 82527)
+ 0x50b1b8 cm848_writeJ1939DiagnosticMemoryByParameterId <-> CM550 0x21642
+ 0x50b298 cm848_handleJ1939WriteByParameterIdLongLengthService (0x45) <-> CM550 0x216c6
+ 0x50b38c cm848_handleJ1939WriteByParameterIdLongOffsetService (0x49) <-> CM550 0x21778
+ 0x50b4d8 cm848_registerJ1939MemoryWriteServices        <-> CM550 0x21872 (0x44 0x45 0x4b 0x4d 0x47 0x49 same order)
+ 0x50b5b4 cm848_buildJ1939LampStatusByte                <-> CM550 0x21920 (CM550 reads bits of the lamp driver byte)

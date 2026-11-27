@@ -1,0 +1,57 @@
+cm550 + cm848: round 91 - fault count / datalogger / gain set structs; the J1939 receive layer and TSC1 finder twins
+
+Workflow wf_368d2db4-707 ran an investigator and a skeptic per item (10 agents). 216 elements were confirmed and 11
+amended (comment text only); none were refuted.
+
+- S1, the fault count table (e2m 1031 DGFUCUBF): fault_count_record_t (10 bytes: status_change_time /
+  last_countdown_time / status / occurrence_count, from the 44 accesses in 13 functions) and fault_count_table[125]
+  at 0x805a1c. It replaces the 3 field rows and 27 unreferenced J90280.05-map rows inside it (io_fault_status_reg_1,
+  vp44_fso_fault_flags, rpm_histogram_buffer_start, ...).
+  - cm550_phase2_sensor_data_processor (0x1452e) is a fall-through split of the countdown function and goes to
+    deleted_functions.csv.
+  - The fault countdown functions are named in both firmwares as counterparts: cm550_countDownPreviouslyActiveFault(s),
+    cm550_processFaultScanGroup and cm550_resetFaultStatus; CM848 cm848_countDownPreviouslyActiveFault(s) (were
+    cm848_faultTimeoutHandler / cm848_activeFaultScanProcessor).
+- S2, the user datalogger (e2m 1282 / 1283), with the record arrays in the EEPROM mirror:
+  - datalogger_trigger_t[4] (16 bytes) at 0x803d64 and datalogger_data_parameter_t[5] (6 bytes) at 0x803da4;
+  - datalogger_trigger_information_t, its working RAM (the sample ring buffer, the resolved addresses, the latches and
+    flags);
+  - 9 functions (cm550_updateDataloggerTriggers, cm550_recordDataloggerSamples, ...).
+  The legacy names those words had (scheduler_phase_execution_time, fuel_demand_blend_input, flash_write_data_pointer,
+  ...) and 63 rows inside the new arrays are gone. 0x800358 main_loop_phase_index was one of them: the scheduler's
+  phase index is scheduler_phase_index (0x80068c), so docs/cross_firmware_variable_map.csv,
+  docs/cross-firmware-analysis.md and an enums.csv comment are corrected.
+- S3, the all-speed governor gain sets: CM550 takes CM848's all_speed_governor_gain_set_t (the same 9 signed words)
+  for j1939_tsc1_speed_control_condition_gain_sets[4], all_speed_governor_throttle_mode_gain_set and
+  all_speed_governor_application_gain_set, and all_speed_governor_gain_set_pointer (was asg_governor_gains_ptr).
+- T1, the J1939 receive layer: twins, so CM848's rows lose their prefix and CM550's take the same name:
+  - receivePgn57344CabMessage1 / receivePgn61441ElectronicBrakeController1Message /
+    receivePgn61443ElectronicEngineController2Message / receivePgn65252ShutdownMessage /
+    receivePgn65264PowerTakeoffInformationMessage / receivePgn65265CruiseControlVehicleSpeedMessage;
+  - registerJ1939ReceiveHandler (CM550's was cm550_canTransmissionController).
+  CM550's 0x21a5c / 0x21c3c were not functions; their rows create them. cm550_registerJ1939InputMessageHandlers and
+  cm550_tickJ1939InputSupervision are counterparts. The receive handler table (j1939_receive_handler_entry_t[16]), the
+  input signal descriptor table (j1939_input_signal_descriptor_t[17]; now j1939_input_signal_descriptor_table[i]
+  .logical_switch) and j1939_input_signal_timeouts are typed. The 23 receiver bytes and two more source address
+  filters take CM848's j1939_received_* / *_source_address_filter_cal names.
+- T2: cm550_diagnosticSessionValidator and cm848_findTsc1SourceConfiguration are one routine (twin:
+  findTsc1SourceConfiguration). CM550 gets tsc1_source_configuration_t (CM848's 20-byte type) for
+  tsc1_source_configuration_table[5], and its three TSC1 pointers (were datalink_session_config_pointer ...) get the
+  same names and type as CM848's fields (*_ptr there -> *_pointer). CM848 0x40aaba j1939_received_accelerator_pedal_
+  position_2 is the J1939 wet tank pressure (e2m 12F7 +14): j1939_received_wet_tank_pressure in both.
+- refresh_references.py protects a whole 'were a / b / c' history list: a 120-character window let the later names
+  of a long list be refreshed (round 89 met it; here it rewrote the fault count table's 27-name history before the
+  fix). A new test_rename_waves.py case fails on the old window.
+- firmware/CLAUDE.md: the J1939 input layer bullet names the twins (the refresh; the full line is in the report).
+
+Proof:
+- CM550: verify DETERMINISTIC. 1 function removed (the 0x1452e split) and 2 added (the two handlers), on purpose.
+  42 functions changed. Caller artifacts are unchanged (unaff_ 4, extraout_ 8, in_ 8, CONCAT 66). The only new build
+  messages are one more deletion target already absent and the moved parameter-row warning; 146 fewer untyped rows.
+  The table indexes that the code builds with shifts / adds still render as byte arithmetic, now on named fields
+  ((int)&datalogger_triggers_cal[0].parameter_offset + offset).
+- CM848: verify DETERMINISTIC; label-only (one line re-wrapped by the longer field name); no new build warning.
+- test_e2m_block_addresses (the table CSV rewritten) / test_e2m_name_audit / test_rename_waves / test_lookup_tables /
+  test_disasm_tools pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

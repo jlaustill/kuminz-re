@@ -1,0 +1,199 @@
+0x0000b210: 6 token changes: ( dword * ) =>  | _DAT_0080006a => engine_acceleration_first_stage_filter_state . accumulator | - =>  | _DAT_0080006a => engine_acceleration_first_stage_filter_state . accumulator | - =>  | ( dword * ) => 
+0x0000b5e4: 3 token changes: _DAT_0080006a => engine_acceleration_first_stage_filter_state . accumulator | _timing_table_4_ptr => engine_acceleration_first_stage_filter_state . coefficient | _DAT_0080006e => engine_acceleration_second_stage_filter_state . coefficient
+0x0000b7bc: 199 token changes: undefined2 uVar2 => word wVar2 | undefined => word | puVar7 => pwVar7 | undefined => sensor_debounce_state_t | table_descriptor => channel_record | table_descriptor => channel_record |  => ( sensor_debounce_state_t * ) | puVar7 => pwVar7 | undefined => sensor_debounce_state_t | table_descriptor => channel_record | puVar7 [ => * ( char * ) ( ( int ) pwVar7 + | ] => ) | table_descriptor [ 0xf ] => channel_record -> sample_counter |  => channel_record -> sample_counter < * |  => * | table_descriptor [ 0xf ] < =>  | byte => ( int | puVar7 [ => pwVar7 + | ] => ) | table_descriptor [ 0xf ] => channe
+0x0000bcf0: 94 token changes: undefined => word | puVar2 => pwVar2 | undefined4 => sensor_debounce_state_t | puVar3 => channel_record | undefined => ema_filter_state_t | puVar4 => peVar3 | puVar2 => pwVar2 | puVar3 => channel_record | undefined4 => sensor_debounce_state_t | puVar3 => channel_record | undefined4 => sensor_debounce_state_t | puVar3 => channel_record |  => channel_record + 1 ) { | undefined4 => channel_record -> filter ) . accumulator = 0 ; ( channel_record -> filter ) . coefficient = pwVar2 ; channel_record -> sample_counter = * ( byte | puVar3 => pwVar2 | 0x16 => 0x17 | ) { puVar3 [ 1 ] = 0 ; * puVar3 = puV
+0x0000c326: 1 token changes: _DAT_0080a91e => alpha_fuel_rate_filter_state . accumulator
+0x0000c404: 1 token changes: _DAT_0080a91e => alpha_fuel_rate_filter_state . accumulator
+0x0000c962: 2 token changes: _DAT_0080a988 => all_speed_governor_reference_filter_state . accumulator | _asg_droop_compensated_error_2000_2000 => all_speed_governor_reference_filter_state . coefficient
+0x0000d0e2: 1 token changes: _asg_droop_compensated_error_2000_2000 => all_speed_governor_reference_filter_state . coefficient
+0x0000d0fc: 1 token changes: _asg_droop_compensated_error_2000_2000 => all_speed_governor_reference_filter_state . coefficient
+0x0000d1a4: 1 token changes: _asg_droop_compensated_error_2000_2000 => all_speed_governor_reference_filter_state . coefficient
+0x0000d4ae: 1 token changes: _asg_droop_compensated_error_2000_2000 => all_speed_governor_reference_filter_state . coefficient
+0x000171be: 8 token changes: _DAT_008005ae => engine_speed_filter_state . accumulator | _DAT_008005ae => engine_speed_filter_state . accumulator | _DAT_008005ae => engine_speed_filter_state . accumulator | uVar1 => _current_engine_rpm_filtered | _current_engine_rpm_filtered => uVar1 | ushort => uint | uVar1 => _current_engine_rpm_filtered | _DAT_008005ae => engine_speed_filter_state . accumulator
+0x000176de: 2 token changes: _DAT_008005ae => engine_speed_filter_state . accumulator | _DAT_008005aa => engine_speed_filter_state . coefficient
+0x00018f4c: 2 token changes: _DAT_00800616 => engine_protection_speed_limit_filter_state . accumulator | _DAT_00800612 => engine_protection_speed_limit_filter_state . coefficient
+0x0001abb2: 2 token changes: ( dword * ) =>  |  => ) ( short
+0x0001ade8: 2 token changes: _DAT_00800674 => engine_deceleration_rate_filter_state . accumulator | _DAT_00800670 => engine_deceleration_rate_filter_state . coefficient
+0x0001ae06: 2 token changes: _DAT_00800674 => engine_deceleration_rate_filter_state . accumulator | _DAT_00800670 => engine_deceleration_rate_filter_state . coefficient
+0x0001ae0c: 2 token changes: _DAT_00800674 => engine_deceleration_rate_filter_state . accumulator | _DAT_00800670 => engine_deceleration_rate_filter_state . coefficient
+0x0001ce7c: 19 token changes: ( dword * ) =>  |  => ( short ) |  => ( short ) | _DAT_0080d63a => high_speed_governor_error_filter . accumulator |  => ( short ) | - =>  |  => ( short ) |  => ( short ) | _DAT_0080d63a => high_speed_governor_error_filter . accumulator |  => ( short ) | - =>  | _DAT_0080d63a => high_speed_governor_error_filter . accumulator |  => ( short ) |  => ( short ) |  => ( short ) |  => ( short ) |  => ) ( short |  => ( short ) |  => ) ( short
+0x0001d2e4: 2 token changes: _DAT_0080d63a => high_speed_governor_error_filter . accumulator | _DAT_0080d636 => high_speed_governor_error_filter . coefficient
+0x0001d392: 2 token changes: _DAT_0080d636 => high_speed_governor_error_filter . coefficient | _DAT_0080d636 => high_speed_governor_error_filter . coefficient
+0x0001dcfc: 2 token changes: _DAT_0080a91e => alpha_fuel_rate_filter_state . accumulator | _DAT_0080a91a => alpha_fuel_rate_filter_state . coefficient
+0x000258d6: 2 token changes: _DAT_00801a32 => pedal_fault_mode_engine_speed_filter_state . coefficient | 0x80820e => & pedal_fault_mode_engine_speed_filter_coefficient
+0x00025b1c: 15 token changes: short sVar3 ; =>  | new_sample => wVar3 | sVar3 => wVar3 | sVar3 => wVar3 | new_sample => wVar3 | new_sample => wVar3 | new_sample => wVar3 | new_sample => wVar3 | - =>  | new_sample => wVar3 | new_sample => wVar3 | ( dword * ) =>  | - =>  | - =>  | - => 
+0x00025ff2: 1 token changes: - => 
+0x00026078: 3 token changes: _retarder_mode3_output_ptr => low_speed_governor_throttle_reference_offset_filter_state . coefficient | _retarder_mode3_threshold_table => low_speed_governor_error_filter . coefficient | 0x80823e => & low_speed_governor_error_filter_coefficient
+0x0002d3c6: 1 token changes: ( dword * ) => 
+0x0002d9d2: 1 token changes: _DAT_00801c04 => power_take_off_speed_error_filter . accumulator
+0x0002db2a: 3 token changes: _DAT_00801c04 => power_take_off_speed_error_filter . accumulator | _DAT_00801c00 => power_take_off_speed_error_filter . coefficient | 0x80889a => & power_take_off_speed_error_filter_coefficient
+0x0002dbde: 12 token changes:  => word wVar1 ; | uVar1 => uVar2 | uVar1 => uVar2 | uVar1 => uVar2 | uVar1 => uVar2 | _DAT_00801c4a => power_take_off_reference_filter_state . accumulator | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1
+0x0002dc8c: 1 token changes: _DAT_00801c4a => power_take_off_reference_filter_state . accumulator
+0x0002dc9e: 2 token changes: _DAT_00801c4a => power_take_off_reference_filter_state . accumulator | _DAT_00801c46 => power_take_off_reference_filter_state . coefficient
+0x00034e9a: 14 token changes: undefined8 => word | dword => ema_filter_state_t | undefined4 in_D1 ; =>  | ( ushort * ) * =>  |  => -> coefficient | ( => & | + 1 ) => -> accumulator | * =>  | * ) ( ( int =>  | + 6 ) => -> accumulator | [ 1 ] => -> accumulator | CONCAT44 ( CONCAT22 ( ( short ) ( ( dVar2 + 0x8000 ) * 0x10000 >> 0x10 ) , =>  | - =>  | ) , in_D1 ) => 
+0x00034f00: 31 token changes: undefined4 => word | x_input => input | dword => second_order_filter_state_t | interpolation_state => filter |  => uint uVar4 ; | dVar4 => dVar5 | iVar5 => iVar6 | interpolation_state [ 2 ] => filter -> output | ( ushort * ) interpolation_state [ 1 ] => filter -> coefficient_3 | ( ushort * ) * interpolation_state => filter -> coefficient_1 | ( ushort * ) * interpolation_state => filter -> coefficient_1 | x_input => input | ( ushort * ) interpolation_state [ 1 ] => filter -> coefficient_3 | interpolation_state [ 3 ] => filter -> output_previous | iVar5 => uVar4 = ( uint ) lVar2 ; iVar6 | ( uint
+0x00034f8a: 19 token changes: undefined8 => word | input_value => new_sample | void => ema_filter_state_t | table_descriptor => filter_state | int iVar2 ; undefined4 in_D1 => dword dVar2 | * ( ushort * * ) table_descriptor => filter_state -> coefficient | iVar2 => dVar2 | input_value => new_sample | iVar2 => dVar2 | ( ( int ) table_descriptor + 4 ) => & filter_state -> accumulator | * =>  | * =>  | ( ( int ) table_descriptor + 6 ) => filter_state -> accumulator | input_value => new_sample | * => filter_state -> accumulator = dVar2 ; return | int * => word | ( int ) table_descriptor => dVar2 | 4 ) = iVar2 ; return CONCAT44 
+---- census of distinct changes
+  69  => *
+  27 ] => )
+  11  => ( short )
+  10 - => 
+  10 puVar7 [ => ( ( int ) pwVar7 +
+  10 puVar7 [ 0x14 ] => ( pwVar7 + 10 )
+   8 * => 
+   7 puVar7 [ => * ( byte * ) ( ( int ) pwVar7 +
+   7 puVar7 [ 0x14 ] => * ( byte * ) ( pwVar7 + 10 )
+   7 puVar2 => pwVar2
+   7 new_sample => wVar3
+   6 ( dword * ) => 
+   6 puVar7 [ 0x16 ] => ( pwVar7 + 0xb )
+   6 uVar1 => wVar1
+   5 table_descriptor => channel_record
+   5 * ( short * ) ( table_descriptor + 0xc ) => channel_record -> debounce_counter
+   5 _asg_droop_compensated_error_2000_2000 => all_speed_governor_reference_filter_state . coefficient
+   5 _DAT_008005ae => engine_speed_filter_state . accumulator
+   5 dVar4 => dVar5
+   4 puVar7 => pwVar7
+   4 table_descriptor [ 0xf ] => channel_record -> sample_counter
+   4 undefined2 => word
+   4 puVar3 => channel_record
+   4 puVar4 => peVar3
+   4 puVar2 [ => ( ( int ) pwVar2 +
+   4 puVar2 [ => * ( byte * ) ( ( int ) pwVar2 +
+   4 puVar2 [ 0x14 ] => ( pwVar2 + 10 )
+   4 puVar2 [ 0x14 ] => * ( byte * ) ( pwVar2 + 10 )
+   4 _DAT_0080d63a => high_speed_governor_error_filter . accumulator
+   4 uVar1 => uVar2
+   4 iVar5 => iVar6
+   3 _DAT_0080006a => engine_acceleration_first_stage_filter_state . accumulator
+   3 * ( undefined2 * ) ( table_descriptor + 0xc ) => channel_record -> debounce_counter
+   3 table_descriptor [ 0xe ] => channel_record -> fault_active_flag
+   3 * ( undefined2 * ) ( table_descriptor + 8 ) => channel_record -> filtered_value
+   3 uVar2 => wVar2
+   3 puVar7 [ 0x16 ] => * ( byte * ) ( pwVar7 + 0xb )
+   3 0x18 => 0xc
+   3 undefined4 => sensor_debounce_state_t
+   3 undefined => ema_filter_state_t
+   3 puVar2 => peVar3
+   3 _DAT_0080a91e => alpha_fuel_rate_filter_state . accumulator
+   3  => ) ( short
+   3 _DAT_00800674 => engine_deceleration_rate_filter_state . accumulator
+   3 _DAT_00800670 => engine_deceleration_rate_filter_state . coefficient
+   3 _DAT_0080d636 => high_speed_governor_error_filter . coefficient
+   3 _DAT_00801c4a => power_take_off_reference_filter_state . accumulator
+   3 interpolation_state [ 2 ] => filter -> output
+   3 input_value => new_sample
+   2 undefined => word
+   2 undefined => sensor_debounce_state_t
+   2 * ( undefined2 * ) ( table_descriptor + 0x10 ) => channel_record -> adc_raw_value
+   2 * ( ushort * ) ( table_descriptor + 0x10 ) => channel_record -> adc_raw_value
+   2 * ( short * ) ( table_descriptor => channel_record -> debounce_counter = pwVar7 [ 4 ]
+   2 0xc ) = * ( short * ) ( puVar7 + 8 ) + * ( short * ) ( table_descriptor + 0xc ) => channel_record -> debounce_counter
+   2 ( puVar7 + 10 ) => pwVar7 [ 5 ]
+   2 * ( undefined2 * ) ( puVar7 + 10 ) => pwVar7 [ 5 ]
+   2 * ( word * ) ( table_descriptor + 10 ) => channel_record -> lookup_result
+   2 table_descriptor => & channel_record -> filter
+   2 * => channel_record -> filtered_value = pwVar7 [ 1 ] ;
+   2 undefined2 * => channel_record -> filter
+   2 ( table_descriptor + 8 ) = * ( undefined2 * ) ( puVar7 + 2 ) ; * ( uint * ) ( table_descriptor + 4 ) => . accumulator
+   2 * ( ushort * ) ( puVar7 + 2 ) => pwVar7 [ 1 ]
+   2 * ( undefined2 * ) ( puVar2 + 10 ) => pwVar2 [ 5 ]
+   2 puVar2 => ( int ) & peVar3 [ 1 ] . coefficient
+   2 10 => 2
+   2 ( puVar4 + 0xc ) => & peVar3 [ 1 ] . accumulator
+   2 uVar1 => _current_engine_rpm_filtered
+   2 sVar3 => wVar3
+   2 _DAT_00801c04 => power_take_off_speed_error_filter . accumulator
+   2 undefined8 => word
+   2 x_input => input
+   2 ( ushort * ) interpolation_state [ 1 ] => filter -> coefficient_3
+   2 ( ushort * ) * interpolation_state => filter -> coefficient_1
+   2 interpolation_state [ 3 ] => filter -> output_previous
+   2 ( uint ) lVar2 => uVar4
+   2 iVar2 => dVar2
+   1 _timing_table_4_ptr => engine_acceleration_first_stage_filter_state . coefficient
+   1 _DAT_0080006e => engine_acceleration_second_stage_filter_state . coefficient
+   1 undefined2 uVar2 => word wVar2
+   1  => ( sensor_debounce_state_t * )
+   1 puVar7 [ => * ( char * ) ( ( int ) pwVar7 +
+   1  => channel_record -> sample_counter < *
+   1 table_descriptor [ 0xf ] < => 
+   1 byte => ( int
+   1 puVar7 [ => pwVar7 +
+   1 ' \ x01 ' => 1
+   1 * ( ushort * ) ( puVar7 + 0x10 ) => pwVar7 [ 8 ]
+   1 * ( ushort * ) ( puVar7 + 0xc ) => pwVar7 [ 6 ]
+   1 * ( ushort * ) ( puVar7 + 0xe ) => pwVar7 [ 7 ]
+   1 * ( short * ) ( puVar7 + 6 ) => pwVar7 [ 3 ]
+   1 * => channel_record -> debounce_counter <=
+   1 ( table_descriptor + 0xc ) <= * ( short * ) ( puVar7 + 4 ) => pwVar7 [ 2 ]
+   1 table_descriptor [ 0xe ] => channel_record -> fault_active_flag == 0 ) { local_8 -> input_value = channel_record -> adc_raw_value ; wVar2 = lookupTableInterpolation ( local_8 ) ; channel_record -> loo
+   1 local_8 -> input_value = * ( word * ) ( table_descriptor + 0x10 ) ; uVar2 = lookupTableInterpolation ( local_8 ) ; * ( undefined2 * ) ( table_descriptor + 10 ) = uVar2 ; if ( puVar7 [ 0x13 ] == ' \ 0 
+   1 * ( short * ) ( table_descriptor + 10 ) => channel_record -> lookup_result
+   1 0x16 => 1
+   1  => channel_record + 1 ) {
+   1 undefined4 => channel_record -> filter ) . accumulator = 0 ; ( channel_record -> filter ) . coefficient = pwVar2 ; channel_record -> sample_counter = * ( byte
+   1 puVar3 => pwVar2
+   1 0x16 => 0x17
+   1 ) { puVar3 [ 1 ] = 0 ; * puVar3 = puVar2 ; * ( undefined * ) ( ( int ) puVar3 + 0xf ) = puVar2 [ 0x17 ] => 
+   1 * ( undefined2 * ) ( puVar3 + 3 ) => channel_record -> debounce_counter
+   1 * ( undefined1 * ) ( ( int ) puVar3 + 0xe ) => channel_record -> fault_active_flag
+   1 puVar2 + 0x16 ) { * => 
+   1 uint => ema_filter_state_t
+   1 puVar2 => ( int ) & peVar3 [ 2 ] . accumulator
+   1 4 => 2
+   1  => ) { peVar3 -> accumulator
+   1 ( puVar2 + 8 ) => & peVar3 [ 1 ] . coefficient
+   1 puVar2 => * ( undefined1 * ) ( ( int ) & peVar3
+   1 0xf => 1
+   1  => . accumulator + 3 )
+   1 puVar4 => ( ema_filter_state_t * ) ( ( int ) & peVar3 [ 2 ] . accumulator
+   1 0x16 => 2 )
+   1 _DAT_0080a988 => all_speed_governor_reference_filter_state . accumulator
+   1 _current_engine_rpm_filtered => uVar1
+   1 ushort => uint
+   1 _DAT_008005aa => engine_speed_filter_state . coefficient
+   1 _DAT_00800616 => engine_protection_speed_limit_filter_state . accumulator
+   1 _DAT_00800612 => engine_protection_speed_limit_filter_state . coefficient
+   1 _DAT_0080a91a => alpha_fuel_rate_filter_state . coefficient
+   1 _DAT_00801a32 => pedal_fault_mode_engine_speed_filter_state . coefficient
+   1 0x80820e => & pedal_fault_mode_engine_speed_filter_coefficient
+   1 short sVar3 ; => 
+   1 _retarder_mode3_output_ptr => low_speed_governor_throttle_reference_offset_filter_state . coefficient
+   1 _retarder_mode3_threshold_table => low_speed_governor_error_filter . coefficient
+   1 0x80823e => & low_speed_governor_error_filter_coefficient
+   1 _DAT_00801c00 => power_take_off_speed_error_filter . coefficient
+   1 0x80889a => & power_take_off_speed_error_filter_coefficient
+   1  => word wVar1 ;
+   1 _DAT_00801c46 => power_take_off_reference_filter_state . coefficient
+   1 dword => ema_filter_state_t
+   1 undefined4 in_D1 ; => 
+   1 ( ushort * ) * => 
+   1  => -> coefficient
+   1 ( => &
+   1 + 1 ) => -> accumulator
+   1 * ) ( ( int => 
+   1 + 6 ) => -> accumulator
+   1 [ 1 ] => -> accumulator
+   1 CONCAT44 ( CONCAT22 ( ( short ) ( ( dVar2 + 0x8000 ) * 0x10000 >> 0x10 ) , => 
+   1 ) , in_D1 ) => 
+   1 undefined4 => word
+   1 dword => second_order_filter_state_t
+   1 interpolation_state => filter
+   1  => uint uVar4 ;
+   1 iVar5 => uVar4 = ( uint ) lVar2 ; iVar6
+   1 CONCAT22 => 
+   1 ( short => word
+   1 ( ulonglong ) lVar2 => dVar5
+   1 , ( short ) ( dVar4 >> 0x10 ) ) => 
+   1 void => ema_filter_state_t
+   1 table_descriptor => filter_state
+   1 int iVar2 ; undefined4 in_D1 => dword dVar2
+   1 * ( ushort * * ) table_descriptor => filter_state -> coefficient
+   1 ( ( int ) table_descriptor + 4 ) => & filter_state -> accumulator
+   1 ( ( int ) table_descriptor + 6 ) => filter_state -> accumulator
+   1 * => filter_state -> accumulator = dVar2 ; return
+   1 int * => word
+   1 ( int ) table_descriptor => dVar2
+   1 4 ) = iVar2 ; return CONCAT44 ( ( iVar2 + 0x8000U ) * 0x10000 | iVar2 + 0x8000U => 0x8000
+   1 , in_D1 => 

@@ -1,0 +1,14 @@
+cm848: round 16 closing - docs, stale text, the session archive, verify
+
+- Task 046: the round 16 section (the records, the vocabulary decisions, stages A-D, the leads); the
+  round 5 / 11 / 15 leads that round 16 resolved are marked.
+- Resolved-lead notes in tasks 025 / 027 / 042 / 045. Two global_variables.csv comments that the
+  refresh missed now use the new names, and a duplicate '(was ...)' note is gone.
+- firmware/CLAUDE.md: four wording refreshes for the retired 'vehicle speed limit' vocabulary (the
+  maximum road speeds, state 10, the arbitration, the round 5 note).
+- The PR body, the session README, the todo line; the round 16 scratch in session_folder/round16/; the
+  build / verify logs, the e2m audit and the governor disassembly in the large-files tarball.
+
+./analyze.sh verify: two builds byte-identical (the .cpp differed only in its timestamp, restored).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

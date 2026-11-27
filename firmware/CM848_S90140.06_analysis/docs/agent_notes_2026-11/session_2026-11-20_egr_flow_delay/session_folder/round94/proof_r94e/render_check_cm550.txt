@@ -1,0 +1,14 @@
+96 rows checked, 13 not clean
+   0x00016dd4 cm550_highRpmEngineProtectionStateMachine -> cm550_runEngineWarmupProtection: new renders True, old renders True
+   0x0001709e cm550_fuelTemperatureLimitingSecondary -> cm550_initializeEngineWarmupProtection: new renders True, old renders True
+   0x0001c0d4 cm550_FUN_0001c0d4 -> cm550_convertTorqueDerateTorqueLimitToFuelLimit: new renders True, old renders True
+   0x0001c308 cm550_FUN_0001c308 -> cm550_initializeTorqueDerateTorqueLimit: new renders True, old renders True
+   0x0001cc72 cm550_FUN_0001cc72 -> cm550_calculateThrottle100Fuelings: new renders True, old renders True
+   0x0003452a cm550_FUN_0003452a -> loadHourMetersFromEeprom: new renders True, old renders True
+   0x00033d38 cm550_FUN_00033d38 -> cm550_buildPgn65252ShutdownMessage: new renders True, old renders True
+   0x00033dfa vp44_engineHoursPGN_65252_Builder -> cm550_initializePgn65252ShutdownBuffer: new renders True, old renders True
+   0x000269f2 cm550_FUN_000269f2 -> cm550_calculateMaximumTorqueAtCurrentEngineSpeed: new renders True, old renders True
+   0x00026a2e cm550_FUN_00026a2e -> cm550_initializeMaximumTorqueAtCurrentEngineSpeed: new renders True, old renders True
+   0x00026a7e cm550_fuelDemandTablePointersInit -> cm550_initializeInjectionTimingMisfireLimit: new renders True, old renders True
+   0x00026ab8 cm550_rpmLoadParameterLookup -> cm550_calculateInjectionTimingMisfireLimit: new renders True, old renders True
+   0x00807d32 DCMNLDTB -> duty_cycle_monitor_load_axis: new renders True, old renders True

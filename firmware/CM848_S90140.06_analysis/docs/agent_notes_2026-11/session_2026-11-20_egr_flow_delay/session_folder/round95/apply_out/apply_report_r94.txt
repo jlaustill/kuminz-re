@@ -1,0 +1,559 @@
+CM550 struct table_lookup_1d_arguments_t added (5 fields)
+CM550 struct cm550_j1939_powertrain_messages_received_t added (13 fields)
+CM550 struct trending_sample_record_t added (6 fields)
+CM550 removed global 0x00804a18 hour_meter_stored_ticks_cal (inside a new instance)
+CM550 removed global 0x00804a1c engine_runtime_total_counter_cal (inside a new instance: trending_storage_table_cal[0].boost_pressure)
+CM550 removed global 0x00804a20 runtime_histogram_array_1_cal (inside a new instance: trending_storage_table_cal[0].average_fuel_consumption)
+CM550 removed global 0x00804a86 runtime_histogram_array_2_cal (inside a new instance: trending_storage_table_cal[7].time_stamp)
+CM550 removed global 0x00804bb6 derate_threshold_setpoint_cal (inside a new instance: trending_storage_table_cal[29].average_fuel_consumption)
+CM550 removed global 0x00804bb8 insite_fuel_statistics_output_cal (inside a new instance: trending_storage_table_cal[29].average_load)
+CM550 removed global 0x00804bbc clutch_operating_stats_output_cal (inside a new instance)
+CM550 removed global 0x00804bc0 vehicle_distance_statistics_value_cal (inside a new instance: trending_storage_table_cal[30].boost_pressure)
+CM550 removed global 0x00804bc4 vehicle_distance_clutch_value_cal (inside a new instance: trending_storage_table_cal[30].average_fuel_consumption)
+CM550 removed global 0x00804bc8 fuel_economy_statistics_output_cal (inside a new instance: trending_storage_table_cal[30].time_stamp)
+CM550 removed global 0x00804bca clutch_transitions_per_distance_cal (inside a new instance)
+CM550 removed global 0x00804bcc insite_runtime_hours_accumulator_cal (inside a new instance: trending_storage_table_cal[31].oil_pressure)
+CM550 removed global 0x00804bd0 insite_command_base_value_cal (inside a new instance: trending_storage_table_cal[31].coolant_temperature)
+CM550 removed global 0x00804bd4 insite_idle_hours_accumulator_cal (inside a new instance: trending_storage_table_cal[31].average_load)
+CM550 removed global 0x00804bd8 vehicle_hours_statistics_value_cal (inside a new instance)
+CM550 removed global 0x00804bdc derate_vp44_status_flag_cal (inside a new instance: trending_storage_table_cal[32].boost_pressure)
+CM550 removed global 0x00804d80 overspeed_event_active_flag_cal (inside a new instance: trending_storage_table_cal[62].boost_pressure)
+CM550 removed global 0x00804d82 overspeed_event_buffer_index_cal (inside a new instance: trending_storage_table_cal[62].coolant_temperature)
+CM550 removed global 0x00804d84 engine_startup_inhibit_flag_cal (inside a new instance: trending_storage_table_cal[62].average_fuel_consumption)
+CM550 removed global 0x00804d86 engine_mode_transition_timer_array_cal (inside a new instance: trending_storage_table_cal[62].average_load)
+CM550 removed global 0x00804de0 protection_state2_output_value_cal (inside a new instance: trending_storage_table_cal[69].oil_pressure)
+CM550 removed global 0x00804e76 diagnostic_protection_state_cal (inside a new instance: trending_storage_table_cal[79].time_stamp)
+CM550 removed global 0x00804e78 protection_state_4_emergency_counter_cal (inside a new instance)
+CM550 removed global 0x00804e7a retry_counter_byte_cal (inside a new instance: trending_storage_table_cal[80].oil_pressure)
+CM550 removed global 0x00804e7c diagnostic_pending_code_count_cal (inside a new instance: trending_storage_table_cal[80].boost_pressure)
+CM550 removed global 0x00804e7d diagnostic_pending_code_array_cal (inside a new instance)
+CM550 removed global 0x00804e9c diagnostic_active_code_count_cal (inside a new instance: trending_storage_table_cal[82].average_fuel_consumption)
+CM550 removed global 0x00804e9d diagnostic_active_code_array_cal (inside a new instance)
+CM550 removed global 0x00804ebc diagnostic_pending_list_count_cal (inside a new instance: trending_storage_table_cal[84].time_stamp)
+CM550 removed global 0x00804efc diagnostic_code_status_count_cal (inside a new instance: trending_storage_table_cal[89].coolant_temperature)
+CM550 removed global 0x00804efe diagnostic_code_status_reserved_cal (inside a new instance: trending_storage_table_cal[89].average_fuel_consumption)
+CM550 removed global 0x00804f38 diagnostic_state_machine_counter_cal (inside a new instance: trending_storage_table_cal[93].average_load)
+CM550 removed global 0x00804f3c diagnostic_state_machine_index_cal (inside a new instance)
+CM550 removed global 0x00804f3e diagnostic_queue_iterator_index_cal (inside a new instance: trending_storage_table_cal[94].oil_pressure)
+CM550 removed global 0x00804f40 insite_fault_detail_state_cal (inside a new instance: trending_storage_table_cal[94].boost_pressure)
+CM550 removed global 0x00804f42 insite_fault_detail_index_cal (inside a new instance: trending_storage_table_cal[94].coolant_temperature)
+CM550 removed global 0x00804f44 diagnostic_active_fault_counter_cal (inside a new instance: trending_storage_table_cal[94].average_fuel_consumption)
+CM550 removed global 0x00803ec2 part_number_list (inside a new instance: component_identification_unit_number_cal[7])
+CM550 removed global 0x00803698 governor_rpm_error_init_value (inside a new instance)
+CM550 removed global 0x00800052 timing_table_1_ptr (inside a new instance: acceleration_noise_control_fuel_limit_lookup.y_values_pointer)
+CM550 removed global 0x0080005a timing_table_2_ptr (inside a new instance: acceleration_noise_control_timing_limit_lookup.x_axis_pointer)
+CM550 removed global 0x00800060 timing_table_3_ptr (inside a new instance: acceleration_noise_control_timing_limit_lookup.y_values_pointer)
+CM550 removed global 0x00800106 fuel_blend_lookup_input_2 (inside a new instance)
+CM550 removed global 0x00800108 fuel_blend_table_4_base (inside a new instance: speed_request_blend_weight_by_speed_difference_lookup.x_input)
+CM550 removed global 0x0080010a fuel_blend_table_4_ptr (inside a new instance: speed_request_blend_weight_by_speed_difference_lookup.y_values_pointer)
+CM550 removed global 0x0080010e fuel_blend_table_3_limit (inside a new instance: speed_request_blend_weight_by_speed_difference_lookup.no_interpolation_flag)
+CM550 removed global 0x0080011a io_control_fuel_rpm_input (inside a new instance: all_speed_governor_friction_fuel_lookup.x_axis_pointer)
+CM550 removed global 0x0080011c retarder_lookup_table_ptr (inside a new instance)
+CM550 removed global 0x00800120 io_control_fuel_table_2_lookup_arg (inside a new instance: all_speed_governor_friction_fuel_lookup.y_values_pointer)
+CM550 removed global 0x00800122 retarder_lookup_table_pointer (inside a new instance)
+CM550 removed global 0x00800128 io_control_fuel_calculator_ptr (inside a new instance: all_speed_governor_coolant_fuel_adjustment_lookup.x_axis_pointer)
+CM550 removed global 0x0080012c throttle_validation_state (inside a new instance: all_speed_governor_coolant_fuel_adjustment_lookup.x_input)
+CM550 removed global 0x00800130 throttle_position_raw_value (inside a new instance)
+CM550 removed global 0x00800138 throttle_buffer_validation_value (inside a new instance: all_speed_governor_alternate_droop_lookup.x_axis_pointer)
+CM550 removed global 0x0080013c throttle_buffer_decreasing_value (inside a new instance: all_speed_governor_alternate_droop_lookup.x_input)
+CM550 removed global 0x00800140 throttle_position_validation_buffer (inside a new instance)
+CM550 removed global 0x00800146 derate_fault_counter_2 (inside a new instance: all_speed_governor_droop_lookup.x_axis_pointer)
+CM550 removed global 0x00800148 derate_fault_counter_3 (inside a new instance)
+CM550 removed global 0x0080014a derate_target_snapshot (inside a new instance: all_speed_governor_droop_lookup.x_input)
+CM550 removed global 0x0080014c derate_lower_limit (inside a new instance: all_speed_governor_droop_lookup.y_values_pointer)
+CM550 removed global 0x0080014e derate_upper_limit (inside a new instance)
+CM550 removed global 0x00800150 current_derate_target (inside a new instance: all_speed_governor_droop_lookup.no_interpolation_flag)
+CM550 removed global 0x00800186 anc_duty_cycle_ptr (inside a new instance: engine_retarder_torque_lookup.x_axis_pointer)
+CM550 removed global 0x0080018a cold_start_rpm_snapshot_2 (inside a new instance: engine_retarder_torque_lookup.x_input)
+CM550 removed global 0x0080018c anc_min_active_time_ptr (inside a new instance: engine_retarder_torque_lookup.y_values_pointer)
+CM550 removed global 0x00800190 anc_disable_duration_table_size (inside a new instance: engine_retarder_torque_lookup.no_interpolation_flag)
+CM550 removed global 0x00800196 cold_start_rpm_snapshot_3 (inside a new instance)
+CM550 removed global 0x00800198 anc_altitude_table_1_base (inside a new instance: engine_retarder_full_scale_torque_lookup.x_input)
+CM550 removed global 0x0080019a anc_altitude_table_1_ptr (inside a new instance: engine_retarder_full_scale_torque_lookup.y_values_pointer)
+CM550 removed global 0x0080019e cold_start_sensor_sum_saved (inside a new instance: engine_retarder_full_scale_torque_lookup.no_interpolation_flag)
+CM550 removed global 0x008001ec hour_meter_table_3_ptr (inside a new instance: cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup.x_axis_pointer)
+CM550 removed global 0x008001f0 engine_rpm_histogram_threshold_select (inside a new instance: cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup.x_input)
+CM550 removed global 0x008001f2 hour_meter_table_4_base (inside a new instance: cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup.y_values_pointer)
+CM550 removed global 0x008001f4 hour_meter_table_4_ptr (inside a new instance)
+CM550 removed global 0x00800212 manifold_temp_table_2_type (inside a new instance)
+CM550 removed global 0x00800214 manifold_temp_table_2_x_ptr (inside a new instance: cylinder_pressure_maintenance_timing_per_temperature_degree_lookup.x_input)
+CM550 removed global 0x00800218 speed_based_parameter_lookup_result (inside a new instance)
+CM550 removed global 0x0080021a manifold_temp_table_2_z_ptr (inside a new instance: cylinder_pressure_maintenance_timing_per_temperature_degree_lookup.no_interpolation_flag)
+CM550 removed global 0x00800268 vp44_third_array_1 (inside a new instance: cylinder_balance_real_2_dynamics_compensation_lookup.no_interpolation_flag)
+CM550 removed global 0x0080026c vp44_third_array_2 (inside a new instance: cylinder_balance_imaginary_2_dynamics_compensation_lookup.x_axis_pointer)
+CM550 removed global 0x00800270 vp44_third_array_3 (inside a new instance: cylinder_balance_imaginary_2_dynamics_compensation_lookup.x_input)
+CM550 removed global 0x00800280 engine_rpm_source_max_ptr (inside a new instance: cylinder_balance_engine_speed_breakpoint_lookup.y_values_pointer)
+CM550 removed global 0x00800284 engine_rpm_source_init_value (inside a new instance: cylinder_balance_engine_speed_breakpoint_lookup.no_interpolation_flag)
+CM550 removed global 0x00800288 peak_torque_correction_applied_flag (inside a new instance: cylinder_balance_delta_fueling_breakpoint_lookup.x_axis_pointer)
+CM550 removed global 0x0080028a load_trending_table_1_size (inside a new instance)
+CM550 removed global 0x0080028c load_trending_kickdown_ptr (inside a new instance: cylinder_balance_delta_fueling_breakpoint_lookup.x_input)
+CM550 removed global 0x00800290 fuel_timing_blend_throttle_input (inside a new instance)
+CM550 removed global 0x00800292 load_trending_accel_ptr (inside a new instance: cylinder_balance_delta_fueling_breakpoint_lookup.no_interpolation_flag)
+CM550 removed global 0x00800296 load_trending_lower_limit_size (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_lookup.x_axis_pointer)
+CM550 removed global 0x00800298 load_trending_lower_limit_ptr (inside a new instance)
+CM550 removed global 0x0080029c fuel_timing_intake_temp_input (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_lookup.y_values_pointer)
+CM550 removed global 0x0080029e load_trending_count_min_ptr (inside a new instance)
+CM550 removed global 0x00800604 epf_fuel_limit_table_x_input (inside a new instance: fault_derate_fuel_limit_at_torque_curve_points_lookup.x_input)
+CM550 removed global 0x00800638 arbitrated_fuel_previous (inside a new instance: fault_derate_fuel_limit_by_engine_speed_lookup.x_input)
+CM550 removed global 0x0080063a governor_rpm_error_previous (inside a new instance: fault_derate_fuel_limit_by_engine_speed_lookup.y_values_pointer)
+CM550 removed global 0x00801a42 retarder_mode1_threshold_table (inside a new instance)
+CM550 removed global 0x00801a44 retarder_mode1_data_ptr (inside a new instance: engine_protection_low_oil_pressure_limit_lookup.x_input)
+CM550 removed global 0x00801a48 retarder_mode1_rpm_input (inside a new instance)
+CM550 removed global 0x00801a4a retarder_mode1_output_ptr (inside a new instance: engine_protection_low_oil_pressure_limit_lookup.no_interpolation_flag)
+CM550 removed global 0x00801a4e retarder_mode2_threshold_table (inside a new instance: engine_protection_very_low_oil_pressure_limit_lookup.x_axis_pointer)
+CM550 removed global 0x00801a50 retarder_mode2_data_ptr (inside a new instance)
+CM550 removed global 0x00801a54 retarder_mode2_rpm_input (inside a new instance: engine_protection_very_low_oil_pressure_limit_lookup.y_values_pointer)
+CM550 removed global 0x00801a56 retarder_mode2_output_ptr (inside a new instance)
+CM550 removed global 0x0080db26 no_load_fueling_curve_rpm_input (inside a new instance: friction_fuel_by_engine_speed_lookup.x_input)
+CM550 removed global 0x0080725a output_control_decrement_step (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[3])
+CM550 removed global 0x0080725c diagnostic_fuel_override_param (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[4])
+CM550 removed global 0x0080725e vp44_injection_timing_limit (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[5])
+CM550 removed global 0x00807260 output_timing_interpolation_base_ptr (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[6])
+CM550 removed global 0x00807262 output_control_fuel_threshold (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[7])
+CM550 removed global 0x00807264 output_control_cycle_limit (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[8])
+CM550 removed global 0x00807266 output_control_timing_reset_countdown (inside a new instance: all_speed_governor_coolant_fuel_adjustment_axis[9])
+CM550 removed global 0x0080726c output_sequence_rpm_threshold (inside a new instance: all_speed_governor_coolant_fuel_adjustment_values[2])
+CM550 removed global 0x0080726e output_sequence_rpm_hysteresis (inside a new instance: all_speed_governor_coolant_fuel_adjustment_values[3])
+CM550 removed global 0x00807270 output_control_rpm_offset (inside a new instance: all_speed_governor_coolant_fuel_adjustment_values[4])
+CM550 removed global 0x00807272 throttle_position_threshold_for_output (inside a new instance: all_speed_governor_coolant_fuel_adjustment_values[5])
+CM550 removed global 0x00807274 output_control_throttle_limit (inside a new instance: all_speed_governor_coolant_fuel_adjustment_values[6])
+CM550 removed global 0x00807276 output_control_rpm_limit (inside a new instance: all_speed_governor_coolant_fuel_adjustment_values[7])
+CM550 removed global 0x00807386 rpm_derate_scale_factor (inside a new instance: cylinder_balance_delta_fueling_breakpoint_axis[3])
+CM550 removed global 0x00807388 rpm_derate_base_offset (inside a new instance: cylinder_balance_delta_fueling_breakpoint_axis[4])
+CM550 removed global 0x0080738a derate_rpm_adjustment_max (inside a new instance: cylinder_balance_delta_fueling_breakpoint_axis[5])
+CM550 removed global 0x0080738c derate_rpm_adjustment_min (inside a new instance: cylinder_balance_delta_fueling_breakpoint_axis[6])
+CM550 removed global 0x00807390 rpm_derate_percent_lower (inside a new instance: cylinder_balance_delta_fueling_breakpoint_values[1])
+CM550 removed global 0x00807392 rpm_derate_lower_threshold (inside a new instance: cylinder_balance_delta_fueling_breakpoint_values[2])
+CM550 removed global 0x00807394 rpm_derate_upper_threshold (inside a new instance: cylinder_balance_delta_fueling_breakpoint_values[3])
+CM550 removed global 0x00807396 rpm_derate_calc_offset_1 (inside a new instance: cylinder_balance_delta_fueling_breakpoint_values[4])
+CM550 removed global 0x00807398 rpm_derate_calc_offset_2 (inside a new instance: cylinder_balance_delta_fueling_breakpoint_values[5])
+CM550 removed global 0x0080739a rpm_derate_calc_multiplier (inside a new instance: cylinder_balance_delta_fueling_breakpoint_values[6])
+CM550 removed global 0x0080739e vp44_feedback_pulse_value (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_axis[1])
+CM550 removed global 0x008073a0 vp44_can_200_response_byte_0 (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_axis[2])
+CM550 removed global 0x008073a1 vp44_can_200_response_byte_1 (inside a new instance)
+CM550 removed global 0x008073a2 derate_output_value (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_axis[3])
+CM550 removed global 0x008073a8 lift_pump_fuel_scale_factor (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_axis[6])
+CM550 removed global 0x008073ac lift_pump_timing_increase_limit (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_values[1])
+CM550 removed global 0x008073ae lift_pump_timing_decrease_limit (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_values[2])
+CM550 removed global 0x008073b0 vp44_can_msg_upper_threshold (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_values[3])
+CM550 removed global 0x008073b2 vp44_can_msg_lower_threshold (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_values[4])
+CM550 removed global 0x008073b4 vp44_fso_bit0_debounce_threshold (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_values[5])
+CM550 removed global 0x008073b5 fso_fault_debounce_threshold (inside a new instance)
+CM550 removed global 0x008073b6 vp44_fso_bit0_fuel_threshold (inside a new instance: cylinder_balance_filtered_fueling_breakpoint_values[6])
+CM550 removed global 0x008071a6 shutdown_limit_selector_param (inside a new instance: fault_derate_fuel_limit_by_engine_speed_axis[24])
+CM550 removed global 0x008071aa timer_capture_init_value (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[1])
+CM550 removed global 0x008071ac clutch_rpm_low_value (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[2])
+CM550 removed global 0x008071ae fuel_temp_throttle_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[3])
+CM550 removed global 0x008071b0 boost_pressure_offset_factor (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[4])
+CM550 removed global 0x008071b2 boost_pressure_interp_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[5])
+CM550 removed global 0x008071b4 boost_pressure_decrement_rate (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[6])
+CM550 removed global 0x008071b6 boost_pressure_stats_threshold_71b6 (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[7])
+CM550 removed global 0x008071b8 boost_pressure_smoke_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[8])
+CM550 removed global 0x008071ba boost_pressure_state_6_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[9])
+CM550 removed global 0x008071bc boost_pressure_state_3_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[10])
+CM550 removed global 0x008071c6 derate_event_threshold_time (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[15])
+CM550 removed global 0x008071ca clutch_slip_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[17])
+CM550 removed global 0x008071ce fuel_temp_exceedance_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[19])
+CM550 removed global 0x008071d0 fuel_limit_near_threshold (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[20])
+CM550 removed global 0x008071d4 boost_pressure_stats_threshold_71d4 (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[22])
+CM550 removed global 0x008071d6 vp44_derate_bit8_limit (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[23])
+CM550 removed global 0x008071d8 vp44_derate_bit4_limit (inside a new instance: fault_derate_fuel_limit_by_engine_speed_values[24])
+CM550 removed global 0x0080895a retarder_torque_point_4_value (inside a new instance: power_take_off_gain_adjustment_axis[1])
+CM550 removed global 0x0080895c retarder_torque_point_5_value (inside a new instance: power_take_off_gain_adjustment_axis[2])
+CM550 removed global 0x0080895e vp44_sensor_value_2 (inside a new instance: power_take_off_gain_adjustment_axis[3])
+CM550 removed global 0x00808962 insite_parameter_table_start (inside a new instance: power_take_off_gain_adjustment_axis[5])
+CM550 removed global 0x008088b2 pwm_output_period_multiplier (inside a new instance: power_take_off_governor_derivative_gain_adjustment_axis[1])
+CM550 removed global 0x008088b3 pwm_output_channel_select (inside a new instance)
+CM550 removed global 0x008088b4 pwm_output_enable_flag (inside a new instance: power_take_off_governor_derivative_gain_adjustment_axis[2])
+CM550 removed global 0x008088c0 redundant_sensor_compare_threshold (inside a new instance: power_take_off_governor_derivative_gain_adjustment_axis[8])
+CM550 removed global 0x008088c3 can_controller_1_status_byte (inside a new instance)
+CM550 removed global 0x008088c5 can_controller_1_filter_byte_1 (inside a new instance)
+CM550 removed global 0x008088c7 can_controller_1_filter_byte_2 (inside a new instance)
+CM550 removed global 0x008088c9 can_controller_1_filter_byte_3 (inside a new instance)
+CM550 removed global 0x008088ca can_controller_1_baud_byte_0 (inside a new instance: power_take_off_governor_derivative_gain_adjustment_axis[13])
+CM550 removed global 0x008088cb can_controller_1_baud_byte_1 (inside a new instance)
+CM550 removed global 0x00808924 oil_pressure_rpm_limit_step (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[2])
+CM550 removed global 0x00808926 oil_pressure_rate_limit_step (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[3])
+CM550 removed global 0x0080892a rpm_range_upper_limit (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[5])
+CM550 removed global 0x0080892c rpm_range_lower_limit (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[6])
+CM550 removed global 0x00808932 oil_pressure_validation_threshold (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[9])
+CM550 removed global 0x00808934 pwm_output_scaling_factor (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[10])
+CM550 removed global 0x00808936 pwm_output_2_scaling_factor (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[11])
+CM550 removed global 0x00808938 pwm_output_3_scaling_factor (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[12])
+CM550 removed global 0x0080893a pwm_output_4_scaling_factor (inside a new instance: power_take_off_governor_proportional_gain_adjustment_axis[13])
+CM550 removed global 0x008071e2 vp44_smoke_limiter_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[1])
+CM550 removed global 0x008071e4 vp44_fault_counter_threshold_1 (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[2])
+CM550 removed global 0x008071e6 vp44_fuel_temp_delta_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[3])
+CM550 removed global 0x008071e8 vp44_fault_tolerance_factor (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[4])
+CM550 removed global 0x008071ea vp44_throttle_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[5])
+CM550 removed global 0x008071ee vp44_fault_counter_limit_1 (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[7])
+CM550 removed global 0x008071f0 vp44_table_compare_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[8])
+CM550 removed global 0x008071f2 vp44_protection_recovery_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[9])
+CM550 removed global 0x008071f4 vp44_clutch_rpm_delta_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_axis[10])
+CM550 removed global 0x008071f8 vp44_fault_counter_limit_2 (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_values[1])
+CM550 removed global 0x00807204 oil_pressure_throttle_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_values[7])
+CM550 removed global 0x00807206 oil_pressure_debounce_threshold (inside a new instance: wet_stack_timing_by_intake_manifold_temperature_values[8])
+CM550 removed global 0x00806d40 linearization_table_ch15_y_axis (inside a new instance: intake_manifold_temperature_linearization_axis[3])
+CM550 removed global 0x00806d46 linearization_table_ch16_x_axis (inside a new instance: intake_manifold_temperature_linearization_axis[6])
+CM550 removed global 0x00806d4c linearization_table_ch16_y_axis (inside a new instance: intake_manifold_temperature_linearization_axis[9])
+CM550 removed global 0x00806d52 linearization_table_ch17_x_axis (inside a new instance: intake_manifold_temperature_linearization_axis[12])
+CM550 removed global 0x00806d58 linearization_table_ch17_y_axis (inside a new instance: intake_manifold_temperature_linearization_axis[15])
+CM550 removed global 0x00806d5e linearization_table_ch18_x_axis (inside a new instance: intake_manifold_temperature_linearization_axis[18])
+CM550 removed global 0x00806d64 linearization_table_ch18_y_axis (inside a new instance: intake_manifold_temperature_linearization_axis[21])
+CM550 removed global 0x00806d6a linearization_table_ch19_x_axis (inside a new instance: intake_manifold_temperature_linearization_axis[24])
+CM550 removed global 0x00806d70 linearization_table_ch19_y_axis (inside a new instance: intake_manifold_temperature_linearization_values[1])
+CM550 removed global 0x00806d76 linearization_table_ch20_x_axis (inside a new instance: intake_manifold_temperature_linearization_values[4])
+CM550 removed global 0x00806d9c linearization_table_ch20_y_axis (inside a new instance: intake_manifold_temperature_linearization_values[23])
+CM550 removed global 0x00806dc2 linearization_table_ch21_x_axis (inside a new instance: fuel_temperature_linearization_axis[16])
+CM550 removed global 0x00806dd4 linearization_table_ch21_y_axis (inside a new instance: fuel_temperature_linearization_values[3])
+CM550 removed global 0x00806de6 linearization_table_ch22_x_axis (inside a new instance: fuel_temperature_linearization_values[12])
+CM550 removed global 0x00806dee linearization_table_ch22_y_axis (inside a new instance: fuel_temperature_linearization_values[16])
+CM550 removed global 0x00806df6 linearization_table_ch23_x_axis (inside a new instance: fuel_temperature_linearization_values[20])
+CM550 removed global 0x00806dfc linearization_table_ch23_y_axis (inside a new instance: coolant_level_linearization_axis[1])
+CM550 removed global 0x00806e02 linearization_table_ch24_x_axis (inside a new instance: coolant_level_linearization_axis[4])
+CM550 removed global 0x00806e08 linearization_table_ch24_y_axis (inside a new instance: coolant_level_linearization_axis[7])
+CM550 removed global 0x00806e0e linearization_table_ch25_x_axis (inside a new instance: coolant_level_linearization_values[1])
+CM550 removed global 0x00806e14 linearization_table_ch25_y_axis (inside a new instance: coolant_level_linearization_values[4])
+CM550 removed global 0x00806e1a fuel_limit_rpm_error_offset (inside a new instance: coolant_level_linearization_values[7])
+CM550 removed global 0x00806e1c diagnostic_exit_limit (inside a new instance: coolant_level_linearization_values[8])
+CM550 removed global 0x00806fa0 timing_protection_flags_param (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[9])
+CM550 removed global 0x00806fa2 timing_protection_blend_base (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[10])
+CM550 removed global 0x00806fa4 timing_protection_blend_increment (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[11])
+CM550 removed global 0x00806fa6 fuel_mode_transition_timeout_value (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[12])
+CM550 removed global 0x00806fa8 fuel_timing_mode_arbitration_1 (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[13])
+CM550 removed global 0x00806fac fuel_timing_mode_arbitration_2 (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[15])
+CM550 removed global 0x00806fae fuel_source_mode_11_timeout_value (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[16])
+CM550 removed global 0x00806fb2 timing_blend_threshold (inside a new instance: cruise_control_switch_multiplexer_linearization_axis[18])
+CM550 removed global 0x0080d04c io_control_active_mask (inside a new instance)
+CM550 removed global 0x00801d48 j1939_received_pgn61442_byte_5 (inside a new instance: j1939_powertrain_messages_received.etc1_status_byte_5)
+CM550 removed global 0x00801d4c j1939_received_tsc1_control_byte (inside a new instance: j1939_powertrain_messages_received.tsc1_control_byte)
+CM550 removed global 0x00801d4d j1939_received_tsc1_requested_speed (inside a new instance: j1939_powertrain_messages_received.tsc1_requested_speed)
+CM550 removed global 0x00801d4f j1939_received_tsc1_requested_torque (inside a new instance: j1939_powertrain_messages_received.tsc1_requested_torque)
+CM550 removed global 0x00801d54 tsc1_accepted_priority (inside a new instance: j1939_powertrain_messages_received.tsc1_accepted_priority)
+CM550 removed global 0x00801d56 tsc1_accepted_requested_speed (inside a new instance: j1939_powertrain_messages_received.tsc1_accepted_requested_speed)
+CM550 removed global 0x00801d58 tsc1_accepted_requested_torque (inside a new instance: j1939_powertrain_messages_received.tsc1_accepted_requested_torque)
+proposed names rewritten in comments: 15
+N1 CM550 function 0x00030498 cm550_FUN_00030498 -> cm550_countEngineBrakeTime [standalone]
+N1 CM550 function 0x000306ca cm550_FUN_000306ca -> cm550_updateTripInformation [counterpart]
+N1 CM550 function 0x00030a5e cm550_FUN_00030a5e -> cm550_flagTripInformationPowerDownDataLoss [counterpart]
+N1 CM550 function 0x00030b0e cm550_FUN_00030b0e -> cm550_emptyStubFunction11 [standalone]
+N1 CM550 function 0x00031496 cm550_FUN_00031496 -> cm550_evaluateTrendingTriggers [standalone]
+N1 CM550 function 0x000315be cm550_FUN_000315be -> cm550_runTrendingIntervalAndStoreSamples [standalone]
+N1 CM550 function 0x00031a68 cm550_FUN_00031a68 -> cm550_restartTrendingAfterEngineRebuild [standalone]
+N1 CM550 function 0x00031bce cm550_FUN_00031bce -> cm550_buildPgn65269AmbientConditionsMessage [counterpart]
+N1 CM550 function 0x00031ed2 cm550_FUN_00031ed2 -> cm550_initializePgn65265CruiseControlVehicleSpeedHandler [counterpart]
+N1 CM550 function 0x00032052 cm550_FUN_00032052 -> cm550_buildPgn65259ComponentIdentificationMessage [counterpart]
+N1 CM550 function 0x00032c22 vp44_FUN_00032c22 -> cm550_initializePgn61441ElectronicBrakeController1Buffer [counterpart]
+N1 CM550 function 0x00033164 vp44_FUN_00033164 -> cm550_buildPgn65263EngineFluidLevelPressure1Message [counterpart]
+N1 CM550 function 0x000333d6 cm550_FUN_000333d6 -> cm550_hasWordIncreasedOrDroppedToZero [counterpart]
+N1 CM550 function 0x00033460 cm550_FUN_00033460 -> cm550_hasByteIncreasedOrDroppedToZero [counterpart]
+N1 CM550 function 0x000334ec cm550_FUN_000334ec -> sendPgn65251EngineConfiguration1OnChange [twin]
+N1 CM848 function 0x0001b778 cm848_sendPgn65251EngineConfiguration1OnChange -> sendPgn65251EngineConfiguration1OnChange [twin of CM550 0x000334ec]
+N1 CM550 function 0x0003366a cm550_FUN_0003366a -> sendPgn65251EngineConfiguration1Message [twin]
+N1 CM848 function 0x0001b730 cm848_sendPgn65251EngineConfiguration1Message -> sendPgn65251EngineConfiguration1Message [twin of CM550 0x0003366a]
+N1 CM550 function 0x00033716 cm550_FUN_00033716 -> cm550_buildPgn65253EngineHoursRevolutionsMessage [standalone]
+N1 CM550 function 0x00033754 cm550_FUN_00033754 -> cm550_initializePgn65253EngineHoursRevolutionsHandler [standalone]
+N1 CM550 function 0x000337c4 cm550_FUN_000337c4 -> cm550_buildPgn65262EngineTemperature1Message [counterpart]
+N1 CM550 function 0x00033a1e cm550_FUN_00033a1e -> initializePgn65213FanDrive1Buffer [twin]
+N1 CM848 function 0x00026480 cm848_initializePgn65213FanDrive1Buffer -> initializePgn65213FanDrive1Buffer [twin of CM550 0x00033a1e]
+N1 CM550 function 0x00033a62 cm550_FUN_00033a62 -> cm550_buildPgn65257FuelConsumptionMessage [standalone]
+N1 CM550 function 0x00033e58 cm550_FUN_00033e58 -> cm550_buildPgn65270InletExhaustConditions1Message [counterpart]
+N1 CM550 function 0x00033f5a cm550_FUN_00033f5a -> cm550_buildPgn65264PowerTakeOffInformationMessage [counterpart]
+N1 CM550 function 0x000341e6 cm550_FUN_000341e6 -> cm550_initializePgn65249RetarderConfigurationBuffer [counterpart]
+N1 CM550 function 0x00034232 cm550_FUN_00034232 -> cm550_buildPgn65248VehicleDistanceMessage [counterpart]
+N1 CM550 function 0x00034394 cm550_FUN_00034394 -> cm550_buildPgn65255VehicleHoursMessage [standalone]
+N1 CM550 function 0x00034440 cm550_FUN_00034440 -> cm550_initializePgn65260VehicleIdentificationHandler [counterpart]
+N1 CM550 function 0x000344ce vp44_FUN_000344ce -> cm550_initializePgn65279WaterInFuelIndicatorBuffer [counterpart]
+N1 CM550 function 0x00034d52 vp44_FUN_00034d52 -> cm550_calculateWetStackTimingAdvance [standalone]
+N1 CM848 function 0x0001b730 sendPgn65251EngineConfiguration1Message: name kept
+N1 CM848 function 0x0001b778 sendPgn65251EngineConfiguration1OnChange: name kept
+N1 CM848 function 0x00026480 initializePgn65213FanDrive1Buffer: name kept
+N1 CM550 global 0x0080615e (no row)  -> trip_engine_brake_time dword
+N1 CM550 global 0x00806176 (no row)  -> lifetime_engine_brake_time dword
+N1 CM550 global 0x0080614e fuel_statistics_overflow_flags dword -> trip_information_fault_status dword
+N1 CM550 global 0x0080de66 (no row) word -> trip_counters_reset_pending_flag word
+N1 CM550 global 0x00806162 (no row)  -> trip_engine_run_time dword
+N1 CM550 global 0x0080613a fuel_statistics_sample_counter dword -> lifetime_engine_run_time dword
+N1 CM550 global 0x0080617e (no row)  -> trip_electronic_smart_power_high_horsepower_time dword
+N1 CM550 global 0x00806182 (no row)  -> lifetime_electronic_smart_power_high_horsepower_time dword
+N1 TYPE CM550 0x0080de64: word -> TRIP_INFORMATION_ENGINE_STATE (same width, more specific)
+N1 CM550 global 0x0080de64 fuel_statistics_operating_mode word -> trip_information_engine_state TRIP_INFORMATION_ENGINE_STATE
+N1 CM550 global 0x00804fc0 (no row)  -> total_engine_operating_time dword
+N1 CM550 global 0x0080401e (no row)  -> engine_run_time_tool_offset_cal dword
+N1 CM550 global 0x00804fa0 (no row)  -> total_fuel_consumed dword
+N1 CM550 global 0x00804fa4 (no row)  -> trip_fuel_consumed dword
+N1 CM550 global 0x00808a7a user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100 word -> trending_requested_sample_count word
+N1 CM550 global 0x00808a7c (no row)  -> trending_sample_interval_hours word
+N1 CM550 global 0x00808a7e time_that_trigger_must_be_satisfied_to_allow_trending_data_co_0_3600 word -> trending_trigger_hold_time word
+N1 CM550 global 0x00808a80 (no row)  -> trending_engine_speed_upper_limit word
+N1 CM550 global 0x00808a82 rpm_divisor_value word -> trending_engine_speed_lower_limit word
+N1 CM550 global 0x00808a84 upper_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5 word -> trending_engine_load_upper_limit word
+N1 CM550 global 0x00808a86 lower_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5 word -> trending_engine_load_lower_limit word
+N1 CM550 global 0x00808a88 (no row)  -> trending_intake_manifold_temperature_upper_limit word
+N1 CM550 global 0x00808a8a (no row)  -> trending_intake_manifold_temperature_lower_limit word
+N1 CM550 global 0x00808a8c (no row)  -> trending_coolant_temperature_upper_limit word
+N1 CM550 global 0x00808a8e (no row)  -> trending_coolant_temperature_lower_limit word
+N1 CM550 global 0x00801e98 (no row)  -> trending_engine_speed_trigger_satisfied_flag word
+N1 CM550 global 0x00801e9a (no row)  -> trending_engine_load_trigger_satisfied_flag word
+N1 CM550 global 0x00801e9c (no row)  -> trending_intake_manifold_temperature_trigger_satisfied_flag word
+N1 CM550 global 0x00801e9e (no row)  -> trending_coolant_temperature_trigger_satisfied_flag word
+N1 CM550 global 0x00801ea0 (no row)  -> trending_minute_divider_counter word
+N1 CM550 global 0x00801ea2 (no row)  -> trending_sample_ready_flag byte
+N1 CM550 global 0x008049ea (no row)  -> trending_engine_rebuild_flag_cal word
+N1 CM550 global 0x008049ec calibration_validator_ptr_cal dword -> trending_engine_rebuild_time_stamp_cal dword
+N1 CM550 global 0x008049f0 (no row)  -> trending_sample_time_stamp_cal dword
+N1 CM550 global 0x008049f4 trending_presample_interval_counter_cal word -> trending_interval_elapsed_minutes_cal word
+N1 CM550 global 0x008049f6 (no row)  -> trending_interval_window_length_cal word
+N1 CM550 global 0x008049f8 trending_sample_phase_counter_cal word -> trending_interval_window_elapsed_minutes_cal word
+N1 CM550 global 0x008049fe (no row)  -> trending_sample_count_before_rebuild_cal word
+N1 CM550 global 0x00804a04 trending_data_capture_active_cal word -> trending_interval_window_active_flag_cal word
+N1 CM550 global 0x00804a06 (no row)  -> trending_interval_window_active_previous_cal word
+N1 CM550 global 0x00804a08 (no row)  -> trending_all_triggers_satisfied_flag_cal word
+N1 CM550 global 0x00804a0a output_control_countdown_timer_cal word -> trending_load_sample_count_cal word
+N1 CM550 global 0x00804a0c engine_run_counter_snapshot_1_cal dword -> trending_load_accumulator_cal dword
+N1 CM550 global 0x00804a10 engine_run_counter_snapshot_2_cal word -> trending_interval_average_load_cal word
+N1 CM550 global 0x00804a12 (no row)  -> trending_torque_curve_maximum_fueling_cal word
+N1 CM550 global 0x00804a14 engine_run_counter_snapshot_0_cal word -> trending_interval_average_fuel_consumption_cal word
+N1 CM550 global 0x00804a16 (no row)  -> trending_lifetime_fuel_used_snapshot_cal dword
+N1 CM550 global 0x00804a1a histogram_stored_ticks_cal undefined -> trending_storage_table_cal trending_sample_record_t[100]
+N1 CM550 global 0x00801f12 (no row)  -> j1939_pgn65259_payload byte[40]
+N1 CM550 global 0x00803dcc (no row)  -> component_identification_make_cal byte[5]
+N1 CM550 global 0x00803dd1 (no row)  -> component_identification_model_cal byte[17]
+N1 CM550 global 0x00803de2 (no row)  -> component_identification_serial_number_cal byte[4]
+N1 CM550 global 0x00803ebb (no row)  -> component_identification_unit_number_cal byte[10]
+N1 CM550 global 0x00803e7f (no row)  -> vehicle_vin_string_cal byte[20]
+N1 CM550 global 0x00801eca (no row)  -> j1939_pgn65269_barometric_pressure byte
+N1 CM550 global 0x008034eb (no row)  -> j1939_pgn65263_engine_oil_pressure byte
+N1 CM550 global 0x00803548 (no row)  -> j1939_pgn65253_total_engine_hours dword
+N1 CM550 global 0x00803560 (no row)  -> j1939_pgn65262_engine_coolant_temperature byte
+N1 CM550 global 0x00803561 (no row)  -> j1939_pgn65262_fuel_temperature byte
+N1 CM550 global 0x00803562 (no row)  -> j1939_pgn65262_engine_oil_temperature word
+N1 CM550 global 0x008035a8 (no row)  -> j1939_pgn65257_trip_fuel dword
+N1 CM550 global 0x008035ac (no row)  -> j1939_pgn65257_total_fuel_used dword
+N1 CM550 global 0x0080360f (no row)  -> j1939_pgn65270_boost_pressure byte
+N1 CM550 global 0x00803610 (no row)  -> j1939_pgn65270_intake_manifold_temperature byte
+N1 CM550 global 0x00803629 (no row)  -> j1939_pgn65264_power_take_off_set_speed byte[2]
+N1 CM550 global 0x0080362b (no row)  -> j1939_pgn65264_enable_and_remote_switches_byte byte
+N1 CM550 global 0x0080362c (no row)  -> j1939_pgn65264_set_and_resume_switches_byte byte
+N1 CM550 global 0x00803662 (no row)  -> j1939_pgn65248_trip_distance dword
+N1 CM550 global 0x00803666 (no row)  -> j1939_pgn65248_total_vehicle_distance dword
+N1 CM550 global 0x00803692 protection_flag_source_2 undefined -> j1939_pgn65255_total_vehicle_hours dword
+N1 CM550 global 0x00803696 (no row)  -> j1939_pgn65255_total_power_take_off_hours dword
+N1 CM550 global 0x008036ac (no row)  -> j1939_pgn65279_water_in_fuel_indicator_byte byte
+N1 CM550 global 0x0080347a vp44_lift_pump_table_2_size undefined -> j1939_pgn61441_payload_byte_1 byte
+N1 CM550 global 0x0080347c vp44_lift_pump_table_2_ptr undefined -> j1939_pgn61441_payload_byte_3 byte
+N1 CM550 global 0x00808ac4 (no row)  -> wet_stack_timing_advance_minimum word
+N1 CM550 global 0x008071de vp44_fault_counter_threshold_2 word -> wet_stack_timing_ramp_rate word
+N1 CM550 global 0x0080dee4 wet_stack_adjusted_timing_floor_0_120 word -> wet_stack_timing_advance word
+N1 CM550 enum TRIP_INFORMATION_ENGINE_STATE created (size 2) with 0: TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF
+N1 CM550 enum TRIP_INFORMATION_ENGINE_STATE 1: new member TRIP_INFORMATION_ENGINE_STATE_IDLE
+N1 CM550 enum TRIP_INFORMATION_ENGINE_STATE 2: new member TRIP_INFORMATION_ENGINE_STATE_POWER_TAKE_OFF
+N1 CM550 enum TRIP_INFORMATION_ENGINE_STATE 3: new member TRIP_INFORMATION_ENGINE_STATE_DRIVING
+N2 CM550 function 0x00034de0 lookupTableInterpolation -> cm550_lookupTableInterpolation [counterpart]
+N2 CM550 global 0x0080004a (no row)  -> acceleration_noise_control_fuel_limit_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800058 timing_table_2_base undefined -> acceleration_noise_control_timing_limit_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800102 fuel_blend_table_3_ptr undefined -> speed_request_blend_weight_by_speed_difference_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800118 (no row)  -> all_speed_governor_friction_fuel_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800126 io_control_fuel_table_param undefined -> all_speed_governor_coolant_fuel_adjustment_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800136 (no row)  -> all_speed_governor_alternate_droop_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800144 derate_fault_counter_1 undefined -> all_speed_governor_droop_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800184 anc_altitude_table_1_size undefined -> engine_retarder_torque_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800192 anc_disable_duration_ptr undefined -> engine_retarder_full_scale_torque_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x008001ea hour_meter_table_3_size undefined -> cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080020e manifold_temp_table_1_z_ptr undefined -> cylinder_pressure_maintenance_timing_per_temperature_degree_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080024e (no row)  -> cylinder_balance_threshold_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080025c (no row)  -> cylinder_balance_real_2_dynamics_compensation_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080026a (no row)  -> cylinder_balance_imaginary_2_dynamics_compensation_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800278 (no row)  -> cylinder_balance_engine_speed_breakpoint_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800286 (no row)  -> cylinder_balance_delta_fueling_breakpoint_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800294 (no row)  -> cylinder_balance_filtered_fueling_breakpoint_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080058e (no row)  -> engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080059c (no row)  -> engine_warmup_protection_fuel_limit_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x008005b4 (no row)  -> crank_wet_stack_timing_by_intake_manifold_temperature_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x008005fe (no row)  -> fault_derate_fuel_limit_at_torque_curve_points_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00800632 (no row)  -> fault_derate_fuel_limit_by_engine_speed_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x008006aa (no row)  -> double_pulsing_fueling_mapping_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080071e (no row)  -> high_speed_governor_derivative_gain_adjustment_multiplier_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080072c (no row)  -> high_speed_governor_proportional_gain_adjustment_multiplier_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080073a (no row)  -> high_speed_governor_integral_gain_adjustment_multiplier_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801a3e (no row)  -> engine_protection_low_oil_pressure_limit_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801a4c (no row)  -> engine_protection_very_low_oil_pressure_limit_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801c0e (no row)  -> power_take_off_gain_adjustment_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801c1c (no row)  -> power_take_off_governor_derivative_gain_adjustment_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801c2a (no row)  -> power_take_off_governor_integral_gain_adjustment_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801c38 (no row)  -> power_take_off_governor_proportional_gain_adjustment_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801e30 (no row)  -> engine_retarder_torque_stage_1_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801e3e (no row)  -> engine_retarder_torque_stage_2_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801e4c (no row)  -> engine_retarder_torque_stage_3_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801e5a (no row)  -> engine_retarder_torque_stage_4_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x00801e68 (no row)  -> engine_retarder_torque_stage_5_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x008036c6 (no row)  -> wet_stack_timing_by_intake_manifold_temperature_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x008036d4 (no row)  -> wet_stack_timing_by_coolant_temperature_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080db20 no_load_fueling_curve_descriptor undefined -> friction_fuel_by_engine_speed_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080db2e (no row)  -> friction_fuel_correction_by_coolant_temperature_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a792 (no row)  -> intake_manifold_temperature_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7a0 (no row)  -> fuel_temperature_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7ae (no row)  -> coolant_level_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7bc (no row)  -> fuel_pressure_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7ca (no row)  -> oil_pressure_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7d8 (no row)  -> boost_pressure_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7e6 (no row)  -> coolant_temperature_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a7f4 (no row)  -> ambient_air_temperature_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a802 (no row)  -> power_steering_temperature_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a810 (no row)  -> exhaust_pressure_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a81e (no row)  -> sampled_throttle_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a82c (no row)  -> remote_throttle_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a83a (no row)  -> ambient_air_pressure_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a848 (no row)  -> battery_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a856 (no row)  -> engine_speed_sensor_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a864 (no row)  -> throttle_position_sensor_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a872 (no row)  -> vehicle_connector_sensor_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a880 (no row)  -> engine_connector_sensor_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a88e (no row)  -> frequency_throttle_input_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a89c (no row)  -> cruise_control_switch_multiplexer_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a8aa (no row)  -> water_in_fuel_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a8b8 (no row)  -> egr_current_feedback_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a8c6 (no row)  -> programming_pulse_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a8d4 (no row)  -> high_side_gate_bias_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0080a8e2 (no row)  -> operational_amplifier_and_comparator_supply_voltage_linearization_lookup table_lookup_1d_arguments_t
+N2 CM550 global 0x0006009e (no row)  -> acceleration_noise_control_fuel_limit_axis word[10]
+N2 CM550 global 0x000600b2 (no row)  -> acceleration_noise_control_fuel_limit_values word[10]
+N2 CM550 global 0x000600c6 (no row)  -> acceleration_noise_control_timing_limit_axis word[10]
+N2 CM550 global 0x000600da (no row)  -> acceleration_noise_control_timing_limit_values word[10]
+N2 CM550 global 0x00807acc (no row)  -> speed_request_blend_weight_by_speed_difference_axis word[6]
+N2 CM550 global 0x00807ad8 (no row)  -> speed_request_blend_weight_by_speed_difference_values word[6]
+N2 CM550 global 0x00807230 (no row)  -> all_speed_governor_friction_fuel_axis word[9]
+N2 CM550 global 0x00807242 (no row)  -> all_speed_governor_friction_fuel_values word[9]
+N2 CM550 global 0x00807254 (no row)  -> all_speed_governor_coolant_fuel_adjustment_axis word[10]
+N2 CM550 global 0x00807268 retarder_input_threshold_for_state undefined -> all_speed_governor_coolant_fuel_adjustment_values word[10]
+N2 CM550 global 0x00060462 (no row)  -> all_speed_governor_alternate_droop_axis word[8]
+N2 CM550 global 0x00060472 (no row)  -> all_speed_governor_alternate_droop_values word[8]
+N2 CM550 global 0x00060482 (no row)  -> all_speed_governor_droop_axis word[8]
+N2 CM550 global 0x00060492 (no row)  -> all_speed_governor_droop_values word[8]
+N2 CM550 global 0x0006052a (no row)  -> engine_retarder_torque_engine_speed_axis word[5]
+N2 CM550 global 0x00060566 (no row)  -> engine_retarder_torque_stage_6_values word[5]
+N2 CM550 global 0x00060596 (no row)  -> cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis word[14]
+N2 CM550 global 0x000605b2 (no row)  -> cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values word[14]
+N2 CM550 global 0x00060640 (no row)  -> cylinder_pressure_maintenance_timing_per_temperature_degree_axis word[14]
+N2 CM550 global 0x0006065c (no row)  -> cylinder_pressure_maintenance_timing_per_temperature_degree_values word[14]
+N2 CM550 global 0x008072f4 rpm_breakpoint_table undefined -> cylinder_balance_engine_speed_axis word[17]
+N2 CM550 global 0x00807316 (no row)  -> cylinder_balance_threshold_values word[17]
+N2 CM550 global 0x00809e9e (no row)  -> cylinder_balance_real_2_dynamics_compensation_values word[16]
+N2 CM550 global 0x00809ebe (no row)  -> cylinder_balance_imaginary_2_dynamics_compensation_values word[16]
+N2 CM550 global 0x00807360 (no row)  -> cylinder_balance_engine_speed_breakpoint_axis word[8]
+N2 CM550 global 0x00807370 (no row)  -> cylinder_balance_engine_speed_breakpoint_values word[8]
+N2 CM550 global 0x00807380 (no row)  -> cylinder_balance_delta_fueling_breakpoint_axis word[7]
+N2 CM550 global 0x0080738e rpm_derate_percent_upper undefined -> cylinder_balance_delta_fueling_breakpoint_values word[7]
+N2 CM550 global 0x0080739c vp44_fso_fault_debounce_threshold undefined -> cylinder_balance_filtered_fueling_breakpoint_axis word[7]
+N2 CM550 global 0x008073aa lift_pump_fuel_base_offset undefined -> cylinder_balance_filtered_fueling_breakpoint_values word[7]
+N2 CM550 global 0x00060846 (no row)  -> engine_warmup_protection_rifle_to_turbocharger_delay_time_axis word[10]
+N2 CM550 global 0x0006085a (no row)  -> engine_warmup_protection_rifle_to_turbocharger_delay_time_values word[10]
+N2 CM550 global 0x000607f2 (no row)  -> engine_warmup_protection_fuel_limit_axis word[21]
+N2 CM550 global 0x0006081c (no row)  -> engine_warmup_protection_fuel_limit_values word[21]
+N2 CM550 global 0x00807176 load_breakpoint_table undefined -> fault_derate_fuel_limit_by_engine_speed_axis word[25]
+N2 CM550 global 0x008071a8 (no row)  -> fault_derate_fuel_limit_by_engine_speed_values word[25]
+N2 CM550 global 0x000607d6 (no row)  -> double_pulsing_fueling_mapping_axis word[7]
+N2 CM550 global 0x000607e4 (no row)  -> double_pulsing_fueling_mapping_values word[7]
+N2 CM550 global 0x00808068 (no row)  -> high_speed_governor_derivative_gain_adjustment_error_axis word[14]
+N2 CM550 global 0x008080a0 (no row)  -> high_speed_governor_proportional_gain_adjustment_error_axis word[14]
+N2 CM550 global 0x008080d8 (no row)  -> high_speed_governor_integral_gain_adjustment_error_axis word[14]
+N2 CM550 global 0x000611d0 (no row)  -> engine_protection_oil_pressure_limit_engine_speed_axis word[7]
+N2 CM550 global 0x000611de (no row)  -> engine_protection_low_oil_pressure_limit_values word[7]
+N2 CM550 global 0x000611ec (no row)  -> engine_protection_very_low_oil_pressure_limit_values word[7]
+N2 CM550 global 0x00808958 retarder_torque_point_3_value undefined -> power_take_off_gain_adjustment_axis word[11]
+N2 CM550 global 0x0080896e (no row)  -> power_take_off_gain_adjustment_values word[11]
+N2 CM550 global 0x008088b0 pwm_output_frequency_divisor undefined -> power_take_off_governor_derivative_gain_adjustment_axis word[14]
+N2 CM550 global 0x008088e8 (no row)  -> power_take_off_governor_integral_gain_adjustment_axis word[14]
+N2 CM550 global 0x00808920 oil_pressure_protection_threshold undefined -> power_take_off_governor_proportional_gain_adjustment_axis word[14]
+N2 CM550 global 0x00060534 (no row)  -> engine_retarder_torque_stage_1_values word[5]
+N2 CM550 global 0x0006053e (no row)  -> engine_retarder_torque_stage_2_values word[5]
+N2 CM550 global 0x00060548 (no row)  -> engine_retarder_torque_stage_3_values word[5]
+N2 CM550 global 0x00060552 (no row)  -> engine_retarder_torque_stage_4_values word[5]
+N2 CM550 global 0x0006055c (no row)  -> engine_retarder_torque_stage_5_values word[5]
+N2 CM550 global 0x008071e0 vp44_fault_timer_threshold undefined -> wet_stack_timing_by_intake_manifold_temperature_axis word[11]
+N2 CM550 global 0x008071f6 (no row)  -> wet_stack_timing_by_intake_manifold_temperature_values word[11]
+N2 CM550 global 0x0080720c (no row)  -> wet_stack_timing_by_coolant_temperature_axis word[9]
+N2 CM550 global 0x000611fa (no row)  -> friction_fuel_by_engine_speed_axis word[10]
+N2 CM550 global 0x0006120e (no row)  -> friction_fuel_by_engine_speed_values word[10]
+N2 CM550 global 0x00061222 (no row)  -> friction_fuel_correction_by_coolant_temperature_axis word[10]
+N2 CM550 global 0x00061236 (no row)  -> friction_fuel_correction_by_coolant_temperature_values word[10]
+N2 CM550 global 0x00806d3a linearization_table_ch15_x_axis undefined -> intake_manifold_temperature_linearization_axis word[26]
+N2 CM550 global 0x00806d6e (no row)  -> intake_manifold_temperature_linearization_values word[26]
+N2 CM550 global 0x00806da2 (no row)  -> fuel_temperature_linearization_axis word[22]
+N2 CM550 global 0x00806dce (no row)  -> fuel_temperature_linearization_values word[22]
+N2 CM550 global 0x00806dfa (no row)  -> coolant_level_linearization_axis word[9]
+N2 CM550 global 0x00806e0c (no row)  -> coolant_level_linearization_values word[9]
+N2 CM550 global 0x00806e1e diagnostic_transition_limit undefined -> fuel_pressure_linearization_axis word[3]
+N2 CM550 global 0x00806e2a (no row)  -> oil_pressure_linearization_axis word[6]
+N2 CM550 global 0x00806e42 (no row)  -> boost_pressure_linearization_axis word[5]
+N2 CM550 global 0x00806e56 (no row)  -> coolant_temperature_linearization_axis word[26]
+N2 CM550 global 0x00806ebe (no row)  -> ambient_air_temperature_linearization_axis word[9]
+N2 CM550 global 0x00806ee2 (no row)  -> power_steering_temperature_linearization_axis word[3]
+N2 CM550 global 0x00806eee (no row)  -> exhaust_pressure_linearization_axis word[3]
+N2 CM550 global 0x00806efa (no row)  -> sampled_throttle_linearization_axis word[7]
+N2 CM550 global 0x00806f16 (no row)  -> remote_throttle_linearization_axis word[7]
+N2 CM550 global 0x00806f32 (no row)  -> ambient_air_pressure_linearization_axis word[5]
+N2 CM550 global 0x00806f46 (no row)  -> battery_voltage_linearization_axis word[3]
+N2 CM550 global 0x00806f52 (no row)  -> engine_speed_sensor_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x00806f5e (no row)  -> throttle_position_sensor_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x00806f6a (no row)  -> vehicle_connector_sensor_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x00806f76 (no row)  -> engine_connector_sensor_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x00806f82 (no row)  -> frequency_throttle_input_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x00806f8e (no row)  -> cruise_control_switch_multiplexer_linearization_axis word[19]
+N2 CM550 global 0x00806fda (no row)  -> water_in_fuel_linearization_axis word[9]
+N2 CM550 global 0x00806ffe (no row)  -> egr_current_feedback_linearization_axis word[4]
+N2 CM550 global 0x0080700e (no row)  -> programming_pulse_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x0080701a (no row)  -> high_side_gate_bias_supply_voltage_linearization_axis word[3]
+N2 CM550 global 0x00807026 (no row)  -> operational_amplifier_and_comparator_supply_voltage_linearization_axis word[3]
+N2 NOTE verdict with no proposal element: ('prototype', '', '0x00034de0')
+N3 CM550 function 0x0001fe84 scheduleJ1939PeriodicMessage -> scheduleJ1939PeriodicMessage [twin]
+N3 CM848 function 0x00538c8c already scheduleJ1939PeriodicMessage
+N3 function 0x00035088 cm550_tableLookup2D: name kept
+N3 CM848 function 0x00029c98 cm848_calculateFuelDemandFilter -> cm848_calculateMaximumTorqueAtCurrentEngineSpeed [CM848 only]
+N3 CM848 function 0x00029de0 cm848_initFuelDemandFilterDimensions -> cm848_initializeMaximumTorqueAtCurrentEngineSpeed [CM848 only]
+N3 CM848 function 0x00029ecc cm848_FUN_00029ecc -> cm848_applyInjectionTimingMainMisfireLimit [CM848 only]
+N3 TYPE CM550 0x0080dc94: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080dc94 j1708_transmit_buffer_0_2_32 dword -> j1708_transmit_buffer_write_pointer byte *
+N3 TYPE CM550 0x0080dc98: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080dc98 j1708_transmit_buffer_2_32_dc98 dword -> j1708_transmit_byte_pointer byte *
+N3 TYPE CM550 0x0080dc9c: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080dc9c j1708_transmit_buffer_2_32_dc9c dword -> j1708_transmit_buffer_read_pointer byte *
+N3 TYPE CM550 0x0080dca2: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080dca2 j1708_receive_buffer_pointer_2_32_dca2 dword -> j1708_receive_buffer_write_pointer byte *
+N3 TYPE CM550 0x0080dca6: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080dca6 j1708_receive_buffer_pointer_2_32_dca6 dword -> j1708_receive_byte_pointer byte *
+N3 TYPE CM550 0x0080dcaa: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080dcaa j1708_receive_buffer_pointer_2_32_dcaa dword -> j1708_receive_buffer_read_pointer byte *
+N3 CM550 global 0x0080ddc6 j1708_transmit_buffer_2_32_ddc6 byte * -> j1708_transmit_buffer_start_address byte *
+N3 TYPE CM550 0x0080ddca: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080ddca j1708_receive_buffer_2_32 dword -> j1708_receive_buffer_start_address byte *
+N3 TYPE CM550 0x0080ddce: dword -> byte * (same width, more specific)
+N3 CM550 global 0x0080ddce (no row) dword -> j1708_receive_buffer_last_byte_address byte *
+N3 CM550 global 0x0080d03e io_control_bit0_state dword -> accumulated_main_engine_position_sensor_period dword
+N3 CM550 global 0x0080d046 io_control_bit4_state word -> main_engine_position_sensor_interrupt_count word
+N3 CM550 global 0x0080d04a io_control_handshake_state undefined -> main_engine_position_sensor_period dword
+N3 TYPE KEPT CM550 0x00801d44 j1939_powertrain_messages_received: live byte (proposal cm550_j1939_powertrain_messages_received_t, a different width)
+N3 CM550 global 0x00801d44 j1939_received_pgn61442_byte_1 byte -> j1939_powertrain_messages_received byte
+N3 CM848 global 0x0040b31e safety_fuel_blend_output word -> fuel_pressure_governor_fault_blended_fuel_limit word
+N3 CM848 global 0x0040b320 safety_blend_fuel_demand_prev word -> fuel_pressure_governor_fault_blend_start_fuel word
+N3 CM848 global 0x0040b322 safety_fuel_blend_fraction word -> fuel_pressure_governor_fault_blend_fraction word
+N3 CM848 global 0x0040b324 safety_fuel_limit_lookup word -> fuel_pressure_governor_fault_fuel_limit word
+N3 CM848 global 0x0040b326 safety_condition_active_flag word -> fuel_pressure_governor_fault_active_flag word
+N3 CM848 global 0x003fb3c0 safety_condition_prev_flag word -> fuel_pressure_governor_fault_active_flag_previous word
+N3 CM848 global 0x003fb3c2 safety_fuel_limit_cached_axis_offset word -> fuel_pressure_governor_fault_fuel_limit_cached_axis_offset word
+N3 CM848 global 0x004088e0 safety_fuel_blend_decrement word -> fuel_pressure_governor_fault_blend_fraction_decrement word
+N3 CM848 global 0x004088e2 safety_fuel_blend_increment word -> fuel_pressure_governor_fault_blend_fraction_increment word
+N3 CM848 global 0x004088e4 safety_fuel_blend_enable byte -> fuel_pressure_governor_fault_blend_enable byte
+N3 CM848 global 0x004088e8 safety_fuel_limit_axis word[25] -> fuel_pressure_governor_fault_fuel_limit_axis word[25]
+N3 CM848 global 0x0040891a safety_fuel_limit_values word[25] -> fuel_pressure_governor_fault_fuel_limit_values word[25]
+N3 CM848 global 0x0040af7c governor_tuning_set_blend_weight word -> all_speed_governor_tuning_set_blend_weight word
+N3 CM848 global 0x003fd526 governor_tuning_set_default_blend_weight_cal word -> all_speed_governor_tuning_set_default_blend_weight_cal word
+N3 CM848 global 0x0005a9c4 governor_tuning_set_blend_weight_by_drivetrain_ratio_axis word[7] -> all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis word[7]
+N3 CM848 global 0x0005a9d2 governor_tuning_set_blend_weight_by_drivetrain_ratio_values word[7] -> all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_values word[7]
+N3 CM550 enum J1939_PERIODIC_TRANSMIT_QUEUE created (size 4) with 0: J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE
+N3 CM848 enum J1939_PERIODIC_TRANSMIT_QUEUE created (size 4) with 0: J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE
+N3 CM550 enum J1939_PERIODIC_TRANSMIT_QUEUE 1: new member J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER
+N3 CM848 enum J1939_PERIODIC_TRANSMIT_QUEUE 1: new member J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER
+N3 NOTE verdict with no proposal element: ('prototype', '', '0x0001fe84')
+N3 NOTE verdict with no proposal element: ('prototype', '', '0x00538c8c')
+N3 NOTE verdict with no proposal element: ('prototype', '', '0x00035088')

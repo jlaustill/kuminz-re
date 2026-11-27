@@ -1,0 +1,19 @@
+cm848: round 68 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 68" records stage A (3be13ab6) and its proof.
+  - The proof counts 6 differing functions, all explained.
+  - It also says plainly that cm848_lookupEepromParameterAddress is the one function that reads worse: the same 4
+    casts and fewer placeholders (16 -> 9), but the casts now name a misleading struct pointer.
+  - The follow-up (bca3c8fd) is recorded too: the part number from e2m, the exact e2m quotes, and the two repaired
+    history notes.
+  - Leads:
+    - the fault bit render in cm848_latchAndCheckEngineOffTime (the field exists; Ghidra does not map the word-wide
+      read-modify-write);
+    - 0x3fee34, the same time-share with the boot kernel's width;
+    - 0x3fee38, the boot kernel's buffer inside an application dword;
+    - round 67's open leads.
+  - 3be13ab6's message says 13 application functions; the count is 14.
+- work/todo.md, the session README, session_folder/round68/, the large-files tarball (the round's verify logs),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

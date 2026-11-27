@@ -1,0 +1,18 @@
+removed 0: 
+added 0: 
+changed 3
+  0x0001e1ac cm550_emptyStubWrapper1: 2 lines
+      -void cm550_emptyStubWrapper1(void)
+      +void cm550_emptyStubWrapper1(word message_object)
+  0x0001e1be cm550_modeBasedDataDispatcherWrapper: 4 lines
+      -void cm550_modeBasedDataDispatcherWrapper(undefined4 param_1)
+      +void cm550_modeBasedDataDispatcherWrapper(word message_object)
+      -  cm550_modeBasedDataDispatcher(CONCAT11((char)((ushort)in_D0w >> 8),param_1._1_1_));
+      +  cm550_modeBasedDataDispatcher(CONCAT11((char)((ushort)in_D0w >> 8),(char)message_object));
+  0x0001e1d0 mc68k_canCs5InterruptHandler: 6 lines
+      +  undefined3 uVar3;
+      +      uVar3 = (undefined3)((uint)pbVar1 >> 8);
+      -        cm550_modeBasedDataDispatcherWrapper();
+      +        cm550_modeBasedDataDispatcherWrapper((word)CONCAT31(uVar3,bVar2 - 2));
+      -        cm550_emptyStubWrapper1();
+      +        cm550_emptyStubWrapper1((word)CONCAT31(uVar3,bVar2 - 2));

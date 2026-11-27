@@ -1,0 +1,2151 @@
+{
+ "batch": "R3",
+ "proposal": {
+  "batch": "R3",
+  "summary": "R3 is the CM550 rows whose old Calterm-slug names contain anc / rsg / afc / pto / accel / decel. The ANC (acceleration noise control) rows are the e2m 10A5 calibration block and 10A4 status block of three CM550-only limits that run every 50 ms: fuel 0xb2aa, timing 0xb3d0 and engine speed 0xb4f2 (CM848 compiles this stage out). Each limit engages while the first stage engine acceleration is at or below a maximum, the second stage is at or above a minimum, and an engine speed or coolant condition holds. After a bare engine acceleration it is inhibited for a calibrated duration. Once engaged it is held on for a minimum time, and it ramps back out when released. The alpha / AFC rows are the same records as CM848's in the twin calculateAlphaAirFuelControlResult. The cruise, road speed governor and power take-off engagement calibrations have no code in the dumped ROM, so they take CM848's names for the same e2m records, and the A/C and vehicle acceleration rows are named from their records. Several old names were wrong: three anc / ac byte rows are auxiliary driver recovery counters of updateEngineSyncStatus, three anc_altitude rows are the sync pulse thresholds and ring pointer of cm550_detectEngineSpeedSensorSyncPulse, and the four eps_accel rows are words inside the PPCVTB fueling curve table.",
+  "functions": [],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x0080003c",
+    "current_name": "",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_inhibit_timer",
+    "proposed_type": "word",
+    "comment": "Countdown of the ANC engine speed limit inhibit after a bare engine acceleration. cm550_engineStateFuelLimitInterpolator (0xb4f2, the ANC engine speed limit) loads it with NZESIHTM (0x807a4a) while ESFT01AC (0x80a294) is above NZESACTR (0x807a36). Otherwise it counts it down, and at 0 it clears the inhibit NZESLMIH (e2m 10A4 +14, 0x80a2a0). The engine speed sibling of acceleration_noise_control_timing_limit_inhibit_timer (0x800040). No e2m record. (new row, was DAT_0080003c; PR #53 round 97)",
+    "evidence": "0xb51c-0xb528 move.w (0x80a294),d0 / cmp.w (0x807a36),d0 / ble; 0xb52e move.w (0x807a4a).l,(0x80003c).l; 0xb53a tst.w (0x80003c); 0xb542 subq.w #1,(0x80003c); 0xb54a clr.w (a0) with a0 = 0x80a2a0 (0xb508). These 3 are its only ROM references, all word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080003e",
+    "current_name": "",
+    "proposed_name": "acceleration_noise_control_fuel_limit_inhibit_timer",
+    "proposed_type": "word",
+    "comment": "Countdown of the ANC fuel limit inhibit after a bare engine acceleration. cm550_rpm_system_state_controller (0xb2aa, the ANC fuel limit) loads it with NZFLIHTM (0x807a4c) while ESFT01AC (0x80a294) is above NZFLACTR (0x807a26). Otherwise it counts it down, and at 0 it clears the inhibit NZFLLMIH (e2m 10A4 +16, 0x80a2a2). The fuel sibling of acceleration_noise_control_timing_limit_inhibit_timer (0x800040). No e2m record. (new row, was DAT_0080003e; PR #53 round 97)",
+    "evidence": "0xb2d4-0xb2e0 move.w (0x80a294),d0 / cmp.w (0x807a26),d0 / ble; 0xb2ea move.w (0x807a4c).l,(0x80003e).l; 0xb2f6 tst.w (0x80003e); 0xb2fe subq.w #1,(0x80003e); 0xb306 clr.w (0x80a2a2). Only these 3 references, all word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800042",
+    "current_name": "anc_fuel_limit_active_timer",
+    "proposed_name": "acceleration_noise_control_fuel_limit_hold_timer",
+    "proposed_type": "word",
+    "comment": "Holds the ANC fuel limit status NZFLLMSS (e2m 10A4 +C, 0x80a298) on for the minimum active time NZFLDYTM (0x807a22) after its conditions end. cm550_rpm_system_state_controller (0xb2aa, the ANC fuel limit, every 50 ms) loads it while the conditions or the override ASANODFG (0x80a2a6) hold, counts it down otherwise and clears NZFLLMSS at 0. The fuel sibling of acceleration_noise_control_timing_limit_hold_timer (0x800044). No e2m record. Typed word (was undefined and read wider). (was anc_fuel_limit_active_timer; PR #53 round 97)",
+    "evidence": "0xb2ba movea.l #0x800042,a4; 0xb34a and 0xb35e move.w (0x807a22).l,(a4); 0xb366 tst.w (a4); 0xb36a subq.w #1,(a4); 0xb36e clr.w (a3) with a3 = 0x80a298 (0xb2b4). No other reference; all word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800046",
+    "current_name": "anc_speed_limit_hold_timer",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_hold_timer",
+    "proposed_type": "word",
+    "comment": "Holds the ANC engine speed limit status NZESLMSS (e2m 10A4 +10, 0x80a29c) on for the minimum active time NZESDYTM (0x807a2e) after its conditions end. cm550_engineStateFuelLimitInterpolator (0xb4f2, the ANC engine speed limit) loads it while the conditions or the override ASANODFG hold, counts it down otherwise and clears NZESLMSS at 0. No e2m record. Typed word (was undefined). (was anc_speed_limit_hold_timer; PR #53 round 97)",
+    "evidence": "0xb502 movea.l #0x800046,a1; 0xb586 and 0xb59a move.w (0x807a2e).l,(a1); 0xb5a2 tst.w (a1); 0xb5a6 subq.w #1,(a1); 0xb5aa clr.w (a3) with a3 = 0x80a29c (0xb4fc). All word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800168",
+    "current_name": "ac_control_accel_threshold_ptr",
+    "proposed_name": "auxiliary_driver_cold_start_aid_1_high_recovery_count",
+    "proposed_type": "byte",
+    "comment": "Recovery count of the cold start aid relay 1 driver while the output is commanded on. The driver is bit 0x02 of auxiliary_driver_feedback_bits 0x80bd03 (e2m 000E +35 DRR2FB / DSCD01FB). updateEngineSyncStatus (0xd610, the auxiliary driver read-back diagnostics) counts the passes in which the commanded bit (io_driver_port_2_feedback 0x80bd09) and the read-back agree at 1 while status word 8 bit 0x2000 is set and not latched (aux_driver_cold_start_aid1_low_side_error_count sets that bit). When the count reaches enhanced_diag_number_good_samples_before_recovery_of_aux_drive it clears the fault bit. A mismatch and cm550_clearKickdownControlState (0xe780) reset the count. The commanded-on counterpart of aux_driver_cold_start1_low_recovery_count (0x800167). It has nothing to do with A/C or acceleration. (was ac_control_accel_threshold_ptr; PR #53 round 97)",
+    "evidence": "0xdbae btst #1,(0x1,a5) (a5 + 1 = 0x80bd09) / beq 0xdc08; 0xdbb8-0xdbd0 status word 0x806010 bit 0x2000 set and 0x806050 bit 0x2000 clear; 0xdbd6 move.b (0x800168),d0 / cmp.l with the word at (a4); 0xdbe4 addq.b #1,(0x800168); 0xdbf4 andi.w #0xdfff,(0x806010) then 0xdbfe clr.b; 0xda86 clr.b in the mismatch branch; 0xe7fe clr.b in 0xe780. 5 byte accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800170",
+    "current_name": "anc_speed_limit_table_1_size",
+    "proposed_name": "auxiliary_driver_relay_4_high_recovery_count",
+    "proposed_type": "byte",
+    "comment": "Recovery count of the relay 4 driver while it is commanded on. The driver is bit 0x40 of auxiliary_driver_feedback_bits 0x80bd03 (e2m 000E +35 DRR4FB); v64t6_s has no function record for relay 4. updateEngineSyncStatus (0xd610) counts the passes in which commanded bit 6 of 0x80bd09 and the read-back agree at 1 while status word 9 bit 0x20 is set and not latched (the relay's low side error count at 0x800160 sets it). At the recovery limit it clears that bit. A mismatch and 0xe780 reset the count. The commanded-on counterpart of aux_driver6_low_recovery_count (0x80016f), which also belongs to this relay despite its number. It has nothing to do with the acceleration noise control. (was anc_speed_limit_table_1_size; PR #53 round 97)",
+    "evidence": "0xe21a-0xe242 compares bit 0x40 of 0x80bd03 with bit 0x40 of (0x1,a5); 0xe24c clr.b (0x800170) on a mismatch; 0xe33a btst #6,(0x1,a5) / beq 0xe394; 0xe344-0xe35c 0x806012 bit 0x20 set and 0x806052 bit 0x20 clear; 0xe362 move.b (0x800170),d0 / cmp.l (a4); 0xe370 addq.b #1; 0xe380 andi.w #0xffdf,(0x806012) then 0xe38a clr.b; 0xe82e clr.b in 0xe780. 5 byte accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800172",
+    "current_name": "anc_speed_limit_table_1_ptr",
+    "proposed_name": "auxiliary_driver_relay_7_high_recovery_count",
+    "proposed_type": "byte",
+    "comment": "Recovery count of the relay 7 driver while it is commanded on. The driver is bit 0x08 of auxiliary_driver_feedback_bits 0x80bd03 (e2m 000E +35 DRR7FB; DSACFB names it the A/C clutch driver). updateEngineSyncStatus (0xd610) counts the passes in which commanded bit 3 of 0x80bd09 and the read-back agree at 1 while status word 9 bit 0x80 is set and not latched. At the recovery limit it clears that bit. A mismatch and 0xe780 reset the count. The commanded-on counterpart of aux_driver7_low_recovery_count (0x800171). It has nothing to do with the acceleration noise control. (was anc_speed_limit_table_1_ptr; PR #53 round 97)",
+    "evidence": "0xe3e0-0xe408 compares bit 0x08 of 0x80bd03 with bit 0x08 of (0x1,a5); 0xe412 clr.b (0x800172) on a mismatch; 0xe500 btst #3,(0x1,a5) / beq 0xe55a; 0xe50a-0xe522 0x806012 bit 0x80 set and 0x806052 bit 0x80 clear; 0xe528 move.b (0x800172),d0 / cmp.l (a4); 0xe536 addq.b #1; 0xe546 andi.w #0xff7f,(0x806012) then 0xe550 clr.b; 0xe83a clr.b in 0xe780. 5 byte accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008001a0",
+    "current_name": "anc_altitude_table_2_ptr",
+    "proposed_name": "backup_engine_position_sensor_sync_pulse_period_threshold",
+    "proposed_type": "dword",
+    "comment": "Sync pulse threshold of the backup engine position sensor. With the backup sensor selected, cm550_detectEngineSpeedSensorSyncPulse (0x1025c) treats a period below this threshold as a candidate for the sync pulse (the extra tooth). It then stores CSXT_1PC (0x807c1e) x the new period >> 8 as the threshold for the next period. cm550_initializeCanBusTiming (0x10394) presets it the same way. No e2m record. It has nothing to do with the acceleration noise control or altitude. (was anc_altitude_table_2_ptr; PR #53 round 97)",
+    "evidence": "0x10306 move.l (0x8001a0).l,d2 in the backup branch (0x102cc); 0x10316 / 0x10322 cmp.l (a2),d2 / bls with a2 = 0x8001a8 (the period under test); 0x10366-0x10370 move.w (a4),d0 (a4 = 0x807c1e) / mulu.l (a2),d0 / lsr.l #8 / move.l d0,(0x8001a0); 0x103b2 move.l d0,(0x8001a0) in 0x10394. 3 long accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008001a4",
+    "current_name": "anc_altitude_table_3_size",
+    "proposed_name": "main_engine_position_sensor_sync_pulse_period_threshold",
+    "proposed_type": "dword",
+    "comment": "Sync pulse threshold of the main engine position sensor. cm550_detectEngineSpeedSensorSyncPulse (0x1025c) is called from cm550_processPrimarySpeedPulsePeriodWithSyncPulse before the new period enters the ring. It treats a main_engine_position_sensor_period below this threshold as a sync pulse candidate, then stores CSXT_1PC (0x807c1e) x the period >> 8 for the next period. cm550_initializeCanBusTiming (0x10394) presets it. No e2m record. Typed dword (was undefined); the row 0x8001a6 is its low word. (was anc_altitude_table_3_size; PR #53 round 97)",
+    "evidence": "0x102c4 move.l (0x8001a4).l,d2 in the main branch; 0x10316 / 0x10322 cmp.l (a2),d2 / bls; 0x10354-0x1035e move.w (a4),d0 / mulu.l (a2),d0 / lsr.l #8 / move.l d0,(0x8001a4); 0x103a8 move.l d0,(0x8001a4) in 0x10394; 0x1a988 jsr 0x1025c comes before 0x1a9e8 move.l (a2),(a0) stores the period at the ring pointer. 3 long accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008001ac",
+    "current_name": "anc_altitude_table_3_ptr",
+    "proposed_name": "sync_pulse_check_previous_period_pointer",
+    "proposed_type": "dword *",
+    "comment": "Points into the selected sensor's pulse period ring at the entry before the next write position. Because cm550_detectEngineSpeedSensorSyncPulse runs before the new period is stored, that entry is the previous period. The main ring starts at 0x80cd1e (next pointer 0x80cd08) and the backup ring at 0x80ceae (next pointer 0x80cd0c); the pointer wraps to the last entry pointer 0x80d078 / 0x80d07c. cm550_bufferDecreasingPatternCheck (0x1011c) walks back from it to compare period slopes, and cm550_bufferThresholdValidator (0x101b8) reads the two entries before it. No e2m record. It has nothing to do with the acceleration noise control. (was anc_altitude_table_3_ptr; PR #53 round 97)",
+    "evidence": "0x1026a movea.l #0x8001ac,a3; main: 0x1029e move.l (0x80d078).l,(a3) or 0x102a6-0x102ae (0x80cd08) - 4 -> (a3); backup 0x102e0-0x102f0 the same with 0x80cd0c / 0x80d07c; 0x10128 movea.l (0x8001ac).l,a3 then move.l (a3),d0 / subq.l #4,a3; 0x101bc movea.l #0x8001ac,a2 then (a2), (-0x4,a0), (-0x8,a0). Long accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800544",
+    "current_name": "pto_set_switch_debounce_counter",
+    "proposed_name": "power_take_off_set_switch_hold_counter",
+    "proposed_type": "word",
+    "comment": "Counts the passes the power take-off set switch has been held, capped at 25. The switch is bit 0x04 of power_take_off_switch_state_bits 0x80bcd5 (e2m DSPTSESW). mc68k_sampleAndDebounceDiscreteInputs adds 1 per pass while the bit is set and clears the count when the bit is off. At 25 the set bit is replaced by the coast bit 0x08, or by the accelerate bit 0x02 when cruise_set_accelerate_switch_select_cal (0x803d42) is set. It is a hold counter, not a debounce. (was pto_set_switch_debounce_counter; PR #53 round 97)",
+    "evidence": "0x154e4 btst #2,(0x7,a4) (a4 = 0x80bcce); 0x154f8 addq.w #1,(0x800544); 0x154fe cmpi.w #0x19; 0x15508 move.w #0x19; 0x15510 tst.w (0x803d42) then 0x15518 ori.b #0x8 / andi.b #0xfb or 0x15526 ori.b #0x2; 0x1554c clr.w (0x800544) when the bit is off. 4 word accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800546",
+    "current_name": "pto_resume_switch_debounce_counter",
+    "proposed_name": "power_take_off_resume_switch_hold_counter",
+    "proposed_type": "word",
+    "comment": "Counts the passes the power take-off resume switch has been held, capped at 25. The switch is bit 0x01 of 0x80bcd5 (e2m DSPTRUSW). mc68k_sampleAndDebounceDiscreteInputs adds 1 per pass while the bit is set and clears the count when it is off. At 25 the resume bit is replaced by the accelerate bit 0x02, or by coast 0x08 when cruise_set_accelerate_switch_select_cal is set. It is a hold counter, not a debounce. (was pto_resume_switch_debounce_counter; PR #53 round 97)",
+    "evidence": "0x15568 btst #0,(0x7,a4); 0x1557c addq.w #1,(0x800546); 0x15582 cmpi.w #0x19; 0x1558c move.w #0x19; 0x15594 tst.w (0x803d42) then 0x1559c ori.b #0x2 / andi.b #0xfe or 0x155aa ori.b #0x8; 0x155d0 clr.w. 4 word accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803d42",
+    "current_name": "pto_switch_polarity_select",
+    "proposed_name": "cruise_set_accelerate_switch_select_cal",
+    "proposed_type": "word",
+    "comment": "e2m 1180 +8 CRSEACSW 'TRUE = SET/ACCEL AND RESUME/COAST, FALSE = SET/COAST AND RESUME/ACCEL'. It is in the EEPROM image, so _cal; 1 in the dump. mc68k_sampleAndDebounceDiscreteInputs uses it to choose the function of a held set or resume switch, for both the power take-off switches (0x80bcd5) and the cruise switches (0x80bcd4). At 0 a held set switch gives coast 0x08 and a held resume switch gives accelerate 0x02; a nonzero value swaps them. It also picks the mapping of the multipurpose increment / decrement switches. The same record and name as CM848 0x3fd530. (was pto_switch_polarity_select; PR #53 round 97)",
+    "evidence": "e2m_block_addresses --firmware cm550 1180 +8 CRSEACSW -> 0x803d42; CM848 1180 +8 Set_Accel_Switch_Select -> EEPROM 0xae = 0x3fd530 cruise_set_accelerate_switch_select_cal. 13 tst.w: 0x15510 / 0x15534 / 0x15552 / 0x15594 / 0x155b8 / 0x155d6 (power take-off), 0x15694 / 0x156b0 / 0x156ca / 0x156fe / 0x1571a / 0x15734 (cruise) and 0x1577e (increment / decrement). Inside the EEPROM image 0x803b0a-0x804f93.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803d44",
+    "current_name": "",
+    "proposed_name": "cruise_discrete_switch_inputs_used_cal",
+    "proposed_type": "word",
+    "comment": "e2m 1180 +A CRUSDSSW 'INDICATES DISCRETE(T) OR FORD MULTIPLEXED(F) CRUISE SWITCHES'. It is in the EEPROM image, so _cal; 1 in the dump. mc68k_sampleAndDebounceDiscreteInputs decodes the power take-off and cruise switches (0x80bcd5 / 0x80bcd4, with the 25-pass hold counters) and the increment / decrement switches only while it is nonzero. The same record and name as CM848 0x3fd532. (new row, was DAT_00803d44; PR #53 round 97)",
+    "evidence": "0x1538a tst.w (0x803d44).l / beq.w 0x15870 skips the whole switch decode 0x15394-0x1586e; a second tst.w at 0x152e6 has no branch after it; e2m_block_addresses --firmware cm550 1180 +A -> 0x803d44 (no row); CM848 1180 +A Cruise_Use_Discrete_Switch_Inputs -> EEPROM 0xb0 = 0x3fd532 cruise_discrete_switch_inputs_used_cal.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a00",
+    "current_name": "accel_threshold_to_disable_a_c_1200_1200",
+    "proposed_name": "air_conditioning_disable_vehicle_acceleration_threshold",
+    "proposed_type": "i16",
+    "comment": "e2m 818A +2 ACVSACCO 'ACCEL THRESHOLD TO DISABLE A/C' (MPHS, 0.0390625 per count, signed; 768 in the dump): the vehicle acceleration above which the A/C compressor control turns the clutch off. There is no reader in the dumped ROM (0x0-0x3ffff). The whole A/C block (818A / 818B, ACCHHY 0x8079fe to ACCHEA 0x80a27e) has no code reference there, only parameter_id_table entries, so the name comes from the record. (was accel_threshold_to_disable_a_c_1200_1200; PR #53 round 97)",
+    "evidence": "e2m_block_addresses --firmware cm550 --address 0x807a00 -> 818A +2 ACVSACCO; find_range_refs 0x8079fe-0x807a22: only parameter_id_table words at 0x383b4-0x383c8 / 0x3845c (block bases), no absolute or base-register reference into the block. RAM dump 0x0300.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a02",
+    "current_name": "alg_executions_to_suspend_ac_after_shutoff_from_accel_0_3600",
+    "proposed_name": "air_conditioning_suspend_time_after_acceleration_shutoff",
+    "proposed_type": "word",
+    "comment": "e2m 818A +4 ACACDBCU 'ALG EXECUTIONS TO SUSPEND AC AFTER SHUTOFF FROM ACCEL' (SEC, 0.1 per count; 20 = 2.0 s in the dump): how long the A/C stays off after the acceleration shutoff. No reader in the dumped ROM (see 0x807a00), so the name comes from the record. (was alg_executions_to_suspend_ac_after_shutoff_from_accel_0_3600; PR #53 round 97)",
+    "evidence": "e2m 818A +4 -> 0x807a02; no ROM reference (find_range_refs 0x8079f0-0x807a60); RAM dump 0x0014.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a1c",
+    "current_name": "first_order_filter_coeff_for_limited_veh_accel_0_1",
+    "proposed_name": "vehicle_acceleration_filter_coefficient",
+    "proposed_type": "word",
+    "comment": "e2m 818C +0 VAACFTTC '1ST ORDER FILTER COEFF FOR LIMITED VEH ACCEL' (FC, 1/65536; 0xf5c3 in the dump): the coefficient of the vehicle acceleration filter. Its input is the unfiltered vehicle acceleration VAVSAC (0x80a28a), limited by 0x807a1e / 0x807a20, and its output is VAVSACFT (filtered_vehicle_acceleration 0x80a288). The RAM dump holds its filter record at 0x803af2: coefficient pointer 0x807a1c, and accumulator 0x80000000, which is 0 in the signed filter's offset binary. Code above the dumped ROM sets the record up; nothing in the dump reads it. (was first_order_filter_coeff_for_limited_veh_accel_0_1; PR #53 round 97)",
+    "evidence": "RAM dump: 0x803af2 = 0x00807a1c and 0x803af6 = 0x80000000, the layout of engine_acceleration_first_stage_filter_state 0x800066 (0x807a42 / 0x80000000); no ROM reference to 0x803af2 or into 0x807a1c except parameter_id_table 0x383c4 / 0x383c8.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a1e",
+    "current_name": "limit_on_max_unfiltered_veh_accel_1200_1200",
+    "proposed_name": "vehicle_acceleration_unfiltered_clamp_maximum",
+    "proposed_type": "i16",
+    "comment": "e2m 818C +2 VAACMXLM 'LIMIT ON MAX UNFILTERED VEH ACCEL' (MPHS, 0.0390625 per count, signed; 0x7800 = 1200 in the dump): the upper limit of the unfiltered vehicle acceleration before the vehicle acceleration filter (vehicle_acceleration_filter_coefficient 0x807a1c). No reader in the dumped ROM, so the name comes from the record. (was limit_on_max_unfiltered_veh_accel_1200_1200; PR #53 round 97)",
+    "evidence": "e2m 818C +2 -> 0x807a1e; no ROM reference (find_range_refs 0x8079f0-0x807a60); RAM dump 0x7800.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a20",
+    "current_name": "limit_on_min_unfiltered_veh_accel_1200_1200",
+    "proposed_name": "vehicle_acceleration_unfiltered_clamp_minimum",
+    "proposed_type": "i16",
+    "comment": "e2m 818C +4 VAACMNLM 'LIMIT ON MIN UNFILTERED VEH ACCEL' (MPHS, signed; 0x8800 = -1200 in the dump): the lower limit of the unfiltered vehicle acceleration before the vehicle acceleration filter. No reader in the dumped ROM, so the name comes from the record. (was limit_on_min_unfiltered_veh_accel_1200_1200; PR #53 round 97)",
+    "evidence": "e2m 818C +4 -> 0x807a20; no ROM reference; RAM dump 0x8800.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a22",
+    "current_name": "minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20",
+    "proposed_name": "acceleration_noise_control_fuel_limit_minimum_active_time",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +0 NZFLDYTM 'MINIMUM AMOUNT OF TIME WHICH THE ANC FUEL LIMIT WILL BE ACTIVE' (0.05 s passes; 40 = 2.0 s in the dump). cm550_rpm_system_state_controller (0xb2aa, the ANC fuel limit) loads it into acceleration_noise_control_fuel_limit_hold_timer (0x800042) whenever the fuel limit conditions or the override hold. (was minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20; PR #53 round 97)",
+    "evidence": "0xb34a and 0xb35e move.w (0x807a22).l,(a4) with a4 = 0x800042 (0xb2ba); parameter_id_table 10A5 -> 0x807a22.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a24",
+    "current_name": "fuel_increment_added_to_anc_fueling_to_ramp_out_the_fueling_de_0_100",
+    "proposed_name": "acceleration_noise_control_fuel_limit_ramp_out_increment",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +2 NZFLRMRT 'FUEL INCREMENT ADDED TO ANC_FUELING TO RAMP OUT THE FUELING DERATE' (273 in the dump). While the ANC fuel limit status is off, cm550_rpm_system_state_controller adds it each pass to acceleration_noise_control_fuel_limit (0x80a28c) until that reaches fuel_demand_maximum (0x808004). (was fuel_increment_added_to_anc_fueling_to_ramp_out_the_fueling_de_0_100; PR #53 round 97)",
+    "evidence": "0xb396-0xb3aa move.w (a2),d0 / cmp.w (a5),d0 (a5 = 0x808004) / bcc / move.w (0x807a24),d0 / add.w d0,(a2) (a2 = 0x80a28c) / cap at (a5). 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a26",
+    "current_name": "engine_acceleration_below_which_anc_may_limit_fueling_2560_2540",
+    "proposed_name": "acceleration_noise_control_fuel_limit_maximum_first_stage_acceleration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +4 NZFLACTR 'ENGINE ACCELERATION BELOW WHICH ANC MAY LIMIT FUELING' (R/S 6.25, signed; 160 = 1000 rpm/s in the dump). The ANC fuel limit (0xb2aa) may engage only while the first stage engine acceleration ESFT01AC (0x80a294) is at or below it. Above it the fuel limit is inhibited as a bare engine acceleration: NZFLLMIH (0x80a2a2) = 1 and acceleration_noise_control_fuel_limit_inhibit_timer is reloaded. (was engine_acceleration_below_which_anc_may_limit_fueling_2560_2540; PR #53 round 97)",
+    "evidence": "0xb2d4-0xb2e0 move.w (0x80a294),d0 / cmp.w (0x807a26),d0 / ble (signed), then the inhibit; 0xb32a-0xb336 the same compare / bgt to the not-met branch. 2 word reads.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a28",
+    "current_name": "filtered_engine_acceleration_above_which_anc_may_limit_fu_2560_2540",
+    "proposed_name": "acceleration_noise_control_fuel_limit_minimum_second_stage_acceleration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +6 NZFLFTTR 'FILTERED ENGINE ACCELERATION ABOVE WHICH ANC MAY LIMIT FUELING' (R/S 6.25, signed; 64 = 400 rpm/s): the ANC fuel limit may engage only while the second stage (filtered) engine acceleration ESFT02AC (0x80a296) is at or above it. (was filtered_engine_acceleration_above_which_anc_may_limit_fu_2560_2540; PR #53 round 97)",
+    "evidence": "0xb338-0xb344 move.w (0x80a296),d0 / cmp.w (0x807a28),d0 / blt to the not-met branch. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a2a",
+    "current_name": "engine_speed_above_which_anc_may_limit_fueling_1000_3000",
+    "proposed_name": "acceleration_noise_control_fuel_limit_minimum_engine_speed",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +8 NZFLTRES 'ENGINE SPEED ABOVE WHICH ANC MAY LIMIT FUELING' (0.125 rpm; 20800 = 2600 rpm): the ANC fuel limit may engage only while current_engine_rpm_filtered (0x80ccf4) is at or above it. (was engine_speed_above_which_anc_may_limit_fueling_1000_3000; PR #53 round 97)",
+    "evidence": "0xb31c-0xb328 move.w (0x80ccf4),d0 / cmp.w (0x807a2a),d0 / bcs to the not-met branch (unsigned). 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a2c",
+    "current_name": "calibratible_engine_speed_constant_used_to_set_anc_engine_1000_3000",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_engaged_value",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +A NZCNESLM 'CALIBRATIBLE ENGINE SPEED CONSTANT USED TO SET ANC ENGINE SPEED LIMIT' (0.125 rpm; 14560 = 1820 rpm). While the ANC engine speed limit status NZESLMSS is on, cm550_engineStateFuelLimitInterpolator (0xb4f2) sets acceleration_noise_control_engine_speed_limit (NZESLM 0x80a290) to it. (was calibratible_engine_speed_constant_used_to_set_anc_engine_1000_3000; PR #53 round 97)",
+    "evidence": "0xb5ac tst.w (a3) (a3 = 0x80a29c) / beq; 0xb5b0 move.w (0x807a2c).l,(a2) with a2 = 0x80a290. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a2e",
+    "current_name": "minimum_amount_of_time_which_the_anc_speed_limit_will_be_active_0_20",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_minimum_active_time",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +C NZESDYTM 'MINIMUM AMOUNT OF TIME WHICH THE ANC SPEED LIMIT WILL BE ACTIVE' (0.05 s; 40 = 2.0 s). 0xb4f2 loads it into acceleration_noise_control_engine_speed_limit_hold_timer (0x800046) while the conditions or the override hold. (was minimum_amount_of_time_which_the_anc_speed_limit_will_be_active_0_20; PR #53 round 97)",
+    "evidence": "0xb586 and 0xb59a move.w (0x807a2e).l,(a1) with a1 = 0x800046 (0xb502). 2 word reads.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a30",
+    "current_name": "engine_speed_increment_added_to_anc_speed_to_ramp_out_the_eng_0_3000",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_ramp_out_increment",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +E NZESRMRT 'ENGINE SPEED INCREMENT ADDED TO ANC_SPEED TO RAMP OUT THE ENGINE SPEED LIMIT' (80 in the dump). While the ANC engine speed limit status is off, 0xb4f2 adds it each pass to acceleration_noise_control_engine_speed_limit until that reaches maximum_rated_engine_speed (0x803f40). (was engine_speed_increment_added_to_anc_speed_to_ramp_out_the_eng_0_3000; PR #53 round 97)",
+    "evidence": "0xb5bc-0xb5d8 move.w (a2),d0 / cmp.w (0x803f40),d0 / bcc / move.w (0x807a30),d0 / add.w d0,(a2) / cap at (0x803f40), a2 = 0x80a290. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a32",
+    "current_name": "filtered_engine_acceleration_above_which_anc_may_limit_en_2560_2540",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_minimum_second_stage_acceleration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +10 NZESFTTR 'FILTERED ENGINE ACCELERATION ABOVE WHICH ANC MAY LIMIT ENGINE SPEED' (R/S 6.25, signed; 40 = 250 rpm/s): the ANC engine speed limit may engage only while ESFT02AC (0x80a296) is at or above it. (was filtered_engine_acceleration_above_which_anc_may_limit_en_2560_2540; PR #53 round 97)",
+    "evidence": "0xb574-0xb580 move.w (0x80a296),d0 / cmp.w (0x807a32),d0 / blt to the not-met branch. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a34",
+    "current_name": "engine_speed_above_which_anc_may_limit_engine_speed_1000_3000",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_maximum_engine_speed",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +12 NZESTRES 'ENGINE SPEED ABOVE WHICH ANC MAY LIMIT ENGINE SPEED' (0.125 rpm; 20800 = 2600 rpm). The code uses it the other way round from the text: 0xb4f2 lets the ANC engine speed limit engage only while current_engine_rpm_filtered (0x80ccf4) is at or below it, unlike the fuel limit's NZFLTRES, which is a minimum. (was engine_speed_above_which_anc_may_limit_engine_speed_1000_3000; PR #53 round 97)",
+    "evidence": "0xb558-0xb564 move.w (0x80ccf4),d0 / cmp.w (0x807a34),d0 / bhi 0xb58e (the not-met branch). Compare the fuel limit at 0xb322-0xb328: bcs. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a36",
+    "current_name": "engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_maximum_first_stage_acceleration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +14 NZESACTR 'ENGINE ACCELERATION BELOW WHICH ANC MAY LIMIT ENGINE SPEED' (R/S 6.25, signed; 136 = 850 rpm/s). The ANC engine speed limit may engage only while ESFT01AC (0x80a294) is at or below it. Above it the limit is inhibited: NZESLMIH (0x80a2a0) = 1 and acceleration_noise_control_engine_speed_limit_inhibit_timer is reloaded. (was engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540; PR #53 round 97)",
+    "evidence": "0xb51c-0xb528 cmp.w (0x807a36),d0 / ble, then the inhibit; 0xb566-0xb572 the same compare / bgt to the not-met branch. 2 word reads.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a3a",
+    "current_name": "minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20",
+    "proposed_name": "acceleration_noise_control_timing_limit_minimum_active_time",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +18 NZTADYTM 'MINIMUM AMOUNT OF TIME WHICH THE ANC TIMING LIMIT WILL BE ACTIVE' (0.05 s; 40). cm550_calculateAccelerationNoiseControlTimingLimit (0xb3d0) loads it into acceleration_noise_control_timing_limit_hold_timer (0x800044) while the conditions or the override hold. (was minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20; PR #53 round 97)",
+    "evidence": "0xb464 and 0xb478 move.w (0x807a3a).l,(a4) with a4 = 0x800044 (0xb3e0). 2 word reads.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a3c",
+    "current_name": "timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720",
+    "proposed_name": "acceleration_noise_control_timing_limit_ramp_out_increment",
+    "proposed_type": "word",
+    "comment": "e2m 10A5 +1A NZTARMRT 'TIMING INCREMENT ADDED TO ANC_TIMING TO RAMP OUT THE TIMING DERATE' (26 in the dump). While the ANC timing limit status is off, 0xb3d0 adds it each pass to acceleration_noise_control_timing_limit (0x80a28e) until that reaches 0x400. (was timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720; PR #53 round 97)",
+    "evidence": "0xb4b0-0xb4c4 cmpi.w #0x400,(a2) / bcc / move.w (0x807a3c),d0 / add.w d0,(a2) / cap 0x400, a2 = 0x80a28e. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a3e",
+    "current_name": "filtered_engine_acceleration_above_which_anc_may_limit_ti_2560_2540",
+    "proposed_name": "acceleration_noise_control_timing_limit_minimum_second_stage_acceleration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +1C NZTAFTTR 'FILTERED ENGINE ACCELERATION ABOVE WHICH ANC MAY LIMIT TIMING' (R/S 6.25, signed; 64): the ANC timing limit may engage only while ESFT02AC (0x80a296) is at or above it. (was filtered_engine_acceleration_above_which_anc_may_limit_ti_2560_2540; PR #53 round 97)",
+    "evidence": "0xb452-0xb45e move.w (0x80a296),d0 / cmp.w (0x807a3e),d0 / blt to the not-met branch. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a40",
+    "current_name": "unfiltered_acceleration_limit_used_to_determine_anc_timi_2560_2540",
+    "proposed_name": "acceleration_noise_control_timing_limit_unfiltered_acceleration_limit",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +1E NZTAACLM 'UNFILTERED ACCELERATION LIMIT USED TO DETERMINE ANC TIMING LIMITING AC...' (full text from 4 other e2m files; R/S 2.5 per count, signed; 400 in the dump). No reader in the dumped ROM: cm550_calculateAccelerationNoiseControlTimingLimit compares only the first and second stage accelerations, and the unfiltered acceleration ESESAC (0x80a292) feeds only the filter. The name comes from the record. (was unfiltered_acceleration_limit_used_to_determine_anc_timi_2560_2540; PR #53 round 97)",
+    "evidence": "find_range_refs 0x8079f0-0x807a60: no reference to 0x807a40 and no RAM pointer to it; 0x80a292 is referenced only by calculateFilteredEngineAcceleration (0xb238 write, 0xb24a filter input).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a46",
+    "current_name": "upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540",
+    "proposed_name": "engine_acceleration_first_stage_clamp_maximum",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +24 ESFT01MX 'UPPER ACCELERATION BOUND FOR ENG ACCEL FIRST STAGE FILTER' (R/S 6.25, signed; 94 in the dump). calculateFilteredEngineAcceleration (0xb210, the twin of CM848 0x38760) lowers the first stage value ESFT01AC to it when larger and presets the filter accumulator to it. The same record and name as CM848 0x40880c (CM848 e2m 8A42 +4). (was upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540; PR #53 round 97)",
+    "evidence": "0xb21a movea.l #0x807a46,a3; 0xb272-0xb278 move.w (a2),d0 / cmp.w (a3),d0 / ble / move.w (a3),(a2), then accumulator = value << 16 - 0x80000000 at (0x4,a5) (0xb27a-0xb288). Signed compare, word. CM848 8A42 +4 ESFT01MX -> 0x40880c engine_acceleration_first_stage_clamp_maximum.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a48",
+    "current_name": "lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540",
+    "proposed_name": "engine_acceleration_first_stage_clamp_minimum",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +26 ESFT01MN 'LOWER ACCELERATION BOUND FOR ENG ACCEL FIRST STAGE FILTER' (signed; -94 in the dump). calculateFilteredEngineAcceleration raises ESFT01AC to it when smaller and presets the filter accumulator. The same record and name as CM848 0x40880e (8A42 +6). (was lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540; PR #53 round 97)",
+    "evidence": "0xb220 movea.l #0x807a48,a4; 0xb258-0xb25c cmp.w (a4),d0 / bge / move.w (a4),(a2) and the accumulator preset 0xb25e-0xb26c. CM848 8A42 +6 ESFT01MN -> 0x40880e engine_acceleration_first_stage_clamp_minimum.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a4a",
+    "current_name": "duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_inhibit_duration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +28 NZESIHTM 'DURATION ANC SPEED LIMIT WILL BE DISABLED AFTER A BARE ENGINE ACCEL' (0.05 s, signed; 40 = 2.0 s). 0xb4f2 loads it into acceleration_noise_control_engine_speed_limit_inhibit_timer (0x80003c) while ESFT01AC is above NZESACTR. (was duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20; PR #53 round 97)",
+    "evidence": "0xb52e move.w (0x807a4a).l,(0x80003c).l. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a4c",
+    "current_name": "duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20",
+    "proposed_name": "acceleration_noise_control_fuel_limit_inhibit_duration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +2A NZFLIHTM 'DURATION ANC FUELING LIMIT WILL BE DISABLED AFTER A BARE ENGINE ACCEL' (0.05 s, signed; 40). 0xb2aa loads it into acceleration_noise_control_fuel_limit_inhibit_timer (0x80003e) while ESFT01AC is above NZFLACTR. The 0x807a4c constants in cm550_ramClearWithWatchdog and mc68k_initializeJ1708Datalink are the end bound of the start-up RAM clear (0x800000-0x807a4b), not reads of this value. Typed i16 like its siblings (was undefined). (was duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20; PR #53 round 97)",
+    "evidence": "0xb2ea move.w (0x807a4c).l,(0x80003e).l; 0x3c2e cmpa.l #0x807a4c,a0 / 0x3c36 movea.l #0x807a4c,a0 / 0x3c64 cmpa.l #0x807a4c,a1 (clr.l (a1)+ loop from 0x800000) and the same three at 0x2ce22-0x2ce58. e2m signed.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a4e",
+    "current_name": "duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20",
+    "proposed_name": "acceleration_noise_control_timing_limit_inhibit_duration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +2C NZTAIHTM 'DURATION ANC TIMING LIMIT WILL BE DISABLED AFTER A BARE ENGINE ACCEL' (0.05 s, signed; 40). cm550_calculateAccelerationNoiseControlTimingLimit loads it into acceleration_noise_control_timing_limit_inhibit_timer (0x800040) while ESFT01AC is above NZTAACTR. (was duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20; PR #53 round 97)",
+    "evidence": "0xb40c move.w (0x807a4e).l,(0x800040).l. 1 word read.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a50",
+    "current_name": "engine_acceleration_below_which_anc_may_limit_timing_2560_2540",
+    "proposed_name": "acceleration_noise_control_timing_limit_maximum_first_stage_acceleration",
+    "proposed_type": "i16",
+    "comment": "e2m 10A5 +2E NZTAACTR 'ENGINE ACCELERATION BELOW WHICH ANC MAY LIMIT TIMING' (R/S 6.25, signed; 160). The ANC timing limit may engage only while ESFT01AC (0x80a294) is at or below it. Above it the timing limit is inhibited: NZTALMIH (0x80a2a4) = 1 and acceleration_noise_control_timing_limit_inhibit_timer is reloaded. (was engine_acceleration_below_which_anc_may_limit_timing_2560_2540; PR #53 round 97)",
+    "evidence": "0xb3fa-0xb406 cmp.w (0x807a50),d0 / ble, then the inhibit; 0xb444-0xb450 the same compare / bgt to the not-met branch. 2 word reads.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807a5a",
+    "current_name": "afc_fueling_derate_value_when_afc_override_is_enabled_0_100",
+    "proposed_name": "air_fuel_control_fueling_override_value",
+    "proposed_type": "word",
+    "comment": "e2m 11D5 +0 AFFLMAN 'AFC FUELING DERATE VALUE WHEN AFC OVERRIDE IS ENABLED' (%FU; 0 in the dump). While algorithm_enable_flags_12_cal.air_fuel_control_override_enable is set, cm550_fuelTimingTransitionStateMachine (0xc180, the air fuel control fuel limit) uses it as air_fuel_control_fuel_limit (0x80a8f6) instead of the engine speed x boost table. The same record and name as CM848 0x3feff2. (was afc_fueling_derate_value_when_afc_override_is_enabled_0_100; PR #53 round 97)",
+    "evidence": "0xc19c-0xc1a8 move.w (0x803cac),d0 / andi.w #0x8 / beq / move.w (0x807a5a).l,(a5) with a5 = 0x80a8f6 (0xc196); CM848 11D5 +0 AFC_Fueling_Override_Value -> 0x3feff2 air_fuel_control_fueling_override_value.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807aa6",
+    "current_name": "time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900",
+    "proposed_name": "air_fuel_control_alpha_timeout",
+    "proposed_type": "word",
+    "comment": "e2m 104B +6 APAFTRTM 'TIME THAT MUST ELAPSE WITHOUT AFC LIMITING BEFORE ALPHA MAY BE SET TO ONE' (0.02 s; 19500 = 390 s). calculateAlphaAirFuelControlResult (0xc504, a twin) reloads alpha_air_fuel_control_timer with it while an air fuel control or low speed governor event is latched. calculateAlpha (0xc326) presets the timer with it while the engine is stopped, cranking or jump starting. The same block, offset, record and name as CM848 0x5be60. (was time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900; PR #53 round 97)",
+    "evidence": "0xc52c move.w (0x807aa6).l,(a2) with a2 = 0x80a914; 0xc36e move.w (0x807aa6).l,(0x80a914).l; CM848 104B +6 AFC_Alpha_Timeout -> 0x5be60 air_fuel_control_alpha_timeout.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807c78",
+    "current_name": "reference_speed_used_when_calculating_cc_and_rsg_upper_droops_on_0_255",
+    "proposed_name": "cruise_droop_reference_speed",
+    "proposed_type": "word",
+    "comment": "e2m 1186 +16 CRDPRFVS 'REFERENCE SPEED USED WHEN CALCULATING CC AND RSG UPPER DROOPS ON POWER-UP' (1/256 mph; 15360 = 60 mph in the dump). No reader in the dumped ROM: the cruise / road speed governor code is above 0x40000, and the algorithm_enable_flags_3_cal bits cruise_control_enable, road_speed_governor_enable and cruise_governor_droop_enable have no reader there. The same block, offset, record and name as CM848 0x408e12. (was reference_speed_used_when_calculating_cc_and_rsg_upper_droops_on_0_255; PR #53 round 97)",
+    "evidence": "e2m_block_addresses --firmware cm550 1186 +16 -> 0x807c78; CM848 1186 +16 Cruise_RSG_Droop_Reference_Speed (same text) -> 0x408e12 cruise_droop_reference_speed; find_range_refs 0x807c60-0x807c98: only parameter_id_table words (0x35fcc / 0x360c4).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807c7a",
+    "current_name": "high_limit_for_cruise_rsg_error_delta_0_255",
+    "proposed_name": "cruise_droop_speed_error_delta_maximum",
+    "proposed_type": "word",
+    "comment": "e2m 1186 +18 CRERDCHL 'HIGH LIMIT FOR CRUISE_RSG_ERROR_DELTA' (1/256 mph; 768 = 3 mph): the ceiling of the cruise / RSG droop speed delta. No reader in the dumped ROM. The same block, offset, record and name as CM848 0x408e14. (was high_limit_for_cruise_rsg_error_delta_0_255; PR #53 round 97)",
+    "evidence": "e2m 1186 +18 -> 0x807c7a; CM848 1186 +18 Cruise_RSG_Error_Delta_HL -> 0x408e14 cruise_droop_speed_error_delta_maximum; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807c7c",
+    "current_name": "low_limit_for_cruise_rsg_error_delta_255_0",
+    "proposed_name": "cruise_droop_speed_error_delta_minimum",
+    "proposed_type": "i16",
+    "comment": "e2m 1186 +1A CRERDCLL 'LOW LIMIT FOR CRUISE_RSG_ERROR_DELTA' (1/256 mph, signed; -768 = -3 mph): the floor of the droop speed delta. No reader in the dumped ROM. The same block, offset, record and name as CM848 0x408e16. (was low_limit_for_cruise_rsg_error_delta_255_0; PR #53 round 97)",
+    "evidence": "e2m 1186 +1A -> 0x807c7c; CM848 1186 +1A Cruise_RSG_Error_Delta_LL -> 0x408e16 cruise_droop_speed_error_delta_minimum (i16); no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807f6a",
+    "current_name": "threshold_for_engine_deceleration_rate_to_activate_decel_timer_0_100",
+    "proposed_name": "engine_deceleration_rate_timer_threshold",
+    "proposed_type": "word",
+    "comment": "e2m 11DD +6 SPDIRTTD 'THRESHOLD FOR ENGINE DECELERATION RATE TO ACTIVATE DECEL TIMER' (0.1 rpm/s; 500 = 50 rpm/s in the dump). cm550_updateElectronicSmartPowerTau (0x1abb2, Electronic Smart Power) counts the deceleration timer SPESDITR (0x80d2b0) up to SPDIPE (0x807f68) while the filtered engine deceleration rate (0x80d2b2, from engine_deceleration_rate_filter_state) is above it, and clears the timer otherwise. CM848 has no 11DD block. (was threshold_for_engine_deceleration_rate_to_activate_decel_timer_0_100; PR #53 round 97)",
+    "evidence": "0x1aca6-0x1acb8 move.w d0,(0x80d2b2) / ext.l d0 / moveq #0,d1 / move.w (0x807f6a),d1 / cmp.l d1,d0 / ble 0x1acd0 (clr.w (0x80d2b0)); else 0x1acba-0x1acc8 cmp.w (0x807f68) / bcc / addq.w #1,(0x80d2b0). 1 word read, zero-extended.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080802e",
+    "current_name": "time_delay_forced_for_rsg_override_for_mismatch_of_veh_and_en_0_100",
+    "proposed_name": "drivetrain_ratio_out_of_gear_speed_mismatch_delay",
+    "proposed_type": "word",
+    "comment": "e2m 106D +C GROGESOD 'TIME DELAY FORCED FOR RSG OVERRIDE FOR MISMATCH OF VEH. AND ENG. SPEEDS' (0.04 s; 150 = 6.0 s in the dump, as in CM848). No reader in the dumped ROM. The same block, offset, record and name as CM848 0x5c93a. (was time_delay_forced_for_rsg_override_for_mismatch_of_veh_and_en_0_100; PR #53 round 97)",
+    "evidence": "e2m 106D +C -> 0x80802e; CM848 106D +C Out_Of_Gear_Spd_Delay -> 0x5c93a drivetrain_ratio_out_of_gear_speed_mismatch_delay; find_range_refs 0x808022-0x808050: references only to 0x808036-0x80804e (HSG gains) and parameter_id_table, none to 0x80802e.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00808984",
+    "current_name": "max_engine_speed_for_pto_engagement_600_2500",
+    "proposed_name": "power_take_off_maximum_engage_engine_speed",
+    "proposed_type": "i16",
+    "comment": "e2m 109D +0 PTMXEGES 'MAX ENGINE SPEED FOR PTO ENGAGEMENT' (0.125 rpm, signed in v64t6_s; 24000 = 3000 rpm). No reader in the dumped ROM: the power take-off engagement logic is above 0x40000 (power_take_off_governor_active_flag has no writer in the dump). The same block, offset, record and name as CM848 0x4071d8. (was max_engine_speed_for_pto_engagement_600_2500; PR #53 round 97)",
+    "evidence": "e2m 109D +0 -> 0x808984; CM848 109D +0 PTO_Maximum_Engage_Speed [PTMXEGES] -> 0x4071d8 power_take_off_maximum_engage_engine_speed; find_range_refs 0x808984-0x80898e: only parameter_id_table 0x35884.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00808986",
+    "current_name": "min_engine_speed_for_pto_engagement_500_2500",
+    "proposed_name": "power_take_off_minimum_engage_engine_speed",
+    "proposed_type": "word",
+    "comment": "e2m 109D +2 PTMNEGES 'MIN ENGINE SPEED FOR PTO ENGAGEMENT' (0.125 rpm; 2400 = 300 rpm). No reader in the dumped ROM. The same block, offset, record and name as CM848 0x4071da. (was min_engine_speed_for_pto_engagement_500_2500; PR #53 round 97)",
+    "evidence": "e2m 109D +2 -> 0x808986; CM848 109D +2 PTO_Minimum_Engage_Speed [PTMNEGES] -> 0x4071da; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080898c",
+    "current_name": "amount_of_time_before_remote_pto_switch_is_considered_stationary_0_10",
+    "proposed_name": "power_take_off_remote_switch_timeout",
+    "proposed_type": "word",
+    "comment": "e2m 109D +8 PTROSWTM 'AMOUNT OF TIME BEFORE REMOTE PTO SWITCH IS CONSIDERED STATIONARY' (0.1 s; 10 = 1.0 s). No reader in the dumped ROM. The same record and name as CM848 0x4071dc, which is at 109D +4 because CM550's block has two patch holes at +4 / +6. (was amount_of_time_before_remote_pto_switch_is_considered_stationary_0_10; PR #53 round 97)",
+    "evidence": "e2m 109D +8 -> 0x80898c (109D +4 / +6 PTBKSPT2 / PTBLKSPT 'PATCH HOLE'); CM848 109D +4 PTO_Remote_Switch_Timeout [PTROSWTM] -> 0x4071dc power_take_off_remote_switch_timeout; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a280",
+    "current_name": "rapid_vehicle_accel_flag_on_off",
+    "proposed_name": "air_conditioning_rapid_vehicle_acceleration_flag",
+    "proposed_type": "word",
+    "comment": "e2m 818B +2 ACHIAC 'RAPID VEHICLE ACCEL FLAG' (1 = on; 0 in the dump): the A/C compressor control's rapid vehicle acceleration flag. It sits beside ACCHEA, the A/C clutch command (0x80a27e), and ACSWERCU (0x80a282). No reader or writer in the dumped ROM, so the name comes from the record. (was rapid_vehicle_accel_flag_on_off; PR #53 round 97)",
+    "evidence": "e2m 818B +2 -> 0x80a280; find_range_refs 0x80a270-0x80a28c: only parameter_id_table entries for 0x80a27e / 0x80a284 / 0x80a288 and the misfire rows at 0x80a270.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a290",
+    "current_name": "anc_speed_limit_ramp_value",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +4 NZESLM 'ENGINE SPEED LIMIT DICTATED BY ANC' (0.125 rpm; 21200 = 2650 rpm in the dump). cm550_engineStateFuelLimitInterpolator (0xb4f2) sets it to the engaged value NZCNESLM (0x807a2c) while the ANC engine speed limit status is on, and otherwise ramps it up by NZESRMRT to maximum_rated_engine_speed. cm550_initializeFuelSystemOutputDriver (0xb666) presets it to the rated speed. selectEngineSpeedLimit (0x1d5a0) takes it as source 3 of the HSG reference speed arbitration. The engine speed sibling of acceleration_noise_control_fuel_limit / acceleration_noise_control_timing_limit. (was anc_speed_limit_ramp_value; PR #53 round 97)",
+    "evidence": "0xb4f6 movea.l #0x80a290,a2, then writes via (a2) at 0xb5b0 / 0xb5cc / 0xb5d8; 0xb66e move.w (0x803f40).l,(0x80a290).l; 0x1d640-0x1d650 move.w (0x80a290),d0 / cmp.w (a2),d0 / bhi / move.w (0x80a290),(a2) / move.w #3,(a3). All word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a29e",
+    "current_name": "timing_advance_limit_as_just_before_modification_by_anc_timing_0_120",
+    "proposed_name": "acceleration_noise_control_timing_advance_before_limit",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +12 TSBENZTA 'TIMING ADVANCE LIMIT AS JUST BEFORE MODIFICATION BY ANC TIMING' (0.1171875 deg, -60 offset; 495 in the dump). cm550_applyAccelerationNoiseControlTimingLimit (0xb4ce) copies fuel_timing_advance_value (0x80d346) into it before capping the timing at acceleration_noise_control_timing_limit. (was timing_advance_limit_as_just_before_modification_by_anc_timing_0_120; PR #53 round 97)",
+    "evidence": "0xb4da move.w (a1),(0x80a29e).l with a1 = 0x80d346 (0xb4ce); its only reference, word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a2a0",
+    "current_name": "anc_speed_limit_disable_due_to_bare_engine_accel_active_inactive",
+    "proposed_name": "acceleration_noise_control_engine_speed_limit_inhibit_flag",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +14 NZESLMIH 'ANC SPEED LIMIT DISABLE DUE TO BARE ENGINE ACCEL' (1 = active). 0xb4f2 sets it while ESFT01AC is above NZESACTR (0x807a36) and clears it when acceleration_noise_control_engine_speed_limit_inhibit_timer (0x80003c) has run out. While it is 1 the engine speed limit conditions fail. (was anc_speed_limit_disable_due_to_bare_engine_accel_active_inactive; PR #53 round 97)",
+    "evidence": "0xb508 movea.l #0x80a2a0,a0; 0xb52a move.w #1,(a0); 0xb54a clr.w (a0); 0xb554 tst.w (a0) / bne to the not-met branch. Word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a2a2",
+    "current_name": "anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive",
+    "proposed_name": "acceleration_noise_control_fuel_limit_inhibit_flag",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +16 NZFLLMIH 'ANC FUELING LIMIT DISABLE DUE TO BARE ENGINE ACCEL'. 0xb2aa sets it while ESFT01AC is above NZFLACTR and clears it when acceleration_noise_control_fuel_limit_inhibit_timer (0x80003e) has run out. While it is 1 the fuel limit conditions fail. (was anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive; PR #53 round 97)",
+    "evidence": "0xb2e2 move.w #1,(0x80a2a2); 0xb306 clr.w (0x80a2a2); 0xb314 tst.w (0x80a2a2) / bne to the not-met branch. 3 word accesses.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a2a4",
+    "current_name": "anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive",
+    "proposed_name": "acceleration_noise_control_timing_limit_inhibit_flag",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +18 NZTALMIH 'ANC TIMING LIMIT DISABLE DUE TO BARE ENGINE ACCEL'. cm550_calculateAccelerationNoiseControlTimingLimit (0xb3d0) sets it while ESFT01AC is above NZTAACTR and clears it when acceleration_noise_control_timing_limit_inhibit_timer (0x800040) has run out. While it is 1 the timing limit conditions fail. (was anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive; PR #53 round 97)",
+    "evidence": "0xb3e6 movea.l #0x80a2a4,a5; 0xb408 move.w #1,(a5); 0xb428 clr.w (a5); 0xb432 tst.w (a5) / bne to the not-met branch. Word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a2a6",
+    "current_name": "application_specific_anc_override_flag_1_engage_anc_0_1",
+    "proposed_name": "acceleration_noise_control_application_override_flag",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +1A ASANODFG 'APPLICATION SPECIFIC ANC OVERRIDE FLAG (1 = ENGAGE ANC)'. When it is nonzero, the three ANC limits (0xb2aa fuel, 0xb3d0 timing, 0xb4f2 engine speed) set their status and reload their hold timers even when their conditions fail. The dumped ROM only reads it (0 in the dump). (was application_specific_anc_override_flag_1_engage_anc_0_1; PR #53 round 97)",
+    "evidence": "tst.w (0x80a2a6) at 0xb352 / 0xb46c / 0xb58e, each followed by move.w #1,(a3) and the minimum active time into the hold timer; no writer in the ROM.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a2a8",
+    "current_name": "application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1",
+    "proposed_name": "acceleration_noise_control_application_enable_flag",
+    "proposed_type": "word",
+    "comment": "e2m 10A4 +1C ASANENF 'APPLICATION SPECIFIC ANC ENABLE/DISABLE FLAG (SET TO FALSE TO DISABLE)'. While it is 0, the three ANC limits treat their conditions as failed. cm550_initializeFuelSystemOutputDriver (0xb666) sets it to 1 at start-up (1 in the dump). (was application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1; PR #53 round 97)",
+    "evidence": "tst.w (0x80a2a8) / beq to the not-met branch at 0xb30c / 0xb42a / 0xb54c; 0xb666 move.w #1,(0x80a2a8). 4 word accesses.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a906",
+    "current_name": "semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true",
+    "proposed_name": "alpha_air_fuel_control_state_detected_flag",
+    "proposed_type": "word",
+    "comment": "e2m 104A +E FLAFSTFG 'SEMAPHORE USED TO LATCH AFC EVENTS THAT OCCUR BETWEEN ALPHA EXECUTIONS'. cm550_diagnosticTimingIncrementController (0xc2be) sets it while final_fueling_state is FUELING_STATE_AIR_FUEL_CONTROL_DERATE. calculateAlphaAirFuelControlResult (0xc504) reloads alpha_air_fuel_control_timer while it is 1, and the code after the alpha base pass (0xc658) clears it. The same block, offset, record and name as CM848 0x40a176. (was semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true; PR #53 round 97)",
+    "evidence": "0xc2ca cmpi.w #0x10,(0x80d330) / beq; 0xc2e0 move.w #1,(0x80a906); 0xc518 cmpi.w #1,(0x80a906); 0xc658 clr.w (0x80a906). CM848 104A +E Fueling_AFC_State_Detected -> 0x40a176 alpha_air_fuel_control_state_detected_flag.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a912",
+    "current_name": "afc_exit_timer_active_flag",
+    "proposed_name": "alpha_air_fuel_control_timer_active_flag",
+    "proposed_type": "word",
+    "comment": "The timer-running flag of alpha_air_fuel_control_timer (0x80a914). calculateAlphaAirFuelControlResult (0xc504) sets it while it reloads the timer, counts the timer down while it is 1, and clears it when the timer has run out (the function then returns 1). calculateAlpha sets it with the timer preset while the engine is stopped, cranking or jump starting, and cm550_initializeAlpha (0x1dcfc) clears it. No e2m record. The same role and name as CM848 0x3fa0dc in the twin. Typed word (was undefined). (was afc_exit_timer_active_flag; PR #53 round 97)",
+    "evidence": "0xc512 movea.l #0x80a912,a0; 0xc532 move.w #1,(a0); 0xc53c cmpi.w #1,(a0); 0xc54e clr.w (a0); 0xc366 move.w #1,(0x80a912); 0x1dd18 clr.w (0x80a912). All word. CM848 calculateAlphaAirFuelControlResult uses alpha_air_fuel_control_timer_active_flag 0x3fa0dc in the same steps.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a914",
+    "current_name": "afc_exit_countdown_timer",
+    "proposed_name": "alpha_air_fuel_control_timer",
+    "proposed_type": "word",
+    "comment": "e2m 104A +1C APAFTR 'TRACE THE TIME SINCE FUELING STATE IS NOT AFC OR LSG' (0.02 s; 19500 in the dump). calculateAlphaAirFuelControlResult (0xc504) reloads it with air_fuel_control_alpha_timeout while an air fuel control or low speed governor event is latched, and counts it down while alpha_air_fuel_control_timer_active_flag is 1. At 0 the AFC alpha result is 1. The same record and name as CM848 0x40a180, at 104A +18 in CM848. (was afc_exit_countdown_timer; PR #53 round 97)",
+    "evidence": "0xc506 / 0xc50c movea.l #0x80a914,a2 / a1; 0xc52c move.w (0x807aa6),(a2); 0xc542 tst.w (a2); 0xc546 subq.w #1,(a2); 0xc36e move.w (0x807aa6),(0x80a914). Word. CM848 104A +18 Alpha_AFC_Timer [APAFTR] -> 0x40a180 alpha_air_fuel_control_timer.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080aa3e",
+    "current_name": "slope_of_the_bottom_droop_line_calculated_in_cc_rsg_droop_0_0_35",
+    "proposed_name": "cruise_bottom_droop_gain",
+    "proposed_type": "word",
+    "comment": "e2m 1187 +6 CRBODJCL 'SLOPE OF THE BOTTOM DROOP LINE CALCULATED IN CC/RSG DROOP' (742 in the dump): the cruise bottom droop slope. No reader or writer in the dumped ROM; the cruise / road speed governor code is above 0x40000. The same block, offset, record and name as CM848 0x40b69c. (was slope_of_the_bottom_droop_line_calculated_in_cc_rsg_droop_0_0_35; PR #53 round 97)",
+    "evidence": "e2m 1187 +6 -> 0x80aa3e; CM848 1187 +6 Cruise_Bottom_Droop_Gain (same text) -> 0x40b69c cruise_bottom_droop_gain; find_range_refs 0x80aa38-0x80aa64: only parameter_id_table 0x35fd4.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080aa52",
+    "current_name": "slope_of_the_top_droop_line_computed_in_cc_rsg_droop_algorith_0_0_35",
+    "proposed_name": "cruise_top_droop_gain",
+    "proposed_type": "word",
+    "comment": "e2m 1187 +1A CRTODJCL 'SLOPE OF THE TOP DROOP LINE COMPUTED IN CC/RSG DROOP ALGORITHM' (0 in the dump). No code in the dumped ROM. The same block, offset, record and name as CM848 0x40b6b0. (was slope_of_the_top_droop_line_computed_in_cc_rsg_droop_algorith_0_0_35; PR #53 round 97)",
+    "evidence": "e2m 1187 +1A -> 0x80aa52; CM848 1187 +1A Cruise_Top_Droop_Gain -> 0x40b6b0 cruise_top_droop_gain; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080aa58",
+    "current_name": "slope_of_the_bottom_droop_line_computed_in_the_cc_rsg_droop_a_0_0_35",
+    "proposed_name": "road_speed_governor_bottom_droop_gain",
+    "proposed_type": "word",
+    "comment": "e2m 1187 +20 RSBODJCL 'SLOPE OF THE BOTTOM DROOP LINE COMPUTED IN THE CC/RSG DROOP ALGORITHM' (742 in the dump). No code in the dumped ROM. The same block, offset, record and name as CM848 0x40b6b6. (was slope_of_the_bottom_droop_line_computed_in_the_cc_rsg_droop_a_0_0_35; PR #53 round 97)",
+    "evidence": "e2m 1187 +20 -> 0x80aa58; CM848 1187 +20 RSG_Bottom_Droop_Gain -> 0x40b6b6 road_speed_governor_bottom_droop_gain; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080aa5e",
+    "current_name": "slope_of_the_top_droop_line_computed_in_the_cc_rsg_droop_algo_0_0_35",
+    "proposed_name": "road_speed_governor_top_droop_gain",
+    "proposed_type": "word",
+    "comment": "e2m 1187 +26 RSTODJCL 'SLOPE OF THE TOP DROOP LINE COMPUTED IN THE CC/RSG DROOP ALGORITHM' (0 in the dump). No code in the dumped ROM. The same block, offset, record and name as CM848 0x40b6bc. (was slope_of_the_top_droop_line_computed_in_the_cc_rsg_droop_algo_0_0_35; PR #53 round 97)",
+    "evidence": "e2m 1187 +26 -> 0x80aa5e; CM848 1187 +26 RSG_Top_Droop_Gain -> 0x40b6bc road_speed_governor_top_droop_gain; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080aa60",
+    "current_name": "offset_of_the_cc_rsg_top_droop_0_100",
+    "proposed_name": "cruise_top_droop_offset",
+    "proposed_type": "word",
+    "comment": "e2m 1187 +28 CRTODPOF 'OFFSET OF THE CC/RSG TOP DROOP' (%FU 0.017; 1325 in the dump): the working top droop offset of the cruise / RSG droop. No code in the dumped ROM. The same block, offset, record and name as CM848 0x40b6be. (was offset_of_the_cc_rsg_top_droop_0_100; PR #53 round 97)",
+    "evidence": "e2m 1187 +28 -> 0x80aa60; CM848 1187 +28 Cruise_RSG_Top_Droop_Offset -> 0x40b6be cruise_top_droop_offset; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bcdf",
+    "current_name": "user_supplied_value_for_the_pto_set_switch_on_off",
+    "proposed_name": "power_take_off_switch_override_values",
+    "proposed_type": "byte",
+    "comment": "e2m 000E +11: the user supplied (override) values of the power take-off switches, with DSPTRUUC 0x01 PTO resume, DSPTSEUC 0x04 PTO set, DSPTONUC 0x10 PTO enable / on and DSAUSHUC 0x40 auxiliary shutdown. When algorithm_enable_flags_16_cal.power_take_off_on / set / resume_switch_override_enable (bits 12 / 10 / 8) is set, mc68k_sampleAndDebounceDiscreteInputs ORs bit 0x10 / 0x04 / 0x01 of this byte into power_take_off_switch_state_bits (0x80bcd5) instead of the debounced input. The power take-off counterpart of switch_1_to_8_override_values. (was user_supplied_value_for_the_pto_set_switch_on_off; PR #53 round 97)",
+    "evidence": "0x15394-0x153aa move.w (0x803cb4),d0 / andi.w #0x1000 / beq / move.b (0x80bcdf),d0 / andi.b #0x10 / or.b d0,(0x7,a4) (a4 = 0x80bcce); the same at 0x153c8-0x153de (0x400 / 0x04) and 0x153fc-0x15412 (0x100 / 0x01). 3 byte reads; e2m 000E +11 records DSPTRUUC / DSPTSEUC / DSPTONUC / DSAUSHUC.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d3a4",
+    "current_name": "timer_used_to_disable_rsg_when_veh_and_eng_speeds_disagree_0_100",
+    "proposed_name": "drivetrain_ratio_decoupled_hold_counter",
+    "proposed_type": "word",
+    "comment": "e2m 106C +6 GROGESTR 'TIMER USED TO DISABLE RSG WHEN VEH AND ENG SPEEDS DISAGREE' (0.04 s; 0 in the dump). No code in the dumped ROM. The same block, offset, record and name as CM848 0x40b6fa. (was timer_used_to_disable_rsg_when_veh_and_eng_speeds_disagree_0_100; PR #53 round 97)",
+    "evidence": "e2m 106C +6 -> 0x80d3a4; CM848 106C +6 Out_Of_Gear_Spd_Timer (same text) -> 0x40b6fa drivetrain_ratio_decoupled_hold_counter; find_range_refs 0x80d39e-0x80d3b0: only parameter_id_table 0x356fc / 0x35844.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d3a6",
+    "current_name": "timer_used_to_disable_rsg_when_gear_ratio_changes_0_100",
+    "proposed_name": "drivetrain_ratio_change_settle_counter",
+    "proposed_type": "word",
+    "comment": "e2m 106C +8 GROGGRTR 'TIMER USED TO DISABLE RSG WHEN GEAR RATIO CHANGES' (0.04 s; 0 in the dump). No code in the dumped ROM. The same block, offset, record and name as CM848 0x40b6fc. (was timer_used_to_disable_rsg_when_gear_ratio_changes_0_100; PR #53 round 97)",
+    "evidence": "e2m 106C +8 -> 0x80d3a6; CM848 106C +8 Out_Of_Gear_GR_Timer -> 0x40b6fc drivetrain_ratio_change_settle_counter; no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc30",
+    "current_name": "pto_fuel_demand_snapshot",
+    "proposed_name": "power_take_off_or_user_fuel_demand",
+    "proposed_type": "word",
+    "comment": "e2m 1265 +4 PTSLFL 'THE FUELING VALUE SELECTED BETWEEN USER FUELING AND PTO FUELING' (%FU). cm550_oil_pressure_shutdown_controller (0x2dcb0, the power take-off / user fueling selector, counterpart of cm848_selectPowerTakeOffOrUserFueling) stores fuel_demand_selected here, or closed_loop_fuel_demand_output while the power take-off governor is active and enabled. cm550_parameterSystemModeController (0xf796) reads it as the driver demand fuel in the power take-off and pedal fault states. It is the fuel demand half of the pair whose state half is power_take_off_or_user_fueling_state (1265 +6, 0x80dc32); CM848 keeps both as operating_mode_governor_output.fuel_demand / .mode_code. (was pto_fuel_demand_snapshot; PR #53 round 97)",
+    "evidence": "e2m 1265 +4 -> 0x80dc30; move.w (abs),(0x80dc30) at 0x2dce6 / 0x2dd42 / 0x2dd5e / 0x2dd86 / 0x2dda2 in 0x2dcb0; move.w (0x80dc30),(a3) at 0xf84a in 0xf796. 6 word accesses; CM848 1265 +4 Selected_User_Fueling -> 0x40af5a operating_mode_governor_output.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc82",
+    "current_name": "maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961",
+    "proposed_name": "road_speed_governor_reference_speed",
+    "proposed_type": "word",
+    "comment": "e2m 1197 +0 CRMXVSRF 'MAXIMUM ALLOWABLE VEHICLE SPEED SELECTED AS THE RSG REFERENCE' (1/256 mph; 25600 = 100 mph in the dump). 1197 +2 SRRFVS is the reference after driver reward / smart RSG. No code in the dumped ROM. CM848's e2m has the same record text as 8B89 +0 RSG_Reference_Speed. 8B89 is not in CM848's dumped parameter table, but its +8 RSG_HPCR_Leak_Reference_Speed lines up with fault_vehicle_speed_limit 0x40b5c4 when +0 is CM848's road_speed_governor_reference_speed 0x40b5bc, so the name is reused. (was maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961; PR #53 round 97)",
+    "evidence": "e2m 1197 +0 -> 0x80dc82 (only the parameter_id_table entry 0x36054 references it); CHR_CC_11.45.01.07 line 8701 RSG_Reference_Speed,MPH,8B89,0000 with the identical description; CM848 0x40b5bc road_speed_governor_reference_speed / 0x40b5c4 fault_vehicle_speed_limit (8B89 +8 RSG_HPCR_Leak_Reference_Speed).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080de68",
+    "current_name": "timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120",
+    "proposed_name": "air_fuel_control_timing_increment",
+    "proposed_type": "i16",
+    "comment": "e2m 105B +0 AFCNICTA 'TIMING ADVANCE ADDED TO BASE TIMING ANYTIME AFC IS LIMITING FUEL' (0.1171875 deg, signed). cm550_diagnosticTimingIncrementController (0xc2be) sets it to the calibrated increment AFICTA (0x808a6e) while final_fueling_state is FUELING_STATE_AIR_FUEL_CONTROL_DERATE, and to 0 otherwise. cm550_addAirFuelControlTimingAdvance (0xc2ee) adds it, signed, to fuel_timing_advance_value with a floor of 0. CM848's e2m label for the same record is AFC_Timing_Increment (0x40a2e4, no row). Typed i16 because it is read with ext.l (was word; in round 74 it was a field of the misapplied j1708_multipacket_msg_t). (was timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120; PR #53 round 97)",
+    "evidence": "0xc2c4 movea.l #0x80de68,a0; 0xc2d4 clr.w (a0); 0xc2da move.w (0x808a6e),(a0); 0xc2fe move.w (0x80de68),d1 / ext.l d1 / add.l d1,d0 / bpl; 0xc30e move.w (0x80de68),d0 / add.w d0,(a1) with a1 = 0x80d346. e2m signed.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080053c",
+    "current_name": "",
+    "proposed_name": "power_take_off_on_switch_previous_state",
+    "proposed_type": "byte",
+    "comment": "The power take-off on switch of the previous pass, 0 / 1 (bit 0x10 of power_take_off_switch_state_bits 0x80bcd5). mc68k_sampleAndDebounceDiscreteInputs uses it for the rising edge that sets bit 6 of the cruise switch byte 0x80bcd4: the PTO on switch turns on while sampled_road_speed is 0 and algorithm_enable_flags_28_cal.integrated_idle_management_enable is set. It then stores the present state. No e2m record. (new row, was DAT_0080053c; PR #53 round 97)",
+    "evidence": "0x15454-0x15466 move.b (0x7,a4),d0 / andi.l #0x10 / beq / tst.b (0x80053c) / bne; 0x15468 tst.w (0x80a9d0); 0x15470 andi.l #0x10 of (0x803ccc); 0x1547e ori.b #0x40,(a5) (a5 = 0x80bcd4); 0x15482-0x15494 andi.l #0x10 / sne / andi.l #1 / move.b d0,(0x80053c). Byte; these 2 are its only references.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803af2",
+    "current_name": "",
+    "proposed_name": "vehicle_acceleration_filter_state",
+    "proposed_type": "ema_filter_state_t",
+    "comment": "The signed first order filter record of the vehicle acceleration (ema_filter_state_t: coefficient pointer, then Q16.16 accumulator). The RAM dump holds coefficient = 0x807a1c (vehicle_acceleration_filter_coefficient, e2m 818C +0 VAACFTTC) and accumulator 0x80000000, which is 0 in the signed filter's offset binary. That is the layout of engine_acceleration_first_stage_filter_state. Code above the dumped ROM sets it up and uses it; nothing in 0x0-0x3ffff references it. The filter's output is VAVSACFT (filtered_vehicle_acceleration 0x80a288). No e2m record. (new row; PR #53 round 97)",
+    "evidence": "RAM dump 0x803af2 = 0x00807a1c, 0x803af6 = 0x80000000; besides 0x800066 / 0x80006e (the engine acceleration filters) it is the only RAM word that points into 0x8079f0-0x807a60; find_range_refs 0x803a00-0x803b0a: no ROM reference below 0x803b08; global_variables.csv has no row between 0x803a00 and 0x803b00.",
+    "confidence": "medium"
+   }
+  ],
+  "skipped": [
+   {
+    "address": "0x008001a6",
+    "current_name": "anc_default_fueling_ptr",
+    "reason": "Not a variable of its own. It is the low word of the dword 0x8001a4 (main_engine_position_sensor_sync_pulse_period_threshold: move.l at 0x102c4 / 0x1035e / 0x103a8) and has no ROM reference. Delete the row when 0x8001a4 is typed dword; otherwise the two rows overlap."
+   },
+   {
+    "address": "0x0080053e",
+    "current_name": "pto_engage_debounce_counter",
+    "reason": "It is a 0/1 latch, not a debounce counter. clr.w at 0x1543c runs when the PTO on bit 0x10 of 0x80bcd5 is off, move.w #1 at 0x1544c runs while the word 0x80aa02 == 3, and tst.w reads it at 0x154b2 / 0x154ec / 0x15570. While it is 0, the set and resume switches pressed together set PTSERUSW (0x20 of 0x80bcd5), and set or resume clears bit 6 of the cruise switch byte 0x80bcd4. While it is 1, neither happens. Two things are missing: what state 3 of 0x80aa02 is (no writer in the dumped ROM, no CM550 e2m record at 117D +3E, and it is not PTST, which is 0x80dc28) and what bit 6 of 0x80bcd4 is (no record, no reader in the dump). A mechanical name would be power_take_off_set_and_resume_inhibit_flag (word)."
+   },
+   {
+    "address": "0x008087f0",
+    "current_name": "eps_accel_threshold_lower",
+    "reason": "Not a variable: word 127 of the e2m table 12DF +0 PPCVTB 'TABLE OF FUELING CURVES' (Z, MM3S). The table spans 0x8086f2-0x808895: X axis PPHPCTI 0x8086b0 with 10 points, Y axis PPSSFLXA 0x8086c6 with 21 points, 10 x 21 = 210 words, and the next parameter_id_table entry is 12D4 at 0x808896. No ROM reference points into the table. The RAM lookup record at 0x8038c4 / 0x8038cc / 0x8038d2 points at the axes and the table and is set up above the dump. Delete the row; the table belongs on 0x8086f2 (now j1939_timeout_clear_value) as word[210]."
+   },
+   {
+    "address": "0x008087f2",
+    "current_name": "eps_accel_threshold_upper",
+    "reason": "Not a variable: word 128 of the PPCVTB fueling curve table (12DF +0, 0x8086f2-0x808895, 210 words). No code reference. Delete the row (see 0x8087f0)."
+   },
+   {
+    "address": "0x008087fa",
+    "current_name": "eps_accel_duration_counter",
+    "reason": "Not a variable: word 132 of the PPCVTB fueling curve table (12DF +0, 0x8086f2-0x808895). No code reference. Delete the row (see 0x8087f0)."
+   },
+   {
+    "address": "0x008087fc",
+    "current_name": "eps_accel_mode_state",
+    "reason": "Not a variable: word 133 of the PPCVTB fueling curve table (12DF +0, 0x8086f2-0x808895). No code reference. Delete the row (see 0x8087f0)."
+   }
+  ],
+  "notes": "Scratch: /home/linux/.claude/jobs/374b0424/tmp/w15/r97/scratch/R3/investigator/ (notes.md, proposals.txt, check_unique.py, refs_by_func.py, find_range_refs.py, ram_find.py, cm550_param_table.csv). All 74 proposed names are unique in CM550's rows and functions. The CM848-shared names are reuses for the same e2m records. Leads for later rounds: (1) Function renames (CM550 only, no twins, because CM848 compiles the ANC stage out): 0xb2aa cm550_rpm_system_state_controller is the ANC fuel limit (enable bit 0x1000; NZFLLM table lookup or ramp; suggested cm550_calculateAccelerationNoiseControlFuelLimit). 0xb4f2 cm550_engineStateFuelLimitInterpolator is the ANC engine speed limit (bit 0x4000; suggested cm550_calculateAccelerationNoiseControlEngineSpeedLimit). 0xb666 cm550_initializeFuelSystemOutputDriver sets ASANENF = 1 and NZESLM = rated speed (an ANC initializer). 0xb614 cm550_rpmParameterPointerSetup and 0xb63e cm550_dmaDescriptorSetup2 set up the ANC fuel / timing limit lookups and preset NZFLLM = fuel_demand_maximum / NZTALM = 0x400. (2) 0xd610 updateEngineSyncStatus is the auxiliary driver read-back diagnostics. It has no CM848 row of that name, so it needs a prefixed name. 0xe780 cm550_clearKickdownControlState resets its counters and fault bits. Its misnamed counters: 0x800166 kickdown_throttle_input = engine brake high recovery; 0x80016c timing_accumulator_flag_mask = ether start high recovery; 0x80016e redundant_sensor_validation_index = prime pump (bit 0x10) high recovery; 0x800160 ac_control_table_size = relay 4 low side error count; 0x800162 ac_control_kickdown_ptr = a relay 7 error count; current_derate_reserved = FSO high side error count. The aux_driver_* siblings should be spelled out (auxiliary_driver_*); aux_driver6 is relay 4 (bit 0x40). (3) Sync pulse: 0x10394 cm550_initializeCanBusTiming is the sync pulse threshold initializer. 0x1011c / 0x101b8 are the cranking sync pulse checks. 0x8001a8 (DAT, dword) is the period under test; the row 0x8001aa cold_start_rpm_snapshot sits inside it. 0x8001b0 cold_start_fuel_control_result is the ring start pointer, 0x8001b4 (DAT) the ring last-entry pointer, and 0x80aa16 / 0x80aa18 (DAT) the main / backup sync pulse results. (4) Power take-off: 0x2dcb0 cm550_oil_pressure_shutdown_controller is the power take-off / user fueling selector, counterpart of cm848_selectPowerTakeOffOrUserFueling (it differs in its first state test and writes flat rows). 0x80dc28 (PTST, no row) = power_take_off_governor_state; POWER_TAKE_OFF_GOVERNOR_STATE 0-3 is the same e2m text. 0x80dc2a PTDXSS (no row) = the J1939 PTO state. 0x80bcde (DAT) = the cruise switch override values (000E +10). 0x800540 / 0x800542 cruise_set / resume_switch_debounce_counter are hold counters too. Option: type 0x80dc30 / 0x80dc32 as CM848's operating_mode_governor_output_t (fuel_demand, mode_code). (5) ANC siblings outside this batch: the status rows 0x80a298 / 0x80a29a / 0x80a29c (sstatus_ / status_indicating_conditions_proper...) -> acceleration_noise_control_fuel_limit_status / _timing_limit_status / _engine_speed_limit_status. 0x80a292 (ESESAC, no row) = CM848 engine_acceleration_unfiltered. 0x800048 (DAT) = CM848 engine_acceleration_engine_speed_previous. 0x807a38 NZTACLTR is a minimum coolant temperature (bls at 0xb442). 0x80a294 / 0x80a296 can take CM848's engine_acceleration_first_stage_filtered / engine_acceleration_second_stage_filtered. (6) 0x8086f2 j1939_timeout_clear_value should be the 210-word PPCVTB fueling curve table (12DF), with every row inside 0x8086f2-0x808895 removed; 0x8086f0 proprietary_load_threshold is the last Y axis point. (7) Judgment calls: 0x807a34 NZESTRES is named a maximum because the code (bhi) contradicts its e2m text. The A/C / vehicle acceleration rows and 0x807a40 have no code in the dump and are named from their records (medium). 0x80dc82 reuses CM848's road_speed_governor_reference_speed on identical record text under a different block id (medium). 0x80053e is skipped because its trigger state is unknown."
+ },
+ "blind": {
+  "batch": "R3",
+  "roles": [
+   {
+    "address": "0x0080003c",
+    "role": "Inhibit countdown of the ANC engine speed limit. In 0xb4f2 (cm550_engineStateFuelLimitInterpolator, the ANC engine speed limit calculation) it is loaded with NZESIHTM (0x807a4a, move.w abs,abs at 0xb52e) while ESFT01AC (0x80a294) is above NZESACTR (0x807a36). Otherwise it counts down 1 per pass, and at 0 it clears NZESLMIH (0x80a2a0). No e2m record. Type word (tst.w / subq.w / move.w); 0 in the RAM dump.",
+    "discriminator": "The engine speed limit's copy: it reloads from NZESIHTM and clears NZESLMIH. 0x80003e does the same for the fuel limit (NZFLIHTM / NZFLLMIH) and 0x800040 for the timing limit (NZTAIHTM / NZTALMIH).",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_inhibit_timer",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has the 10A4 ANC records but no ANC code (no access to 0x40a04a-0x40a05c)"
+   },
+   {
+    "address": "0x0080003e",
+    "role": "Inhibit countdown of the ANC fuel limit. In 0xb2aa (cm550_rpm_system_state_controller, which is the ANC fuel limit calculation) it is loaded with NZFLIHTM (0x807a4c, move.w at 0xb2ea) while ESFT01AC is above NZFLACTR (0x807a26), otherwise counted down; at 0 it clears NZFLLMIH (0x80a2a2). No e2m record; type word.",
+    "discriminator": "The fuel limit's copy: NZFLIHTM / NZFLLMIH. Its siblings are 0x80003c (engine speed) and 0x800040 (timing).",
+    "suggested_name": "acceleration_noise_control_fuel_limit_inhibit_timer",
+    "confidence": "high",
+    "cm848_counterpart": "none: no ANC code in CM848"
+   },
+   {
+    "address": "0x00800042",
+    "role": "Hold timer of the ANC fuel limit. 0xb2aa (a4 = 0x800042) reloads it with NZFLDYTM (0x807a22) and sets NZFLLMSS (0x80a298) = 1 while the fuel limit conditions hold or the override ASANODFG (0x80a2a6) is set. Otherwise it counts down and clears NZFLLMSS at 0. While NZFLLMSS is 1, NZFLLM comes from the engine speed lookup; else it ramps out. Word accesses only, through a4 (type undefined -> word).",
+    "discriminator": "It is reloaded from NZFLDYTM and drives NZFLLMSS. 0x800044 (timing) and 0x800046 (engine speed) are the other two limits' hold timers.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_hold_timer",
+    "confidence": "high",
+    "cm848_counterpart": "none: no ANC code in CM848"
+   },
+   {
+    "address": "0x00800046",
+    "role": "Hold timer of the ANC engine speed limit. 0xb4f2 (a1 = 0x800046) reloads it with NZESDYTM (0x807a2e) and sets NZESLMSS (0x80a29c) while the conditions hold or ASANODFG is set. Otherwise it counts down and clears NZESLMSS at 0. While NZESLMSS is set, NZESLM = NZCNESLM. Word accesses via a1 (type undefined -> word).",
+    "discriminator": "The engine speed limit's hold timer (NZESDYTM / NZESLMSS); siblings 0x800042 (fuel) and 0x800044 (timing).",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_hold_timer",
+    "confidence": "high",
+    "cm848_counterpart": "none: no ANC code in CM848"
+   },
+   {
+    "address": "0x00800168",
+    "role": "It is not an A/C table pointer. It is a read-back recovery count of the auxiliary driver checker in updateEngineSyncStatus (0xd610), for feedback bit 1 of 0x80bd03 (000E +35 DSCD01FB, cold start aid relay 1) against bit 1 of the command latch 0x80bd09. While the command and the feedback are both on and the 'commanded on, feedback off' fault (0x806010 bit 13, set when 0x800158 reaches DAAUCTMX 0x807bfa) is set with its 0x806050 bit clear, it counts up to DRDRRVCU (0x807c02). At that limit it clears the fault bit and itself. It is cleared on any mismatch (0xda86) and by cm550_clearKickdownControlState (0xe780). Type byte (5 byte accesses).",
+    "discriminator": "Driver bit 1, recovery while commanded on (clears bit 13). 0x800167 is the same driver's commanded-off recovery (clears bit 14), and 0x800157 / 0x800158 are its two mismatch counts. The other seven drivers use 0x800155-0x800176.",
+    "suggested_name": "cold_start_aid_1_output_read_back_high_fault_recovery_count",
+    "confidence": "medium",
+    "cm848_counterpart": "counterpart: CM848 intake_air_heater_1_output_read_back_check.high_fault_recovery_count (0x3fd287 struct, cm848_checkDiscreteOutputReadBack 0x537c64). Same DAAUCTMX / DRDRRVCU limits and the same high / low fault scheme, but CM848 has one parameterized helper where CM550 has eight inline copies, so not a twin."
+   },
+   {
+    "address": "0x00800170",
+    "role": "It is not an ANC table size. updateEngineSyncStatus (block 0xe21a) uses it as the commanded-on read-back recovery count for feedback bit 6 of 0x80bd03 (DRR4FB; command bit DREA04 'relay 4 driver'). While the command and feedback are both on and the fault 0x806012 bit 5 is set (that fault is set when 0x800160 reaches DAAUCTMX), it counts to DRDRRVCU, then clears the fault bit and itself. It is cleared on a mismatch (0xe24c) and by 0xe780. Type byte.",
+    "discriminator": "Driver bit 6 (relay 4), commanded-on recovery: it clears word 9 bit 5. 0x80016f is the commanded-off recovery and 0x80015f / 0x800160 are the mismatch counts.",
+    "suggested_name": "relay_4_output_read_back_high_fault_recovery_count",
+    "confidence": "medium",
+    "cm848_counterpart": "counterpart role: cm848_checkDiscreteOutputReadBack high_fault_recovery_count; no CM848 output identified as relay 4"
+   },
+   {
+    "address": "0x00800172",
+    "role": "It is not an ANC table pointer. updateEngineSyncStatus (block 0xe3e0) uses it as the commanded-on read-back recovery count for feedback bit 3 of 0x80bd03 (DSACFB 'feedback for AC_CLUTCH driver' / DRR7FB). While the command and feedback are both on and the fault 0x806012 bit 7 is set (by 0x800162 at DAAUCTMX), it counts to DRDRRVCU and then clears that fault and itself. It is cleared on a mismatch (0xe412) and by 0xe780. Type byte.",
+    "discriminator": "Driver bit 3 (A/C clutch), commanded-on recovery: it clears word 9 bit 7. 0x800171 is the commanded-off recovery and 0x800161 / 0x800162 are the mismatch counts.",
+    "suggested_name": "air_conditioning_output_read_back_high_fault_recovery_count",
+    "confidence": "medium",
+    "cm848_counterpart": "counterpart: CM848 air_conditioning_output_read_back_check.high_fault_recovery_count (0x3fd27f, cm848_checkDiscreteOutputReadBack)"
+   },
+   {
+    "address": "0x008001a0",
+    "role": "Sync pulse period threshold of the backup engine speed sensor (it has nothing to do with ANC altitude). cm550_detectEngineSpeedSensorSyncPulse (0x1025c) with flag byte 1 reads it (move.l at 0x10306): a period below it is the sync pulse at running speed, and below running speed it selects the validators. After each pass it is rewritten as latest period 0x8001a8 x CSXT_1PC (0x807c1e) >> 8 (0x10370). cm550_initializeCanBusTiming (0x10394) presets it the same way (0x103b2). Type dword (long accesses only; it is already dword).",
+    "discriminator": "The backup sensor's threshold; 0x8001a4 is the primary sensor's.",
+    "suggested_name": "backup_engine_speed_sensor_sync_pulse_period_threshold",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 syncs on TPU cam and crank signals (hpcr_processEngineSyncPulses), with no period-ratio sync pulse test"
+   },
+   {
+    "address": "0x008001a4",
+    "role": "Sync pulse period threshold of the primary engine speed sensor. cm550_detectEngineSpeedSensorSyncPulse with flag byte 0 compares the new period against it (move.l at 0x102c4), and the function's plate already calls 0x8001a4 the threshold. It is rewritten each pass as period x CSXT_1PC >> 8 (0x1035e) and preset by cm550_initializeCanBusTiming (0x103a8). Type undefined -> dword.",
+    "discriminator": "The primary sensor's threshold, used with the ring 0x80cd1e; 0x8001a0 is the backup sensor's.",
+    "suggested_name": "primary_engine_speed_sensor_sync_pulse_period_threshold",
+    "confidence": "high",
+    "cm848_counterpart": "none (CM848 uses a different sync scheme)"
+   },
+   {
+    "address": "0x008001a6",
+    "role": "This row has no access of its own: no long constant and no displacement reaches it. It is the low word of the dword 0x8001a4, the primary sync pulse threshold, which is written and read only with move.l. The row should be removed instead of named.",
+    "discriminator": "It is part of 0x8001a4, not a variable.",
+    "suggested_name": "",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x008001ac",
+    "role": "Pointer into the selected sensor's pulse period ring, at the newest stored period. cm550_detectEngineSpeedSensorSyncPulse sets it to the sensor's next-write pointer - 4, or to the ring's last entry (from 0x80d078 / 0x80d07c) when the next pointer is at the ring start. cm550_bufferDecreasingPatternCheck (0x1011c, movea.l at 0x10128) walks backwards from it, wrapping from 0x8001b0 (ring start) to 0x8001b4 (ring last entry). cm550_bufferThresholdValidator (0x101b8) reads the two entries before it. Long accesses only; type undefined -> dword *.",
+    "discriminator": "The cursor at the newest period. 0x8001a8 holds the latest period value, and 0x8001b0 / 0x8001b4 hold the ring bounds.",
+    "suggested_name": "engine_speed_sensor_sync_pulse_latest_period_pointer",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0080053e",
+    "role": "It is not a counter but a 0/1 latch in mc68k_sampleAndDebounceDiscreteInputs. It is cleared while the PTO on bit (0x80bcd5 bit 4) is off (0x1543c) and set to 1 when the word 0x80aa02 equals 3 (0x1544c). While it is 0, set + resume pressed together set the PTO set-and-resume bit PTSERUSW (0x20) and clear 0x80bcd4 bit 6, and set or resume alone clears 0x80bcd4 bit 6. While it is 1, both effects are blocked. Type word. It is skipped because the latch's trigger 0x80aa02 (e2m 117D +3E) has no record in any CM550-family e2m and no writer in the dumped ROM, so what state 3 means is unknown.",
+    "discriminator": "Its effect is clear but its trigger is unknown.",
+    "suggested_name": "",
+    "confidence": "low",
+    "cm848_counterpart": "none found"
+   },
+   {
+    "address": "0x00800544",
+    "role": "Hold pass count of the PTO set switch in mc68k_sampleAndDebounceDiscreteInputs. It counts +1 per pass while 0x80bcd5 bit 2 (set) is on and saturates at 25 (0x19). At 25, set becomes coast (0x08) when CRSEACSW 0x803d42 = 0, or accelerate (0x02) otherwise, and the set bit is cleared. Below 25 the coast / accelerate bit is held off. It is cleared when set is released. It is not a debounce. Type word.",
+    "discriminator": "The PTO set switch (byte 0x80bcd5 bit 2); 0x800546 is PTO resume, and 0x800540 / 0x800542 are the same for the cruise byte 0x80bcd4.",
+    "suggested_name": "power_take_off_set_switch_hold_count",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 decodes its PTO switches in power_take_off_governor_switch_state_bits, with no set-held-becomes-coast counter found"
+   },
+   {
+    "address": "0x00800546",
+    "role": "Hold pass count of the PTO resume switch (0x80bcd5 bit 0). It counts +1 per pass to 25; at 25, resume becomes accelerate when CRSEACSW = 0, or coast otherwise, and the resume bit is cleared. It is cleared on release. Type word.",
+    "discriminator": "The PTO resume switch; its pair is 0x800544 (set).",
+    "suggested_name": "power_take_off_resume_switch_hold_count",
+    "confidence": "high",
+    "cm848_counterpart": "none found"
+   },
+   {
+    "address": "0x00803d42",
+    "role": "e2m 1180 +8 CRSEACSW 'TRUE = SET/ACCEL AND RESUME/COAST, FALSE = SET/COAST AND RESUME/ACCEL', in the EEPROM mirror (1 in the dump). Its 13 tst.w reads in mc68k_sampleAndDebounceDiscreteInputs choose what a set or resume held 25 passes turns into, for the cruise byte 0x80bcd4 and the PTO byte 0x80bcd5: 0 = set->coast and resume->accelerate, nonzero = set->accelerate and resume->coast. Type word.",
+    "discriminator": "The one selector for both the cruise and the PTO switch decode.",
+    "suggested_name": "cruise_set_accelerate_switch_select_cal",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 cruise_set_accelerate_switch_select_cal @ 0x3fd530 (same record 1180 +8 CRSEACSW; CM848 reads it only in its CCVS1 builder): same name"
+   },
+   {
+    "address": "0x00807a00",
+    "role": "e2m 818A +2 ACVSACCO 'ACCEL THRESHOLD TO DISABLE A/C' (MPHS, signed, -1200..1200). No code in the dumped ROM reads it; the only hit is its parameter ID table entry. The A/C control code lies outside the dump. Type i16 (signed record).",
+    "discriminator": "The vehicle acceleration that cuts out the A/C; 0x807a02 is the cutout duration.",
+    "suggested_name": "air_conditioning_vehicle_acceleration_cutout_threshold",
+    "confidence": "medium",
+    "cm848_counterpart": "none: CM848 has no 818A records"
+   },
+   {
+    "address": "0x00807a02",
+    "role": "e2m 818A +4 ACACDBCU 'ALG EXECUTIONS TO SUSPEND AC AFTER SHUTOFF FROM ACCEL' (SEC 0.1, 0-3600). No reader in the dumped ROM (parameter ID table only). Type word.",
+    "discriminator": "The duration of the acceleration A/C cutout; 0x807a00 is its threshold.",
+    "suggested_name": "air_conditioning_vehicle_acceleration_cutout_duration",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a1c",
+    "role": "e2m 818C +0 VAACFTTC '1ST ORDER FILTER COEFF FOR LIMITED VEH ACCEL' (1/65536). No code in the dumped ROM references it: no filter-state set-up stores its address, and the only hit is the parameter ID table. It belongs to the vehicle acceleration filter whose output is VAVSACFT 0x80a288. Type word.",
+    "discriminator": "The filter coefficient, not the clamps (0x807a1e / 0x807a20).",
+    "suggested_name": "vehicle_acceleration_filter_coefficient",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a1e",
+    "role": "e2m 818C +2 VAACMXLM 'LIMIT ON MAX UNFILTERED VEH ACCEL' (MPHS, signed). No reader in the dumped ROM. Type i16.",
+    "discriminator": "The upper clamp; 0x807a20 is the lower clamp.",
+    "suggested_name": "vehicle_acceleration_clamp_maximum",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a20",
+    "role": "e2m 818C +4 VAACMNLM 'LIMIT ON MIN UNFILTERED VEH ACCEL' (MPHS, signed). No reader in the dumped ROM. Type i16.",
+    "discriminator": "The lower clamp.",
+    "suggested_name": "vehicle_acceleration_clamp_minimum",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a22",
+    "role": "e2m 10A5 +0 NZFLDYTM 'minimum amount of time which the ANC fuel limit will be active' (SEC 0.05). 0xb2aa copies it into the fuel limit hold timer 0x800042 (0xb34a / 0xb35e) whenever the conditions hold or ASANODFG is set. Type word.",
+    "discriminator": "The fuel limit's reload value; 0x807a3a (timing) and 0x807a2e (engine speed) are the others.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_minimum_active_time",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has no 10A5 records"
+   },
+   {
+    "address": "0x00807a24",
+    "role": "e2m 10A5 +2 NZFLRMRT 'fuel increment added to ANC_FUELING to ramp out the fueling derate'. While NZFLLMSS is 0, 0xb2aa adds it to acceleration_noise_control_fuel_limit each pass (0xb39c) until fuel_demand_maximum (0x808004). Type word.",
+    "discriminator": "The fuel limit's ramp-out step; the timing step (0x807a3c) ramps to 0x400 and the engine speed step (0x807a30) to the maximum rated speed.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_ramp_out_step",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a26",
+    "role": "e2m 10A5 +4 NZFLACTR 'engine acceleration below which ANC may limit fueling' (R/S, signed). 0xb2aa uses it twice against ESFT01AC (0x80a294): above it, the bare engine acceleration inhibit starts (NZFLLMIH = 1 and the inhibit timer reloads); the conditions also need ESFT01AC <= it (bgt fails). Type i16 (signed compares).",
+    "discriminator": "The fuel limit's first stage acceleration ceiling; its siblings are 0x807a50 (timing) and 0x807a36 (engine speed). The second stage floor is 0x807a28.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_engine_acceleration_maximum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a28",
+    "role": "e2m 10A5 +6 NZFLFTTR 'filtered engine acceleration above which ANC may limit fueling'. The 0xb2aa conditions need ESFT02AC (0x80a296, second stage) >= it (blt fails at 0xb344). Type i16.",
+    "discriminator": "The fuel limit's second stage acceleration floor; siblings 0x807a3e (timing) and 0x807a32 (engine speed).",
+    "suggested_name": "acceleration_noise_control_fuel_limit_filtered_engine_acceleration_minimum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a2a",
+    "role": "e2m 10A5 +8 NZFLTRES 'engine speed above which ANC may limit fueling' (RPM). The 0xb2aa conditions need the engine speed word 0x80ccf4 >= it (bcs fails at 0xb328). Type word.",
+    "discriminator": "The fuel limit's engine speed floor; the engine speed limit's 0x807a34 is a ceiling instead.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_engine_speed_minimum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a2c",
+    "role": "e2m 10A5 +A NZCNESLM 'calibratible engine speed constant used to set ANC engine (speed limit)' (RPM). While NZESLMSS is set, 0xb4f2 copies it into the ANC engine speed limit NZESLM (0x80a290) at 0xb5b0. Type word.",
+    "discriminator": "The value of the engine speed limit while that limit is active. The fuel and timing limits take their active values from lookups by engine speed instead.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_active_value",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a2e",
+    "role": "e2m 10A5 +C NZESDYTM 'minimum amount of time which the ANC speed limit will be active'. 0xb4f2 reloads the hold timer 0x800046 from it (0xb586 / 0xb59a). Type word.",
+    "discriminator": "The engine speed limit's reload value.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_minimum_active_time",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a30",
+    "role": "e2m 10A5 +E NZESRMRT 'engine speed increment added to ANC_SPEED to ramp out the engine (speed limit)'. While NZESLMSS is 0, 0xb4f2 adds it to NZESLM each pass (0xb5c6) up to the maximum rated engine speed (0x803f40). Type word.",
+    "discriminator": "The engine speed limit's ramp-out step.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_ramp_out_step",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a32",
+    "role": "e2m 10A5 +10 NZESFTTR 'filtered engine acceleration above which ANC may limit engine speed'. The 0xb4f2 conditions need ESFT02AC >= it (blt fails at 0xb580). Type i16.",
+    "discriminator": "The engine speed limit's second stage acceleration floor.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_filtered_engine_acceleration_minimum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a34",
+    "role": "e2m 10A5 +12 NZESTRES 'engine speed above which ANC may limit engine speed' (RPM). The code does the opposite of that text: the 0xb4f2 conditions need the engine speed 0x80ccf4 <= it (bhi fails at 0xb564). Type word.",
+    "discriminator": "An engine speed ceiling, unlike the fuel limit's floor 0x807a2a.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_engine_speed_maximum",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a36",
+    "role": "e2m 10A5 +14 NZESACTR 'engine acceleration below which ANC may limit engine speed'. In 0xb4f2, ESFT01AC above it starts the bare engine acceleration inhibit (NZESLMIH, timer 0x80003c), and the conditions need ESFT01AC <= it. Type i16.",
+    "discriminator": "The engine speed limit's first stage acceleration ceiling.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_engine_acceleration_maximum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a3a",
+    "role": "e2m 10A5 +18 NZTADYTM 'minimum amount of time which the ANC timing limit will be active'. cm550_calculateAccelerationNoiseControlTimingLimit (0xb3d0) reloads the hold timer 0x800044 from it (0xb464 / 0xb478). Type word.",
+    "discriminator": "The timing limit's reload value.",
+    "suggested_name": "acceleration_noise_control_timing_limit_minimum_active_time",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a3c",
+    "role": "e2m 10A5 +1A NZTARMRT 'timing increment added to ANC_TIMING to ramp out the timing derate'. While NZTALMSS is 0, 0xb3d0 adds it to acceleration_noise_control_timing_limit until 0x400. Type word.",
+    "discriminator": "The timing limit's ramp-out step.",
+    "suggested_name": "acceleration_noise_control_timing_limit_ramp_out_step",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a3e",
+    "role": "e2m 10A5 +1C NZTAFTTR 'filtered engine acceleration above which ANC may limit timing'. The 0xb3d0 conditions need ESFT02AC >= it (blt at 0xb45e). Type i16.",
+    "discriminator": "The timing limit's second stage acceleration floor.",
+    "suggested_name": "acceleration_noise_control_timing_limit_filtered_engine_acceleration_minimum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a40",
+    "role": "e2m 10A5 +1E NZTAACLM 'unfiltered acceleration limit used to determine ANC timing' (R/S, signed). No code in the dumped ROM reads it: the timing limit 0xb3d0 compares only NZTACLTR, NZTAACTR and NZTAFTTR. Type i16. The name restates the record because no code shows its direction.",
+    "discriminator": "The only 10A5 ANC value with no reader.",
+    "suggested_name": "acceleration_noise_control_timing_limit_unfiltered_engine_acceleration_limit",
+    "confidence": "low",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a46",
+    "role": "e2m 10A5 +24 ESFT01MX 'upper acceleration bound for eng accel first stage filter'. calculateFilteredEngineAcceleration (0xb210, twin of CM848 0x38760) clamps the first stage output ESFT01AC down to it and presets that filter's accumulator to it << 16 (+ 0x80000000). Type i16.",
+    "discriminator": "The upper clamp; 0x807a48 is the lower clamp.",
+    "suggested_name": "engine_acceleration_first_stage_clamp_maximum",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 engine_acceleration_first_stage_clamp_maximum @ 0x40880c (8A42 +4 ESFT01MX, same mnemonic, used the same way in the twin): same name"
+   },
+   {
+    "address": "0x00807a48",
+    "role": "e2m 10A5 +26 ESFT01MN 'lower acceleration bound for eng accel first stage filter': the lower clamp of ESFT01AC in calculateFilteredEngineAcceleration, with the same accumulator preset. Type i16.",
+    "discriminator": "The lower clamp.",
+    "suggested_name": "engine_acceleration_first_stage_clamp_minimum",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 engine_acceleration_first_stage_clamp_minimum @ 0x40880e (8A42 +6 ESFT01MN): same name"
+   },
+   {
+    "address": "0x00807a4a",
+    "role": "e2m 10A5 +28 NZESIHTM 'duration ANC speed limit will be disabled after a bare engine acceleration' (SEC 0.05, signed record). 0xb4f2 copies it into the inhibit timer 0x80003c (0xb52e). Type i16.",
+    "discriminator": "The engine speed limit's inhibit reload value.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_inhibit_time",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a4c",
+    "role": "e2m 10A5 +2A NZFLIHTM 'duration ANC fueling limit will be disabled after a bare engine acceleration' (signed record). Its one reader is 0xb2ea in 0xb2aa, which copies it into the inhibit timer 0x80003e. The cmpa.l #0x807a4c hits at 0x3c30 / 0x2ce22 are only the end bound of a start-up RAM clear loop. Type undefined -> i16.",
+    "discriminator": "The fuel limit's inhibit reload value.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_inhibit_time",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a4e",
+    "role": "e2m 10A5 +2C NZTAIHTM: 0xb3d0 copies it into the timing limit inhibit timer 0x800040 (0xb40c). Type i16.",
+    "discriminator": "The timing limit's inhibit reload value.",
+    "suggested_name": "acceleration_noise_control_timing_limit_inhibit_time",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a50",
+    "role": "e2m 10A5 +2E NZTAACTR 'engine acceleration below which ANC may limit timing'. In 0xb3d0, ESFT01AC above it starts the timing limit inhibit (NZTALMIH, timer 0x800040), and the conditions need ESFT01AC <= it. Type i16.",
+    "discriminator": "The timing limit's first stage acceleration ceiling.",
+    "suggested_name": "acceleration_noise_control_timing_limit_engine_acceleration_maximum",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00807a5a",
+    "role": "e2m 11D5 +0 AFFLMAN 'AFC fueling derate value when AFC override is enabled'. 0xc180 (cm550_fuelTimingTransitionStateMachine, in fact the air fuel control fuel limit calculation) makes it air_fuel_control_fuel_limit (0xc1a8) instead of the engine speed x boost table, while algorithm_enable_flags_12_cal.air_fuel_control_override_enable is set. Type word.",
+    "discriminator": "The override value of the AFC limit, not the AFC timing (0x80de68) or the alpha timeout (0x807aa6).",
+    "suggested_name": "air_fuel_control_fueling_override_value",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 air_fuel_control_fueling_override_value @ 0x3feff2 (same record 11D5 +0), read by cm848_calculateAirFuelControlFuelLimit (counterpart of 0xc180): same name"
+   },
+   {
+    "address": "0x00807aa6",
+    "role": "e2m 104B +6 APAFTRTM 'time that must elapse without AFC limiting before alpha may be (set to one)'. calculateAlpha (0xc36e, at stopped / cranking / jump start) and calculateAlphaAirFuelControlResult (0xc52c) reload the alpha AFC timer 0x80a914 from it. Type word.",
+    "discriminator": "The AFC alpha timeout; 0x807aae is the LSG timeout.",
+    "suggested_name": "air_fuel_control_alpha_timeout",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 air_fuel_control_alpha_timeout @ 0x5be60 (104B +6), used by the same twin functions: same name"
+   },
+   {
+    "address": "0x00807c78",
+    "role": "e2m 1186 +16 CRDPRFVS 'reference speed used when calculating CC and RSG upper droops on (power-up)' (MPH/256). No code in the dumped ROM references block 1186 (parameter ID table only). Type word.",
+    "discriminator": "The droop reference speed of block 1186.",
+    "suggested_name": "cruise_droop_reference_speed",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 cruise_droop_reference_speed @ 0x408e12 (1186 +16, same text): same name"
+   },
+   {
+    "address": "0x00807c7a",
+    "role": "e2m 1186 +18 CRERDCHL 'high limit for Cruise_RSG_Error_Delta'. No reader in the dumped ROM. Type word.",
+    "discriminator": "The high limit; 0x807c7c is the low limit.",
+    "suggested_name": "cruise_droop_speed_error_delta_maximum",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 cruise_droop_speed_error_delta_maximum @ 0x408e14 (1186 +18): same name"
+   },
+   {
+    "address": "0x00807c7c",
+    "role": "e2m 1186 +1A CRERDCLL 'low limit for Cruise_RSG_Error_Delta' (signed). No reader in the dumped ROM. Type i16.",
+    "discriminator": "The low limit.",
+    "suggested_name": "cruise_droop_speed_error_delta_minimum",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 cruise_droop_speed_error_delta_minimum @ 0x408e16 (1186 +1A, i16): same name"
+   },
+   {
+    "address": "0x00807f6a",
+    "role": "e2m 11DD +6 SPDIRTTD 'threshold for engine deceleration rate to activate decel timer' (R/S 0.1). In cm550_updateElectronicSmartPowerTau (0x1acb0, zero-extended move.w), while the filtered engine deceleration rate 0x80d2b2 is above it, the deceleration timer SPESDITR (0x80d2b0) counts up to SPDIPE (0x807f68); otherwise the timer is 0. Type word.",
+    "discriminator": "The rate threshold of the ESP deceleration timer; its sibling 0x807f66 is the rate filter coefficient.",
+    "suggested_name": "engine_deceleration_rate_timer_threshold",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has no 11DD records and no writer of its ESP tau"
+   },
+   {
+    "address": "0x0080802e",
+    "role": "e2m 106D +C GROGESOD 'time delay forced for RSG override for mismatch of vehicle and engine speeds' (SEC 0.04). No reader in the dumped ROM (block 106D base 0x808022 only in the parameter ID table). Type word.",
+    "discriminator": "The delay calibration behind the RSG speed mismatch timer 0x80d3a4.",
+    "suggested_name": "drivetrain_ratio_out_of_gear_speed_mismatch_delay",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 drivetrain_ratio_out_of_gear_speed_mismatch_delay @ 0x5c93a (106D +C Out_Of_Gear_Spd_Delay, same text): same name"
+   },
+   {
+    "address": "0x008087f0",
+    "role": "It is not a variable: a cell (word 127) of e2m 12DF +0 PPCVTB 'TABLE OF FUELING CURVES' (programmable power). That table runs 0x8086f2-0x808895: 210 words, 10 x 21, with x axis PPHPCTI at 0x8086b0, y axis PPSSFLXA at 0x8086c6, and the next block PPSEAVTB at 0x808896. No long constant in 0x8087a0-0x808830 occurs anywhere in the ROM, and the RAM dump shows runs of 10 equal words. The fix is one table row at 0x8086f2 (now named j1939_timeout_clear_value) and deleting the cell rows 0x8087c0-0x808814.",
+    "discriminator": "A table cell.",
+    "suggested_name": "",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x008087f2",
+    "role": "A cell (word 128) of the PPCVTB fueling curve table 0x8086f2-0x808895, not a variable; there is no reference in the dumped ROM. Delete the row and type the table at 0x8086f2.",
+    "discriminator": "A table cell.",
+    "suggested_name": "",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x008087fa",
+    "role": "A cell (word 132) of the PPCVTB fueling curve table, not a counter; there is no reference in the dumped ROM.",
+    "discriminator": "A table cell.",
+    "suggested_name": "",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x008087fc",
+    "role": "A cell (word 133) of the PPCVTB fueling curve table, not a state; there is no reference in the dumped ROM.",
+    "discriminator": "A table cell.",
+    "suggested_name": "",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00808984",
+    "role": "e2m 109D +0 PTMXEGES 'max engine speed for PTO engagement' (RPM 0.125, signed in CM550's record). No reader in the dumped ROM (parameter ID table only). Type i16 (from the record; CM848 types its row word).",
+    "discriminator": "The upper bound of the engagement speed window; 0x808986 is the lower bound.",
+    "suggested_name": "power_take_off_maximum_engage_engine_speed",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 power_take_off_maximum_engage_engine_speed @ 0x4071d8 (109D +0): same name"
+   },
+   {
+    "address": "0x00808986",
+    "role": "e2m 109D +2 PTMNEGES 'min engine speed for PTO engagement'. No reader in the dumped ROM. Type word.",
+    "discriminator": "The lower bound of the window.",
+    "suggested_name": "power_take_off_minimum_engage_engine_speed",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 power_take_off_minimum_engage_engine_speed @ 0x4071da (109D +2): same name"
+   },
+   {
+    "address": "0x0080898c",
+    "role": "e2m 109D +8 PTROSWTM 'amount of time before remote PTO switch is considered stationary' (SEC 0.1). CM550's 109D has two patch holes at +4 / +6. No reader in the dumped ROM. Type word.",
+    "discriminator": "The remote switch timeout.",
+    "suggested_name": "power_take_off_remote_switch_timeout",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 power_take_off_remote_switch_timeout @ 0x4071dc (109D +4, same mnemonic PTROSWTM): same name"
+   },
+   {
+    "address": "0x0080a280",
+    "role": "e2m 818B +2 ACHIAC 'RAPID VEHICLE ACCEL FLAG' (1 = on), in the A/C RAM block with ACCHEA (+0) and ACSWERCU (+4). No code in the dumped ROM accesses it. Type word.",
+    "discriminator": "The A/C's rapid acceleration status, next to the A/C clutch command 0x80a27e.",
+    "suggested_name": "air_conditioning_rapid_vehicle_acceleration_flag",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0080a290",
+    "role": "e2m 10A4 +4 NZESLM 'engine speed limit dictated by ANC' (RPM 0.125). 0xb4f2 sets it to NZCNESLM while NZESLMSS is set, otherwise ramps it up by NZESRMRT to the maximum rated speed. cm550_initializeFuelSystemOutputDriver (0xb666) presets it to the maximum rated speed. selectEngineSpeedLimit (0x1d640) applies it as HSG reference source 3. Type word.",
+    "discriminator": "The engine speed output of ANC; its siblings are acceleration_noise_control_fuel_limit (10A4 +0) and acceleration_noise_control_timing_limit (+2).",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848's 10A4 has no NZESLM"
+   },
+   {
+    "address": "0x0080a29e",
+    "role": "e2m 10A4 +12 TSBENZTA 'timing advance limit as just before modification by ANC timing' (DADV). cm550_applyAccelerationNoiseControlTimingLimit (0xb4ce) stores fuel_timing_advance_value here before it caps the timing with the ANC limit. Its only access is that write. Type word.",
+    "discriminator": "The snapshot before the ANC cap, like 0x80a270 injection_timing_before_misfire_limit before the misfire cap.",
+    "suggested_name": "injection_timing_before_acceleration_noise_control_limit",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 has the record (10A4 +C SOI_Before_ANC_Timing, 0x40a056) but no row and no code"
+   },
+   {
+    "address": "0x0080a2a0",
+    "role": "e2m 10A4 +14 NZESLMIH 'ANC speed limit disable due to bare engine accel'. 0xb4f2 (a0) sets it to 1 when ESFT01AC > NZESACTR and clears it when the inhibit timer 0x80003c reaches 0; while it is 1 the speed limit conditions fail. Type word.",
+    "discriminator": "The engine speed limit's inhibit flag.",
+    "suggested_name": "acceleration_noise_control_engine_speed_limit_inhibit_flag",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0080a2a2",
+    "role": "e2m 10A4 +16 NZFLLMIH 'ANC fueling limit disable due to bare engine accel'. 0xb2aa sets it (0xb2e2), clears it when 0x80003e reaches 0 (0xb306), and tests it in the conditions (0xb314). Type word.",
+    "discriminator": "The fuel limit's inhibit flag.",
+    "suggested_name": "acceleration_noise_control_fuel_limit_inhibit_flag",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0080a2a4",
+    "role": "e2m 10A4 +18 NZTALMIH 'ANC timing limit disable due to bare engine accel'. 0xb3d0 (a5) sets it when ESFT01AC > NZTAACTR and clears it when 0x800040 reaches 0. Type word.",
+    "discriminator": "The timing limit's inhibit flag.",
+    "suggested_name": "acceleration_noise_control_timing_limit_inhibit_flag",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 has the record (10A4 +4 ANC_Timing_Limit_Inhibit, 0x40a04e) but no row and no code"
+   },
+   {
+    "address": "0x0080a2a6",
+    "role": "e2m 10A4 +1A ASANODFG 'application specific ANC override flag (1 = engage ANC)'. Each of the three limit functions tests it (0xb352 / 0xb46c / 0xb58e). When the conditions fail and it is nonzero, the limit's status is forced to 1 and its hold timer is reloaded. No writer in the dumped ROM. Type word.",
+    "discriminator": "The override that engages all three limits; 0x80a2a8 is the enable that can disable them.",
+    "suggested_name": "acceleration_noise_control_application_override_flag",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 has the record (10A4 +E AS_ANC_Override) but no row and no code"
+   },
+   {
+    "address": "0x0080a2a8",
+    "role": "e2m 10A4 +1C ASANENF 'application specific ANC enable/disable flag (set to FALSE to disable)'. Each limit function tests it first in its conditions (0 = conditions fail), and cm550_initializeFuelSystemOutputDriver (0xb666) sets it to 1 at start-up. Type word.",
+    "discriminator": "The enable of all three limits.",
+    "suggested_name": "acceleration_noise_control_application_enable_flag",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 has the record (10A4 +10 AS_ANC_Enable_Flag) but no row and no code"
+   },
+   {
+    "address": "0x0080a906",
+    "role": "e2m 104A +E FLAFSTFG 'semaphore used to latch AFC events that occur between alpha executions'. 0xc2be (cm550_diagnosticTimingIncrementController, in fact the AFC timing increment) sets it to 1 while final_fueling_state is FUELING_STATE_AIR_FUEL_CONTROL_DERATE. calculateAlphaAirFuelControlResult reads it (0xc518), and 0xc658 (cm550_phase2_slot_5_handler) clears it together with the LSG latch. Type word.",
+    "discriminator": "The AFC latch; 0x80a908 is the LSG latch.",
+    "suggested_name": "alpha_air_fuel_control_state_detected_flag",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 alpha_air_fuel_control_state_detected_flag @ 0x40a176 (same record 104A +E; CM848 sets it in cm848_selectFinalFueling and clears it in calculateAlphaBase): same name"
+   },
+   {
+    "address": "0x0080a912",
+    "role": "Running flag of the alpha AFC timer, with no e2m record. calculateAlpha sets it to 1 at stopped / cranking / jump start (0xc36a). calculateAlphaAirFuelControlResult sets it while the latches reload the timer, counts the timer down only while it is 1, and clears it when the timer has run out (returning 1). cm550_initializeAlpha clears it (0x1dd18). Word accesses (type undefined -> word).",
+    "discriminator": "The AFC timer's running flag; 0x80a90e is the LSG timer's.",
+    "suggested_name": "alpha_air_fuel_control_timer_active_flag",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 alpha_air_fuel_control_timer_active_flag @ 0x3fa0dc, same role in the twin calculateAlphaAirFuelControlResult (0xe2cc): same name"
+   },
+   {
+    "address": "0x0080a914",
+    "role": "e2m 104A +1C APAFTR 'trace the time since fueling state is not AFC or LSG' (SEC 0.02). Loaded with APAFTRTM 0x807aa6 by calculateAlpha and by calculateAlphaAirFuelControlResult while either latch is 1, then counted down once per alpha pass. When it runs out the AFC alpha result goes to 1. Type word.",
+    "discriminator": "The AFC alpha timer; 0x80a910 is the LSG one.",
+    "suggested_name": "alpha_air_fuel_control_timer",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 alpha_air_fuel_control_timer @ 0x40a180 (104A +18 APAFTR, same mnemonic), used by the twin functions: same name"
+   },
+   {
+    "address": "0x0080aa3e",
+    "role": "e2m 1187 +6 CRBODJCL 'slope of the bottom droop line calculated in CC/RSG droop' (M/F). No code in the dumped ROM references block 1187 (base 0x80aa38, parameter ID table only). Type word.",
+    "discriminator": "The cruise bottom droop slope.",
+    "suggested_name": "cruise_bottom_droop_gain",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 cruise_bottom_droop_gain @ 0x40b69c (1187 +6, same text): same name"
+   },
+   {
+    "address": "0x0080aa52",
+    "role": "e2m 1187 +1A CRTODJCL 'slope of the top droop line computed in CC/RSG droop algorithm'. No reader in the dumped ROM. Type word.",
+    "discriminator": "The cruise top droop slope.",
+    "suggested_name": "cruise_top_droop_gain",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 cruise_top_droop_gain @ 0x40b6b0 (1187 +1A): same name"
+   },
+   {
+    "address": "0x0080aa58",
+    "role": "e2m 1187 +20 RSBODJCL, the bottom droop slope of the road speed governor (RS prefix). No reader in the dumped ROM. Type word.",
+    "discriminator": "The RSG bottom droop slope.",
+    "suggested_name": "road_speed_governor_bottom_droop_gain",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 road_speed_governor_bottom_droop_gain @ 0x40b6b6 (1187 +20): same name"
+   },
+   {
+    "address": "0x0080aa5e",
+    "role": "e2m 1187 +26 RSTODJCL, the RSG top droop slope. No reader in the dumped ROM. Type word.",
+    "discriminator": "The RSG top droop slope.",
+    "suggested_name": "road_speed_governor_top_droop_gain",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 road_speed_governor_top_droop_gain @ 0x40b6bc (1187 +26): same name"
+   },
+   {
+    "address": "0x0080aa60",
+    "role": "e2m 1187 +28 CRTODPOF 'offset of the CC/RSG top droop' (%FU). No reader in the dumped ROM. Type word.",
+    "discriminator": "The top droop offset, not a slope.",
+    "suggested_name": "cruise_top_droop_offset",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 cruise_top_droop_offset @ 0x40b6be (1187 +28): same name"
+   },
+   {
+    "address": "0x0080bcdf",
+    "role": "e2m 000E +11, the user (override) values of logical inputs 56-63, the PTO switch byte: DSPTRUUC 0x01 resume, DSPTSEUC 0x04 set, DSPTONUC 0x10 PTO enable, DSAUSHUC 0x40 auxiliary shutdown. mc68k_sampleAndDebounceDiscreteInputs ORs bits 0x10 / 0x04 / 0x01 (0x153a0 / 0x153d4 / 0x15408) into power_take_off_switch_state_bits 0x80bcd5 instead of the switch inputs while algorithm_enable_flags_16_cal bits 12 / 10 / 8 are set. Byte 7 of the override value bytes 0x80bcd8-0x80bce1; per the flags 16 rows, J1939 entries 10 / 11 / 12 write it by index. Type byte. It holds the whole switch byte, not just the set switch.",
+    "discriminator": "The override byte of 0x80bcd5. 0x80bcde does the same for the cruise byte 0x80bcd4, and 0x80bcd8 / 0x80bcd9 for switches 1-16.",
+    "suggested_name": "power_take_off_switch_override_values",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848's switch block (switch_input_state_bits, from e2m 1612) has no per-byte override value array"
+   },
+   {
+    "address": "0x0080d3a4",
+    "role": "e2m 106C +6 GROGESTR 'timer used to disable RSG when vehicle and engine speeds disagree' (SEC 0.04). No code in the dumped ROM references block 106C (base 0x80d39e). Type word.",
+    "discriminator": "The speed mismatch timer; 0x80d3a6 is the gear ratio change timer.",
+    "suggested_name": "drivetrain_ratio_decoupled_hold_counter",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 drivetrain_ratio_decoupled_hold_counter @ 0x40b6fa (106C +6 Out_Of_Gear_Spd_Timer, same text): same name"
+   },
+   {
+    "address": "0x0080d3a6",
+    "role": "e2m 106C +8 GROGGRTR 'timer used to disable RSG when gear ratio changes'. No reader in the dumped ROM. Type word.",
+    "discriminator": "The gear ratio change timer.",
+    "suggested_name": "drivetrain_ratio_change_settle_counter",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 drivetrain_ratio_change_settle_counter @ 0x40b6fc (106C +8 Out_Of_Gear_GR_Timer): same name"
+   },
+   {
+    "address": "0x0080dc30",
+    "role": "e2m 1265 +4 PTSLFL 'the fueling value selected between user fueling and PTO fueling'. 0x2dcb0 (named cm550_oil_pressure_shutdown_controller, in fact the PTO / user fueling selector) writes it five times: the user fuel demand, or the PTO governor fuel closed_loop_fuel_demand_output while the PTO governor is active and not overridden by the throttle. cm550_parameterSystemModeController (0xf84a) uses it as the J1939 driver's demand fueling when the selected state is POWER_TAKE_OFF or ACCELERATOR_PEDAL_FAULT. Type word.",
+    "discriminator": "The selected fuel value; its pair 0x80dc32 power_take_off_or_user_fueling_state (1265 +6) is the selected state.",
+    "suggested_name": "power_take_off_or_user_fueling",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 operating_mode_governor_output.fuel_demand @ 0x40af5a (1265 +4, struct operating_mode_governor_output_t, written by cm848_selectPowerTakeOffOrUserFueling, the counterpart of 0x2dcb0). CM550 already split +6 out as a flat row, hence the flat name."
+   },
+   {
+    "address": "0x0080dc82",
+    "role": "e2m 1197 +0 CRMXVSRF 'maximum allowable vehicle speed selected as the RSG reference' (MPH/256). Block 1197 +2 is SRRFVS 'the RSG reference after application of driver reward, smart RSG'. No code in the dumped ROM references it (parameter ID table only). Type word.",
+    "discriminator": "The RSG reference before the driver reward / smart RSG adjustment.",
+    "suggested_name": "road_speed_governor_maximum_vehicle_speed_reference",
+    "confidence": "low",
+    "cm848_counterpart": "none: CM848 has no 1197 records. Its road_speed_governor_reference_speed (0x40b5bc, no record) has a similar role, but nothing proves they are the same."
+   },
+   {
+    "address": "0x0080de68",
+    "role": "e2m 105B +0 AFCNICTA 'timing advance added to base timing anytime AFC is limiting fuel' (DADV, signed). 0xc2be sets it to AFICTA (0x808a6e) while final_fueling_state is AIR_FUEL_CONTROL_DERATE (16) and to 0 otherwise. cm550_addAirFuelControlTimingAdvance (0xc2ee) adds it to fuel_timing_advance_value with a floor of 0; its read is ext.l, so signed. Type word -> i16.",
+    "discriminator": "The applied AFC timing increment (RAM); 0x808a6e is its calibration.",
+    "suggested_name": "air_fuel_control_timing_increment",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has the record (105B +0 AFC_Timing_Increment, 0x40a2e4) but no row and no code for it"
+   }
+  ],
+  "notes": "Scratch (notes.md, scripts, proposals.txt): /home/linux/.claude/jobs/374b0424/tmp/w15/r97/scratch/R3/describer/. Every proposed name is unique in both CM550 and CM848; the only CM848 matches are the intended same-record rows.\n\nANC: three limit functions with one pattern, compares checked in the disassembly. 0xb2aa (now cm550_rpm_system_state_controller) is the ANC fuel limit calculation, 0xb3d0 the timing limit, and 0xb4f2 (now cm550_engineStateFuelLimitInterpolator) the engine speed limit. 0xb666 (cm550_initializeFuelSystemOutputDriver) is the ANC start-up: ASANENF = 1 and NZESLM = the maximum rated speed. 0xb614 / 0xb63e are the fuel / timing lookup set-ups. CM848 has the 10A4 records but no ANC code. NZESTRES 0x807a34 is used as an engine speed ceiling, the opposite of its Calterm text.\n\nAFC: 0xc180 (cm550_fuelTimingTransitionStateMachine) is the AFC fuel limit calculation, counterpart of cm848_calculateAirFuelControlFuelLimit. 0xc2be sets the AFC timing increment and the FLAFSTFG latch. 0xc658 clears both alpha latches.\n\nPTO: 0x2dcb0 (cm550_oil_pressure_shutdown_controller) is the PTO / user fueling selector. It is a counterpart, not a twin, of cm848_selectPowerTakeOffOrUserFueling, because the mode lists differ.\n\nMisnamed rows: 0x800152-0x800176 is the auxiliary driver read-back block of updateEngineSyncStatus (0xd610, eight drivers written out inline). cm550_clearKickdownControlState (0xe780) clears it. Its CM848 counterpart is cm848_monitorDiscreteOutputReadBack / cm848_checkDiscreteOutputReadBack. CM550's old sibling names (high_side / low_side) invert CM848's high / low fault meaning. 0x8001a0-0x8001ac is the engine speed sensor sync pulse detector, not ANC altitude. 0x10394 (cm550_initializeCanBusTiming) presets its thresholds.\n\nSkipped: 0x8001a6 (the low word of the dword 0x8001a4), 0x80053e (its trigger 0x80aa02 = 117D +3E has no record and no writer), and 0x8087f0 / f2 / fa / fc (cells of the 12DF PPCVTB table at 0x8086f2).\n\nNo code in the dumped ROM reads: A/C 818A / 818B, vehicle acceleration 818C, cruise / RSG 1186 / 1187 / 1197, drivetrain ratio 106C / 106D, PTO 109D, or NZTAACLM. Those names come from the records, plus the CM848 rows of the same records where they exist.\n\nType changes: undefined -> word for 0x80003c, 0x80003e, 0x800042, 0x800046, 0x80a912. 0x8001a4 undefined -> dword. 0x8001ac undefined -> dword *. 0x807a4c undefined -> i16. 0x80de68 word -> i16.\n\nSiblings outside this batch that follow the same pattern: 0x800540 / 0x800542 are the cruise set / resume hold counts, 0x8001a8 / 0x8001b0 / 0x8001b4 are the latest period, ring start and ring last entry, and 0x80bcde holds the cruise switch override values."
+ },
+ "verdict": {
+  "batch": "R3",
+  "overall": "74 CM550 global verdicts: 71 CONFIRMED, 3 AMENDED, none REFUTED. All 74 names are unique in CM550's global_variables.csv and function_renames.csv and among the proposals (judge/check_unique.py). I re-derived every row from the disassembly. The ANC rows come from 0xb2aa (fuel limit), 0xb3d0 (timing limit), 0xb4f2 (engine speed limit), 0xb210, 0xb4ce and 0xb666. The others come from updateEngineSyncStatus, the sync pulse detector 0x1025c (one caller at 0x1a988, which runs before the new period is stored at 0x1a9e8), mc68k_sampleAndDebounceDiscreteInputs (a4 = 0x80bcce, a5 = 0x80bcd4), the AFC / alpha code (0xc180, 0xc2be, 0xc2ee, 0xc326, 0xc504) and the PTO / user fueling selector 0x2dcb0. Where no code reads a row, I checked find_range_refs over the whole block: only parameter_id_table entries point into the A/C, vehicle acceleration, cruise / RSG, drivetrain ratio, 109D PTO and 1197 blocks, and into NZTAACLM. Every CM848 reuse is the same record (same block, offset and description, or the same mnemonic in the twin), and its CM848 row exists. The three amendments: 0x807a00 / 0x807a02 become air_conditioning_vehicle_acceleration_cutout_threshold / _cutout_duration, after CM848's A/C cutout family air_conditioning_<trigger>_cutout_*; the proposed 0x807a00 name reads as a threshold for disabling vehicle acceleration. 0x80dc30 becomes power_take_off_or_user_fueling, to pair with power_take_off_or_user_fueling_state the way final_fueling, requested_fueling and adjusted_user_fueling pair with their _state rows. All six skips should stay skipped. 0x8001a6 has no reference; it is the low word of the dword 0x8001a4, so its row must be deleted in the same change that types 0x8001a4 as dword, or the rows overlap. 0x80053e is a 0/1 latch whose trigger (0x80aa02 == 3, 117D +3E) has no v64t6_s record and no writer in the dump; other e2m families put unrelated records at 117D +3E. 0x8087f0 / f2 / fa / fc are cells of the PPCVTB fueling curve table, proven from the RAM dump: X byte count 20 at 0x8086b0, Y byte count 42 at 0x8086c6, 10 x 21 = 210 words over 0x8086f2-0x808895, next block 12D4 at 0x808896, and only the parameter_id_table references it. The investigator's function leads (renames of 0xb2aa, 0xb4f2, 0xb666, 0x10394, 0x2dcb0 and updateEngineSyncStatus) are consistent with what I read, but this batch has no function verdicts. Notes: /home/linux/.claude/jobs/374b0424/tmp/w15/r97/scratch/R3/judge/notes.md",
+  "verdicts": [
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080003c",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_inhibit_timer",
+    "final_type": "word",
+    "own_role": "Inhibit countdown of the ANC engine speed limit: reloaded from NZESIHTM when ESFT01AC > NZESACTR, else decremented; at 0 NZESLMIH is cleared.",
+    "reason": "0xb52e move.w (0x807a4a),(0x80003c) after 0xb522 cmp.w NZESACTR / ble; 0xb53a tst.w, 0xb542 subq.w, 0xb54a clr.w (a0 = 0x80a2a0). Only these 3 word references (abs_refs). Sibling of 0x800040 acceleration_noise_control_timing_limit_inhibit_timer. No e2m record."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080003e",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_inhibit_timer",
+    "final_type": "word",
+    "own_role": "Inhibit countdown of the ANC fuel limit (NZFLIHTM reload, clears NZFLLMIH at 0).",
+    "reason": "0xb2ea move.w (0x807a4c),(0x80003e) after 0xb2da cmp.w NZFLACTR / ble; 0xb2f6 tst.w, 0xb2fe subq.w, 0xb306 clr.w (0x80a2a2). 3 word references only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800042",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_hold_timer",
+    "final_type": "word",
+    "own_role": "Hold timer that keeps the ANC fuel limit status NZFLLMSS on for NZFLDYTM after the conditions or the override end.",
+    "reason": "a4 = 0x800042 (0xb2ba); 0xb34a / 0xb35e move.w NZFLDYTM,(a4); 0xb366 tst.w (a4), 0xb36a subq.w (a4), 0xb36e clr.w (a3 = 0x80a298). All word accesses; the frozen .cpp renders it _anc_fuel_limit_active_timer (read wider), so typing it word is right."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800046",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_hold_timer",
+    "final_type": "word",
+    "own_role": "Hold timer of the ANC engine speed limit status NZESLMSS (NZESDYTM reload).",
+    "reason": "a1 = 0x800046 (0xb502); 0xb586 / 0xb59a move.w NZESDYTM,(a1); 0xb5a2 tst.w, 0xb5a6 subq.w, 0xb5aa clr.w (a3 = 0x80a29c). Word only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800168",
+    "verdict": "CONFIRMED",
+    "final_name": "auxiliary_driver_cold_start_aid_1_high_recovery_count",
+    "final_type": "byte",
+    "own_role": "Read-back recovery count of the bit 1 driver (cold start aid 1) while commanded on: it counts agreeing passes while fault 0x806010 bit 0x2000 is set (and 0x806050 bit clear) up to DRDRRVCU, then clears the fault.",
+    "reason": "0xdbae btst #1,(0x1,a5) (0x80bd09) / beq; 0xdbb8-0xdbd0 the 0x2000 tests; 0xdbd6 move.b / cmp with (a4 = 0x807c02); 0xdbe4 addq.b; 0xdbf4 andi.w #0xdfff then 0xdbfe clr.b; 0xda86 clr.b on a mismatch; 0xe7fe clr.b. 5 byte accesses. The bit 0x2000 fault is set by 0x800158 (0xdb8c). e2m bit 1 = DRR2FB / DSCD01FB, and the driver group has DRCD01DR, so the function name fits. 'high' = commanded on, as in sibling 0x80016a aux_driver_cold_start2_high_recovery_count."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800170",
+    "verdict": "CONFIRMED",
+    "final_name": "auxiliary_driver_relay_4_high_recovery_count",
+    "final_type": "byte",
+    "own_role": "Commanded-on read-back recovery count of the bit 6 driver (relay 4): clears fault 0x806012 bit 0x20 at the recovery limit.",
+    "reason": "0xe21a-0xe242 compare of bit 0x40; 0xe24c clr.b on a mismatch; 0xe336 btst #6,(0x1,a5); 0xe344-0xe35c the 0x20 tests; 0xe362 / 0xe370 / 0xe380 / 0xe38a; 0xe82e clr.b. 0x800160 sets that bit (0xe318). e2m bit 0x40 = DRR4FB, command DREA04 'RELAY 4 DRIVER', and no function record."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800172",
+    "verdict": "CONFIRMED",
+    "final_name": "auxiliary_driver_relay_7_high_recovery_count",
+    "final_type": "byte",
+    "own_role": "Commanded-on read-back recovery count of the bit 3 driver (relay 7, which DSACFB / DSDRAC call the A/C clutch driver): clears fault 0x806012 bit 0x80.",
+    "reason": "0xe3e0-0xe408 compare of bit 0x08; 0xe412 clr.b on a mismatch; 0xe500 btst #3,(0x1,a5); 0xe50a-0xe522 the 0x80 tests; 0xe528 / 0xe536 / 0xe546 / 0xe550; 0xe83a. 5 byte accesses. The describer's air_conditioning name is also supported, but the driver-group records for bit 3 are only DREA07 / DRR7FB 'RELAY 7' (the A/C clutch name exists only in the debounce group). This matches sibling 0x800171 aux_driver7_low_recovery_count, and the comment cites DSACFB."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008001a0",
+    "verdict": "CONFIRMED",
+    "final_name": "backup_engine_position_sensor_sync_pulse_period_threshold",
+    "final_type": "dword",
+    "own_role": "Backup sensor sync pulse threshold: a period below it is a sync pulse candidate; rewritten as CSXT_1PC x period >> 8.",
+    "reason": "0x10306 move.l in the backup branch (0x102cc); 0x10316 / 0x10322 cmp.l (a2),d2 / bls; 0x10370 move.l d0 after mulu.l / lsr.l #8; 0x103b2 preset in 0x10394. 3 long accesses. 'engine_position_sensor' matches the existing row main_engine_position_sensor_period (0x80d04a)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008001a4",
+    "verdict": "CONFIRMED",
+    "final_name": "main_engine_position_sensor_sync_pulse_period_threshold",
+    "final_type": "dword",
+    "own_role": "Main sensor sync pulse threshold (same scheme, main branch).",
+    "reason": "0x102c4 move.l (main branch); 0x1035e and 0x103a8 move.l writes; 3 long accesses. The dword covers 0x8001a6 (anc_default_fueling_ptr, no reference): delete that row in the same change (it is in skipped[])."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008001ac",
+    "verdict": "CONFIRMED",
+    "final_name": "sync_pulse_check_previous_period_pointer",
+    "final_type": "dword *",
+    "own_role": "Pointer to the selected sensor's most recently stored ring entry (next-write pointer - 4, or the last entry when next is at the ring start). The detector runs before the store, so this is the previous period.",
+    "reason": "0x1026a a3 = #0x8001ac; 0x1029e / 0x102a6-0x102ae and the backup copies; the only caller is 0x1a988, before the period store at 0x1a9e8. 0x1011c slot 0 = (period under test >> 2) - (*pointer >> 2), walking back from there. 0x101b8 reads pointer-4 / pointer-8. Long accesses only. The describer's 'latest period' could be confused with 0x8001a8, the period under test, so 'previous' is the more precise word. 'dword *' follows the CSV's 'word *' / 'byte *' spelling; 4 bytes, no row inside."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800544",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_set_switch_hold_counter",
+    "final_type": "word",
+    "own_role": "Counts the passes the PTO set switch (0x80bcd5 bit 0x04) is held, capped at 25; at 25 set becomes coast (CRSEACSW 0) or accelerate.",
+    "reason": "0x154f8 addq.w, 0x154fe cmpi.w #0x19 / bcs, 0x15508 move.w #0x19, 0x15510 tst.w 0x803d42 then ori #8 / andi #0xfb or ori #2; 0x1554c clr.w when the bit is off. 4 word accesses. A hold counter, not a debounce."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800546",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_resume_switch_hold_counter",
+    "final_type": "word",
+    "own_role": "Hold pass count of the PTO resume switch (bit 0x01), capped at 25; at 25 resume becomes accelerate (CRSEACSW 0) or coast.",
+    "reason": "0x1557c addq.w, 0x15582 cmpi.w #0x19, 0x1558c move.w #0x19, 0x15594 tst.w 0x803d42 then ori #2 / andi #0xfe or ori #8; 0x155d0 clr.w. 4 word accesses."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803d42",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_set_accelerate_switch_select_cal",
+    "final_type": "word",
+    "own_role": "Selects what a held set / resume switch becomes (0: set to coast and resume to accelerate, matching the record's FALSE case) for the PTO and cruise bytes and the idle increment / decrement mapping.",
+    "reason": "e2m 1180 +8 CRSEACSW -> 0x803d42; CM848 1180 +8 -> 0x3fd530 cruise_set_accelerate_switch_select_cal (the same record). 13 tst.w (abs_refs: 0x15510-0x155d6 PTO, 0x15694-0x15734 cruise, 0x1577e mapping into 0x80bccf bits 0x20 / 0x40 = DSICSWSS / DSDTSWSS idle increment / decrement). Inside the EEPROM image -> _cal. 1 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803d44",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_discrete_switch_inputs_used_cal",
+    "final_type": "word",
+    "own_role": "Gates the whole PTO / cruise / idle increment-decrement switch decode (discrete cruise switches present).",
+    "reason": "0x1538a tst.w (0x803d44) / beq.w 0x15870 skips 0x15394-0x1586e; the tst.w at 0x152e6 is followed by a move.l, so it decides nothing. e2m 1180 +A CRUSDSSW -> 0x803d44 (no row); CM848 1180 +A -> 0x3fd532 cruise_discrete_switch_inputs_used_cal. In the EEPROM image -> _cal. Word, 1 in the dump. New row: nothing at 0x803d44-0x803d45."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a00",
+    "verdict": "AMENDED",
+    "final_name": "air_conditioning_vehicle_acceleration_cutout_threshold",
+    "final_type": "i16",
+    "own_role": "Record only (no reader in the dump): the vehicle acceleration above which the A/C clutch is switched off.",
+    "reason": "Both roles agree on the record (818A +2 ACVSACCO 'ACCEL THRESHOLD TO DISABLE A/C', MPHS, signed). The only references into 0x8079f0-0x807a60 besides the ANC / filter code are parameter_id_table entries. The proposed air_conditioning_disable_vehicle_acceleration_threshold can be read as a threshold for disabling vehicle acceleration. CM848 already names its A/C clutch cutouts air_conditioning_<trigger>_cutout_* (0x40869a / 0x4086ba / 0x4086bc), so this name follows that family (the describer's name). Unique in CM550. Keep the proposed comment."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a02",
+    "verdict": "AMENDED",
+    "final_name": "air_conditioning_vehicle_acceleration_cutout_duration",
+    "final_type": "word",
+    "own_role": "Record only: how long the A/C stays off after the acceleration cutout (SEC 0.1, 20 = 2.0 s).",
+    "reason": "818A +4 ACACDBCU 'ALG EXECUTIONS TO SUSPEND AC AFTER SHUTOFF FROM ACCEL' (unsigned). No code reference. Renamed to pair with 0x807a00 in CM848's air_conditioning_*_cutout_* vocabulary. Unique in CM550. Keep the proposed comment."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a1c",
+    "verdict": "CONFIRMED",
+    "final_name": "vehicle_acceleration_filter_coefficient",
+    "final_type": "word",
+    "own_role": "Coefficient of the vehicle acceleration filter (record 818C +0 VAACFTTC), pointed to by the RAM filter record 0x803af2.",
+    "reason": "No ROM reference except parameter_id_table 0x383c4 / 0x383c8. The RAM dump at 0x803af2 holds 0x00807a1c with accumulator 0x80000000, like engine_acceleration_first_stage_filter_state. Named like engine_acceleration_first_stage_filter_coefficient. 0xf5c3 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a1e",
+    "verdict": "CONFIRMED",
+    "final_name": "vehicle_acceleration_unfiltered_clamp_maximum",
+    "final_type": "i16",
+    "own_role": "Record only: the upper limit of the unfiltered vehicle acceleration (818C +2 VAACMXLM).",
+    "reason": "Record 'LIMIT ON MAX UNFILTERED VEH ACCEL' (MPHS, signed). No code reference. 'unfiltered' is in the record and says which value is clamped. 0x7800 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a20",
+    "verdict": "CONFIRMED",
+    "final_name": "vehicle_acceleration_unfiltered_clamp_minimum",
+    "final_type": "i16",
+    "own_role": "Record only: the lower limit of the unfiltered vehicle acceleration (818C +4 VAACMNLM).",
+    "reason": "Record signed; no code reference; 0x8800 (-1200 mph/s) in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a22",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_minimum_active_time",
+    "final_type": "word",
+    "own_role": "Reload value of the fuel limit hold timer 0x800042 (NZFLDYTM).",
+    "reason": "0xb34a / 0xb35e move.w (0x807a22),(a4); parameter_id_table 0x358c8 is the 10A5 block base. 40 (2.0 s) in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a24",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_ramp_out_increment",
+    "final_type": "word",
+    "own_role": "Per-pass step added to NZFLLM while the fuel limit status is off, up to fuel_demand_maximum.",
+    "reason": "0xb396-0xb3aa cmp.w (a5 = 0x808004) / bcc / move.w (0x807a24) / add.w d0,(a2 = 0x80a28c) / cap. 1 word read. 'increment' is the record's word (NZFLRMRT 'FUEL INCREMENT ADDED ...')."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a26",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_maximum_first_stage_acceleration",
+    "final_type": "i16",
+    "own_role": "Ceiling of the first stage engine acceleration ESFT01AC for the fuel limit; above it the bare-acceleration inhibit starts.",
+    "reason": "0xb2da cmp.w / ble -> inhibit (0xb2e2 / 0xb2ea); 0xb330 cmp.w / bgt -> conditions fail. Signed branches; NZFLACTR record S. Naming by stage is more precise than the describer's 'engine_acceleration' / 'filtered', because both stages are filtered."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a28",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_minimum_second_stage_acceleration",
+    "final_type": "i16",
+    "own_role": "Floor of the second stage engine acceleration ESFT02AC for the fuel limit.",
+    "reason": "0xb33e cmp.w (0x807a28) / blt -> not met. Signed. 1 word read."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a2a",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_minimum_engine_speed",
+    "final_type": "word",
+    "own_role": "Engine speed floor of the fuel limit.",
+    "reason": "0xb31c-0xb328 rpm 0x80ccf4 cmp.w (0x807a2a) / bcs (unsigned below) -> not met. 20800 (2600 rpm)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a2c",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_engaged_value",
+    "final_type": "word",
+    "own_role": "Value given to NZESLM while the engine speed limit status is on.",
+    "reason": "0xb5ac tst.w (a3 = 0x80a29c) / beq; 0xb5b0 move.w (0x807a2c),(a2 = 0x80a290). 1 word read. 'engaged' vs the describer's 'active' is wording only."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a2e",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_minimum_active_time",
+    "final_type": "word",
+    "own_role": "Reload value of the engine speed limit hold timer 0x800046.",
+    "reason": "0xb586 / 0xb59a move.w (0x807a2e),(a1 = 0x800046). 2 word reads."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a30",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_ramp_out_increment",
+    "final_type": "word",
+    "own_role": "Per-pass step added to NZESLM while the status is off, up to 0x803f40 (maximum rated speed).",
+    "reason": "0xb5bc-0xb5d8 cmp.w (0x803f40) / bcc / move.w (0x807a30) / add.w / cap. 1 word read."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a32",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_minimum_second_stage_acceleration",
+    "final_type": "i16",
+    "own_role": "ESFT02AC floor of the engine speed limit.",
+    "reason": "0xb57a cmp.w (0x807a32) / blt -> not met. Signed."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a34",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_maximum_engine_speed",
+    "final_type": "word",
+    "own_role": "Engine speed ceiling of the engine speed limit; the code uses it against its record text ('above which').",
+    "reason": "0xb55e cmp.w (0x807a34),d0 / 0xb564 bhi 0xb58e = not met when rpm > it; contrast the fuel limit's bcs at 0xb328. Both roles agree; the comment records the contradiction."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a36",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_maximum_first_stage_acceleration",
+    "final_type": "i16",
+    "own_role": "ESFT01AC ceiling of the engine speed limit and its inhibit trigger.",
+    "reason": "0xb522 cmp.w / ble then the inhibit (0xb52a / 0xb52e); 0xb56c cmp.w / bgt -> not met. 2 word reads, signed."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a3a",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_minimum_active_time",
+    "final_type": "word",
+    "own_role": "Reload value of the timing limit hold timer 0x800044.",
+    "reason": "0xb464 / 0xb478 move.w (0x807a3a),(a4 = 0x800044). Matches the existing sibling acceleration_noise_control_timing_limit_hold_timer."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a3c",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_ramp_out_increment",
+    "final_type": "word",
+    "own_role": "Per-pass step added to NZTALM while the timing status is off, up to 0x400.",
+    "reason": "0xb4b0-0xb4c4 cmpi.w #0x400,(a2 = 0x80a28e) / bcc / move.w (0x807a3c) / add.w / cap. 1 word read."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a3e",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_minimum_second_stage_acceleration",
+    "final_type": "i16",
+    "own_role": "ESFT02AC floor of the timing limit.",
+    "reason": "0xb458 cmp.w (0x807a3e) / blt -> not met. Signed."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a40",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_unfiltered_acceleration_limit",
+    "final_type": "i16",
+    "own_role": "Record only (NZTAACLM): no reader in the dump.",
+    "reason": "abs_refs: no reference; find_range_refs 0x8079f0-0x807a60: no pointer; the only RAM pointers into the area are 0x800066 / 0x80006e / 0x803af2. 0xb3d0 compares only NZTACLTR / NZTAACTR / NZTAFTTR. Record S, scale 2.5. Medium confidence, record-based name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a46",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_acceleration_first_stage_clamp_maximum",
+    "final_type": "i16",
+    "own_role": "Upper clamp of ESFT01AC in the engine acceleration filter, with the accumulator preset.",
+    "reason": "0xb21a a3 = #0x807a46; 0xb272-0xb288 cmp.w (a3) / ble / move.w (a3),(a2) / accumulator = value << 16 - 0x80000000. The CM848 twin calculateFilteredEngineAcceleration (0x38760) uses engine_acceleration_first_stage_clamp_maximum (0x40880c, 8A42 +4 ESFT01MX, same mnemonic) in the same step."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a48",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_acceleration_first_stage_clamp_minimum",
+    "final_type": "i16",
+    "own_role": "Lower clamp of ESFT01AC.",
+    "reason": "0xb220 a4 = #0x807a48; 0xb258 cmp.w (a4) / bge / move.w (a4),(a2) and the preset; CM848 twin engine_acceleration_first_stage_clamp_minimum 0x40880e (ESFT01MN)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a4a",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_inhibit_duration",
+    "final_type": "i16",
+    "own_role": "Reload value of the engine speed limit inhibit timer 0x80003c.",
+    "reason": "0xb52e move.w (0x807a4a),(0x80003c); record NZESIHTM S. 'duration' keeps it apart from the *_inhibit_timer counters."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a4c",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_inhibit_duration",
+    "final_type": "i16",
+    "own_role": "Reload value of the fuel limit inhibit timer 0x80003e.",
+    "reason": "0xb2ea move.w (0x807a4c),(0x80003e) is the only access. The other six hits (0x3c2e / 0x3c36 / 0x3c64 and 0x2ce22 / 0x2ce2a / 0x2ce58) are the cmpa.l / movea.l bound of the RAM clear 0x800000-0x807a4b (clr.l (a1)+), as the comment says. Record S -> i16 like its siblings."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a4e",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_inhibit_duration",
+    "final_type": "i16",
+    "own_role": "Reload value of the timing limit inhibit timer 0x800040.",
+    "reason": "0xb40c move.w (0x807a4e),(0x800040); record NZTAIHTM S."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a50",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_maximum_first_stage_acceleration",
+    "final_type": "i16",
+    "own_role": "ESFT01AC ceiling of the timing limit and its inhibit trigger.",
+    "reason": "0xb400 cmp.w / ble then 0xb408 move.w #1,(a5 = 0x80a2a4) / 0xb40c reload; 0xb44a cmp.w / bgt -> not met. Signed."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807a5a",
+    "verdict": "CONFIRMED",
+    "final_name": "air_fuel_control_fueling_override_value",
+    "final_type": "word",
+    "own_role": "AFC fuel limit value used while the AFC override bit is set.",
+    "reason": "0xc19c-0xc1a8 move.w (0x803cac) / andi.w #8 (algorithm_enable_flags_12 air_fuel_control_override_enable) / beq / move.w (0x807a5a),(a5 = 0x80a8f6). CM848 11D5 +0 AFFLMAN -> 0x3feff2 air_fuel_control_fueling_override_value (the same record)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807aa6",
+    "verdict": "CONFIRMED",
+    "final_name": "air_fuel_control_alpha_timeout",
+    "final_type": "word",
+    "own_role": "Reload value of alpha_air_fuel_control_timer.",
+    "reason": "0xc52c move.w (0x807aa6),(a2 = 0x80a914) in the twin calculateAlphaAirFuelControlResult; 0xc36e preset in calculateAlpha at engine_state 1 / 2 / 6 (a4 = 0x80d0c8). CM848 104B +6 APAFTRTM -> 0x5be60 air_fuel_control_alpha_timeout. 19500 in the dump, 0.02 s per count."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807c78",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_droop_reference_speed",
+    "final_type": "word",
+    "own_role": "Record only: the cruise / RSG droop reference speed.",
+    "reason": "1186 +16 CRDPRFVS; find_range_refs 0x807c60-0x807ca0: only parameter_id_table. CM848 1186 +16 (same text) -> 0x408e12 cruise_droop_reference_speed. 15360 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807c7a",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_droop_speed_error_delta_maximum",
+    "final_type": "word",
+    "own_role": "Record only: high limit of the cruise / RSG error delta.",
+    "reason": "1186 +18 CRERDCHL; no code reference; CM848 1186 +18 -> 0x408e14 cruise_droop_speed_error_delta_maximum."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807c7c",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_droop_speed_error_delta_minimum",
+    "final_type": "i16",
+    "own_role": "Record only: low limit of the cruise / RSG error delta (signed).",
+    "reason": "1186 +1A CRERDCLL signed; no code reference; CM848 1186 +1A -> 0x408e16 cruise_droop_speed_error_delta_minimum (i16)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807f6a",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_deceleration_rate_timer_threshold",
+    "final_type": "word",
+    "own_role": "Threshold of the ESP deceleration timer: while the filtered deceleration rate is above it the timer 0x80d2b0 counts up to 0x807f68, else it is cleared.",
+    "reason": "0x1aca6-0x1acb8 move.w d0,(0x80d2b2) / ext.l d0 / moveq #0,d1 / move.w (0x807f6a),d1 / cmp.l / ble 0x1acd0 clr.w (0x80d2b0); else cmp.w (0x807f68) / bcc / addq.w. 1 word read, zero-extended. Record 11DD +6 SPDIRTTD (unsigned). Sibling engine_deceleration_rate_filter_coefficient 0x807f66."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080802e",
+    "verdict": "CONFIRMED",
+    "final_name": "drivetrain_ratio_out_of_gear_speed_mismatch_delay",
+    "final_type": "word",
+    "own_role": "Record only: RSG override delay for a vehicle / engine speed mismatch.",
+    "reason": "106D +C GROGESOD; find_range_refs 0x808020-0x808050 shows code only for 0x808020 and the HSG gains 0x808036-0x80804e, nothing for 0x80802e. CM848 106D +C (same text) -> 0x5c93a drivetrain_ratio_out_of_gear_speed_mismatch_delay. 150 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00808984",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_maximum_engage_engine_speed",
+    "final_type": "i16",
+    "own_role": "Record only: maximum engine speed for PTO engagement.",
+    "reason": "109D +0 PTMXEGES (signed in v64t6_s, so i16 stays, although CM848 types its row word); find_range_refs 0x808980-0x808990: only parameter_id_table (and 0x80898e for the PWM read-back). CM848 109D +0 PTMXEGES -> 0x4071d8 power_take_off_maximum_engage_engine_speed. 24000 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00808986",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_minimum_engage_engine_speed",
+    "final_type": "word",
+    "own_role": "Record only: minimum engine speed for PTO engagement.",
+    "reason": "109D +2 PTMNEGES unsigned; no code reference; CM848 109D +2 -> 0x4071da."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080898c",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_remote_switch_timeout",
+    "final_type": "word",
+    "own_role": "Record only: time before the remote PTO switch is considered stationary.",
+    "reason": "CM550 109D +8 PTROSWTM (+4 / +6 are PATCH HOLE rows 0x808988 / 0x80898a); CM848 109D +4 PTROSWTM (same mnemonic and text) -> 0x4071dc power_take_off_remote_switch_timeout. No code reference. 10 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a280",
+    "verdict": "CONFIRMED",
+    "final_name": "air_conditioning_rapid_vehicle_acceleration_flag",
+    "final_type": "word",
+    "own_role": "Record only: the A/C block's rapid vehicle acceleration flag (818B +2 ACHIAC).",
+    "reason": "abs_refs: no reference; find_range_refs 0x80a270-0x80a28c: only parameter_id_table entries and the misfire code at 0x80a270. Sits beside ACCHEA 0x80a27e / ACSWERCU 0x80a282."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a290",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit",
+    "final_type": "word",
+    "own_role": "The ANC engine speed limit NZESLM: the engaged value, or ramped up to the rated speed; it is source 3 of selectEngineSpeedLimit.",
+    "reason": "0xb4f6 a2 = #0x80a290; writes 0xb5b0 / 0xb5cc / 0xb5d8; 0xb66e preset from 0x803f40; 0x1d640-0x1d650 move.w / cmp.w (a2) / bhi / move.w (0x80a290),(a2) / move.w #3,(a3). Word. Named like acceleration_noise_control_fuel_limit / _timing_limit. 21200 in the extended RAM dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a29e",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_advance_before_limit",
+    "final_type": "word",
+    "own_role": "Snapshot of fuel_timing_advance_value taken just before the ANC timing cap (TSBENZTA).",
+    "reason": "0xb4da move.w (a1 = 0x80d346),(0x80a29e) is its only reference. The describer's injection_timing_before_acceleration_noise_control_limit would mirror 0x80a270 injection_timing_before_misfire_limit, but that family's limit is injection_timing_misfire_limit, while this family's limit is acceleration_noise_control_timing_limit. So the concept-first name groups it with its own family and is not wrong. 495 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a2a0",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_engine_speed_limit_inhibit_flag",
+    "final_type": "word",
+    "own_role": "NZESLMIH: 1 after a bare engine acceleration until the inhibit timer 0x80003c runs out; blocks the engine speed limit conditions.",
+    "reason": "0xb508 a0 = #0x80a2a0; 0xb52a move.w #1,(a0); 0xb54a clr.w (a0); 0xb554 tst.w (a0) / bne. Word."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a2a2",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_fuel_limit_inhibit_flag",
+    "final_type": "word",
+    "own_role": "NZFLLMIH, the fuel limit's inhibit flag.",
+    "reason": "0xb2e2 move.w #1; 0xb306 clr.w; 0xb314 tst.w / bne. 3 word accesses."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a2a4",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_inhibit_flag",
+    "final_type": "word",
+    "own_role": "NZTALMIH, the timing limit's inhibit flag.",
+    "reason": "0xb3e6 a5 = #0x80a2a4; 0xb408 move.w #1,(a5); 0xb428 clr.w (a5); 0xb432 tst.w (a5) / bne."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a2a6",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_application_override_flag",
+    "final_type": "word",
+    "own_role": "ASANODFG: when nonzero, each ANC limit sets its status and reloads its hold timer even with failed conditions.",
+    "reason": "tst.w at 0xb352 / 0xb46c / 0xb58e, each followed by move.w #1,(a3) and the minimum active time. No writer in the ROM (abs_refs)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a2a8",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_application_enable_flag",
+    "final_type": "word",
+    "own_role": "ASANENF: 0 fails all three ANC limit conditions; set to 1 at start-up.",
+    "reason": "tst.w / beq at 0xb30c / 0xb42a / 0xb54c; 0xb666 move.w #1,(0x80a2a8). 1 in the extended RAM dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a906",
+    "verdict": "CONFIRMED",
+    "final_name": "alpha_air_fuel_control_state_detected_flag",
+    "final_type": "word",
+    "own_role": "FLAFSTFG latch: set while final_fueling_state is FUELING_STATE_AIR_FUEL_CONTROL_DERATE (16); makes the alpha AFC timer reload; cleared after the alpha base pass.",
+    "reason": "0xc2ca cmpi.w #0x10,(0x80d330) / beq; 0xc2e0 move.w #1; 0xc518 cmpi.w #1 in the twin 0xc504; 0xc658 clr.w with the LSG latch. CM848 104A +E -> 0x40a176 alpha_air_fuel_control_state_detected_flag; the CM848 twin body uses it in the same step."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a912",
+    "verdict": "CONFIRMED",
+    "final_name": "alpha_air_fuel_control_timer_active_flag",
+    "final_type": "word",
+    "own_role": "Running flag of alpha_air_fuel_control_timer.",
+    "reason": "0xc512 a0 = #0x80a912; 0xc532 move.w #1,(a0); 0xc53c cmpi.w #1,(a0); 0xc54e clr.w (a0); 0xc366 move.w #1 (calculateAlpha preset); 0x1dd18 clr.w (cm550_initializeAlpha). All word. The CM848 twin calculateAlphaAirFuelControlResult does the same steps with alpha_air_fuel_control_timer_active_flag (0x3fa0dc). No e2m record."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a914",
+    "verdict": "CONFIRMED",
+    "final_name": "alpha_air_fuel_control_timer",
+    "final_type": "word",
+    "own_role": "The alpha AFC timer (APAFTR): reloaded while either latch is set, counted down while the flag is 1; at 0 the AFC alpha result is 1.",
+    "reason": "0xc506 / 0xc50c a2 / a1 = #0x80a914; 0xc52c reload; 0xc542 tst.w / 0xc546 subq.w; 0xc36e preset. CM550 104A +1C APAFTR = CM848 104A +18 APAFTR (same mnemonic and text) -> 0x40a180 alpha_air_fuel_control_timer, the same twin step. 19500 in the extended RAM dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080aa3e",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_bottom_droop_gain",
+    "final_type": "word",
+    "own_role": "Record only: the cruise bottom droop slope (1187 +6 CRBODJCL).",
+    "reason": "find_range_refs 0x80aa30-0x80aa64: only parameter_id_table 0x35fd4 (block base 0x80aa38). CM848 1187 +6 (same text, same block layout) -> 0x40b69c cruise_bottom_droop_gain. 742 in the extended RAM dump (written by code above the dump)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080aa52",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_top_droop_gain",
+    "final_type": "word",
+    "own_role": "Record only: cruise top droop slope (1187 +1A CRTODJCL).",
+    "reason": "No code reference; CM848 1187 +1A -> 0x40b6b0 cruise_top_droop_gain."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080aa58",
+    "verdict": "CONFIRMED",
+    "final_name": "road_speed_governor_bottom_droop_gain",
+    "final_type": "word",
+    "own_role": "Record only: RSG bottom droop slope (1187 +20 RSBODJCL).",
+    "reason": "No code reference; CM848 1187 +20 -> 0x40b6b6 road_speed_governor_bottom_droop_gain. 742 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080aa5e",
+    "verdict": "CONFIRMED",
+    "final_name": "road_speed_governor_top_droop_gain",
+    "final_type": "word",
+    "own_role": "Record only: RSG top droop slope (1187 +26 RSTODJCL).",
+    "reason": "No code reference; CM848 1187 +26 -> 0x40b6bc road_speed_governor_top_droop_gain."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080aa60",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_top_droop_offset",
+    "final_type": "word",
+    "own_role": "Record only: the CC / RSG top droop offset (1187 +28 CRTODPOF).",
+    "reason": "No code reference; CM848 1187 +28 Cruise_RSG_Top_Droop_Offset -> 0x40b6be cruise_top_droop_offset. 1325 in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080bcdf",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_switch_override_values",
+    "final_type": "byte",
+    "own_role": "Override byte of power_take_off_switch_state_bits: bits 0x10 / 0x04 / 0x01 are ORed in when algorithm_enable_flags_16 bits 12 / 10 / 8 (power_take_off_on / set / resume_switch_override_enable) are set.",
+    "reason": "0x15394-0x153aa / 0x153c8-0x153de / 0x153fc-0x15412 move.b (0x80bcdf) / andi.b / or.b d0,(0x7,a4) with a4 = 0x80bcce. 3 byte reads only. e2m 000E +11 DSPTRUUC 0x01 / DSPTSEUC 0x04 / DSPTONUC 0x10 / DSAUSHUC 0x40. Pairs with switch_1_to_8_override_values (0x80bcd8)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d3a4",
+    "verdict": "CONFIRMED",
+    "final_name": "drivetrain_ratio_decoupled_hold_counter",
+    "final_type": "word",
+    "own_role": "Record only: timer that disables the RSG while vehicle and engine speeds disagree (106C +6 GROGESTR).",
+    "reason": "find_range_refs 0x80d39c-0x80d3b0: only parameter_id_table. CM848 106C +6 (same text) -> 0x40b6fa drivetrain_ratio_decoupled_hold_counter."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d3a6",
+    "verdict": "CONFIRMED",
+    "final_name": "drivetrain_ratio_change_settle_counter",
+    "final_type": "word",
+    "own_role": "Record only: timer that disables the RSG when the gear ratio changes (106C +8 GROGGRTR).",
+    "reason": "No code reference; CM848 106C +8 (same text) -> 0x40b6fc drivetrain_ratio_change_settle_counter."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc30",
+    "verdict": "AMENDED",
+    "final_name": "power_take_off_or_user_fueling",
+    "final_type": "word",
+    "own_role": "PTSLFL: the fueling selected between the user fueling (fuel_demand_selected) and the PTO governor fueling (closed_loop_fuel_demand_output) by 0x2dcb0; read into JCDRIDFL 0x80da36 when the selected state is POWER_TAKE_OFF or ACCELERATOR_PEDAL_FAULT.",
+    "reason": "The role is confirmed: five move.w writes in 0x2dcb0 (0x2dce6 / 0x2dd42 / 0x2dd5e / 0x2dd86 / 0x2dda2, sources 0x80ded2 / 0x80dc00), and the read at 0xf84a where a5 = 0x80dc32 holds 6 or 4. Its pair 0x80dc32 is power_take_off_or_user_fueling_state, and CM550 names every fueling value / state pair <x>_fueling / <x>_fueling_state (final_fueling 0x80d32e, requested_fueling 0x80d332, adjusted_user_fueling 0x80a8f0), so the value half drops '_fuel_demand' (the describer's name). Unique in CM550. Keep the proposed comment."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc82",
+    "verdict": "CONFIRMED",
+    "final_name": "road_speed_governor_reference_speed",
+    "final_type": "word",
+    "own_role": "Record only: the maximum allowable vehicle speed selected as the RSG reference, before driver reward / smart RSG (1197 +2 SRRFVS).",
+    "reason": "1197 +0 CRMXVSRF; find_range_refs 0x80dc78-0x80dc90: only parameter_id_table. CM848's 8B89 +0 RSG_Reference_Speed has the identical text. 8B89 is not in CM848's dumped table, but its layout matches CM848's rows at three offsets: +0 0x40b5bc road_speed_governor_reference_speed (code-named 'the reference speed of the road speed governor'), +6 Gear_Down_Active 0x40b5c2 drivetrain_gear_range, +8 RSG_HPCR_Leak_Reference_Speed 0x40b5c4 fault_vehicle_speed_limit. So the reuse is justified (medium). 25600 (100 mph) in the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080de68",
+    "verdict": "CONFIRMED",
+    "final_name": "air_fuel_control_timing_increment",
+    "final_type": "i16",
+    "own_role": "The applied AFC timing increment: AFICTA while final_fueling_state is AFC derate, else 0; added signed to fuel_timing_advance_value with a floor of 0.",
+    "reason": "0xc2c4 a0 = #0x80de68; 0xc2d4 clr.w (a0); 0xc2da move.w (0x808a6e),(a0); 0xc2fe move.w / ext.l / add.l / bpl; 0xc30e move.w / add.w d0,(a1 = 0x80d346). Record 105B +0 AFCNICTA S. No clash with 0x808a6e (calibratible_timing_increment_...)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080053c",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_on_switch_previous_state",
+    "final_type": "byte",
+    "own_role": "The PTO on switch bit (0x80bcd5 bit 0x10) of the previous pass, for the rising edge that sets 0x80bcd4 bit 6 (with road speed 0x80a9d0 == 0 and algorithm_enable_flags_28 integrated_idle_management_enable).",
+    "reason": "0x15454-0x1547e: PTO on set, tst.b (0x80053c) == 0, tst.w (0x80a9d0) == 0, (0x803ccc) & 0x10, then ori.b #0x40,(a5 = 0x80bcd4); 0x15482-0x15494 sne / andi.l #1 / move.b d0,(0x80053c). Only these 2 byte references. 'sampled_road_speed' in the comment is the prefix of the real row name (sampled_road_speed_after_it_has_been_filtered_0_255_9961), so the comment stands. New row; 0x80053d is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803af2",
+    "verdict": "CONFIRMED",
+    "final_name": "vehicle_acceleration_filter_state",
+    "final_type": "ema_filter_state_t",
+    "own_role": "The signed first-order filter record of the vehicle acceleration (coefficient pointer -> VAACFTTC 0x807a1c, Q16.16 accumulator); used by code above the dump.",
+    "reason": "RAM dump 0x803af2 = 0x00807a1c, 0x803af6 = 0x80000000 (0 in offset binary), the same layout as engine_acceleration_first_stage_filter_state {0x00807a42, 0x80000000}. A second_order_filter_state_t would need a second coefficient pointer at +4, and 0x80000000 is not one. ema_filter_state_t is 8 bytes (coefficient word*, accumulator dword); 0x803af2-0x803af9 holds no row (next row 0x803b00, outside the EEPROM image). No ROM pointer to it. Medium confidence (data layout, no dumped code)."
+   }
+  ]
+ }
+}

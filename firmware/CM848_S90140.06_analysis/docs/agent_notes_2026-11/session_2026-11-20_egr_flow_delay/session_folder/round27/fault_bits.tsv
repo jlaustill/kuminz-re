@@ -1,0 +1,346 @@
+0	0	0	RAM_Image_Word_Error	P0606
+1	0	1	FSO_Command_High_Control_Error	
+2	0	2	FSO_Command_Low_Control_Error	
+3	0	3	TU_WG_Driver1_High_Control_Error	
+4	0	4	TU_WG_Driver1_Low_Control_Error	
+5	0	5		P0341
+6	0	6	AFC_Low_Boost_Error	
+7	0	7	FP_Idle_Error	P0191
+8	0	8	Boost_Pressure_High_Error	P0238
+9	0	9	Boost_Pressure_Low_Error	P0237
+10	0	10	Sampled_Throttle_High_Error	P2123
+11	0	11	Sampled_Throttle_Low_Error	P2122
+12	0	12	Oil_Pressure_High_Error	
+13	0	13	Oil_Pressure_Low_Error	
+14	0	14	HPCR_OBD_Neg_Dev_Error	
+15	0	15	HPCR_OBD_Pos_Dev_Error	
+16	1	0	Coolant_Temperature_High_Error	P0118
+17	1	1	Coolant_Temperature_Low_Error	P0117
+19	1	3	Intake_Manifold_Temperature_High_Error	P0113
+20	1	4	Intake_Manifold_Temperature_Low_Error	P0112
+25	1	9	Ambient_Air_Pressure_High_Error	P0108
+26	1	10	Ambient_Air_Pressure_Low_Error	P0107
+27	1	11	Overspeed_Injector_Shutoff_Error	P0219
+29	1	13	VSS_Signal_Lost_Error	P0500
+30	1	14	VSS_Tampering_Error	
+33	2	1	FSO_Control_Error	
+35	2	3	TU_WG_Driver2_High_Control_Error	
+36	2	4	TU_WG_Driver2_Low_Control_Error	
+37	2	5	CORS_Makeup_Valve_Driver_High_Control_Error	
+38	2	6	CORS_Makeup_Valve_Driver_Low_Control_Error	
+41	2	9	Engine_Brake_Driver_1_High_Control_Error	P0478
+42	2	10	Engine_Brake_Driver_1_Low_Control_Error	P0477
+43	2	11	Engine_Brake_Driver_2_High_Control_Error	
+44	2	12	Engine_Brake_Driver_2_Low_Control_Error	
+45	2	13	Engine_Brake_Driver_3_High_Control_Error	
+46	2	14	Engine_Brake_Driver_3_Low_Control_Error	
+47	2	15	Fuel_Temperature_High_Error	
+48	3	0	Fuel_Temperature_Low_Error	
+52	3	4	Frequency_Throttle_Low_Error	
+53	3	5	Frequency_Throttle_High_Error	
+54	3	6	Water_In_Fuel_High_Error	P2267
+55	3	7	Water_In_Fuel_Low_Error	P2266
+56	3	8	Water_In_Fuel_Error	P2269
+57	3	9		P1221
+58	3	10		P1222
+60	3	12		P1223
+62	3	14	Throttle_Validation_Switch_Low_Error	P2127
+63	3	15	Throttle_Validation_Process_Error	P2121
+64	4	0	Boost_In_Range_High_Error	P0236
+66	4	2	Battery_Voltage_Low_Error	P0562
+67	4	3	Battery_Voltage_High_Error	P0563
+68	4	4	Throttle_Validation_Switch_High_Error	P2128
+69	4	5		P1221
+70	4	6		P1222
+71	4	7		P1223
+73	4	9	Increment_Decrement_Switch_Error	
+74	4	10	Ram_Overrun_Error	
+77	4	13	Remote_Throttle_High_Error	
+78	4	14	Remote_Throttle_Low_Error	
+80	5	0	QSPI_Command_Error	
+81	5	1	QSPI_Initialization_Error	
+82	5	2	Power_Off_Without_Ignition_Off_Error	P2509
+84	5	4	Flash_Failure_Error	
+89	5	9	Powerdown_Data_Lost_Error	P2509
+90	5	10	All_Powerdown_Data_Lost_Error	P2509
+91	5	11	Poweroff_Command_Ignored_Error	P0606
+92	5	12	EPS_Main_Channel_Lost_Error	P0335
+93	5	13	EPS_Backup_Channel_Lost_Error	P0340
+111	6	15	J1939_Link_Cannot_Transmit_Error	
+112	7	0	J1939_Link_Not_Fast_Enough_Error	
+117	7	5	Cam_Crank_Sync_Mismatch_Error	P0016
+121	7	9	Fan_Clutch_1_PWM_Control_Error	P0480
+124	7	12	Crank_Sync_Error	P0336
+127	7	15	J1939_Mux_APS_System_Error	
+128	8	0	J1939_Mux_PGN_Timeout_Error	
+129	8	1	J1939_Mux_Remote_Throttle_Data_Error	
+130	8	2	J1939_Mux_Configuration_Error	
+132	8	4	Engine_Brake_Driver_4_High_Control_Error	
+133	8	5	Engine_Brake_Driver_4_Low_Control_Error	
+134	8	6	Engine_Brake_Driver_5_High_Control_Error	
+135	8	7	Engine_Brake_Driver_5_Low_Control_Error	
+136	8	8	Transmission_VFS_Battery_Driver_High_Control_Error	P0883
+137	8	9	Transmission_VFS_Battery_Driver_Low_Control_Error	P0882
+138	8	10	Engine_Alarm_Driver_High_Control_Error/Transmission_Overdrive_Driver_High_Control_Error	P0974
+139	8	11	Engine_Alarm_Driver_Low_Control_Error/Transmission_Overdrive_Driver_Low_Control_Error	P0973
+140	8	12	Fan_Clutch_Control_Driver1_High_Control_Error/Transmission_TCC_Driver_High_Control_Error	P2770
+141	8	13	Fan_Clutch_Control_Driver1_Low_Control_Error/Transmission_TCC_Driver_Low_Control_Error	P2769
+142	8	14	Cruise_Vent_Driver_High_Control_Error/Fan_Clutch_Control_Driver2_High_Control_Error	P0588
+143	8	15	Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error	P0587
+144	9	0	Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error	P0584
+145	9	1	Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error	P0583
+146	9	2	Cruise_SC_Source_Driver_High_Control_Error	P0596
+147	9	3	Cruise_SC_Source_Driver_Low_Control_Error	P0595
+148	9	4	Transmission_Park_Neutral_Switch_Error	P0850
+149	9	5	RE_Governor_Pressure_Rationality_Error	P1762
+150	9	6	Ambient_Air_Temperature_High_Error	P0073
+151	9	7	Ambient_Air_Temperature_Low_Error	P0072
+152	9	8	Transmission_Overdrive_Driver_2_High_Control_Error	
+153	9	9	Transmission_Overdrive_Driver_2_Low_Control_Error	
+154	9	10	Transmission_TCC_Driver_2_High_Control_Error	
+155	9	11	Transmission_TCC_Driver_2_Low_Control_Error	
+165	10	5	EEPROM_Write_Error	
+166	10	6	Powerdown_EEPROM_Checksum_Error	
+171	10	11	RT_Low_Error	
+172	10	12	RT_High_Error	
+196	12	4	Throttle_Sensor_Supply_Voltage_High_Error	P0699
+197	12	5	Throttle_Sensor_Supply_Voltage_Low_Error	P0698
+204	12	12	Stop_Lamp_Driver_High_Control_Error	
+205	12	13	Stop_Lamp_Driver_Low_Control_Error	
+206	12	14	T2_High_Gear_Driver_High_Control_Error/T2_Shift_Driver_High_Control_Error	
+207	12	15	T2_High_Gear_Driver_Low_Control_Error/T2_Shift_Driver_Low_Control_Error	
+208	13	0	T2_Lamp_Driver_High_Control_Error	
+209	13	1	T2_Lamp_Driver_Low_Control_Error	
+210	13	2	T2_Lockout_Driver_High_Control_Error	
+211	13	3	T2_Lockout_Driver_Low_Control_Error	
+212	13	4	T2_Low_Gear_Driver_High_Control_Error	
+213	13	5	T2_Low_Gear_Driver_Low_Control_Error	
+214	13	6	T2_Neutral_Driver_High_Control_Error	
+215	13	7	T2_Neutral_Driver_Low_Control_Error	
+216	13	8	TAS_Lamp_Driver_High_Control_Error	
+217	13	9	TAS_Lamp_Driver_Low_Control_Error	
+218	13	10	Wait_To_Start_Lamp_Driver_High_Control_Error/Wait_To_Start_Lamp_High_Control_Error	P0381
+219	13	11	Wait_To_Start_Lamp_Driver_Low_Control_Error/Wait_To_Start_Lamp_Low_Control_Error	P0381
+220	13	12	Warning_Lamp_Driver_High_Control_Error	
+221	13	13	Warning_Lamp_Driver_Low_Control_Error	
+222	13	14	Water_In_Fuel_Lamp_Driver_High_Control_Error	
+223	13	15	Water_In_Fuel_Lamp_Driver_Low_Control_Error	
+228	14	4	Overspeed_Pump_Shutoff_Error	
+229	14	5	Warning_Lamp_Driver_Open_Control_Error	
+230	14	6	Stop_Lamp_Driver_Open_Control_Error	
+232	14	8	Maintenance_Lamp_Driver_Open_Control_Error	
+262	16	6	Fuel_Temperature_RPM_Error_Active	
+263	16	7	Fuel_Temperature_Fueling_Error_Active	
+264	16	8	HPCR_CP3_Low_Current_Error	
+265	16	9	HPCR_CP3_High_Current_Error	
+268	16	12	Injector_1_Short_to_Vbatt_Error	P2146
+269	16	13	Injector_1_Short_to_Ground_Error	P2146
+270	16	14	Injector_1_Fast_Decay_Error	
+271	16	15	Injector_5_Short_to_Vbatt_Error	P2146
+272	17	0	Injector_5_Short_to_Ground_Error	P2146
+273	17	1	Injector_5_Fast_Decay_Error	
+274	17	2	Injector_3_Short_to_Vbatt_Error	P2146
+275	17	3	Injector_3_Short_to_Ground_Error	P2146
+276	17	4	Injector_3_Fast_Decay_Error	
+277	17	5	Injector_6_Short_to_Vbatt_Error	P2149
+278	17	6	Injector_6_Short_to_Ground_Error	P2149
+279	17	7	Injector_6_Fast_Decay_Error	
+280	17	8	Injector_2_Short_to_Vbatt_Error	P2149
+281	17	9	Injector_2_Short_to_Ground_Error	P2149
+282	17	10	Injector_2_Fast_Decay_Error	
+283	17	11	Injector_4_Short_to_Vbatt_Error	P2149
+284	17	12	Injector_4_Short_to_Ground_Error	P2149
+285	17	13	Injector_4_Fast_Decay_Error	
+286	17	14	Injector_1_Open_Circuit_Error	P0201
+287	17	15	Injector_5_Open_Circuit_Error	P0202
+288	18	0	Injector_3_Open_Circuit_Error	P0203
+289	18	1	Injector_6_Open_Circuit_Error	P0204
+291	18	3	Injector_2_Open_Circuit_Error	P0205
+292	18	4	Injector_4_Open_Circuit_Error	P0206
+294	18	6	Cold_Start_Aid_1_Low_Control_Error	P0541
+295	18	7	Cold_Start_Aid_1_High_Control_Error	P0542
+296	18	8	Cold_Start_Aid_2_Low_Control_Error	P2607
+297	18	9	Cold_Start_Aid_2_High_Control_Error	P2608
+298	18	10	Transmission_Oil_Temperature_Rationality_Error	P0711
+299	18	11	Transmission_Governor_Pressure_High_Error	P0868
+300	18	12	Transmission_Governor_Pressure_Low_Error	P0869
+301	18	13	Transmission_Oil_Temperature_High_Error	P0713
+302	18	14	Transmission_Oil_Temperature_Low_Error	P0712
+303	18	15	HPCR_Pressure_Too_High_Error	P0088
+304	19	0	Fuel_Rail_Pressure_High_Error	P0193
+305	19	1	Fuel_Rail_Pressure_Low_Error	P0192
+306	19	2	ECM_Internal_Temperature_Low_Error	
+307	19	3	ECM_Internal_Temperature_High_Error	
+308	19	4	Chry_Dat42_Stuck_Error	
+318	19	14		P0604
+319	19	15	TCC_Rationality_Error	P1740
+320	20	0	OSS_Rationality_Error	P0720
+328	20	8	Booster_Cap_1_Voltage_High_Error	P0606
+329	20	9	Booster_Cap_1_Voltage_Low_Error	P2146
+330	20	10	Booster_Cap_2_Voltage_High_Error	P0606
+331	20	11	Booster_Cap_2_Voltage_Low_Error	P2149
+332	20	12	CWG_High_Boost_Error	P0234
+333	20	13	CP3_Pump_Regulator_Control_Error	P0251
+334	20	14	PPS_Conformance_Error	P2121
+335	20	15	Speed_Limp_Home_Error	P0336
+336	21	0	WIF_Too_Long_Error	P0169
+337	21	1	Sensor_Supply_1_Voltage_Low_Error	P0642
+338	21	2	Sensor_Supply_1_Voltage_High_Error	P0643
+339	21	3	Ambient_Air_Temperature_Rationality_Error	P0071
+340	21	4	Ambient_Air_Pressure_In_Range_Error	P0106
+341	21	5	Low_Oil_Switch_Error	P0521
+344	21	8	VIN_E2_Not_Entered_Error	P0630
+345	21	9	Odometer_E2_Not_Entered_Error	
+346	21	10	VTA_Secret_Key_E2_Not_Entered_Error	P0633
+347	21	11	Pedal_Position_Sensor_1_Low_Error	P2122
+348	21	12	Pedal_Position_Sensor_1_High_Error	P2123
+349	21	13	Pedal_Position_Sensor_2_Low_Error	P2127
+350	21	14	Pedal_Position_Sensor_2_High_Error	P2128
+351	21	15	Transmission_VFS_PWM_Driver_Error	P0748
+352	22	0	HPCR_Cusum_Leak_Error	
+353	22	1	Battery_Temperature_Rationality_Error	P0514
+354	22	2	Intake_Manifold_Temperature_Rationality_Error	P0111
+355	22	3	J1850_Open_Ckt_No_Message_Error	P1652
+356	22	4	Jcomm_TSC_Lost_Fault	
+357	22	5	Checksum_Error	P0602
+358	22	6	Intake_Manifold_Temperature_Keyon_Ration_Error	P0111
+359	22	7	Battery_Temperature_Keyon_Rationality_Error	P0514
+360	22	8	Ambient_Air_Temperature_Keyon_Rationality_Error	P0071
+361	22	9	Cylinder_1_Misfire_Error	P0301
+362	22	10	Cylinder_2_Misfire_Error	P0302
+363	22	11	Cylinder_3_Misfire_Error	P0303
+364	22	12	Cylinder_4_Misfire_Error	P0304
+365	22	13	Cylinder_5_Misfire_Error	P0305
+366	22	14	Cylinder_6_Misfire_Error	P0306
+367	22	15	Multiple_Cylinders_Misfire_Error	P0300
+368	23	0	Alternator_Error	P2502
+369	23	1	Charging_System_High_Error	P2504
+370	23	2	Charging_System_Low_Error	P2503
+371	23	3	AC_Discrete_Output_High_Control_Error	P0647
+372	23	4	AC_Discrete_Output_Low_Control_Error	P0646
+373	23	5	Cruise_Control_Switch_Mux_High_Error	P0581
+374	23	6	Cruise_Control_Switch_Mux_Low_Error	P0580
+375	23	7	Engine_Speed_Sensor_SV_High_Error	P0338
+376	23	8	Engine_Speed_Sensor_SV_Low_Error	P0337
+377	23	9	Engine_Conn_Sensors_SV_High_Error	P0653
+378	23	10	Engine_Conn_Sensors_SV_Low_Error	P0652
+379	23	11	Battery_Temperature_High_Error	P0517
+380	23	12	Battery_Temperature_Low_Error	P0516
+381	23	13	Fuel_Level_High_Error	P0463
+382	23	14	Fuel_Level_Low_Error	P0462
+383	23	15	J1850_System_Bus_Fault	P1652
+384	24	0	AC_Pressure_High_Error	P0533
+385	24	1	AC_Pressure_Low_Error	P0532
+386	24	2	Lift_Pump_Driver_High_Control_Error	P0629
+387	24	3	Lift_Pump_Driver_Low_Control_Error	P0628
+388	24	4	Watchdog_Fueling_Error	P0606
+389	24	5	CT_Derate_Agg_Derate_Error	P0217
+390	24	6	CT_Derate_Min_Derate_Error	P0217
+391	24	7	RE_Governor_Pr_Zero_Rationality_Error	P1757
+392	24	8	RE_Governor_Pr_Mid_Rationality_Error	P1756
+393	24	9	Low_Oil_Pressure_Error	P0524
+394	24	10	Brake_Switch_High_Error	P0573
+395	24	11	Brake_Switch_Low_Error	P0572
+396	24	12	EVR_Driver_Control_Error	P0622
+397	24	13	OBD_Fuel_Level_Low_Error	
+398	24	14	Fuel_Level_Rationality_Error	P0461
+399	24	15	FS_Shutdown_HW_Error	P0607
+400	25	0	Tstat_System_Error	P0128
+401	25	1	Coolant_Temperature_In_Range_Error	P0116
+402	25	2	Fuel_Temperature_In_Range_Error	
+403	25	3	Wastegate_Pressure_Control_Driver_Error	P0243
+404	25	4	Transmission_Rx_Emissions_Fault	
+405	25	5	Transmission_Rx_Message_Fault	
+406	25	6	Tcase_Switch_Mux_OOR_Error	P0837
+407	25	7	Fan_Speed_Error	P0483
+408	25	8	HPCR_Cusum_Pos_Error	P0148
+409	25	9	HPCR_Cusum_Neg_Error	P0148
+411	25	11	Intake_Air_Heater_System_Error	P2609
+412	25	12	Tcase_Switch_Mux_High_Error	P0839
+413	25	13	Tcase_Switch_Mux_Low_Error	P0838
+414	25	14	Fuel_Pressure_Keyon_Rationality_Error	P0191
+415	25	15	Turbo_High_Boost_Error	P0234
+416	26	0	Cylinder_7_Misfire_Error	
+417	26	1	Cylinder_8_Misfire_Error	
+418	26	2	Injector_7_Open_Circuit_Error	
+419	26	3	Injector_8_Open_Circuit_Error	
+420	26	4	Injector_7_Short_to_Vbatt_Error	
+421	26	5	Injector_8_Short_to_Vbatt_Error	
+422	26	6	Injector_7_Short_to_Ground_Error	
+423	26	7	Injector_8_Short_to_Ground_Error	
+424	26	8	Injector_7_Fast_Decay_Error	
+425	26	9	Injector_8_Fast_Decay_Error	
+432	27	0	CAN_General_Network_Error	P0653
+433	27	1	Implausible_AC_Pressure_Voltage_From_TIPM_Error	
+434	27	2	Implausible_Fuel_Voltage_From_TIPM_Error	
+435	27	3	Implausible_Ign_Off_Timer_From_TIPM_Error	
+436	27	4	Implausible_Vehicle_Speed_From_ABS_Error	
+437	27	5	Lost_Communication_With_ABS_Error	
+438	27	6	Lost_Communication_With_TIPM_Error	
+439	27	7	VTA_Invalid_Key_Error	
+509	31	13	Gen_Diag_Low_Battery_Voltage_Error	
+510	31	14	OBD_Low_Battery_Voltage_Error	
+512	32	0	EGR_Orifice_Temp_Rationality_Error	
+513	32	1	EGR_Orifice_Temp_Startup_Error	
+514	32	2	EGR_Valve_Rationality_Error	
+515	32	3	EGR_Valve_Response_Time_Error	
+518	32	6	Boost_In_Range_Error	
+519	32	7	TVA_Stuck_Actuator_Error	B1976
+520	32	8	TVA_Position_Rationality_Error	B1972
+521	32	9	TVA_Span_Error	B1975
+522	32	10	TVA_AZ_Error	B1971
+525	32	13	TVA_Motor_Overcurrent_Error	
+526	32	14	TVA_Electrical_Fault	
+527	32	15	Charge_Press_IR_Error	
+596	37	4	Oil_Pressure_Error	
+597	37	5	Oil_Pressure_High_Postprocessed_Error	
+611	38	3	Turbo_Speed_High_Error	P2581
+613	38	5	Turbo_Speed_Low_Error	P2580
+618	38	10	Turbo_Speed_In_Range_Error	P2579
+619	38	11		B1934
+620	38	12		B1934
+619	38	11	/	
+642	40	2	EGR_Position_Before_Autozero_High_Error	
+643	40	3	EGR_Position_Before_Autozero_Low_Error	
+648	40	8	Boost_Pressure_Absolute_High_Error	
+649	40	9	Boost_Pressure_Absolute_Low_Error	
+658	41	2	Exhaust_Throttle_Position_High_Error	
+659	41	3	Exhaust_Throttle_Position_Low_Error	
+670	41	14	VGT_Closed_Adjustment_Error	
+671	41	15	VGT_Span_Adjustment_Error	
+672	42	0	Exhaust_Pressure_Sensor_High_Error	
+673	42	1	Exhaust_Pressure_Sensor_Low_Error	
+690	43	2	EGR_Delta_P_Sensor_High_Error	
+691	43	3	EGR_Delta_P_Sensor_Low_Error	
+709	44	5	VGT_Position_PP_High_Error	
+710	44	6	VGT_Position_PP_Low_Error	
+718	44	14	EGR_Valve_Autozero_Error	
+719	44	15	EGR_Delta_P_Autozero_Error	
+720	45	0	EGA_Fault_HB1A	
+721	45	1	EGA_Fault_HB1B	
+722	45	2	EGA_Fault_HB1_OC_HI	
+723	45	3	EGA_Fault_HB1_OC_LO	
+724	45	4	EGA_Fault_HB1_Inrush	
+725	45	5	EGA_Control_Error	
+726	45	6	EGA_Electrical_Fault	
+727	45	7	EGA_Driver_Over_Current	
+728	45	8	EGA_Over_Temperature	
+729	45	9	Boost_In_Range_Low_Error	P0299
+738	46	2	VGA_Fault_HB0A	
+739	46	3	VGA_Fault_HB0B	
+740	46	4	VGA_Fault_HB0_OC_HI	
+741	46	5	VGA_Fault_HB0_OC_LO	
+742	46	6	VGA_Fault_HB0_Inrush	
+743	46	7	VGA_Control_Error	
+744	46	8	VGA_Electrical_Fault	B1978
+745	46	9	VGA_Driver_Over_Current	
+746	46	10	VGA_Over_Temperature	
+774	48	6	EGR_DP_In_Range_Error	
+775	48	7	EGR_DP_In_Range_High_Error	
+776	48	8	EGR_DP_In_Range_Low_Error	
+777	48	9	EGR_DP_Startup_Error	
+778	48	10	Boost_Ambient_Delta_Error	P0069
+788	49	4	TVA_Sampled_Position_High_Error	B1973
+789	49	5	TVA_Sampled_Position_Low_Error	B1974
+796	49	12	EGR_Orifice_Temperature_High_Error	
+797	49	13	EGR_Orifice_Temperature_Low_Error	

@@ -1,0 +1,42 @@
+cm848: round 39 stage A - the 24 ROM-side _cal lookup tables renamed after their lookups, with 11 caches
+
+The auditing-cal-suffixes skill's report: 20 HARD and 4 SOFT contradictions were lookup tables carrying _cal.
+- They sit at 0x40xxxx (the ROM-copied tables) and in Bank1 ROM. Firmware/CLAUDE.md's table rule: none of these
+  tables is EEPROM-backed, and the older _cal table names are legacy.
+- They also kept an old role vocabulary (_axis1 / _xaxis / _ystart / _yend / _output) and banned abbreviations
+  (temp / corr / seq). That had kept round 37 / 38 from naming their caches.
+- Each table is now named from its own lookup, in the table grammar (<base>_axis / _values,
+  <base>_x_axis / _y_axis / _grid). Several were wrong-domain:
+  - injection_timing_temp_corr_axis1 / ystart / yend_cal is the turbocharger corrected speed map:
+    turbocharger_corrected_speed_x_axis / _y_axis / _grid.
+    - cm848_estimateTurbochargerSpeed looks it up by the compressor pressure ratio (charge_pressure x 4096 /
+      compressor_inlet_pressure) and the filtered engine speed.
+  - j1939_fuel_table_xaxis / ystart / yend_cal is e2m MT_Max_Torque_Map (cm848_lookupMaximumTorqueAtEngineSpeed's
+    plate already said "not a fuel table"): maximum_torque_map_x_axis / _y_axis / _grid.
+  - governor_load_xaxis_cal is the engine speed axis the engine retarder torque stage tables share:
+    engine_retarder_torque_engine_speed_axis.
+  - engine_sync_speed_correction_axis / values_cal is fuel_metering_pwm_frequency_axis / _values.
+    - TPU-B channel 11's period is 5000000 / value. At the 3.2 us TPU-B tick, the value is 16 x the frequency in Hz
+      (stated as the arithmetic).
+  - The rest:
+    - low_speed_governor_no_load_fuel (by commanded throttle);
+    - safety_fuel_limit (by engine speed);
+    - cylinder_balance_enable (by engine speed and filtered fueling: 0 resets the sequence counter and below 0x80
+      stops the compensation);
+    - crank_tooth_good_window_fraction;
+    - cylinder_event_index_a / _b (by TPU-A channel 0 PARAM4);
+    - crank_preliminary_sync_count (a step lookup at the constant 2).
+- Their caches, named from the same lookups:
+  - governor_interp_table_state_b, crank_timing_init_state_a / b / c and cam_timing_filter_init_state took their
+    tables' names;
+  - DAT_003fb01a / DAT_003fb3c2 gained rows;
+  - cylinder_event_init_state_a and fuel_demand_interp_state_a / c / e were widened to word[2], with their y halves
+    (_b / _d / _f) merged as name[1];
+  - the three maximum torque map caches serve the alpha 0 row and the chi lower / upper rows
+    (maximum_torque_map_alpha_0 / _chi_lower / _chi_upper_cached_axis_offsets).
+
+Proof: prove_caches.py (round 37's canonical form) matches all 1968 functions. (word *) casts are unchanged.
+audit_cal_suffixes.py: HARD 63 -> 43 (the 43 scalars need the skill's per-symbol write check), SOFT 4 -> 0.
+lookup_tables.py: 920 tables typed, 0 sizing problems. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

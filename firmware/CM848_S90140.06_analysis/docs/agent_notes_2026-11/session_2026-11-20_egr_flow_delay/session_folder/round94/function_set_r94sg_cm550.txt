@@ -1,0 +1,97 @@
+removed 0: 
+added 0: 
+changed 13
+  0x0001444e cm550_fuelDemandPercentageCalculator: 6 lines
+      -                  (int)(short)jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
+      -                  0x6400,jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+      -                         frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
+      +                  (int)jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) * 0x6400
+      +                  ,jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+      +                   frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
+  0x00014872 cm550_processFaultScanGroup: 10 lines
+      -            active_dtc_list[(short)(ushort)bVar7] = active_dtc_list[active_fault_list_count];
+      -            iVar2 = (int)active_fault_list_count;
+      -            active_fault_list_count = active_fault_list_count + -1;
+      +            active_dtc_list[(short)(ushort)bVar7] = active_dtc_list[(short)active_fault_list_count];
+      +            iVar2 = (int)(short)active_fault_list_count;
+      +            active_fault_list_count = active_fault_list_count - 1;
+      -          active_dtc_list[active_fault_list_count] = (byte)uVar5;
+      -          active_dtc_cummins_fault_codes[active_fault_list_count] =
+      +          active_dtc_list[(short)active_fault_list_count] = (byte)uVar5;
+      +          active_dtc_cummins_fault_codes[(short)active_fault_list_count] =
+  0x00017baa cm550_FUN_00017baa: 12 lines
+      -      (ushort)crank_low_intake_manifold_temperature_50_to_293)) {
+      +      crank_low_intake_manifold_temperature_50_to_293)) {
+      -  if ((ushort)crank_high_intake_manifold_temperature_50_to_293 <
+      +  if (crank_high_intake_manifold_temperature_50_to_293 <
+      -       (short)((((uint)(ushort)crank_high_intake_manifold_temperature_50_to_293 -
+      +       (short)((((uint)crank_high_intake_manifold_temperature_50_to_293 -
+      -                (uint)(ushort)crank_low_intake_manifold_temperature_50_to_293) *
+      +                (uint)crank_low_intake_manifold_temperature_50_to_293) *
+      -  uVar2 = (((uint)(ushort)crank_high_intake_manifold_temperature_50_to_293 -
+      +  uVar2 = (((uint)crank_high_intake_manifold_temperature_50_to_293 -
+      -                (uint)(ushort)crank_low_intake_manifold_temperature_50_to_293) *
+      +                (uint)crank_low_intake_manifold_temperature_50_to_293) *
+  0x00018ac4 cm550_diagnosticProtectionEvaluator: 6 lines
+      -         (word *)(&engine_protection_config_table_base +
+      -                 (short)engine_protection_active_fault_index * 0x24);
+      -    iVar2 = (short)engine_protection_active_fault_index * 0x2e;
+      +         (word *)(&engine_protection_config_table_base + engine_protection_active_fault_index * 0x24
+      +                 );
+      +    iVar2 = engine_protection_active_fault_index * 0x2e;
+  0x00018cb6 cm550_protectionState1DiagnosticValidator: 2 lines
+      -      if ((((int)(short)engine_protection_active_fault_index == uVar3) &&
+      +      if ((((int)engine_protection_active_fault_index == uVar3) &&
+  0x00018fcc processDiagnosticLimitStatus: 12 lines
+      -  word wVar4;
+      +  short sVar4;
+      -      wVar4 = (word)uVar3;
+      +      sVar4 = (short)uVar3;
+      -        if ((((int)(short)engine_protection_active_fault_index == uVar3) &&
+      +        if ((((int)engine_protection_active_fault_index == uVar3) &&
+      -            engine_protection_active_fault_index = wVar4;
+      +            engine_protection_active_fault_index = sVar4;
+      -            engine_protection_active_fault_index = wVar4;
+      +            engine_protection_active_fault_index = sVar4;
+      -      uVar3 = (uint)(ushort)(wVar4 + 1);
+      +      uVar3 = (uint)(ushort)(sVar4 + 1);
+  0x0001ce7c runHighSpeedGovernorPid: 3 lines
+      -  iVar1 = (int)_DAT_00800718 + (int)_DAT_0080d62a + (int)hsg_pid_proportional_fueling_contribution;
+      +  iVar1 = (int)(short)_DAT_00800718 +
+      +          (int)_DAT_0080d62a + (int)hsg_pid_proportional_fueling_contribution;
+  0x0001d5a0 selectEngineSpeedLimit: 4 lines
+      -            (ushort)hsg_pid_fuel_output_previous) {
+      +            hsg_pid_fuel_output_previous) {
+      -          if ((ushort)hsg_pid_fuel_output_previous <
+      +          if (hsg_pid_fuel_output_previous <
+  0x00024c5a cm550_FUN_00024c5a: 2 lines
+      -         (ushort)active_fault_list_count < (ushort)fault_list_navigation_index)) {
+      +         active_fault_list_count < fault_list_navigation_index)) {
+  0x00025b1c cm550_runLowSpeedGovernor: 2 lines
+      -    if ((ushort)the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 <
+      +    if (the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 <
+  0x00026ab8 cm550_rpmLoadParameterLookup: 12 lines
+      -sword cm550_rpmLoadParameterLookup(void)
+      +word cm550_rpmLoadParameterLookup(void)
+      -  sword sVar1;
+      -  sVar1 = 0;
+      +  word wVar1;
+      +  wVar1 = 0;
+      -    sVar1 = cm550_tableLookup2D((word *)&DAT_00801aaa);
+      -    output_of_the_misfire_timing_limit_table_60_to_60 = sVar1;
+      +    wVar1 = cm550_tableLookup2D((word *)&DAT_00801aaa);
+      +    output_of_the_misfire_timing_limit_table_60_to_60 = wVar1;
+      -  return sVar1;
+      +  return wVar1;
+  0x00026af0 cm550_FUN_00026af0: 2 lines
+      -    if (fuel_timing_advance_value < (ushort)output_of_the_misfire_timing_limit_table_60_to_60) {
+      +    if (fuel_timing_advance_value < output_of_the_misfire_timing_limit_table_60_to_60) {
+  0x0002f128 processEngineTsc1Request: 8 lines
+      -                   ((int)(short)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100
+      -                   - (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      +                   ((int)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+      +                   (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      -                   ((int)(short)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100
+      -                   - (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      +                   ((int)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+      +                   (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);

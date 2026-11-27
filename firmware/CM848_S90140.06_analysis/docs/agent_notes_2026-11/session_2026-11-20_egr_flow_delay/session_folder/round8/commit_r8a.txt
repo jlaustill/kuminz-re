@@ -1,0 +1,26 @@
+cm848: round 8 stage A - the 48RE anti-hunt governor pressure mode and its post-shift acceleration model (label-only)
+
+0x3257c / 0x32250 / 0x320e0 / 0x3241c and ~60 words were protection_* names. They are the 48RE anti-hunt logic,
+named from the Chrysler e2m RE_* vocabulary and checked against each word's code use.
+- **Functions:**
+  - cm848_selectGovernorPressureAntiHunt (was cm848_processProtectionStateFlags). It holds the governor pressure on
+    the hold curve (RE_Hold_Curve_1 / 2: 'to prevent 1-2 / 2-3 upshift in anti-hunt conditions') and forces the
+    upshift with the boost curve (RE_AH_Boost_Curve_1_2 / 2_3: 'to force ... shift') once the predicted post-shift
+    acceleration clears the minimum for the throttle (RE_PSA_Max_*: 'Min acceptable post-shift accel vs TPS to allow
+    ... upshift').
+  - cm848_predictPostShiftAcceleration: next gear torque - road load, / the learned inertia.
+  - cm848_calculateTransmissionOutputTorqueInGear: the turbine torque estimate RE_TPS_3DSCL / RE_Turbine_3DSCL /
+    RE_Torque_Input x the gear ratio.
+  - cm848_learnVehicleInertia: torque change / acceleration change across a forced 1-2 upshift (RE_Inertia).
+- **Blocks:**
+  - e2m 8C53 +0 RE_Trans_Pressure_State resolves to 0x40b100 in the parameter ID table. So protection_timer_state_t
+    is transmission_pressure_state_t: pressure_state (the curve source code), then the e2m 8C17 anti-hunt timers.
+  - 8C17 and the ROM block 8BBC are not in the table. Their bases are proved by word after word of code use:
+    - 8C17 at 0x40b102: +0..+6 are the timers, and +28 RE_OSS_Accel is the existing output shaft acceleration at
+      0x40b12a.
+    - 8BBC at 0x40780c: +2..+8 are the timer limits, +A / +E / +12 / +14 / +44 the torque and inertia limits, and +10
+      RE_Inertia_Default = 53 is the learned inertia in the RAM dump.
+- **The gear ratio table** (0x40786a, x 32: 2.44 / 1.44 / 1.00 / 0.63 at index gear + 1) proves the model's gear index.
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

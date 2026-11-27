@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x0040a442,egr_off_allowed_flag,fuel_blend_correction_inhibit_flag,global,1
+0x003fd530,cruise_set_accelerate_switch_select_cal,j1939_ccvs1_switch_logic_option_cal,global,1

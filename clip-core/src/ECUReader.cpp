@@ -1,5 +1,6 @@
 #include "clip/ECUReader.h"
 #include "clip/SecurityAuth.h"
+#include "clip/ChunkedRead.h"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -771,45 +772,41 @@ bool ECUReader::enableJ1939Broadcasts(bool directEnable, int timeoutMs)
 bool ECUReader::readMemoryService4ALarge(uint32_t address, uint32_t totalLength,
                                          std::vector<uint8_t>& data, uint8_t chunkSize)
 {
+    m_lastReadGaps.clear();
     if (!m_connected) {
         log("Not connected");
         return false;
     }
 
-    data.clear();
-    data.reserve(totalLength);
+    // readInChunks keeps every byte at its own offset: a chunk that still fails after its retries is filled with
+    // 0xFF and recorded as a gap (the old loop skipped it, so every later byte of the dump moved down a chunk).
+    TChunkedReadResult result = readInChunks(
+        address, totalLength, chunkSize,
+        [this](uint32_t chunkAddress, uint8_t length, std::vector<uint8_t>& chunk) {
+            bool read = readMemoryService4A(chunkAddress, length, chunk);
+            usleep(10000);  // 10ms between requests
+            return read;
+        },
+        2, 5, 0xFF,
+        [this](uint32_t done, uint32_t total, uint32_t chunkAddress) {
+            std::stringstream ss;
+            ss << "0x" << std::hex << std::setfill('0') << std::setw(6) << chunkAddress
+               << " (" << std::dec << (static_cast<uint64_t>(done) * 100 / total) << "%)";
+            reportProgress(done, total, ss.str());
+        });
 
-    uint32_t offset = 0;
-    int errors = 0;
-
-    while (offset < totalLength) {
-        uint32_t remaining = totalLength - offset;
-        uint8_t readLen = (remaining < chunkSize) ?
-                          static_cast<uint8_t>(remaining) : chunkSize;
-
+    data = std::move(result.data);
+    m_lastReadGaps = result.gaps;
+    for (const TReadGap& gap : m_lastReadGaps) {
         std::stringstream ss;
-        ss << "0x" << std::hex << std::setfill('0') << std::setw(6) << (address + offset)
-           << " (" << std::dec << (offset * 100 / totalLength) << "%)";
-        reportProgress(offset, totalLength, ss.str());
-
-        std::vector<uint8_t> chunk;
-        if (!readMemoryService4A(address + offset, readLen, chunk)) {
-            errors++;
-            if (errors > 5) {
-                log("Too many errors, aborting");
-                return false;
-            }
-            // Skip this chunk on error
-            offset += readLen;
-            continue;
-        }
-
-        data.insert(data.end(), chunk.begin(), chunk.end());
-        offset += chunk.size();
-        errors = 0;  // Reset on success
-
-        // Small delay between requests
-        usleep(10000);  // 10ms
+        ss << "Could not read 0x" << std::hex << std::setfill('0') << std::setw(6) << gap.address << "-0x"
+           << std::setw(6) << (gap.address + gap.length - 1) << std::dec << " (" << gap.length
+           << " bytes): filled with 0xFF";
+        log(ss.str());
+    }
+    if (!result.completed) {
+        log("Too many errors, aborting");
+        return false;
     }
 
     reportProgress(totalLength, totalLength, "Complete");
@@ -842,6 +839,18 @@ bool ECUReader::dumpMemoryService4AToFile(uint32_t address, uint32_t length,
     ss.str("");
     ss << "Wrote " << std::dec << data.size() << " bytes to " << outputPath;
     log(ss.str());
+
+    if (!m_lastReadGaps.empty()) {
+        // The dump stays aligned (gaps hold 0xFF); list the unread ranges next to it so nobody reads them as data.
+        std::string gapsPath = outputPath + ".gaps.txt";
+        std::ofstream gapsFile(gapsPath);
+        gapsFile << "# Ranges of " << outputPath << " that could not be read (filled with 0xFF): address length\n";
+        for (const TReadGap& gap : m_lastReadGaps) {
+            gapsFile << "0x" << std::hex << std::setfill('0') << std::setw(6) << gap.address << " " << std::dec
+                     << gap.length << "\n";
+        }
+        log("WARNING: " + std::to_string(m_lastReadGaps.size()) + " unread range(s), listed in " + gapsPath);
+    }
 
     return true;
 }

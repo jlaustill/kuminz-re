@@ -1,0 +1,18 @@
+cm550: round 84 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 84" records stage A (7c1bb279) and its proof: the boot block image (ROM 0x291F4, a byte
+  copy of the boot block), its updater, and the nine image copies. It also corrects round 83: the 0x311F4 / 0x31256
+  record is the image copy's view of ROM 0x8000 / 0x8062.
+- Leads:
+  - the application signature at ROM 0x8000 / 0x8062;
+  - the RAM program at 0x80339E;
+  - what 0xFFD000 bit 0 is;
+  - the other placeholder-named hardware functions.
+- The PR body: the Round 84 bullet, "Beyond CM848" for rounds 72-84, and the test plan line.
+- The PR body's round 24-84 headings get a blank line above them. Without it, CommonMark reads each heading as a
+  lazy continuation line, so GitHub showed it at the end of the round above (61 headings; only blank lines added,
+  fix_pr_body_round_headings_r84.py).
+- work/todo.md, the session README, session_folder/round84/, the large-files tarball (the round's 2 verify logs),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,135 @@
+0x807ce4			accelerator_pedal_highest_valid_minimum	1048 +0006 CTHISATH [%]	MAXIMUM THROTTLE_MIN THAT ANY VALID PEDAL CAN HAVE~8-20
+0x80052c			friction_fuel_coolant_temperature_correction		
+0x807d4c	jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100	word	j1939_peak_fueling_tau_0	10DF +000A JCMXT0FL [MM3S]	JCOMM PEAK FUELING TAU 0 MAX FUELING ON 100% THROTTLE CURVE FO~0 - 100
+0x807d4e	shutdown_protection_step_2	word	j1939_rated_speed_tau_0	10DF +000C JCRTT0RP [RPM]	JCOMM RATED SPEED TAU 0 RATED MAX ENGINE SPEED TAU = 0 ALS~0,56 - 3000
+0x807d50	shutdown_protection_step_1	word	j1939_speed_breakpoint_3_tau_0	10DF +000E JCT0RP03 [RPM]	JCOMM SPEED BREAKPOINT 3 TAU 0 ENGINE SPEED BREAKPOINT 3 D~0,56 - 3000
+0x807d52	engine_running_timer_threshold	word	j1939_speed_breakpoint_4_tau_0	10DF +0010 JCT0RP04 [RPM]	JCOMM SPEED BREAKPOINT 4 TAU 0 ENGINE SPEED BREAKPOINT 4 D~0,56 - 3000
+0x807d54	frictional_load_torque_table_value	word	j1939_speed_breakpoint_5_tau_0	10DF +0012 JCT0RP05 [RPM]	JCOMM SPEED BREAKPOINT 5 TAU 0 ENGINE SPEED BREAKPOINT 5 D~0,56 - 3000
+0x80bc82	frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100	word	j1939_friction_load_fueling_at_low_idle	10E2 +000E JCFCLDIS [%FU]	FRICTIONAL LOAD INTERPOLATED FROM THE NO LOAD CURVE AT LSG REF S~0-100
+0x80bc84	frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84	word	j1939_friction_load_fueling_at_rated_speed	10E2 +0010 JCFCBKRR [MM3S]	FRICTIONAL LOAD TORQUE (IN FUELING) AT RATED ENGINE RPM~0 - 100
+0x80bc86	frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86	word	j1939_friction_load_fueling_at_breakpoint_3	10E2 +0012 JCFCBK03 [MM3S]	FRICTIONAL LOAD TORQUE (IN FUELING) AT BREAKPOINT 3 ENGINE RPM~0 - 100
+0x80bc88	frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88	word	j1939_friction_load_fueling_at_breakpoint_4	10E2 +0014 JCFCBK04 [MM3S]	FRICTIONAL LOAD TORQUE (IN FUELING) AT BREAKPOINT 4 ENGINE RPM~0 - 100
+0x80bc8a	frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a	word	j1939_friction_load_fueling_at_breakpoint_5	10E2 +0016 JCFCBK05 [MM3S]	FRICTIONAL LOAD TORQUE (IN FUELING) AT BREAKPOINT 5 ENGINE RPM~0 - 100
+0x80de78	fault_to_erase_none	word	diagnostic_fault_to_erase	1080 +0000 FLT2ERAS [HEX]	FAULT TO ERASE~NONE
+0x807f3e	intercept_fueling_between_lsg_ref_and_the_epf_curve_0_100	word	fault_derate_curve_low_speed_governor_intercept_fueling	12BA +0000 EPLSINFL [MM3S]	INTERCEPT FUELING BETWEEN LSG REF AND THE EPF CURVE.~0 - 100
+0x807f40	intercept_fueling_between_hsg_brkpt_and_the_epf_curve_0_100	word	fault_derate_curve_high_speed_governor_intercept_fueling	12BA +0002 EPHSINFL [MM3S]	INTERCEPT FUELING BETWEEN HSG BRKPT AND THE EPF CURVE.~0 - 100
+0x807f42			fault_derate_curve_engine_speed_point_2	12BA +0004 EPRPP2 [RPM]	EPF CURVE SPEED AT BREAKPOINT 2.~0 - 5000
+0x807f44			fault_derate_curve_engine_speed_point_3	12BA +0006 EPRPP3 [RPM]	EPF CURVE SPEED AT BREAKPOINT 3.~0 - 5000
+0x807f46			fault_derate_curve_engine_speed_point_4	12BA +0008 EPRPP4 [RPM]	EPF CURVE SPEED AT BREAKPOINT 4.~0 - 5000
+0x807f48			fault_derate_curve_engine_speed_point_5	12BA +000A EPRPP5 [RPM]	EPF CURVE SPEED AT BREAKPOINT 5.~0 - 5000
+0x807f4a			fault_derate_curve_priority_bit_position	12BA +000C EPTQPZ [NONE]	PRIORITY LEVEL OF THE EPF CURVE CONFIGURATION AND BIT POSITION ~0 - 15
+0x807f4c			fault_derate_curve_clamp_priority_mask	12BA +000E EPTQCG [HEX]	BITMAP INDICATING WHEN A FEATURE SHOULD CLAMP A FUELING POINT~0-FFFF
+0x80060c	epf_source_bitmask	word	fault_derate_torque_curve_priority_bit		
+0x80d0da	state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff	word	j1939_pgn65251_speed_points_request_flags	12BB +0000 EPAERPST [HEX]	STATE FLAG TO USE EPF'S RPM BREAKPOINTS FOR J1939.~0 - FFFF
+0x80d286	indicator_from_engine_protection_that_fuel_derate_1_active_0_inact	word	fault_derate_active_flag	10B1 +000C EPFLLMSS [  ]	INDICATOR FROM ENGINE PROTECTION THAT FUEL DERATE~1 = ACTIVE/0 = INACT
+0x80daf4			low_speed_governor_droop_selected_slope	1065 +0016 LSDPSE [R/FU]	LSG DROOP SELECTED SLOPE~-20.0 - 20.0
+0x808010			j1939_pgn65251_speed_at_point_1_low_speed_governor_offset	12BD +0000 JCLSRFOF [RPM]	OFFSET FROM LSG REFERENCE WHICH IS BROADCAST PT1~-3600 - 3600
+0x808014			j1939_pgn65251_speed_at_point_3	12BD +0004 PPTHES03 [RPM]	JCOMM SPEED AT POINT 3 FOR BROADCAST~0, 56-8000
+0x808016			j1939_pgn65251_speed_at_point_4	12BD +0006 PPTHES04 [RPM]	JCOMM SPEED AT POINT 4 FOR BROADCAST~0, 56-8000
+0x808018			j1939_pgn65251_speed_at_point_5	12BD +0008 PPTHES05 [RPM]	JCOMM SPEED AT POINT 5 FOR BROADCAST~0, 56-8000
+0x80801a	bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff	word	throttle_100_fueling_point_clamp_bitmap	12BD +000A FSMXTHCG [HEX]	BITMAP INDICATING WHEN A FEATURE SHOULD CLAMP A FUELING POINT~0-FFFF
+0x80801c	bitmap_indicating_which_algorithms_wish_to_set_rpms_0_15	word	throttle_100_priority_bit_index	12BD +000C FSMXMNCG [NONE]	BITMAP INDICATING WHICH ALGORITHMS WISH TO SET RPMS~0-15
+0x8006e6	torque_curve_feature_bitmask	undefined	throttle_100_speed_points_request_bit		
+0x8006e8			throttle_100_speed_points_request_bit_initialized_flag		
+0x80da38	torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000	word	j1939_torque_curve_speed_at_point_1	1102 +0022 JCTQRPP1 [RPM]	TORQUE CURVE SPEED AT BREAKPOINT 1 (LSG REFERENCE).~0 - 5000
+0x80da3a	torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000	word	j1939_torque_curve_speed_at_point_2	1102 +0024 JCTQRPP2 [RPM]	TORQUE CURVE SPEED AT BREAKPOINT 2 (HSG BREAKPOINT).~0 - 5000
+0x80da3c	torque_curve_speed_at_breakpoint_3_0_5000	word	j1939_torque_curve_speed_at_point_3	1102 +0026 JCTQRPP3 [RPM]	TORQUE CURVE SPEED AT BREAKPOINT 3.~0 - 5000
+0x80da3e	torque_curve_speed_at_breakpoint_4_0_5000	word	j1939_torque_curve_speed_at_point_4	1102 +0028 JCTQRPP4 [RPM]	TORQUE CURVE SPEED AT BREAKPOINT 4.~0 - 5000
+0x80da40	torque_curve_speed_at_breakpoint_5_0_5000	word	j1939_torque_curve_speed_at_point_5	1102 +002A JCTQRPP5 [RPM]	TORQUE CURVE SPEED AT BREAKPOINT 5.~0 - 5000
+0x80da42	torque_curve_fueling_at_idle_speed_breakpoint_0_100	word	j1939_torque_curve_fueling_at_point_1	1102 +002C JCTQFLP1 [MM3S]	TORQUE CURVE FUELING AT IDLE SPEED BREAKPOINT.~0 - 100
+0x80da44	torque_curve_fueling_at_point_2_speed_breakpoint_0_100	word	j1939_torque_curve_fueling_at_point_2	1102 +002E JCTQFLP2 [MM3S]	TORQUE CURVE FUELING AT POINT 2 SPEED BREAKPOINT.~0 - 100
+0x80da46	torque_curve_fueling_at_point_3_speed_breakpoint_0_100	word	j1939_torque_curve_fueling_at_point_3	1102 +0030 JCTQFLP3 [MM3S]	TORQUE CURVE FUELING AT POINT 3 SPEED BREAKPOINT.~0 - 100
+0x80da48	torque_curve_fueling_at_point_4_speed_breakpoint_0_100	word	j1939_torque_curve_fueling_at_point_4	1102 +0032 JCTQFLP4 [MM3S]	TORQUE CURVE FUELING AT POINT 4 SPEED BREAKPOINT.~0 - 100
+0x80da4a	torque_curve_fueling_at_point_5_speed_breakpoint_0_100	word	j1939_torque_curve_fueling_at_point_5	1102 +0034 JCTQFLP5 [MM3S]	TORQUE CURVE FUELING AT POINT 5 SPEED BREAKPOINT.~0 - 100
+0x80061e			engine_protection_power_up_shutdown_channel		
+0x80d33e			four_dimensional_fueling	1053 +0000 5DFL [MM3S]	FUELING VALUE CALCULATED FROM THE 4D FUELING TABLES~0 - 100
+0x80d340	timing_alpha_blend_factor	word	four_dimensional_fueling_interpolation_factor	1053 +0002 FLINML [NONE]	INTERPOLATION FACTOR FOR 4-D FUELING, MAX FUELING CALCULATION.~0 - 1
+0x80d342	maximum_user_fueling_allowed_0_100	i16	four_dimensional_fueling_user_maximum	1053 +0004 5DIRMXFL [%FU]	MAXIMUM USER FUELING ALLOWED~0-100
+0x803f3a			four_dimensional_fueling_increment_cal	125A +000C 5DFLAJ [MM3S]	INCREMENTAL FUELING VALUE ADDED TO 4-D FUELING VALUE~-8.7 - 8.7
+0x80a254	vp44_fuel_temperature_value	undefined	engine_protection_fuel_temperature	81FA +0000 EPFLTP [DEGF]	FUEL TEMPERATURE USED FOR THE EPF~-40 TO 300
+0x80784a	dzg_pressure_max_limit	word	engine_protection_fuel_temperature_source	81F9 +0002 EPFTFG [HEX]	VP44 OR ECM FUEL TEMPERATURE SOURCE FOR EPF (0=VP44 FUEL TEMP)~0-1
+0x80d686			injector_fault_engine_speed_limit	10C4 +0000 ZILMES [RPM]	OUTPUT ENGINE SPEED LIMIT GOING TO HSG REFERENCE SPEED ALG~1400 - 3000
+0x8072c0			cylinder_balance_enable_flag	823C +0034 CBDEN [NONE]	CYLINDER BALANCING ENABLE~0-1
+0x8072dc			cylinder_balance_start_tooth	823C +0050 CBDST [NONE]	CYLINDER BALANCING START TOOTH~0-23
+0x80728e			cylinder_balance_delta_speed_threshold	823C +0002 CBDDST [RPM]	CYLINDER BALANCING DELTA SPEED THRESHOLD~0-1000
+0x807290			cylinder_balance_upper_speed_limit	823C +0004 CBDUSL [RPM]	CYLINDER BALANCING UPPER SPEED LIMIT~0-3000
+0x807292			cylinder_balance_lower_speed_limit	823C +0006 CBDLSL [RPM]	CYLINDER BALANCING LOWER SPEED LIMIT~0-3000
+0x807296			cylinder_balance_magnitude_gain_2	823C +000A CBDMG2 [N]	CYLINDER BALANCING MAGNITUDE GAIN_2~0-100
+0x807298			cylinder_balance_magnitude_gain_3	823C +000C CBDMG3 [N]	CYLINDER BALANCING MAGNITUDE GAIN_3~0-100
+0x80729a			cylinder_balance_error_filter_coefficient	823C +000E CBDEFCN [N]	CYLINDER BALANCING ERROR FILTER CONSTANT~0-1
+0x8072a0			cylinder_balance_fueling_trim_maximum	823C +0014 CBDFTMX [MG/S]	CYLINDER BALANCING FUELING TRIM MAXIMUM~0-5
+0x8072a2			cylinder_balance_fueling_trim_minimum	823C +0016 CBDFTMN [MG/S]	CYLINDER BALANCING FUELING TRIM MINIMUM~-5-0
+0x8072be			cylinder_balance_motoring_fuel_threshold	823C +0032 CBDMFT [MM3S]	CYLINDER BALANCING MOTORING FUEL THRESHOLD~0-100
+0x8072c2			cylinder_balance_reference_1_cylinder_1_real	823C +0036 CBDR1C1R [N]	CYLINDER BALANCING REFERENCE_1 CYLINDER_1 REAL~-1-1
+0x8072c4			cylinder_balance_reference_1_cylinder_1_imaginary	823C +0038 CBDR1C1I [N]	CYLINDER BALANCING REFERENCE_1 CYLINDER_1 IMAG~-1-1
+0x8072c6			cylinder_balance_reference_1_cylinder_5_real	823C +003A CBDR1C5R [N]	CYLINDER BALANCING REFERENCE_1 CYLINDER_5 REAL~-1-1
+0x8072c8			cylinder_balance_reference_1_cylinder_5_imaginary	823C +003C CBDR1C5I [N]	CYLINDER BALANCING REFERENCE_1 CYLINDER_5 IMAG~-1-1
+0x8072ca			cylinder_balance_reference_1_cylinder_3_real	823C +003E CBDR1C3R [N]	CYLINDER BALANCING REFERENCE_1 CYLINDER_3 REAL~-1-1
+0x8072cc			cylinder_balance_reference_1_cylinder_3_imaginary	823C +0040 CBDR1C3I [N]	CYLINDER BALANCING REFERENCE_1 CYLINDER_3 IMAG~-1-1
+0x8072ce			cylinder_balance_reference_2_cylinder_1_real	823C +0042 CBDR2C1R [N]	CYLINDER BALANCING REFERENCE_2 CYLINDER_1 REAL~-1-1
+0x8072d0			cylinder_balance_reference_2_cylinder_1_imaginary	823C +0044 CBDR2C1I [N]	CYLINDER BALANCING REFERENCE_2 CYLINDER_1 IMAG~-1-1
+0x8072d2			cylinder_balance_reference_2_cylinder_5_real	823C +0046 CBDR2C5R [N]	CYLINDER BALANCING REFERENCE_2 CYLINDER_5 REAL~-1-1
+0x8072d4			cylinder_balance_reference_2_cylinder_5_imaginary	823C +0048 CBDR2C5I [N]	CYLINDER BALANCING REFERENCE_2 CYLINDER_5 IMAG~-1-1
+0x8072d6			cylinder_balance_reference_2_cylinder_3_real	823C +004A CBDR2C3R [N]	CYLINDER BALANCING REFERENCE_2 CYLINDER_3 REAL~-1-1
+0x8072d8			cylinder_balance_reference_2_cylinder_3_imaginary	823C +004C CBDR2C3I [N]	CYLINDER BALANCING REFERENCE_2 CYLINDER_3 IMAG~-1-1
+0x8072da			cylinder_balance_reference_3	823C +004E CBDR3 [N]	CYLINDER BALANCING REFERENCE_3~0-1
+0x8072de			cylinder_balance_compensation_enable	823C +0052 CBDCEN [N]	CYLINDER BALANCING COMPENSATION ENABLE~0-1
+0x8072e0			cylinder_balance_dynamic_compensation_reset_enable	823C +0054 CBDDCR [NONE]	CYLINDER BALANCING DYNAMICS COMPENSATION RESET~0-1
+0x8072e4			cylinder_balance_trim_gain_1_small	823C +0058 CBDTG1S [MG/S]	CYLINDER BALANCING TRIM GAIN_1 SMALL~0-1
+0x8072e6			cylinder_balance_trim_gain_2_small	823C +005A CBDTG2S [MG/S]	CYLINDER BALANCING TRIM GAIN_2 SMALL~0-1
+0x8072e8			cylinder_balance_trim_gain_3_small	823C +005C CBDTG3S [MG/S]	CYLINDER BALANCING TRIM GAIN_3 SMALL~0-1
+0x8072ea			cylinder_balance_coolant_temperature_threshold	823C +005E CBDCLTP [DEGF]	CYL BALANCE DISABLED BELOW THIS COOLANT TEMP~-50 TO 255
+0x8072ec			cylinder_balance_intake_manifold_temperature_threshold	823C +0060 CBDIMTP [DEGF]	CYL BALANCE DISABLED BELOW THIS INTAKE AIR TEMP~-50 TO 255
+0x8072ee			cylinder_balance_cutout_disable_time	823C +0062 CBDDSTM [SEC]	TIME DELAY BEFORE CBD RESUMES AFTER CYL CUTOUT~0 TO 60
+0x8072f0			cylinder_balance_fueling_trim_limit_mode	823C +0064 CBDLMMD [NONE]	LIMIT MODE;0=NONE;1=RESET TO LAST;2=RESET TO 0~0 TO 2
+0x8072f2			cylinder_balance_update_maximum_road_speed	823C +0066 CBDVSTD [MPH]	CBD UPDATES DISABLED ABOVE THIS ROAD SPEED~0 TO 120
+0x8091e8			cylinder_balance_filtered_fueling	823D +0000 CBDFFL [MM3S]	CYLINDER BALANCING FILTERED FUELING~0-1000
+0x8091ea	intake_manifold_temp_raw	undefined	cylinder_balance_speed_buffer_1	823D +0002 CBDSB1 [N]	CYLINDER BALANCING SPEED BUFFER_1~0-0.00001
+0x809206			cylinder_balance_fourier_real_component_1	823D +001E CBDFRC1 [TICS]	CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x80920a			cylinder_balance_fourier_imaginary_component_1	823D +0022 CBDFIC1 [TICS]	CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x80920e			cylinder_balance_fourier_real_component_2	823D +0026 CBDFRC2 [TICS]	CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x809212			cylinder_balance_fourier_imaginary_component_2	823D +002A CBDFIC2 [TICS]	CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x809216			cylinder_balance_fourier_real_component_3	823D +002E CBDFRC3 [TICS]	CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x80922e			cylinder_balance_stop_compensation_flag	823D +0046 CBDSCF [N]	CYLINDER BALANCING STOP COMPENSATION FLAG~0-1
+0x809230			cylinder_balance_fourier_threshold	823D +0048 CBDFT [TICS]	CYLINDER BALANCING FFT THRESHOLD~0-10000
+0x809232			cylinder_balance_fourier_magnitude_1	823D +004A CBDFM1 [TICS]	CYLINDER BALANCING FILTERED ERROR_3~0-15000
+0x809234			cylinder_balance_fourier_magnitude_2	823D +004C CBDFM2 [TICS]	CYLINDER BALANCING FILTERED ERROR_3~0-15000
+0x809236			cylinder_balance_fourier_magnitude_3	823D +004E CBDFM3 [TICS]	CYLINDER BALANCING FILTERED ERROR_3~0-15000
+0x809246	cyl_balance_correction_array	undefined	cylinder_balance_fueling_trim_1	823D +005E CBDDFO1 [MG/S]	CYLINDER BALANCING FUELING TRIM_1~-5-5
+0x809248			cylinder_balance_fueling_trim_2	823D +0060 CBDDFO2 [MG/S]	CYLINDER BALANCING FUELING TRIM_2~-5-5
+0x80924a			cylinder_balance_fueling_trim_3	823D +0062 CBDDFO3 [MG/S]	CYLINDER BALANCING FUELING TRIM_3~-5-5
+0x80924c			cylinder_balance_fueling_trim_4	823D +0064 CBDDFO4 [MG/S]	CYLINDER BALANCING FUELING TRIM_4~-5-5
+0x80924e			cylinder_balance_fueling_trim_5	823D +0066 CBDDFO5 [MG/S]	CYLINDER BALANCING FUELING TRIM_5~-5-5
+0x809250			cylinder_balance_fueling_trim_6	823D +0068 CBDDFO6 [MG/S]	CYLINDER BALANCING FUELING TRIM_6~-5-5
+0x80925e			cylinder_balance_trim_limits_exceeded_flag	823D +0076 CBDTLE [N]	CYLINDER BALANCING TRIM LIMITS EXCEEDED~0-1
+0x809260			cylinder_balance_trim_index_1	823D +0078 CBDTI1 [N]	CYLINDER BALANCING TRIM INDEX_1~0-5
+0x809262			cylinder_balance_trim_index_2	823D +007A CBDTI2 [N]	CYLINDER BALANCING TRIM INDEX_2~0-5
+0x809264			cylinder_balance_trim_index_3	823D +007C CBDTI3 [N]	CYLINDER BALANCING TRIM INDEX_3~0-5
+0x80926e	throttle_position_raw	word	cylinder_balance_trim_increment_1	823D +0086 CBDTINC1 [N]	CYLINDER BALANCING TRIM INCREMENT_1~0-1
+0x809270			cylinder_balance_trim_increment_2	823D +0088 CBDTINC2 [N]	CYLINDER BALANCING TRIM INCREMENT_2~0-1
+0x809272			cylinder_balance_trim_increment_3	823D +008A CBDTINC3 [N]	CYLINDER BALANCING TRIM INCREMENT_3~0-1
+0x809276			cylinder_balance_adjusted_real_component_2	823D +008E CBDARC2 [N]	CYLINDER BALANCING ADJUSTED REAL COMP_2~-10000-10000
+0x809278			cylinder_balance_adjusted_imaginary_component_2	823D +0090 CBDAIC2 [N]	CYLINDER BALANCING ADJUSTED IMAG COMP_2~-10000-10000
+0x80927a			cylinder_balance_adjusted_real_component_3	823D +0092 CBDARC3 [N]	CYLINDER BALANCING ADJUSTED REAL COMP_2~-10000-10000
+0x809288			cylinder_balance_acceleration_buffer_2	823D +00A0 CBDAXB2 [NONE]	CYLINDER BALANCING ACCELARATION BUFFER_2~-10000-10000
+0x80928c			cylinder_balance_acceleration_buffer_3	823D +00A4 CBDAXB3 [NONE]	CYLINDER BALANCING ACCELARATION BUFFER_3~-10000-10000
+0x809290			cylinder_balance_acceleration_buffer_4	823D +00A8 CBDAXB4 [NONE]	CYLINDER BALANCING ACCELARATION BUFFER_4~-10000-10000
+0x809294			cylinder_balance_acceleration_buffer_5	823D +00AC CBDAXB5 [NONE]	CYLINDER BALANCING ACCELARATION BUFFER_5~-10000-10000
+0x809298			cylinder_balance_acceleration_buffer_6	823D +00B0 CBDAXB6 [NONE]	CYLINDER BALANCING ACCELARATION BUFFER_6~-10000-10000
+0x8092e0			cylinder_balance_component_3_adjustment	823D +00F8 CBDC3ADJ [N]	CYLINDER BALANCING COMP_3 ADJUSTMENT~-10000-10000
+0x8092e2	cyl_balance_gain_percent	undefined	cylinder_balance_active_trim_gain	823D +00FA CBDATG [NONE]	CYLINDER BALANCING ACTIVE TRIM GAIN~0-1
+0x8092e4			cylinder_balance_speed_buffer_ready_flag	823D +00FC CBDSBRF [NONE]	CYLINDER BALANCING SPEED BUFFER READY FLAG~0-1
+0x804158	cyl_balance_trim_array_cal	undefined	cylinder_balance_saved_fueling_trims_cal	8241 +0000 CBDDFTO1 [MSEC]	CYL 1 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5
+0x80a1ac			balanced_cylinder_fueling_offsets		
+0x8002a4	load_trending_table_1_ptr	undefined	cylinder_balance_segment_index		
+0x8002a6			cylinder_balance_segment_period_sum		
+0x8002aa	load_trending_table_2_base	word	cylinder_balance_segment_tooth_count		
+0x800322	throttle_zero_position_counter	undefined	cylinder_balance_segment_periods		
+0x80033e	oil_pressure_mode_init_flag	word	cylinder_balance_speed_buffer_processed_flag		
+0x8002c6	load_trending_table_6_ptr	word	cylinder_balance_engine_speed_previous		
+0x8002c8			cylinder_balance_engine_speed_change		
+0x8002d4	engine_mode_previous_2	undefined	cylinder_balance_power_up_fueling_trims		
+0x8002e0	system_timer_array	undefined	cylinder_balance_real_2_dynamics_compensation_previous_values		
+0x800300	protection_state2_table_ptr_1	undefined	cylinder_balance_imaginary_2_dynamics_compensation_previous_values		
+0x800320	rpm_speed_bin_index	i16	cylinder_balance_engine_speed_bin_index		
+0x800220	manifold_temp_table_3_x_ptr	word	cylinder_balance_cutout_disable_timer		

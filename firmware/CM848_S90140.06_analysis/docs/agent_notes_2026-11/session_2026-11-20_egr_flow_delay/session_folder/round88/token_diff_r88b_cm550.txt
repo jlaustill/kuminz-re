@@ -1,0 +1,374 @@
+0x0000ac3c: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x0000c326: 3 token changes: 1 => ENGINE_STATE_STOPPED | 2 => ENGINE_STATE_CRANKING | 6 => ENGINE_STATE_JUMP_START
+0x0000c66a: 1 token changes: 3 => ENGINE_STATE_RUNNING
+0x0000d610: 10 token changes: 5 => ENGINE_STATE_OVERSPEED | 8 => ENGINE_STATE_SHUTDOWN | 5 => ENGINE_STATE_OVERSPEED | 8 => ENGINE_STATE_SHUTDOWN | 5 => ENGINE_STATE_OVERSPEED | 8 => ENGINE_STATE_SHUTDOWN | 5 => ENGINE_STATE_OVERSPEED | 8 => ENGINE_STATE_SHUTDOWN | 5 => ENGINE_STATE_OVERSPEED | 8 => ENGINE_STATE_SHUTDOWN
+0x0000e998: 1 token changes: 3 => ENGINE_STATE_RUNNING
+0x000104e8: 7 token changes: j1939_header_t => j1939_tx_msg_t | msg_header => msg | msg_header => ( msg | length => header ) . data_length | msg_header => ( msg | id => header ) . can_id | msg_header => msg
+0x00010512: 2 token changes:  => j1939_tx_msg_t * unaff_A2 ; |  => unaff_A2
+0x000114d4: 5 token changes:  => ( byte * ) |  => ( byte * ) |  => ( byte * ) |  => ( byte * ) |  => ( byte * )
+0x0001192a: 2 token changes: int => dword | 1 => ENGINE_STATE_STOPPED
+0x00011a68: 1 token changes: WORD_0080de2e => key_off_shutdown_inhibit_flag
+0x00011a74: 1 token changes: BYTE_0080dde4 => eeprom_mirror_commit_j1708_reply_pending_flag
+0x000127c2: 2 token changes: 3 => ENGINE_STATE_RUNNING | 3 => ENGINE_STATE_RUNNING
+0x000138b6: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x000144bc: 5 token changes: ( uint ) ( =>  | ) =>  | ( uint ) ( =>  | ) =>  | int => dword
+0x00014872: 2 token changes: undefined4 => dword | undefined4 => dword
+0x00014dc6: 2 token changes: ( uint ) ( =>  | ) => 
+0x00014fca: 1 token changes: 3 => ENGINE_STATE_RUNNING
+0x00015f8e: 2 token changes: BYTE_0080dde4 => eeprom_mirror_commit_j1708_reply_pending_flag | BYTE_0080dde4 => eeprom_mirror_commit_j1708_reply_pending_flag
+0x00016dd4: 6 token changes: 1 => ENGINE_STATE_STOPPED | 1 => ENGINE_STATE_STOPPED | 2 => ENGINE_STATE_CRANKING | 7 => ENGINE_STATE_REENTRY | 3 => ENGINE_STATE_RUNNING | 6 => ENGINE_STATE_JUMP_START
+0x00017120: 1 token changes: 3 => ENGINE_STATE_RUNNING
+0x000171be: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x000177c2: 3 token changes: 2 => ENGINE_STATE_CRANKING | 6 => ENGINE_STATE_JUMP_START | 7 => ENGINE_STATE_REENTRY
+0x00017a06: 3 token changes: 2 => ENGINE_STATE_CRANKING | 6 => ENGINE_STATE_JUMP_START | 7 => ENGINE_STATE_REENTRY
+0x00017cf0: 3 token changes: 2 => ENGINE_STATE_CRANKING | 6 => ENGINE_STATE_JUMP_START | 7 => ENGINE_STATE_REENTRY
+0x00017d2a: 2 token changes: 2 => ENGINE_STATE_CRANKING | 7 => ENGINE_STATE_REENTRY
+0x00017d6a: 2 token changes: 6 => ENGINE_STATE_JUMP_START | 1 => ENGINE_STATE_STOPPED
+0x00017e06: 3 token changes: 2 => ENGINE_STATE_CRANKING | 6 => ENGINE_STATE_JUMP_START | 3 => ENGINE_STATE_RUNNING
+0x00017e62: 5 token changes: 3 => ENGINE_STATE_RUNNING | 1 => ENGINE_STATE_STOPPED | 2 => ENGINE_STATE_CRANKING | 1 => ENGINE_STATE_STOPPED | 8 => ENGINE_STATE_SHUTDOWN
+0x00017eba: 1 token changes: 7 => ENGINE_STATE_REENTRY
+0x00017f7c: 67 token changes: ' \ =>  | ' =>  | ' \ x01 ' => 1 | * ( undefined4 * ) ( & =>  | + => [ | * 8 ) => ] . start_key_on_hour_meter | * ( undefined2 * ) ( & fuel_arbitrator_rpm_target_history + => engine_overspeed_log [ | * 8 ) => ] . duration | * ( ushort * ) ( & vp44_sensor_diag_state_1 + => engine_overspeed_log [ | * 8 ) => ] . engine_speed_at_detection | * ( ushort * ) ( & vp44_sensor_diag_state_1 + => engine_overspeed_log [ | * 8 ) => ] . engine_speed_at_detection | * ( ushort * ) ( & vp44_sensor_diag_state_1 + => engine_overspeed_log [ | * 8 ) => ] . engine_speed_at_detection | ' \ =>  | ' =>  | * ( short * )
+0x00018384: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x00018fcc: 3 token changes: 1 => ENGINE_STATE_STOPPED | 8 => ENGINE_STATE_SHUTDOWN | 1 => ENGINE_STATE_STOPPED
+0x00019332: 8 token changes: undefined4 => dword | puVar1 => pdVar1 | puVar1 => pdVar1 | undefined4 => dword | puVar1 => pdVar1 | puVar1 => pdVar1 | puVar1 => pdVar1 | puVar1 => pdVar1
+0x00019436: 1 token changes: _DAT_0080bda6 => key_on_hour_meter . _2_2_
+0x0001952c: 1 token changes: undefined4 => dword
+0x0001c152: 7 token changes: 1 => ENGINE_STATE_STOPPED | 8 => ENGINE_STATE_SHUTDOWN | 5 => ENGINE_STATE_OVERSPEED | 4 => ENGINE_STATE_ENGINE_BRAKE | 2 => ENGINE_STATE_CRANKING | 6 => ENGINE_STATE_JUMP_START | 7 => ENGINE_STATE_REENTRY
+0x0001ca54: 2 token changes: 5 => ENGINE_STATE_OVERSPEED | 5 => ENGINE_STATE_OVERSPEED
+0x0001ca5c: 2 token changes: 5 => ENGINE_STATE_OVERSPEED | 5 => ENGINE_STATE_OVERSPEED
+0x0001d9b4: 1 token changes: 2 => ENGINE_STATE_CRANKING
+0x0001e056: 2 token changes: node_address => message_object_number | node_address => message_object_number
+0x0001e086: 4 token changes: node_address => message_object_number | node_address => message_object_number | node_address => message_object_number | node_address => message_object_number
+0x0001e5f0: 24 token changes:  => word wVar5 ; | puVar5 => puVar6 | puVar6 => puVar7 | puVar6 => puVar7 | puVar5 => puVar6 | puVar6 => puVar7 | puVar5 => puVar6 |  => puVar7 = puVar7 + 1 ; | + 1 ; puVar5 = puVar5 =>  | puVar6 => puVar7 | puVar5 => puVar6 | puVar6 => puVar7 | puVar5 => puVar6 |  => puVar7 = puVar7 + 1 ; | + 1 ; puVar5 = puVar5 =>  | puVar5 => puVar6 | uVar4 => wVar5 | uVar4 => wVar5 | uVar4 => wVar5 | uVar4 => wVar5 | puVar5 => puVar6 | puVar5 => puVar6 | puVar5 => puVar6 | puVar5 => puVar6
+0x0001fdc0: 1 token changes: uint => dword
+0x000212b2: 1 token changes: DAT_0080d9f5 => ( byte ) j1939_transmit_message_object_number
+0x00021982: 2 token changes:  => word msg_length ; | ; word msg_length => 
+0x0002238e: 23 token changes: undefined1 => undefined | j1939_header_t => j1939_tx_msg_t | msg_header => msg | msg_header => msg | msg_header => msg | j1939_header_t => j1939_tx_msg_t |  => msg -> data_pointer ; | undefined1 * => msg -> header | msg_header [ 1 ] =>  | id ; msg_header -> id => can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => msg
+0x00022726: 70 token changes: uint => j1939_tx_msg_t | param_1 => msg | bVar3 => * pbVar3 ; byte bVar4 ; byte bVar5 | uVar4 => uVar6 | puVar5 => puVar7 | pcVar6 => pcVar8 | bVar3 => pbVar3 | * =>  | param_1 => & ( msg -> header ) . can_id |  => ; bVar4 = * pbVar3 ; bVar5 = ( byte ) ( msg -> header ) . can_id | ( ( int ) param_1 + 1 ) => pbVar3 | bVar3 => bVar4 | bVar3 => bVar4 | * =>  | ushort * => msg -> header | ( param_1 + 1 ) => . data_length | * ( undefined4 * ) ( ( int ) param_1 + 6 ) => msg -> data_pointer | * param_1 => ( msg -> header ) . can_id | * ( char * * ) ( ( int ) param_1 + 10 ) => msg -> status_pointer | 
+0x00023130: 13 token changes: j1939_header_t => j1939_tx_msg_t | _DAT_00801238 => j1939_single_frame_tx_message . data_pointer | 0x801242 => & DAT_00801242 | _DAT_00801236 => j1939_single_frame_tx_message . header . data_length | _DAT_0080123c => j1939_single_frame_tx_message . status_pointer | 0x801240 => & j1939_single_frame_transmit_status | ( j1939_header_t * ) 0x801232 => & j1939_single_frame_tx_message | _DAT_00800b20 => j1939_transport_tx_message . data_pointer | 0x800b2a => & DAT_00800b2a | _DAT_00800b1e => j1939_transport_tx_message . header . data_length | _DAT_00800b24 => j1939_transport_tx_message . status_poin
+0x00024d40: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x000254b6: 1 token changes: 3 => ENGINE_STATE_RUNNING
+0x00026616: 3 token changes: 1 => ENGINE_STATE_STOPPED | 2 => ENGINE_STATE_CRANKING | 3 => ENGINE_STATE_RUNNING
+0x00027af0: 1 token changes: short => word
+0x00027cd0: 1 token changes:  => ( byte * )
+0x00027f9c: 5 token changes: byte => dword | int => dword | ushort => word | ( byte * ) =>  |  => ( byte * )
+0x0002e9ac: 19 token changes: undefined4 => dword | puVar1 => chunk_end | undefined4 => dword | puVar2 => working_ram_pointer | puVar2 => working_ram_pointer | undefined4 => dword | puVar2 => working_ram_pointer | undefined4 => dword | puVar1 => chunk_end | puVar2 => working_ram_pointer | undefined4 => dword | puVar1 => chunk_end | puVar1 => chunk_end | undefined4 => dword | puVar2 => working_ram_pointer | puVar1 => chunk_end | puVar2 => working_ram_pointer | puVar2 => working_ram_pointer | puVar2 => working_ram_pointer
+0x0002e9f8: 14 token changes: int iVar1 => undefined * puVar1 | int => undefined | piVar4 => * ppuVar4 | piVar4 => ppuVar4 | int => undefined * | piVar4 => ppuVar4 | piVar4 => ppuVar4 | piVar4 => ppuVar4 | iVar1 => puVar1 | piVar4 => ppuVar4 | iVar1 => ( int ) puVar1 | iVar1 => puVar1 | iVar1 => puVar1 | iVar1 => ( int ) puVar1
+0x0002eadc: 34 token changes: undefined4 => undefined |  => * | short => undefined * |  => ( | [ 1 ] => + 4 ) | ( undefined4 * ) =>  | 3 => 0xc | ( undefined4 * ) =>  | 6 => 0x18 | undefined4 => undefined | ( undefined4 * ) =>  |  => * | short => undefined * | * =>  |  => = * ( undefined * * ) ( ram_refresh_current_block_pointer + 8 ) ; } psVar2 | ram_refresh_current_block_pointer [ 2 ] ; } psVar2 = => ( |  => ( uint ) |  => * 2 ) |  => * |  => * |  => ( | [ 1 ] => + 4 ) |  => * |  => * |  => ( | [ 1 ] => + 4 ) |  => ( undefined * ) ( ( int ) | 1 => 2 ) |  => ( short * ) |  => ( short * ) |  => ( short * ) |  => ( short * 
+0x0002eea2: 13 token changes: char => j1939_diagnostic_service_entry_t | pcVar3 => pjVar3 | pcVar3 => pjVar3 | & =>  | * pcVar3 => pjVar3 -> service_id | * pcVar3 => pjVar3 -> service_id | char => J1939_DIAGNOSTIC_SERVICE | * =>  | * =>  | ( pcVar3 + 2 ) => pjVar3 -> handler | pcVar3 => pjVar3 | pcVar3 => pjVar3 | 6 => 1
+0x0002fe38: 2 token changes: undefined4 => dword | undefined4 => dword
+0x000304f4: 1 token changes: 8 => ENGINE_STATE_SHUTDOWN
+0x0003061a: 1 token changes: 8 => ENGINE_STATE_SHUTDOWN
+0x00031496: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x000315be: 1 token changes: 1 => ENGINE_STATE_STOPPED
+0x00031b22: 3 token changes:  => . header . can_id | _DAT_00801ea6 => j1939_pgn59392_tx_message . header . can_id . _2_2_ | ( j1939_header_t * ) => 
+0x00031b96: 4 token changes: _DAT_00801ea8 => j1939_pgn59392_tx_message . header . data_length | _DAT_00801eaa => j1939_pgn59392_tx_message . data_pointer | _DAT_00801eae => j1939_pgn59392_tx_message . status_pointer | 0x801eba => & j1939_pgn59392_transmit_status
+0x00031bce: 1 token changes: ( j1939_header_t * ) => 
+0x00031c1a: 7 token changes:  => . header . can_id | _DAT_00801ec0 => j1939_pgn65269_tx_message . header . data_length | _DAT_00801ec2 => j1939_pgn65269_tx_message . data_pointer | _DAT_00801ec6 => j1939_pgn65269_tx_message . status_pointer | 0x801ed2 => & j1939_pgn65269_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x00031c84: 1 token changes: ( j1939_header_t * ) => 
+0x00031ed2: 7 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_00801ed8 => j1939_pgn65265_tx_message . header . data_length | _DAT_00801eda => j1939_pgn65265_tx_message . data_pointer | _DAT_00801ede => j1939_pgn65265_tx_message . status_pointer | 0x801eea => & j1939_pgn65265_transmit_status
+0x00031f30: 1 token changes: ( j1939_header_t * ) => 
+0x00031fee: 7 token changes:  => . header . can_id | _DAT_00801ef0 => j1939_pgn65261_tx_message . header . data_length | _DAT_00801ef2 => j1939_pgn65261_tx_message . data_pointer | _DAT_00801ef6 => j1939_pgn65261_tx_message . status_pointer | 0x801f02 => & j1939_pgn65261_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x00032052: 1 token changes: ( j1939_header_t * ) => 
+0x000320f6: 7 token changes:  => . header . can_id | _DAT_00801f08 => j1939_pgn65259_tx_message . header . data_length | _DAT_00801f0a => j1939_pgn65259_tx_message . data_pointer | _DAT_00801f0e => j1939_pgn65259_tx_message . status_pointer | 0x801f3a => & j1939_pgn65259_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x0003216a: 21 token changes: j1939_header_t => j1939_tx_msg_t | msg_header => msg | msg_header => msg | msg_header => msg | j1939_header_t => j1939_tx_msg_t | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | msg_header => ( msg | id => header ) . can_id | ( undefined1 * ) msg_header [ 1 ] . id => msg -> data_pointer | msg_header => msg
+0x00032244: 7 token changes:  => . header . can_id | _DAT_00801f42 => j1939_dm10_tx_message . header . data_length | _DAT_00801f44 => j1939_dm10_tx_message . data_pointer | _DAT_00801f48 => j1939_dm10_tx_message . status_pointer | 0x801f54 => & j1939_dm10_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x000322ae: 6 token changes: _DAT_00801f60 => j1939_dm1_tx_message . status_pointer | _DAT_00801f5a => j1939_dm1_tx_message . header . data_length | _DAT_00801f5a => j1939_dm1_tx_message . header . data_length | _DAT_00801f5a => j1939_dm1_tx_message . header . data_length | _DAT_00801f5a => j1939_dm1_tx_message . header . data_length | ( j1939_header_t * ) => 
+0x000323be: 5 token changes:  => . header . can_id | _DAT_00801f5c => j1939_dm1_tx_message . data_pointer | _DAT_00801f60 => j1939_dm1_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x0003241c: 6 token changes: _dm2_message_byte_count => j1939_dm2_tx_message . header . data_length | _dm2_message_byte_count => j1939_dm2_tx_message . header . data_length | _dm2_message_byte_count => j1939_dm2_tx_message . header . data_length | _dm2_message_byte_count => j1939_dm2_tx_message . header . data_length | _dm2_message_byte_count => j1939_dm2_tx_message . header . data_length | ( j1939_header_t * ) => 
+0x0003252c: 5 token changes:  => . header . can_id | _DAT_00802662 => j1939_dm2_tx_message . data_pointer | _DAT_00802666 => j1939_dm2_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x0003258a: 5 token changes: _DAT_00802d66 => j1939_pgn65229_tx_message . header . data_length | _DAT_00802d66 => j1939_pgn65229_tx_message . header . data_length | _DAT_00802d66 => j1939_pgn65229_tx_message . header . data_length | _DAT_00802d66 => j1939_pgn65229_tx_message . header . data_length | ( j1939_header_t * ) => 
+0x000329d2: 5 token changes:  => . header . can_id | _DAT_00802d68 => j1939_pgn65229_tx_message . data_pointer | _DAT_00802d6c => j1939_pgn65229_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x00032a42: 1 token changes: ( j1939_header_t * ) => 
+0x00032ae2: 6 token changes:  => . header . can_id | _oil_pressure_table_3_ptr => j1939_pgn65230_tx_message . header . data_length | _DAT_00803450 => j1939_pgn65230_tx_message . data_pointer | _DAT_00803454 => j1939_pgn65230_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x00032b38: 1 token changes: ( j1939_header_t * ) => 
+0x00032b64: 6 token changes:  => . header . can_id | _DAT_00803466 => j1939_pgn65232_tx_message . header . data_length | _base_timing_fuel_value_input => j1939_pgn65232_tx_message . data_pointer | _DAT_0080346c => j1939_pgn65232_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x00032c22: 6 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _lift_pump_table_lookup_arg_3486 => j1939_pgn61441_tx_message . header . data_length | _DAT_00803488 => j1939_pgn61441_tx_message . data_pointer | _vp44_can_msg_timeout_counter => j1939_pgn61441_tx_message . status_pointer
+0x00032c76: 1 token changes: ( j1939_header_t * ) => 
+0x00032c7a: 1 token changes: ( j1939_header_t * ) => 
+0x00032e08: 6 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_0080349e => j1939_pgn61444_tx_message . header . data_length | _vp44_fso_fault_active_flag => j1939_pgn61444_tx_message . data_pointer | _derate_threshold_change_counter => j1939_pgn61444_tx_message . status_pointer
+0x00032e4c: 1 token changes: ( j1939_header_t * ) => 
+0x00033064: 6 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _fso_fault_debounce_counter => j1939_pgn61443_tx_message . header . data_length | _fso_high_cmd_fault_debounce_counter => j1939_pgn61443_tx_message . data_pointer | _vp44_fso_range2_fault_counter => j1939_pgn61443_tx_message . status_pointer
+0x000330c4: 1 token changes: ( j1939_header_t * ) => 
+0x00033120: 6 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _vp44_fso_timing_fault_counter => j1939_pgn65247_tx_message . header . data_length | _vp44_fso_bit0_fault_counter => j1939_pgn65247_tx_message . data_pointer | _vp44_fso_bit15_fault_counter => j1939_pgn65247_tx_message . status_pointer
+0x00033164: 1 token changes: ( j1939_header_t * ) => 
+0x000331ae: 7 token changes:  => . header . can_id | _vp44_fso_multibit_fault_accumulator => j1939_pgn65263_tx_message . header . data_length | _vp44_fso_multibit_fault_state => j1939_pgn65263_tx_message . data_pointer | _vp44_fso_stuck_high_recovery_counter => j1939_pgn65263_tx_message . status_pointer | 0x8034f0 => & j1939_pgn65263_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x0003366a: 1 token changes: ( j1939_header_t * ) => 
+0x00033692: 6 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_0080352e => j1939_pgn65251_tx_message . header . data_length | _DAT_00803530 => j1939_pgn65251_tx_message . data_pointer | _DAT_00803534 => j1939_pgn65251_tx_message . status_pointer
+0x00033716: 1 token changes: ( j1939_header_t * ) => 
+0x00033754: 7 token changes:  => . header . can_id | _DAT_0080353e => j1939_pgn65253_tx_message . header . data_length | _DAT_00803540 => j1939_pgn65253_tx_message . data_pointer | _DAT_00803544 => j1939_pgn65253_tx_message . status_pointer | 0x803550 => & j1939_pgn65253_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x000337c4: 1 token changes: ( j1939_header_t * ) => 
+0x00033880: 7 token changes:  => . header . can_id | _DAT_00803556 => j1939_pgn65262_tx_message . header . data_length | _DAT_00803558 => j1939_pgn65262_tx_message . data_pointer | _DAT_0080355c => j1939_pgn65262_tx_message . status_pointer | 0x803568 => & j1939_pgn65262_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x000338ea: 1 token changes: ( j1939_header_t * ) => 
+0x000339b0: 7 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_00803576 => j1939_pgn61440_tx_message . header . data_length | _DAT_00803578 => j1939_pgn61440_tx_message . data_pointer | _DAT_0080357c => j1939_pgn61440_tx_message . status_pointer | 0x803580 => & j1939_pgn61440_transmit_status
+0x00033a1e: 8 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_0080358e => j1939_pgn65213_tx_message . header . data_length | _DAT_00803590 => j1939_pgn65213_tx_message . data_pointer | 0x803582 => & DAT_00803582 | _DAT_00803594 => j1939_pgn65213_tx_message . status_pointer | 0x803598 => & j1939_pgn65213_transmit_status
+0x00033a62: 1 token changes: ( j1939_header_t * ) => 
+0x00033aea: 7 token changes:  => . header . can_id | _DAT_0080359e => j1939_pgn65257_tx_message . header . data_length | _DAT_008035a0 => j1939_pgn65257_tx_message . data_pointer | _DAT_008035a4 => j1939_pgn65257_tx_message . status_pointer | 0x8035b0 => & j1939_pgn65257_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x00033b40: 1 token changes: ( j1939_header_t * ) => 
+0x00033c28: 7 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_008035c0 => j1939_pgn65266_tx_message . header . data_length | _DAT_008035c2 => j1939_pgn65266_tx_message . data_pointer | _DAT_008035c6 => j1939_pgn65266_tx_message . status_pointer | 0x8035ca => & j1939_pgn65266_transmit_status
+0x00033c6c: 1 token changes: ( j1939_header_t * ) => 
+0x00033ce2: 7 token changes:  => . header . can_id | _vp44_status_flags_1 => j1939_pgn65244_tx_message . header . data_length | _fuel_demand_control_flags => j1939_pgn65244_tx_message . data_pointer | _engine_operating_state_flags => j1939_pgn65244_tx_message . status_pointer | 0x8035e6 => & j1939_pgn65244_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x00033dfa: 7 token changes:  => . header . can_id | _vp44_status_flags_2 => j1939_pgn65252_tx_message . header . data_length | _DAT_008035ee => j1939_pgn65252_tx_message . data_pointer | _DAT_008035f2 => j1939_pgn65252_tx_message . status_pointer | 0x8035fe => & j1939_pgn65252_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x00033e58: 1 token changes: ( j1939_header_t * ) => 
+0x00033eee: 7 token changes:  => . header . can_id | _DAT_00803604 => j1939_pgn65270_tx_message . header . data_length | _DAT_00803606 => j1939_pgn65270_tx_message . data_pointer | _DAT_0080360a => j1939_pgn65270_tx_message . status_pointer | 0x803616 => & j1939_pgn65270_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x00033f5a: 1 token changes: ( j1939_header_t * ) => 
+0x0003401a: 7 token changes:  => . header . can_id | _DAT_0080361c => j1939_pgn65264_tx_message . header . data_length | _DAT_0080361e => j1939_pgn65264_tx_message . data_pointer | _DAT_00803622 => j1939_pgn65264_tx_message . status_pointer | 0x80362e => & j1939_pgn65264_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x0003407a: 1 token changes: ( j1939_header_t * ) => 
+0x000341e6: 6 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_00803648 => j1939_pgn65249_tx_message . header . data_length | _DAT_0080364a => j1939_pgn65249_tx_message . data_pointer | _DAT_0080364e => j1939_pgn65249_tx_message . status_pointer
+0x00034232: 1 token changes: ( j1939_header_t * ) => 
+0x0003429a: 7 token changes:  => . header . can_id | _DAT_00803658 => j1939_pgn65248_tx_message . header . data_length | _DAT_0080365a => j1939_pgn65248_tx_message . data_pointer | _DAT_0080365e => j1939_pgn65248_tx_message . status_pointer | 0x80366a => & j1939_pgn65248_transmit_status |  => . header . can_id |  => . header . can_id . _0_3_
+0x000342f0: 1 token changes: ( j1939_header_t * ) => 
+0x00034334: 6 token changes:  => . header . can_id | _DAT_00803670 => j1939_pgn65271_tx_message . header . data_length | _DAT_00803672 => j1939_pgn65271_tx_message . data_pointer | _DAT_00803676 => j1939_pgn65271_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x00034394: 1 token changes: ( j1939_header_t * ) => 
+0x000343d2: 6 token changes:  => . header . can_id | _vp44_comm_test_sensor_value => j1939_pgn65255_tx_message . header . data_length | _redundant_sensor_param_1 => j1939_pgn65255_tx_message . data_pointer | _redundant_sensor_param_3 => j1939_pgn65255_tx_message . status_pointer |  => . header . can_id |  => . header . can_id . _0_3_
+0x00034440: 6 token changes:  => . header . can_id | _DAT_008036a0 => j1939_pgn65260_tx_message . header . data_length | _oil_pressure_rpm_limit_max => j1939_pgn65260_tx_message . data_pointer | 0x803e7f ; _DAT_008036a6 = 0x8036aa => & DAT_00803e7f |  => . status_pointer = & j1939_pgn65260_transmit_status ; j1939_pgn65260_tx_message . header . can_id |  => . header . can_id . _0_3_
+0x000344ce: 7 token changes:  => . header . can_id |  => . header . can_id |  => . header . can_id . _0_3_ | _DAT_008036b8 => j1939_pgn65279_tx_message . header . data_length | _vp44_comm_fault_monitor_state => j1939_pgn65279_tx_message . data_pointer | _DAT_008036be => j1939_pgn65279_tx_message . status_pointer | 0x8036c2 => & j1939_pgn65279_transmit_status
+0x00034512: 1 token changes: 1 => ENGINE_STATE_STOPPED
+---- census of distinct changes
+  64  => . header . can_id
+  32  => . header . can_id . _0_3_
+  28 ( j1939_header_t * ) => 
+  27 pcVar6 => pcVar8
+  25 1 => ENGINE_STATE_STOPPED
+  18 8 => ENGINE_STATE_SHUTDOWN
+  17 3 => ENGINE_STATE_RUNNING
+  15 msg_header => ( msg
+  14 id => header ) . can_id
+  14 undefined4 => dword
+  13 2 => ENGINE_STATE_CRANKING
+  12 5 => ENGINE_STATE_OVERSPEED
+  10 6 => ENGINE_STATE_JUMP_START
+  10 msg_header => msg
+  10 WORD_0080de2e => key_off_shutdown_inhibit_flag
+  10 puVar5 => puVar6
+   9 7 => ENGINE_STATE_REENTRY
+   8 * => 
+   8 puVar2 => working_ram_pointer
+   7 j1939_header_t => j1939_tx_msg_t
+   7  => ( byte * )
+   6 puVar1 => pdVar1
+   6 node_address => message_object_number
+   6  => *
+   5 puVar6 => puVar7
+   5 puVar1 => chunk_end
+   5 piVar4 => ppuVar4
+   5 _dm2_message_byte_count => j1939_dm2_tx_message . header . data_length
+   4 ' \ => 
+   4 ' => 
+   4 uVar4 => wVar5
+   4 bVar3 => bVar4
+   4 * param_1 => ( msg -> header ) . can_id
+   4  => ( short * )
+   4 pcVar3 => pjVar3
+   4 _DAT_00801f5a => j1939_dm1_tx_message . header . data_length
+   4 _DAT_00802d66 => j1939_pgn65229_tx_message . header . data_length
+   3 int => dword
+   3 BYTE_0080dde4 => eeprom_mirror_commit_j1708_reply_pending_flag
+   3 ( uint ) ( => 
+   3 ) => 
+   3 * ( ushort * ) ( & vp44_sensor_diag_state_1 + => engine_overspeed_log [
+   3 * 8 ) => ] . engine_speed_at_detection
+   3 4 => ENGINE_STATE_ENGINE_BRAKE
+   3 uVar4 => uVar6
+   3 puVar5 => puVar7
+   3 * ( undefined1 * * ) ( ( int ) param_1 + 10 ) => msg -> status_pointer
+   3 iVar1 => puVar1
+   3  => (
+   3 [ 1 ] => + 4 )
+   3 ( undefined4 * ) => 
+   2 ' \ x01 ' => 1
+   2 * 8 ) => ] . start_key_on_hour_meter
+   2 * 8 ) => ] . duration
+   2 _DAT_0080bda6 => key_on_hour_meter . _2_2_
+   2  => puVar7 = puVar7 + 1 ;
+   2 + 1 ; puVar5 = puVar5 => 
+   2 uint => dword
+   2  => msg -> data_pointer ;
+   2 ( param_1 + 1 ) => . data_length
+   2 ( byte ) * param_1 => bVar5
+   2 undefined4 => undefined *
+   2 iVar1 => ( int ) puVar1
+   2 undefined4 => undefined
+   2 short => undefined *
+   2  => ( undefined * ) ( ( int )
+   2 1 => 2 )
+   2 * pcVar3 => pjVar3 -> service_id
+   2 _DAT_00801f60 => j1939_dm1_tx_message . status_pointer
+   1 length => header ) . data_length
+   1  => j1939_tx_msg_t * unaff_A2 ;
+   1  => unaff_A2
+   1 * ( undefined4 * ) ( & => 
+   1 + => [
+   1 * ( undefined2 * ) ( & fuel_arbitrator_rpm_target_history + => engine_overspeed_log [
+   1 * ( short * ) ( & fuel_arbitrator_rpm_target_history + => engine_overspeed_log [
+   1 ( & diagnostic_snapshot_fuel_mode_0 + => engine_overspeed_log [
+   1  => word wVar5 ;
+   1 DAT_0080d9f5 => ( byte ) j1939_transmit_message_object_number
+   1  => word msg_length ;
+   1 ; word msg_length => 
+   1 undefined1 => undefined
+   1 undefined1 * => msg -> header
+   1 msg_header [ 1 ] => 
+   1 id ; msg_header -> id => can_id
+   1 uint => j1939_tx_msg_t
+   1 param_1 => msg
+   1 bVar3 => * pbVar3 ; byte bVar4 ; byte bVar5
+   1 bVar3 => pbVar3
+   1 param_1 => & ( msg -> header ) . can_id
+   1  => ; bVar4 = * pbVar3 ; bVar5 = ( byte ) ( msg -> header ) . can_id
+   1 ( ( int ) param_1 + 1 ) => pbVar3
+   1 ushort * => msg -> header
+   1 * ( undefined4 * ) ( ( int ) param_1 + 6 ) => msg -> data_pointer
+   1 * ( char * * ) ( ( int ) param_1 + 10 ) => msg -> status_pointer
+   1 undefined2 => word
+   1 undefined2 * => msg -> header
+   1 ( int ) param_1 + 6 ) ; * ( uint * ) ( pcVar6 => pcVar8
+   1 * ( undefined4 * ) ( ( int ) param_1 + 10 ) => msg -> status_pointer
+   1 _DAT_00801238 => j1939_single_frame_tx_message . data_pointer
+   1 0x801242 => & DAT_00801242
+   1 _DAT_00801236 => j1939_single_frame_tx_message . header . data_length
+   1 _DAT_0080123c => j1939_single_frame_tx_message . status_pointer
+   1 0x801240 => & j1939_single_frame_transmit_status
+   1 ( j1939_header_t * ) 0x801232 => & j1939_single_frame_tx_message
+   1 _DAT_00800b20 => j1939_transport_tx_message . data_pointer
+   1 0x800b2a => & DAT_00800b2a
+   1 _DAT_00800b1e => j1939_transport_tx_message . header . data_length
+   1 _DAT_00800b24 => j1939_transport_tx_message . status_pointer
+   1 ( j1939_header_t * ) 0x800b1a => & j1939_transport_tx_message
+   1 short => word
+   1 byte => dword
+   1 ushort => word
+   1 ( byte * ) => 
+   1 int iVar1 => undefined * puVar1
+   1 int => undefined
+   1 piVar4 => * ppuVar4
+   1 int => undefined *
+   1 3 => 0xc
+   1 6 => 0x18
+   1  => = * ( undefined * * ) ( ram_refresh_current_block_pointer + 8 ) ; } psVar2
+   1 ram_refresh_current_block_pointer [ 2 ] ; } psVar2 = => (
+   1  => ( uint )
+   1  => * 2 )
+   1 char => j1939_diagnostic_service_entry_t
+   1 & => 
+   1 char => J1939_DIAGNOSTIC_SERVICE
+   1 ( pcVar3 + 2 ) => pjVar3 -> handler
+   1 6 => 1
+   1 _DAT_00801ea6 => j1939_pgn59392_tx_message . header . can_id . _2_2_
+   1 _DAT_00801ea8 => j1939_pgn59392_tx_message . header . data_length
+   1 _DAT_00801eaa => j1939_pgn59392_tx_message . data_pointer
+   1 _DAT_00801eae => j1939_pgn59392_tx_message . status_pointer
+   1 0x801eba => & j1939_pgn59392_transmit_status
+   1 _DAT_00801ec0 => j1939_pgn65269_tx_message . header . data_length
+   1 _DAT_00801ec2 => j1939_pgn65269_tx_message . data_pointer
+   1 _DAT_00801ec6 => j1939_pgn65269_tx_message . status_pointer
+   1 0x801ed2 => & j1939_pgn65269_transmit_status
+   1 _DAT_00801ed8 => j1939_pgn65265_tx_message . header . data_length
+   1 _DAT_00801eda => j1939_pgn65265_tx_message . data_pointer
+   1 _DAT_00801ede => j1939_pgn65265_tx_message . status_pointer
+   1 0x801eea => & j1939_pgn65265_transmit_status
+   1 _DAT_00801ef0 => j1939_pgn65261_tx_message . header . data_length
+   1 _DAT_00801ef2 => j1939_pgn65261_tx_message . data_pointer
+   1 _DAT_00801ef6 => j1939_pgn65261_tx_message . status_pointer
+   1 0x801f02 => & j1939_pgn65261_transmit_status
+   1 _DAT_00801f08 => j1939_pgn65259_tx_message . header . data_length
+   1 _DAT_00801f0a => j1939_pgn65259_tx_message . data_pointer
+   1 _DAT_00801f0e => j1939_pgn65259_tx_message . status_pointer
+   1 0x801f3a => & j1939_pgn65259_transmit_status
+   1 ( undefined1 * ) msg_header [ 1 ] . id => msg -> data_pointer
+   1 _DAT_00801f42 => j1939_dm10_tx_message . header . data_length
+   1 _DAT_00801f44 => j1939_dm10_tx_message . data_pointer
+   1 _DAT_00801f48 => j1939_dm10_tx_message . status_pointer
+   1 0x801f54 => & j1939_dm10_transmit_status
+   1 _DAT_00801f5c => j1939_dm1_tx_message . data_pointer
+   1 _DAT_00802662 => j1939_dm2_tx_message . data_pointer
+   1 _DAT_00802666 => j1939_dm2_tx_message . status_pointer
+   1 _DAT_00802d68 => j1939_pgn65229_tx_message . data_pointer
+   1 _DAT_00802d6c => j1939_pgn65229_tx_message . status_pointer
+   1 _oil_pressure_table_3_ptr => j1939_pgn65230_tx_message . header . data_length
+   1 _DAT_00803450 => j1939_pgn65230_tx_message . data_pointer
+   1 _DAT_00803454 => j1939_pgn65230_tx_message . status_pointer
+   1 _DAT_00803466 => j1939_pgn65232_tx_message . header . data_length
+   1 _base_timing_fuel_value_input => j1939_pgn65232_tx_message . data_pointer
+   1 _DAT_0080346c => j1939_pgn65232_tx_message . status_pointer
+   1 _lift_pump_table_lookup_arg_3486 => j1939_pgn61441_tx_message . header . data_length
+   1 _DAT_00803488 => j1939_pgn61441_tx_message . data_pointer
+   1 _vp44_can_msg_timeout_counter => j1939_pgn61441_tx_message . status_pointer
+   1 _DAT_0080349e => j1939_pgn61444_tx_message . header . data_length
+   1 _vp44_fso_fault_active_flag => j1939_pgn61444_tx_message . data_pointer
+   1 _derate_threshold_change_counter => j1939_pgn61444_tx_message . status_pointer
+   1 _fso_fault_debounce_counter => j1939_pgn61443_tx_message . header . data_length
+   1 _fso_high_cmd_fault_debounce_counter => j1939_pgn61443_tx_message . data_pointer
+   1 _vp44_fso_range2_fault_counter => j1939_pgn61443_tx_message . status_pointer
+   1 _vp44_fso_timing_fault_counter => j1939_pgn65247_tx_message . header . data_length
+   1 _vp44_fso_bit0_fault_counter => j1939_pgn65247_tx_message . data_pointer
+   1 _vp44_fso_bit15_fault_counter => j1939_pgn65247_tx_message . status_pointer
+   1 _vp44_fso_multibit_fault_accumulator => j1939_pgn65263_tx_message . header . data_length
+   1 _vp44_fso_multibit_fault_state => j1939_pgn65263_tx_message . data_pointer
+   1 _vp44_fso_stuck_high_recovery_counter => j1939_pgn65263_tx_message . status_pointer
+   1 0x8034f0 => & j1939_pgn65263_transmit_status
+   1 _DAT_0080352e => j1939_pgn65251_tx_message . header . data_length
+   1 _DAT_00803530 => j1939_pgn65251_tx_message . data_pointer
+   1 _DAT_00803534 => j1939_pgn65251_tx_message . status_pointer
+   1 _DAT_0080353e => j1939_pgn65253_tx_message . header . data_length
+   1 _DAT_00803540 => j1939_pgn65253_tx_message . data_pointer
+   1 _DAT_00803544 => j1939_pgn65253_tx_message . status_pointer
+   1 0x803550 => & j1939_pgn65253_transmit_status
+   1 _DAT_00803556 => j1939_pgn65262_tx_message . header . data_length
+   1 _DAT_00803558 => j1939_pgn65262_tx_message . data_pointer
+   1 _DAT_0080355c => j1939_pgn65262_tx_message . status_pointer
+   1 0x803568 => & j1939_pgn65262_transmit_status
+   1 _DAT_00803576 => j1939_pgn61440_tx_message . header . data_length
+   1 _DAT_00803578 => j1939_pgn61440_tx_message . data_pointer
+   1 _DAT_0080357c => j1939_pgn61440_tx_message . status_pointer
+   1 0x803580 => & j1939_pgn61440_transmit_status
+   1 _DAT_0080358e => j1939_pgn65213_tx_message . header . data_length
+   1 _DAT_00803590 => j1939_pgn65213_tx_message . data_pointer
+   1 0x803582 => & DAT_00803582
+   1 _DAT_00803594 => j1939_pgn65213_tx_message . status_pointer
+   1 0x803598 => & j1939_pgn65213_transmit_status
+   1 _DAT_0080359e => j1939_pgn65257_tx_message . header . data_length
+   1 _DAT_008035a0 => j1939_pgn65257_tx_message . data_pointer
+   1 _DAT_008035a4 => j1939_pgn65257_tx_message . status_pointer
+   1 0x8035b0 => & j1939_pgn65257_transmit_status
+   1 _DAT_008035c0 => j1939_pgn65266_tx_message . header . data_length
+   1 _DAT_008035c2 => j1939_pgn65266_tx_message . data_pointer
+   1 _DAT_008035c6 => j1939_pgn65266_tx_message . status_pointer
+   1 0x8035ca => & j1939_pgn65266_transmit_status
+   1 _vp44_status_flags_1 => j1939_pgn65244_tx_message . header . data_length
+   1 _fuel_demand_control_flags => j1939_pgn65244_tx_message . data_pointer
+   1 _engine_operating_state_flags => j1939_pgn65244_tx_message . status_pointer
+   1 0x8035e6 => & j1939_pgn65244_transmit_status
+   1 _vp44_status_flags_2 => j1939_pgn65252_tx_message . header . data_length
+   1 _DAT_008035ee => j1939_pgn65252_tx_message . data_pointer
+   1 _DAT_008035f2 => j1939_pgn65252_tx_message . status_pointer
+   1 0x8035fe => & j1939_pgn65252_transmit_status
+   1 _DAT_00803604 => j1939_pgn65270_tx_message . header . data_length
+   1 _DAT_00803606 => j1939_pgn65270_tx_message . data_pointer
+   1 _DAT_0080360a => j1939_pgn65270_tx_message . status_pointer
+   1 0x803616 => & j1939_pgn65270_transmit_status
+   1 _DAT_0080361c => j1939_pgn65264_tx_message . header . data_length
+   1 _DAT_0080361e => j1939_pgn65264_tx_message . data_pointer
+   1 _DAT_00803622 => j1939_pgn65264_tx_message . status_pointer
+   1 0x80362e => & j1939_pgn65264_transmit_status
+   1 _DAT_00803648 => j1939_pgn65249_tx_message . header . data_length
+   1 _DAT_0080364a => j1939_pgn65249_tx_message . data_pointer
+   1 _DAT_0080364e => j1939_pgn65249_tx_message . status_pointer
+   1 _DAT_00803658 => j1939_pgn65248_tx_message . header . data_length
+   1 _DAT_0080365a => j1939_pgn65248_tx_message . data_pointer
+   1 _DAT_0080365e => j1939_pgn65248_tx_message . status_pointer
+   1 0x80366a => & j1939_pgn65248_transmit_status
+   1 _DAT_00803670 => j1939_pgn65271_tx_message . header . data_length
+   1 _DAT_00803672 => j1939_pgn65271_tx_message . data_pointer
+   1 _DAT_00803676 => j1939_pgn65271_tx_message . status_pointer
+   1 _vp44_comm_test_sensor_value => j1939_pgn65255_tx_message . header . data_length
+   1 _redundant_sensor_param_1 => j1939_pgn65255_tx_message . data_pointer
+   1 _redundant_sensor_param_3 => j1939_pgn65255_tx_message . status_pointer
+   1 _DAT_008036a0 => j1939_pgn65260_tx_message . header . data_length
+   1 _oil_pressure_rpm_limit_max => j1939_pgn65260_tx_message . data_pointer
+   1 0x803e7f ; _DAT_008036a6 = 0x8036aa => & DAT_00803e7f
+   1  => . status_pointer = & j1939_pgn65260_transmit_status ; j1939_pgn65260_tx_message . header . can_id
+   1 _DAT_008036b8 => j1939_pgn65279_tx_message . header . data_length
+   1 _vp44_comm_fault_monitor_state => j1939_pgn65279_tx_message . data_pointer
+   1 _DAT_008036be => j1939_pgn65279_tx_message . status_pointer
+   1 0x8036c2 => & j1939_pgn65279_transmit_status

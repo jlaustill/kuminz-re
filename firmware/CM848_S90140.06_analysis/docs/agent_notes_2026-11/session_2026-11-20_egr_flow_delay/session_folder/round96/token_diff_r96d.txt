@@ -1,0 +1,3 @@
+0x00507028: 1 token changes: undefined2 => word
+---- census of distinct changes
+   1 undefined2 => word

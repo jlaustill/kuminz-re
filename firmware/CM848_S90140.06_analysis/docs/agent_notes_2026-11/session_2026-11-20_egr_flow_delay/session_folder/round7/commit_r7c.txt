@@ -1,0 +1,17 @@
+cm848: round 7 stage C - the drivetrain ratio module's misnamed words and functions (label-only)
+
+Read in full: cm848_updateDrivetrainRatio, its initialization, the J1939 out of gear hook, the VSS interrupt's
+period average, and cm848_calculateVehicleSpeedLimitFueling's gear-down branch.
+- engine_temperature_protection_filter_state -> drivetrain_ratio_filter_state. Only the drivetrain ratio filter uses
+  this ema_filter_state_t.
+- protection_timeout_enable_flag -> drivetrain_ratio_engine_period_valid_flag. The VSS interrupt sets it when it has
+  averaged the engine period between two VSS pulses; the period ratio is computed only while it is 1.
+- governor_j1939_bypass_flag -> drivetrain_gear_range: 1 = top gear / 2 = one gear down / 3 = lower. With the
+  gear-down feature (j1939_governor_feature_cal bit 0x100), only top gear keeps the road speed governor's droops.
+- governor_bypass_threshold_low / _high -> top_gear_ratio_threshold / gear_down_ratio_threshold. They come from
+  top_gear_ratio_cal (0.8 in the EEPROM image) and the gear down ratio at 0x3fd900 (1.0).
+- initGovernorJ1939Bypass -> cm848_initializeDrivetrainRatio, etcTransmissionModeControl ->
+  cm848_applyJ1939OutOfGearToDrivetrainRatio, cm848_output_shaft_speed_save -> cm848_saveOutputShaftSpeed.
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

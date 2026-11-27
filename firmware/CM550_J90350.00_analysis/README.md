@@ -1,6 +1,6 @@
 # J90350.00 Firmware Analysis
 
-**Status: Analysis Complete** - 489 named functions, 5,372 RAM variables, full decompilation available.
+**Status: analysis in progress** - 721 named functions of 722, 4,626 RAM variable rows (3,018 global rows typed), full decompilation available.
 
 ## ECU Details
 
@@ -24,13 +24,14 @@
 
 ## Current Analysis State
 
+Counted from the CSVs for PR #53 round 97 (2026-11-25):
+
 | Metric | Count |
 |--------|-------|
-| Named functions | 489 |
-| RAM variables | 5,372 |
-| Total global variables | 5,866 |
-| Structure definitions | 274 fields |
-| Decompiled C code | 1.0MB |
+| Function rows | 722 (721 named, 1 placeholder) |
+| Global variable rows | 4,752 (4,626 in RAM and extended RAM; 3,018 typed) |
+| Structure types | 89 (749 fields) |
+| Decompiled C code | 1.6 MB |
 | Memory regions | 4 (ROM + RAM + EXT_RAM + EEPROM) |
 
 ## Files
@@ -42,46 +43,39 @@
 | `firmware/J90350.00.rom.bin` | 256KB | ROM/Flash memory dump |
 | `firmware/J90350.00.ram.bin` | 37KB | RAM snapshot at extraction time |
 | `firmware/J90350.00.extended_ram.bin` | 28KB | Extended RAM (scheduler data, J1708 buffers) |
-| `firmware/J90350.00.eeprom.bin` | 4KB | EEPROM calibration data |
+| `firmware/J90350.00.eeprom.bin` | 4KB | EEPROM calibration data: the first 4 KB of the 0x148A-byte EEPROM image (the RAM dump holds the rest at 0x804B0A-0x804F93) |
 
 ### Analysis Output
 
+The CSVs in `output/` are the only source of truth; the build reads them and writes only the decompilation.
+
 | File | Description |
 |------|-------------|
-| `output/function_renames.csv` | 489 named functions |
-| `output/global_variables.csv` | 5,866 named variables |
+| `output/function_renames.csv` | Function names and plate comments |
+| `output/global_variables.csv` | Named and typed globals |
+| `output/structure_definitions.csv` | Structure types and their instances |
+| `output/function_definitions.csv` / `output/local_variables.csv` | Prototypes and local variable names |
+| `output/enums.csv` / `labels.csv` / `constants.csv` / `arrays.csv` / `deleted_functions.csv` | The other CSV inputs (see `CLAUDE.md`) |
 | `output/relocation_map.csv` | Historical function mapping (J90280.05 removed) |
-| `output/structure_definitions.csv` | 219 structure field definitions |
-| `output/J90350.00.ghidra.cpp` | Full decompilation (1.1MB) |
+| `output/J90350.00.ghidra.cpp` | Full decompilation, the build's only output |
+| `output/firmware_types.hpp` / `firmware_globals.hpp` / `firmware_functions.hpp` | Headers generated from the CSVs (`../scripts/generate_headers.py`) |
 
 ### Ghidra Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `ghidra/scripts/ApplyRelocationMap.java` | Bootstrap function names from relocation map |
-| `ghidra/scripts/ApplyRamVariables.java` | Apply RAM variable names |
-| `ghidra/scripts/SetupMemoryMap.java` | Add RAM and EEPROM memory regions |
-| `ghidra/scripts/ExportAnalysis.java` | Export to CSV and decompiled C |
-| `ghidra/scripts/ImportAnalysis.java` | Import CSV changes |
-| `ghidra/scripts/DecompileFunction.java` | On-demand function decompilation |
+The build's Ghidra scripts are shared with CM848 in `../scripts/` (see `../CLAUDE.md`). Two stages are CM550's own:
+`SetupMemoryMap.java` (the RAM, extended RAM and EEPROM blocks, including the extended RAM dump's 0x80-byte shift) and
+`ApplyHardwareRegisters.java` (the MC68336 register names, from the 0xFFxxxx rows of `output/global_variables.csv`).
 
 ## Quick Start
 
 ```bash
-# Install dependencies
-npm install
-
-# Complete analysis from scratch (takes ~2 minutes)
-npm run ghidra:full
-
-# Or run individual steps:
-npm run ghidra:init       # Import firmware
-npm run ghidra:analyze    # Auto-analysis
-npm run ghidra:memmap     # Add RAM + EEPROM regions
-npm run ghidra:ramvars    # Apply RAM variable names
-npm run ghidra:bootstrap  # Apply function names from relocation map
-npm run ghidra:export     # Export CSV + decompilation
+cd ghidra
+./analyze.sh build      # fresh binary -> apply every CSV -> output/J90350.00.ghidra.cpp
+./analyze.sh verify     # build twice and check that the output is byte-identical
 ```
+
+The build needs Ghidra 12.2 PUBLIC (the CPU32 language) and JDK 25; `../CLAUDE.md` gives the paths. `npm install`
+is only needed for the TypeScript comparison tools below.
 
 ## CLI Commands
 
@@ -91,26 +85,26 @@ npm run ghidra:export     # Export CSV + decompilation
 ./ghidra/analyze.sh <command>
 
 Commands:
-  init       Import firmware into Ghidra project
-  analyze    Run Ghidra auto-analysis
-  memmap     Add RAM and EEPROM memory regions
-  ramvars    Apply RAM variable names
-  bootstrap  Apply function names via relocation map
-  export     Export to CSV and decompiled C
-  import     Import CSV changes back into Ghidra
-  decompile  Decompile a single function
-  full       Run complete pipeline
-  status     Show project status
+  build                        Fresh binary -> apply every CSV -> decompilation (the only producer)
+  verify                       Build twice and assert byte-identical output
+  deletefuncs <addr>...        Record spurious function addresses in output/deleted_functions.csv
+  status                       Project status (read-only)
+  decompile <addr|name>        Decompile one function from the last build (read-only)
+  listfuncs <out>              List every function entry address (read-only)
+  classifyfuncs <addrs> <out>  Classify addresses by their incoming references (read-only)
 ```
+
+The partial commands (`init` / `analyze` / `memmap` / `import` / `export` / ...) were removed: edit the CSVs and run
+`build`.
 
 ### On-Demand Decompilation
 
 ```bash
 # By address
-npm run ghidra:decompile -- 0x22e5e
+./ghidra/analyze.sh decompile 0x22e5e
 
 # By function name
-npm run ghidra:decompile -- vp44CanMessageDispatcher
+./ghidra/analyze.sh decompile dispatchJ1939TransportConnectionManagement
 ```
 
 ### Binary Comparison Tools
@@ -123,22 +117,24 @@ npm run match        # Function matching
 
 ## Iterative Analysis Workflow
 
-1. **Make discoveries** - Identify new functions/variables in decompiled code
-2. **Edit CSVs** - Update `output/function_renames.csv` or `output/global_variables.csv`
-3. **Import changes** - `npm run ghidra:import`
-4. **Re-export** - `npm run ghidra:export`
+1. **Make discoveries** - Identify new functions and variables in the decompiled code
+2. **Edit CSVs** - `output/function_renames.csv`, `output/global_variables.csv`, ... (the `editing-firmware-csvs` skill has the rules for each file)
+3. **Build** - `./ghidra/analyze.sh build` (or `verify`), then check the new names in `output/J90350.00.ghidra.cpp`
+4. **Regenerate the headers** after renames (`../CLAUDE.md`)
 
 ## Memory Map (MC68336)
 
-See [docs/memory_map.md](docs/memory_map.md) for full details including peripheral registers.
+See [docs/memory_map.md](docs/memory_map.md) for full details including peripheral registers. The 25 A/D channels' configuration and runtime records, with their Calterm names, are in [docs/analog_sensor_channels.md](docs/analog_sensor_channels.md).
 
 | Region | Address Range | Size | Permissions | Status |
 |--------|---------------|------|-------------|--------|
 | ROM | 0x000000-0x03FFFF | 256KB | rx | Extracted |
 | RAM | 0x800000-0x8091C1 | 37KB | rwx | Extracted |
-| EXT_RAM | 0x8091C2-0x80FF7F | 28KB | rwx | Extracted |
-| EEPROM | 0x1000000-0x1000FFF | 4KB | rw- | Extracted |
+| EXT_RAM | 0x8091C2-0x80FFFF | 28KB | rwx | Extracted, 0x80 bytes short (below) |
+| EEPROM | 0x1000000-0x1001489 | 0x148A (5 KB) | rw- | 0x1000000-0x1000FFF extracted |
 | MC68336 Peripherals | 0xFFD000-0xFFFFFF | 12KB | - | Hardware registers (not extractable) |
+
+**The extended RAM dump is 0x80 bytes short.** `J90350.00.extended_ram.bin` (0x6DBE bytes) was read in 128-byte chunks from 0x8091C2 (kuminz-cli asks for 0x8091C2-0x80FFFF, 0x6E3E bytes), and the dump tool skipped one failed chunk - the first (0x8091C2) or the second (0x809242) - without padding. So from 0x8092C2 on, each value sits at file offset address - 0x809242 (address - 0x80 from the region start): of 100 init-time constant stores, 40 match the dump only at address - 0x80 and none only at the address (PR #53 round 87). 0x8091C2-0x8092C1 is uncertain. clip-core's `ECUReader` pads a failed chunk with 0xFF and lists it in `<dump>.gaps.txt` since PR #53 round 88, so new dumps stay aligned. `SetupMemoryMap.java` loads the file's bytes from offset 0x80 at 0x8092C2 and leaves 0x8091C2-0x8092C1 0 (`ScriptUtils.imageFromDumpWithGaps`, PR #53 round 88; it used to load the file at 0x8091C2, 0x80 too high).
 
 **Total extracted: 325KB** - 100% of data memory regions.
 

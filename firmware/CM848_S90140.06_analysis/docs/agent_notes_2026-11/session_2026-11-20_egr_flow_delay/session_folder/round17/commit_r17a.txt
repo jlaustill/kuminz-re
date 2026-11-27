@@ -1,0 +1,33 @@
+cm848: round 17 stage A - the engine retarder request chain from e2m 1070 / 1071 / 1192 / 117D (label-only)
+
+The ECU's parameter ID table places the records; each was checked against the code of
+cm848_processEngineRetarderRequest's seven steps. The e2m's vocabulary fits the code exactly:
+- The override command (was engine_retarder_tsc1_request_*) is the TSC1 request: source 1 (J1939
+  override) or 6 (no override).
+- The non-override command (was engine_retarder_limit_*) is the lowest of the cruise permission (2), the
+  operator switch selection (3) and the TSC1 limit (4).
+- The allowed state (was engine_retarder_enable_state; cm848_updateEngineRetarderAllowedState) picks
+  between them: 0 none, 1 override only (the driver conditions hold the rest off), 2 override or
+  non-override.
+- The command level / source (were the arbitrated request / request source code;
+  cm848_selectEngineRetarderCommand) and engine_retarder_j1939_control_device (was
+  _request_source_index; its comment called the TSC1 devices primary / secondary / tertiary).
+
+Also: engine_retarder_engage_inhibit_flag, engine_retarder_immediate_brake_flag (the 0x40a35c dword),
+service_brake_recently_applied_flag, the two service tool test points (never written in this build), the
+VG brake flag, engine_retarder_output_level_percent (117D +4A), engine_retarder_brake_type (bit 0 exhaust
+/ bit 1 VG), and the 1071 limits named for idle / power take-off (were governor_mode_11 / _4). The
+algorithm_enable_flags_18_t bit 14 guess is proven: engine_retarder_service_brake_activate_enable (was
+reserved_bit_14). The chain's seven other plates are rewritten in these words; their old plates called the
+extended idle condition 'the road speed limit'.
+
+'Driver' stays the human (the pedal / clutch / brake conditions); the e2m's hardware-driver words take
+'output' names. e2m 1070 +10 / +20 (a 0-255 switch sum, a 1/8192 fraction) do not explain the code's 0 /
+100 values, so those two words keep their code-derived names.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (30 names, 0
+underscore variants). Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four
+test suites pass; the thunk counts are unchanged; the one width mismatch is the 0x40a35c dword, split in
+stage C.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

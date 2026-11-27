@@ -1,0 +1,18 @@
+cm550: round 85 closing - task 046, the session archive, the PR body
+
+- work/tasks/046 "Done, round 85" records the two stages and their proofs:
+  - stage A (5fd9219c): the prefix rule audit workflow, 23 renames under commit 16143a5c's watchdog-only rule, 9
+    spurious function records deleted;
+  - stage B (808a338b): the Huffman tree node struct applied, FLASH_ERASE_RESULT.
+- It also records the round 86 research. CM550 passes byte / word arguments in 2-byte stack slots, while Ghidra's
+  68000.cspec right-justifies stack parameters in 4-byte slots, so 89 functions are affected.
+- New leads:
+  - four CM550 / CM848 twins for a two-firmware rename;
+  - main_loop is the executive's periodic interrupt handler;
+  - three functions still to name;
+  - four globals / functions with the wrong vocabulary.
+- The PR body: the Round 85 bullets, "Beyond CM848" for rounds 72-85, and the test plan lines.
+- work/todo.md, the session README, session_folder/round85/ (with stack_argument_survey/: the survey's CPU32 decoder,
+  call-site walker and text outputs), the large-files tarball (the two verify logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

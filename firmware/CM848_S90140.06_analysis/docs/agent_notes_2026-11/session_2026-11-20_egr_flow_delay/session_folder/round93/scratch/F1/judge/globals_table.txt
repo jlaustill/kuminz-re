@@ -1,0 +1,567 @@
+== 0x0080dec8 proposed torque_derate_fuel_quantity : word
+   frozen row: 'fuel_limit_shutdown_minimum' type='word' comment='Running minimum of the fuel limits (each limiter stores its value here when it is smaller). Was hidden behind a duplicate trailing base_ptr field of j1708_multipacket_msg_t'
+   CM848 same name: 0x40afac type=word comment='The lowest fuel quantity limit of the derate sources (fuel demand scale, 5888 = 400 mm3 = none), reset every pass of cm848_processProtectionLimits and lowered by the limiters listed in the note; e2m Torque_Derate_Fueling'
+== 0x0080dece proposed fuel_demand_minimum_tracked : word
+   frozen row: 'smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80decc fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100 undefined
+   CM848 same name: 0x40afb2 type=word comment="e2m: e2m 105D +6 Torque_Derate_Fueling_2 '[FLLMAHFL] Smallest derate fueling value among group 2 (AH) derate algorithms' (the running minimum of the air handling limiters: air fuel control derate 16, net torque limit 59)"
+== 0x0080decc proposed fuel_system_derate_fuel_limit : word
+   frozen row: 'fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100' type='undefined' comment=''
+   CM848: no row with this name
+== 0x0080a28c proposed acceleration_noise_control_fuel_limit : word
+   frozen row: 'anc_fuel_limit_value' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a254 vp44_fuel_temperature_value undefined
+   ?? earlier typed row of unknown size: 0x80a262 temp_signal_used_in_postheat_0_imt_1_battery_temp_for_chrysler_0_1 undefined
+   ?? earlier typed row of unknown size: 0x80a26a pre_processed_imt_for_epf_due_to_exhaust_brake_on_50_to_293 undefined
+   ?? earlier typed row of unknown size: 0x80a26c timer_used_to_disable_imt_epf_when_exhaust_brake_on_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80a26e output_of_the_misfire_timing_limit_table_60_to_60 undefined
+   ?? earlier typed row of unknown size: 0x80a274 the_percent_load_override_as_the_output_signal_for_the_transmis_0_255 undefined
+   ?? earlier typed row of unknown size: 0x80a27a DRTXCSKD undefined
+   ?? earlier typed row of unknown size: 0x80a27c DRTXCSKU undefined
+   ?? earlier typed row of unknown size: 0x80a27e command_to_a_c_compressor_clutch_solenoid_on_off undefined
+   ?? earlier typed row of unknown size: 0x80a280 rapid_vehicle_accel_flag_on_off undefined
+   ?? earlier typed row of unknown size: 0x80a282 ACSWERCU undefined
+   ?? earlier typed row of unknown size: 0x80a284 duty_cycle_requested_for_pwm_cool_temp_gauge_driver_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a286 duty_cycle_requested_for_pwm_oil_pressure_gauge_driver_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a288 filtered_vehicle_acceleration_1200_1200 undefined
+   CM848: no row with this name
+== 0x0080a8f6 proposed air_fuel_control_fuel_limit : word
+   frozen row: 'afc_derate_fuel_adjustment' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a8f0 lsg_governor_fuel_demand undefined
+   CM848 same name: 0x40a158 type=word comment="The air fuel control (boost) fuel limit of cm848_calculateAirFuelControlFuelLimit (was fuel_demand_load_based) | e2m: e2m 104C +0 AFC_Fueling '[AFFL] fueling limit as calculated by AFC Fueling algorithm'"
+== 0x0080a922 proposed altitude_derate_fuel_limit : word
+   frozen row: 'altitude_derate_fuel_limit_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a8f0 lsg_governor_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80a8f6 afc_derate_fuel_adjustment undefined
+   ?? earlier typed row of unknown size: 0x80a8f8 alpha_blend_factor undefined
+   ?? earlier typed row of unknown size: 0x80a906 semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true undefined
+   ?? earlier typed row of unknown size: 0x80a908 semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true undefined
+   ?? earlier typed row of unknown size: 0x80a90e lsg_exit_timer_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80a910 trace_the_time_since_fueling_state_has_left_lsg_state_0_900 undefined
+   ?? earlier typed row of unknown size: 0x80a912 afc_exit_timer_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80a914 afc_exit_countdown_timer undefined
+   ?? earlier typed row of unknown size: 0x80a91a alpha_fuel_rate_filter_state ema_filter_state_t
+   CM848 same name: 0x40a18c type=word comment='The altitude derate fuel limit of cm848_calculateAltitudeDerateFuelLimit (fuel_demand_maximum = no limit) (was fuel_correction_upper_limit)'
+== 0x0080d284 proposed fault_derate_fuel_limit : word
+   frozen row: 'engine_protection_fuel_limit' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d244 pointer_to_fuel_temperature_fuel_fault_log_data_0_2_32 undefined
+   ?? earlier typed row of unknown size: 0x80d248 pointer_to_fuel_temperature_rpm_fault_log_data_0_2_32 undefined
+   ?? earlier typed row of unknown size: 0x80d250 mask_for_input_of_ambient_air_pressure_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80d252 amount_of_time_since_ambient_air_pressure_low_failure_was_dete_0_65535_d252 undefined
+   ?? earlier typed row of unknown size: 0x80d254 amount_of_time_since_ambient_air_pressure_low_failure_was_dete_0_65535_d254 undefined
+   ?? earlier typed row of unknown size: 0x80d256 engine_sync_fuel_pressure_min_threshold_flag_4 undefined
+   ?? earlier typed row of unknown size: 0x80d25a points_to_ambient_air_pressure_fuel_maximum_threshold_0_2_32 undefined
+   ?? earlier typed row of unknown size: 0x80d25e pointer_to_ambient_air_pressure_rpm_limit_threshold_0_2_32 undefined
+   ?? earlier typed row of unknown size: 0x80d262 EPAAEREN undefined
+   ?? earlier typed row of unknown size: 0x80d264 true_ambient_air_pressure_precrank_error_0_1 undefined
+   ?? earlier typed row of unknown size: 0x80d266 amount_of_time_over_ambient_air_pressure_fuel_shutdown_thresho_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80d268 amount_of_time_over_ambient_air_pressure_rpm_shutdown_threshol_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80d26a delay_before_warning_about_shutdown_from_ambient_air_pressure_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80d26c delay_before_warning_abuot_shutdown_from_ambient_air_pressure_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80d26e time_since_rpm_crossed_ambient_air_pressure_start_mon_rpm_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80d270 errors_allowed_timer_running_flag_for_ambient_air_pressure_0_1 undefined
+   ?? earlier typed row of unknown size: 0x80d272 pointer_to_ambient_air_pressure_fuel_fault_log_data_0_2_32 undefined
+   ?? earlier typed row of unknown size: 0x80d276 pointer_to_ambient_air_pressure_rpm_fault_log_data_0_2_32 undefined
+   ?? earlier typed row of unknown size: 0x80d27a epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false undefined
+   ?? earlier typed row of unknown size: 0x80d27c epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false undefined
+   CM848 same name: 0x40a77c type=word comment='Written by cm848_calculateFaultDerateFuelLimit (limit between the speed curve and throttle_100_fueling) and reset to fuel_demand_maximum (5888 = none) by cm848_resetFaultDerateFuelLimit and cm848_runFaultDerateScheduler;'
+== 0x0080d368 proposed throttle_100_fueling : word
+   frozen row: 'fueling_value_at_100_throttle_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d328 how_often_samples_are_taken_for_imt_1_3000_d328 undefined
+   ?? earlier typed row of unknown size: 0x80d32c a2d_input_related_to_ac_pressure_255_255 undefined
+   ?? earlier typed row of unknown size: 0x80d32e current_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80d332 desired_engine_fueling_after_derate_without_air_handl_derate_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d338 torque_demand_fuel_limit undefined
+   ?? earlier typed row of unknown size: 0x80d33a indicates_origin_of_tqdqta_value_0_10 undefined
+   ?? earlier typed row of unknown size: 0x80d340 timing_alpha_blend_factor undefined
+   ?? earlier typed row of unknown size: 0x80d342 maximum_user_fueling_allowed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d344 timing_4DTBTA undefined
+   ?? earlier typed row of unknown size: 0x80d348 intermediate_timing_state_used_before_final_timing_selction_0_10 undefined
+   ?? earlier typed row of unknown size: 0x80d34c timing_advance_selection_state undefined
+   ?? earlier typed row of unknown size: 0x80d34e fso_state_desired_from_fuel_system_specific_algorithms_1_off_on_off undefined
+   ?? earlier typed row of unknown size: 0x80d350 fss_adjustment_to_compensate_for_delta_between_injected_and_co_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d352 quantity_of_fuel_to_be_injected_during_next_injection_cycle_0_100 undefined
+   CM848 same name: 0x40a897 type=word comment="e2m 105A +0 Throttle_100_Fueling [FSMXTHFL] 'Fueling value at 100% throttle.' (address from the ECU's parameter ID table) (MM3S, 0.0679 mm3 per count; 2390 = 162.4 mm3 here; the 105A block starts at the odd address 0x40a"
+== 0x0080dc26 proposed power_take_off_governor_active_flag : word
+   frozen row: 'closed_loop_governor_active_flag' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80dc00 closed_loop_fuel_demand_output undefined
+   ?? earlier typed row of unknown size: 0x80dc02 closed_loop_filtered_speed_error undefined
+   ?? earlier typed row of unknown size: 0x80dc04 closed_loop_pid_proportional_term undefined
+   ?? earlier typed row of unknown size: 0x80dc08 pid_derivative_term undefined
+   ?? earlier typed row of unknown size: 0x80dc10 fuel_above_no_load_feedforward undefined
+   ?? earlier typed row of unknown size: 0x80dc14 pid_combined_correction_term undefined
+   ?? earlier typed row of unknown size: 0x80dc18 closed_loop_rpm_snapshot undefined
+   CM848 same name: 0x40af4e type=word comment='1 while the power take-off governor runs (POWER_TAKE_OFF_GOVERNOR_STATE 1 / 3; 0 in 2); OBD-II PID 0x1E sends it with switch 3. RAM dump: 0 (was governor_fuel_active_flag)'
+== 0x0080d338 proposed torque_derate_torque_limit : word
+   frozen row: 'torque_demand_fuel_limit' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d2fa ac_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fc coolant_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fe desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d302 imt_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d304 minimum_time_fan_will_be_on_following_100_imt_request_0_60 undefined
+   ?? earlier typed row of unknown size: 0x80d306 percent_prior_to_hysteresis_0_100_d306 undefined
+   ?? earlier typed row of unknown size: 0x80d310 how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x80d312 FC13DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d314 FC13DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d316 FC23DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d318 FC23DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d320 how_often_samples_are_taken_for_ct_1_3000_d320 undefined
+   ?? earlier typed row of unknown size: 0x80d328 how_often_samples_are_taken_for_imt_1_3000_d328 undefined
+   ?? earlier typed row of unknown size: 0x80d32c a2d_input_related_to_ac_pressure_255_255 undefined
+   ?? earlier typed row of unknown size: 0x80d32e current_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80d332 desired_engine_fueling_after_derate_without_air_handl_derate_0_100 undefined
+   CM848 same name: 0x40a2d8 type=word comment="e2m 1051 +A Torque_Derate_Torque [TQDQTQ] 'min torque limit in foot-pounds' (address from the ECU's parameter ID table): the power take-off maximum torque is one source of it, not the only meaning. 0xffff (no limit) or p"
+== 0x0080d33a proposed torque_derate_torque_limit_state : FUELING_STATE
+   frozen row: 'indicates_origin_of_tqdqta_value_0_10' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d2fa ac_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fc coolant_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fe desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d302 imt_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d304 minimum_time_fan_will_be_on_following_100_imt_request_0_60 undefined
+   ?? earlier typed row of unknown size: 0x80d306 percent_prior_to_hysteresis_0_100_d306 undefined
+   ?? earlier typed row of unknown size: 0x80d310 how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x80d312 FC13DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d314 FC13DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d316 FC23DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d318 FC23DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d320 how_often_samples_are_taken_for_ct_1_3000_d320 undefined
+   ?? earlier typed row of unknown size: 0x80d328 how_often_samples_are_taken_for_imt_1_3000_d328 undefined
+   ?? earlier typed row of unknown size: 0x80d32c a2d_input_related_to_ac_pressure_255_255 undefined
+   ?? earlier typed row of unknown size: 0x80d32e current_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80d332 desired_engine_fueling_after_derate_without_air_handl_derate_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d338 torque_demand_fuel_limit undefined
+   CM848 same name: 0x40a2da type=FUELING_STATE comment="e2m 1051 +C Torque_Derate_Torque_State [TQDQTQST] 'indicates origin of TQDQTA value' (address from the ECU's parameter ID table). The code cm848_calculateProtectionRateLimited gives its limit in torque_derate_fuel_source"
+== 0x0080400e proposed power_take_off_maximum_torque_cal : word
+   frozen row: NONE
+   CM848 same name: 0x3fd89e type=word comment='EEPROM 0x41c: the power take-off maximum torque (10000 = none) that cm848_applyPowerTakeOffTorqueLimit applies while the governor is active (was governor_fuel_limit_override)'
+== 0x0080da50 proposed datalink_engine_control_mode : word
+   frozen row: 'datalink_speed_control_mode' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80da10 status_from_fault_handler_indicating_obdii_def_of_monit_not_comp_comp undefined
+   ?? earlier typed row of unknown size: 0x80da1a jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da1c jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da1e jcomm_ind_torque_at_idle_available_torque_that_engine_can_prov_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da20 jcomm_ind_torque_at_point_2_available_torque_that_engine_can_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da22 jcomm_ind_torque_at_point_3_available_torque_that_engine_can_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da24 jcomm_ind_torque_at_point_4_available_torque_that_engine_can_p_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da26 jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da2a jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875 undefined
+   ?? earlier typed row of unknown size: 0x80da2c jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 undefined
+   ?? earlier typed row of unknown size: 0x80da2e jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e undefined
+   ?? earlier typed row of unknown size: 0x80da30 jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30 undefined
+   ?? earlier typed row of unknown size: 0x80da32 determined_peak_engine_fueling_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da36 four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da38 torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da3a torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da3c torque_curve_speed_at_breakpoint_3_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da3e torque_curve_speed_at_breakpoint_4_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da40 torque_curve_speed_at_breakpoint_5_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da42 torque_curve_fueling_at_idle_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da44 torque_curve_fueling_at_point_2_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da46 torque_curve_fueling_at_point_3_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da48 torque_curve_fueling_at_point_4_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da4a torque_curve_fueling_at_point_5_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da4c byte_indicating_engine_commands_as_received_over_datalink_0_255 undefined
+   ?? earlier typed row of unknown size: 0x80da4e source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e undefined
+   CM848: no row with this name
+== 0x0080da62 proposed datalink_torque_limit_fueling : word
+   frozen row: 'jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80da22 jcomm_ind_torque_at_point_3_available_torque_that_engine_can_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da24 jcomm_ind_torque_at_point_4_available_torque_that_engine_can_p_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da26 jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125 undefined
+   ?? earlier typed row of unknown size: 0x80da2a jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875 undefined
+   ?? earlier typed row of unknown size: 0x80da2c jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 undefined
+   ?? earlier typed row of unknown size: 0x80da2e jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e undefined
+   ?? earlier typed row of unknown size: 0x80da30 jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30 undefined
+   ?? earlier typed row of unknown size: 0x80da32 determined_peak_engine_fueling_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da36 four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da38 torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da3a torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da3c torque_curve_speed_at_breakpoint_3_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da3e torque_curve_speed_at_breakpoint_4_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da40 torque_curve_speed_at_breakpoint_5_0_5000 undefined
+   ?? earlier typed row of unknown size: 0x80da42 torque_curve_fueling_at_idle_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da44 torque_curve_fueling_at_point_2_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da46 torque_curve_fueling_at_point_3_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da48 torque_curve_fueling_at_point_4_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da4a torque_curve_fueling_at_point_5_speed_breakpoint_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80da4c byte_indicating_engine_commands_as_received_over_datalink_0_255 undefined
+   ?? earlier typed row of unknown size: 0x80da4e source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e undefined
+   ?? earlier typed row of unknown size: 0x80da50 datalink_speed_control_mode undefined
+   ?? earlier typed row of unknown size: 0x80da56 driveline_disengaged_flag undefined
+   ?? earlier typed row of unknown size: 0x80da58 engine_brake_override_flag undefined
+   ?? earlier typed row of unknown size: 0x80da5a datalink_commanded_speed_limit undefined
+   ?? earlier typed row of unknown size: 0x80da5c datalink_torque_demand_percent undefined
+   ?? earlier typed row of unknown size: 0x80da5e datalink_commanded_speed_reference undefined
+   ?? earlier typed row of unknown size: 0x80da60 jcomm_speed_control_status_1_speed_control_mode_0_n_true_false undefined
+   CM848: no row with this name
+== 0x0080ccc6 proposed engine_warmup_protection_fuel_limit : word
+   frozen row: 'high_rpm_fuel_limit_value' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80ccb0 circular_buffer_last_address_offset undefined
+   ?? earlier typed row of unknown size: 0x80ccb2 high_rpm_fuel_limit_active undefined
+   ?? earlier typed row of unknown size: 0x80ccb4 high_rpm_fuel_limit_idle undefined
+   ?? earlier typed row of unknown size: 0x80ccc4 timer_counting_against_oil_pressure_threshold_time_0_60 undefined
+   CM848: no row with this name
+== 0x0080ccb2 proposed engine_warmup_protection_fuel_limiting_flag : word
+   frozen row: 'high_rpm_fuel_limit_active' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80cc72 high_rpm_protection_warning_flag undefined
+   ?? earlier typed row of unknown size: 0x80ccb0 circular_buffer_last_address_offset undefined
+   CM848: no row with this name
+== 0x0080ccb4 proposed engine_warmup_protection_completed_flag : word
+   frozen row: 'high_rpm_fuel_limit_idle' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80ccb0 circular_buffer_last_address_offset undefined
+   ?? earlier typed row of unknown size: 0x80ccb2 high_rpm_fuel_limit_active undefined
+   CM848: no row with this name
+== 0x00803f2a proposed torque_derate_override_fuel_quantity_cal : word
+   frozen row: NONE
+   CM848 same name: 0x3fd802 type=word comment="e2m 125E +0 Torque_Derate_Override '[FSTQDQUO] Engineering torque derate fueling override' (address from the ECU's parameter ID table: EEPROM 0x380) (MM3S, 0.0679 mm3 per count; 5888 = 400 mm3, the maximum, in the dump):"
+== 0x00803f2c proposed user_override_fueling_cal : word
+   frozen row: NONE
+   CM848 same name: 0x3fd804 type=word comment="e2m 125E +2 User_Override_Fueling '[FSUOFL] Engineering fueling override' (address from the ECU's parameter ID table: EEPROM 0x382) (MM3S, 0.0679 mm3 per count; 0 in the dump): the engineering fuel override. While bit 0x"
+== 0x0080a8f0 proposed adjusted_user_fueling : word
+   frozen row: 'lsg_governor_fuel_demand' type='undefined' comment=''
+   CM848 same name: 0x40a152 type=word comment="e2m 1045 +0 Adjusted_User_Fueling [FSGVFL] 'Fueling as limited by limiting governors (LSG, HSG)' (address from the ECU's parameter ID table). (was governor_fuel_demand_value)"
+== 0x0080d332 proposed requested_fueling : word
+   frozen row: 'desired_engine_fueling_after_derate_without_air_handl_derate_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d2f4 imt_desired_percent_of_max_fan_1_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2f6 percent_prior_to_hysteresis_0_100_d2f6 undefined
+   ?? earlier typed row of unknown size: 0x80d2fa ac_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fc coolant_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fe desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d302 imt_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d304 minimum_time_fan_will_be_on_following_100_imt_request_0_60 undefined
+   ?? earlier typed row of unknown size: 0x80d306 percent_prior_to_hysteresis_0_100_d306 undefined
+   ?? earlier typed row of unknown size: 0x80d310 how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x80d312 FC13DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d314 FC13DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d316 FC23DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d318 FC23DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d320 how_often_samples_are_taken_for_ct_1_3000_d320 undefined
+   ?? earlier typed row of unknown size: 0x80d328 how_often_samples_are_taken_for_imt_1_3000_d328 undefined
+   ?? earlier typed row of unknown size: 0x80d32c a2d_input_related_to_ac_pressure_255_255 undefined
+   ?? earlier typed row of unknown size: 0x80d32e current_fuel_demand undefined
+   CM848 same name: 0x40a2d2 type=word comment="e2m 1051 +4 Requested_Fueling [FSLMDSFL] 'Desired engine fueling after derate without Air Handl. derate' (address from the ECU's parameter ID table); cm848_arbitrateRequestedFueling sets it to adjusted_user_fueling or to"
+== 0x0080d32e proposed final_fueling : word
+   frozen row: 'current_fuel_demand' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d2ee coolant_desired_percent_of_max_fan_1_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2f0 desired_percent_of_max_fan_1_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2f4 imt_desired_percent_of_max_fan_1_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2f6 percent_prior_to_hysteresis_0_100_d2f6 undefined
+   ?? earlier typed row of unknown size: 0x80d2fa ac_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fc coolant_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fe desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d302 imt_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d304 minimum_time_fan_will_be_on_following_100_imt_request_0_60 undefined
+   ?? earlier typed row of unknown size: 0x80d306 percent_prior_to_hysteresis_0_100_d306 undefined
+   ?? earlier typed row of unknown size: 0x80d310 how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x80d312 FC13DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d314 FC13DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d316 FC23DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d318 FC23DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d320 how_often_samples_are_taken_for_ct_1_3000_d320 undefined
+   ?? earlier typed row of unknown size: 0x80d328 how_often_samples_are_taken_for_imt_1_3000_d328 undefined
+   ?? earlier typed row of unknown size: 0x80d32c a2d_input_related_to_ac_pressure_255_255 undefined
+   CM848 same name: 0x40a2ce type=word comment="e2m 1051 +0 Final_Fueling [FSFNFL] 'Final fueling value' (address from the ECU's parameter ID table); set by cm848_selectFinalFueling and copied into each fault freeze frame (fault_entry_t.final_fueling). (was fuel_deman"
+== 0x0080800a proposed fuel_demand_minimum : word
+   frozen row: 'minimum_fueling_value_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x807fd8 default_how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x807fe2 how_often_samples_are_taken_for_ct_1_3000_7fe2 undefined
+   ?? earlier typed row of unknown size: 0x807fec how_often_samples_are_taken_for_imt_1_3000_7fec undefined
+   ?? earlier typed row of unknown size: 0x808004 peak_fueling_calibration_value undefined
+   CM848 same name: 0x5c30c type=word comment="e2m 1052 +6 Minimum_Fueling '[FSMNFL] Minimum fueling value allowed for the system' (mm3, 0.0679 per count; flash constant, 0 here). Lower bound of the final fueling clamp (cm848_selectFinalFueling: it .. fuel_demand_max"
+== 0x00808004 proposed fuel_demand_maximum : word
+   frozen row: 'peak_fueling_calibration_value' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x807fd8 default_how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x807fe2 how_often_samples_are_taken_for_ct_1_3000_7fe2 undefined
+   ?? earlier typed row of unknown size: 0x807fec how_often_samples_are_taken_for_imt_1_3000_7fec undefined
+   CM848 same name: 0x5c306 type=word comment="ROM constant 5888 (0x1700) = the full scale of the fuel demand words (400 mm3 per stroke): the 'no limit' initial value of the fuel limits (fault_derate_fuel_limit = it in cm848_runFaultDerateScheduler and the reset; 8 r"
+== 0x00808008 proposed engine_overspeed_fueling : word
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x807fd8 default_how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x807fe2 how_often_samples_are_taken_for_ct_1_3000_7fe2 undefined
+   ?? earlier typed row of unknown size: 0x807fec how_often_samples_are_taken_for_imt_1_3000_7fec undefined
+   ?? earlier typed row of unknown size: 0x808004 peak_fueling_calibration_value undefined
+   CM848 same name: 0x5c30a type=word comment="e2m 1052 +4 [FSOSFL] Overspeed_Fueling (MM3S): 'Fueling value commanded if the engine overspeed limit is exceeded'. cm848_selectFinalFueling uses it as the fuel target while engine_state is ENGINE_STATE_OVERSPEED, clampe"
+== 0x00808006 proposed engine_brake_fueling : word
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x807fd8 default_how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x807fe2 how_often_samples_are_taken_for_ct_1_3000_7fe2 undefined
+   ?? earlier typed row of unknown size: 0x807fec how_often_samples_are_taken_for_imt_1_3000_7fec undefined
+   ?? earlier typed row of unknown size: 0x808004 peak_fueling_calibration_value undefined
+   CM848 same name: 0x5c308 type=word comment="e2m 1052 +2 [EBFL] E_Brake_Fueling (MM3S): 'Calibratible constant fueling value to be output when brake solenoid is on'. cm848_selectFinalFueling uses it as the fuel target while engine_state is ENGINE_STATE_ENGINE_BRAKE"
+== 0x0080d098 proposed crank_fuel : word
+   frozen row: 'engine_mode_timing_init_flag' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80d058 dzg_pressure_threshold_high undefined
+   ?? earlier typed row of unknown size: 0x80d05a eps_main_lost_duration_0_20 undefined
+   ?? earlier typed row of unknown size: 0x80d05e eps_external_lost_duration_0_20 undefined
+   ?? earlier typed row of unknown size: 0x80d060 governor_pid_proportional_term_d060 undefined
+   ?? earlier typed row of unknown size: 0x80d062 governor_pid_derivative_term_d062 undefined
+   ?? earlier typed row of unknown size: 0x80d064 eps_raw_period_backup_raw_time_between_teeth_not_norm_d_to_1_200000 undefined
+   ?? earlier typed row of unknown size: 0x80d068 cam_sync_backup_lost_duration_duration_in_no_sync_state_0_20 undefined
+   ?? earlier typed row of unknown size: 0x80d06a crank_sync_backup_lost_duration_amount_of_time_crank_sync_lost_1_20 undefined
+   ?? earlier typed row of unknown size: 0x80d06c governor_rpm_target_adjusted undefined
+   ?? earlier typed row of unknown size: 0x80d06e pulse_period_timeout_backup undefined
+   ?? earlier typed row of unknown size: 0x80d070 pulse_period_sum_primary undefined
+   ?? earlier typed row of unknown size: 0x80d076 eps_acceleration_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80d078 eps_control_mode_param_1 undefined
+   ?? earlier typed row of unknown size: 0x80d07a eps_control_mode_param_2 undefined
+   ?? earlier typed row of unknown size: 0x80d07c eps_control_mode_param_3 undefined
+   ?? earlier typed row of unknown size: 0x80d07e eps_acceleration_monitor_value undefined
+   ?? earlier typed row of unknown size: 0x80d080 eps_override_output_state undefined
+   ?? earlier typed row of unknown size: 0x80d082 eps_override_checker_state undefined
+   ?? earlier typed row of unknown size: 0x80d084 eps_control_mode_init_value_2 undefined
+   ?? earlier typed row of unknown size: 0x80d086 eps_control_mode_init_value_1 undefined
+   ?? earlier typed row of unknown size: 0x80d088 eps_control_mode_init_state undefined
+   ?? earlier typed row of unknown size: 0x80d08a eps_acceleration_monitor_state undefined
+   ?? earlier typed row of unknown size: 0x80d08c speed_measurement_function_pointer undefined
+   ?? earlier typed row of unknown size: 0x80d08e eps_control_mode_selector_state_d08e undefined
+   ?? earlier typed row of unknown size: 0x80d092 governor_rpm_error_value undefined
+   ?? earlier typed row of unknown size: 0x80d094 engine_mode_timing_adjuster_state undefined
+   ?? earlier typed row of unknown size: 0x80d096 fuel_timing_offset_value undefined
+   CM848 same name: 0x40a7ac type=word comment='e2m 105E +14 Crank_Fuel: the CRANKING fuel of cm848_selectFinalFueling (FUELING_STATE_CRANKING) - a fuel quantity, not an rpm (was governor_cold_start_rpm_output)'
+== 0x00800698 proposed final_fueling_selected : word
+   frozen row: 'fuel_limit_after_derate_selection' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x800658 sync_miss_counter undefined
+   ?? earlier typed row of unknown size: 0x800670 engine_deceleration_rate_filter_state ema_filter_state_t
+   ?? earlier typed row of unknown size: 0x800688 scheduler_phase_elapsed_ticks undefined
+   ?? earlier typed row of unknown size: 0x80068c scheduler_phase_index undefined
+   ?? earlier typed row of unknown size: 0x800690 scheduler_timing_record_ptr undefined
+   CM848: no row with this name
+== 0x0080a908 proposed alpha_low_speed_governor_state_detected_flag : word
+   frozen row: 'semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a8f0 lsg_governor_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80a8f6 afc_derate_fuel_adjustment undefined
+   ?? earlier typed row of unknown size: 0x80a8f8 alpha_blend_factor undefined
+   ?? earlier typed row of unknown size: 0x80a906 semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true undefined
+   CM848 same name: 0x40a178 type=word comment="e2m 104A +10 Fueling_LSG_State_Detected '[FSLSSTFG] semaphore used to latch LSG events that occur between alpha executions' (UNITLESS): set to 1 by cm848_selectFinalFueling when final_fueling_state enters LOW_SPEED_GOVER"
+== 0x0080a926 proposed master_slave_override_enable_flag : word
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x80a8f0 lsg_governor_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80a8f6 afc_derate_fuel_adjustment undefined
+   ?? earlier typed row of unknown size: 0x80a8f8 alpha_blend_factor undefined
+   ?? earlier typed row of unknown size: 0x80a906 semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true undefined
+   ?? earlier typed row of unknown size: 0x80a908 semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true undefined
+   ?? earlier typed row of unknown size: 0x80a90e lsg_exit_timer_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80a910 trace_the_time_since_fueling_state_has_left_lsg_state_0_900 undefined
+   ?? earlier typed row of unknown size: 0x80a912 afc_exit_timer_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80a914 afc_exit_countdown_timer undefined
+   ?? earlier typed row of unknown size: 0x80a91a alpha_fuel_rate_filter_state ema_filter_state_t
+   ?? earlier typed row of unknown size: 0x80a922 altitude_derate_fuel_limit_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a924 override_fueling_to_slave_fuel_selection_0_100 undefined
+   CM848 same name: 0x40a87d type=word comment="e2m 11D4 +2 MS_Override_Enable '[MSODEN] Enable overriding slave Final_Fueling, Final_Timing'. Master / slave override enable: set together with master_slave_control_flag = 0 it makes cm848_selectFinalFueling output the "
+== 0x0080d336 proposed master_slave_control_flag : word
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x80d2f6 percent_prior_to_hysteresis_0_100_d2f6 undefined
+   ?? earlier typed row of unknown size: 0x80d2fa ac_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fc coolant_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d2fe desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d302 imt_desired_percent_of_max_fan_2_speed_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80d304 minimum_time_fan_will_be_on_following_100_imt_request_0_60 undefined
+   ?? earlier typed row of unknown size: 0x80d306 percent_prior_to_hysteresis_0_100_d306 undefined
+   ?? earlier typed row of unknown size: 0x80d310 how_often_samples_are_taken_for_ac_1_3000 undefined
+   ?? earlier typed row of unknown size: 0x80d312 FC13DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d314 FC13DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d316 FC23DR01 undefined
+   ?? earlier typed row of unknown size: 0x80d318 FC23DR02 undefined
+   ?? earlier typed row of unknown size: 0x80d320 how_often_samples_are_taken_for_ct_1_3000_d320 undefined
+   ?? earlier typed row of unknown size: 0x80d328 how_often_samples_are_taken_for_imt_1_3000_d328 undefined
+   ?? earlier typed row of unknown size: 0x80d32c a2d_input_related_to_ac_pressure_255_255 undefined
+   ?? earlier typed row of unknown size: 0x80d32e current_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80d332 desired_engine_fueling_after_derate_without_air_handl_derate_0_100 undefined
+   CM848 same name: 0x40a2d6 type=word comment="e2m 1051 +8 MS_Control_Flag [MSCNFG] 'Flag in MASTER/SLAVE identifying fueling and timing override in SLAVE' (address from the ECU's parameter ID table); nothing stores it in this build. (was fuel_limit_secondary_flag)"
+== 0x0080a924 proposed master_slave_final_override_fueling : word
+   frozen row: 'override_fueling_to_slave_fuel_selection_0_100' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a8f0 lsg_governor_fuel_demand undefined
+   ?? earlier typed row of unknown size: 0x80a8f6 afc_derate_fuel_adjustment undefined
+   ?? earlier typed row of unknown size: 0x80a8f8 alpha_blend_factor undefined
+   ?? earlier typed row of unknown size: 0x80a906 semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true undefined
+   ?? earlier typed row of unknown size: 0x80a908 semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true undefined
+   ?? earlier typed row of unknown size: 0x80a90e lsg_exit_timer_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80a910 trace_the_time_since_fueling_state_has_left_lsg_state_0_900 undefined
+   ?? earlier typed row of unknown size: 0x80a912 afc_exit_timer_active_flag undefined
+   ?? earlier typed row of unknown size: 0x80a914 afc_exit_countdown_timer undefined
+   ?? earlier typed row of unknown size: 0x80a91a alpha_fuel_rate_filter_state ema_filter_state_t
+   ?? earlier typed row of unknown size: 0x80a922 altitude_derate_fuel_limit_0_100 undefined
+   CM848 same name: 0x40a87b type=word comment="e2m 11D4 +0 MS_Final_Override_Fueling '[MSFNODFL] Override fueling to slave fuel selection' (mm3, 0.0679 per count; 0 in the dump). Master / slave override fueling: cm848_selectFinalFueling outputs it as the final fuelin"
+== 0x0080ccee proposed engine_hour_meter : dword
+   frozen row: 'time_that_the_engine_is_not_in_stop_state_0_2_29' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80ccb0 circular_buffer_last_address_offset undefined
+   ?? earlier typed row of unknown size: 0x80ccb2 high_rpm_fuel_limit_active undefined
+   ?? earlier typed row of unknown size: 0x80ccb4 high_rpm_fuel_limit_idle undefined
+   ?? earlier typed row of unknown size: 0x80ccc4 timer_counting_against_oil_pressure_threshold_time_0_60 undefined
+   ?? earlier typed row of unknown size: 0x80ccc6 high_rpm_fuel_limit_value undefined
+   ?? earlier typed row of unknown size: 0x80ccce EBODCOAG undefined
+   ?? earlier typed row of unknown size: 0x80ccd2 timing_command_prior_to_engine_brake_override_of_the_value_0_120 undefined
+   ?? earlier typed row of unknown size: 0x80cce6 EBNOODCS undefined
+   ?? earlier typed row of unknown size: 0x80cce8 level_of_eng_braking_req_by_non_override_algorithms_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80ccea eps_pulse_number_eps_tooth_counter_0_24 undefined
+   ?? earlier typed row of unknown size: 0x80ccec eps_pulse_number_backup_eps_backup_tooth_counter_0_24 undefined
+   CM848 same name: 0x40a794 type=dword comment='ENGINE-RUNNING time in 0.2 s counts (hours = counts / 18000): +1 every 40-phase main-loop cycle unless engine_state is 1 (engine stopped / cranking) - cm848_advanceHourMeters. Loaded from engine_hour_meter_cal (EEPROM 0x'
+== 0x00808a74 proposed maximum_timing_advance : word
+   frozen row: 'fuel_limit_floor_value' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x808a42 minimum_elapsed_time_before_brake_switch_is_valid_to_avoid_coun_0_10 undefined
+   ?? earlier typed row of unknown size: 0x808a4a minimum_elapsed_time_top_gear_must_be_true_before_top_gear_is_0_300 undefined
+   ?? earlier typed row of unknown size: 0x808a4c minimum_time_gear_down_is_true_before_gear_down_is_declared_va_0_300 undefined
+   ?? earlier typed row of unknown size: 0x808a4e mask_used_by_a_tool_to_id_the_trip_faults_found_in_the_trip_in_0_03f undefined
+   ?? earlier typed row of unknown size: 0x808a50 road_speed_below_which_esp_distance_does_not_accumulate_0_10 undefined
+   ?? earlier typed row of unknown size: 0x808a54 the_minimum_time_a_fault_must_be_present_before_logged_in_trip_in_0_30 undefined
+   ?? earlier typed row of unknown size: 0x808a56 fuel_statistics_mode_selector undefined
+   ?? earlier typed row of unknown size: 0x808a58 if_the_engine_load_exceeds_this_threshold_the_engine_is_deemed_0_127_5 undefined
+   ?? earlier typed row of unknown size: 0x808a5a minimum_time_the_engine_must_idle_before_shutdown_if_high_loa_0_1800 undefined
+   ?? earlier typed row of unknown size: 0x808a5c rpm_histogram_non_idle_threshold_8a5c undefined
+   ?? earlier typed row of unknown size: 0x808a60 minimum_time_the_engine_must_idle_before_shutdown_if_at_high_0_1800 undefined
+   ?? earlier typed row of unknown size: 0x808a62 rpm_histogram_high_speed_threshold undefined
+   ?? earlier typed row of unknown size: 0x808a64 minimum_idle_time_if_the_engine_was_at_high_speed_to_avoid_ho_0_1800 undefined
+   ?? earlier typed row of unknown size: 0x808a66 rpm_histogram_bin_size undefined
+   ?? earlier typed row of unknown size: 0x808a68 rpm_histogram_temp_threshold undefined
+   ?? earlier typed row of unknown size: 0x808a6a fuel_statistics_divisor undefined
+   ?? earlier typed row of unknown size: 0x808a6e calibratible_timing_increment_that_is_added_to_base_timing_any_0_120 undefined
+   ?? earlier typed row of unknown size: 0x808a70 diagnostic_fuel_arbitration_state_9_value undefined
+   ?? earlier typed row of unknown size: 0x808a72 fuel_demand_state_24_override_value undefined
+   CM848: no row with this name
+== 0x008000d6 proposed air_fuel_control_timing_increment_status : word
+   frozen row: 'diagnostic_message_alternation_counter' type='undefined' comment=''
+   !! row inside the width at +1: [(8388823, 'main_loop_iteration_counter', 'undefined', '')]
+   ?? earlier typed row of unknown size: 0x800096 rpm_interpolation_lookup_arg undefined
+   ?? earlier typed row of unknown size: 0x800098 rpm_parameter_pointer undefined
+   ?? earlier typed row of unknown size: 0x80009c target_rpm_rate_limiter_output undefined
+   ?? earlier typed row of unknown size: 0x80009e target_rpm_rate_limiter_reserved_9e undefined
+   ?? earlier typed row of unknown size: 0x8000a2 governor_interpolation_factor undefined
+   ?? earlier typed row of unknown size: 0x8000a4 governor_fuel_output_state undefined
+   ?? earlier typed row of unknown size: 0x8000a6 target_rpm_rate_limiter_previous undefined
+   ?? earlier typed row of unknown size: 0x8000a8 target_rpm_rate_limiter_state undefined
+   ?? earlier typed row of unknown size: 0x8000aa target_rpm_rate_limiter_reserved_aa undefined
+   ?? earlier typed row of unknown size: 0x8000ac diagnostic_table_pointer_4 undefined
+   ?? earlier typed row of unknown size: 0x8000ae diagnostic_table_5_ptr undefined
+   ?? earlier typed row of unknown size: 0x8000b2 diag_mode_0_target_rpm_arg undefined
+   ?? earlier typed row of unknown size: 0x8000b4 diagnostic_table_pointer_3 undefined
+   ?? earlier typed row of unknown size: 0x8000b8 diagnostic_table_pointer_2 undefined
+   ?? earlier typed row of unknown size: 0x8000ba diagnostic_table_6_ptr undefined
+   ?? earlier typed row of unknown size: 0x8000be diag_mode_1_target_rpm_arg undefined
+   ?? earlier typed row of unknown size: 0x8000c0 diagnostic_table_pointer_1 undefined
+   ?? earlier typed row of unknown size: 0x8000c4 tpu_timer_channel_config undefined
+   ?? earlier typed row of unknown size: 0x8000c8 io_can_fault_monitor_state undefined
+   ?? earlier typed row of unknown size: 0x8000c9 can_pin_fault_persistence_counter undefined
+   ?? earlier typed row of unknown size: 0x8000ca io_control_fault_persistence_counter_1 undefined
+   ?? earlier typed row of unknown size: 0x8000cb io_control_fault_persistence_counter_2 undefined
+   ?? earlier typed row of unknown size: 0x8000cc can_fault_monitor_counter undefined
+   ?? earlier typed row of unknown size: 0x8000cd io_control_fault_persistence_counter_4 undefined
+   ?? earlier typed row of unknown size: 0x8000ce io_control_fault_persistence_counter_5 undefined
+   ?? earlier typed row of unknown size: 0x8000cf io_control_fault_persistence_counter_6 undefined
+   ?? earlier typed row of unknown size: 0x8000d0 accelerator_throttle_fault_counter undefined
+   ?? earlier typed row of unknown size: 0x8000d1 io_control_fault_persistence_counter_7 undefined
+   ?? earlier typed row of unknown size: 0x8000d2 accel_throttle_fault_delay_counter undefined
+   ?? earlier typed row of unknown size: 0x8000d4 accelerator_throttle_fault_state undefined
+   CM848: no row with this name
+== 0x0080a28e proposed acceleration_noise_control_timing_limit : word
+   frozen row: 'anc_timing_limit_interpolated_value' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a254 vp44_fuel_temperature_value undefined
+   ?? earlier typed row of unknown size: 0x80a262 temp_signal_used_in_postheat_0_imt_1_battery_temp_for_chrysler_0_1 undefined
+   ?? earlier typed row of unknown size: 0x80a26a pre_processed_imt_for_epf_due_to_exhaust_brake_on_50_to_293 undefined
+   ?? earlier typed row of unknown size: 0x80a26c timer_used_to_disable_imt_epf_when_exhaust_brake_on_0_65535 undefined
+   ?? earlier typed row of unknown size: 0x80a26e output_of_the_misfire_timing_limit_table_60_to_60 undefined
+   ?? earlier typed row of unknown size: 0x80a274 the_percent_load_override_as_the_output_signal_for_the_transmis_0_255 undefined
+   ?? earlier typed row of unknown size: 0x80a27a DRTXCSKD undefined
+   ?? earlier typed row of unknown size: 0x80a27c DRTXCSKU undefined
+   ?? earlier typed row of unknown size: 0x80a27e command_to_a_c_compressor_clutch_solenoid_on_off undefined
+   ?? earlier typed row of unknown size: 0x80a280 rapid_vehicle_accel_flag_on_off undefined
+   ?? earlier typed row of unknown size: 0x80a282 ACSWERCU undefined
+   ?? earlier typed row of unknown size: 0x80a284 duty_cycle_requested_for_pwm_cool_temp_gauge_driver_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a286 duty_cycle_requested_for_pwm_oil_pressure_gauge_driver_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a288 filtered_vehicle_acceleration_1200_1200 undefined
+   ?? earlier typed row of unknown size: 0x80a28c anc_fuel_limit_value undefined
+   CM848: no row with this name
+== 0x008036e2 proposed wet_stack_timing_state : word
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x8036b4 j1939_pgn65279_tx_message j1939_tx_msg_t
+   CM848: no row with this name
+== 0x0080aaa4 proposed timing_advance_before_cylinder_pressure_maintenance : word
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x80aa6c CRERDP undefined
+   ?? earlier typed row of unknown size: 0x80aa6e CRETRS undefined
+   ?? earlier typed row of unknown size: 0x80aa78 gain_used_to_adjust_droop_error_can_change_with_rear_axle_ratio_1_294 undefined
+   ?? earlier typed row of unknown size: 0x80aa80 flag_to_denote_if_valid_resume_speed_is_available_valid_invalid undefined
+   ?? earlier typed row of unknown size: 0x80aa82 validated_percent_throttle_commanded_by_driver_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80aa84 throttle_validation_diagnostic_state undefined
+   ?? earlier typed row of unknown size: 0x80aa86 throttle_above_idle_flag undefined
+   ?? earlier typed row of unknown size: 0x80aa88 throttle_signal_validation_state undefined
+   ?? earlier typed row of unknown size: 0x80aa8a throttle_min_reset_delay_timer undefined
+   ?? earlier typed row of unknown size: 0x80aa8c minimum_sampled_throttle_detected_0_21 undefined
+   ?? earlier typed row of unknown size: 0x80aa8e alternate_throttle_command undefined
+   ?? earlier typed row of unknown size: 0x80aa90 alternate_throttle_priority undefined
+   ?? earlier typed row of unknown size: 0x80aa92 intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80aa94 state_of_selected_alternate_throttle_priority_0_9 undefined
+   ?? earlier typed row of unknown size: 0x80aa98 requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80aa9c expected_intake_temperature_based_on_mass_fuel_rate_calcula_50_to_293 undefined
+   ?? earlier typed row of unknown size: 0x80aa9e increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 undefined
+   ?? earlier typed row of unknown size: 0x80aaa0 calculated_cylinder_pressure_1500_3000 undefined
+   ?? earlier typed row of unknown size: 0x80aaa2 cylinder_pressure_calculation_method undefined
+   CM848: no row with this name
+== 0x00801a82 proposed low_speed_governor_operator_idle_adjustment : word
+   frozen row: 'rpm_averaging_accumulator_1' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x801a42 retarder_mode1_threshold_table undefined
+   ?? earlier typed row of unknown size: 0x801a44 retarder_mode1_data_ptr undefined
+   ?? earlier typed row of unknown size: 0x801a48 retarder_mode1_rpm_input undefined
+   ?? earlier typed row of unknown size: 0x801a4a retarder_mode1_output_ptr undefined
+   ?? earlier typed row of unknown size: 0x801a4e retarder_mode2_threshold_table undefined
+   ?? earlier typed row of unknown size: 0x801a50 retarder_mode2_data_ptr undefined
+   ?? earlier typed row of unknown size: 0x801a54 retarder_mode2_rpm_input undefined
+   ?? earlier typed row of unknown size: 0x801a56 retarder_mode2_output_ptr undefined
+   ?? earlier typed row of unknown size: 0x801a5a low_speed_governor_error_filter ema_filter_state_t
+   ?? earlier typed row of unknown size: 0x801a62 low_speed_governor_throttle_reference_offset_filter_state ema_filter_state_t
+   ?? earlier typed row of unknown size: 0x801a6a fuel_economy_sample_1 undefined
+   ?? earlier typed row of unknown size: 0x801a6c fuel_economy_sample_2 undefined
+   ?? earlier typed row of unknown size: 0x801a6e fuel_economy_sample_3 undefined
+   ?? earlier typed row of unknown size: 0x801a70 vp44_fuel_demand_previous undefined
+   ?? earlier typed row of unknown size: 0x801a74 non_idle_time_counter undefined
+   ?? earlier typed row of unknown size: 0x801a78 high_load_idle_cooldown_timer undefined
+   ?? earlier typed row of unknown size: 0x801a7a high_speed_idle_cooldown_timer undefined
+   ?? earlier typed row of unknown size: 0x801a7c high_temp_idle_cooldown_timer undefined
+   ?? earlier typed row of unknown size: 0x801a7e engine_mode_previous_state_1a7e undefined
+   ?? earlier typed row of unknown size: 0x801a80 rpm_averaging_accumulator_2 undefined
+   CM848: no row with this name
+== 0x00801e92 proposed lifetime_average_engine_load_previous : word
+   frozen row: 'lifetime_rpm_running_average' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x801e78 tach_output_minimum_rpm undefined
+   ?? earlier typed row of unknown size: 0x801e7a fuel_statistics_fault_timer undefined
+   ?? earlier typed row of unknown size: 0x801e86 non_idle_run_time_counter undefined
+   ?? earlier typed row of unknown size: 0x801e8a idle_cooldown_timer_high_load undefined
+   ?? earlier typed row of unknown size: 0x801e8c idle_cooldown_timer_high_speed undefined
+   ?? earlier typed row of unknown size: 0x801e8e idle_cooldown_timer_sustained_run undefined
+   CM848: no row with this name
+== 0x00801e94 proposed trip_average_engine_load_previous : word
+   frozen row: 'trip_rpm_running_average' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x801e78 tach_output_minimum_rpm undefined
+   ?? earlier typed row of unknown size: 0x801e7a fuel_statistics_fault_timer undefined
+   ?? earlier typed row of unknown size: 0x801e86 non_idle_run_time_counter undefined
+   ?? earlier typed row of unknown size: 0x801e8a idle_cooldown_timer_high_load undefined
+   ?? earlier typed row of unknown size: 0x801e8c idle_cooldown_timer_high_speed undefined
+   ?? earlier typed row of unknown size: 0x801e8e idle_cooldown_timer_sustained_run undefined
+   ?? earlier typed row of unknown size: 0x801e92 lifetime_rpm_running_average undefined
+   CM848: no row with this name
+== 0x00801e82 proposed integrated_fuel_delivered_previous : dword
+   frozen row: NONE
+   ?? earlier typed row of unknown size: 0x801e78 tach_output_minimum_rpm undefined
+   ?? earlier typed row of unknown size: 0x801e7a fuel_statistics_fault_timer undefined
+   CM848: no row with this name
+== 0x0080a98e proposed all_speed_governor_reference_state : FUELING_STATE
+   frozen row: 'asg_quadratic_integral_adjustment_500_500' type='undefined' comment=''
+   ?? earlier typed row of unknown size: 0x80a94e asg_application_specific_state_x1_reset_value_2000_2000 undefined
+   ?? earlier typed row of unknown size: 0x80a950 asg_application_specific_state_x2_reset_value_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a952 asg_application_specific_state_x3_reset_value_0_4500 undefined
+   ?? earlier typed row of unknown size: 0x80a954 asg_application_specific_state_x4_reset_value_100_100 undefined
+   ?? earlier typed row of unknown size: 0x80a956 asg_application_specific_state_x5_reset_value_0_100 undefined
+   ?? earlier typed row of unknown size: 0x80a958 all_speed_governor_application_reset_state_fuel_demand_correction i16
+   ?? earlier typed row of unknown size: 0x80a95a all_speed_governor_application_gain_set all_speed_governor_gain_set_t
+   ?? earlier typed row of unknown size: 0x80a96c asg_derivative_deadband_output undefined
+   ?? earlier typed row of unknown size: 0x80a96e asg_error_difference_2000_2000 undefined
+   ?? earlier typed row of unknown size: 0x80a970 asg_feedback_difference_term_1000_1000 undefined
+   ?? earlier typed row of unknown size: 0x80a972 asg_filtered_reference_speed_0_4500 undefined
+   ?? earlier typed row of unknown size: 0x80a978 asg_state_x1_2000_2000 undefined
+   ?? earlier typed row of unknown size: 0x80a97a asg_state_x2_100_100 undefined
+   ?? earlier typed row of unknown size: 0x80a97c asg_state_x4_100_100 undefined
+   ?? earlier typed row of unknown size: 0x80a97e asg_state_x5_100_100 undefined
+   ?? earlier typed row of unknown size: 0x80a980 asg_state_x6_100_100 undefined
+   ?? earlier typed row of unknown size: 0x80a982 stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 undefined
+   ?? earlier typed row of unknown size: 0x80a984 all_speed_governor_reference_filter_state ema_filter_state_t
+   ?? earlier typed row of unknown size: 0x80a98c all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000 undefined
+   CM848: no row with this name

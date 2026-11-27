@@ -1,0 +1,199 @@
+// Function: selectEngineSpeedLimit @ 0x0001d5a0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Lowest-wins arbitration of the high speed governor (HSG) reference speed, the same function as
+   CM848 0x1fd94: the J1939 high idle override (JCHII1OD, speed JCHSODES, source 8), otherwise the
+   lowest of the engine protection derate limit EPESLM (5), the base reference (6), the datalink
+   speed control mode 3 limit (9), the VSS tamper derate (4), anc_speed_limit_ramp_value (3),
+   DAT_0080a9d6 (2, or the isochronous cap in modes 2 / 3), the application group rpm derate (7),
+   the throttle fueling override limit (11) and DAT_0080d65c (10, slope 0), limited by DAT_00808144
+   and a minimum; the winner is recorded in hsg_reference_speed_winning_source_indicator (e2m
+   HSINRFST). The ramped reference (the derate speed used in the droop) follows it, then the droop
+   line (slope recomputed only when its inputs change) gives hsg_reference_speed_after_droop, capped
+   by the isochronous speed (was cm550_FUN_0001d5a0). */
+
+void selectEngineSpeedLimit(void)
+
+{
+  division_operand_t divisor;
+  short sVar2;
+  int iVar1;
+  ushort uVar3;
+  
+  if (_JCHII1OD == 1) {
+    _hsg_reference_speed_after_droop = _JCHSODES;
+    _hsg_reference_speed_winning_source_indicator = 8;
+    _hsg_droop_active_flag = 0;
+  }
+  else {
+    _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 = *_DAT_0080d666;
+    if (_EPESLM < _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _EPESLM;
+      _hsg_reference_speed_winning_source_indicator = 5;
+    }
+    if (_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 <
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _hsg_reference_speed_winning_source_indicator = 6;
+      _reference_speed_before_droop_calculation_1400_4500 =
+           _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+    }
+    if ((_datalink_speed_control_mode == 3) &&
+       (_datalink_commanded_speed_limit <= _reference_speed_before_droop_calculation_1400_4500)) {
+      _reference_speed_before_droop_calculation_1400_4500 = _datalink_commanded_speed_limit;
+      _hsg_reference_speed_winning_source_indicator = 9;
+    }
+    if (_vss_tamper_derate_rpm_0_3000 <= _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _vss_tamper_derate_rpm_0_3000;
+      _hsg_reference_speed_winning_source_indicator = 4;
+    }
+    if (_anc_speed_limit_ramp_value <= _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _anc_speed_limit_ramp_value;
+      _hsg_reference_speed_winning_source_indicator = 3;
+    }
+    if ((_DAT_0080a9d6 <= _reference_speed_before_droop_calculation_1400_4500) &&
+       ((_DAT_00803f42 == 0 || (_DAT_00803f42 == 1)))) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_0080a9d6;
+      _hsg_reference_speed_winning_source_indicator = 2;
+    }
+    if ((_DAT_0080a9d6 <= _hsg_isochronous_speed_currently_in_use_1500_3000) &&
+       ((_DAT_00803f42 == 2 || (_DAT_00803f42 == 3)))) {
+      _hsg_isochronous_speed_currently_in_use_1500_3000 = _DAT_0080a9d6;
+      _indicator_of_which_alg_is_setting_hsisrfae_0_255 = 2;
+    }
+    if (_rpm_derate_supplied_by_application_group_0_8000 <=
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 =
+           _rpm_derate_supplied_by_application_group_0_8000;
+      _hsg_reference_speed_winning_source_indicator = 7;
+    }
+    if (_max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 <=
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 =
+           _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500;
+      _hsg_reference_speed_winning_source_indicator = 0xb;
+    }
+    if (_DAT_0080d65c <= _reference_speed_before_droop_calculation_1400_4500) {
+      _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 = 0;
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_0080d65c;
+      _hsg_reference_speed_winning_source_indicator = 10;
+    }
+    if (_DAT_00808144 < _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_00808144;
+    }
+    if (_hsg_reference_speed_winning_source_indicator == 9) {
+      if ((uint)_reference_speed_before_droop_calculation_1400_4500 <
+          (uint)_DAT_00807a54 + (uint)_lsg_breakpoint_speed) {
+        _reference_speed_before_droop_calculation_1400_4500 = _DAT_00807a54 + _lsg_breakpoint_speed;
+      }
+    }
+    else if (_reference_speed_before_droop_calculation_1400_4500 < _DAT_00808142) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_00808142;
+    }
+    if (_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 <
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 =
+           _incremental_step_in_hsg_reference_used_when_reference_is_incre_0_300 +
+           _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+    }
+    if (_reference_speed_before_droop_calculation_1400_4500 <
+        _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000) {
+      _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 =
+           _reference_speed_before_droop_calculation_1400_4500;
+    }
+    if (((_hsg_reference_speed_winning_source_indicator == 9) && (_JCEGNETY == 1)) ||
+       (_hsg_reference_speed_winning_source_indicator == 0xb)) {
+      _hsg_reference_speed_after_droop =
+           _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+      _hsg_droop_active_flag = 0;
+    }
+    else {
+      _hsg_droop_active_flag = 1;
+      if (((_DAT_0080074c != 0) || (_DAT_0080a9e0 != _DAT_0080074e)) ||
+         (_timing_alpha_blend_factor != _DAT_00800750)) {
+        _DAT_0080d36e =
+             cm550_calculateBlendedTableValue
+                       (_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000,400);
+        if (_DAT_0080d36e < _minimum_fueling_value_0_100) {
+          _DAT_0080d36e = _minimum_fueling_value_0_100;
+        }
+        _no_load_fueling_curve_rpm_input =
+             _point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500;
+        _DAT_0080db34 = coolant_temperature_sensor_state.filtered_value;
+        sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db2e);
+        _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 =
+             lookupTableInterpolation((table_interp_args_t *)&no_load_fueling_curve_descriptor);
+        _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 =
+             sVar2 + _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100;
+        divisor.value = _DAT_0080d36e - _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100
+        ;
+        divisor.limit = 0x7fd6;
+        _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 =
+             cm550_clampedDivisionCalculator
+                       (((uint)_point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500
+                        - (uint)_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000)
+                        * 0x1111,divisor,0x8000);
+      }
+      if (_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 < 1) {
+        _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 = 0;
+        _hsg_reference_speed_after_droop =
+             _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+        _hsg_droop_active_flag = 0;
+      }
+      else {
+        if (_maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100 <
+            _hsg_pid_fuel_output_previous) {
+          uVar3 = _maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100;
+        }
+        else {
+          uVar3 = _hsg_pid_fuel_output_previous;
+          if (_hsg_pid_fuel_output_previous <
+              _minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100) {
+            uVar3 = _minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100;
+          }
+        }
+        iVar1 = cm550_scaleByRatioSigned
+                          ((int)
+                           _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13,
+                           (uint)_full_fueling_value_at_hsg_bef_droop_speed_0_100 - (uint)uVar3,
+                           0x1111);
+        if ((uint)_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 + iVar1 <
+            0x10000) {
+          _DAT_0080d64a =
+               (ushort)((uint)_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 +
+                       iVar1);
+        }
+        else {
+          _DAT_0080d64a = 0xffff;
+        }
+        if (_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 < _DAT_0080d64a) {
+          _hsg_reference_speed_after_droop = _DAT_0080d64a;
+        }
+        else {
+          _hsg_reference_speed_after_droop =
+               _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+        }
+        _DAT_0080074c = 0;
+      }
+      if (_hsg_isochronous_speed_currently_in_use_1500_3000 < _hsg_reference_speed_after_droop) {
+        _hsg_reference_speed_after_droop = _hsg_isochronous_speed_currently_in_use_1500_3000;
+      }
+    }
+    _reference_speed_before_droop_sent_hsg_ref_hsg_gain_sched_1400_3000 =
+         _reference_speed_before_droop_calculation_1400_4500;
+    _reference_speed_before_droop_calculation_1400_4500 = _maximum_rated_engine_speed_0_5000;
+    _winning_active_isochronous_speed_1500_4500 = _hsg_isochronous_speed_currently_in_use_1500_3000;
+    _winning_active_isochronous_speed_state_0_255 =
+         _indicator_of_which_alg_is_setting_hsisrfae_0_255;
+    _hsg_isochronous_speed_currently_in_use_1500_3000 = 0xffff;
+    _indicator_of_which_alg_is_setting_hsisrfae_0_255 = 0;
+  }
+  _DAT_0080074e = _DAT_0080a9e0;
+  _DAT_00800750 = _timing_alpha_blend_factor;
+  _HSINRFST = _hsg_reference_speed_winning_source_indicator;
+  return;
+}
+
+
+
+//

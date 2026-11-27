@@ -1,0 +1,12 @@
+cm848: round 36 closing - task 046, the session archive, verify
+
+- task 046, the round 36 section: stages A / B and their proofs, plus the leads (the stored-request fields as
+  j1939_rx_msg_t *, the next functions on the messy_functions.py ranking).
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round36/: the apply scripts, the maps / tokens and the commit messages. The .cpp copies are left
+    out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

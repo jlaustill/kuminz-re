@@ -1,0 +1,1 @@
+CM550: verify DETERMINISTIC; 120 functions placed, no Error / mismatch / exception; 0 functions left with a parameter piece or stack read; param_N pieces 201 -> 0 and in_stack_ 139 -> 2 over the round (the 2: an offset-0 return read); placed rows match the survey's reads and pushes; headers 0 g++ errors.

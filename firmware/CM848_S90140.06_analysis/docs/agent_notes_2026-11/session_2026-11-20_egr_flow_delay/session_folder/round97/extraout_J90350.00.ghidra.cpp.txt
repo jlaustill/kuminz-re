@@ -1,0 +1,5 @@
+2 cm550_dispatchJ1939DiagnosticServiceRequest 0x0002eea2
+10 cm550_runFaultCodeFlashOut 0x00024d40
+19 insiteCommandByteDispatcher 0x0000ed64
+2 readJ1939DiagnosticMemoryAndRespond 0x0002238e
+17 sendPgn65251EngineConfiguration1OnChange 0x000334ec

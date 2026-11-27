@@ -139,6 +139,40 @@ def field_declaration(field_name, c_type, size):
     return f'    {c_type} {field_name};'
 
 
+FUNCTION_TYPE = re.compile(r'^\s*function:\s*([A-Za-z_][A-Za-z0-9_]*)((?:\s*\*)*)\s*\((.*)\)\s*$')
+FUNCTION_PARAMETER = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)(?:((?:\s*\*)+)\s*|\s+)([A-Za-z_][A-Za-z0-9_]*)\s*$')
+
+
+def parse_function_type(raw_type):
+    """
+    (return type, [(type, name), ...]) of a structure_definitions.csv function type
+    "function:<return>(<type> <name>;<type> <name>)", else None. The same syntax as
+    ScriptUtils.parseFunctionType: ';' separates the parameters, "()" or "(void)" means none.
+    """
+    m = FUNCTION_TYPE.match(raw_type or '')
+    if not m:
+        return None
+    parameters = []
+    listed = m.group(3).strip()
+    if listed and listed != 'void':
+        for part in listed.split(';'):
+            p = FUNCTION_PARAMETER.match(part)
+            if not p:
+                return None
+            parameters.append((p.group(1) + re.sub(r'\s+', '', p.group(2) or ''), p.group(3)))
+    return m.group(1) + re.sub(r'\s+', '', m.group(2)), parameters
+
+
+def function_typedef(name, return_type, parameters, comment):
+    """The C typedef of a function type: a field or a parameter then holds '<name> *'."""
+    def c_type(raw):
+        base = raw.rstrip('*')
+        return TYPE_MAP.get(base, base) + raw[len(base):]
+    listed = ', '.join(f'{c_type(t)} {n}' for t, n in parameters) or 'void'
+    line = f'typedef {c_type(return_type)} {name}({listed});'
+    return f'{line}  /* {comment} */' if comment else line
+
+
 # ---------------------------------------------------------------------------
 # Task 2: firmware_types.hpp
 # ---------------------------------------------------------------------------
@@ -194,9 +228,14 @@ def generate_types_header(output_dir):
 
     # Group fields by struct name, preserving insertion order
     structs = OrderedDict()
+    function_types = OrderedDict()  # name -> (return type, [(type, name)], comment)
     for row in struct_rows:
         name = row.get('struct_name', '').strip()
         if not name:
+            continue
+        signature = parse_function_type(row.get('type', ''))
+        if signature and not row.get('field_name', '').strip():
+            function_types[name] = signature + (row.get('comment', '').strip(),)
             continue
         if name not in structs:
             structs[name] = []
@@ -325,6 +364,10 @@ def generate_types_header(output_dir):
     if struct_blocks:
         parts.append('/* ---- Structures ---- */')
         parts.append('\n'.join(f'typedef struct {name} {name};' for name in struct_blocks))
+    if function_types:
+        parts.append('/* ---- Function types (a field or a parameter holds a pointer to one) ---- */')
+        parts.append('\n'.join(function_typedef(name, *signature) for name, signature in function_types.items()))
+    if struct_blocks:
         parts.append('\n\n'.join(struct_blocks[name] for name in ordered))
 
     content = '\n\n'.join(parts) + '\n'
@@ -332,6 +375,7 @@ def generate_types_header(output_dir):
     stats = {
         'structs': len(structs),
         'struct_fields': len(struct_rows),
+        'function_types': len(function_types),
         'enums': len(enums),
         'enum_members': len(enum_rows),
     }

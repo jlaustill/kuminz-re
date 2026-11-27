@@ -1,0 +1,823 @@
+# EGR transport delay session (2026-11-20, todo 046)
+
+The question was whether `cm848_throttleBasedFuelCalculation` (0x128a0) is named properly. It is not. It is the EGR
+transport delay stage of the CHP charge flow model (e2m 177F, resolved by the ECU's parameter ID table; CHP is the e2m
+prefix and is never spelled out), so it is now `cm848_calculateDelayedEgrFlowAndFraction`. The user then asked for the
+rest of the family on the same PR (stages 3 / 4). The findings and the open leads are in
+`work/tasks/046-cm848-egr-flow-estimate.md`. No subagents ran. The work was done by hand, with advisor reviews before
+the edits of each round and before the end.
+
+`session_folder/` has these files:
+- **Stage 1 (label-only):**
+  - `apply_stage1.py` makes the CSV edits: the three functions, the 12 struct fields with their comments, and the two
+    globals. Before it runs, `rename_waves/rename_struct_types.py ... throttle_fuel_trim_t=egr_flow_estimate_terms_t@0x0040a3ea=egr_flow_estimate_terms`
+    must rename the type and the instance.
+  - `fix_bare_fields.py` fixes the bare old field names in five comments that `refresh_references.py` cannot reach.
+    A bare `reserved_0c` also names fields of other structs, so the tool skips them.
+  - The mappings:
+    - `map_struct.csv` comes from `rename_struct_types.py`.
+    - `map_stage1.csv` holds the fields, functions and globals.
+    - `map_all_stage1.csv` joins the two and is the proof input.
+    - `map_refresh_stage1.csv` holds the old -> new pairs for `refresh_references.py`, including the
+      `instance.field` / `type.field` forms.
+  - The proof result: `reverse_names.py` reported EQUIVALENT, and `squash_changed.py` found 0 functions that differ.
+- **Stage 2 (shape):**
+  - `apply_stage2.py`:
+    - the `delay_line_t` template and its two instances;
+    - the six e2m-signed 177F words as `short`;
+    - removes the type-only byte row at 0x3fa5a0;
+    - adds the two helper prototypes.
+  - `fix_stage2_plates.py` makes the plate comments name the delay lines.
+  - `apply_stage2b.py` retypes the two EGR flow limits as `i16` and names the five locals.
+    - The `uVar5` row was renamed by hand afterwards to `volumetric_efficiency_speed_product`: committing a name on
+      it splits the reused register, which is why that one rename was needed.
+- **Review fixes:** `fix_review_comments.py`, from the advisor's final review. Above a fraction of 1.0 it is the scaled
+  term that becomes 0xffff, not the delay. The first delay line's comment now names its boot call target.
+- **Stage 3 (label-only, the rest of the family):**
+  - `apply_stage3.py` makes the edits: 12 functions with their plate comments and 37 globals, one of them a new row at
+    0x3fd8ea. It checks each old name and type, and that every new name is unused.
+  - `fix_stage3_comments.py` fixes the struct field comment that `refresh_references.py` skips, and the 0x128a0
+    plate's "charge properties" wording.
+  - `map_stage3.csv` is the proof mapping, and `map_refresh_stage3.csv` holds the refresh pairs.
+  - `users.py` lists the functions whose code (not comments) uses a symbol. It was used to bound the scope.
+  - The proof result: EQUIVALENT, with 49 names, all rendered. One function differs, and only in its declaration order.
+- **Stage 4 (shape):**
+  - `apply_stage4.py`:
+    - the three 2-D caches as `word[2]`;
+    - `void` prototypes for 0x12ad4 / 0x12dc4 / 0x130dc;
+    - `word` returns for the two source checks;
+    - `i16` for the signed pumping torque words.
+  - `predicted_stage4.txt` is the changed-function set, written before the build. The 10 core functions changed as
+    predicted. The two `pumping_torque_adjustment` readers did not, because they never cast it. One more function only
+    reorders its declarations.
+- **Round 3, stages 5-8 (the user: "keep going, nothing is out of scope"):**
+  - **Investigation helpers:**
+    - `symbol_e2m_table.py` lists every global a function uses with the e2m record at its address (from an
+      `e2m_name_audit.py` output).
+    - `use_lines.py` prints a few code lines per symbol, and `fault_dtc.py` maps fault bit -> OBD DTC.
+  - **Stage 5:**
+    - `apply_stage5.py` does the TPE charge pressure estimate, the in range monitor, the exhaust pressure estimate and
+      sensor, the EGR delta pressures, two source words and the monitor bit.
+    - `fix_stage5_collision.py`: the first build's proof failed. The bit's first name equalled a new global's name, so
+      the global reversal also rewrote `.field`. This script renames it `charge_pressure_estimate_enable` and fixes the
+      name column of 0x13294's prototype rows.
+    - The mappings are `map_stage5.csv` / `map_refresh_stage5.csv`.
+  - **Stage 6:** `apply_stage6.py`, the `i16` words and 0x13294's `void` prototype.
+  - **Stage 7:**
+    - `apply_stage7.py` does the 819B engine speed block. Run `rename_struct_types.py ...
+      engine_rpm_state_t=engine_speed_state_t@0x0040b7ac=engine_speed_state` first.
+    - The mappings are `map_struct7.csv` / `map_stage7.csv` / `map_refresh_stage7*.csv`. `7b` maps the bare
+      `current_rpm` in comments.
+  - **Stage 8, the signedness sweep:**
+    - `signed_candidates.py` counts the candidates.
+    - `classify_signed_loads.py` writes `signed_loads.csv` with each candidate's loads (lha-only / has-lhz / no-load).
+    - `apply_stage8.py` applies the sweep.
+    - `revert_pointer_passed.py` restores `word` on the rows in `revert_ptr.txt` (passed to `word *` parameters) and
+      `revert_ptr2.txt` (read through an `lhz` pointer).
+    - `cast_normalized_diff.py` is the proof.
+- `commit1.txt` .. `commit12.txt` are the commit messages, and `pr_body.md` is the pull request text.
+
+`session_folder_large_files.tar.xz` holds the build logs:
+- `build1.log`: stage 1;
+- `build2.log`: stage 2;
+- `build3.log`: stage 2b;
+- `build4.log`: the final locals;
+- `build5.log`: the review comment fix;
+- `verify.log`: `./analyze.sh verify` after round 1, two byte-identical builds;
+- `build6.log` / `build7.log`: stages 3 / 4;
+- `verify2.log`: `./analyze.sh verify` after stage 4;
+- `build8.log` / `build9.log`: stage 5, before / after the collision fix;
+- `build10.log` / `build11.log`: stages 6 / 7;
+- `build12.log` / `build13.log` / `build14.log`: the sweep, then its two reverts;
+- `verify3.log`: `./analyze.sh verify` after stage 8.
+
+It also holds `stage2.cpp`, the stage 2 output before the locals were named.
+- The other snapshots are in git: the pre-session `.cpp` is 9ba021f's and stage 1's is a513107's.
+- The proof's canonical / reversed copies can be regenerated with the commands in
+  `firmware/scripts/rename_waves/README.md`.
+
+What the build logs show:
+- **Stage 2 thunks:** the stage 2 logs read "made 19, call overrides 13". Stage 1 read 21 / 11. The two boot-ROM call
+  targets inside the delay lines are now call overrides:
+  - 0x3fa2f0, `cm848_runFlashProgramStateMachine`, under `egr_oxygen_fraction_delay_line`;
+  - 0x3fa5a0, `mpc555_cmfEraseBlocks`, under `egr_mass_flow_delay_line`.
+- **Warnings:** the warning and error lines are the same in every build up to stage 3. Stage 4 removes two of them,
+  the stale-prototype warnings ("defines 2 param row(s) but Ghidra recovered 0") for 0x12ad4 and 0x130dc.
+
+## Round 4: rename wave 15 (`session_folder/wave15/`)
+
+The user gave the go-ahead for an agent wave over the e2m audit's low-overlap rows.
+- **The pool (`funnel_W15.py`, `overlap_pool_W15.py`, `build_context_W15.py`):** named scalar / array / enum rows,
+  used in the code, dump in range, never reviewed (no `| e2m:` note, the comment does not cite the record), whose
+  name shares at most 20 % of the words of the e2m record the ECU's table resolves to the address. An address whose
+  name fits another record there better is out. `earlier_verdicts_W15.py` attached waves 12-14's notes and dropped
+  wave 13's 15 drift rows: 378 rows in 6 bins.
+- **The agents:** `brief_W15.md` (every rename needs a quoted `.cpp` line), six Sonnet agents, ~3.3M tokens. Their
+  results are in `results/`, their scripts in `agent_scratch/`, and their prompts and reports in
+  `agent_prompts_and_reports_W15.md` (extracted with `extract_reports_W15.py`).
+- **The apply (`apply_W15.py`):** bin coverage, old = current, name free (global / function / struct field /
+  parameter / local / any `.cpp` identifier), `_cal` = EEPROM mirror, banned abbreviations, CM550 sharing, the
+  quoted line, and the repo gate. `patch_apply_hand.py` adds the main session's decisions (`RENAMED_BY_HAND`,
+  `NOT_TWINS`, the PGN 56320 comment fix, drift markers). `apply_stage10_extras.py` adds the 1170 family.
+- **The hand follow-ups:** `apply_hand_worklist.py` applies a worklist (`worklist_10b_*.py`) through the same checks.
+  `evidence_W15.py` prints each row's e2m record and code lines for the review. `finish_10b5.py` finished one run
+  that the repo gate stopped at the function step. `add_e2m_prefix_W15.py` repaired the 90 comments that a
+  relative-path bug left without their e2m record.
+- **The types:** `apply_stage10c_types.py`.
+- **Checks:**
+  - `check_quoted_dump_values_W15.py` and `dump_mismatch_context_W15.py` (the 17 flags were regex hits on scaled
+    values);
+  - `stale_refs_W15.py`;
+  - the comment-name sweeps `sweep10*.txt`;
+  - the width checks `map10*_width.csv`.
+- **Maps:** `map_stage10.csv` (the wave and the 1170 extras), `map_stage10b.csv` / `map_stage10c.csv` (the
+  follow-ups), `map_stage10d.csv` (the 10c labels). Commit messages: `commit15-18.txt`.
+- **Regenerating `all.dis`** (6.7 MB, not archived): `powerpc-linux-gnu-objdump -D -b binary -m powerpc -EB
+  --adjust-vma=0x0 --start-address=0x0 --stop-address=0x70000 originals/cm848_rom.bin` followed by the same for
+  `originals/cm848_flash2_live.bin` with `--adjust-vma=0x500000 --start-address=0x500000 --stop-address=0x53e000`.
+
+## Round 5: hand fixes on the wave 15 leads (`session_folder/round5/`)
+
+The user's second "keep going". No agents.
+- **`j1939_header_pgns.py`:** every J1939 header builder with the PGN its constant encodes. PDU1 PS bytes are
+  destinations, not part of the PGN.
+- **`writes_of.py`:** a function's profile (the globals it writes, the functions it calls, the fueling states it
+  names), used to name long functions.
+- **Worklists `worklist_r5_j1939.py`, `worklist_r5b_functions.py`, `worklist_r5d.py`, `worklist_r5e.py`, `worklist_r5f.py`
+  and `worklist_r5g.py`:** applied with `wave15/apply_hand_worklist.py`. The maps are `map_r5a.csv`-`map_r5g.csv`
+  (`map_r5a_cm550.csv` for the shared EC1 rename) and `map_r5_all.csv`.
+- **Type stages:**
+  - `apply_r5b_asg_gain_set.py` (`all_speed_governor_gain_set_t`; `removed_r5b.csv` lists the member rows that went,
+    and `replace_member_refs.py` replaced them in comments);
+  - `apply_r5c_vehicle_speed_sensor_type.py` (`VEHICLE_SPEED_SENSOR_TYPE`);
+  - the `INTAKE_AIR_HEATER_PHASE` enum.
+- **Checks:**
+  - `wave15/changed_functions_W15.py`, which compares function bodies with comments stripped on both sides. Pass it a
+    `--write-reversed` file written without `--canonical-code-labels`, or every `LAB_` differs.
+  - The piece census, `grep_old_names.py` over `map_r5_all.csv`, and `append_resolved_r5.py` for the task files.
+- **Commit messages:** `commit_r5*.txt`.
+- **Logs:** the round 5 build logs (`build_r5*.log`, with the CM550 build `build_r5a_cm550.log`) and `verify_round5.log` are in `session_folder_large_files.tar.xz` (added by `round5/update_large_tar_r5.sh`).
+
+## Round 6: the TSC1 / ETC1 / Jcomm vocabulary (`session_folder/round6/`)
+
+The round 5 lead, as hand work.
+- **Stage 0:** the two orphan struct definitions were deleted, proved with `diff_underscore_fix.py`.
+- **Stage A, label-only on both firmwares:** `worklist_r6a.py` for the globals and functions,
+  `gate_r6a_shared_cm848.jsonl` / `gate_r6a_shared_cm550.jsonl` for the shared handler (`apply_renames.py` directly:
+  the worklist gate wants a prefix, and CM550 has no arrays.csv), then `apply_r6a_structs.py` for the types, fields,
+  label and comment refresh. `rename_alias_rows_r6a.py` and `fix_headers_r6a.py` cover the dotted per-field alias
+  rows and the `#` headers. The maps are `map_r6a.csv`, `map_r6a_cm550.csv` and `map_r6a_proof.csv`, which adds the
+  auto-named local `ptVar1` and shows 0 changed functions.
+- **Stage B1, label-only:** `worklist_r6b1.py` plus `apply_r6b1_fields.py`, from e2m blocks 10E8 / 10E6.
+- **Stage B2, the types:** `apply_r6b2_types.py`, with every fact quoted in its docstring, then `apply_r6b2_fixes.py`
+  after the first build: the bitfield revert, the lookup's local and the monitor copies. Each changed function was
+  read with `fn_code_diff.py`.
+- **Closing:** `fix_comments_r6c.py`, `append_resolved_r6.py` and `memory_edits_r6.py`, which updates the private
+  memory notes.
+- **Commit messages:** `commit_r6*.txt`. The logs go into the large-files tarball.
+
+## Round 7: the J1939 monitor, the retarder TSC1 words, the drivetrain ratio module (`session_folder/round7/`)
+
+Hand work on the round 6 leads.
+- **Stage A, label-only:** `worklist_r7a.py` plus `apply_r7a_fields.py`, covering two retarder fields and the session
+  functions' `int32_t` parameter. The first build rendered `int` as `dword`, which is how the importer maps `int`.
+- **Stage C, label-only:** `worklist_r7c.py`, the drivetrain ratio module.
+- **Stage B, the types:**
+  - `apply_r7b_session_struct.py`: `j1939_control_session_t` and its instances, the length words, the four member rows
+    (`removed_r7b.csv`) and the array note.
+  - `apply_r7b_drivetrain.py`: the e2m 106D cals, `gear_down_gear_ratio_cal` and `DRIVETRAIN_GEAR_RANGE`.
+  - The history store's local rows took three builds. A `word *` local and then a `byte *` local both rendered the
+    copy start longer than the struct pointer did.
+- **Closing:** `docs_r7.py`, `fix_leads_r7.py`, `append_resolved_r7.py` and `memory_round7.py`. The commit messages are
+  `commit_r7*.txt`.
+
+## Round 8: the 48RE transmission controller (`session_folder/round8/`)
+
+Hand work on the round 7 lead.
+- **Finding the vocabulary:**
+  - `e2m_of_names.py` looks up the e2m record of each named row by address.
+  - `align_block.py` prints an e2m block against the CSV rows at an assumed base, with each row's RAM value and users.
+    It is the tool that proved the 8C17 and 8BBC bases.
+- **Stage A, label-only:** `worklist_r8a.py` and `apply_r8a_struct.py` (`transmission_pressure_state_t`).
+- **Stage B, label-only:** `worklist_r8b.py` and `apply_r8b_struct.py` (`transmission_lockup_timers_t`; generated by
+  `make_r8b_struct.py`).
+- **Stage C, the types:** `worklist_r8c.py` and `apply_r8c_types.py`.
+- **Stage E, label-only:** `worklist_r8e.py` and `apply_r8e_comment.py` (the converter clutch transition state comment); `worktree_refresh_audit.py` is `refresh_audit.py` for an uncommitted tree.
+- **Stage F, label-only:** `worklist_r8f.py` and `apply_r8f_fix.py`: the stage E rows' notes, the two-method plate, the new 0x408370 row, three unquoted comments. Also `width_check_r8.py` (e2m size against the declared width, block by block), `keyed_refresh_audit.py` (the comment-refresh audit keyed by address) and `quote_counts.py` (quoted CSV lines on two revisions).
+- **Stage G, label-only:** `worklist_r8g.py` and `apply_r8g_fix.py` (the exhaust brake inhibit word order, the 0x408388 polarity comment). `csv_tail_check.py` / `csv_tail_check2.py` look for the silent forms of the csv-module bug (left-over comment tails) between two revisions.
+- **References:** `refresh_struct_comments.py` refreshes the comment columns of `structure_definitions.csv` /
+  `enums.csv`, which `refresh_references.py` skips.
+- **Commit messages:** `commit_r8*.txt`.
+- **Closing:** `old_names_r8.py` writes the old names for `grep_old_names.py` (results `grep_old_r8.txt` / `grep_old_r8_after.txt`); `close_r8.py` marks the round 7 lead resolved and writes `append_resolved_r8.py` (tasks 025 / 027); `refresh_audit.py` lists every comment-only change a commit made to a CSV, to catch a reference refresh that rewrote a history mention (it caught one in firmware/CLAUDE.md); `memory_round8.py` and `update_large_tar_r8.sh` (the round 8 build / verify logs).
+
+## Round 9: the 48RE tables in memory order (`session_folder/round9/`)
+
+- **The table walk:** `walk_tables.py` walks e2m table blocks in column-5 order from a start address, sizing each from
+  the dump. `walk_*.csv` are the walks from 0B43, 0B9E and 0BB5.
+- **Stage A:** `worklist_r9a.py` and `apply_r9a_new.py`. The second adds label-only rows (empty type) for unnamed
+  words.
+- **Stage B:** `worklist_r9b.py` and `apply_r9b_fix.py`.
+- **Stage C:** `apply_r9c_enum.py` and `apply_r9c_types.py`.
+- **Stage D:** `apply_r9d_structs.py` (two structs, the field split), `worklist_r9d.py` and
+  `refresh_qualified_r9d.py` (it refreshes `instance.field` mentions, which the generic refresh cannot do safely).
+- **Stage F (the review fixes):** `worklist_r9f.py` and `apply_r9f_fix.py` (the 8BB6 records, the proportional term row, the bare old field names in 48RE comments and plates). `csv_tail_check*.py` audits the CSVs for the csv-module bug; `close_r9.py` writes the resolved notes.
+- **Commit messages:** `commit_r9*.txt`.
+
+## Round 10: types, the 48RE monitors, the transmission relay, the SCI actuator tests (`session_folder/round10/`)
+
+- **Stage A (the RE lookup caches):** `list_caches.py` lists the cache words with old names, `gen_r10a.py` writes
+  `worklist_r10a.py` and `new_r10a.json`, and `apply_r10a_new.py` inserts label-only rows.
+- **Stage B (types):** `re_audit.py` builds the audit CSV for the aligned RE blocks, `classify_signed_loads.py` (one
+  level up) gives `re_signed_loads.csv`, and `apply_r10b_types.py` writes the i16s, the label-only types and the
+  1-2 shift lag table.
+- **Stage C:**
+  - `apply_r10c_suffix.py`: the `_cached_axis_offset` suffix;
+  - `worklist_r10c.py`;
+  - `apply_r10c_extra.py`: the `_`-prefixed row and the output 16 field.
+- **Stage E:** `worklist_r10e.py`, `new_r10e.json` and `apply_r10e_plates.py`. `sci_test_codes.py` lists the SCI
+  0x13 test codes with their outputs.
+- **Stage D:** `gen_r10d.py` writes `worklist_r10d.py`, and `apply_r10d_types.py` adds the enum and the limp-home
+  comments.
+- **Stage F:** `apply_r10f_types.py` (the widths and `sci_output_test_timers_t`) and `apply_r10f_prototypes.py` (the
+  three helpers' `word *timer` prototypes; the first build, without them, printed the field addresses as raw
+  constants). `relabel_struct.py` maps `instance.field` back to the old labels for the proof.
+- **Helpers:**
+  - `cache_tables.py`: the tables each cache serves;
+  - `final_names.py`: old to final name through the round's maps;
+  - `resolved_r10.py`: the task file sections.
+- **The closing checks (after the advisor review):**
+  - `output_requesters.py`: the firmware requesters of each tested output;
+  - `docs_requesters_r10.py`: adds them to the firmware/CLAUDE.md table;
+  - `stem_check.py` / `stem_check_r10.py`: each cache's stem against its lookup's table.
+- **Logs:** the round 10 build logs (`build_r10*.log`, with 10F's first attempt `build_r10f_attempt1.log`) and
+  `verify_round10.log` are in `session_folder_large_files.tar.xz` (`round10/update_large_tar_r10.sh`).
+- **Commit messages:** `commit_r10*.txt`.
+
+## Round 11: the e2m output and switch maps (`session_folder/round11/`)
+
+- **Stage A:** `worklist_r11a.py`, `new_r11a.json` (rows through `../round10/apply_r10a_new.py`) and
+  `apply_r11a_extra.py` (the `FUN_0051dfdc` function row and the arrays.csv switch map).
+- **Stage B:** `apply_r11b_types.py` (the six request-byte bitfield structs from e2m 1577), `apply_r11b_lift_pump.py`
+  (types, `LIFT_PUMP_RUN_REASON`) and `apply_r11b_docs.py` (the byte 0 map, the 16-23 record names).
+  `bitfield_normalize.py` is the proof helper. `output_bit_reads.py` lists the tested bits with their records.
+- **Stage C:**
+  - `apply_r11c_switch_struct.py` is the all-bitfield pilot; its numbers are in `pilot_r11c_numbers.txt`.
+  - `apply_r11c_switch_narrow.py` is the committed shape.
+  - `switch_bit_reads.py` lists the tested switches and their setters; `switch_normalize.py` / `switch_normalize2.py`
+    are the proof helpers.
+- **Stages D / E:** `apply_r11d_field.py` and `apply_r11e_field.py` (output 54; stage E after the review).
+- **Logs:** the round 11 build logs (with the pilot's `build_r11c_attempt1.log`) are in the large-files tarball.
+- **Commit messages:** `commit_r11*.txt`.
+
+## Round 12: arrays and the CP3 fuel metering vocabulary (`session_folder/round12/`)
+
+- **Stage A:**
+  - `array_candidates.py` checks each candidate's range for other rows and for the `DAT_` words inside it.
+  - `apply_r12a_arrays.py` and `apply_r12a_fix.py` (the eight setpoint caches) write the types.
+  - `array_normalize.py` is the proof helper (it maps each array back to its old labels).
+- **Stage B:** `worklist_r12b.py`, the 43 `HPCR_*` names. `apply_r12_plate.py` updates the function's plate in the
+  closing.
+- **Stage C:** `apply_r12c.py` (the remaining names, the plate, the stale text).
+- **Logs:** the round 12 build logs (with 12A's first attempt) are in the large-files tarball.
+- **Commit messages:** `commit_r12*.txt`.
+
+## Round 13: the end-of-line tests and the SCI command 0x25 service tests (`session_folder/round13/`)
+
+- **Stage A:** `worklist_r13a.py` (35 renames, 13 functions), `new_r13a.json` (10 new rows) and `apply_r13a_plates.py`.
+- **Stage B:** `apply_r13b_enums.py`. The proof is `check_enum_proof3.py`, a copy of the fueling state session's
+  `check_enum_proof2.py` that normalizes byte-sized enum types to `byte`.
+- **Stage C:** `worklist_r13c.py`, `apply_r13c_comments.py` (the bit maps, the cutout correction) and
+  `apply_r13c_docs.py`.
+- **Stage D:** `apply_r13d_cutout.py` (tests 5-10 cut out firing-order slots; three task 046 leads).
+- **Audits:** `refresh_diff_offline.py` checks a committed stage's reference refresh between two commits.
+  `keyed_refresh_audit_refs.py` is the same audit pinned to two commits.
+- **Logs:** the round 13 build logs and the final verify log are in the large-files tarball.
+- **Commit messages:** `commit_r13*.txt`.
+
+## Round 14: the low speed governor reference speed chain (`session_folder/round14/`)
+
+- **Stage A:** `worklist_r14a.py` (68 globals, 7 functions), `apply_r14a_struct.py` (the struct at 0x40aec2) and
+  `new_r14a.json` (the 14EF gain and clamps).
+- **Stage B:** `apply_r14b_enum.py`, proved with round 13's `check_enum_proof3.py`.
+- **Stage C:** `apply_r14c_split.py`; its proof map sends the two words back to the old `._0_2_` / `._2_2_` pieces.
+- **Closing:** `apply_r14_closing.py`.
+- **Logs and commit messages:** the round 14 build logs are in the large-files tarball; the messages are
+  `commit_r14*.txt`.
+
+## Round 15: the e2m pool above 0.2 overlap, part 1 (`session_folder/round15/`)
+
+- **The pool:** `pool_r15.py` (wave 15's filter, by overlap band) and `evidence_r15.py` (code lines per candidate).
+- **Stage A:**
+  - `channel_calls_r15.py` proves each channel at its calls.
+  - `gen_channels_r15.py` and `make_worklist_r15a.py` build `worklist_r15a.py` (named rows) and `fill_r15a.json`
+    (type-only rows, via `apply_r15a_fill.py`).
+- **Stage B:** `worklist_r15b.py`. `width_check_r15.py` compares each row's width with its e2m size.
+- **Closing:** `apply_r15_closing.py`.
+
+## Round 16: the cruise control / road speed governor (`session_folder/round16/`)
+
+- **The records:** `blocks.txt` / `blocks2.txt` (e2m_block_addresses.py on 117D-1192), `check*_out.txt` (code lines
+  per candidate), `width_r16a.txt` (the width check).
+- **Stage A:** `worklist_r16a.py` (through apply_hand_worklist.py), `fill_r16a.json` (type-only rows, via
+  round15/apply_r15a_fill.py) and `apply_r16a_enums.py`; `refresh_enums_structs.py` refreshes the two CSVs that
+  refresh_references.py skips.
+- **Stage B:** `apply_r16b.py`. **Stage C:** `apply_r16c_switch_bits.py` and the proof helper
+  `switch_normalize_r16c.py`. **Closing:** `apply_r16_closing.py`; after the review, `retired_prose.py` (the old
+  vocabulary in current comment text) and `fix_retired_prose.py`.
+
+## Round 17: the engine retarder request chain (`session_folder/round17/`)
+
+- **The records:** `blocks.txt` (e2m_block_addresses.py on 1070 / 1071 / 1192), `check*_out.txt`, `width_r17a.txt`.
+- **Stage A:** `worklist_r17a.py` (through apply_hand_worklist.py), `apply_r17a_plates.py` (the chain's plates),
+  `retired_prose_r17.py` / `fix_retired_prose_r17.py` (the old words in current comments).
+- **Stage B:** `apply_r17b_enums.py`. **Stage C:** `apply_r17c.py` and the proof helper `normalize_r17c.py`.
+  **Closing:** `apply_r17_closing.py`.
+
+## Round 18: types and the main injection timing selection (`session_folder/round18/`)
+
+- **Stage A:** `apply_r18a.py` (after the q16 pilot build). **Stage B:** `worklist_r18b.py` / `worklist_r18b2.py`
+  (through apply_hand_worklist.py) and `apply_r18b_enums.py`. **Stage C:** `apply_r18c.py`. **Closing:**
+  `fix_retired_prose_r18.py`, `apply_r18_closing.py`.
+
+## Round 19: tables, sources and the ANC pass-through (`session_folder/round19/`)
+
+- **Stage A:** `worklist_r19a.py`. **Stage B:** `apply_r19b.py`, with `source_values.py` (the values each source word
+  stores and compares). **Stage C:** `worklist_r19c.py`. **Closing:** `apply_r19_closing.py`.
+
+## Round 20: the algorithm enable flags block (`session_folder/round20/`)
+
+- **Stage A:** `worklist_r20a.py`, `make_worklist_r20a2.py` (generates `worklist_r20a2.py`). **Stage B:** `apply_r20b.py`
+  + `normalize_r20b.py`. **Stage C:** `worklist_r20c.py`, `apply_r20c2.py` (its structs-only rerun
+  `apply_r20c2_structs.py`), `apply_r20c3.py`. **Stage D:** `apply_r20d.py` (the naming table and its checks) +
+  `normalize_r20d.py`. **Stage E:** `worklist_r20e.py`. **Stage F (after the advisor's review):** `apply_r20f.py`, `patch_r20d_for_f.py` (adds the generator's `--only` / `SAME_ENABLE`), then `apply_r20d.py --only 11`. **Closing:** `apply_r20_closing.py`, `apply_r20f_closing.py`, `fix_r20_task046_order.py`.
+- **Evidence:** `flag_word_uses.py` / `bit_readers.txt` (the readers of each bit), `flag_records.txt` /
+  `flag_records_typed.txt` (the e2m records with their descriptions), `bit_context.py` (the code around a bit's
+  tests).
+
+## Round 21: the engine protection module (`session_folder/round21/`)
+
+- **Stage A:** `apply_r21a.py` (the three structs and the helper prototypes; `--only state` was the packing pilot),
+  `refresh_r21a_plates.py`, the gate `prove_r21a.py`. **Stage B:** `apply_r21b.py` + `prove_r21b.py`, and
+  `struct_type_fallbacks.py` (the field types the importer does not know). **Stage C:** `worklist_r21c.py`,
+  `apply_r21c2.py`. **Stage D:** `patch_apply_structures.py` (mind the file's CRLF line endings); its positive control's log is
+  `build_r21_control.log` in the large-files tarball. **Stage E:** `apply_r21e.py` + `prove_r21e.py`. **Closing:**
+  `apply_r21_closing.py`, `apply_r21_closing2.py`.
+- **Evidence:** `blocks.txt` (e2m 112E / 1152 / 1143), the per-function bodies `body_*.txt`.
+
+## Round 22: the engine protection leftovers (`session_folder/round22/`)
+
+- **Stage A:** `worklist_r22a.py`, `apply_r22a2.py` (the two new rows and the configuration flags comment).
+  **Stage B:** `worklist_r22b.py`, `apply_r22b2.py` (the two comments). **Closing:** `apply_r22_closing.py`,
+  `apply_r22_closing2.py`. `raw_addr_scan.py` is the fixed scanner: the nearest `lis` decides, and `--permissive`
+  keeps the old rule for "no access" claims.
+
+## Round 23: the ambient module and the source enum (`session_folder/round23/`)
+
+- **Stage A:** `worklist_r23a.py`, `apply_r23a2.py` (the unnamed and new rows). **Stage B:** `source_scan.py` (each
+  `*_source` word's e2m value list against the code's literals; rerun it as `source_scan.py <firmware> <round19/source_values.py>`), `apply_r23b.py`. **Stage C:** `apply_r23c.py`, `stale_ghidra_labels.py` (dry run only), `source_scan_after.txt`. **Closing:** `apply_r23_closing.py`, `apply_r23_closing2.py`.
+
+## Round 24: the Ghidra-label struct instances (`session_folder/round24/`)
+
+- **Stage A:** `classify_labels.py`, `apply_r24a.py`, `prove_r24a.py`. The proof is comments-only: the code without comments is identical, and the CSV changes are in comment columns only.
+- **Stages B-D:**
+  - `worklist_r24b.py` / `_c` / `_d`, run through `apply_hand_worklist.py` (the snapshot here has the `NOT_CAL` exemption);
+  - `spec_r24b.py` / `_c` / `_d`, run through `apply_struct_renames.py` (struct types, fields, dotted alias rows, qualified references);
+  - `apply_r24b2.py` (new rows) and `apply_r24b_docs.py`;
+  - the checks: `instance_users.py`, `fault_bit_names.py` (the e2m 1036 fault bit names), `definition_flag_2000.py`, `byte_enum_renders.py`.
+- **Stage E:** `fault_bit_names.py` (the e2m 1036 bit table), `apply_r24e.py`, `refresh_r24e.py`, `prove_r24e.py`
+  (each fault word reference mapped to an address token). **Stage F:** `apply_r24f.py`, `refresh_r24f.py`,
+  `prove_tokens.py` (a general token-normalized gate for type changes).
+- **Closing:** `apply_r24_interim.py` (interim, after stage D) and `apply_r24_closing.py`.
+
+## Round 25: an enum and three shapes (`session_folder/round25/`)
+
+- **Stage A:** `apply_r25a.py`, which is checked by `check_enum_proof3.py` from round 13.
+- **Stage B:** `apply_r25b.py`. `raw_addr_scan_any.py` is round 22's scanner with the `lis` base taken from
+  the range; round 22's version only tried 0x40 / 0x41.
+- **Stage C:** `apply_r25c.py`. **Stage D:** `apply_r25d.py`.
+- **The proofs:** `tokens_r25*.json`, checked by round 24's `prove_tokens.py`.
+- **Closing:** `apply_r25_closing.py`.
+
+## Round 26: the peer session's cruise review (`session_folder/round26/`)
+
+- **Stage A:** `worklist_r26a.py` (e2m 8C2E / 8C2F aligned by offset; each record's code use is in its comment), `map_r26a.csv`. **Closing:** `apply_r26_closing.py`.
+
+## Round 27: the sensor channel layer, the J1939 switch inputs, the fault bits (`session_folder/round27/`)
+
+- **Stage A:** `channel_calls.py` / `channel_identity.py` / `wrapper_census.py` (the census and the e2m evidence), `asm_diff.py` (Type A vs Type B), `generate_r27a.py` -> `worklist_r27a.py` + `labels_r27a.tsv`, `apply_r27a_labels.py`, `refresh_rest_r27a.py`, `derived_ptr_rows.py` (the proof's PTR_ labels).
+- **Stage C:** `spec_r27c.py`, `apply_r27c.py`.
+- **Stage B:** `fault_bit_names.py` -> `fault_field_names.py` (the names, the expansions and their evidence), `fault_setters_r27.py`, `bitfield_words.py` (flat, the layout kept) / `bitfield_words_nested.py` (rejected), `fault_render_census.py`, `piece_contexts.py`, `per_word_tradeoff.py`, `prove_fault_bitfields.py` + `diff_function_r27b.py` (the mask-exact proof).
+- **Closing:** `apply_r27_closing.py`.
+
+## Round 28: the sensor-present flags, the boot CAN ring state (`session_folder/round28/`)
+
+- **Stage A:** `present_flags.py` (the e2m flag scan), `worklist_r28a.py`, `spec_r28a.py`, `dotted_rows_r28a.py`.
+- **Stage B:** `apply_r28b.py`, `tokens_r28b.json`, `diff_flag_users_r28b.py` (the statement check).
+- **Closing:** `apply_r28_closing.py`.
+
+## Round 29: the transfer case low-range detector, fault bits from their setters (`session_folder/round29/`)
+
+- **Stage A:** `opposite_words.py` (the scan), `worklist_r29a.py`, `labels_r29a.tsv`, `fault_n_evidence.py` / `fault_n_context.py` (each bit's setters and readers), `fault_bits_r29a.py`.
+- **Closing:** `apply_r29_closing.py`.
+
+## Round 30: the watchdog fueling monitor (`session_folder/round30/`)
+
+- **Scans:** `unit_domain_scan.py`, `setter_name_scan.py`, `ec1_access_census.py` (the EC1 lead).
+- **Stage A:** `worklist_r30a.py`, `add_rows_r30a.py`. **Closing:** `apply_r30_closing.py`.
+
+## Round 31: the J1939 EC1 payload as a struct (`session_folder/round31/`)
+
+- **Stage A:** `apply_r31a.py` (the struct, the instances, the dotted rows). **Closing:** `apply_r31_closing.py`.
+
+## Round 32: the discrete output read-back checks (`session_folder/round32/`)
+
+- **Finder:** `messy_functions.py`. **Stage A:** `output_check_calls.py`, `worklist_r32a.py`, `apply_r32a.py`; the proof `make_tokens_r32a.py`, `flatten_cpp.py`, `check_two_r32a.py`. **Closing:** `apply_r32_closing.py`.
+
+## Round 33: the J1939 transmit status bytes and three payload structs (`session_folder/round33/`)
+
+- **Stage A:** `status_bytes.py` (every descriptor's status byte and its readers), `coverage_check.py` (what covers an address), `apply_r33a.py`, `fix_text_r33a.py`; the proof map `map_r33a_proof*.csv` and `proof_r33a.txt`. **Stage B:** `apply_r33b.py`, `apply_r33b2.py`; the proof `tokens_r33b.json`, `check_reorders_r33b.py`, `diff_functions.py` (label-substituted unified diffs). **Closing:** `apply_r33_closing.py`.
+
+## Round 34: the application J1939 transport's transmit sessions (`session_folder/round34/`)
+
+- `area_users.py` (who uses an address range). **Stage A:** `worklist_r34a.py`. **Stage B:** `apply_r34b.py`. **Stage C:** `apply_r34c.py`. The proofs reuse round 33's `diff_functions.py` / `check_reorders_r33b.py` and round 32's `flatten_cpp.py` / `make_tokens_r32a.py`. **Closing:** `apply_r34_closing.py`.
+
+## Round 35: the boot kernel's J1939 transport and the receive session (`session_folder/round35/`)
+
+- **Stage A:** `apply_r35a.py`. **Stage B:** `apply_r35b.py`. **Stage C:** `apply_r35c.py` (its first run was not idempotent: the clean-up is in the stage C commit message). **Closing:** `apply_r35_closing.py`.
+
+## Round 36: two payloads and the boot diagnostic request path (`session_folder/round36/`)
+
+- **Stage A:** `apply_r36a.py`. **Stage B:** the prototype rows (in the commit). **Closing:** `apply_r36_closing.py`.
+
+## Round 37: 120 lookup cache words (`session_folder/round37/`)
+
+- `cache_users.py` (a cache range's lookups), `cache_names.py` (names every unnamed cache from its lookups), `apply_r37a.py`, the proof `prove_caches.py`. **Closing:** `apply_r37_closing.py`.
+
+## Round 38: the named lookup cache audit (`session_folder/round38/`)
+
+- `cache_audit.py` (named caches vs their lookups), `second_words.py` (a 2-D cache's y half), `apply_r38a.py`; the proof is round 37's `prove_caches.py`. **Closing:** `apply_r38_closing.py`.
+
+## Round 39: the `_cal` HARD list cleared (`session_folder/round39/`)
+
+- **Stage A:** `audit.txt` (the auditor's report), `plan.txt` (`lookup_tables.py --plan`), `table_calls.py`, `apply_r39a.py`.
+- **Stage B:** `apply_r39b.py`, `make_rules_r39b.py` / `rules_r39b*.json` (`statement_diff.py` rules).
+- **Stage C:** `hard_scalars.py` / `hard_scalars.tsv` (each HARD row with its e2m record, ROM-copy check and writes), `symbol_uses.py`, `use_context.py`, `apply_r39c.py`, `make_rules_r39c.py`.
+- **Closing:** `apply_r39_closing.py`, `update_large_tar_r39.sh`.
+
+## Round 40: the application's EEPROM mirror names (`session_folder/round40/`)
+
+- **Stage A:** `audit.txt`, `missing_survey.py` / `missing.tsv`, `missing_users.py` / `missing_users.tsv` (who uses each row), `app_e2m.txt` (the parameter ID table), `apply_r40a.py`, `apply_r40a_followups.py`.
+- **Stage B:** `apply_r40b.py`, `rules_r40b*.json`, `address_pairs_check.py`.
+- **Closing:** `apply_r40_closing.py`, `update_large_tar_r40.sh`.
+
+## Round 41: the injector driver booster capacitor monitor (`session_folder/round41/`)
+
+- `apply_r41a.py` (the two record types decoded from the ROM, the RAM arrays, the renames), `prove_records.py` (old raw addresses and new struct fields to one canonical form). **Closing:** `apply_r41_closing.py`, `update_large_tar_r41.sh`.
+
+## Round 42: the fault status records, the retarder cylinder counts (`session_folder/round42/`)
+
+- **Stage A:** `apply_r42a.py`, `prove_status_records.py`. **Stage B:** `apply_r42b.py`, `rules_r42b.json`. **Closing:** `apply_r42_closing.py`, `update_large_tar_r42.sh`.
+
+## Round 43: the main injection end timing, the junk rows (`session_folder/round43/`)
+
+- **Stage A:** `apply_r43a.py`, `rules_r43a*.json`. **Stage B:** `apply_r43b.py`, `removed_junk_rows.txt`. **Stage C:** `apply_r43c.py`. **Fix:** `dedupe_task046.py`, `apply_r43_fix.py`. **Closing:** `apply_r43_closing.py`, `update_large_tar_r43.sh`, the MISSING survey (`missing*.tsv`).
+
+## Round 44: round 39's unverified rows, the last typed junk row (`session_folder/round44/`)
+
+- **Stage A:** `apply_r44a.py`, `map_r44a.csv`. **Evidence:** `e2m_negatives.py` (+ `e2m_negatives.txt`), `raw_address_scan.py`, `pedal_records.txt`. **Closing:** `apply_r44_closing.py`, `update_large_tar_r44.sh`. **Stage B:** `apply_r44b.py`, `map_r44b.csv`, `align_blocks.py` (+ `align_blocks.txt`), `candidate_blocks.txt`, `col5_neighbours.txt`, `check_history_r44b.py`, `apply_r44b_closing.py`. **Stage C:** `apply_r44c.py`, `map_r44c.csv`, `check_r44b_review.py` (run with `git show f338e54:firmware/CM848_S90140.06_analysis/output/global_variables.csv` as its before file), `apply_r44c_closing.py`.
+
+## Round 45: the table gap sweep (`session_folder/round45/`)
+
+- **Sweep:** `sweep_table_gaps.py` (+ `sweep_gaps.txt`), `match_gap_signatures.py` (+ `gap_signatures*.txt`), `rank_gap_semantics.py` (+ `gap_semantics.txt`), `show_placement.py` (+ `placements_*.txt`), `citation_status.py`, `fix_tools_r45.py`. **Stage A:** `apply_r45a.py`, `map_r45a.csv`. **Closing:** `apply_r45_closing.py`, `update_large_tar_r45.sh`.
+
+## Round 46: the warning chime, rock cycle torque management (`session_folder/round46/`)
+
+- `gap_leads.py` (+ `gap_leads.txt`), `placements_*.txt`. **Stage A:** `apply_r46a.py`, `map_r46a.csv`. **Stage B:** `apply_r46b.py`, `map_r46b*.csv`, `apply_r46b_struct_comment.py`. **Closing:** `apply_r46_closing.py`, `update_large_tar_r46.sh`.
+
+## Round 47: uncited table rows (`session_folder/round47/`)
+
+- `uncited_table_rows.py` (+ `uncited.txt`), `block_reliability.py` (+ `reliable_leads.txt`). **Stage A:** `apply_r47a.py`, `map_r47a*.csv`. **Stage B:** `apply_r47b.py`, `map_r47b.csv`, `fix_r47b_texts.py`. **Closing:** `apply_r47_closing.py`, `update_large_tar_r47.sh`.
+
+## Round 48: the OBD cooling monitors (`session_folder/round48/`)
+
+- **Stage A:** `apply_r48a.py`, `map_r48a.csv`, the cast-stripped proof (`prove_r48a.sh`). **Closing:** `apply_r48_closing.py`, `update_large_tar_r48.sh`.
+
+## Round 49: unnamed table-resolved reads (`session_folder/round49/`)
+
+- `unnamed_table_reads.py` (+ `unnamed_reads.txt`). **Stage A:** `apply_r49a.py`, `map_r49a.csv`, `prove_r49a.sh`. **Closing:** `apply_r49_closing.py`, `update_large_tar_r49.sh`.
+
+## Round 50: gaps by access signature (`session_folder/round50/`)
+
+- `gap_access_signatures.py` (+ `gap_access.txt`). **Stage A:** `apply_r50a.py`, `map_r50a.csv`, `prove_r50a.sh`. **Closing:** `apply_r50_closing.py`, `update_large_tar_r50.sh`.
+
+## Round 51: the 0x408d38 gap is four blocks, the trip information blocks (`session_folder/round51/`)
+
+- Search: `three_block_fill.py`, `split_gap_debug.py`, `pair_fill.py`, `scored_cover.py` (+ their `.txt` outputs). **Stage A:** `apply_r51a.py`, `map_r51a.csv`, `prove_r51a.sh`. **Stage B:** `apply_r51b.py`, `prove_r51b_enum.py`. **Not shipped:** `apply_r51c_bitfield_structs_rejected.py`, `commit_r51c_bitfield_structs_not_shipped.txt`. `show_function_changes.py` lists the changed lines the type stages were read by. **Closing:** `find_branch_callers.py`, `apply_r51_call_site_fix.py`, `apply_r51_closing.py`, `update_large_tar_r51.sh`.
+
+## Round 52: nine more blocks record for record, five state enums (`session_folder/round52/`)
+
+- Search: `record_for_record_matches.py` (+ `record_matches.txt`), `placement_*.txt`, `find_sprg_writers.py`. **Stage A:** `apply_r52a.py` (`apply_r52a_first_draft.py` = before the retest names and the six blocks), `map_r52a.csv`, `prove_r52a.sh`. **Stage B:** `apply_r52b.py`, `prove_enum_substitution.py`. **Closing:** `apply_r52_closing.py`, `update_large_tar_r52.sh`.
+
+## Round 53: blocks ranked by meaning, the coolant temperature derate module (`session_folder/round53/`)
+
+- Search: `semantic_record_matches.py` (from round 52's matcher, `patch_matcher.py`), `semantic_score.py`, `semantic_matches.txt`, `placements.txt`. Shared helpers: `e2m_cite.py`. **Stage A:** `apply_r53a.py` (`fix_r53a_texts.py`), `map_r53a.csv`. **Stage B:** `apply_r53b.py`, `map_r53b.csv`, `refresh_dat_mentions_r53.py` (the plates that quoted the new rows' DAT_ labels). Proof: `prove_r53.sh`. **Closing:** `apply_r53_closing.py`, `update_large_tar_r53.sh`.
+
+## Round 54: the last unnamed tables, the stack monitor, legacy boot functions (`session_folder/round54/`)
+
+- `placements.txt` (round 53's disputed hits), `word_arrays.txt`, `list_unprefixed.py` (+ `unprefixed.txt`), `order_only.py`. **Stage A:** `apply_r54a.py`, `map_r54a.csv`. **Stage B:** `apply_r54b.py`, `map_r54b.csv`. Proof: `prove_r54.sh`. **Closing:** `apply_r54_closing.py`, `update_large_tar_r54.sh`.
+
+## Round 55: the fault manager core named from its code (`session_folder/round55/`)
+
+- `function_summary.py`. **Stage A:** `apply_r55a.py`, `map_r55a.csv`, `refresh_struct_comments_r55.py`. Proof: `prove_r55.sh`. **Closing:** `apply_r55_closing.py`, `update_large_tar_r55.sh`.
+
+## Round 56: the discrete output overrides (`session_folder/round56/`)
+
+- **Stage A:** `apply_r56a.py`, `map_r56a.csv`, `params_r56a.csv`. Proof: `prove_r56.sh` (the parameter renames per function, plus a struct-piece count). **Closing:** `apply_r56_closing.py`, `update_large_tar_r56.sh`.
+
+## Round 57: the cruise cluster, the N/V ratio, two warning chime sources (`session_folder/round57/`)
+
+- **Stage A:** `apply_r57a.py`, `map_r57a.csv`, `refresh_other_csvs_r57.py`. Proof: `prove_r57.sh`, `prove_return_types_r57.py`, `diff_function_r57.py`, `count_casts.py`. **Stage B:** `apply_r57b.py`, `map_r57b.csv`. **Closing:** `apply_r57_closing.py`, `update_large_tar_r57.sh`.
+
+## Round 58: the last protection_* globals (`session_folder/round58/`)
+
+- **Stage A:** `apply_r58a.py`, `map_r58a.csv`, the access scanners `scan_accesses.py` / `scan_accesses_v2.py`, `uses.py`. Proof: `prove_r58.sh`, `count_casts.py`. **Closing:** `apply_r58_closing.py`, `update_large_tar_r58.sh`.
+
+## Round 59: struct types nothing uses (`session_folder/round59/`)
+
+- **Stage A:** `orphan_struct_types.py`, `apply_r59a.py`, `removed_orphan_types.txt`. **Stage B:** `fix_r59b.py`. **Closing:** `apply_r59_closing.py`, `update_large_tar_r59.sh`.
+
+## Round 60: the parameter ID tables and the SCI dispatch table typed (`session_folder/round60/`)
+
+- **Stage A:** `check_tables.py`, `apply_r60a.py`, `map_r60a.csv`. Proof: `prove_r60.sh`, `diff_function_r57.py`, `count_casts.py`. **Closing:** `apply_r60_closing.py`, `update_large_tar_r60.sh`.
+
+## Round 61: both diagnostic service dispatch tables typed (`session_folder/round61/`)
+
+- **Stage A:** `apply_r61a.py`, `map_r61a.csv`. Proof: `prove_r61.sh`, `diff_function_r57.py`, `count_casts.py`. **Closing:** `apply_r61_closing.py`, `update_large_tar_r61.sh`.
+
+## Round 62: the J1939 registration functions, the DM7 test identifier (`session_folder/round62/`)
+
+- **Stage A:** `service_ids.py`, `apply_r62a.py`, `map_r62a.csv`. Proof: `prove_r62.sh`. **Closing:** `apply_r62_closing.py`, `update_large_tar_r62.sh`.
+
+## Round 63: the PGN 61184 diagnostic services in both kernels (`session_folder/round63/`)
+
+- **Stage A:** `registrations.py`, `checks_r63a.py`, `service_tables.py`, `apply_r63a.py` (its first draft `apply_r63a_first_draft.py`), `fix_r63a.py`, `map_r63a.csv`, `params_r63a.csv`. Checks: `compare_registrations.py`, `leftovers.py`, `check_function_history.py`.
+- **Stage B:** `signatures.py`, `apply_r63b.py`. Review: `review_typed.py`, `artifacts.py`, `differing.py`.
+- **Stage C:** `boot_tables.py`, `cm550_names.py`, `apply_r63c.py`, `map_r63c.csv`.
+- **Proof:** `prove_r63.sh`. **Closing:** `apply_r63_closing.py`, `update_large_tar_r63.sh`.
+
+## Round 64: both kernels' transmit records, one result-code enum (`session_folder/round64/`)
+
+- **Stage A:** `apply_r64a.py`. **Stage B:** `apply_r64b.py`. **Stage C:** `apply_r64c.py`, `map_r64c.csv`, `refresh_other_csvs_r64.py` (history-safe), `history_corruption.py`.
+- **Proof:** `prove_r64.sh` and round 63's `differing.py` / `review_typed.py` / `artifacts.py`. **Closing:** `apply_r64_closing.py`, `update_large_tar_r64.sh`.
+
+## Round 65: the unprefixed CM848-only functions, the J1939 receive table (`session_folder/round65/`)
+
+- **Stage A:** `apply_r65a.py`, `map_r65a.csv`. **Stage B:** `apply_r65b.py`, `param_passing.py`.
+- **Proof:** `prove_r65.sh` and round 63's `differing.py` / `artifacts.py`. **Closing:** `apply_r65_closing.py`, `update_large_tar_r65.sh`.
+
+## Round 66: the boot kernel's result codes, the coolant friction torque term (`session_folder/round66/`)
+
+- **Stage A:** `apply_r66a.py`, `map_r66a.csv`, `shared_unprefixed.py`. **Proof:** `prove_r66.sh`. **Closing:** `apply_r66_closing.py`, `update_large_tar_r66.sh`.
+
+## Round 67: the boot kernel's reflash state machine (`session_folder/round67/`)
+
+- **Stage A:** `apply_r67a.py` then `fix_r67a2.py` (two retypes dropped after the first build), `map_r67a.csv`,
+  `params_r67a.csv`. **Proof:** `prove_r67.sh` (renames enum members as text too), `list_differing.py` (all
+  canonically differing functions; prove_caches.py prints 12). **Closing:** `apply_r67_closing.py`,
+  `update_large_tar_r67.sh`.
+
+## Round 68: the application's EEPROM mirror words at 0x3fee18 (`session_folder/round68/`)
+
+- **Stage A:** `apply_r68a.py`, then `fix_r68a2.py` (the lookup's prototype), `fix_r68a3.py` (a typed local)
+  and `fix_r68a4.py` (which undoes it), `map_r68a.csv`. **Proof:**
+  `prove_r68.py` (exact string renames: the old labels end in `]`), `diff_r68.py`. **Closing:**
+  `apply_r68_closing.py`, `update_large_tar_r68.sh`.
+
+## Round 69: the calibration image header at ROM 0x8100 (`session_folder/round69/`)
+
+- **Stage A:** `apply_r69a.py`, then `fix_r69a2.py` (`bank2_image_last_word`) and `fix_r69a3.py` (field rows).
+  **Proof:** `prove_r69.py`, `diff_r69.py`. **Closing:** `apply_r69_closing.py`, `update_large_tar_r69.sh`.
+
+## Round 70: the 6 KB dual-port TPU RAM (`session_folder/round70/`)
+
+- **Stage A:** `apply_r70a.py`, `map_r70a.csv`, `classify_dptram_rows.py`. **Follow-up:** `fix_r70b.py` (the MPC5xx
+  memory map), then `fix_r70b2.py` (one retype reverted). **Proof:** `prove_r70.py`,
+  `diff_r70.py`. **Closing:** `apply_r70_closing.py`, `update_large_tar_r70.sh`.
+
+## Round 71: MEMORY_REGION_TYPE (`session_folder/round71/`)
+
+- **Stage A:** `apply_r71a.py`, `map_r71a.csv`. **Proof:** `prove_r71.py`, `diff_r71.py`. **Closing:**
+  `apply_r71_closing.py`, `fix_r71_closing_text.py`, `fix_r71_closing_text2.py`, `update_large_tar_r71.sh`. **Follow-up:** `fix_r71b.py`. **Commit
+  messages:** `commit_r71a.txt`, `commit_r71b.txt`, `commit_r71_closing.txt`.
+
+## Round 72: the J1939 memory write service shared with CM550 (`session_folder/round72/`)
+
+- **Stage A:** `apply_r72a.py` / `apply_r72a2.py` / `apply_r72a3.py` / `apply_r72a4.py`, the maps `map_r72a_cm848.csv` / `map_r72a_cm550.csv`. **Stage B1:** `apply_r72b1.py` / `apply_r72b1b.py` / `apply_r72b1c.py` / `apply_r72b1d.py`, `map_r72b_*.csv`.
+- **Proof:** `prove_r72*.py` (renamed functions keyed by their new name; boundary-aware renames), `diff_r72*.py`. **Closing:** `apply_r72_closing.py`, `update_large_tar_r72.sh`.
+
+## Round 73: CM550's EEPROM mirror, the security key variables, development mode twins (`session_folder/round73/`)
+
+- **Stage A0:** `apply_r73a0.py`. **Stage A:** `apply_r73a.py`, `map_r73a_*.csv`, the m68k width scanners `m68k_abs_access.py` / `m68k_register_ops.py`. **Stage B:** `apply_r73b.py`, `apply_r73b_docs.py`, `map_r73b_*.csv`. **Stage C:** `apply_r73c.py`, `map_r73c_cm550.csv`.
+- **Proof:** `prove_r73*.py`, `diff_r73*.py`. **Closing:** `apply_r73_closing.py`, `update_large_tar_r73.sh`.
+
+## Round 74: CM550's misapplied J1708 struct dismantled; the boot kernel's key check (`session_folder/round74/`)
+
+- **Stage A:** `struct_accesses.py` (every access with its address and width), `apply_r74a.py` (+ `patch_r74a_render.py`), `apply_r74a2.py`, `pairs_r74a.json`. **Stage B:** `apply_r74b.py`, `map_r74b_cm848.csv`. **Stage C:** `apply_r74c.py`. **Checks:** `closing_checks_r74.py`, `sweep_r74.py`.
+- **Proof:** `prove_r74*.py`, `diff_r74*.py`. **Closing:** `apply_r74_closing.py`, `update_large_tar_r74.sh`.
+
+## Round 75: the boot kernel's EEPROM header; CM550's InSite parameter schedule and J1708 SCI (`session_folder/round75/`)
+
+- **Stage B (CM848):** `apply_r75b.py` (the header fields, the EEPROM rows, the plate comment), `map_r75b.csv`.
+- **Stage A (CM550):** `apply_r75a.py` (the schedule struct, the pointer types), `apply_r75a2.py` (the table row
+  label-only: no memory block past the dump), `apply_r75a3.py` (the SCI registers, the two J1708 functions),
+  `apply_r75a4.py` (the mc68k_ prefix), `apply_r75a5.py` (the SCI interrupt handler), `map_r75a3/4/5.csv`.
+- **Proof:** `prove_r75*.py`, `diff_r75*.py`. **Closing:** `apply_r75_closing.py`, `update_large_tar_r75.sh`.
+
+## Round 76: CM550's MC68336 register map (`session_folder/round76/`)
+
+- **Stage A (CM550):** `register_access_sizes.py` (each register's m68k access sizes, decoded with llvm-mc-18;
+  `register_access_sizes.txt`), `apply_r76a.py` (the 141 register rows and the five struct types removed),
+  `apply_r76a2.py` (the 32-bit-only pairs as dwords), `apply_r76a3.py` (the malformed circular buffer struct).
+  The register names come from the MC68336/376 User's Manual, Appendix D (NXP, MC68336376UMD.pdf); the manual
+  itself is not archived here.
+- **Proof:** `prove_r76a_cm550.py`, `residual_r76a_cm550.py`, `diff_r76a_cm550.py`. **Closing:**
+  `apply_r76_closing.py`, `update_large_tar_r76.sh`.
+
+## Round 77: CM550's malformed J1708 state structs; the J1708 bus timer (`session_folder/round77/`)
+
+- **Stage A (CM550):** `multi_address_structs.py` (structs whose field rows carry several addresses),
+  `apply_r77a.py` (the two J1708 state structs removed and the globals typed), `apply_r77a2.py` (the bus timer
+  functions, flag and prototype), `map_r77a2.csv`.
+- **Proof:** `prove_r77a_cm550.py` and `statements_r77a_cm550.py` (a statement-level comparison that line wrapping
+  cannot fool). **Closing:** `apply_r77_closing.py`, `update_large_tar_r77.sh`.
+
+## Round 78: the last CM550 structs with a separate address per field row (`session_folder/round78/`)
+
+- **Stage A (CM550):** `multi_address_detail.py` (each struct's rows, the globals at its field addresses and their
+  field renders), `apply_r78a.py` (the 16 structs removed, their globals typed; `plan_r78a.txt`), `apply_r78a2.py`
+  (the exposed neighbors typed and the coordinate rows replaced), `field_widths.txt`.
+- **Proof:** `prove_r78a_cm550.py` (each old field render mapped to the address it reached, then a statement-level
+  comparison). **Closing:** `apply_r78_closing.py`, `update_large_tar_r78.sh`.
+
+## Round 79: CM550's two 82527 CAN controllers (`session_folder/round79/`)
+
+- **Stage A (CM550):** `apply_r79a.py` (the 45 register rows), `apply_r79a3.py` (the two CS5 functions),
+  `map_r79a3.csv`. The register map comes from Intel's 82527 Architectural Overview; the document itself is not
+  archived here.
+- **Proof:** `prove_r79a_cm550.py`. **Closing:** `apply_r79_closing.py`, `update_large_tar_r79.sh`.
+
+## Round 80: the chip select 2 watchdog register; the EEPROM log's indexes (`session_folder/round80/`)
+
+- **Stage A (CM550):** `apply_r80a.py`; `inside_addresses.txt` (the 182 rows inside the log range, each scanned
+  for absolute accesses).
+- **Closing:** `apply_r80_closing.py`, `update_large_tar_r80.sh`.
+
+## Round 81: CM550 functions renamed for the hardware they drive (`session_folder/round81/`)
+
+- **Stage A (CM550):** `hardware_name_check.py` (each function's name against the register modules it touches),
+  `apply_r81a.py`, `map_r81a.csv`.
+- **Closing:** `apply_r81_closing.py`, `update_large_tar_r81.sh`.
+
+## Round 82: CM550's TPU set-up functions (`session_folder/round82/`)
+
+- **Stage A (CM550):** `apply_r82a.py`, `map_r82a.csv`; `ch10_a.txt` / `ch10_b.txt` (the two channel 10 modes).
+- **Closing:** `apply_r82_closing.py`, `update_large_tar_r82.sh`.
+
+## Round 83: the TPU microcode images; the engine position functions (`session_folder/round83/`)
+
+- **Stage A (CM550):** `apply_r83a.py`, `map_r83a.csv`.
+- **Closing:** `apply_r83_closing.py`, `update_large_tar_r83.sh`.
+
+## Round 84: CM550's boot block image and its updater (`session_folder/round84/`)
+
+- **Stage A (CM550):** `placeholder_hardware_functions.py` (the placeholder-named functions that drive hardware),
+  `apply_r84a.py`, `map_r84a.csv`.
+- **Stage B (CM550):** `prefix_rule_check.py` (functions without `mc68k_` that touch MC68336 registers),
+  `function_set_check.py` (functions removed / added / changed between two builds), `apply_r84b.py`,
+  `apply_r84b2.py`, `map_r84b.csv`, `apply_r84b_closing.py`.
+- **Closing:** `apply_r84_closing.py`, `update_large_tar_r84.sh`, `fix_pr_body_round_headings_r84.py` (the PR
+  body's round 24-84 headings had no blank line above them, so GitHub showed each inside the bullet above it).
+
+## Round 85: the CM550 prefix rule audit, the Huffman tree struct (`session_folder/round85/`)
+
+- **Stage A (CM550):** `audit_table.py` / `audit_records.py` (the audit workflow's result as a table / as full
+  records, `audit_records.txt`), `hardware_access_kinds.py` (watchdog-only vs real hardware access),
+  `references_to.py` (every m68k reference form to an address), `apply_r85a.py`, `map_r85a.csv`.
+- **Stage B (CM550):** `apply_r85b.py`.
+- **Research:** `stack_argument_survey/` (a CPU32 decoder and call-site walker that classifies CM550's small
+  stack arguments; its scripts and text outputs).
+- **Research reports:** `research_survey.txt`, `research_mechanics.txt`, `research_design.txt` (`save_research.py`,
+  `journal_results.py` pull them out of the workflow result).
+- **Closing:** `apply_r85_closing.py`, `update_large_tar_r85.sh`; the fix-up `apply_r85c_docs.py` (the 14 / 9 split, the
+  class Z leads, the J1708 dispatcher's old name in comments, CLAUDE.md's relocation map section) with
+  `rom_hardware_operands.py` (each watchdog-only function's ROM bytes scanned for other 0x00FFxxxx operands).
+
+## Round 86: CM550's stack parameters in 2-byte slots (`session_folder/round86/`)
+
+- **Stage A:** `apply_r86a_rows.py` (the design's wave 0 / 1 rows; `fix_design/` holds its inputs),
+  `compare_rows.py`, `check_r86a.py` (the design's T3 checks), `caller_census.py` (call-site artifacts before /
+  after), `placed_vs_survey.py` (each placed prototype against the survey's reads and pushes),
+  `classify_changes.py`, `remaining_and_hazard.py`, `list_remaining.py`.
+- **Stage B:** `apply_r86b_docs.py`.
+- **Stage C:** `wave2_summary.py`, `apply_r86c_rows.py`, `applied_r86c.csv`.
+- **Stage D:** `local_rows_check.py` (each named local of a changed function, before / after),
+  `new_token_lines.py` (the new artifact lines, for classification), `apply_r86d.py`.
+- **Closing:** `apply_r86_closing.py`, `apply_r86d_closing.py`, `update_large_tar_r86.sh`; `wave2_result.json` is the
+  workflow's proposals and verdicts.
+
+## Round 87: the round 85-86 leads audit; 8 twins share one name (`session_folder/round87/`)
+
+- **The audit:** `audit_result_r87.json` (the workflow's proposals and verdicts), `audit_summary_r87.txt`,
+  `summary.py`, `final_changes.py` / `final_changes.tsv` (the accepted and amended changes).
+- **Stage A:** `precheck.py`, `apply_r87a.py`, `apply_r87a2.py` (comment tidy; the CM848 J1939 defaults copy),
+  `old_name_sweep.py`, `token_diff.py` (a per-function token diff that ignores line wrapping), `fix_map_header.py`,
+  the maps and the proof outputs.
+- **Stage B:** `apply_r87b.py`, `refresh_other_csvs.py` (old names in the four CSVs refresh_references.py does not
+  cover), `fault_pcode.py` (fault number -> OBD P-code).
+- **Stage C:** `apply_r87c.py`, `find_pointer.py` (big-endian pointers to an address and the PowerPC branches that
+  target it, in one or more images).
+- **Closing:** `apply_r87_closing.py`, `apply_r87c_closing.py`, `dedupe_r87c.py` (removed the three blocks that a
+  second run of `apply_r87c_closing.py` duplicated before its guard was fixed), `update_large_tar_r87.sh`.
+
+## Round 88: the filter library, 6 more twins, ENGINE_STATE, the shifted dumps (`session_folder/round88/`)
+
+- **The audits:** `audit_result_r88.json` / `audit_summary_r88.txt` (the misname audit) and `audit2_result_r88.json`
+  (the filter callers and the A/D config record, for round 89); `audit_changes.py` (accepted / amended changes as a
+  TSV, with the skeptics' notes).
+- **Stage A:** `ema_changes.py`, `precheck_r88a.py`, `apply_r88a.py`, `fix_replaces_notes.py` (refresh_references
+  rewrites a "replaces" note; "were" is protected), `apply_r88a2.py` (the A/D loops' record pointer).
+- **Stage C:** the clip-core change is in the commit; `to_crlf.py` (clip-core is CRLF), `apply_r88c_docs.py`.
+- **Stage D:** `apply_r88d_loaders.py`, `apply_r88d_docs.py`.
+- **Stage B:** `precheck_r88b.py`, `apply_r88b0_clear.py` (clearWorkingRam's locals), `apply_r88b.py`,
+  `quote_enum_comments.py` (enums.csv parses quote-aware), `split_maps.py` / `add_own_only.py` /
+  `refresh_other_csvs.py` (per-firmware refresh for an old name the two rename differently).
+- **Closing:** `apply_r88_closing.py`, `update_large_tar_r88.sh`, `verdicts.py`.
+
+## Round 89: the filter callers, sensor_config_t / sensor_state_t, the Calterm names (`session_folder/round89/`)
+
+- **Stage A:** `apply_r89a.py` (round 88's generated comments, three script comments, the dump provenance).
+- **Stage B:** `check_current.py` (the audit's current names against HEAD), `precheck_r89b.py`, `apply_r89b.py`,
+  `fix_extra_notes.py` (the audit's framing), `apply_r89b2.py` / `revert_r89b2.py` (the config-pointer rows that
+  failed).
+- **Stage C:** `calterm_stems_r89.py` (which e2m original carries J90350.00's block 1003 / 1004 layout, and each
+  channel's Calterm names), `precheck_r89c.py`, `apply_r89c.py` + `patch_apply_r89c.py` (second pass) +
+  `run_r89c.sh` (refresh with the Calterm-named old labels kept), `apply_r89c2.py` / `drop_bcf0_rows_r89.py`
+  (the walker rows), `apply_r89c3.py` (reserved_18 as a dword). The ApplyLocalVariables change is in the commit.
+- **Stage D:** `apply_r89d.py`.
+- **Round 90 leads:** `check_parameter_table_r89.py` / `parameter_table_r89.tsv` (the parameter ID table's stale
+  firmware_variable column).
+- **Closing:** `apply_r89_closing.py`, `update_large_tar_r89.sh`.
+
+## Round 90: CM550's parameter ID table, the CM550 e2m audit, a naming wave, DM8 (`session_folder/round90/`)
+
+- **Stage A:** `find_cm550_table_r90.py` / `check_cm550_table_layout_r90.py` (the table's layout, against the CSV),
+  `apply_r90a.py`, `check_e2m_parameter_rule_r90.py` / `diff_parameter_table_r90.py` / `classify_table_names_r90.py`
+  (the old CSV columns against the regenerated table). The tool changes are in the commit.
+- **Stage B:** `cm550_e2m_census_r90.py` (the first census), `gap_effect_r90.py` (the CM848 reader fix's effect).
+- **Stage C:** `wave_candidates_r90.py` / `make_batches_r90.py` (`wave/`: the candidates and batches, the agents'
+  scratch), `wave_result_r90.json` / `wave_notes_r90.txt` (the workflow's proposals, verdicts and notes),
+  `tally_wave_r90.py` / `show_wave_r90.py`, `apply_r90c.py` (with the two array overrides), `extend_map_r90c.py`,
+  `apply_r90c_vsk.py` (validateSecurityKey), `keep_r90c.txt` (the Calterm names the refresh keeps).
+- **Stage D:** `apply_r90d.py`.
+- **Closing:** `apply_r90_closing.py`, `update_large_tar_r90.sh`.
+
+## Round 91: structs and J1939 twins (`session_folder/round91/`)
+
+- `rows_in_ranges_r91.py` (the rows inside each struct candidate), `item_S1..T2.json` (the workflow's proposals and
+  verdicts), `peek_r91.py` / `dump_items_r91.py`, `apply_r91.py` (applies the verified elements, with the
+  amendments), `keep_lists_r91.py`, `run_r91.sh` (apply + refresh), `review_refresh_r91.py` (every refresh change
+  against the post-apply snapshot), `fix_phase_index_docs_r91.py`.
+- **Closing:** `apply_r91_closing.py`, `update_large_tar_r91.sh`.
+
+## Round 92: CM550's fueling state enum and algorithm enable bitfields (`session_folder/round92/`)
+
+- **Stage B:** `compare_fueling_state_r92.py` (CM848's members against CM550's Calterm labels), `apply_r92b.py`.
+- **Stage A:** `enable_words_r92.py` (the e2m records of each word), `pilot_bitfield_r92.py` (the thrown-away pilot:
+  bitfield names render on CM550), `batch_W1..W4.json` (the workflow's proposals and verdicts),
+  `dump_words_r92.py` / `check_shared_r92.py`, `make_amend_r92a.py` -> `amend_r92a.json` (the skeptics' amendments
+  as exact values), `apply_r92a.py`, `fix_cm848_word3_comment_r92.py`, `apply_r92a_prev.py` / `abs_refs_r92.py` (the
+  two previous-pass rows and their access widths), `apply_r92a_word20.py`, `mask_exact_r92.py` (the proof that each
+  mask test became the field of that bit), `bitfield_notes_r92.txt`, `scratch/` (the agents' own scripts).
+- **Closing:** `apply_r92_claude_md.py`, `apply_r92_closing.py`, `update_large_tar_r92.sh`.
+
+## Round 93: CM550 structure fixes, freeze frames, task sets, typing (`session_folder/round93/`)
+
+- **The round 91 plate comment fix:** `fix_r91_plate_comments_r93.py`.
+- **Mid-function rows:** `call_sites_r93.py` (how the ROM reaches each function row), `apply_r93_midbody.py` (the 21
+  task set rows), `midfunction_rows_r93.py` / `midbody2_survey_r93.py` / `apply_r93_midbody2.py` (the 30 others),
+  `midbody2_flow_check_r93.py` (control flow from the holding function), `pc_relative_refs_r93.py`,
+  `switch_case_rows_r93.py` / `apply_r93_switchcase.py`, `midbody_proof_r93.py` (the by-address proof),
+  `fix_tail_mentions_r93.py`, `cm848_entry_scan_r93.py` (CM848 has none).
+- **Freeze frames:** `apply_r93_freeze_frame.py`, `apply_r93_freeze_frame_cm848.py`, `width_census_r93.py`,
+  `pointer_table_r93.py`, `fix_dm4_comment_r93.py`.
+- **Position inputs:** `apply_r93_position_inputs.py`.
+- **Task sets:** `frame_schedule_r93.py` (+ `.tsv`: the 40-phase schedule), `apply_r93_task_sets.py`.
+- **Typing:** `untyped_width_scan_r93.py`, `untyped_cpp_check_r93.py`, `apply_r93_types.py`, `signedness_r93.py`,
+  `apply_r93_types_signed.py`, `e2m_width_sign_r93.py`, `apply_r93_types_signed_e2m.py` (pass 1);
+  `e2m_type_candidates_r93.py`, `apply_r93_types_e2m.py`, `pointer_rows_r93.py` (pass 2); `types_proof_r93.py`,
+  `line_count_diff_r93.py`, `underscore_census_r93.py`.
+- **The naming workflow (not applied yet):** `function_candidates_r93.py`, `families_r93.py`,
+  `batch_tables_r93.py`, `make_retry_workflow_r93.py`, `make_sturdy_workflow_r93.py` (+ the `.js`),
+  `apply_r93.py` with `test_apply_r93.sh` and `patch_apply_guard_r93.py`, `dump_batches_r93.py`, `run_r93.sh`.
+- **Shared:** `refresh_r93.sh`, `review_refresh_r93.py`, `round_counts_r93.py`, the `map_r93*.csv` rename maps,
+  the commit messages. **Closing:** `apply_r93_closing.py`, `update_large_tar_r93.sh`.

@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include "ChunkedRead.h"
 #include "ICanAdapter.h"
 #include "J1939MessageBuilder.h"
 #include "J1939TransportProtocol.h"
@@ -196,10 +197,16 @@ public:
      * @param totalLength Total bytes to read
      * @param data Output: read data
      * @param chunkSize Bytes per read (max 255, default 128)
-     * @return true if all reads successful
+     * @return true if the read completed; a chunk that failed after its retries is filled with 0xFF and listed in
+     *         lastReadGaps(), so data always keeps each byte at its own offset
      */
     bool readMemoryService4ALarge(uint32_t address, uint32_t totalLength,
                                   std::vector<uint8_t>& data, uint8_t chunkSize = 128);
+
+    /**
+     * @brief The address ranges the last readMemoryService4ALarge could not read (filled with 0xFF).
+     */
+    const std::vector<TReadGap>& lastReadGaps() const { return m_lastReadGaps; }
 
     /**
      * @brief Dump memory region to file using Service 0x4A.
@@ -370,6 +377,7 @@ private:
     uint8_t m_ecuAddress;  // ECU address for Service 0x4A operations
     ProgressCallback m_progressCallback;
     LogCallback m_logCallback;
+    std::vector<TReadGap> m_lastReadGaps;  // unread ranges of the last chunked read
 
     void log(const std::string& message);
     void reportProgress(uint32_t current, uint32_t total, const std::string& message);

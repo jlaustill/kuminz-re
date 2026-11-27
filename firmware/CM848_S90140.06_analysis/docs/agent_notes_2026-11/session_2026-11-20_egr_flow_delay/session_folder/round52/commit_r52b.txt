@@ -1,0 +1,27 @@
+cm848: round 52 stage B - five state enums from the e2m labels of the fan and alternator field blocks
+
+The labels come from the records stage A cited, merged over the e2m's duplicate records (it splits a long label list
+in two). Each member was checked against the code branch that stores it. Every access is a whole-value compare or
+store.
+- COOLING_FAN_COOLANT_REQUEST_STATE (cooling_fan_coolant_request_state, 8B22 +8): BELOW_RAMP / RAMP / PI_CONTROL /
+  FULL_SPEED.
+- COOLING_FAN_SPEED_TARGET_SOURCE (cooling_fan_speed_target_source, 8B22 +E, 16 members):
+  - the base speed and the coolant / A/C / intake / transmission requests;
+  - the engine-driven limit, the ceiling, the override and the thermostat monitor;
+  - the high-engine-rpm ramp states (the e2m's "slip" logic).
+- COOLING_FAN_DUTY_SOURCE (cooling_fan_duty_source_code, 8B22 +16, 12 members): cm848_selectCoolingFanDutySource's
+  branches and cm848_applyCoolingFanDuty's clamps and hold.
+- ALTERNATOR_FIELD_REGULATOR_STATE (alternator_field_regulator_state and its previous-state copy, 8A60 +10):
+  INACTIVE / STARTUP / STEADY_STATE / LOAD_RESPONSE.
+- ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE (alternator_field_load_response_stage, 8A60 +16): NONE / HOLD / RECOVERY.
+- The two EVR value lists are in the records' descriptions, not label fields.
+
+Proof:
+- prove_r52a.sh with an empty map (casts and two char literals folded): 1958 of 1968 functions match.
+- The other ten are the fan and alternator field functions. prove_enum_substitution.py puts each member's value
+  back, writes the decompiler's hex literals in decimal and removes whitespace: all ten then equal the old text.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,16 @@
+cm550: round 74 stage C - two more duplicate J90280.05-era enums removed (CALIBRATION_BANK, CALIBRATION_STATE_SIGNATURE)
+
+From the closing review's read of CM550's enums.csv. Like MEMORY_ACCESS_FLAG in round 72, they modeled variables that
+CM848's enums now type:
+- CALIBRATION_BANK (0 FACTORY / 1 ACTIVE) for 0x80dc6c duplicated RAM_REFRESH_STATE. 0x80dc6c is ram_refresh_enable
+  (e2m block 10C7).
+  - Its notes claim the value picks bytes 0-3 or 4-7 of the parameter table entries at 0x35224. That is not checked,
+    and the claim stays as a lead in the replacement comment.
+- CALIBRATION_STATE_SIGNATURE (0xEEEE / 0xEAEA / 0xEAEB / 0xEEEF) for 0x80dc90 duplicated RUN_LOCATION. 0x80dc90 is
+  run_location (e2m block 0010). No write of its 0xeaeb / 0xeeef was found.
+Neither rendered anywhere or typed any row.
+
+Proof: CM550's .cpp is unchanged past the Generated line. The regenerated header no longer declares the two enums (0
+g++ errors). CM550 verify is byte-identical with stage B's WARNING lines.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

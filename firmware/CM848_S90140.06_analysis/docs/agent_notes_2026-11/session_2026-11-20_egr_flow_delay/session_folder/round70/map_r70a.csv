@@ -1,0 +1,6 @@
+address,name,old_label,kind,dims
+0x00302000,dual_port_tpu_ram_start,TPU3_TPUMCR,global,1
+0x00302016,boot_can_receive_ring,TPU3_HSQR1,global,1
+0x00302006,ecu_power_state_flags.state,keyon_state_machine_phase,global,1
+0x0030200a,ecu_power_state_flags.transfer_crc,qadc_a_portqa,global,1
+0x00302012,ecu_power_state_flags.runtime_counter,ecm_runtime_accumulator,global,1

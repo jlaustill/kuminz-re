@@ -1,0 +1,32 @@
+=== governor_cruise_speedError_torqueAdj (lines 85852-85888, 31 non-blank)
+// Function: governor_cruise_speedError_torqueAdj @ 0x00525134
+//
+int governor_cruise_speedError_torqueAdj(void)
+{
+  int iVar1;
+  short sStack_6;
+  iVar1 = (int)governor_cruise_speed_error_net;
+  sStack_6 = (short)((iVar1 * (short)cruise_pid_rate_gain_working) / 1000);
+  if ((sStack_6 == 0) && (iVar1 != 0)) {
+    if (iVar1 < 1) {
+      sStack_6 = -1;
+    }
+    else {
+      sStack_6 = 1;
+    }
+  }
+  iVar1 = (int)sStack_6 * (uint)cruise_pid_rate_gain_scale;
+  if (iVar1 < 0x138800) {
+    if (iVar1 < -0x1387ff) {
+      sStack_6 = -10000;
+    }
+    else {
+      sStack_6 = (short)(iVar1 >> 7);
+    }
+  }
+  else {
+    sStack_6 = 10000;
+  }
+  return (int)sStack_6;
+}
+//

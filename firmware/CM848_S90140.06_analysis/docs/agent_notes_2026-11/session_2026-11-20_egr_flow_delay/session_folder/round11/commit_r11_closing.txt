@@ -1,0 +1,17 @@
+cm848: round 11 closing - docs (task 046, the session README, todo)
+
+- **work/tasks/046:** the round 11 section.
+  - The e2m discrete I/O tables (1577 / 1612 / 12A7 / 12A8).
+  - Stages A-D.
+  - The switch pilot's numbers, as the user's decision: 216 named reads vs 10 piece lines in 3 setters and a
+    field_0x0 in the scanner.
+  - The leads: the switch bytes 0 / 1 / 3, fuel_pressure_setpoint_map_cached_axis_offsets as word[16], the cruise
+    governor's looked-up value at 0x3fd006, and the 12A8 array.
+  - The round 10 leads round 11 resolved (the output bitfields, the lift pump) are marked.
+- **The session README:** the round 11 scripts.
+- **work/todo.md (046):** round 11.
+- **No new firmware/CLAUDE.md rules:** this round started from a 'keep going' relayed by another session, so its
+  methods stay in task 046 for the user to promote. The only firmware/CLAUDE.md change was stage A's rename refresh
+  of the lift pump table row.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

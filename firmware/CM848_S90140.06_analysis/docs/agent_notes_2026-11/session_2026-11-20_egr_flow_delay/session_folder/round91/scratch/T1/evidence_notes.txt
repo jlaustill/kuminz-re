@@ -1,0 +1,49 @@
+T1 evidence notes (CM550 J1939 receive layer vs CM848) - scratch, read-only investigation
+
+Disassembly: CM550 via llvm-objdump-18 on a hand-made m68k ELF wrapper (mkelf.py, cm550.elf); CM848 via disasm_func.py.
+llvm marks moveq / addq / subq / andi / clr / cmp.b abs / pea / tst / cmpa as <unknown>; decoded by hand.
+
+HANDLERS (CM550 vs CM848): same filter slot, same timeout slot + constant, same data byte + bit field, same receiver offset.
+ receiver block: CM550 0x80d70f.. = CM848 0x40aaa9.. (same relative offset for all 23 bytes; e2m 12F7 +3..+19 in both)
+ CM1    0x21a5c / 0x50b734: f[0] -> t[0]=500, data[0] -> +0x0d (0x80d71c / 0x40aab6)
+ EBC1   0x21a8c / 0x50b77c: f[1..5] -> t[1..5]=50; b3>>6 +0x14, b3>>4&3 +0x02, b3>>2&3 +0x16, b3&3 +0x01, b4 +0x0a
+ EEC2   0x21b88 / 0x50b8a4: f[6..9] -> t[6..9]=25; b0&3 +0x0b, b1 +0x05, b3 +0x13, b4 +0x11
+ SHUTDN 0x21c3c / 0x50b98c: f[10] -> t[10]=500; b2&3 +0x00
+ PTO    0x21c74 / 0x50b9d8: f[11..14] -> t[11..14]=50; b5>>2&3 +0x12, b5&3 +0x0e, b6>>4&3 +0x0f, b6&3 +0x10
+ CCVS1  0x21d44 / 0x50bacc: f[15..22] -> t[15..22]=50; b3>>6 +4, b3>>4&3 +3, b3>>2&3 +6, b4>>4&3 +7, b4&3 +8, b7&3 +0x0c, b7>>2&3 +9, b7>>4&3 +0x15
+ CM550 masks then shifts ((b & 0xc0) >> 6, asr.l); CM848 rlwinm/clrlwi - the same values.
+
+REGISTER (0x21272 / 0x538eb0): count byte right after table; full test (16 vs 17) returns 1; entry = base + count*6; count+1;
+ word key at +0, long handler at +2; return 0.  CM550 0x800ab0 + 16*6 = 0x800b10 count; CM848 0x3fd414 + 17*6 = 0x3fd47a.
+ ONLY difference: capacity constant 16 vs 17.
+ CM550 dispatcher 0x212b2 scans 6-byte entries (psVar8 += 3) up to the count byte, calls (+2) with the 18-byte ring record.
+ RAM dump: count 13; entries 7-12 = 0xe000/0x21a5c, 0xf001/0x21a8c, 0xf003/0x21b88, 0xfee4/0x21c3c, 0xfef0/0x21c74, 0xfef1/0x21d44.
+ 8 call sites (pea handler; move.w #pgn / clr.w; jsr): 0x231bc ec00, 0x231cc eb00, 0x2ef12 ef00, 0x2fbba 0, 0x2f11e f002,
+ 0x2f54a ea00, 0x2efc6 e300, and 0x21ef6's six.
+ Row 0x800b00 diagnostic_request_buffer: no ROM reference, no .cpp use -> inside entry 13 (+2) -> remove when table typed.
+
+REGISTER HANDLERS (0x21ef6 / 0x50bdcc): same six PGN keys + handlers, same order; CM848 adds j1939_input_fault_start_delay = 1000.
+
+TICK (0x21edc / 0x50bca0): CM550 = only: for (p = 0x804234; p <= 0x804264; p++) if (*p) --*p;  (bls loop, cmpa #0x804264)
+ CM848 = multiplex enable gate (algorithm_enable_flags_28 0x400), fault start delay countdown, startup timer / inhibit flag,
+ DM13 gate, then the same loop (p <= base + 48). CM550 e2m 12F7 has no JCMXRNTR / JCIHMXFU records.
+ CM550 callers: vp44_evenPhaseSchedulerTaskSet (0x1b4d8) and cm550_diagnosticMonitoringCoordinator (0x1b4ea), unconditional.
+
+TIMEOUTS CM550 0x804234 word[25]: slots 0-22 = e2m 12F6 +0..+2C (MX..TR, EEPROM-region tag 0x0100072a + 2n = 0x803b0a + 0x72a + 2n),
+ slot 23 = 12F6 +2E MXDUMYTR (no writer), slot 24 = 0x804264 = e2m 11C0 +0 J39PDBLK (only the tick's bound references it).
+ Readers: slot 0 @0x20462, 1 @0x207f2, 5 @0x203ca, 6 @0x2051a, 7 @0x20cea, 9 @0x21000; indexed @0x20976 (descriptor slot*2).
+ Outside the EEPROM mirror 0x803b0a-0x804155 -> no _cal. CM848 twin j1939_input_signal_timeouts word[25] 0x3feaa4.
+
+DESCRIPTOR TABLE CM550 ROM 0x20108: 17 x 10 bytes {byte* signal +0, byte timeout slot +4, byte 0 +5, dword logical switch +6};
+ loop in cm550_FUN_00020890 (index 0..16, x10). Pointers and slots identical to CM848 j1939_input_signal_descriptor_table
+ (0x53a278); logical switch numbers differ (CM550 72 9 54 11 10 3 1 2 14 13 60 56 58 20 19 15 54).
+
+RECEIVERS CM550 0x80d70f-0x80d725: bytes; switch bytes referenced only by the descriptor pointer + their handler store;
+ 0x80d714 / 19 / 1a / 1c / 20 / 22 have direct byte readers. Dump all 0 (no J1939 input traffic; last source 0xF9).
+ 0x80d720 = e2m 12F7 +14 JCWTPRMU wet tank pressure (PSIA); consumer cm550_FUN_00020fac scales x 0x2442 / 100.
+ CM848 0x40aaba same record (J1939_Mux_Wet_Tank_Pressure) but named j1939_received_accelerator_pedal_position_2.
+
+FILTERS without rows: 0x803f9c (12E8 +6 MXMNFMSA, fan speed) and 0x803fa6 (12E8 +10 MXAKPRSA, A/C pressure switch);
+ each referenced only by its handler (2 refs). EEPROM dump 0xff.
+SOURCE ADDRESS 0x80d9dc can_received_source_address: written by dispatcher (record byte 3), compared by all 6 handlers
+ = CM848 j1939_received_source_address 0x40ad52.

@@ -1,0 +1,8 @@
+removed 0: 
+added 0: 
+changed 1
+  0x00010e16 cm550_lookupParameterIdAddress: 4 lines
+      -    *resolved_address = *(dword *)(&DAT_00035224 + (uint)param_id * 8);
+      +    *resolved_address = parameter_id_table[param_id].address_ram_refresh_disabled;
+      -    *resolved_address = *(dword *)(&DAT_00035228 + (uint)param_id * 8);
+      +    *resolved_address = parameter_id_table[param_id].address_ram_refresh_enabled;

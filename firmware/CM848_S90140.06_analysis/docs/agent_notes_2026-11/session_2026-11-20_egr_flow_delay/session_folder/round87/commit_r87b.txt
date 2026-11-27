@@ -1,0 +1,45 @@
+cm550 + cm848: round 87 stage B - the skeptics' apply notes; the CM848 working RAM end marker
+
+The skeptics' notes on stage A, applied:
+- Plate fixes: 0x15df0 runs after the discrete input set-up and cm550_initADCChannelConfiguration, not right after the
+  inputs; 0x1191a is J1708 message type 3, then command 67; parameter_block_uploaded holds a block number;
+  flash_write_failure_flag_cal is set when all 3 attempts fail to erase or program; CM848 restartOnKeyOnDuringPowerDown
+  has two different waits (1000 x cm848_delayMicroseconds(19), then 1000 x 2500 timebase ticks); CM848
+  clearWorkingRam makes one 4-byte store per step (65 per outer pass); CM848 restartThroughBootRom waits for each hour
+  meter write only while ram_refresh_enable is on. The parameter block saver plates use the new vocabulary.
+- Old names refreshed in function_definitions.csv / enums.csv / structure_definitions.csv / local_variables.csv:
+  refresh_references.py covers only the other CSVs (and its --text mode would rewrite a CRLF file with LF).
+- CM550 0x15dd0 vp44_initVP44StatusMonitoring -> cm550_initializeDiscreteInputs: it points the discrete input
+  override mask and runs mc68k_sampleAndDebounceDiscreteInputs 4 times (two agents saw it; body checked).
+- CM550 service 0x0B's enum member SYSTEM_SERVICE_0B -> J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM, CM848's
+  name: its handler is the twin handleJ1939RestartService.
+- CM550 row 0x803b15 ecu_serial_number removed: no access of its own; it is the low byte of
+  parameter_block_2_checksum_cal (0 references in the .cpp before and after).
+
+CM848 finds:
+- The working RAM end marker. cm848_writeWorkingRamEndMarker (0x527958, was cm848_timer_state_preservation) writes
+  0xC0DAC0DA to working_ram_end_marker (0x41428e: stw at 0x527964, a dword) once at start-up, after clearWorkingRam,
+  whose end pointer is that address. cm848_checkWorkingRamEndMarker (0x52796c, was cm848_main_loop_initialization;
+  lwz at 0x527970) runs in executive phase 17: with the marker intact it clears fault 462 in fault_detected_cal and
+  fault_registered_cal, otherwise it sets it. Fault 462 has no DTC slot (ROM 0x5985a[462] = 170); its bit is
+  working_ram_end_marker_error (was fault_462).
+- executive_frame_phase (0x3fa008, was main_loop_scheduler_phase): the executive's phase, beside the executive_frame_*
+  words.
+- The function_renames.csv header line and firmware/CLAUDE.md said copyCalibrationToRam() copies ROM 0x3C30-0x7F60 to
+  RAM 0x3F9800; that copy is cm848_copyBootKernelToRam (0x340: boot_kernel_rom_start..boot_kernel_rom_end to
+  0x3f9800).
+
+firmware/CLAUDE.md (one line):
+- old: `copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
+- new: `cm848_copyBootKernelToRam` (0x340) copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
+
+Proof:
+- CM550: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); every new
+  plate rendered; no new build warning (unmapped types 5429 -> 5428: the removed row). CM848: verify DETERMINISTIC;
+  0 functions removed or added; label-only except 3 functions - one local declaration moved in
+  mpc555_areBootModeStrapPinsHigh, the marker compare prints 0xc0dac0da (was -0x3f253f26) now that
+  working_ram_end_marker is a dword, and clearWorkingRam shows its one 4-byte store per step (was two word stores)
+  with pointer casts; no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 28 ->
+  27: the removed row).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

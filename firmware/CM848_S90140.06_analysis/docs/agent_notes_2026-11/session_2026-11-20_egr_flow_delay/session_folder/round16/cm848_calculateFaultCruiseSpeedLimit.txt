@@ -1,0 +1,41 @@
+=== cm848_calculateFaultCruiseSpeedLimit (lines 42359-42405, 40 non-blank)
+// Function: cm848_calculateFaultCruiseSpeedLimit @ 0x0003e42c
+//
+/* While fault_reaction_request_bits is nonzero, ramps fault_vehicle_speed_limit down from the
+   vehicle speed at the first pass by fault_vehicle_speed_limit_ramp_step to
+   fault_vehicle_speed_limit_floor (cruise_speed_setpoint_default when no reaction is requested);
+   cruise_speed_limit_working is the lower of that and cruise_speed_setpoint_default and lowers
+   cruise_maximum_road_speed_cal to it when cruise_speed_clamp_enable is set. (was
+   cm848_calculateTorqueCurveValue) */
+void cm848_calculateFaultCruiseSpeedLimit(void)
+{
+  uint uVar1;
+  word wVar2;
+  if (fault_reaction_request_bits == 0) {
+    uVar1 = (uint)cruise_speed_setpoint_default;
+  }
+  else {
+    if (fault_reaction_request_bits_previous == 0) {
+      fault_vehicle_speed_limit = vehicle_speed;
+    }
+    uVar1 = (uint)fault_vehicle_speed_limit_floor;
+    if (uVar1 + fault_vehicle_speed_limit_ramp_step < (uint)fault_vehicle_speed_limit) {
+      uVar1 = (uint)fault_vehicle_speed_limit - (uint)fault_vehicle_speed_limit_ramp_step;
+    }
+  }
+  fault_vehicle_speed_limit = (word)uVar1;
+  cruise_speed_limit_working = cruise_speed_setpoint_default;
+  if ((uVar1 & 0xffff) < (uint)cruise_speed_setpoint_default) {
+    cruise_speed_limit_working = (word)uVar1;
+  }
+  cruise_speed_limit_prev = cruise_speed_limit_working;
+  wVar2 = cruise_speed_high_limit_default;
+  if ((cruise_speed_clamp_enable != 0) &&
+     (cruise_speed_limit_working < cruise_maximum_road_speed_cal)) {
+    wVar2 = cruise_speed_limit_working;
+  }
+  cruise_maximum_road_speed_cal = wVar2;
+  fault_reaction_request_bits_previous = fault_reaction_request_bits;
+  return;
+}
+//

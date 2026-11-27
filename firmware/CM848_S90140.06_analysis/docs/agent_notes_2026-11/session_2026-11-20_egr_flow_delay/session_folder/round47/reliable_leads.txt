@@ -1,0 +1,50 @@
+525 blocks with resolved named rows; 240 are >= 70 % consistent with 3+ rows; 49 low-score rows inside those
+1052 (3/4 rows match) 0.14 0x5c306 fuel_demand_maximum [word] <- +0 Maximum_Fueling: [FSMXFL] The calibrated maximum fueling that the system may output
+1070 (13/15 rows match) 0.12 0x40a372 engine_retarder_switch_percent_2 [word] <- +20 EB_Active_Driver_Fraction: Fraction (0-1) of engine brake hardware currently active
+1071 (15/20 rows match) 0.00 0x408e9c engine_retarder_release_passes [word] <- +2 EB_Brake_to_Fuel_Delay: DELAY BETWEEN BRAKES COMMANDED OFF TO STATUS(EBSS) DEACTIVATION
+109E (4/5 rows match) 0.11 0x40af4e power_take_off_governor_active_flag [word] <- +2 PTO_Status: [PTSS] Status of the PTO algorithm based on switch activation and cab interaction
+109F (3/4 rows match) 0.11 0x40a192 altitude_derate_air_handling_fault_fuel_limit [word] <- +6 Torque_Derate_Turbo_Fueling: Derate fueling value if input to turbo speed/COT estimater is corrupt
+10AB (12/13 rows match) 0.14 0x40af28 power_take_off_governor_fuel_demand [word] <- +0 PTO_Fueling: [PTFL] sum of derivative , proportional and integral fueling
+10E3 (7/10 rows match) 0.00 0x5a490 obd_compliance_code [word] <- +24 Jcomm_DD_PTO_I_Gain: Driver Demand mimic PTO adjustment integrator gain, for JCOMM COMMAND mode.
+10E3 (7/10 rows match) 0.00 0x5a492 supported_continuous_monitors_bits [word] <- +26 DDT_TSC_ASG_Filter_Constant: Calibrated first order filter for driver demand ASG throttle ref. engine speed
+1180 (7/8 rows match) 0.12 0x3fd530 j1939_ccvs1_switch_logic_option_cal [word] <- +8 Set_Accel_Switch_Select: [CRSEACSW] TRUE = SET/ACCEL and RESUME/COAST FALSE = SET/COAST and RESUME/ACCEL
+11F9 (4/5 rows match) 0.00 0x5a9c4 governor_tuning_set_blend_weight_by_drivetrain_ratio_axis [word[7]] <- +8 OBD_Fuel_Type: Type of Fuel Currently being used by vehicle
+120C (3/4 rows match) 0.00 0x40a336 j1939_broadcast_enable_flag [dword] <- +6 FSS_Torque_Load_Calculation_Flag: When active, this flag sets bdcst for Actual Eng %Torque and %Load to 0xFE.
+1226 (6/8 rows match) 0.00 0x40af0c fault_handled_bitmap [byte[22]] <- +E J1979_OBD_Transmit_Buf: Buffer containing OBD messages to be transmitted on CAN-C datalink
+1254 (29/30 rows match) 0.12 0x3fd87a j1939_pgn65213_priority_cal [word] <- +40 Jcomm_Fan_Drive_Message_Default_Priority: [JCFMDFPZ] Default network priority for Fan Drive Message.
+1298 (3/4 rows match) 0.12 0x5c95c high_speed_governor_gain_set_21 [high_speed_governor_gain_set_t] <- +C HSG_Low_Gear_Ratio_D_Gain: Gear Ratio based Derivative Gain for HSG
+162A (12/13 rows match) 0.14 0x64424 intake_air_heater_performance_test_ring_sample_delay_ticks [word] <- +0 IAH_Band_Check_Delay: Delay between grid-on and start of band check
+1651 (6/8 rows match) 0.14 0x40ba16 misfire_monitor_cylinder_balance_suspend_flag [word] <- +28 Misfire_CBD_Compensation_Disable: If set, disable cyl bal while misfire is running
+16A2 (8/10 rows match) 0.00 0x40a3c0 wastegate_duty_integrator_whole_counts [word] <- +2 TGC_Integral_Term: I portion of Turbocharger position command to actuator controller
+1711 (15/19 rows match) 0.12 0x40a53a off_nominal_compensation_off_flag [word] <- +22 CBO_Off: CBO off test point - TRUE if SHM_CBO_OFF or CBR_EGR_Off is TRUE
+1773 (3/4 rows match) 0.12 0x40a54a fuel_air_equivalence_ratio [word] <- +4 CBP_Phi: fraction of fuel rate to that of stoicometric at current airflow
+1830 (41/43 rows match) 0.14 0x40776e variable_geometry_turbocharger_enable_flag [word] <- +54 C_VGA_Swingvane_Enable: Enable for Swingvane VG Manager, TRUE = 1
+1831 (25/32 rows match) 0.00 0x40b026 variable_geometry_turbocharger_position_reference_filter_coefficient [word] <- +24 VGA_Prefilter_Cnst: VGA prefilter cnst after gain scheduling
+1834 (10/12 rows match) 0.10 0x40b066 variable_geometry_turbocharger_closed_stop_diagnostic_drive_flag [word] <- +8 VGA_PWM_Closed_Diag_Override: TRUE when fault processing requests hold closed PWM
+1838 (10/11 rows match) 0.14 0x40b090 variable_geometry_turbocharger_back_electromotive_force [word] <- +12 VGA_Back_EMF: VGA Valve Motor Back EMF (x100 V)
+183B (7/9 rows match) 0.14 0x40777a variable_geometry_turbocharger_position_command_diagnostic_filter_coefficient [word] <- +A C_VGA_Diag_Cmd_Fil_Cnst: Filter constant used in recognizing position control steady state operation
+183C (10/12 rows match) 0.11 0x407796 variable_geometry_turbocharger_h_bridge_inrush_fault_set_threshold [word] <- +14 C_VGA_HB0_OC_Fault_Set: Fault count delay for setting Overcurrent fault
+183C (10/12 rows match) 0.14 0x407792 variable_geometry_turbocharger_h_bridge_fault_set_threshold [word] <- +10 C_VGA_HB0_Fault_Set: Fault count delay for setting HB0 fault
+1901 (24/31 rows match) 0.11 0x409fb0 intake_manifold_temperature_cranking_mismatch_count_threshold [word] <- +3C C_IMT_Max_Counts: Debounce counter limit for IMT key-on fault
+1901 (24/31 rows match) 0.11 0x409fb2 temperature_rationality_cranking_decision_count [word] <- +3E C_Rationality_Debounce_Delay: Debounce counter limit for BT key-on fault
+1963 (33/34 rows match) 0.00 0x40be5e sensor_diag_default_a [word] <- +4A TVA_Position_Status: TVA_Position_Status .
+196F (18/23 rows match) 0.08 0x40a5da intake_condensation_temperature_difference [i16] <- +24 EMO_Intake_Cond_Delta_T: CHP_Predicted_IMT - Charge_Saturation_Tmptr - margin
+1982 (7/8 rows match) 0.00 0x40af72 fuel_demand_mode_active_flag [word] <- +A Charge_Saturation_Tmptr_Source: Charge Saturation Temperature Source
+1A57 (5/6 rows match) 0.00 0x40a442 fuel_blend_correction_inhibit_flag [dword] <- +0 CHH_CBO_Off: Flag indicating that EGR may be turned off.
+8000 (28/32 rows match) 0.12 0x40910e fuel_pressure_governor_key_off_command [i16] <- +14 HPCR_Dutycycle_Shutoff: Duty cycle during shut off
+8000 (28/32 rows match) 0.12 0x409128 fuel_metering_reference_filter_coefficient [word] <- +2E HPCR_Duty_To_Current_Filter_Constant: Time constant for the filter used on the converted dutycycle to current
+8000 (28/32 rows match) 0.12 0x40912e fuel_pressure_governor_accelerator_feed_forward_filter_coefficient [word] <- +34 HPCR_Throttle_FF_Filter_Constant: Time constant for Throttle Derivative Component
+806D (8/9 rows match) 0.11 0x409e78 injection_timing_rpm_snap_tolerance [word] <- +A Pilot_SOI_Constant_Time_RPM_Window: Pilot-to-Main time interval fixed in this window
+8085 (4/5 rows match) 0.09 0x409e42 injection_timing_main_combination_mode [INJECTION_TIMING_COMBINATION_MODE] <- +2 Main_Cold_Advance_Select: 0=add coolant and intake adv,1=MAX WINS,2=MIN WINS
+80C4 (9/11 rows match) 0.11 0x40b820 injection_quantity_auxiliary_source_code [word] <- +C Aux_Quantity_State: Indicator as to which contributor is controlling Aux fuel timing
+819B (32/34 rows match) 0.14 0x40b7ec cylinder_event_index [word] <- +5E Cylinder_Number: cylinder counter indicating next cyl to be fueled
+81C9 (6/8 rows match) 0.00 0x408f49 cylinder_cutout_debounce_event_factor [word] <- +3 HPCR_Bank_Diagnostic_Count: Number of cam rev. counts for delay of bank shutdown so faults can be detected.
+8A0D (18/19 rows match) 0.10 0x5c7d0 engine_off_time_unchanged_count_limit [byte] <- +22 Chry_Dat42_Stuck_Times_Threshold: Minimum number of trips to claim Chry_Dat42 stuck error
+8A12 (44/53 rows match) 0.13 0x40b426 pci_transmit_message_1_payload [byte[7]] <- +51 Chry_DatOSS: Chrysler DR Message $TBD data for Transmission Output Shaft Speed, ECM Rx mes
+8A13 (62/72 rows match) 0.09 0x40b4fb pci_spare_in_frame_response [byte] <- +AC Chry_Ifr16: Chrysler DR Message $16 IFR for TRD Link Status, ECM Tx message
+8A13 (62/72 rows match) 0.10 0x40b492 pci_transmit_message_10 [pci_diagnostic_response_t] <- +43 Chry_Dat26: Chrysler Specific Data for J2190 diagnosic support of ECM response
+8A14 (22/24 rows match) 0.00 0x4086c6 ambient_air_pressure_initial_scaling_factor [word] <- +2C AC_Anti_Slugging_Driver_Off_Time: Max time to set ac driver off during the de-slug event
+8A14 (22/24 rows match) 0.00 0x4086c8 j1939_tsc1_active_duration_reload [word] <- +2E AC_Anti_Slugging_Tmptr_Thd: Amb air temp limit below which initial ac anti slugging will not run
+8A2B (13/14 rows match) 0.09 0x5c7ac intake_air_heater_default_intake_manifold_temperature [i16] <- +24 IAH_Pulsewidth_Time_Duration: Make grid cycle period (duty cycle percentage) a calibration.
+8C34 (12/13 rows match) 0.00 0x40b58e governor_pressure_error [dword] <- +14 OD_Function_Timer: Count of how long the OD driver has been on this drive cycle
+8C5E (6/8 rows match) 0.11 0x408dca wastegate_solenoid_fixed_duty_enable [byte] <- +0 CWG_Duty_Cycle_Overide: Diagnostic Tool Override while engine stopped.

@@ -1,0 +1,8 @@
+664c664
+<   - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
+---
+>   - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_transmit_message_t` instance (`header.can_id` /
+669c669
+<     `j1939_<message>_transmit_status`: the send result or the transport session code (`j1939_tx_msg_t` lists
+---
+>     `j1939_<message>_transmit_status`: the send result or the transport session code (`j1939_transmit_message_t` lists

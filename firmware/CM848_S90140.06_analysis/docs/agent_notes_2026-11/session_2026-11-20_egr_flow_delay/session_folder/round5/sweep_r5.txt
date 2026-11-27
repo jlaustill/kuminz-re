@@ -1,0 +1,40 @@
+all_speed_governor_droop_blend_0 x1 [prefix of 3 names] |  is the blend (weighted by the gear-ratio blend weight 0..128) of the all_speed_governor_droop_blend_0 and _128 tables at speed_requ
+all_speed_governor_gain_set_p x9 [prefix of 1 names] | rnor_throttle_mode_*) | fields: +0x0 proportional_gain_1  starts, and all_speed_governor_gain_set_p) ; +0x2 proportional_gain_2  
+cast_normalized_diff x1 | +  - Prove a type-only change with a cast-normalized diff (`cast_normalized_diff.py`). The sweep removed 617 `
+classify_signed_loads x1 | +  - 430 rows; `classify_signed_loads.py` in the session archive li
+cm848_calculate x1 [prefix of 157 names] | rsions against average_pulse_period: angle x period / (this x 256) in cm848_calculate{Pilot,Auxiliary}InjectionPuls
+cm848_eeprom x1 [prefix of 1 names] | ight_cal,word,EEPROM-backed (mirror offset 0xa4, reads 0 in originals/cm848_eeprom.bin) and never written. cm848
+cm848_initialize x1 [prefix of 102 names] | +    and `cm848_initialize...Channel` (once at boot), be
+cm848_miosChannel x1 [prefix of 30 names] |  `cm848_initializeInjectionHardware`). MDASM11-15 / 27-31 go through `cm848_miosChannel{N}EnablePwm` / `SetPwmPeriod`
+cm848_miosPwm x1 [prefix of 24 names] | 6 % per count, 25600 = 100 %). PWM submodules 0-3 / 16-19 go through `cm848_miosPwm{N}Enable` / `SetPeriodMicrose
+cm848_tpuBReadBackChannel4 x1 [prefix of 4 names] | ts 4 / 7 / 6 / 10 (each is put in input mode by the read-back enable `cm848_tpuBReadBackChannel4 / 7 / 6 / 10EnablePwm` before
+cm848_update x1 [prefix of 113 names] | pacitor channels 54 / 55: their wrappers are named by when they run, `cm848_update...Channel` (every pass)
+combustion_torque_by_fuel_quantity x1 [prefix of 3 names] | ion torque of the coolant friction fuel adjustment (e2m 109C +4) from combustion_torque_by_fuel_quantity at the engine speed (cm848_ca
+cruise_pid_kp x1 [prefix of 1 names] | _code, with hysteresis on the zone thresholds) and its PID gains into cruise_pid_kp / ki / kd / rate gain working
+ema_filter_state_t_003fcbdc x1 | nentialMovingAverage of engine_speed_state_t.target_rpm, filter state ema_filter_state_t_003fcbdc); working RAM outside the tim
+enable_byte_34 x1 | t)  | earlier note: class-B condition code for protection event 0x26 (enable_byte_34 & 0x40 path)
+engine_rpm_state_t_0040b7ac x1 | +  `engine_rpm_state_t_0040b7ac.current_rpm`).
+fuel_blend_lower x1 | b / _a / _boost5_lookup 0x40a4d4-0x40a4da) and picks / blends them by fuel_blend_lower / upper_map_number (the tail 
+fuel_demand_compensation_target_by_pressure x1 [prefix of 2 names] |  water vapor partial pressure of the exhaust gas x 4) is looked up in fuel_demand_compensation_target_by_pressure (10 breakpoints, pressure -> 
+fuel_demand_rpm_limit x1 [prefix of 2 names] | e. cm848_calculateThrottle100Fuelings stores the interpolation of the fuel_demand_rpm_limit grid (axes fuel_demand_rpm_th
+fuel_temp_trim_working x1 | s a confusing shadow (used `fuel_temp_trim_uncapped`, not the global `fuel_temp_trim_working`). **Naming a reused register
+governor_fuel_table x1 [prefix of 3 names] | r_dimensional_fueling_interpolation_factor to 0 around that call (the governor_fuel_table grid alone) and restores it. 
+injection_quantity_pilot_ambient_map x1 [prefix of 3 names] | +0x0040b94a,injection_quantity_pilot_ambient_correction,i16,(injection_quantity_pilot_ambient_map value x ambient factor) >> 12
+injection_quantity_pilot_base_map x1 [prefix of 3 names] | tion_quantity_pilot_map_N tables (current / target map index) against injection_quantity_pilot_base_map; first term of the arbitratio
+injection_quantity_pilot_intake_temperature_factor x1 [prefix of 2 names] | value x intake temperature factor) >> 12 with the factor from the 1-D injection_quantity_pilot_intake_temperature_factor table: a quantity, not a slew
+injection_quantity_pilot_intake_temperature_map x1 [prefix of 3 names] | x0040b946,injection_quantity_pilot_intake_temperature_correction,i16,(injection_quantity_pilot_intake_temperature_map value x intake temperature fa
+injection_timing_main_cold_start x1 [prefix of 5 names] | _state,word,Lookup cache (x segment offset, the next row is y) of the injection_timing_main_cold_start lookup in cm848_calculateMain
+injection_timing_offset_map_1 x1 | timing_pilot_offset_map_blend,i16,cm848_interpolateAlphaChiValue over injection_timing_offset_map_1..4_grid with injection_timing
+intercooler_temp_raw x1 | olds applies. The old name came from the oil temperature slot 11 name intercooler_temp_raw.  | retyped word -> i16 2026-
+j1939_header_pgns x1 | +  - **J1939 builders vs their PGNs:** `round5/j1939_header_pgns.py` lists the PGN every heade
+mios_timer16_scale_percent_ref x1 | ionHardware; no direct store found (displacement scan). Earlier name: mios_timer16_scale_percent_ref.  | earlier note: PWM submodu
+mios_timer17_scale_percent_ref x1 | ionHardware; no direct store found (displacement scan). Earlier name: mios_timer17_scale_percent_ref.  | earlier note: PWM submodu
+mios_timer18_scale_percent_ref x1 | ionHardware; no direct store found (displacement scan). Earlier name: mios_timer18_scale_percent_ref.  | earlier note: PWM submodu
+mios_timer19_scale_percent_ref x1 | ionHardware; no direct store found (displacement scan). Earlier name: mios_timer19_scale_percent_ref.  | earlier note: PWM submodu
+mpc555_updateSensorDiagnosticFlags x1 | ve measured engine RPM (0.125 RPM/count) - NOT a setpoint; written by mpc555_updateSensorDiagnosticFlags from backup_engine_speed or m
+throttle_fuel_trim_t x1 | +    `throttle_fuel_trim_t`).
+throttle_rate_integrator_reset_flag x1 | F60; the byte scan of ROM 0x0-0x7f60 finds none either. Earlier name: throttle_rate_integrator_reset_flag.  | earlier note: cm848_calcu
+tpu_a_channel_4_scale_by_battery_voltage x1 [prefix of 2 names] | eter ID table) (0.4 us per count; 7500 = 3000 us here): scaled by the tpu_a_channel_4_scale_by_battery_voltage lookup (/ 0xfff) and stored i
+tpu_mios_channel_map x2 | er:** PWM 16-19 are its voltage / current reference levels (see `docs/tpu_mios_channel_map.md`).
+upper_map_number x1 | okup 0x40a4d4-0x40a4da) and picks / blends them by fuel_blend_lower / upper_map_number (the tail of that function wa
+-- 39 unknown tokens

@@ -1,0 +1,25 @@
+cm848: round 51 closing - the power-down step's one call site, task 046, the session archive, the PR body
+
+- cm848_flagTripInformationPowerDownDataLoss has one call site, a bl at 0x54de0 in
+  cm848_restartApplicationWithoutReset (find_branch_callers.py over the ROM and the live flash2).
+  cm848_applicationMain falls through into that code from 0x54d2c, so both decompilations show the call.
+  - The 0x30d4 the decompiler showed as an argument is 12500 from li r3,12500 / mtdec r3, the decrementer reload.
+  - Stage A's plate said cm848_applicationMain called it twice, and stage B's message said two calls. The plate and
+    the prototype comment now say what the binary shows.
+- Bitfield structs for the two trip information status words were built and rejected; they are not shipped. Every
+  access is a whole-word ori / andi write, never a bit test. The build rendered no field name and added a
+  (trip_information_*_t)(...) cast to all 14 mask lines. Both words stay word, with every bit in their row comments;
+  the script is archived as apply_r51c_bitfield_structs_rejected.py.
+- task 046, round 51:
+  - the four-block fill and the corrected 0x40b592 lead;
+  - stages A and B;
+  - the rejected bitfields;
+  - leads: a flag enum (a user call, since firmware/CLAUDE.md allows an enum type only for whole-value compares),
+    0x40b5a8 +30, initGovernorFlagsAux, the rest of the transmission RAM.
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 221.
+- PR body, README, todo, memory, and the round 51 session folder (the search scripts and their outputs, the stage
+  scripts, maps and proofs, the rejected stage, the closing scripts, all five verify logs).
+
+PROOF_PLACEHOLDER
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

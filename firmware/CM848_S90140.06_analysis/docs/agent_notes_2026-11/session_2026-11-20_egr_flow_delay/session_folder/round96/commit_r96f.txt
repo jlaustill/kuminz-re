@@ -1,0 +1,65 @@
+both firmwares: round 96 stage F - the J1939 periodic builders by PGN, CM550's PGN 59904 request responders and CM550 placeholders (workflow batches Q1 / Q2 / Q4)
+
+Workflow wf_e321e981-9fd, batches Q1, Q2 and Q4 (each one an investigator, an independent describer and a judge;
+nothing refuted).
+- Q1, the periodic J1939 broadcasts of both firmwares, paired by PGN: 19 CM550 builders (13 + 6 amended), 4 CM848
+  rows and 62 payload globals (50 + 12). Five builders are twins (EEC1 61444, EEC2 61443, EEC3 65247, EC1 65251, VEP1
+  65271); twelve are counterparts whose CM848 version adds fault tests, enable gates or fields. Four CM550 builders
+  had no function row because only the scheduler's builder argument reaches them (0x3229a DM1, 0x339fe FD1, 0x32bbc
+  EBC1, 0x34496 WFI); their schedule pointers rendered as &LAB_000xxxxx and now carry the names.
+- Q2, CM550's PGN 59904 request responders: 39 functions (33 + 6), 4 CM848 functions, 19 globals, 3 CM848 enum
+  members and 4 prototypes. New rows for the registrar 0x2f47e (registerJ1939PgnRequestHandler, the twin of CM848
+  0x23188), the DM10 builder 0x32222 and the VI sender 0x34430.
+- Q4, CM550 placeholders: 29 functions (25 + 4), 2 CM848 functions, 36 globals (29 + 7). 0x2cf52 stays skipped:
+  nothing in the dumped ROM reaches it.
+- Twelve verdicts kept an earlier round's name and plate ('Keep the round 95 name and plate'); they apply as no
+  change (the apply refused them as instruction-like comments).
+Types and rows:
+- CM550 takes CM848's j1939_pgn65249_payload_t (RC, 19 bytes), j1939_pgn_handler_entry_t (6) and
+  j1939_pgn65261_payload_t (8); j1939_pgn65230_payload_t (DM5, 8 bytes) is new in both firmwares; CM550's
+  j1708_memory_write_record_t (10 bytes: address / data_pointer / length / region_type) types
+  j1708_memory_write_records[15], so cm550_applyJ1708MemoryWriteRecords reads record->region_type ==
+  MEMORY_REGION_TYPE_EEPROM where it read puVar5[9] == '\x05'.
+- CM848's j1939_pgn_dispatch_table is j1939_pgn_handler_entry_t[32] like its CM550 twin (the Q2 judge's lead: the
+  registrar compares the count with 32 and 0x3fa9a2 + 32 x 6 = 0x3faa62 = j1939_pgn_handler_count); its three inner
+  rows go. Seven rows inside the new instances go (CM550 5, CM848 2), and CM550 0x803631 becomes the documentation
+  row j1939_pgn65249_payload.retarder_control_method (CM848's form).
+- The four CM550 prototypes are written from the Q2 judge's verdicts: registerJ1939PgnRequestHandler (byte; ushort
+  pgn, void *handler; its 24 call sites now show the PGN and the handler, e.g. (0xfecc,
+  cm550_j1939HandlePgn65228Dm3ClearInactiveFaults)), the DM3 / DM7 receive handlers and
+  dispatchTsc1ByDestinationAddress; 0x2ef4a's stale 'msg_ptr int' row goes. CM848's function_definitions lose two
+  duplicates (0x23b38's first param-0 row, which the build overrode; 0x2cd8's repeat of rows 109 / 110).
+- CM848 enum J1939_PGN_LOWER: the Q2 members PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT / PGN_65504_PROPRIETARY_B /
+  PGN_65264_POWER_TAKE_OFF_INFORMATION, and the judge's lead: PGN_65228_DM3_CLEAR_PREVIOUSLY_ACTIVE_TROUBLE_CODES,
+  PGN_65271_VEHICLE_ELECTRICAL_POWER_1, PGN_65262_ENGINE_TEMPERATURE_1 (were _DM3_CLEAR_DIAG / _VEHICLE_ELECTRICAL /
+  _ENGINE_TEMP). None of the six renders in code (no whole-value compare).
+- Plates: 50 CM550 and 5 CM848 plates said their twin twice; the batch apply had appended 'The twin of CM848
+  0x000xxxxx: one shared name.' to plates that already said so. The repeats go, and apply_r96.py no longer appends
+  the note when the plate names the twin.
+- parameter_id_lookup_table.csv: CM550's is regenerated (e2m_block_addresses.py --write-table; 7 names were stale,
+  the Q4 judge's lead). CM848's has no generator: its eight 'MPC555_REG' rows (0x302002-0x302898) are in the MPC555
+  DPTRAM array 0x302000-0x3037ff (MPC555UM), not registers (QADC_A is 0x304800), so 'qadc_a_mcr' / 'qadc_a_portqb' /
+  'qadc_a_result_ch4' were wrong; the rows now read DPTRAM and the live names (EEPROM rows through the RAM mirror).
+  docs/parameter_by_id_system.md's table and counts follow (8 DPTRAM / 4 ROM, it said 7 / 5).
+- References refreshed in both firmwares' CSV comments, two CM848 docs and firmware/CLAUDE.md
+  (cm848_dispatchTsc1ByDestinationAddress -> dispatchTsc1ByDestinationAddress).
+
+Proof: CM848 and CM550 built twice each, deterministic, in a copy of the firmware folder (base = HEAD fb4b434c).
+- CM848: the function set is unchanged (1969), statement counts and pieces (1370) are equal, and no old name is left
+  in the code. The token changes outside the map are the expected ones: the DM5 payload rows now render as
+  j1939_pgn65230_payload fields, the dispatch table's (&j1939_pgn_dispatch_table)[i] becomes
+  j1939_pgn_dispatch_table[i], new byte rows replace DAT_ / undefined1 reads, and one local declaration moves.
+- CM550: 706 -> 713 functions (the seven new rows); no old name is left. With the new rows' DAT_ labels mapped, the
+  remaining changes are the registrar's call arguments, the five struct typings (offsets -> fields), retyped rows that
+  lose their underscore (e.g. _fuel_economy_sample_3 -> low_speed_governor_reference_maximum_fuel_quantity), char
+  literals that become numbers on byte-typed rows, and the four prototypes' parameters. Two statement counts change,
+  both declarations: cm550_runLowSpeedGovernor's new dword temporary (+1; a temporaries-normalized diff of the
+  function shows the same statements) and cm550_applyJ1708MemoryWriteRecords' two pointer temporaries that become one
+  record pointer (-1). The 4 new pieces are honest: low_speed_governor_integral_accumulator._0_2_ x3 (the code writes
+  and reads the accumulator's high word between whole-dword stores; Q4's dword typing swallowed the old word row
+  fuel_economy_sample_2) and pgn._0_1_ (the registrar stores the PGN's PDU format byte).
+- unaff_ / extraout_ / CONCAT counts are equal in both firmwares; the in_ count rises only by longer names that
+  contain 'in_'. Headers regenerated (g++ 0 errors in both); the _cal audit is 0 hard / 0 soft; the five Python suites
+  and the 109 JUnit tests pass. The overlap check's one new row is the 0x803631 documentation row.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

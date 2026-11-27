@@ -1,0 +1,38 @@
+cm848: round 33 stage B - three J1939 transmit payloads as structs (types)
+
+Three transmit payloads in the boot kernel's RAM image were flat DAT_ / LAB_ bytes. firmware/CLAUDE.md had flagged
+the RC one ("must be an array, not 18 flat bytes"). They are now structs, in the J1939-71 order:
+- j1939_pgn65249_payload_t (RC, Retarder Configuration; 19 bytes at 0x3fae50). The builder stores each speed /
+  torque low byte first, so the fields are bytes, with SPN names from the automotive j1939_spns table.
+  - Byte 1 decodes cleanly against SPN 901 / 902: 0x14 = exhaust at the engine exhaust brake (one retarder output
+    driver), 3 = compression release at the engine compression release brake (two or more), 0xff = not available.
+  - Byte 2 (SPN 557) is 6 / 3 / 2 / 1 for engine_retarder_stage_1_weight 1 / 2 / 3 / 6, i.e. 6 divided by the
+    weight.
+  - The percent torque bytes are 125 minus the percent and now print 0x7d (was '}').
+- j1939_pgn65259_payload_t (CI, Component Identification; 44 bytes at 0x3fab22): make[5] / model[17] /
+  serial_number[8] / unit_number[10], each ended by '*', with the lengths from the handler's copies.
+  - "CMMNS" anchors the make. The rest follows the standard's field sequence, since neither database gives
+    positions.
+  - Its status byte 0x3fab4e is j1939_pgn65259_transmit_status (it rendered as LAB_003fab4c_2).
+  - The struct covers the boot-called RAM copy of mpc555_can2TransmitInterruptHandler at 0x3fab3c. The thunk
+    stage now keeps the struct and makes those 3 boot calls call overrides (thunks 19 -> 18, overrides 13 -> 14).
+    The code units it clears there were RAM-dump bytes that analysis had disassembled.
+- j1939_pgn65242_payload_t (SOFT, Software Identification; 47 bytes at 0x3fae80): the field count 6, two 8-digit
+  numbers (EEPROM 0x219 / 0x21d), 12 characters (EEPROM 0x22d), the calibration version (two digits per byte), and
+  the two-character ECM identifier and application identifier, each field ended by '*'.
+- cm848_formatNumberAsDecimalText gets a prototype (number / text / digit_count, the first two byte*). Its text
+  buffer was an int, so the serial number argument printed as a bare 0x3fab3a once it sat inside a struct. Its body
+  now reads text + digit_count / *number with one cast left, on the 4-byte read; its char temps print as byte, so
+  '0' prints as 0x30.
+- Plates for the two text-payload initializers.
+
+Proof:
+- prove_tokens.py with the map's tokens, on flattened copies: 1962 of 1969 functions match token for token.
+- Two of the rest only reorder their local declarations (checked with the declarations sorted).
+- The other five were read as label-substituted unified diffs: the 65259 handler / init, the RC builder, the
+  SOFT initializer and the formatter. Every byte lands in its field, and the remaining changes are array decay,
+  the byte temps and the casts above.
+- Pieces 1412 -> 1412. "1 failed (in code)" unchanged. (dword *) casts 14 -> 14, (byte *) 181 -> 180.
+- Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

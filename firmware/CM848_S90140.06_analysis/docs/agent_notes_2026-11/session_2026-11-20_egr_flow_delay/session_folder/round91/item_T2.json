@@ -1,0 +1,259 @@
+{
+ "proposal": {
+  "item": "T2",
+  "summary": "Lead 1: CM550 0x31ace (cm550_diagnosticSessionValidator) and CM848 0x27cc4 (cm848_findTsc1SourceConfiguration) run the same steps: a 20-byte stride, a data-link word compare, a source-address byte compare, a J1939 (data link 1) 0xff wildcard, a store of the matched entry pointer and a return of 0 or 1. The only difference is the entry count (5 entries in a calibration RAM table vs 10 in ROM), the same kind of difference that clearWorkingRam and copyCalibrationFromRomToRam have. So they are twins and take one name, findTsc1SourceConfiguration. CM550's words at 0x80da72 / 0x80da76 / 0x80da7a are CM848's matched / controlling / retarder tsc1_source_configuration pointers, and the CM550 table at 0x808196 is a 5-entry tsc1_source_configuration_t array that needs a new CM550 struct template. Lead 2: CM848 0x40aaba holds PGN 61443 EEC2 byte 5 (data_pointer[4]; SPN 29 in today's J1939-71). It is J1939 input slot 9, and the firmware's own records (12F7 +14 value, 12E8 +F source filter, 12F6 +12 timer) all name that slot wet tank pressure. No direct reader was found in CM848, and the CM550 twin byte 0x80d720 has one consumer.",
+  "functions": [
+   {
+    "firmware": "cm550",
+    "address": "0x00031ace",
+    "current_name": "cm550_diagnosticSessionValidator",
+    "proposed_name": "findTsc1SourceConfiguration",
+    "relation": "twin",
+    "other_firmware_address": "0x00027cc4",
+    "plate_comment": "Looks up tsc1_source_configuration_table (five 20-byte tsc1_source_configuration_t entries at 0x808196) for (data link, source address): an entry matches when its data_link equals the data link and its source address byte (+3) equals the source address, or, on J1939 (data link 1), when the entry is data link 1 with source address 0xff (any sender). Stores the matched entry in tsc1_matched_source_configuration_pointer and returns 0, or returns 1 when none of the five entries matches. Callers: processEngineTsc1Request and cm550_retarderControlModeHandler (data link 1, the sender's source address) and the J1922 command handlers cm550_FUN_0001f4e8 / cm550_engineFluidLevelDataBuilder (data link 0, sources 0x4a / 0x4f) (was cm550_diagnosticSessionValidator; PR #53 round 91; the twin of CM848 0x27cc4: one shared name - the same compares, wildcard and 20-byte stride; CM848's table has ten entries in ROM)",
+    "evidence": "m68k 0x31ace-0x31b20: movem d2-d3; d3 = data link word (12,sp), d1 = source address word (14,sp); movea.l #0x808196,a0; clr.b d2; loop: cmp.w (a0),d3 / bne; cmp.b (3,a0),d1 / beq found; cmpi.w #1,d3 / bne next; cmpi.w #1,(a0) / bne next; cmpi.b #0xff,(3,a0) / bne next; found: move.l a0,$80da72 (0x31b02, the only writer of 0x80da72); clr.w d0; rts; next: moveq #0x14,d0; adda.l d0,a0; addq.b #1,d2; cmpi.b #5,d2; bcs loop; moveq #1,d0; rts. CM848 0x27cc4-0x27d34 is the same sequence: r7 = 0x5c3b4; lha r5,0(r7) / cmpw r3,r5; lhz 2(r7) & 0xff vs r4; cmpwi r3,1 / cmpwi r5,1 / low byte == 255; stw r7 -> 0x40ae3e; li r3,0 / li r3,1; addi r7,r7,20; cmpwi r6,10; blt. Same return codes, wildcard rule, stride, field offsets (+0 word, +2/+3 source address) and role (callers copy the match into the controlling or retarder pointer, then reload request timeouts at +4/+8/+0xc/+0xe/+0x12). Differences: 5 vs 10 entries; RAM calibration copy 0x808196 vs ROM 0x5c3b4; CM550 also has J1922 callers (data link 0). Precedent: clearWorkingRam (different bounds plus watchdog kicks in CM550) and copyCalibrationFromRomToRam (different ranges) share one name. The table layout matches too: CM550 dump entries [1, SA, 5, 0, 5, 0, 5, 25, 0, 25] with SAs 0x03/0x0b/0x21/0xfe/0xfe; CM848 ROM entries [1, SA, 5, 600, 5, 600, 5, 25, 0, 25] with SAs 0x03/0x0b/0x21/0x4a/0x4f and 0xfe for the unused ones."
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x00027cc4",
+    "current_name": "cm848_findTsc1SourceConfiguration",
+    "proposed_name": "findTsc1SourceConfiguration",
+    "relation": "twin",
+    "other_firmware_address": "0x00031ace",
+    "plate_comment": "Looks up the tsc1_source_configuration_table entry for (data link, source address); on J1939 (data link 1) an entry with source address 0xff matches any sender. Stores the match in j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer and returns 0, or returns 1 when none of the ten entries matches (the caller then rejects the request). Its callers (processEngineTsc1Request, cm848_processEngineRetarderTsc1Request) pass data link 1 and zero-extend the result (clrlwi r3,r3,16) (was cm848_governorSpeedControl) | (was cm848_findTsc1SourceConfiguration; PR #53 round 91; the twin of CM550 0x31ace: one shared name - CM550's table has five entries)",
+    "evidence": "See the CM550 row: an instruction-for-instruction match (lha / cmpw data link, lhz + clrlwi 24 source address byte, cmpwi 1 / cmpwi 1 / cmpwi 255 wildcard, stw r7 -> 0x40ae3e, li r3,0 / li r3,1, addi r7,r7,20, cmpwi r6,10). 5 call sites: processEngineTsc1Request 0x22e50 / 0x22ec8 / 0x22efc and cm848_processEngineRetarderTsc1Request (two calls), all data link 1."
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "cm550",
+    "address": "0x00808196",
+    "current_name": "tsc1_source_configuration_1_data_link",
+    "proposed_name": "tsc1_source_configuration_table",
+    "proposed_type": "tsc1_source_configuration_t[5]",
+    "comment": "e2m 10E7 +18..+7B (JCNES{n}SW / JCSA{n} / JCRPS{n}TM / JCRPS{n}TL / JCTQS{n}TM / JCTQS{n}TL / JCLMS{n}TM / JCRDT{n}TM / JCRDT{n}TL / JCRDL{n}TM for n = 1-5): five tsc1_source_configuration_t entries (20 bytes). Each holds the data link (0 = J1922 / 1 = J1939), the source address, and the request timeouts / time limits per TSC1 mode for the engine and the engine retarder (10 ms per count). findTsc1SourceConfiguration walks it (moveq #0x14 stride, cmpi.b #5 bound). RAM dump: all five data link 1; source addresses 0x03 / 0x0b / 0x21 / 0xfe / 0xfe (0xfe = the J1939 null address, unused); request timeouts 5 = 50 ms; time limits 0; retarder request timeouts 25 = 250 ms. CM848's twin table is ROM 0x5c3b4 (ten entries, same layout). It lies in the calibration RAM copy of copyCalibrationFromRomToRam, not the EEPROM mirror, so no _cal (was tsc1_source_configuration_1_data_link; PR #53 round 91)",
+    "evidence": "0x808196 + 5 x 20 = 0x8081fa = j1939_high_idle_override_speed (10E7 +7C), so the array ends exactly at the next row, and no CM550 row sits inside 0x808197-0x8081f9. The e2m tool resolves every one of the 50 words to a JC*n record at 0x808196 + 20(n-1) + {0,2,4,6,8,0xa,0xc,0xe,0x10,0x12}. Accesses: the finder's +0 word / +3 byte compares and 20-byte stride; the pointer reads at +4/+8/+0xc (processEngineTsc1Request, J1922 handlers), +6/+0xa and +0x10 (cm550_fuelDemandLimitOrchestrator), +0xe/+0x12 (cm550_retarderControlModeHandler). CM550 global arrays of struct type already apply (engine_overspeed_log engine_overspeed_event_t[5])."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080da72",
+    "current_name": "datalink_session_config_pointer",
+    "proposed_name": "tsc1_matched_source_configuration_pointer",
+    "proposed_type": "tsc1_source_configuration_t *",
+    "comment": "The tsc1_source_configuration_table entry that findTsc1SourceConfiguration matched for the last (data link, source address) it was asked about; its only writer is the finder (move.l a0,$80da72 at 0x31b02). When the sender is accepted, processEngineTsc1Request and the J1922 command handlers cm550_FUN_0001f4e8 / cm550_engineFluidLevelDataBuilder copy it into tsc1_source_configuration_pointer, and cm550_retarderControlModeHandler copies it into retarder_tsc1_source_configuration_pointer. While a J1922 request holds the engine, a J1939 sender is rejected when tsc1_source_configuration_pointer < this pointer, so it needs an entry at the same or an earlier position. The twin of CM848 j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer (0x40ae3e). Dump 0 (was datalink_session_config_pointer; PR #53 round 91)",
+    "evidence": "All 13 ROM references are 4-byte: 0x31b02 move.l a0,(abs) (the finder); reads move.l (abs),d0 / move.l (abs),(a4) / move.l (abs),(a3) at 0x1f59c-0x1f5c4, 0x1f96a-0x1f992, 0x2f244-0x2f28c, 0x2f8f6 / 0x2f914. The decompile renders it _datalink_session_config_pointer because the row is undefined (1 byte) while every access is a long. CM848 field +0x46 has the same role (cm848_findTsc1SourceConfiguration stw r7 -> 0x40ae3e; processEngineTsc1Request copies it into tsc1_source_configuration_ptr). The 0x80de1e row (insite_parameter_schedule_entry_t *) shows that CM550 globals typed as struct pointers render with ->."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080da76",
+    "current_name": "datalink_active_session_pointer",
+    "proposed_name": "tsc1_source_configuration_pointer",
+    "proposed_type": "tsc1_source_configuration_t *",
+    "comment": "The configuration entry of the sender in control of the engine: the accepted TSC1 sender, or the J1922 command source. processEngineTsc1Request and the J1922 command handlers cm550_FUN_0001f4e8 / cm550_engineFluidLevelDataBuilder set it from tsc1_matched_source_configuration_pointer when they accept the sender. Its speed / torque / limit control request timeouts (+4 / +8 / +0xc) + 1 reload datalink_command_timeout_counter, and cm550_fuelDemandLimitOrchestrator reloads the time limit word 0x80da7e from its speed / torque control time limits (+6 / +0xa) + 1. The twin of CM848 j1939_powertrain_control_state.tsc1_source_configuration_pointer (0x40ae42). Dump 0 (was datalink_active_session_pointer; PR #53 round 91)",
+    "evidence": "ROM references: movea.l #$80da76,a4 at 0x1f4fa (cm550_FUN_0001f4e8) and 0x2f138 (processEngineTsc1Request), movea.l #$80da76,a3 at 0x1f8ca (0x1f8bc), and movea.l $80da76,a0 at 0x2348c / 0x2349e (cm550_fuelDemandLimitOrchestrator), all long. Decompile: '_datalink_active_session_pointer = _datalink_session_config_pointer' on accept; '*(short *)(_datalink_active_session_pointer + 4 / 8 / 0xc) + 1' -> _datalink_command_timeout_counter (lines 20867-20903, 21077-21112, 32215-32251); '+ 6' / '+ 10' -> _DAT_0080da7e (lines 24619 / 24623); 'if (_datalink_active_session_pointer < _datalink_session_config_pointer) return' (32197). CM848 +0x4a does the same (speed_control_request_timeout / torque_control_request_timeout / speed_torque_limit_control_request_timeout, and the < compare in the J1922-held branch)."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080da7a",
+    "current_name": "retarder_session_config_pointer",
+    "proposed_name": "retarder_tsc1_source_configuration_pointer",
+    "proposed_type": "tsc1_source_configuration_t *",
+    "comment": "The configuration entry of the accepted engine retarder TSC1 sender. cm550_retarderControlModeHandler sets it from tsc1_matched_source_configuration_pointer and reloads retarder_command_timeout_counter / retarder_disengage_hold_timer from its retarder torque control (+0xe) and speed / torque limit control (+0x12) request timeouts + 1. cm550_fuelDemandLimitOrchestrator reloads retarder_command_inactivity_timer from its retarder torque control time limit (+0x10) + 1. The twin of CM848 j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer (0x40ae46). Dump 0 (was retarder_session_config_pointer; PR #53 round 91)",
+    "evidence": "ROM references: movea.l #$80da7a,a3 at 0x2f7f0 (cm550_retarderControlModeHandler, which stores the matched pointer through (a3) at 0x2f8f6 / 0x2f914) and movea.l $80da7a,a0 at 0x23618 (cm550_fuelDemandLimitOrchestrator), all long. Decompile lines 32495 / 32516 (set), 32546 / 32554 (+0xe), 32572 / 32574 (+0x12), 24681 (+0x10). CM848 +0x4e reads the same offsets: retarder_torque_control_request_timeout / retarder_torque_control_time_limit / retarder_speed_torque_limit_control_request_timeout."
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0040ae3e",
+    "current_name": "j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr",
+    "proposed_name": "j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer",
+    "proposed_type": "tsc1_source_configuration_t*",
+    "comment": "Struct field rename (type unchanged). In structure_definitions.csv rename j1939_powertrain_control_state_t field +0x46 tsc1_matched_source_configuration_ptr to tsc1_matched_source_configuration_pointer (its comment then reads: the tsc1_source_configuration_table entry findTsc1SourceConfiguration matched for the last sender (was tsc1_matched_source_configuration_ptr, before that etc1_config_entry_ptr)), and rename the dotted label row at 0x40ae3e in global_variables.csv to match. This gives the CM550 twin 0x80da72 the same spelled-out name.",
+    "evidence": "The spell-out rule (task 046 line 1738 lists ptr among the abbreviations to remove), recent names prefer _pointer (all_speed_governor_gain_set_pointer, low_speed_governor_gain_set_pointer, insite_parameter_table_pointer), and twins share names. It is a pure label rename: 16 .cpp lines, 3 struct rows, 3 label rows and the 0x27cc4 plate name the three fields."
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0040ae42",
+    "current_name": "j1939_powertrain_control_state.tsc1_source_configuration_ptr",
+    "proposed_name": "j1939_powertrain_control_state.tsc1_source_configuration_pointer",
+    "proposed_type": "tsc1_source_configuration_t*",
+    "comment": "Struct field rename (type unchanged): j1939_powertrain_control_state_t field +0x4a tsc1_source_configuration_ptr -> tsc1_source_configuration_pointer in structure_definitions.csv, plus the dotted label row at 0x40ae42 in global_variables.csv; append (was tsc1_source_configuration_ptr) to the field comment. Same name as the CM550 twin 0x80da76.",
+    "evidence": "Same reasons as 0x40ae3e; role verified in processEngineTsc1Request (set from the matched pointer; reloads tsc1_request_timeout_count from +4 / +8 / +0xc)."
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0040ae46",
+    "current_name": "j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr",
+    "proposed_name": "j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer",
+    "proposed_type": "tsc1_source_configuration_t*",
+    "comment": "Struct field rename (type unchanged): j1939_powertrain_control_state_t field +0x4e retarder_tsc1_source_configuration_ptr -> retarder_tsc1_source_configuration_pointer in structure_definitions.csv, plus the dotted label row at 0x40ae46 in global_variables.csv; append (was retarder_tsc1_source_configuration_ptr) to the field comment. Same name as the CM550 twin 0x80da7a.",
+    "evidence": "Same reasons as 0x40ae3e; CM848 reads +0xe / +0x10 / +0x12 through it (its existing field comment)."
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0040aaba",
+    "current_name": "j1939_received_accelerator_pedal_position_2",
+    "proposed_name": "j1939_received_wet_tank_pressure",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +14 J1939_Mux_Wet_Tank_Pressure '[JCWTPRMU] MUXed value for the Pneumatic Control Pressure (Wet tank pressure)' (PSI_A, 0.7252683 per count = 5 kPa) (address from the ECU's parameter ID table). J1939 input slot 9: cm848_receivePgn61443ElectronicEngineController2Message stores PGN 61443 EEC2 byte 5 (data_pointer[4]; SPN 29 Accelerator Pedal Position 2 in the current J1939-71) here when the sender passes j1939_input_source_address_filter_cal[9] (0x3fd827 = EEPROM 0x3a5, e2m 12E8 +F Wet_Tank_Pressure_Source_Address_Enable), and reloads j1939_input_signal_timeouts[9] (0x3feab6, e2m 12F6 +12 J1939_Wet_Tank_Pressure_Timer) with 25. No direct reader found: one stb (0x50b984) across ROM and flash2, no pointer literal to it in either image, and slot 9 is not in j1939_input_signal_descriptor_table. CM550's twin is 0x80d720. Dump 0xff (not available) (was j1939_received_accelerator_pedal_position_2; PR #53 round 91)",
+    "evidence": "Disassembly 0x50b954-0x50b984: lbz r12,9(r5) with r5 = 0x3fd81e (filter slot 9) vs the received SA or 0xff; li r11,25 / sth r11,-5450(r12) -> 0x3feab6; lwz r9,6(r3) (data_pointer) / lbz r9,4(r9) / stb r9,-21830(r10) -> 0x40aaba. The handler is registered for 0xf003 = 61443 in cm848_registerJ1939InputMessageHandlers. A whole-image scan of ROM and flash2 for lis/addi-based D-form accesses finds only that stb; base pointers near the block (0x40aaa6, 0x40aab4, 0x40aaa4) touch offset 0 only. A byte search finds no 0x0040aaba literal. The 17 j1939_input_signal_descriptor_table entries (0x53a278) point at 0x40aaa9-0x40aabf except 0x40aaba (slots 1-4 and 10-22 only). In the decompile j1939_input_signal_timeouts[9] appears once (the reload); slots 0 and 5-7 have a writer and a reader. All three slot-9 records (value 12F7 +14, filter 12E8 +F, timer 12F6 +12) say wet tank pressure. CM550's twin EEC2 handler fills its wet tank byte from the same byte 5 (see 0x80d720). The local J1939 database has no 5 kPa/bit EEC2 signal; the standard pneumatic supply pressure is SPN 46 in PGN 65198 (8 kPa/bit), for which CM848 registers no handler. So the name follows the firmware's use, and the comment keeps the J1939-71 meaning."
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d720",
+    "current_name": "muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250",
+    "proposed_name": "j1939_received_wet_tank_pressure",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +14 JCWTPRMU 'MUXED VALUE FOR THE PNEUMATIC CONTROL PRESSURE (WET TANK PRESSURE)' (PSIA 0.7252683 per count, 0-250). J1939 input slot 9: the EEC2 handler cm550_FUN_00021b88 (registered for PGN 61443 at 0x21f16) stores PGN 61443 EEC2 byte 5 here when the sender passes j1939_wet_tank_pressure_source_address_filter_cal (0x803fa5, e2m 12E8 +F MXWTPRSA), and reloads the slot 9 timeout word 0x804246 (e2m 12F6 +12 MXWTPRTR) with 25. Read only by cm550_FUN_00020fac, while bit 9 (0x200) of 0x803cbc is set and the client priority word 0x80a6fc allows it: slot timed out -> the default 0x806d3c; 0-250 -> value x 9282 / 100 into analog_sensor_raw_override_values[0]; 0xfe -> the default; 0xfb-0xfd / 0xff -> the default and setBitInArray(9). The same slot, byte and record as CM848 0x40aaba. Extended RAM dump 0; 0x803cbc is 0 in the dump (was muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250; PR #53 round 91)",
+    "evidence": "ROM references to 0x80d720: 0x21c34 move.b (4,a0),$80d720 (the 0x21b88 slot 9 branch; filter read move.b $803fa5 at 0x21c12, move.w #0x19,$804246 at 0x21c28) and 0x2101e cmpi.b #0xfa / 0x21028 move.b / 0x2104e cmpi.b #0xfe in 0x20fac; nothing else. In 0x20fac the multiply is shifts and adds giving 9282 x value (lsl 3, +v, lsl 4, +v, lsl 5, +v, x2), then divu by 100, stored through a3 = 0x80a760. Registration 0x21ef6: pea 0x21b88 / move.w #61443. The same handler shape as CM848's EEC2 handler (byte 1 & 3, byte 2, byte 4, byte 5 into slots 6-9, each reloaded with 25)."
+   }
+  ],
+  "structs": [
+   {
+    "firmware": "cm550",
+    "struct_name": "tsc1_source_configuration_t",
+    "size": 20,
+    "fields": [
+     {
+      "offset": 0,
+      "name": "data_link",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m 10E7 JCNES{n}SW 'JCOMM NETWORK TYPE SA n' (0 = J1922 / 1 = J1939): findTsc1SourceConfiguration compares it with the data link (cmp.w (a0)); only data link 1 takes the 0xff source address wildcard. 1 in all five entries of the RAM dump. CM848's field is typed CONTROL_NETWORK, an enum CM550 does not have yet"
+     },
+     {
+      "offset": 2,
+      "name": "source_address_filter",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCSA{n} 'JCOMM SOURCE ADDRESS n' (2 bytes, 0-255): findTsc1SourceConfiguration compares the low byte (+3, cmp.b (3,a0)) with the source address; 0xff on data link 1 matches any sender. RAM dump 0x03 / 0x0b / 0x21 / 0xfe / 0xfe, high byte 0 (CM848 reads the word and masks the low byte)"
+     },
+     {
+      "offset": 4,
+      "name": "speed_control_request_timeout",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCRPS{n}TM (10 ms per count): the request timeout of a speed control request (mode 1); processEngineTsc1Request and the J1922 command handlers reload datalink_command_timeout_counter with it + 1. 5 = 50 ms in the dump"
+     },
+     {
+      "offset": 6,
+      "name": "speed_control_time_limit",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCRPS{n}TL (10 ms per count): the time limit of a speed control request; cm550_fuelDemandLimitOrchestrator reloads the time limit word 0x80da7e with it + 1 when the request starts or changes. 0 in the dump"
+     },
+     {
+      "offset": 8,
+      "name": "torque_control_request_timeout",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCTQS{n}TM (10 ms per count): the request timeout of a torque control request (mode 2). 5 in the dump"
+     },
+     {
+      "offset": 10,
+      "name": "torque_control_time_limit",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCTQS{n}TL (10 ms per count): the time limit of a torque control request (the 0x80da7e reload). 0 in the dump"
+     },
+     {
+      "offset": 12,
+      "name": "speed_torque_limit_control_request_timeout",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCLMS{n}TM (10 ms per count): the request timeout of a speed / torque limit control request (mode 3). 5 in the dump"
+     },
+     {
+      "offset": 14,
+      "name": "retarder_torque_control_request_timeout",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCRDT{n}TM (10 ms per count): cm550_retarderControlModeHandler reloads retarder_command_timeout_counter (and retarder_disengage_hold_timer) with it + 1 for a retarder torque control request (mode 2). 25 = 250 ms in the dump"
+     },
+     {
+      "offset": 16,
+      "name": "retarder_torque_control_time_limit",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCRDT{n}TL (10 ms per count): cm550_fuelDemandLimitOrchestrator reloads retarder_command_inactivity_timer with it + 1. 0 in the dump"
+     },
+     {
+      "offset": 18,
+      "name": "retarder_speed_torque_limit_control_request_timeout",
+      "type": "word",
+      "size": 2,
+      "comment": "e2m JCRDL{n}TM (10 ms per count): the retarder speed / torque limit control (mode 3) request timeout (retarder_command_timeout_counter / retarder_disengage_hold_timer reload). 25 in the dump"
+     }
+    ],
+    "evidence": "A type-only template (empty address column), the same type name and fields as CM848's tsc1_source_configuration_t (ROM 0x5c3b4), instanced by the 0x808196 global row typed tsc1_source_configuration_t[5]. Stride 20 (moveq #0x14 / adda.l d0,a0 in the finder), count 5 (cmpi.b #5,d2 / bcs). Every field has an access: +0 cmp.w, +3 cmp.b, +4 / +8 / +0xc (processEngineTsc1Request, J1922 handlers), +6 / +0xa / +0x10 (cm550_fuelDemandLimitOrchestrator), +0xe / +0x12 (cm550_retarderControlModeHandler). Each field has its own e2m 10E7 record per entry, 2 bytes each, MSEC fields scale 10. Every entry in the dump reads [1, SA, 5, 0, 5, 0, 5, 25, 0, 25], the same pattern as CM848's unused entries [1, 0xfe, 5, 0, 5, 0, 5, 25, 0, 25]. The +3 byte compare may render as a ._1_1_ piece of source_address_filter; that matches the e2m width and CM848's layout and is not a width error."
+   }
+  ],
+  "notes": "Applier notes:\n(1) Rename both function rows to findTsc1SourceConfiguration. Refresh the old names in the CSVs that refresh_references.py does not cover:\n- CM550 function_definitions.csv: the three 0x31ace rows (function_name column; the return comment says 'stored to datalink_session_config_pointer'; param 0 says 'CM848's twin cm848_findTsc1SourceConfiguration').\n- CM550 function_renames.csv: processEngineTsc1Request's plate (cm550_diagnosticSessionValidator).\n- CM848: the global_variables.csv comment of 0x5c3b4 tsc1_source_configuration_table and two structure_definitions.csv comments (the tsc1_source_configuration_t header line and field +0x46), which name cm848_findTsc1SourceConfiguration.\n- Regenerate the headers for both firmwares.\n(2) The CM550 pointer types depend on the new CM550 struct template. Add the template and the 0x808196 array row in the same build.\n(3) If CM848 must not be touched, use CM848's existing _ptr field names verbatim for 0x80da72 / 0x80da76 / 0x80da7a instead. The primary proposal spells out pointer in both firmwares so the twins share one name.\n(4) Lead 2 name: it follows what the firmware does. All three slot-9 records, in both firmwares' own parameter tables, say wet tank pressure, and CM550's only consumer treats the byte as 0-250 with 0xfe and 0xfb+ codes, not as a pedal. Mismatch to flag: CM550 0x20fac writes value x 9282 / 100 into analog_sensor_raw_override_values[0], arbitrated by priority word 0x80a6fc. The e2m records of that element (12D1 +0 ADIMTPPR, 12D3 +0 ADIMTPUR) say intake manifold temperature. 92.82 = 0.72516 x 128, close to the record's 0.7252683 psi per count, which suggests a psi x 128 target (an inference, not a code fact). Why a wet tank pressure overrides A/D channel 0 is not settled. The override gate 0x803cbc bit 9 is 0 in the CM550 dump.\n(5) \"No direct reader\" in CM848 rests on: one store across ROM and flash2, no pointer literal, and no slot 9 in the descriptor table. A scan cannot rule out indexed access from a distant base, so nothing is proposed for removal.\n\nLeads outside T2, verified only as far as stated:\n- CM550 0x80da70 datalink_command_source_id: byte-only accesses; the twin of CM848 tsc1_controlling_source_address (+0x45), though the CM550 J1922 handlers also store 0x4a / 0x4f there.\n- CM550 0x80da7e (no row, word): the twin of CM848 tsc1_request_time_limit_timer (reloaded from +6 / +0xa + 1; at 1, cm550_ioControlEntryAdd).\n- CM550 0x21b88 / 0x20fac (the EEC2 handler and the wet tank consumer) and 0x23820 cm550_diagnosticMessageValidator (claimed twin of the CM848 ignored-request lookup).\n- CM848 0x27cc4 has no prototype. Its callers zero-extend the return (clrlwi r3,r3,16), so 'ushort findTsc1SourceConfiguration(ushort data_link, ushort source_address)' would mirror CM550's; it needs a build check for call-site casts.\n- Local names for both finders (entry / entry_index).\n- Stale label rows inside the CM848 struct instance: 0x40ae4a etc1_prev_speed_ctrl_active_flag and 0x40ae4c etc1_override_timer_countdown sit on the fields high_idle_override_recovery_flag / etc1_message_timeout and render nowhere. Relabel them with the dotted field names or remove them.\n\nScratch scanner: /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/T2/ppc_scan.py"
+ },
+ "verdict": {
+  "item": "T2",
+  "verdicts": [
+   {
+    "element": "function cm550 0x00031ace (cm550_diagnosticSessionValidator -> findTsc1SourceConfiguration, twin)",
+    "verdict": "CONFIRMED",
+    "reason": "My own disassembly of 0x31ace-0x31b20 matches CM848 0x27cc4-0x27d34 step for step. Both do: movem d2-d3; d3 = data link word (12,sp), d1 = source address word (14,sp); table base 0x808196; cmp.w (a0),d3; cmp.b (3,a0),d1; the wildcard cmpi.w #1,d3 / cmpi.w #1,(a0) / cmpi.b #$ff,(3,a0); move.l a0,$80da72; clr.w d0 (0) or moveq #1 (1); moveq #20 / adda stride. The only differences are the count (cmpi.b #5 vs cmpwi 10) and where the table lives (RAM calibration copy vs ROM). Repo precedent accepts that: CM550 clearWorkingRam has different bounds and inline watchdog kicks (0xfffa27 / 0xffd00f), and copyCalibrationFromRomToRam has different ranges, yet both are twins. Callers: 9 jsr abs.l and nothing else. The literal 0x00031ace appears only as those 9 operands, with no pea, movea or PC-relative bsr/jsr. They are 0x1f58c / 0x1f5b4 (cm550_FUN_0001f4e8: clr.w + #$4a, data link 0), 0x1f95a / 0x1f982 (cm550_engineFluidLevelDataBuilder: 0, 0x4f), 0x2f1e4 / 0x2f252 / 0x2f27c (processEngineTsc1Request: 1, the sender's SA) and 0x2f8b6 / 0x2f904 (cm550_retarderControlModeHandler: 1, SA). Both arguments are pushed as words. The plate text is accurate. Two slips are evidence-only, not CSV text. First, the store instruction is at 0x31b00; 0x31b02 is its operand. Second, CM848 ROM entry 0 is [1,3,5,65535,5,600,8,25,0,25], and the unused entries 5-9 have time limits 0, not 600. Applier: also fix the function_name column of the three function_definitions.csv rows (326-328) and the stale comment at enums.csv line 214 ('diagnosticSessionValidator param 0x4A')."
+   },
+   {
+    "element": "function cm848 0x00027cc4 (cm848_findTsc1SourceConfiguration -> findTsc1SourceConfiguration, twin)",
+    "verdict": "CONFIRMED",
+    "reason": "There are 5 bl call sites, each preceded by li r3,1 and followed by clrlwi r3,r3,16: 0x22e50 / 0x22ec8 / 0x22efc in processEngineTsc1Request (0x22d60) and 0x237fc / 0x23858 in cm848_processEngineRetarderTsc1Request (0x236f0, header checked). The flash2 image has no bl to 0x27cc4, and neither image holds the literal or a lis/addi pair for it. The plate is accurate. It names the field tsc1_matched_source_configuration_pointer, so it is correct only if the 0x40ae3e field rename lands in the same build; under the applier's fallback (3), keep _ptr in the plate."
+   },
+   {
+    "element": "global cm550 0x00808196 (tsc1_source_configuration_1_data_link -> tsc1_source_configuration_table, tsc1_source_configuration_t[5])",
+    "verdict": "CONFIRMED",
+    "reason": "The e2m tool maps all 50 JC*n records of 10E7 +18..+7B to 0x808196 + 20(n-1) + {0,2,...,0x12}. That gives 10 two-byte unsigned fields per entry; the MSEC fields are scale 10. The next record, JCHSODES 10E7 +7C, sits at 0x8081fa = 0x808196 + 100 (row j1939_high_idle_override_speed). No CSV row sits in 0x808197-0x8081f9. The only code reference to any address in 0x808196-0x8081f9 is the finder's movea.l #$808196,a0 at 0x31ada. Stride 20 and count 5 come from the finder. The RAM dump holds five entries [1,SA,5,0,5,0,5,25,0,25] with SA 0x03 / 0x0b / 0x21 / 0xfe / 0xfe. The table lies inside the copyCalibrationFromRomToRam range 0x80654a-0x808acd and outside the EEPROM mirror 0x803B0A-0x804155, so no _cal. The comment checks out."
+   },
+   {
+    "element": "global cm550 0x0080da72 (datalink_session_config_pointer -> tsc1_matched_source_configuration_pointer, tsc1_source_configuration_t *)",
+    "verdict": "AMENDED",
+    "reason": "The name, type and twin pairing hold. All 13 literal references are long accesses. The only writer is the finder; the other 12 references are reads in 0x1f4e8 / 0x1f8bc / processEngineTsc1Request / the retarder handler. No displacement access through a nearby base register (0x80da50 in a5/a2, 0x80da68 in a5, 0x80da58, 0x80da62) reaches 0x80da70-0x80da7d. The extended RAM dump holds 0. Two corrections to the comment, which lands in the CSV. (1) The store instruction move.l a0,$80da72 is at 0x31b00; 0x31b02 is its operand. (2) The position-test sentence covers only one branch. Decompile lines 20842-20848 and 21051-21058, and the disassembly at 0x1f59a-0x1f5a6 / 0x1f968-0x1f974 (move.l $80da72,d0; cmp.l (aN),d0; bhi reject), show that each J1922 command handler applies the same test whenever the engine is held by any sender other than its own source (engine_control_network_type != 0, or datalink_command_source_id != 0x4a / 0x4f). processEngineTsc1Request applies it only in its J1922-holder branch.",
+    "amendment": "Name tsc1_matched_source_configuration_pointer and type tsc1_source_configuration_t * are unchanged. Comment: \"The tsc1_source_configuration_table entry that findTsc1SourceConfiguration matched for the last (data link, source address) it was asked about; its only writer is the finder (move.l a0,$80da72 at 0x31b00). When the sender is accepted, processEngineTsc1Request and the J1922 command handlers cm550_FUN_0001f4e8 / cm550_engineFluidLevelDataBuilder copy it into tsc1_source_configuration_pointer, and cm550_retarderControlModeHandler copies it into retarder_tsc1_source_configuration_pointer. While a J1922 source holds the engine, processEngineTsc1Request rejects a J1939 TSC1 sender when tsc1_source_configuration_pointer < this pointer; each J1922 command handler applies the same test whenever the engine is held by any sender other than its own source (0x4a / 0x4f). In those cases the new sender needs an entry at the same or an earlier position. The twin of CM848 j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer (0x40ae3e). Dump 0 (was datalink_session_config_pointer; PR #53 round 91)\""
+   },
+   {
+    "element": "global cm550 0x0080da76 (datalink_active_session_pointer -> tsc1_source_configuration_pointer, tsc1_source_configuration_t *)",
+    "verdict": "CONFIRMED",
+    "reason": "5 literal references. Three are movea.l #$80da76 instructions at 0x1f4f8 / 0x1f8c8 / 0x2f136, and two are movea.l $80da76,a0 at 0x2348a / 0x2349c; the evidence cites the operand addresses (+2). Through (a4) / (a3) there are only long accesses: compare against and store of the matched pointer, then reads via a0 at +4 / +8 / +12. Through a0 in cm550_fuelDemandLimitOrchestrator there are +6 / +10 reads that reload 0x80da7e when the request starts or changes (mode / network / source differ from 0x801982/84/86). The CM848 twin field +0x4a does the same. It takes +4 / +8 / +0xc in processEngineTsc1Request, and +6 / +10 (iVar10) reload tsc1_request_time_limit_timer in cm848_runJ1939PowertrainControlTimeouts. Dump 0. Optional, not required: tsc1_controlling_source_configuration_pointer would parallel the sibling fields tsc1_controlling_data_link / tsc1_controlling_source_address."
+   },
+   {
+    "element": "global cm550 0x0080da7a (retarder_session_config_pointer -> retarder_tsc1_source_configuration_pointer, tsc1_source_configuration_t *)",
+    "verdict": "CONFIRMED",
+    "reason": "2 literal references: movea.l #$80da7a,a3 at 0x2f7ee (the retarder handler stores the matched pointer through (a3) at 0x2f8f4 / 0x2f912) and movea.l $80da7a,a0 at 0x23616 followed by move.w (16,a0). The decompile reads +0xe (mode 2: retarder_command_timeout_counter, and retarder_disengage_hold_timer when the stepped torque is 0) and +0x12 (mode 3), and +0x10 reloads retarder_command_inactivity_timer. This matches CM848 +0x4e: +0xe / +0x12 in cm848_processEngineRetarderTsc1Request and +0x10 -> retarder_tsc1_request_time_limit_timer in cm848_runJ1939PowertrainControlTimeouts. The handler pair is the same shape: an ignored-list check, then the finder, then the priority rules. Dump 0."
+   },
+   {
+    "element": "global cm848 0x0040ae3e (struct field j1939_powertrain_control_state_t +0x46 tsc1_matched_source_configuration_ptr -> tsc1_matched_source_configuration_pointer)",
+    "verdict": "CONFIRMED",
+    "reason": "Computed from the struct rows: +0x46 = 0x40ae3e, type tsc1_source_configuration_t*, 4 bytes. Its only writer is the finder (stw r7,-20930(r12) at 0x27d10). This is a pure label rename that spells out ptr. Task 046 line 1738 lists ptr as an abbreviation to remove. structure_definitions.csv already has 35 _pointer fields, and these three are its only _ptr fields. The rename touches the struct row, the dotted label row at 0x40ae3e, the 0x27cc4 plate and the regenerated firmware_types.hpp. No collision with an existing name."
+   },
+   {
+    "element": "global cm848 0x0040ae42 (struct field +0x4a tsc1_source_configuration_ptr -> tsc1_source_configuration_pointer)",
+    "verdict": "CONFIRMED",
+    "reason": "Offset and type verified (+0x4a = 0x40ae42). It is set from the matched pointer in processEngineTsc1Request: an unsigned 'active < matched' reject at 0x22ee8 (cmplw / bgt) in the J1922-holder branch, then the store. It reloads tsc1_request_timeout_count from +4 / +8 / +0xc and tsc1_request_time_limit_timer from +6 / +10. This is a pure label rename (struct row and dotted label row), and it gives the CM550 twin 0x80da76 the same name."
+   },
+   {
+    "element": "global cm848 0x0040ae46 (struct field +0x4e retarder_tsc1_source_configuration_ptr -> retarder_tsc1_source_configuration_pointer)",
+    "verdict": "CONFIRMED",
+    "reason": "Offset and type verified (+0x4e = 0x40ae46). It is set from the matched pointer in cm848_processEngineRetarderTsc1Request, which reads +0xe / +0x12; +0x10 is read in cm848_runJ1939PowertrainControlTimeouts. This is a pure label rename that matches the CM550 twin 0x80da7a."
+   },
+   {
+    "element": "global cm848 0x0040aaba (j1939_received_accelerator_pedal_position_2 -> j1939_received_wet_tank_pressure, byte)",
+    "verdict": "CONFIRMED",
+    "reason": "In the EEC2 handler 0x50b8a4 (registered for 0xf003), the slot 9 branch at 0x50b954-0x50b984 does this. It compares lbz 9(r5) (r5 = 0x3fd81e, so the slot 9 filter is 0x3fd827 = EEPROM 0x3a5) with j1939_received_source_address (0x40ad52) or 0xff. On a pass it does li r11,25 / sth -> 0x3feab6 (j1939_input_signal_timeouts[9]), then lbz r9,4(data_pointer) / stb -> 0x40aaba. So the byte is EEC2 byte 5. The local J1939 database confirms EEC2 byte 5 = SPN 29 Accelerator Pedal Position 2 (0.4 %/bit), so the comment's J1939-71 note is right. Readers: my own scan of ROM and flash2 tracks lis / addi / ori bases, D-form and X-form accesses, and does a byte-aligned literal search. It finds only the stb at 0x50b984; the nearby bases (0x40aa9a / 0x40aaa4 / 0x40aaa6 / 0x40aab4) touch offset 0 only. The code uses no r13 small-data base: its 12 r13 D-form hits all lie in data regions. The 17-entry descriptor table (10-byte entries) covers slots 1-4 and 10-22, not 9. Dump: 0xff, with timeout[9] = 25. The name rests on the facts that discriminate. The e2m J1939_Mux_Wet_Tank_Pressure is PSI_A 0.7252683 per count (= 5 kPa), while the pedal inputs JCCMTHMU / JCRTTHMU are 0.4 %/bit. All three slot-9 records (value 12F7 +14, filter 12E8 +F, timer 12F6 +12) say wet tank pressure. CM550's consumer scales the byte by 9282/100 = 0.7252 x 128, i.e. psi x 128. This departs from the sibling j1939_received_* rows, which are named after their SPN. Here Cummins' own records define the variable, so the firmware's label wins and the comment keeps the J1939-71 meaning. Weak points in the proposer's notes, not in the CSV text: the 0-250 / 0xfe / 0xfb+ handling is generic for any 1-byte J1939 value, so it does not show 'not a pedal'; and the database gives no resolution for SPN 46, so '8 kPa/bit' is not database-backed."
+   },
+   {
+    "element": "global cm550 0x0080d720 (muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250 -> j1939_received_wet_tank_pressure, byte)",
+    "verdict": "CONFIRMED",
+    "reason": "The EEC2 handler 0x21b88 is registered by pea $21b88 at 0x21f16 with move.w #$f003. Its slot 9 branch compares 0x803fa5 (12E8 +F MXWTPRSA, already named j1939_wet_tank_pressure_source_address_filter_cal) with the received SA at 0x80d9dc or 0xff. It then does move.w #$19,$804246 and move.b (4,a0),$80d720 (instruction at 0x21c30). This is the same four-slot shape as CM848's handler. The only other references are in cm550_FUN_00020fac, at instructions 0x2101a / 0x21026 / 0x2104a; the evidence cites operands. Bases near the byte (0x80d719 / 0x80d71a / 0x80d71c in a4, 0x80d70e in a2) touch offset 0 only, and the 0x20108 descriptor table omits 0x80d720. The consumer behaves as the comment says: it multiplies by 9282 through shifts and adds, divides with divu 100, and stores to (a3) = 0x80a760. The comment omits one detail: on timeout the consumer also calls cm550_FUN_00020348(9). The 12F6 +12 MXWTPRTR timer: the e2m tool prints EEPROM 0x100073c. That equals 0x804246 only through 0x803b0a + 0x73c (slot 9 of the timeout words at 0x804234). The code writes 0x804246 directly, so the comment holds. The address lies beyond the _cal mirror end 0x804155, and no row is proposed there. Extended RAM dump 0; 0x803cbc = 0."
+   },
+   {
+    "element": "struct cm550 tsc1_source_configuration_t (new type-only template, 20 bytes)",
+    "verdict": "CONFIRMED",
+    "reason": "The 10 two-byte fields at +0..+0x12 match the e2m records per entry (JCNES / JCSA / JCRPS TM,TL / JCTQS TM,TL / JCLMS TM / JCRDT TM,TL / JCRDL TM). The field names and order are those of CM848's tsc1_source_configuration_t, whose computed size is 20. Code accesses: +0 cmp.w, +3 cmp.b, +4 / +8 / +0xc (TSC1 and J1922 handlers), +6 / +0xa and +0x10 (cm550_fuelDemandLimitOrchestrator), +0xe / +0x12 (retarder handler). The +2 high byte has no access; keeping a word matches the 2-byte e2m record and CM848. data_link as word is acceptable because CM550 has no CONTROL_NETWORK enum. The type-only template (empty address) and the global struct array both have CM550 precedent (engine_overspeed_event_t / engine_overspeed_log). The dump values in the field comments match."
+   }
+  ],
+  "overall": "11 CONFIRMED, 1 AMENDED (comment text of CM550 0x80da72 only), 0 REFUTED. Lead 1 is a twin. CM550 0x31ace and CM848 0x27cc4 are the same routine instruction for instruction; only the entry count (5 vs 10) and the table location differ, which the clearWorkingRam / copyCalibrationFromRomToRam precedents accept. The CM550 words 0x80da72 / 0x80da76 / 0x80da7a are the matched / controlling / retarder pointers, in the same order and with the same offsets read as CM848's +0x46 / +0x4a / +0x4e. Lead 2: CM848 0x40aaba holds EEC2 byte 5 (SPN 29 in J1939-71), has no reader in CM848, and every firmware record for slot 9 says wet tank pressure; the CM550 twin byte has one consumer. Applier notes beyond the proposal: (a) CM550 function_definitions.csv rows 326-328 need the new function_name; (b) the CM550 enums.csv line 214 comment still says diagnosticSessionValidator; (c) the CM848 0x27cc4 plate names the _pointer field, so apply the struct rename in the same build. Evidence-only slips (no CSV impact): several m68k addresses in the evidence are operand addresses (instruction + 2), and the CM848 ROM table pattern is off for entry 0 and the unused entries. Out of scope, for later: CM550 0x21c3c (the PGN 65252 handler, registered with move.w #$fee4) has no function row and is folded into cm550_FUN_00021b88's range; the stale CM848 labels at 0x40ae4a / 0x40ae4c sit inside the struct instance; it is still unexplained why CM550 writes the wet tank value into analog_sensor_raw_override_values[0], whose e2m records say intake manifold temperature. The scanners are static linear sweeps, so the comment's wording 'no direct reader found' is right. Scratch: /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/T2/skeptic/ (ppc_scan2.py, r13_uses.py, m68k.py).\""
+ }
+}

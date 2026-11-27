@@ -1,0 +1,25 @@
+cm550: round 92 stage B - the FUELING_STATE enum (CM848's twin) and its seven carriers
+
+CM550's e2m (v64t6_s.e2m, FSFNFLST) labels fueling state codes 0x00-0x29 with the same Cummins numbering as CM848's
+FUELING_STATE: 32 codes quote the same Calterm label as a CM848 member (JCOMTORQ, PTO, LIMPHOME, LSG, AFCDERAT, ...).
+- FUELING_STATE (42 members, 2 bytes): those 32 codes take CM848's member names. Of the 10 codes CM848 has no member
+  for, four take the label's plain words (FUELING_STATE_LOW_GEAR / _OUT_OF_GEAR / _ALTERNATE_TORQUE / _TORQUE_CONTROL)
+  and six are FUELING_STATE_UNIDENTIFIED_<n> (CM848's convention), with the label in the comment (PSSPEED, ANCDERAT,
+  EPF, ESUOILLM, PTPDERAT, T2DERAT).
+- Carriers typed with it: user_fueling_state (FSDSFLST), requested_fueling_state (FSLMDSST) and
+  fuel_demand_minimum_tracked_state (FSLMAHST). Four take CM848's names for the same e2m records:
+  - final_fueling_state (FSFNFLST; was fuel_limit_selection_state);
+  - adjusted_user_fueling_state (FSGVFLST) and torque_derate_fuel_source_code (FSLMFLST), which had e2m description
+    names;
+  - power_take_off_or_user_fueling_state (PTSLFLST; CM848 keeps it as a struct field).
+  The four were untyped, so they printed with an underscore (_fuel_limit_selection_state, 40 renders).
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed / added; 43 changed, all by the four renames (83 renders) and
+  numbers that became members (166 member renders, e.g. user_fueling_state == FUELING_STATE_VARIABLE_SPEED_GOVERNOR);
+  no value renders as an OR of members; caller artifacts unchanged (unaff_ 20, extraout_ 19, in_ 17, uStack 3,
+  CONCAT 56); no new build warning.
+- CM848 untouched; the parameter ID table CSV is unchanged. test_e2m_block_addresses / test_e2m_name_audit /
+  test_rename_waves / test_lookup_tables / test_disasm_tools pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

@@ -1,0 +1,5 @@
+cm848_updateExhaustBrakeLockupInhibit
+exhaust_brake_lockup_flags
+exhaust_brake_lockup_inhibit_previous
+exhaust_brake_lockup_inhibit_timeout
+exhaust_brake_lockup_inhibit_timer

@@ -1,0 +1,1923 @@
+{
+ "batch": "Q2",
+ "proposal": {
+  "batch": "Q2",
+  "summary": "CM550 answers J1939 Request (PGN 59904) messages through a 32-entry table at 0x801d5a. Each entry is 6 bytes: a 16-bit PGN key at +0 and a handler pointer at +2. The entry count is a BYTE at 0x801e1a, right after the table. The RAM dump shows 24 entries in registration order, with DM1 registered twice, as in CM848. registerJ1939PgnRequestHandler (0x2f47e) appends entries and is a step-for-step twin of CM848 0x23188. cm550_dispatchJ1939PgnRequest (0x2f4be) is the 0xea00 receive handler: it matches request data bytes 0-1 against the table and calls the handler, or sends a NACK (PGN 59392). It is a counterpart of CM848 0x231cc, which also sets j1939_dm1_active_flag. cm550_registerJ1939PgnRequestHandlers (0x2f538, was cm550_diagnosticDataDump) registers the dispatcher and 21 of the 24 handlers. The other three come from the descriptor set-ups in mc68k_initializeJ1939Datalink. Each responder builds and sends one message. DM5, DM10 and VI match CM848 step for step. DM1, DM2 and CCSS do not, so their shared names were wrong. The range also holds the J1939 receive registrations (PGN 61184, TSC1, ETC1, DM7), the engine retarder TSC1 path and the remote throttle claim.",
+  "functions": [
+   {
+    "address": "0x2f47e",
+    "current_name": "",
+    "proposed_name": "registerJ1939PgnRequestHandler",
+    "role": "Appends a requested PGN and the function that answers it to the PGN 59904 request table j1939_pgn_dispatch_table.",
+    "discriminator": "The only writer of 0x801d5a / 0x801e1a: a byte count compared with 32 and 6-byte entries (word key + long handler). Its siblings registerJ1939ReceiveHandler (0x21272) and registerJ1939DiagnosticService (0x2ee62) fill other tables.",
+    "relation": "twin",
+    "cm848_address": "0x23188",
+    "cm848_current_name": "cm848_j1939RegisterPgnHandler",
+    "plate_comment": "Registers a PGN 59904 request handler. When j1939_pgn_handler_count is 32 it stores nothing and returns 1. Otherwise it writes the requested PGN's low 16 bits (the word argument, e.g. 0xfee4) to entry +0 and the handler (the long argument) to +2 of j1939_pgn_dispatch_table[count], adds 1 to the count and returns 0; no caller reads the result. This ROM makes 24 registrations (the RAM dump count is 24): the descriptor set-ups of mc68k_initializeJ1939Datalink and cm550_registerJ1939PgnRequestHandlers. Twin of CM848 0x23188 (was cm848_j1939RegisterPgnHandler): one shared name.",
+    "evidence": "CM550 0x2f480 movea.l #0x801e1a,a1 / 0x2f486 cmpi.b #0x20,(a1) / 0x2f48c moveq #1,d0 rts / 0x2f492 move.b (a1),d0 / 0x2f494 addq.b #1,(a1) / 0x2f49c-0x2f4a2 count x 6 / 0x2f4a4 movea.l #0x801d5a,a0 / 0x2f4ae move.w (0x8,a7),(a2) / 0x2f4b2 move.l (0xa,a7),(0x2,a2) / 0x2f4b8 clr.b d0 / rts 0x2f4bc. CM848 0x23188: lbz r7 from 0x3faa62 / cmpwi r7,32 / li r3,1 / mulli r11,r7,6 / r6 = 0x3fa9a2 + r11 / stb r7+1 to 0x3faa62 / sth r3,0(r6) / stw r4,2(r6) / li r3,0. Same steps in the same order with the same constants (32, 6, the PGN halfword at +0 and the handler at +2) and the same callers' role. CM550 callers: 16 jsr (0x2f47e).l (0x2ef40, 0x31f26, 0x32142, 0x32290, 0x32412, 0x32580, 0x32a36, 0x32b2e, 0x330b8, 0x337ba, 0x338e0, 0x33b36, 0x33d2e, 0x342e6, 0x34426, 0x3448c) plus 7 jsr (a2) in 0x2f538 (a2 = 0x2f47e at 0x2f53a). There is no function row yet; it ends at the rts at 0x2f4bc. RAM dump: byte 0x801e1a = 24, and entries 0-23 at 0x801d5a match the registrations in call order.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2f4be",
+    "current_name": "cm550_FUN_0002f4be",
+    "proposed_name": "cm550_dispatchJ1939PgnRequest",
+    "role": "The PGN 59904 Request receive handler: it finds the requested PGN in j1939_pgn_dispatch_table and calls its handler, or NACKs.",
+    "discriminator": "The only reader of the 0x801d5a table (scan bound = the byte 0x801e1a). 0x2f538 registers it for 0xea00 (0x2f540). It is the only J1939 dispatcher that keys on request data bytes 0-1.",
+    "relation": "counterpart",
+    "cm848_address": "0x231cc",
+    "cm848_current_name": "cm848_j1939DispatchPgnHandler",
+    "plate_comment": "The PGN 59904 Request receive handler, registered for 0xea00 by cm550_registerJ1939PgnRequestHandlers. For a request addressed to j1939_engine_node_source_address or global (0xff), it scans j1939_pgn_dispatch_table up to j1939_pgn_handler_count. It looks for the entry whose PGN bytes match request data bytes 0 and 1 (the data page byte is not compared) and calls that handler with the request. With no match and a request that was not global, it sends a negative acknowledgement through cm550_diagnosticCanResponseSender(request, 1) (PGN 59392). The CM848 counterpart cm848_j1939DispatchPgnHandler also sets j1939_dm1_active_flag before the call.",
+    "evidence": "Registered at 0x2f540-0x2f54a (pea 0x2f4be / move.w #0xea00 / jsr 0x21272). 0x2f4d2-0x2f4e4: ID byte 2 (the destination) compared with (0x80da01) or 0xff, else return. Loop 0x2f4ec-0x2f516: a2 = 0x801d5a, +6 per entry, bound d3 = (a4) = 0x801e1a. If entry +1 == data[0] and entry +0 == data[1], it pushes the request and jsr (a0) with a0 = entry +2, then exits. 0x2f518-0x2f52a: index == count and destination != 0xff -> jsr 0x31b22 with (request, 1). 0x31b22 sends header 0xe8ff00 (PGN 59392) with control byte d1 and the request's data bytes 0-2 as the PGN field. CM848 0x231cc has the same address test (0x231e8-0x23204), the same scan (lbz 1(r31) vs data[0], lbz 0(r31) vs data[1]) and the same NACK (0x23288-0x2329c, bl 0x23dbc with 1). CM848 has one extra step: li 1 / stb to 0x40ad53 (j1939_dm1_active_flag) before blrl (0x23248-0x23250). CM550 lacks it -> counterpart. The existing funcdef row (rx_msg can_std_rx_desc_t*) needs its function_name updated.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2f538",
+    "current_name": "cm550_diagnosticDataDump",
+    "proposed_name": "cm550_registerJ1939PgnRequestHandlers",
+    "role": "Start-up: registers the PGN 59904 dispatcher and the request handlers of the on-request messages, directly or through their transmit descriptor set-ups.",
+    "discriminator": "Of the J1939 start-up registration calls, this is the only one that registers 0xea00 and drives registerJ1939PgnRequestHandler (a2 = 0x2f47e). It dumps no diagnostic data.",
+    "relation": "counterpart",
+    "cm848_address": "0x232b4",
+    "cm848_current_name": "cm848_initJ1939ProtocolHandlers",
+    "plate_comment": "Start-up step of mc68k_initializeJ1939Datalink. It registers cm550_dispatchJ1939PgnRequest for PGN 59904 with registerJ1939ReceiveHandler, then calls initPgn65261CruiseControlSetupStruct. It then calls eight descriptor set-ups that each register their responder: 65259, 65253, 65262, 65257, 65244, 65248, 65255, 65260. It registers seven responders directly with registerJ1939PgnRequestHandler: 65252, 65261, 65263, 65264, 65269, 65270, 65271. Last come the DM set-ups DM1 / DM2 / DM3 / DM4 / DM5 / DM10. Entries 3-23 of j1939_pgn_dispatch_table come from here. Counterpart of CM848 cm848_initJ1939ProtocolHandlers, which registers a different message set.",
+    "evidence": "0x2f53a movea.l #0x2f47e,a2. 0x2f540-0x2f54a registerJ1939ReceiveHandler(0xea00, 0x2f4be). jsr 0x31fee, 0x320f6, 0x33754, 0x33880, 0x33aea, 0x33ce2, 0x3429a, 0x343d2, 0x34440 (0x2f550-0x2f580). These register 0x32052 / 0x33716 / 0x337c4 / 0x33a62 / 0x33c6c / 0x34232 / 0x34394 / 0x34430, at 0x32138 / 0x337b0 / 0x338d6 / 0x33b2c / 0x33d24 / 0x342dc / 0x3441c / 0x34482. 0x2f586-0x2f5d8: seven pea handler / move.w #pgn / jsr (a2): 0xfee4 0x33d38, 0xfeed 0x31f30, 0xfeef 0x33164, 0xfef0 0x33f5a, 0xfef5 0x31bce, 0xfef6 0x33e58, 0xfef7 0x342f0. lea (0x30,a7),a7 pops 48 bytes. Then 0x323be (DM1), 0x3252c (DM2), 0x2ef36 (DM3), 0x329d2 (DM4), 0x32ae2 (DM5), 0x32244 (DM10). Its only caller is mc68k_initializeJ1939Datalink (jsr at 0x28e2c, after 0x2f114 and before 0x2efbc). CM848 0x232b4 has the same shape at the same place (cm848_j1939_system_init bl at 0x539514): registerJ1939ReceiveHandler(0xea00, 0x231cc), initPgn65261CruiseControlSetupStruct, five set-ups (65259 65262 65242 65248 65260), seven direct registrations (65261 65263 65264 65269 65270 65271 65504), then DM1 DM2 DM3 DM4 DM5 DM10. Different message set -> counterpart. RAM dump entries 3-23 = these registrations in this order.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2ec50",
+    "current_name": "cm550_FUN_0002ec50",
+    "proposed_name": "cm550_claimRemoteThrottleOverride",
+    "role": "20 ms task: gives the alternate throttle to the remote throttle (at its calibrated priority) while the remote throttle is selected, and takes it back otherwise.",
+    "discriminator": "The only CM550 writer of commanded_throttle_state.alternate_throttle / alternate_throttle_priority that uses the remote throttle priority CTRMTHPZ (0x8089a4) and remote_throttle_sensor_state.filtered_value. It is also the only writer that latches remote_throttle_active_flag from the remote throttle switch RMTHSW.",
+    "relation": "counterpart",
+    "cm848_address": "0x50e610",
+    "cm848_current_name": "cm848_claimRemoteThrottleOverride",
+    "plate_comment": "The remote throttle's claim on the alternate throttle (20 ms task set). With algorithm_enable_flags_18_cal.remote_throttle_enable off it releases a claim it holds: alternate_throttle_priority equal to CTRMTHPZ (0x8089a4) -> priority 0 and alternate throttle 0. With the enable on and remote_throttle_transition_verification_enable off, the remote throttle switch (0x80bcd0 bit 3, e2m 000E +2 RMTHSW) decides. Switch on: it claims (priority = CTRMTHPZ, alternate_throttle = remote_throttle_sensor_state.filtered_value). Switch off: it drops the priority. With verification on, remote_throttle_active_flag goes to 1 when the switch is on and the remote throttle is at or below the calculated commanded throttle. It goes to 0 when the switch is off and the remote throttle is at or above it, or, with fault status word 3 bit 0x800 set and the word at 0x806046 bit 0x800 clear, as soon as the remote throttle reaches it. The flag then claims or releases as the switch does. CM848 splits this into cm848_verifyRemoteThrottleTransition and cm848_claimRemoteThrottleOverride.",
+    "evidence": "Caller: cm550_runEvery4FramesTaskSetPhase0 (jsr at 0x1b558). 0x2ec6c-0x2ec78 andi.l #0x1000 of 0x803cb8 (algorithm_enable_flags_18_cal, bit 12 remote_throttle_enable). If 0: 0x2ec7a-0x2ec84 cmp alternate_throttle_priority 0x80aa90 with CTRMTHPZ 0x8089a4 (e2m 1171 +0), then clr.w both 0x80aa90 and 0x80aa8e. 0x2ec90-0x2ec9c andi.l #0x2000 (bit 13). If 0: btst #3 of 0x80bcd0 (RMTHSW). On: 0x2ecb0 priority = CTRMTHPZ and 0x2ecb2 alternate = 0x80a3a4 when below. Off: 0x2ecc6 clr.w priority when equal. 0x2ecce-0x2ed30 latch 0x801c78 (set 0x2ecfe, clear 0x2ed1e / 0x2ed30) from 0x80a3a4 vs 0x80aa92 (calculated_commanded_throttle), the switch bit, 0x806006 & 0x800 and 0x806046 & 0x800. 0x2ed36 cmpi.w #1 flag -> claim (0x2ed46-0x2ed48) or release (0x2ed5a). CM848: cm848_claimRemoteThrottleOverride (0x50e610, from cm848_runEvery4FramesTaskSetPhase2) mirrors fault bits 77 / 78 into 171 / 172 and calls cm848_verifyRemoteThrottleTransition (0x50e534) for the flag. It only claims and never releases -> counterpart (same role, different steps). Dump: 0x803cb8 = 0x303a (both enables on), CTRMTHPZ = 5.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2ed62",
+    "current_name": "cm550_FUN_0002ed62",
+    "proposed_name": "cm550_initializeRemoteThrottle",
+    "role": "Start-up: clears remote_throttle_active_flag, the remote throttle transition latch of cm550_claimRemoteThrottleOverride.",
+    "discriminator": "Its only store is clr.w 0x801c78. The only other user of 0x801c78 is 0x2ec50.",
+    "relation": "counterpart",
+    "cm848_address": "0x50e768",
+    "cm848_current_name": "cm848_initializeRemoteThrottle",
+    "plate_comment": "Start-up step of mc68k_applicationMain: clears remote_throttle_active_flag (0x801c78), the transition latch that cm550_claimRemoteThrottleOverride sets and tests. CM848's counterpart cm848_initializeRemoteThrottle clears remote_throttle_transition_verified_flag and, with the remote throttle disabled, the remote throttle fault bits 171 / 172.",
+    "evidence": "0x2ed62 clr.w (0x801c78).l / rts. Single caller: jsr at 0x2882e in mc68k_applicationMain's start-up list (0x28810-0x2884c). The other users of 0x801c78 are inside 0x2ec50 (0x2ecfe / 0x2ed1e / 0x2ed30 / cmpi.w at 0x2ed36). CM848 0x50e768 (called from cm848_applicationMain) also clears fault_detected_cal / fault_registered_cal bits 0x1800 when the remote throttle is disabled -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2ef4a",
+    "current_name": "cm550_FUN_0002ef4a",
+    "proposed_name": "cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage",
+    "role": "The DM7 (PGN 58112 Command Non-continuously Monitored Test) receive handler: records the test identifier and answers with a DM8 test result or a NACK.",
+    "discriminator": "It is the PGN 58112 handler (0x2efbc registers it for 0xe300), the only writer of the byte 0x801d3c and the only caller of the DM8 sender 0x32b38. The other receive handlers in the range serve 61184 / 0 / 61442 / 59904.",
+    "relation": "counterpart",
+    "cm848_address": "0x227a0",
+    "cm848_current_name": "cm848_j1939HandlePgn58112Dm7",
+    "plate_comment": "Receives a DM7 command (PGN 58112, registered by registerJ1939Dm7Handler) and stores data byte 0, the test identifier (SPN 1224), in j1939_dm7_test_identifier. For identifier 0 with bit 0x100 of supported_non_continuous_monitors_bits (e2m 1228 +8 JCNTCTMR) it sends a DM8 test result (PGN 65232, 0x32b38) with test 0 and value 0x100. For identifier 1 with bit 0x200 it sends test 1 with value 0x200. Any other request gets a negative acknowledgement (cm550_diagnosticCanResponseSender with 1). CM848's counterpart sends the intake air heater / misfire monitor results as the values and NACKs only identifiers 0 and 1.",
+    "evidence": "Registered at 0x2efbc (pea 0x2ef4a / move.w #0xe300 / jsr 0x21272). 0x2ef4e movea.l (0x10,a7),a2. 0x2ef5e-0x2ef62 move.b (data_ptr) -> (a3) = 0x801d3c. 0x2ef64-0x2ef76: identifier 0 and (0x60fa8) & 0x100 -> 0x32b38(0, 0x100). 0x2ef84-0x2ef9a: identifier 1 and & 0x200 -> 0x32b38(1, 0x200). 0x32b38 writes the identifier to 0x803470 and byteSwap16(value) to 0x803472, then sends 0x803462 (header 0xfed000, PGN 65232, at 0x32b70). Otherwise 0x2efa8-0x2efae jsr 0x31b22(request, 1). CM848 0x227a0 stores the same byte (stb to 0x3fa97a j1939_dm7_test_identifier) but passes intake_air_heater_monitor_result (0x40ad82) / misfire_monitor_result (0x40ad84) as the values. It NACKs only when the identifier is <= 1 (cmpwi r5,1 / bgt at 0x22820) -> counterpart. The existing funcdef row (msg_ptr int) should become the prototype given in prototypes[].",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2f606",
+    "current_name": "cm550_FUN_0002f606",
+    "proposed_name": "decodeRetarderTorqueRequestPercent",
+    "role": "Decodes the TSC1 requested torque byte (SPN 518, offset -125 %) into a retarding percent 0-100.",
+    "discriminator": "Only the engine retarder TSC1 processor calls it (twice: torque control and torque limit modes). It maps the byte below 25 to 100, 25-124 to 125 minus the byte, and 125 or more to 0.",
+    "relation": "twin",
+    "cm848_address": "0x2346c",
+    "cm848_current_name": "cm848_decodeRetarderTorqueRequestPercent",
+    "plate_comment": "Decodes the TSC1 requested torque / torque limit byte (data byte 4, SPN 518: 1 % per bit, offset -125 %) into a retarding magnitude: 100 below 25 (-100 % or more), 125 minus the byte from 25 to 124, and 0 from 125 (zero or positive torque). cm550_processEngineRetarderTsc1Request calls it in torque control mode and in torque limit mode. Twin of CM848 0x2346c (was cm848_decodeRetarderTorqueRequestPercent): one shared name.",
+    "evidence": "CM550 0x2f60c cmpi.b #0x19,d2 / bcc / moveq #100. 0x2f618 cmpi.b #0x7d / bcs to compute / clr.w d0. 0x2f624-0x2f62a moveq #125 - byte. Callers: bsr.w at 0x2f980 (mode 2) and 0x2fa5a (mode 3) inside 0x2f7e6, each with the TSC1 byte 4 copy 0x801e21; the result goes to 0x80d9f2. No absolute reference. CM848 0x2346c: cmpwi 25 / bge, li 100; cmpwi 125 / blt, li 0; subfic 125. The same tests in the same order with the same constants. Its only caller is cm848_processEngineRetarderTsc1Request, twice (torque control / limit) -> twin. Funcdef rows 0x2f606 (return / requested_torque) need their function_name updated.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2faa4",
+    "current_name": "cm550_FUN_0002faa4",
+    "proposed_name": "cm550_initializeEngineRetarderTsc1RequestState",
+    "role": "Start-up: resets the engine retarder TSC1 request state and sets up the five retarder stage torque lookups.",
+    "discriminator": "The only writer of 0x801e28 (the cylinder brake count sum) and of the five lookup records 0x801e30-0x801e75 (pointers and offset). It runs once, right after the PGN 65249 descriptor set-up.",
+    "relation": "counterpart",
+    "cm848_address": "0x23a9c",
+    "cm848_current_name": "cm848_initializeEngineRetarderTsc1RequestState",
+    "plate_comment": "Start-up step of mc68k_initializeJ1939Datalink, right after cm550_initializePgn65249RetarderConfigurationBuffer. It sets retarder_torque_percent = 125, retarder_control_mode = 0 (TSC1_OVERRIDE_OFF) and engine_retarder_control_device_indicator = 0. It stores the sum of the six engine brake driver cylinder counts (0x808200-0x80820a) in engine_retarder_stage_count. It fills the lookup records engine_retarder_torque_stage_1..5_lookup with the axis engine_retarder_torque_engine_speed_axis, the stage values and offset 2. CM848's counterpart starts the torque limit at 100 and sets only the cached axis offsets.",
+    "evidence": "Caller: jsr at 0x28c1e in mc68k_initializeJ1939Datalink, after 0x341e6 (0x28c18). CM848 calls 0x23a9c at 0x539278, after 0x2682c cm848_initializePgn65249RetarderConfigurationBuffer (0x539274). 0x2fac0 move.w #0x7d -> 0x80d9ee. 0x2fac8 / 0x2face clr.w 0x80d9e4 / 0x80d9e6. 0x2fad4-0x2faf8 add.w of 0x808200..0x80820a -> 0x801e28 (6 in the dump). 0x2fafe-0x2fb62 x_axis_pointer 0x6052a, y values 0x60534 / 0x6053e / 0x60548 / 0x60552 / 0x6055c and x_axis_offset 2 into 0x801e30 / 3e / 4c / 5a / 68. CM848 0x23a9c: li 100 / sth to 0x40ad62 (not 125), two zero stores, the same six-word sum into 0x3faa72, and 2 into the five cache words 0x3faa7a-0x3faa82, with no axis / value pointers -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2fbb2",
+    "current_name": "cm550_FUN_0002fbb2",
+    "proposed_name": "registerTsc1DestinationAddressDispatcher",
+    "role": "Start-up: registers dispatchTsc1ByDestinationAddress as the receive handler of TSC1 (PGN 0).",
+    "discriminator": "Of the one-call registration wrappers (0x2ef08 61184, 0x2f114 61442, 0x2efbc 58112, 0x2ef36 65228), this one registers PGN 0 with 0x2fb70.",
+    "relation": "twin",
+    "cm848_address": "0x23bb4",
+    "cm848_current_name": "cm848_initJ1939AddressDispatcher",
+    "plate_comment": "Start-up step of the J1939 datalink set-up (the second registration call): registers dispatchTsc1ByDestinationAddress for PGN 0 (TSC1) with registerJ1939ReceiveHandler. Twin of CM848 0x23bb4 (was cm848_initJ1939AddressDispatcher): one shared name.",
+    "evidence": "0x2fbb2 pea (0x2fb70).l / clr.w -(a7) / jsr (0x21272).l / addq.l #6,a7 / rts. CM848 0x23bb4: r4 = 0x23b38, li r3,0, bl 0x538eb0 (registerJ1939ReceiveHandler). Both are the second registration call of the J1939 start-up: CM550 jsr at 0x28e20 after 0x2ef08, CM848 bl at 0x539508 after 0x221f0 -> twin.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2fb70",
+    "current_name": "cm550_torqueControlAddressDispatcher",
+    "proposed_name": "dispatchTsc1ByDestinationAddress",
+    "role": "The TSC1 (PGN 0) receive handler: routes the frame to the engine TSC1 processor and/or the engine retarder TSC1 processor by its destination address.",
+    "discriminator": "The only caller of processEngineTsc1Request (0x2f128) and of the retarder processor 0x2f7e6. It compares ID byte 2 with the engine (0x80da01) and the retarder (0x80da0b) source addresses.",
+    "relation": "twin",
+    "cm848_address": "0x23b38",
+    "cm848_current_name": "cm848_dispatchTsc1ByDestinationAddress",
+    "plate_comment": "The TSC1 (PGN 0) receive handler, registered by registerTsc1DestinationAddressDispatcher. A frame addressed to j1939_engine_node_source_address or global (0xff) goes to processEngineTsc1Request. Then a frame addressed to j1939_retarder_node_source_address (41 here) or global goes to cm550_processEngineRetarderTsc1Request. Twin of CM848 0x23b38: one shared name.",
+    "evidence": "0x2fb78 move.b (0x2,a2),d2 (ID byte 2). 0x2fb7c cmp.b (0x80da01) / cmpi.b #0xff -> jsr 0x2f128 (0x2fb8c). 0x2fb94 cmp.b (0x80da0b) / cmpi.b #0xff -> jsr 0x2f7e6 (0x2fba4). Retarder SA = 0x29 in the dump. Only reference: the pea at 0x2fbb4. CM848 0x23b38: lbz r31,2(r30); j1939_source_address low byte or 255 -> bl 0x22d60 (processEngineTsc1Request); j1939_engine_retarder_source_address or 255 -> bl 0x236f0. The same steps in the same order with the same constant, registered for PGN 0 by the twin wrappers -> twin. CM848 has two funcdef rows for 0x23b38 (lines 87 and 244) to retarget.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2ef08",
+    "current_name": "cm550_systemControlFunction1",
+    "proposed_name": "registerJ1939DiagnosticServiceDispatcher",
+    "role": "Start-up: registers the PGN 61184 (Proprietary A) diagnostic service dispatcher with the J1939 receive layer.",
+    "discriminator": "Among the one-call registration wrappers it registers PGN 61184 (0xef00) with 0x2eea2, the scanner of j1939_diagnostic_service_table.",
+    "relation": "twin",
+    "cm848_address": "0x221f0",
+    "cm848_current_name": "cm848_initJ1939DiagnosticServiceHandler",
+    "plate_comment": "Start-up step of the J1939 datalink set-up (the first registration call): registers cm550_diagnosticServiceDispatcher (the j1939_diagnostic_service_table scanner) for PGN 61184 with registerJ1939ReceiveHandler. Twin of CM848 0x221f0 (was cm848_initJ1939DiagnosticServiceHandler): one shared name.",
+    "evidence": "0x2ef08 pea (0x2eea2).l / move.w #0xef00,-(a7) / jsr (0x21272).l / addq.l #6 / rts. CM848 0x221f0: r4 = 0x22128 (cm848_j1939DiagnosticServiceHandler), r3 = 61184, bl 0x538eb0. Both are the first registration of the start-up (CM550 jsr at 0x28e1a, CM848 bl at 0x539504) -> twin. The CM848 funcdef row (return void) needs its function_name updated.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2efbc",
+    "current_name": "cm550_systemControlFunction2",
+    "proposed_name": "registerJ1939Dm7Handler",
+    "role": "Start-up: registers the DM7 (PGN 58112) receive handler.",
+    "discriminator": "Among the one-call registration wrappers it registers PGN 58112 (0xe300) with 0x2ef4a.",
+    "relation": "twin",
+    "cm848_address": "0x22840",
+    "cm848_current_name": "cm848_registerJ1939Dm7Handler",
+    "plate_comment": "Start-up step of the J1939 datalink set-up: registers cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage for PGN 58112 (DM7) with registerJ1939ReceiveHandler. Twin of CM848 0x22840: one shared name (CM848's name without its prefix).",
+    "evidence": "0x2efbc pea (0x2ef4a).l / move.w #0xe300,-(a7) / jsr (0x21272).l / addq.l #6 / rts. CM848 0x22840: r4 = 0x227a0, r3 = 58112, bl 0x538eb0. Both run after the request handler registration list: CM550 jsr at 0x28e32 right after 0x2f538; CM848 bl at 0x539520 after 0x232b4 and two CM848-only registrations (0x2343c PGN 56832, 0x22318 DM13) -> twin.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2f114",
+    "current_name": "cm550_systemControlFunction3",
+    "proposed_name": "cm550_registerJ1939ElectronicTransmissionController1Handler",
+    "role": "Start-up: registers the ETC1 (PGN 61442) receive handler and nothing else.",
+    "discriminator": "Among the one-call registration wrappers it registers PGN 61442 (0xf002) with cm550_receivePgn61442ElectronicTransmissionController1Message (0x2efd0).",
+    "relation": "counterpart",
+    "cm848_address": "0x22bc4",
+    "cm848_current_name": "cm848_initJ1939Pgn61442Etc1Handler",
+    "plate_comment": "Start-up step of the J1939 datalink set-up (the third registration call): registers cm550_receivePgn61442ElectronicTransmissionController1Message for PGN 61442 (ETC1) with registerJ1939ReceiveHandler. CM848's counterpart also initializes the ETC1 timeout, output shaft speed timer and fault hold-off state before it registers.",
+    "evidence": "0x2f114 pea (0x2efd0).l / move.w #0xf002,-(a7) / jsr (0x21272).l / addq.l #6 / rts. Third registration call (jsr at 0x28e26). CM848 0x22bc4 (bl at 0x53950c) first zeroes etc1_message_timeout (sth at 0x22bd8), loads the output shaft speed power-up timeout (0x22be4-0x22be8), sets the hold-off flag (0x22bf4) and clears fault bits when vehicle_speed_sensor_type_cal is 4 (0x22bfc-0x22c28). Only then does it register cm848_j1939ProcessPgn61442Etc1 -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2ef36",
+    "current_name": "cm550_canTransmissionTrigger",
+    "proposed_name": "registerJ1939Dm3RequestHandler",
+    "role": "Start-up: registers the DM3 (PGN 65228) request handler with the PGN 59904 request registrar.",
+    "discriminator": "The only registration of 0xfecc. It transmits nothing; the name canTransmissionTrigger was wrong.",
+    "relation": "twin",
+    "cm848_address": "0x22770",
+    "cm848_current_name": "cm848_initPgn65228Dm3Handler",
+    "plate_comment": "Start-up step of cm550_registerJ1939PgnRequestHandlers (between the DM2 and DM4 set-ups): registers cm550_j1939HandlePgn65228Dm3ClearInactiveFaults for PGN 65228 (DM3) with registerJ1939PgnRequestHandler. Twin of CM848 0x22770 (was cm848_initPgn65228Dm3Handler): one shared name.",
+    "evidence": "0x2ef36 pea (0x2ef1c).l / move.w #0xfecc,-(a7) / jsr (0x2f47e).l / addq.l #6 / rts. Called at 0x2f5ea between 0x3252c (DM2) and 0x329d2 (DM4). CM848 0x22770: r4 = 0x22674, r3 = 65228, bl 0x23188, called by cm848_initJ1939ProtocolHandlers between the DM2 and DM4 set-ups -> twin. RAM dump entry 20 = 0xfecc / 0x2ef1c.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2f632",
+    "current_name": "j1939FormatMultiFrameResponse",
+    "proposed_name": "cm550_selectEngineRetarderStagePercent",
+    "role": "Quantizes the decoded TSC1 retarder torque request into a retarder stage percent (0 / 17 / 33 / 50 / 67 / 83 / 100) from the stage torque curves at the current engine speed.",
+    "discriminator": "The only reader of 0x801e28 (cmpi.w #4) and of the five stage lookup records. It writes retarder_torque_level_stepped. It has nothing to do with multi-frame transport.",
+    "relation": "counterpart",
+    "cm848_address": "0x234a4",
+    "cm848_current_name": "cm848_selectEngineRetarderStagePercent",
+    "plate_comment": "Quantizes the retarder torque request jcomm_req_torque_braking_override_or_limit_value_0_125 into a stage percent in retarder_torque_level_stepped. A request of 0 gives 0, and a request of 100 or more in torque limit mode (3) gives 100. Otherwise it scales the request by the full-scale torque (stage 4 values [4] 0x6055a when engine_retarder_stage_count is 4, else 0x6056e). The first stage 1-5 curve whose value at engine_rpm_primary covers the request then gives 0 / 17 / 33 / 50 / 67 / 83, one stage up in torque control mode (2). Called twice by cm550_processEngineRetarderTsc1Request. Counterpart of CM848 cm848_selectEngineRetarderStagePercent.",
+    "evidence": "Callers: bsr.w at 0x2f98e and 0x2fa90 inside 0x2f7e6. 0x2f64e tst.w 0x80d9f2 -> clr.w 0x801e2a. 0x2f65e cmpi.w #3 retarder_control_mode and cmpi.w #0x64 -> 100. 0x2f678 cmpi.w #4,(0x801e28) -> move.w 0x6055a or 0x6056e into 0x801e2c. 0x2f698-0x2f6aa request x full scale / 100 -> 0x801e26. 0x2f6ac onward: x_input = 0x80ccf6 and jsr cm550_lookupTableInterpolation (0x34de0) on 0x801e30 / 3e / 4c / 5a / 68, results 0 / 0x11 / 0x21 / 0x32 / 0x43 / 0x53 / 100. CM848 0x234a4 runs the same algorithm, but it loads stage_6_values[4] and then overrides it when the count is 4, and it calls lookupTableInterpolation with cached offsets and table arguments instead of records -> counterpart. Its current unprefixed name is in no CM848 row.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2f7e6",
+    "current_name": "cm550_retarderControlModeHandler",
+    "proposed_name": "cm550_processEngineRetarderTsc1Request",
+    "role": "Processes a TSC1 frame addressed to the engine retarder: sender arbitration, then the off / torque control / torque limit modes and the retarder torque percent.",
+    "discriminator": "The only caller of decodeRetarderTorqueRequestPercent and cm550_selectEngineRetarderStagePercent. It is reached from dispatchTsc1ByDestinationAddress for the retarder address. It writes retarder_control_mode / retarder_torque_percent.",
+    "relation": "counterpart",
+    "cm848_address": "0x236f0",
+    "cm848_current_name": "cm848_processEngineRetarderTsc1Request",
+    "plate_comment": "Handles a TSC1 (PGN 0) frame addressed to the engine retarder (from dispatchTsc1ByDestinationAddress). It ignores the frame when the ECM has no engine brake output driver, for a length other than 8 and for speed control (mode 1), and gates transmission senders on j1939_retarder_shift_assist_enable. It applies the retarder ignored request list and findTsc1SourceConfiguration, and arbitrates a new sender by the priority bits (byte 1 & 0x30) and the torque byte. Then: mode 0 clears the control. Mode 2 (torque control) and mode 3 (torque limit) decode byte 4 with decodeRetarderTorqueRequestPercent and set the stage percent with cm550_selectEngineRetarderStagePercent, the timeouts and the control device. Counterpart of CM848 cm848_processEngineRetarderTsc1Request.",
+    "evidence": "Called only from 0x2fba4 (jsr in 0x2fb70). Stores data byte 0 at 0x801e1e and byte 3 at 0x801e21 (0x2f818 / 0x2f848). Mode 1 rejected. Calls cm550_removeRetarderTsc1IgnoredRequestEntry / cm550_refreshRetarderTsc1IgnoredRequestEntry / findTsc1SourceConfiguration(1, sender) / lookupJ1939ControlDevice. Priority test against 0x801e1c and torque byte test against 0x801e1d. bsr 0x2f606 at 0x2f980 / 0x2fa5a and bsr 0x2f632 at 0x2f98e / 0x2fa90. CM848 0x236f0 has the same structure plus steps CM550 lacks: it masks j1939_powertrain_control_state.j1939_blocked_message_bits in mode 0, and keeps retarder_tsc1_speed_control_flag and the zero torque request timer in mode 2 -> counterpart. The CM550 helpers it calls already carry the counterpart names cm550_*RetarderTsc1IgnoredRequestEntry.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x2ef1c",
+    "current_name": "cm550_diagnosticResponseHandler2",
+    "proposed_name": "cm550_j1939HandlePgn65228Dm3ClearInactiveFaults",
+    "role": "The PGN 59904 request handler for DM3 (PGN 65228): requests the clear of the previously active faults and acknowledges.",
+    "discriminator": "The only request handler that writes diagnostic_clear_request_state, and the only one that answers with a positive acknowledgement (control 0) instead of a message.",
+    "relation": "counterpart",
+    "cm848_address": "0x22674",
+    "cm848_current_name": "cm848_j1939HandlePgn65228Dm3ClearInactiveFaults",
+    "plate_comment": "The DM3 request handler (PGN 65228 Diagnostic Data Clear/Reset of Previously Active DTCs), registered by registerJ1939Dm3RequestHandler. It writes 1 (CLEAR_INACTIVE) to diagnostic_clear_request_state (e2m 1080 +2 DGJCFUCC), which the fault clear processing acts on. It then sends a positive acknowledgement (cm550_diagnosticCanResponseSender with 0, PGN 59392). There is no gate and no NACK. CM848's counterpart gates on the program safety flag / key switch, moves the state 0->1 / 2->3 and answers ACK or NACK.",
+    "evidence": "0x2ef1c movea.l (0x4,a7),a0. 0x2ef20 move.w #0x1,(0x80de7a).l. 0x2ef28-0x2ef2c clr.w -(a7) / move.l a0,-(a7) / jsr 0x31b22 (control byte 0 into 0x801eb2, header 0xe8ff00). Only reference: the pea at 0x2ef38 (registered for 0xfecc, RAM dump entry 20). No branch enters it. CM848 0x22674 tests not_safe_to_program_flag, switch_input_state_bits.key_switch and obd_fault_handler_enable, steps diagnostic_clear_request_state 0->1, 2->3 and chooses between cm848_sendJ1939AcknowledgeMessage and cm848_sendJ1939NegativeAcknowledgement by j1939_dm1_active_flag -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33d38",
+    "current_name": "cm550_buildPgn65252ShutdownMessage",
+    "proposed_name": "cm550_buildPgn65252ShutdownMessage",
+    "role": "Builds and sends PGN 65252 Shutdown (SHUTDN) from the idle shutdown state; the 65252 request handler and the 1000 ms broadcast.",
+    "discriminator": "The only 0xfee4 registration (entry 11) and the only reader of idle_shutdown_state among the responders.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Keep the round 95 name and plate. Registered for 65252 directly by cm550_registerJ1939PgnRequestHandlers and scheduled every 1000 ms. CM848 neither sends nor answers PGN 65252.",
+    "evidence": "0x2f586-0x2f590 pea (0x33d38).l / move.w #0xfee4 / jsr (a2) (RAM dump entry 11). CM848 has no 0xfee4 registration (cm848_initJ1939ProtocolHandlers' direct registrations are 0xfeed 0xfeef 0xfef0 0xfef5 0xfef6 0xfef7 0xffe0) and no 0xfee4 schedule. The name came from round 95. Batch Q1 also reviews it (periodic builder).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x31f30",
+    "current_name": "j1939HandlePgn65261CruiseControlSetup",
+    "proposed_name": "cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage",
+    "role": "Builds and sends PGN 65261 Cruise Control/Vehicle Speed Setup from three speed limits; the 65261 request handler.",
+    "discriminator": "The only reader of maximum_road_speed / cruise_maximum_road_speed / cruise_speed_low_limit that converts MPH x 256 to km/h (x 161 / 100 >> 8). It is the 0xfeed handler (entry 12).",
+    "relation": "counterpart",
+    "cm848_address": "0x246fc",
+    "cm848_current_name": "j1939HandlePgn65261CruiseControlSetup",
+    "plate_comment": "The PGN 65261 (CCSS Cruise Control/Vehicle Speed Setup) request handler, registered directly by cm550_registerJ1939PgnRequestHandlers. Each of three words is sent as km/h (x 161 / 100 >> 8), or 0xff above 0x9e00 (158 MPH): maximum_road_speed (e2m 117D +18 RSMXRZ) as byte 1 (SPN 74 Maximum Vehicle Speed Limit), cruise_maximum_road_speed (117F +26 CRMXRZ) as byte 2 (SPN 87) and cruise_speed_low_limit (117E +0 CRMNRUVS) as byte 3 (SPN 88). It then sends j1939_pgn65261_tx_message. Bytes 4-8 keep the 0xff of initPgn65261CruiseControlSetupStruct. CM848's version gates the bytes on the road speed governor and cruise enables, so this is a counterpart and not the twin the old shared name claimed.",
+    "evidence": "0x2f592-0x2f59c pea (0x31f30).l / move.w #0xfeed / jsr (a2) (entry 12). 0x31f46-0x31f72: cmpi.w #0x9e00 / bhi of word 0x80a9dc, then x 161 (lsl 2 + add, lsl 5 + add) / divu #100 / asr #8 -> move.b (0x801efa), else 0xff. The same for word 0x804fc6 -> 0x801efb (0x31f76-0x31fa6) and word 0x807bf6 -> 0x801efc (0x31fac-0x31fd4). 0x31fda pea 0x801eec / jsr 0x104e8. CM848 0x246fc: byte 1 = 0xff when algorithm_enable_flags_3_cal.road_speed_governor_enable is 0, bytes 2-3 = 0xff when cruise_control_enable is 0 -> different steps -> counterpart. The CM848 row is renamed in cm848_functions.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33164",
+    "current_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "proposed_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "role": "Builds and sends PGN 65263 (engine oil pressure byte); the 65263 request handler and the 500 ms broadcast.",
+    "discriminator": "The 0xfeef registration (entry 13). It computes oil pressure x 6906 / 1000 >> 2.",
+    "relation": "counterpart",
+    "cm848_address": "0x25eb4",
+    "cm848_current_name": "cm848_buildPgn65263EngineFluidLevelPressure1Message",
+    "plate_comment": "Keep the round 95 name and plate. Registered for 65263 directly by cm550_registerJ1939PgnRequestHandlers.",
+    "evidence": "0x2f59e-0x2f5a8 pea (0x33164).l / move.w #0xfeef / jsr (a2) (entry 13). Body: j1939_pgn65263_engine_oil_pressure = (oil_pressure_sensor_state.filtered_value >> 7) x 0x1afa / 1000 >> 2, then send. CM848 0x25eb4 also encodes fuel delivery pressure with an enable and fault checks -> counterpart (round 95). Batch Q1 also reviews it.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33f5a",
+    "current_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "proposed_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "role": "Builds and sends PGN 65264 Power Takeoff Information; the 65264 request handler and the 100 ms broadcast.",
+    "discriminator": "The 0xfef0 registration (entry 14).",
+    "relation": "counterpart",
+    "cm848_address": "0x2bd58",
+    "cm848_current_name": "cm848_buildPgn65264PowerTakeOffInformationMessage",
+    "plate_comment": "Keep the round 95 name and plate. Registered for 65264 directly by cm550_registerJ1939PgnRequestHandlers.",
+    "evidence": "0x2f5aa-0x2f5b4 pea (0x33f5a).l / move.w #0xfef0 / jsr (a2) (entry 14). The name and the counterpart relation come from round 95. Batch Q1 also reviews it.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x31bce",
+    "current_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "proposed_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "role": "Builds and sends PGN 65269 Ambient Conditions (barometric pressure byte); the 65269 request handler and the 1000 ms broadcast.",
+    "discriminator": "The 0xfef5 registration (entry 15).",
+    "relation": "counterpart",
+    "cm848_address": "0x23e8c",
+    "cm848_current_name": "cm848_buildPgn65269AmbientConditionsMessage",
+    "plate_comment": "Keep the round 95 name and plate. Registered for 65269 directly by cm550_registerJ1939PgnRequestHandlers.",
+    "evidence": "0x2f5b6-0x2f5c0 pea (0x31bce).l / move.w #0xfef5 / jsr (a2) (entry 15). CM550 sends only the barometric pressure (x 2 x 6906 / 1000 >> 7). CM848 0x23e8c adds fault checks (0xfe) and the ambient air temperature -> counterpart. Batch Q1 also reviews it.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33e58",
+    "current_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "proposed_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "role": "Builds and sends PGN 65270 Inlet/Exhaust Conditions 1; the 65270 request handler and the 500 ms broadcast.",
+    "discriminator": "The 0xfef6 registration (entry 16).",
+    "relation": "counterpart",
+    "cm848_address": "0x264d8",
+    "cm848_current_name": "cm848_buildPgn65270InletExhaustConditions1Message",
+    "plate_comment": "Keep the round 95 name and plate. Registered for 65270 directly by cm550_registerJ1939PgnRequestHandlers.",
+    "evidence": "0x2f5c2-0x2f5cc pea (0x33e58).l / move.w #0xfef6 / jsr (a2) (entry 16). The name and the counterpart relation come from round 95. Batch Q1 also reviews it.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x342f0",
+    "current_name": "cm550_retarderDataBuilder",
+    "proposed_name": "cm550_buildPgn65271VehicleElectricalPower1Message",
+    "role": "Builds and sends PGN 65271 Vehicle Electrical Power 1 (battery potential); the 65271 request handler and the 1000 ms broadcast.",
+    "discriminator": "The 0xfef7 registration (entry 17). It is the only responder that reads battery_voltage_sensor_state. It has nothing to do with the retarder.",
+    "relation": "counterpart",
+    "cm848_address": "0x26cf0",
+    "cm848_current_name": "cm848_j1939HandlePgn65271VehicleElectrical",
+    "plate_comment": "Builds and sends PGN 65271 (VEP1 Vehicle Electrical Power 1): payload bytes 5-6 (the word at 0x80367e, now named loop_termination_flag, SPN 168 battery potential, low byte first) = battery_voltage_sensor_state.filtered_value x 5 / 2. It then sends j1939_pgn65271_tx_message. It is the 65271 request handler (registered directly by cm550_registerJ1939PgnRequestHandlers) and the 1000 ms broadcast. CM848's builder scales its battery voltage x 20 / 8 from a different variable.",
+    "evidence": "0x2f5ce-0x2f5d8 pea (0x342f0).l / move.w #0xfef7 / jsr (a2) (entry 17), and scheduleJ1939PeriodicMessage(ENGINE, 0xfef7, 1000, 0xd2, 0x342f0) in mc68k_initializeJ1939Datalink. Body: local = filtered_value x 5 >> 1; byteSwap16 -> 0x80367e (payload 0x80367a + 4); cm550_sendCanMessage(0x80366c). CM848 0x26cf0: battery_voltage_sensor_filtered x 0x14 >> 3 -> j1939_pgn65271_voltage_tx_word. Other constants, other source -> counterpart. J1939 DB: PGN 65271 = Vehicle Electrical Power 1. Batch Q1 also names this builder; this name follows Q1's scheme.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x31c84",
+    "current_name": "j1939HandlePgn65265CruiseVehicleSpeed",
+    "proposed_name": "cm550_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "role": "Builds and sends PGN 65265 Cruise Control/Vehicle Speed 1; the 65265 request handler and the 100 ms broadcast.",
+    "discriminator": "The 0xfef1 registration (entry 0, from cm550_initializePgn65265CruiseControlVehicleSpeedHandler). It handles no received message.",
+    "relation": "counterpart",
+    "cm848_address": "0x24178",
+    "cm848_current_name": "cm848_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "plate_comment": "Builds and sends PGN 65265 (CCVS1). Byte 1 comes from the cruise switch bits (0xf3 / 0xf7, the two-speed axle field when 0x803d48 is 1). Bytes 2-3 are the filtered road speed x 103 / 64 (capped at 0x9c00). Bytes 4-5 are the cruise, brake and clutch switch fields, byte 6 the cruise set speed and byte 7 the cruise state. It is the 65265 request handler registered by cm550_initializePgn65265CruiseControlVehicleSpeedHandler and the 100 ms broadcast. Counterpart of CM848 cm848_buildPgn65265CruiseControlVehicleSpeedMessage, which scales the speed x 412 / 256 and reports datalink-sourced switches as not available.",
+    "evidence": "Registered at 0x31f1c (0xfef1, RAM dump entry 0) and scheduled (ENGINE, 0xfef1, 100, 0x46). Body: ccvs_message_byte_0 = 0xf3 / 0xf7 from switch_status_cruise_coast_switch_bit_3_on_off & 0x40, and & 0xfc / 0xfd from 0x80bcd0 bit 2 when 0x803d48 == 1. Road speed capped at 0x9c00, x 0x67 >> 6 into 0x801ee3 / 0x801ee4. The set speed 0x80a9c6 x 0x67 >> 6 >> 8 goes to 0x801ee7. The shared-looking name is in no CM848 row: CM848 renamed its builder cm848_buildPgn65265CruiseControlVehicleSpeedMessage and it differs (x 412 / 256, datalink source handling) -> counterpart. Batch Q1 also names this builder.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x32052",
+    "current_name": "cm550_buildPgn65259ComponentIdentificationMessage",
+    "proposed_name": "cm550_buildPgn65259ComponentIdentificationMessage",
+    "role": "Builds and sends PGN 65259 Component Identification; the 65259 request handler.",
+    "discriminator": "The 0xfeeb registration (entry 3).",
+    "relation": "counterpart",
+    "cm848_address": "0x24870",
+    "cm848_current_name": "cm848_j1939HandlePgn65259ComponentId",
+    "plate_comment": "Keep the round 95 name and plate (the 40-byte make / model / serial / unit number payload).",
+    "evidence": "Registered at 0x32138 by cm550_engineSerialNumberPGN_65259_Builder (0xfeeb, entry 3). Round 95: CM848 0x24870 writes the serial number as 8 decimal digits (44 bytes) -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x32222",
+    "current_name": "",
+    "proposed_name": "buildPgn65234Dm10TestIdentifiersSupportMessage",
+    "role": "The DM10 (PGN 65234) request handler: sends the non-continuously monitored systems test identifier support word.",
+    "discriminator": "The only 0xfed2 registration (entry 23). Its payload is the byte-swapped JCNTCTMR word alone.",
+    "relation": "twin",
+    "cm848_address": "0x24b28",
+    "cm848_current_name": "cm848_j1939HandlePgn65234Dm10",
+    "plate_comment": "The DM10 request handler (PGN 65234 Non-Continuously Monitored Systems Test Identifiers Support), registered by the DM10 descriptor set-up. It stores supported_non_continuous_monitors_bits (e2m 1228 +8 JCNTCTMR) low byte first in j1939_dm10_payload (SPN 1229) and sends j1939_dm10_tx_message (2 bytes). Twin of CM848 0x24b28 (was cm848_j1939HandlePgn65234Dm10): one shared name.",
+    "evidence": "New row: 0x32222 pea (0x60fa8).l / jsr byteSwap16 (0x218fe) / move.w d0,(0x801f4c).l / pea (0x801f3e).l / jsr cm550_sendCanMessage / addq.l #8 / rts at 0x32242. It begins right after the rts of cm550_diagnosticMultiPacketResponseBuilder (0x32220) and ends before the DM10 set-up 0x32244. Its only reference is the pea at 0x32286 (registered for 0xfed2, RAM dump entry 23). A scan of every Bcc / BRA / BSR / jsr / jmp target finds no other entry. CM848 0x24b28: r3 = 0x5a494 (supported_non_continuous_monitors_bits), bl cm848_reverseByteOrder16, sth to 0x3fab60 (j1939_dm10_payload), r3 = 0x3fab52, bl cm848_sendJ1939Message. The same steps in the same order. Both set-ups (0x32244 / 0x24b64) build header 0xfed200 with length 2 and register for 0xfed2 last in the registration list -> twin.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x322ae",
+    "current_name": "j1939HandlePgn65226Dm1ActiveDtc",
+    "proposed_name": "cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage",
+    "role": "Builds and sends DM1 (PGN 65226 Active Diagnostic Trouble Codes): the lamp byte and one 4-byte DTC per active fault. The 65226 request handler and the body of the periodic DM1 entry 0x3229a.",
+    "discriminator": "It reads active_dtc_list (count 0x8058d4) and sends j1939_dm1_tx_message. Its DM2 sibling 0x3241c reads previously_active_dtc_list (0x8058f4) and j1939_dm2_tx_message.",
+    "relation": "counterpart",
+    "cm848_address": "0x24be8",
+    "cm848_current_name": "j1939HandlePgn65226Dm1ActiveDtc",
+    "plate_comment": "Builds and sends DM1 (PGN 65226) while j1939_dm1_transmit_status is idle. With no active fault it sends lamp byte 0 and 0xffffffff (6 bytes). Otherwise it sends cm550_buildJ1939LampStatusByte and, for each active_dtc_list slot whose fault definition lacks flag 0x4000, the DTC from the ROM table 0x60fac with the FMI, the occurrence count (at most 127) and the conversion method bit 0x80. It is the 65226 request handler (registered twice, as in CM848) and the body of the periodic DM1 broadcast. Counterpart of CM848's DM1 builder, which stops at 20 slots and re-orders the DTC bytes.",
+    "evidence": "0x322b2 a4 = 0x801f56. 0x322bc status pointer = 0x80265a. 0x322c8 andi.b #0xf0 / bne exit. 0x322d2 length 2. 0x322d6 tst.b 0x8058d4 -> clr.b 0x801f64 and moveq -1 -> 0x801f66, length + 4. Else jsr 0x21920 and loop 0x3230c-0x323aa (bound cmp.b (0x8058d4) / bls only): definition flags (0x8067c6 + 6 x code) & 0x4000 skip; occurrence 0x805a25 + 10 x code capped at 0x7f; (0x60fac + 4 x code) lsr 13 lsl 13 | (0x60fae + 4 x code & 0x1f) << 8 | count | 0x80 -> (a2)+. 0x323b0 jsr 0x104e8. RAM dump entries 2 and 18 = 0xfeca / 0x322ae, and 0x3229a calls it (jsr at 0x322a4). CM848 0x24be8 adds the slot cap (cmpwi r6,20 at 0x24d54) and a byte re-order of the DTC word (0x24ce4-0x24d04) -> counterpart. The old shared name claimed a twin; the CM848 row is renamed in cm848_functions.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x3241c",
+    "current_name": "cm550_previousDtcListBuilder",
+    "proposed_name": "cm550_buildPgn65227Dm2PreviouslyActiveDiagnosticTroubleCodesMessage",
+    "role": "Builds and sends DM2 (PGN 65227 Previously Active Diagnostic Trouble Codes); the 65227 request handler.",
+    "discriminator": "It reads previously_active_dtc_list (0x8058f4) and sends j1939_dm2_tx_message. The DM1 sibling reads the active list. Here the lamp byte is built before the empty test.",
+    "relation": "counterpart",
+    "cm848_address": "0x24e78",
+    "cm848_current_name": "cm848_j1939HandlePgn65227Dm2PreviousDtc",
+    "plate_comment": "Builds and sends DM2 (PGN 65227) while j1939_dm2_transmit_status is idle. It sends the lamp byte (cm550_buildJ1939LampStatusByte), then 0xffffffff when no fault is previously active, or one 4-byte DTC per previously_active_dtc_list slot whose fault definition lacks flag 0x4000 (DTC from ROM 0x60fac, FMI, occurrence count at most 127, bit 0x80). It is the 65227 request handler registered by the DM2 descriptor set-up. Counterpart of CM848 cm848_j1939HandlePgn65227Dm2PreviousDtc, which stops at 20 slots and re-orders the DTC bytes.",
+    "evidence": "Registered at 0x32576 (0xfecb, entry 19). 0x3243c jsr 0x21920 before the empty test. Loop bound cmp.b (0x8058f4) / bls at 0x32512 only. 0x3251e jsr 0x104e8. CM848 0x24e78 has the 20-slot bound (uVar3 < 0x15) and the same byte re-order as its DM1 builder -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x3258a",
+    "current_name": "cm550_j1939HandlePgn65229Dm4FreezeFrame",
+    "proposed_name": "cm550_j1939HandlePgn65229Dm4FreezeFrame",
+    "role": "Builds and sends DM4 (PGN 65229 Freeze Frame Parameters); the 65229 request handler.",
+    "discriminator": "The 0xfecd registration (entry 21).",
+    "relation": "counterpart",
+    "cm848_address": "0x25390",
+    "cm848_current_name": "cm848_j1939HandlePgn65229Dm4FreezeFrame",
+    "plate_comment": "Keep the round 93 name and plate.",
+    "evidence": "Registered at 0x32a2c by cm550_initializePgn65229Dm4Handler (entry 21). CM550 builds the 73-byte records inline from fault_freeze_frame_entries_cal; CM848 0x25390 loops 8 times over cm848_j1939BuildDm4FreezeFrame -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x32a42",
+    "current_name": "vp44_diagnosticDM5DataBuilder",
+    "proposed_name": "buildPgn65230Dm5DiagnosticReadiness1Message",
+    "role": "Builds and sends DM5 (PGN 65230 Diagnostic Readiness 1); the 65230 request handler.",
+    "discriminator": "The only 0xfece registration (entry 22). It fills the DM5 payload from the two DTC counts and the JCOBDG / JCCTMR / JCNTCTMR / JCGPSS records. It does nothing with the VP44.",
+    "relation": "twin",
+    "cm848_address": "0x25458",
+    "cm848_current_name": "cm848_j1939HandlePgn65230Dm5Readiness",
+    "plate_comment": "Builds and sends DM5 (PGN 65230) into j1939_pgn65230_payload. Byte 1 is the active DTC count (SPN 1218), byte 2 the previously active count (SPN 1219), byte 3 the low byte of obd_compliance_code (e2m 1228 +4 JCOBDG, SPN 1220) and byte 4 the low byte of supported_continuous_monitors_bits (1228 +6 JCCTMR, SPN 1221). Bytes 5-6 are supported_non_continuous_monitors_bits low byte first (SPN 1222). Bytes 7-8 are the status word (SPN 1223) low byte first: 0x1000 when intake_air_heater_monitor_result (1227 +0 JCGPSS) is 1 or bit 0x100 is unsupported, else 0. Then it sends j1939_pgn65230_tx_message. Twin of CM848 0x25458 (was cm848_j1939HandlePgn65230Dm5Readiness): one shared name.",
+    "evidence": "CM550 0x32a60 clr.w local. 0x32a62 move.b 0x8058d4 -> 0x803458. 0x32a6c 0x8058f4 -> +1. 0x32a74 0x60fa5 -> +2. 0x32a7c 0x60fa7 -> +3. 0x32a84 byteSwap16(0x60fa8) -> +4. 0x32a94 cmpi.w #1,(0x80da0e) -> 0x1000. 0x32aa0 bit 0x100 clear -> 0x1000. 0x32aae tst.w result / bit set -> andi.w #0xfeff. 0x32abe byteSwap16(local) -> +6. 0x32acc send 0x80344a. CM848 0x25458: li 0 / sth local; stb 0x3fe05a / 0x3fe07a counts to +0 / +1; low bytes of 0x5a490 (obd_compliance_code) / 0x5a492 (supported_continuous_monitors_bits) to +2 / +3; reverseByteOrder16(0x5a494) -> +4; 0x40ad82 == 1 -> 4096; rlwinm bit 0x100 == 0 -> 4096; else &0xfeff; reverse -> +6; send 0x3fad48. The same steps in the same order with the same constants, both registered for 0xfece by the DM5 set-up -> twin. The DM5 set-ups 0x32ae2 / 0x2553c match too (a lead).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x32e4c",
+    "current_name": "j1939HandlePgn61443Eec2",
+    "proposed_name": "cm550_buildPgn61443ElectronicEngineController2Message",
+    "role": "Builds and sends PGN 61443 Electronic Engine Controller 2 (accelerator / idle switch / load bytes); the 61443 request handler and the 50 ms broadcast.",
+    "discriminator": "The 0xf003 registration (entry 1, from vp44_cumminsProprietaryDM_983_Builder). It handles no received message.",
+    "relation": "counterpart",
+    "cm848_address": "0x25b10",
+    "cm848_current_name": "cm848_buildPgn61443ElectronicEngineController2Message",
+    "plate_comment": "Builds and sends PGN 61443 (EEC2). Byte 1 is the accelerator low idle switch and kickdown field: 0xf0 / 0xf4 above the kickdown threshold, 0xf8 when the throttle faults of status word 4 are set and enabled, plus the idle switch bits. Byte 2 is the accelerator pedal position (commanded throttle x 0.625). The later bytes are the load and the remote accelerator. It is the 61443 request handler and the 50 ms broadcast. Counterpart of CM848 cm848_buildPgn61443ElectronicEngineController2Message, which tests fault_detected_cal and the datalink switch sources instead.",
+    "evidence": "Registered at 0x330ae (0xf003, RAM dump entry 1) and scheduled (ENGINE, 0xf003, 0x32, 10). Body tests status_32_word_bit_mapped_system_error_status_word_4_0_1 with fault_processing_enable_flags[4] bits 0x20 / 8 / 2 / 4, jcomm_throttle_kickdown_threshold and algorithm_enable_flags_13_cal.idle_switch_override_enable. CM848 0x25b10 tests fault_detected_cal fields and switch_input_datalink_source_bits_cal -> counterpart. The old shared-looking name is in no CM848 row. Batch Q1 also names this builder.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33716",
+    "current_name": "cm550_buildPgn65253EngineHoursRevolutionsMessage",
+    "proposed_name": "cm550_buildPgn65253EngineHoursRevolutionsMessage",
+    "role": "Builds and sends PGN 65253 Engine Hours, Revolutions; the 65253 request handler.",
+    "discriminator": "The 0xfee5 registration (entry 4).",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Keep the round 95 name and plate.",
+    "evidence": "Registered at 0x337b0 by cm550_initializePgn65253EngineHoursRevolutionsHandler (entry 4). CM848 has no 0xfee5 registration or schedule.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x337c4",
+    "current_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "proposed_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "role": "Builds and sends PGN 65262 Engine Temperature 1; the 65262 request handler and the 1000 ms broadcast.",
+    "discriminator": "The 0xfeee registration (entry 5).",
+    "relation": "counterpart",
+    "cm848_address": "0x26024",
+    "cm848_current_name": "cm848_buildPgn65262EngineTemperature1Message",
+    "plate_comment": "Keep the round 95 name and plate.",
+    "evidence": "Registered at 0x338d6 by cm550_engineTemperaturePGN_65262_Builder (entry 5) and scheduled (ENGINE, 0xfeee, 1000, 0x1ae). Round 95 kept it prefixed against CM848 0x26024. Batch Q1 also reviews it.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33a62",
+    "current_name": "cm550_buildPgn65257FuelConsumptionMessage",
+    "proposed_name": "cm550_buildPgn65257FuelConsumptionMessage",
+    "role": "Builds and sends PGN 65257 Fuel Consumption (Liquid); the 65257 request handler.",
+    "discriminator": "The 0xfee9 registration (entry 6).",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Keep the round 95 name and plate.",
+    "evidence": "Registered at 0x33b2c by 0x33aea (entry 6). That set-up builds the LFC descriptor although its row is named cm550_retarderConfigPGN_65249_Builder (a lead). CM848 has no 0xfee9 registration or schedule.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x33c6c",
+    "current_name": "cm550_ioControlDataBuilder",
+    "proposed_name": "cm550_buildPgn65244IdleOperationMessage",
+    "role": "Builds and sends PGN 65244 Idle Operation (total idle fuel and total idle hours); the 65244 request handler.",
+    "discriminator": "The only 0xfedc registration (entry 7). It is the only responder that reads the idle trip records TIGAIST2 (0x804fb8) and TITMIS (0x804fb4).",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "The PGN 65244 (IO Idle Operation) request handler, registered by the IO descriptor set-up 0x33ce2. Bytes 1-4 are j1939_pgn65244_total_idle_fuel_used (SPN 236, 0.5 L/bit, low byte first) = total_idle_fuel_consumed (e2m 117F +18 TIGAIST2, 0.125 gal) / 4 x 3785411 / 1000000. Bytes 5-8 are j1939_pgn65244_total_idle_hours (SPN 235, 0.05 h/bit) = total_idle_operating_time (117F +14 TITMIS, 0.1 s counts) x 20 / 36000. It then sends j1939_pgn65244_tx_message. CM848 has no PGN 65244 message.",
+    "evidence": "Registered at 0x33d24 (0xfedc, RAM dump entry 7). 0x33c76 move.l 0x804fb8 / lsr.l #2. 0x33c80-0x33c8e cm550_scaleByRatio(x, 0x39c2c3, 0xf4240). 0x33c9a byteSwap32 -> 0x8035de. 0x33ca6-0x33cb6 cm550_scaleByRatio(0x804fb4, 0x14, 0x8ca0). byteSwap32 -> 0x8035e2 (0x33cc8). 0x33cce pea 0x8035d0 / jsr 0x104e8. J1939 DB: 65244 Idle Operation = SPN 236 bytes 1-4 and SPN 235 bytes 5-8. Dump: idle time 4649 h of 12567 engine hours and idle fuel 1463.5 gal, which fits idle records. CM848 registers and schedules no 0xfedc.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x34232",
+    "current_name": "cm550_buildPgn65248VehicleDistanceMessage",
+    "proposed_name": "cm550_buildPgn65248VehicleDistanceMessage",
+    "role": "Builds and sends PGN 65248 Vehicle Distance; the 65248 request handler.",
+    "discriminator": "The 0xfee0 registration (entry 8).",
+    "relation": "counterpart",
+    "cm848_address": "0x26bb0",
+    "cm848_current_name": "cm848_j1939HandlePgn65248VehicleDistance",
+    "plate_comment": "Keep the round 95 name and plate.",
+    "evidence": "Registered at 0x342dc by cm550_vehicleDistancePGN_65248_Builder (entry 8). CM550 scales 0x804fac / 0x804fa8 x 0x3268 / 64000. CM848 0x26bb0 scales trip_distance_cal and lifetime_distance_pulses_cal with other constants -> counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x34394",
+    "current_name": "cm550_buildPgn65255VehicleHoursMessage",
+    "proposed_name": "cm550_buildPgn65255VehicleHoursMessage",
+    "role": "Builds and sends PGN 65255 Vehicle Hours; the 65255 request handler.",
+    "discriminator": "The 0xfee7 registration (entry 9).",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Keep the round 95 name and plate.",
+    "evidence": "Registered at 0x3441c by vp44_vehicleHoursPGN_65255_Builder (entry 9). The body scales 0x804fbc (TITMP2) x 20 / 36000 into 0x803696 and sends 0x803684. CM848 has no 0xfee7 registration or schedule.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x34430",
+    "current_name": "",
+    "proposed_name": "sendPgn65260VehicleIdentificationMessage",
+    "role": "The PGN 65260 Vehicle Identification request handler: sends the VI descriptor.",
+    "discriminator": "The only 0xfeec registration (entry 10). Its whole body is one send of j1939_pgn65260_tx_message.",
+    "relation": "twin",
+    "cm848_address": "0x26db4",
+    "cm848_current_name": "cm848_j1939HandlePgn65260VehicleId",
+    "plate_comment": "The PGN 65260 (VI Vehicle Identification) request handler, registered by cm550_initializePgn65260VehicleIdentificationHandler. It sends j1939_pgn65260_tx_message, whose 20 data bytes point straight at vehicle_vin_string_cal. Twin of CM848 0x26db4 (was cm848_j1939HandlePgn65260VehicleId): one shared name. The descriptor set-ups differ: CM848 copies the VIN and appends '*'.",
+    "evidence": "New row: 0x34430 pea (0x80369c).l / jsr (0x104e8).l / addq.l #4,a7 / rts at 0x3443e. The next function, the VI set-up, starts at 0x34440. Its only reference is the pea at 0x34482 (registered for 0xfeec, RAM dump entry 10). The branch-target scan finds no other entry. CM848 0x26db4: r3 = 0x3faef8 (j1939_pgn65260_tx_message), bl 0x539fc (cm848_sendJ1939Message). The same single step, registered for 0xfeec by the VI set-up -> twin.",
+    "confidence": "medium"
+   }
+  ],
+  "cm848_functions": [
+   {
+    "address": "0x246fc",
+    "current_name": "j1939HandlePgn65261CruiseControlSetup",
+    "proposed_name": "cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage",
+    "role": "Builds and sends PGN 65261 Cruise Control/Vehicle Speed Setup; the 65261 request handler.",
+    "discriminator": "It gates SPN 74 on road_speed_governor_enable and SPNs 87 / 88 on cruise_control_enable. CM550's 0x31f30 has no gates, so the shared name was not a twin.",
+    "plate_comment": "The PGN 65261 (CCSS) request handler, registered by cm848_registerJ1939PgnRequestHandlers. Byte 1 is maximum_road_speed in km/h (0xff with the road speed governor off or above 158 MPH). Bytes 2-3 are cruise_maximum_road_speed_cal and cruise_speed_low_limit in km/h (0xff with cruise control off or above 158 MPH). It then sends j1939_pgn65261_tx_message. Counterpart of CM550 cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage, which has no enable gates.",
+    "evidence": "CM848 0x246fc: algorithm_enable_flags_3_cal.road_speed_governor_enable == 0 -> 0xff. cruise_control_enable == 0 -> bytes 2-3 0xff. Speeds x 0xa1 / 100 >> 8. cm848_sendJ1939Message(&j1939_pgn65261_tx_message). CM550 0x31f30 encodes the same three records with no gate (0x31f46-0x31fd4), so the bodies differ and the unprefixed name was a false twin claim.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x24be8",
+    "current_name": "j1939HandlePgn65226Dm1ActiveDtc",
+    "proposed_name": "cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage",
+    "role": "Builds and sends DM1 (PGN 65226): lamp byte and up to 20 active DTCs.",
+    "discriminator": "The 20-slot cap and the DTC byte re-order are absent from CM550's 0x322ae, so it is a counterpart, not a twin.",
+    "plate_comment": "Builds and sends DM1 (PGN 65226) while j1939_dm1_transmit_status is idle. It sends the lamp byte and 0xffffffff when no fault is active. Otherwise it sends the lamp byte and one DTC per active_dtc_list_cal slot (at most 20) whose fault definition lacks flag 0x4000, its bytes re-ordered from fault_111_j1939_data with the FMI, the occurrence count (at most 127) and bit 0x80. It is the 65226 request handler (registered twice) and is called by cm848_processDm1FaultBroadcast. Counterpart of CM550 cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage.",
+    "evidence": "0x24d54 cmpwi r6,20 / ble loop. 0x24ce4-0x24d04 byte re-order through the stack. CM550 0x322ae has neither (loop bound cmp.b (0x8058d4) only). cm848_processDm1FaultBroadcast calls it twice. The unprefixed name was a false twin claim.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x231cc",
+    "current_name": "cm848_j1939DispatchPgnHandler",
+    "proposed_name": "cm848_dispatchJ1939PgnRequest",
+    "role": "The PGN 59904 Request receive handler: calls the handler registered for the requested PGN or NACKs.",
+    "discriminator": "The only reader of j1939_pgn_dispatch_table. It also sets j1939_dm1_active_flag before the call, which CM550's counterpart does not.",
+    "plate_comment": "The PGN 59904 Request receive handler, registered for 0xea00 by cm848_registerJ1939PgnRequestHandlers. For a request addressed to j1939_source_address or global, it scans j1939_pgn_dispatch_table up to j1939_pgn_handler_count for the entry matching request data bytes 0-1. It sets j1939_dm1_active_flag and calls that handler with the request. With no match and a request that was not global, it sends cm848_sendJ1939NegativeAcknowledgement (J1939_NACK). Counterpart of CM550 cm550_dispatchJ1939PgnRequest. It is renamed for the CM550 pair; it dispatches requests, not handlers.",
+    "evidence": "0x231e8-0x23204 destination test. 0x2322c-0x23278 scan (+6, bound lbz 0x3faa62). 0x23248-0x23250 stb 1 to 0x40ad53. 0x23254-0x23260 blrl handler. 0x23288-0x2329c NACK. CM550 0x2f4be lacks only the flag store. The funcdef row 0x231cc (msg j1939_rx_msg_t*) needs its function_name updated.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x232b4",
+    "current_name": "cm848_initJ1939ProtocolHandlers",
+    "proposed_name": "cm848_registerJ1939PgnRequestHandlers",
+    "role": "Start-up: registers the PGN 59904 dispatcher and the request handlers of the on-request messages.",
+    "discriminator": "Of CM848's J1939 start-up registration calls, this is the only one that registers 0xea00 and calls cm848_j1939RegisterPgnHandler / the cm848_init*Handler set-ups.",
+    "plate_comment": "Start-up step of cm848_j1939_system_init. It registers cm848_dispatchJ1939PgnRequest for PGN 59904 and calls initPgn65261CruiseControlSetupStruct. It calls the set-ups of 65259 / 65262 / 65242 / 65248 / 65260, which register their handlers. It registers 65261 / 65263 / 65264 / 65269 / 65270 / 65271 / 65504 directly, then calls the DM1 / DM2 / DM3 / DM4 / DM5 / DM10 set-ups. Counterpart of CM550 cm550_registerJ1939PgnRequestHandlers, which registers another message set. The old name said init and protocol handlers.",
+    "evidence": "Body: registerJ1939ReceiveHandler(0xea00, 0x231cc), five set-ups, seven cm848_j1939RegisterPgnHandler calls, six DM set-ups. Called once from cm848_j1939_system_init (bl at 0x539514), at the same place as CM550 0x2f538 (jsr at 0x28e2c).",
+    "confidence": "medium"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00801d5a",
+    "current_name": "",
+    "proposed_name": "j1939_pgn_dispatch_table",
+    "proposed_type": "j1939_pgn_handler_entry_t[32]",
+    "comment": "The PGN 59904 request handler table (CM848's j1939_pgn_dispatch_table 0x3fa9a2): 32 entries of 6 bytes, each the requested PGN's low 16 bits (big endian) and the handler. registerJ1939PgnRequestHandler appends to it and cm550_dispatchJ1939PgnRequest scans it. The dump holds 24 entries.",
+    "evidence": "Writer: 0x2f4a4 movea.l #0x801d5a / 0x2f4ae move.w pgn,(a2) / 0x2f4b2 move.l handler,(0x2,a2). Reader: 0x2f4cc movea.l #0x801d5a,a2, addq.l #6 per entry, bytes +0 / +1 compared, movea.l (0x2,a2) called. 0x801d5a + 32 x 6 = 0x801e1a, the count. RAM dump entries 0-23 decode as PGN / handler pairs (0xfef1 0x31c84 ... 0xfed2 0x32222).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801e1a",
+    "current_name": "",
+    "proposed_name": "j1939_pgn_handler_count",
+    "proposed_type": "byte",
+    "comment": "The number of j1939_pgn_dispatch_table entries (CM848's j1939_pgn_handler_count 0x3faa62): compared with 32 and incremented by registerJ1939PgnRequestHandler, and the scan bound of cm550_dispatchJ1939PgnRequest. 24 in the dump. A byte, not a word.",
+    "evidence": "0x2f486 cmpi.b #0x20,(a1) / 0x2f492 move.b (a1),d0 / 0x2f494 addq.b #1,(a1) / 0x2f4e8 move.b (a4),d3 / 0x2f518 cmp.b (a4),d2. These are the only two absolute references (0x2f482, 0x2f4c8). Dump byte = 0x18, next byte 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d3c",
+    "current_name": "",
+    "proposed_name": "j1939_dm7_test_identifier",
+    "proposed_type": "byte",
+    "comment": "The test identifier (SPN 1224) of the last DM7 command (PGN 58112, data byte 0), stored by cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage and tested for 0 / 1 (CM848's j1939_dm7_test_identifier 0x3fa97a).",
+    "evidence": "0x2ef62 move.b (a0),(a3) with a3 = 0x801d3c (0x2ef52). 0x2ef72 / 0x2ef96 move.b (a3),d0. 0x2ef84 cmpi.b #0x1,(a3). Only reference 0x2ef54. CM848 0x227b8 stb to 0x3fa97a in the counterpart.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801f4c",
+    "current_name": "",
+    "proposed_name": "j1939_dm10_payload",
+    "proposed_type": "word",
+    "comment": "The DM10 (PGN 65234) data word, SPN 1229 Test Identifiers Supported: buildPgn65234Dm10TestIdentifiersSupportMessage stores the byte-swapped supported_non_continuous_monitors_bits in it, and j1939_dm10_tx_message points at it (CM848's j1939_dm10_payload 0x3fab60).",
+    "evidence": "0x3222e move.w d0,(0x801f4c).l. 0x3226e move.l #0x801f4c,(0x6,a0) (the data pointer, length 2 at 0x32268). Twin CM848 0x24b44 sth to 0x3fab60.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803458",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65230_payload",
+    "proposed_type": "j1939_pgn65230_payload_t",
+    "comment": "The 8-byte DM5 (PGN 65230 Diagnostic Readiness 1) payload filled by buildPgn65230Dm5DiagnosticReadiness1Message: the two DTC counts, OBD compliance, continuously monitored systems support, then the non-continuously monitored systems support and status words (low byte first). This struct replaces the rows 0x80345a base_timing_table_lookup_arg_345a and 0x80345c vp44_timing_idle_cmd_ptr, which lie inside it and have no other reference.",
+    "evidence": "All accesses go through a2 = 0x803458 in 0x32a42: move.b +0 (0x32a62) / +1 (0x32a6c) / +2 (0x32a74) / +3 (0x32a7c), move.w +4 (0x32a90) / +6 (0x32ac8). The data pointer is set at 0x32b0e (length 8). abs_refs finds no other reference to 0x803458-0x80345f.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fad56",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65230_payload",
+    "proposed_type": "j1939_pgn65230_payload_t",
+    "comment": "The 8-byte DM5 (PGN 65230) payload of the twin buildPgn65230Dm5DiagnosticReadiness1Message. It replaces the rows 0x3fad5a j1939_feature_config_tx_word (really SPN 1222 non-continuously monitored systems support) and 0x3fad5c j1939_dm1_active_faults_tx_word (really SPN 1223 non-continuously monitored systems status). Only the DM5 builder and its set-up use them.",
+    "evidence": "0x25474-0x25514: r31 = 0x3fad56; stb +0 / +1 / +2 / +3, sth +4 / +6. cm848_initPgn65230Dm5Handler data_pointer = 0x3fad56, length 8. The awk xref finds the two word rows only in these two functions.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801efa",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65261_payload",
+    "proposed_type": "j1939_ccss_tx_payload_t",
+    "comment": "The 8-byte CCSS (PGN 65261) payload: bytes 1-3 (SPN 74 / 87 / 88 in km/h) are written by cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage. Bytes 4-8 are set to 0xff by initPgn65261CruiseControlSetupStruct. The layout is CM848's j1939_ccss_tx_payload_t.",
+    "evidence": "0x31f34 a2 = 0x801efa, move.b (a1) / (0x1,a2) / (0x2,a2). initPgn65261CruiseControlSetupStruct (0x31fee) sets the data pointer to 0x801efa, length 8, and 0xff into 0x801efd-0x801f01. Dump: 00 00 00 ff ff ff ff ff.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fab0a",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65261_payload",
+    "proposed_type": "j1939_ccss_tx_payload_t",
+    "comment": "The CCSS (PGN 65261) payload instance, which now renders as j1939_ccss_tx_payload_t_003fab0a: written by cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage, with the 0xff bytes from initPgn65261CruiseControlSetupStruct.",
+    "evidence": "initPgn65261CruiseControlSetupStruct sets data_pointer = &j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit (length 8). The struct rows already carry address 0x003fab0a, but no global row names the instance.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080da0e",
+    "current_name": "",
+    "proposed_name": "intake_air_heater_monitor_result",
+    "proposed_type": "word",
+    "comment": "e2m 1227 +0 JCGPSS 'STATUS FROM FAULT HANDLER INDICATING OBDII DEF. OF MONITOR STATUS' (NOT_COMP / COMP), the record CM848 labels Intake_Air_Heater_Status (intake_air_heater_monitor_result 0x40ad82). DM5 sends status 0x1000 when it is 1. Its writer is not in the dump.",
+    "evidence": "0x32a5a a5 = 0x80da0e; 0x32a94 cmpi.w #0x1,(a5); 0x32aae tst.w (a5) (word accesses). The parameter ID table 0x364d4 maps block 1227 to 0x80da0e. The twin CM848 0x254c4 lhz 0x40ad82.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00060fa4",
+    "current_name": "",
+    "proposed_name": "obd_compliance_code",
+    "proposed_type": "word",
+    "comment": "e2m 1228 +4 JCOBDG 'INDICATOR OF OBD COMPLIANCE OF MODULE' (ROM above the dumped 256 KB). DM5 byte 3 (SPN 1220) is its low byte 0x60fa5. CM848's obd_compliance_code 0x5a490.",
+    "evidence": "e2m_block_addresses --firmware cm550: 1228 +4 JCOBDG -> 0x060fa4, length 2. Only access: move.b (0x60fa5).l at 0x32a74 (the low byte). The twin CM848 0x25498 lhz 0x5a490 / stb.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00060fa6",
+    "current_name": "",
+    "proposed_name": "supported_continuous_monitors_bits",
+    "proposed_type": "word",
+    "comment": "e2m 1228 +6 JCCTMR 'INDICATOR OF SOFTWARE'S SUPPORT OF CONTINUOUSLY RUN MONITOR' (ROM above the dump). DM5 byte 4 (SPN 1221) is its low byte 0x60fa7. CM848's supported_continuous_monitors_bits 0x5a492.",
+    "evidence": "1228 +6 JCCTMR -> 0x060fa6, length 2. Only access: move.b (0x60fa7).l at 0x32a7c. The twin CM848 0x254a4 lhz 0x5a492 / stb.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035de",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65244_total_idle_fuel_used",
+    "proposed_type": "dword",
+    "comment": "PGN 65244 (IO) bytes 1-4, SPN 236 engine total idle fuel used (0.5 L/bit, low byte first), written by cm550_buildPgn65244IdleOperationMessage from total_idle_fuel_consumed. The data pointer of j1939_pgn65244_tx_message.",
+    "evidence": "0x33ca0 move.l d0,(0x8035de).l after byteSwap32. 0x33d0c data_pointer = 0x8035de (length 8).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008035e2",
+    "current_name": "protection_state_enable_flags",
+    "proposed_name": "j1939_pgn65244_total_idle_hours",
+    "proposed_type": "dword",
+    "comment": "PGN 65244 (IO) bytes 5-8, SPN 235 engine total idle hours (0.05 h/bit, low byte first), written by cm550_buildPgn65244IdleOperationMessage from total_idle_operating_time. The old name had no basis: its single access is this store.",
+    "evidence": "Only reference: 0x33cc8 move.l d0,(0x8035e2).l after byteSwap32 (abs_refs). It is payload 0x8035de + 4 of the 8-byte IO descriptor.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00804fb8",
+    "current_name": "accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000",
+    "proposed_name": "total_idle_fuel_consumed",
+    "proposed_type": "dword",
+    "comment": "e2m 117F +18 TIGAIST2 'ACCUMULATED AMOUNT OF FUEL USED DURING VEHICLE OPERATION WHILE UNDER IDLE' (0.125 gal): accumulated by 0x30414 and sent as SPN 236 by cm550_buildPgn65244IdleOperationMessage. It sits beside total_fuel_consumed (TIGAT2) and outside the EEPROM image, so no _cal.",
+    "evidence": "move.l reads at 0xf5d0 / 0x33c76; pea at 0x30440 into the accumulator 0x303d4. The record has length 4, scale 0.125. Dump 11708 = 1463.5 gal against 30480 gal total.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00804fb4",
+    "current_name": "",
+    "proposed_name": "total_idle_operating_time",
+    "proposed_type": "dword",
+    "comment": "e2m 117F +14 TITMIS 'ACCUMULATED TIME OF OPERATION OF THE ENGINE WHILE UNDER IDLE CONDITION' (0.1 s counts): copied from 0x806152 by 0x30414 and sent as SPN 235 by cm550_buildPgn65244IdleOperationMessage. It is the idle twin of total_engine_operating_time (TITMT2) and outside the EEPROM image.",
+    "evidence": "0x30420 move.l (0x806152),(0x804fb4). Reads at 0xf580 / 0x33cb0. The record has length 4, scale 2.77777e-5 h. Dump 167363181 = 4649 h against 12567 h total.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801e28",
+    "current_name": "",
+    "proposed_name": "engine_retarder_stage_count",
+    "proposed_type": "word",
+    "comment": "The sum of the six engine brake driver cylinder counts (0x808200-0x80820a), set once by cm550_initializeEngineRetarderTsc1RequestState. cm550_selectEngineRetarderStagePercent tests it for 4 to pick the stage 4 full-scale torque. This is CM848's engine_retarder_stage_count (0x3faa72). 6 in the dump.",
+    "evidence": "0x2faf8 move.w d0,(0x801e28).l and 0x2f678 cmpi.w #0x4,(0x801e28).l are the only references. CM848 0x23b04 sth into 0x3faa72, then the == 4 test in cm848_selectEngineRetarderStagePercent.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a9dc",
+    "current_name": "",
+    "proposed_name": "maximum_road_speed",
+    "proposed_type": "word",
+    "comment": "e2m 117D +18 RSMXRZ 'MAX. VEHICLE SPEED IN TG (ANY GEAR W/O GD) AFTER DRIVER REWARD ADJUSTMENT' (MPH / 256), the record CM848 names maximum_road_speed (117D +16 Max_Road_Speed). CCSS sends it as SPN 74.",
+    "evidence": "e2m_block_addresses: 117D +0018 RSMXRZ -> 0x80a9dc. Word accesses: cmpi.w #0x9e00,(a0) / move.w (a0) at 0x31f4c / 0x31f54, and move.w at 0xf00c. CM848's labelled e2m gives the same RSMXRZ text for Max_Road_Speed.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00804fc6",
+    "current_name": "",
+    "proposed_name": "cruise_maximum_road_speed",
+    "proposed_type": "word",
+    "comment": "e2m 117F +26 CRMXRZ 'MAX ALLOWABLE CC REFERENCE SPEED ALLOWED, AFTER DR ADJUSTMENT' (MPH / 256), CM848's cruise_maximum_road_speed_cal (Cruise_Max_Road_Speed). In CM550 it lies outside the EEPROM image 0x803b0a-0x804f93, so no _cal. CCSS sends it as SPN 87.",
+    "evidence": "117F +0026 CRMXRZ -> 0x804fc6. cmpi.w #0x9e00,(0x804fc6) at 0x31f76, move.w at 0x31f82 and 0xf0e0. CM848's labelled e2m: Cruise_Max_Road_Speed [CRMXRZ] -> cruise_maximum_road_speed_cal.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807bf6",
+    "current_name": "",
+    "proposed_name": "cruise_speed_low_limit",
+    "proposed_type": "word",
+    "comment": "e2m 117E +0 CRMNRUVS 'MINIMUM VEHICLE SPEED AT WHICH CRUISE CONTROL MAY REACTIVATE ON RESUME' (MPH / 256). The same record as CM848's cruise_speed_low_limit (Cruise_Min_Road_Speed). It lies in the RAM copy of the ROM calibration, so no _cal. CCSS sends it as SPN 88.",
+    "evidence": "117E +0000 CRMNRUVS -> 0x807bf6. a3 = 0x807bf6 at 0x31f3a, cmpi.w #0x9e00,(a3) / move.w (a3) at 0x31fac / 0x31fb4, move.w at 0xf0ec. The CM848 tool resolves 117E +0 to 0x5c28a cruise_speed_low_limit.",
+    "confidence": "high"
+   }
+  ],
+  "enum_members": [
+   {
+    "firmware": "CM848",
+    "enum_name": "J1939_PGN_LOWER",
+    "value": 65234,
+    "current_member": "PGN_65234_DM11_CLEAR_ACTIVE",
+    "proposed_member": "PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT",
+    "comment": "PGN 65234 is DM10 Non-Continuously Monitored Systems Test Identifiers Support (DM11 is 65235)",
+    "evidence": "CM848 registers cm848_j1939HandlePgn65234Dm10 for 0xfed2 (cm848_initializePgn65234Dm10Handler 0x24b64), and that handler sends the supported non-continuous monitor bits. The j1939 database: 65234 = DM10. The CM848 rows already corrected the DM11 claim for the descriptor and payload.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "enum_name": "J1939_PGN_LOWER",
+    "value": 65504,
+    "current_member": "PGN_65504_PROPRIETARY_A",
+    "proposed_member": "PGN_65504_PROPRIETARY_B",
+    "comment": "0xffe0 is in the Proprietary B range (65280-65535); Proprietary A is 61184",
+    "evidence": "cm848_initJ1939ProtocolHandlers registers cm848_j1939HandlePgn65504ProprietaryB for 0xffe0. That function's row already notes the PDU2 range 65280-65535 and that Proprietary A is 61184.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "enum_name": "J1939_PGN_LOWER",
+    "value": 65264,
+    "current_member": "PGN_65264_PTO",
+    "proposed_member": "PGN_65264_POWER_TAKE_OFF_INFORMATION",
+    "comment": "Power Takeoff Information (PTO spelled out per the naming rules)",
+    "evidence": "The naming rules ban PTO. 0xfef0 is registered with cm848_buildPgn65264PowerTakeOffInformationMessage in cm848_initJ1939ProtocolHandlers.",
+    "confidence": "medium"
+   }
+  ],
+  "prototypes": [
+   {
+    "firmware": "CM550",
+    "address": "0x2f47e",
+    "function_name": "registerJ1939PgnRequestHandler",
+    "return_type": "byte",
+    "params": [
+     {
+      "index": 0,
+      "name": "pgn",
+      "type": "ushort",
+      "comment": "The requested PGN's low 16 bits (e.g. 0xfee4 for 65252): the word at +4 (move.w (0x8,a7) after the a2 push), stored at the entry's +0 (PDU format byte first)"
+     },
+     {
+      "index": 1,
+      "name": "handler",
+      "type": "void*",
+      "comment": "The request handler: the long at +6 (move.l (0xa,a7)), stored at the entry's +2; cm550_dispatchJ1939PgnRequest calls it with the request"
+     }
+    ],
+    "evidence": "0x2f47e move.l a2,-(a7), then (0x8,a7) = arg 0 (word slot) and (0xa,a7) = arg 1 (4 bytes right after it), per stack_parameter_layout. Callers push pea handler then move.w #pgn (e.g. 0x2ef36-0x2ef40) and pop 6 bytes (addq.l #6 / lea (0x30,a7) for 8 calls). Returns 1 (moveq #1,d0 at 0x2f48c) or 0 (clr.b d0 at 0x2f4b8) in the low byte. No caller reads d0. Matches CM848 0x23188 (pgn uint, handler_func void*).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x2ef4a",
+    "function_name": "cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage",
+    "return_type": "void",
+    "params": [
+     {
+      "index": 0,
+      "name": "request_msg",
+      "type": "can_std_rx_desc_t*",
+      "comment": "The received DM7 frame: the long at +4 (movea.l (0x10,a7),a2 after saving 3 registers); data_ptr (+6) byte 0 is the test identifier, and it goes to cm550_diagnosticCanResponseSender for the NACK"
+     }
+    ],
+    "evidence": "0x2ef4a movem.l a4/a3/a2 (12 bytes), then movea.l (0x10,a7),a2. Dereferences (0x6,a2) at 0x2ef5e and passes a2 to 0x31b22 at 0x2efac. The receive layer pushes one long. This replaces the row 'msg_ptr int'.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x2ef1c",
+    "function_name": "cm550_j1939HandlePgn65228Dm3ClearInactiveFaults",
+    "return_type": "void",
+    "params": [
+     {
+      "index": 0,
+      "name": "request_msg",
+      "type": "can_std_rx_desc_t*",
+      "comment": "The PGN 59904 request cm550_dispatchJ1939PgnRequest passes: the long at +4 (movea.l (0x4,a7),a0), handed to cm550_diagnosticCanResponseSender for the acknowledgement"
+     }
+    ],
+    "evidence": "0x2ef1c movea.l (0x4,a7),a0, then 0x2ef2a move.l a0,-(a7) / jsr 0x31b22. The dispatcher pushes a3 (the request) at 0x2f504.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x2fb70",
+    "function_name": "dispatchTsc1ByDestinationAddress",
+    "return_type": "void",
+    "params": [
+     {
+      "index": 0,
+      "name": "msg",
+      "type": "can_std_rx_desc_t*",
+      "comment": "The received TSC1 frame: the long at +4 (movea.l (0xc,a7),a2 after saving 2 registers); ID byte 2 is the destination address, and it is passed on to the engine and retarder processors"
+     }
+    ],
+    "evidence": "0x2fb70 movem.l a2/d2 (8 bytes), movea.l (0xc,a7),a2, move.b (0x2,a2),d2. move.l a2,-(a7) before jsr 0x2f128 / 0x2f7e6.",
+    "confidence": "high"
+   }
+  ],
+  "skipped": [],
+  "notes": "STRUCTS. (1) CM550 needs CM848's j1939_pgn_handler_entry_t (portable rows, no address), 6 bytes: +0 pgn_byte_1 byte 1 (PGN bits 8-15, the PDU format byte, the high byte of the word the registrar stores with move.w at 0x2f4ae; the dispatcher compares it with request data byte 1 at 0x2f4f8-0x2f500); +1 pgn_byte_0 byte 1 (PGN bits 0-7, compared with data byte 0 at 0x2f4ec-0x2f4f4); +2 handler_func dword 4 (stored by move.l at 0x2f4b2, called by movea.l (2,a2) / jsr (a0) at 0x2f506-0x2f50a). CM848's global row 0x3fa9a2 could become j1939_pgn_handler_entry_t[32] too. (2) New shared j1939_pgn65230_payload_t, 8 bytes: +0 active_trouble_code_count byte (SPN 1218), +1 previously_active_trouble_code_count byte (SPN 1219), +2 obd_compliance byte (SPN 1220), +3 continuously_monitored_systems_support byte (SPN 1221), +4 non_continuously_monitored_systems_support word (SPN 1222, low byte first), +6 non_continuously_monitored_systems_status word (SPN 1223, low byte first). Applying it removes CM550 rows 0x80345a / 0x80345c and CM848 rows 0x3fad5a / 0x3fad5c: build and diff. (3) Copy CM848's j1939_ccss_tx_payload_t (max_vehicle_speed_limit, cruise_high_set_limit_speed, cruise_low_set_limit_speed, reserved3..reserved7, all byte 1) into CM550 for 0x801efa. JUDGMENT CALLS. The task text says the count at 0x801e1a is a word, but every access is a byte. DM1 is registered twice in both firmwares (RAM dump entries 2 and 18). The DM3 / DM7 / 61184 / TSC1 registration wrappers are twins of one-call CM848 wrappers (the same constant and callee at the same start-up position), following the registerJ1939DiagnosticHandlers precedent. The VI handler twin is a single send: medium confidence. The shared names j1939HandlePgn65261CruiseControlSetup and j1939HandlePgn65226Dm1ActiveDtc were false twins, so both firmwares get prefixes. OVERLAP: batch Q1 also names the periodic builders 0x31c84 / 0x32e4c / 0x342f0 / 0x337c4 / 0x33d38 / 0x33164 / 0x33f5a / 0x31bce / 0x33e58. My names follow Q1's scheme; take Q1's verdict where they differ. FUNCDEF ROWS to retarget on rename: CM550 0x2f4be, 0x2f606 and 0x2ef4a (replaced by my prototype); CM848 0x23188, 0x231cc, 0x221f0 and 0x23b38 (two duplicate rows, lines 87 and 244). LEADS. (a) The descriptor set-ups that register handlers have wrong names: 0x320f6 (CI 65259), 0x32244 cm550_diagnosticDM11PGN_65234_Builder (DM10, a step-for-step twin of CM848 0x24b64 cm848_initializePgn65234Dm10Handler: shared initializePgn65234Dm10Handler), 0x323be cm550_engineCoolantPGN_65226_Builder (DM1), 0x3252c (DM2), 0x32ae2 (DM5, a twin candidate of CM848 0x2553c), 0x33064 vp44_cumminsProprietaryDM_983_Builder (EEC2 61443), 0x33880 (ET1), 0x33aea cm550_retarderConfigPGN_65249_Builder (actually LFC 65257), 0x33ce2 vp44_ioControlPGN_65244_Builder (IO), 0x3429a (VD), 0x343d2 (VH). (b) 0x31b22 cm550_diagnosticCanResponseSender is the PGN 59392 acknowledgement sender: header 0xe8ff00, control byte at data byte 1, the requested PGN copied into data bytes 6-8, sent to the requester. A CM550 copy of CM848's J1939_ACK_TYPE (0 ACK / 1 NACK) would type its second parameter. (c) 0x32b38 vp44_diagnosticByteResponseSender is the DM8 (PGN 65232) test result sender: identifier to 0x803470, byte-swapped value to 0x803472, send 0x803462. It is a twin candidate of CM848 0x255c0 cm848_sendPgn65232NonContinuousMonitorTestResultMessage. (d) CM550 registerJ1939ReceiveHandler (0x21272) has no prototype, so its call sites print no arguments. (e) 0x2eea2 cm550_diagnosticServiceDispatcher is a counterpart of CM848 0x22128: CM848 skips the positive / negative response services. (f) CM848's J1939_PGN_LOWER enum is applied nowhere. It could type the pgn parameter of registerJ1939PgnRequestHandler, but CM550 lacks the enum and several of its PGNs (65252 / 65253 / 65257 / 65244 / 65255). (g) The VEP1 payload word 0x80367e (loop_termination_flag) is SPN 168 battery potential, left to Q1. (h) The word 0x806046 that the remote throttle claim reads is word 3 of the array at 0x806040 (fault_first_occurrence_flags_word_0..7); word 3 has no row. Scratch: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q2/investigator/ (notes.md, registrations.py, branch_targets.py, disassembly dumps)."
+ },
+ "blind": {
+  "batch": "Q2",
+  "roles": [
+   {
+    "address": "0x2f47e",
+    "role": "The PGN 59904 request responder registrar (no row yet). Arguments: a PGN key word (sp+8) and a handler long (sp+10). When the count byte 0x801e1a is already 32 it returns 1 and stores nothing. Otherwise it takes index = count, increments the count first, then writes the key word to 0x801d5a + 6 x index and the handler at entry + 2, and returns 0. It is called 17 times directly and 7 times through a2 from 0x2f538. The RAM dump holds 24 entries (count 0x18).",
+    "discriminator": "Third member of the registrar family. registerJ1939ReceiveHandler (0x21272) fills 0x800ab0 with 16 entries and registerJ1939DiagnosticService (0x2ee62) fills 0x801c7a with a byte key. This one fills table 0x801d5a / count 0x801e1a, and only the PGN 59904 dispatcher 0x2f4be reads that table.",
+    "suggested_name": "registerJ1939RequestResponder",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939RegisterPgnHandler @ 0x23188: TWIN. The same steps in the same order: lbz count, cmpwi 32 -> return 1, count*6 + table 0x3fa9a2, stb count+1 before the entry stores, sth key at +0, stw handler at +2, return 0. Both are called by the descriptor set-ups and the registration list. Both rows take the one unprefixed name."
+   },
+   {
+    "address": "0x2f4be",
+    "role": "The PGN 59904 (Request) receive handler, registered for key 0xea00 by 0x2f538. It acts only when the request's destination byte (rx + 2) is j1939_engine_node_source_address (0x80da01) or 0xff. It scans the count-byte (0x801e1a) entries of 0x801d5a for one whose byte 1 equals request data byte 1 (data[0], PGN bits 0-7) and whose byte 0 equals data byte 2 (data[1], PGN bits 8-15). The data page byte is not compared. On a match it calls the entry's handler with the request record and stops. With no match and a request that was not global, it sends a negative acknowledgement: cm550_diagnosticCanResponseSender(rx, 1), PGN 59392.",
+    "discriminator": "The only reader of table 0x801d5a. It picks a responder by the requested PGN. The PGN 61184 dispatcher 0x2eea2 picks by a service byte, and 0x2fb70 picks by destination address.",
+    "suggested_name": "cm550_dispatchJ1939Request",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939DispatchPgnHandler @ 0x231cc: COUNTERPART. The same scan, match and NACK steps, but CM848 also stores 1 to 0x40ad53 (j1939_dm1_active_flag) before it calls the handler. CM848's DM3 responder reads that flag to choose its acknowledgement path and clears it. CM550 has no such flag."
+   },
+   {
+    "address": "0x2f538",
+    "role": "The start-up registration list of the J1939 request responders, called from mc68k_initializeJ1939Datalink (0x28e2e). Steps: registerJ1939ReceiveHandler(0xea00 = PGN 59904, 0x2f4be). Then initPgn65261CruiseControlSetupStruct (descriptor only). Then 8 descriptor set-ups, each of which registers its responder: 65259 0x320f6, 65253 0x33754, 65262 0x33880, 65257 0x33aea, 65244 0x33ce2, 65248 0x3429a, 65255 0x343d2, 65260 0x34440. Then 7 direct 0x2f47e registrations: 65252 0x33d38, 65261 0x31f30, 65263 0x33164, 65264 0x33f5a, 65269 0x31bce, 65270 0x33e58, 65271 0x342f0. Last, the DM set-ups: DM1 0x323be, DM2 0x3252c, DM3 0x2ef36, DM4 0x329d2, DM5 0x32ae2, DM10 0x32244. These are table entries 3-23. Entries 0-2 (65265, 61443 and DM1 again) come earlier from mc68k_initializeJ1939Datalink.",
+    "discriminator": "The only caller of the 7 direct registrations (through a2 = 0x2f47e) and the only function that registers the PGN 59904 dispatcher. It does no data dump: the current name is wrong.",
+    "suggested_name": "cm550_registerJ1939RequestResponders",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initJ1939ProtocolHandlers @ 0x232b4: COUNTERPART. The same frame (0xea00 registration, initPgn65261CruiseControlSetupStruct, set-ups, 7 direct registrations, the same six DM set-ups) but different lists. CM848 has 5 set-ups (65259 65262 65242 65248 65260) and direct 65261 65263 65264 65269 65270 65271 65504. CM550 has 8 set-ups and direct 65252 instead of 65504."
+   },
+   {
+    "address": "0x2ef08",
+    "role": "registerJ1939ReceiveHandler(0xef00 = PGN 61184 Proprietary A, 0x2eea2 the diagnostic service dispatcher). Called from mc68k_initializeJ1939Datalink (0x28e1a).",
+    "discriminator": "Registers PGN 61184. Its two one-call siblings in this range register 58112 (0x2efbc) and 61442 (0x2f114), and 0x2fbb2 registers PGN 0.",
+    "suggested_name": "cm550_registerJ1939DiagnosticServiceDispatcher",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initJ1939DiagnosticServiceHandler @ 0x221f0: COUNTERPART. The same one call with 0xef00, but the registered dispatchers differ (see 0x2eea2)."
+   },
+   {
+    "address": "0x2eea2",
+    "role": "The PGN 61184 diagnostic service dispatcher. It scans j1939_diagnostic_service_table (count j1939_diagnostic_handler_count) for request data byte 1. On a match it runs cm550_diagnosticServiceSecurityValidator (0x21982) and, when that returns 0xff, the service handler. Any result other than 0xff, including the default 0x18 for an unknown service, is answered with cm550_diagnosticMultiPacketResponseBuilder(rx, result) (0x3216a). It is registered by 0x2ef08 and also called from 0x22d10 inside vp44MultiFrameResponseHandler (0x22c26).",
+    "discriminator": "The only reader of j1939_diagnostic_service_table. It dispatches by service byte, not by PGN.",
+    "suggested_name": "cm550_dispatchJ1939DiagnosticService",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_j1939DiagnosticServiceHandler @ 0x22128: COUNTERPART. CM848 first answers nothing (0xff) when the service byte is the positive / negative response code. CM550 has no such check."
+   },
+   {
+    "address": "0x2ef1c",
+    "role": "The PGN 65228 (DM3, clear previously active DTCs) request responder, table entry 20. It writes 1 to diagnostic_clear_request_state (0x80de7a; e2m DGJCFUCC 01 = CLEAR_INACTIVE) and sends a positive acknowledgement: cm550_diagnosticCanResponseSender(rx, 0), PGN 59392 with the requested PGN copied in.",
+    "discriminator": "The only responder that writes diagnostic_clear_request_state and the only caller that passes acknowledgement type 0.",
+    "suggested_name": "cm550_j1939HandlePgn65228Dm3ClearInactiveFaults",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65228Dm3ClearInactiveFaults @ 0x22674: COUNTERPART. CM848 gates on not_safe_to_program_flag / the key switch / obd_fault_handler_enable, steps the 0-3 clear state machine, NACKs when gated off, and chooses the ACK sender by j1939_dm1_active_flag. CM550 always sets 1 and acknowledges."
+   },
+   {
+    "address": "0x2ef36",
+    "role": "registerJ1939RequestResponder(0xfecc = PGN 65228 DM3, 0x2ef1c). Called from the registration list 0x2f538.",
+    "discriminator": "The DM3 set-up has no transmit descriptor to build. It only registers, unlike the DM1 / DM2 / DM4 / DM5 / DM10 set-ups.",
+    "suggested_name": "cm550_registerPgn65228Dm3RequestResponder",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initPgn65228Dm3Handler @ 0x22770: COUNTERPART. The same single registration of 0xfecc, but the DM3 responders differ."
+   },
+   {
+    "address": "0x2ef4a",
+    "role": "The PGN 58112 (DM7, Command Non-continuously Monitored Test) receive handler, registered for key 0xe300 by 0x2efbc. It stores request data byte 1, the test identifier (SPN 1224), in byte 0x801d3c (no row). Test 0 with bit 0x100 of supported_non_continuous_monitors_bits calls the DM8 sender 0x32b38(0, 0x100). Test 1 with bit 0x200 calls 0x32b38(1, 0x200). The DM8 sender sends PGN 65232 with the test identifier and the byte-swapped value. Every other case gets a negative acknowledgement, cm550_diagnosticCanResponseSender(rx, 1).",
+    "discriminator": "The only writer of 0x801d3c and the only caller of the DM8 sender 0x32b38.",
+    "suggested_name": "cm550_receivePgn58112Dm7TestCommandMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn58112Dm7 @ 0x227a0: COUNTERPART. CM848 sends intake_air_heater_monitor_result / misfire_monitor_result as the test value, where CM550 sends the constant mask, and CM848 NACKs only test identifiers 0 and 1 (id < 2). CM550 NACKs every unsupported identifier."
+   },
+   {
+    "address": "0x2efbc",
+    "role": "registerJ1939ReceiveHandler(0xe300 = PGN 58112 DM7, 0x2ef4a). Called from mc68k_initializeJ1939Datalink (0x28e32).",
+    "discriminator": "Registers PGN 58112. Its siblings 0x2ef08 / 0x2f114 / 0x2fbb2 register 61184 / 61442 / 0.",
+    "suggested_name": "cm550_registerJ1939Dm7Handler",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_registerJ1939Dm7Handler @ 0x22840: COUNTERPART. The same single call with 0xe300, but the DM7 handlers differ."
+   },
+   {
+    "address": "0x2f114",
+    "role": "registerJ1939ReceiveHandler(0xf002 = PGN 61442 ETC1, 0x2efd0 cm550_receivePgn61442ElectronicTransmissionController1Message). Called from mc68k_initializeJ1939Datalink (0x28e26).",
+    "discriminator": "Registers PGN 61442 and does nothing else.",
+    "suggested_name": "cm550_registerPgn61442ElectronicTransmissionController1Handler",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initJ1939Pgn61442Etc1Handler @ 0x22bc4: COUNTERPART. CM848 also starts the ETC1 timers and clears fault bits before it registers."
+   },
+   {
+    "address": "0x2efd0",
+    "role": "The PGN 61442 ETC1 receive handler (named in round 94; the code matches its plate). It takes frames from the transmission source address (or any address when that is 0xff) with 8 data bytes, stores bytes 1 and 5, and runs the high idle override, progressive shift disable and driveline disengaged flags and timers.",
+    "discriminator": "The only reader of the ETC1 status bytes in j1939_powertrain_messages_received.",
+    "suggested_name": "cm550_receivePgn61442ElectronicTransmissionController1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939ProcessPgn61442Etc1: counterpart (round 94)."
+   },
+   {
+    "address": "0x2fbb2",
+    "role": "registerJ1939ReceiveHandler(0 = PGN 0 TSC1, 0x2fb70 the TSC1 destination dispatcher). Called from mc68k_initializeJ1939Datalink (0x28e20).",
+    "discriminator": "Registers key 0, the only TSC1 registration.",
+    "suggested_name": "registerJ1939Tsc1ReceiveHandler",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_initJ1939AddressDispatcher @ 0x23bb4: TWIN. li r3,0 / r4 = 0x23b38 / bl registerJ1939ReceiveHandler, which registers the twin dispatcher (see 0x2fb70). Both rows take the one unprefixed name."
+   },
+   {
+    "address": "0x2fb70",
+    "role": "The TSC1 (PGN 0) receive handler. It routes a frame by its destination byte (rx + 2): to processEngineTsc1Request (0x2f128) when the destination is j1939_engine_node_source_address (0x80da01) or 0xff, then to the retarder TSC1 processor 0x2f7e6 when it is j1939_retarder_node_source_address (0x80da0b) or 0xff.",
+    "discriminator": "The only caller of 0x2f128 and 0x2f7e6. It dispatches by destination address.",
+    "suggested_name": "dispatchTsc1ByDestinationAddress",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_dispatchTsc1ByDestinationAddress @ 0x23b38: TWIN. lbz rx+2, compare with the low byte of j1939_source_address (0x40ad74) or 255, bl processEngineTsc1Request, compare with the low byte of 0x40ad7e (engine retarder source address) or 255, bl 0x236f0. The same order. Both rows take this unprefixed name."
+   },
+   {
+    "address": "0x2f7e6",
+    "role": "Processes a TSC1 frame addressed to the engine retarder. It ignores the frame when total_number_of_engine_brake_output_drivers is 0, the length is not 8, or the control mode (byte 1 & 3) is speed control (1). It stores the control byte (0x801e1e) and the torque byte (byte 4, 0x801e21). It drops the transmission's own frames unless j1939_retarder_shift_assist_enable is set. It removes (mode 0) or refreshes (else) the sender's retarder ignored-request entry, needs a findTsc1SourceConfiguration match, and uses the priority bits (& 0x30) against the controlling sender: a lower value wins, and at equal priority mode 2 is kept and mode 3 needs a larger torque byte. It records the priority (0x801e1c), the torque byte (0x801e1d), the source and the control byte. Mode 0 clears the timeout, mode and device and sets retarder_torque_percent = 125. Mode 2 decodes the torque (0x2f606), selects the stage (0x2f632) as the torque command, and cancels for a transmission shift assist (transmission source, engine TSC1 speed control by the transmission device, fuel_demand_selected at or above the shift assist limit, and a non-zero request); otherwise it sets the timeout and mode 2. Mode 3 sets mode 3, the timeout and retarder_torque_percent = the selected stage.",
+    "discriminator": "The only caller of 0x2f606 and 0x2f632 (bsr.w at 0x2f980 / 0x2f98e / 0x2fa5a / 0x2fa90) and the only writer of retarder_control_mode outside the initializer.",
+    "suggested_name": "cm550_processEngineRetarderTsc1Request",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_processEngineRetarderTsc1Request @ 0x236f0: COUNTERPART. The same decision flow, but CM848 masks j1939_blocked_message_bits & 5 on mode 0, skips the pointer update for the controlling sender with a jump, and keeps other state words (zero torque timer, speed control flag)."
+   },
+   {
+    "address": "0x2f606",
+    "role": "Decodes a TSC1 requested torque byte (SPN 518, offset -125 percent) into a retarding magnitude: raw < 25 -> 100, raw >= 125 -> 0, otherwise 125 - raw.",
+    "discriminator": "Pure arithmetic with the constants 25 / 125 / 100. Called only by 0x2f7e6, once per torque mode.",
+    "suggested_name": "decodeRetarderTorqueRequestPercent",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_decodeRetarderTorqueRequestPercent @ 0x2346c: TWIN. cmpwi 25 -> 100, cmpwi 125 -> 0, subfic 125, in the same order. Both rows take this unprefixed name."
+   },
+   {
+    "address": "0x2f632",
+    "role": "Quantizes the retarder torque request (0x80d9f2, 0-100 percent) into a stage percentage in retarder_torque_level_stepped (0x801e2a). Steps: 0 when the request is 0, and 100 in mode 3 when the request is at least 100. Full scale is ROM 0x6055a (stage 4 values [4]) when the stage count 0x801e28 is 4, else 0x6056e (stage 6 values [4]). Then scaled = request x full / 100 (0x801e26). The stage 1-5 lookups at engine_rpm_primary go through the 1-D records 0x801e30... The first stage whose maximum covers the scaled request gives 0 / 17 / 33 / 50 / 67 / 83, or 17 / 33 / 50 / 67 / 83 / 100 in mode 2 (rounded up). It formats no multi-frame response: the current name is wrong.",
+    "discriminator": "The only reader of the five engine_retarder_torque_stage lookups. Called only from 0x2f7e6 (bsr.w).",
+    "suggested_name": "selectEngineRetarderStagePercent",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_selectEngineRetarderStagePercent @ 0x234a4: TWIN. The disassembly has the same order and constants: request 0, mode 3 and >= 100, stage count == 4 ? 0x5a456 : 0x5a46a, x/100, stage 1-5, 0x11/0x21/0x32/0x43/0x53/100. Only the 1-D lookup call follows each platform's API (CM848 passes a cache word and filtered_engine_speed). Both rows take this unprefixed name."
+   },
+   {
+    "address": "0x2faa4",
+    "role": "Start-up set-up of the engine retarder TSC1 path, called from mc68k_initializeJ1939Datalink (0x28c1e). It sets retarder_torque_percent (0x80d9ee) = 125, retarder_control_mode = 0 and engine_retarder_control_device_indicator = 0, and sets 0x801e28 = the sum of the six cylinder-brake counts 0x808200-0x80820a. It fills the five stage lookup records engine_retarder_torque_stage_1..5_lookup: the x axis pointer (engine_retarder_torque_engine_speed_axis 0x6052a), the stage values pointer and x_axis_offset = 2.",
+    "discriminator": "The only writer of 0x801e28 and of the lookup records' pointers.",
+    "suggested_name": "cm550_initializeEngineRetarderTsc1RequestState",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initializeEngineRetarderTsc1RequestState @ 0x23a9c: COUNTERPART. CM848 stores 100 (li r11,100) where CM550 stores 125, and it sets five cache words to 2 instead of filling lookup records."
+   },
+   {
+    "address": "0x2ec50",
+    "role": "Remote throttle claim, run by cm550_runEvery4FramesTaskSetPhase0 (0x1b55a). With algorithm_enable_flags_18_cal.remote_throttle_enable off, it releases its claim: when alternate_throttle_priority equals the remote throttle priority (0x8089a4, CTRMTHPZ), it sets priority 0 and alternate_throttle 0. With remote_throttle_transition_verification_enable off, switch 20 (0x80bcd0 bit 3, e2m DS20SWSS) on claims (a lower priority becomes the remote priority and alternate_throttle = remote_throttle_sensor_state.filtered_value, ADROTHFT) and switch 20 off releases. With verification on, it first updates the hand-over latch 0x801c78. The latch is set when the remote throttle is at or below calculated_commanded_throttle with switch 20 on, and cleared when the calculated throttle is at or below the remote throttle with the switch off. Under a remote throttle fault (status word 3 bit 0x800 set and bit 0x800 of 0x806046 clear) it is cleared when the calculated throttle is at or below the remote throttle. Latch 1 claims and latch 0 releases.",
+    "discriminator": "The only function that claims alternate_throttle_priority with the remote throttle priority, and the only one that sets or tests 0x801c78 (0x2ed62 only clears it). Unlike the other claimers it releases its own claim.",
+    "suggested_name": "cm550_updateRemoteThrottleOverrideClaim",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_claimRemoteThrottleOverride @ 0x50e610, which calls cm848_verifyRemoteThrottleTransition @ 0x50e534: COUNTERPART. CM848 keeps the latch in its own function, mirrors the remote pedal fault bits, gates on J1939 pedal faults / timeouts, and never releases (cm848_selectCommandedThrottle resets the claim each pass)."
+   },
+   {
+    "address": "0x2ed62",
+    "role": "Clears 0x801c78 (remote_throttle_active_flag), the remote throttle hand-over latch of 0x2ec50. Called once at start-up from mc68k_applicationMain (0x28830).",
+    "discriminator": "Its only action is the latch clear; 0x2ec50 is the only other user of 0x801c78.",
+    "suggested_name": "cm550_initializeRemoteThrottle",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_initializeRemoteThrottle @ 0x50e768: COUNTERPART. It clears remote_throttle_transition_verified_flag and, with the feature disabled, also the remote throttle fault bits 171/172."
+   },
+   {
+    "address": "0x2ed6a",
+    "role": "Returns the byte length (PID byte included) of the J1587 parameter at insite_request_read_pointer, for the J1708 request parser 0x1e956: PID insite_parameter_id < 128 -> 2, < 192 -> 3, < 254 -> its count byte + 2 (20 when the count is 19 or more), 254 / 255 -> 0 (the parser stops). Nothing J1939.",
+    "discriminator": "It sizes a received request parameter by the J1587 PID ranges; 0x2edb2 sizes the response instead.",
+    "suggested_name": "cm550_getJ1587RequestParameterLength",
+    "confidence": "medium",
+    "cm848_counterpart": "none (CM848 has no J1708 / J1587 code)"
+   },
+   {
+    "address": "0x2edb2",
+    "role": "Returns the response length of a requested J1587 PID (insite_parameter_id): < 128 -> 2, < 192 -> 3, 193 -> insite_active_fault_count + 2, 194 -> 2 x (active reportable + change queue) + 2 or, in full detail mode, 3 x (inactive + active) + 2, 196 -> 4 / 2 / 7 from the DTC command byte and the matched code, 234 -> 24, 237 -> 22, 243 -> 31, else 6. Called by 0x1e956 (3 times) and cm550_activeParamReadFunction 0xec1e.",
+    "discriminator": "Response size per PID, including the fault tables (193 / 194 / 196) and the identification PIDs (234 / 237 / 243).",
+    "suggested_name": "cm550_getJ1587ResponseParameterLength",
+    "confidence": "medium",
+    "cm848_counterpart": "none (no J1587 in CM848)"
+   },
+   {
+    "address": "0x2ee62",
+    "role": "Appends {service byte, handler} to j1939_diagnostic_service_table (32 entries, count j1939_diagnostic_handler_count). Unchanged; the existing row holds.",
+    "discriminator": "Byte service key, table 0x801c7a.",
+    "suggested_name": "registerJ1939DiagnosticService",
+    "confidence": "high",
+    "cm848_counterpart": "registerJ1939DiagnosticService @ 0x220e4: twin (existing shared name)"
+   },
+   {
+    "address": "0x2f128",
+    "role": "Processes a TSC1 for the engine (existing twin name, unchanged); its only caller is 0x2fb70.",
+    "discriminator": "Engine branch of the TSC1 destination dispatcher.",
+    "suggested_name": "processEngineTsc1Request",
+    "confidence": "high",
+    "cm848_counterpart": "processEngineTsc1Request @ 0x22d60: twin (existing)"
+   },
+   {
+    "address": "0x34430",
+    "role": "The PGN 65260 (VI Vehicle Identification) request responder (no row), table entry 10, registered by cm550_initializePgn65260VehicleIdentificationHandler (0x34440). Its only action is cm550_sendCanMessage(&j1939_pgn65260_tx_message), the descriptor that points at vehicle_vin_string_cal with 20 bytes. Request only (not scheduled).",
+    "discriminator": "Sends the 65260 descriptor and nothing else.",
+    "suggested_name": "j1939HandlePgn65260VehicleIdentification",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65260VehicleId @ 0x26db4: TWIN (a single bl cm848_sendJ1939Message with j1939_pgn65260_tx_message; the set-ups differ, not the responders). Both rows take this name."
+   },
+   {
+    "address": "0x32222",
+    "role": "The PGN 65234 (DM10, Non-Continuously Monitored Systems Test Identifiers Support) request responder (no row), table entry 23, registered by 0x32244. It stores byteSwap16(&supported_non_continuous_monitors_bits) in the 2-byte DM10 payload 0x801f4c and sends j1939_dm10_tx_message (0x801f3e).",
+    "discriminator": "The only writer of 0x801f4c. It sends DM10 only and does not clear DTCs.",
+    "suggested_name": "j1939HandlePgn65234Dm10TestIdentifiersSupport",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65234Dm10 @ 0x24b28: TWIN (r3 = 0x5a494 supported bits, bl reverseByteOrder16, sth to j1939_dm10_payload, send j1939_dm10_tx_message). Both rows take this name."
+   },
+   {
+    "address": "0x32a42",
+    "role": "The PGN 65230 (DM5 Diagnostic Readiness 1) request responder, table entry 22, registered by 0x32ae2. It builds the 8-byte payload at 0x803458: byte 1 the active DTC count, byte 2 the previously active count, bytes 3 and 4 from ROM 0x60fa5 / 0x60fa7, bytes 5-6 byteSwap16(supported_non_continuous_monitors_bits), bytes 7-8 byteSwap16 of a status word. The status word is 0x1000 when 0x80da0e is 1 or bit 0x100 is unsupported, else it stays 0 (& 0xfeff). It then sends j1939_pgn65230_tx_message. Nothing touches the VP44: the vp44_ prefix is wrong.",
+    "discriminator": "The only DM responder that reads both DTC list counts and the monitor support words.",
+    "suggested_name": "j1939HandlePgn65230Dm5DiagnosticReadiness",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65230Dm5Readiness @ 0x25458: TWIN (the same steps, constants 0x1000 / 0x100 / 0xfeff; 0x80da0e = CM848's intake_air_heater_monitor_result). Both rows take this name."
+   },
+   {
+    "address": "0x342f0",
+    "role": "Builds and sends VEP1 (PGN 65271 Vehicle Electrical Power 1). It is the request responder of table entry 17 (registered directly by 0x2f538) and is scheduled every 1000 ms from 210 ms. It copies battery_voltage_sensor_state.filtered_value into a local, computes local = local x 20 >> 3, byte-swaps it into 0x80367e (bytes 5-6 of the payload 0x80367a, SPN 168 battery potential, 0.05 V/bit) and sends j1939_pgn65271_tx_message. Nothing about a retarder: the current name is wrong.",
+    "discriminator": "The only builder of 0x80367e.",
+    "suggested_name": "buildPgn65271VehicleElectricalPower1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65271VehicleElectrical @ 0x26cf0: TWIN. Both store the voltage to the local, then mulli 20 / srwi 3 (CM550: lsl 2, add, lsl 2, lsr 3; the decompiler shows x5>>1), reverse the bytes, sth the payload word and send. Both rows take this name."
+   },
+   {
+    "address": "0x33c6c",
+    "role": "The PGN 65244 (IO Idle Operation) request responder, table entry 7, registered by 0x33ce2 (descriptor 0xfedc00, 8 bytes). Bytes 1-4 (0x8035de) = byteSwap32(scale(0x804fb8 >> 2, 3785411, 1000000)): e2m 117F +18 TIGAIST2 'fuel used ... while under idle' (0.125 gal), giving SPN 236 total idle fuel at 0.5 L/bit. Bytes 5-8 (0x8035e2, misnamed protection_state_enable_flags) = byteSwap32(scale(0x804fb4, 20, 36000)): 117F +14 TITMIS 'time ... while under idle condition' (0.1 s), giving SPN 235 total idle hours at 0.05 h/bit. Then it sends j1939_pgn65244_tx_message. Request only.",
+    "discriminator": "The only reader of the idle fuel and idle time counters.",
+    "suggested_name": "cm550_buildPgn65244IdleOperationMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none (CM848 registers no 65244 responder)"
+   },
+   {
+    "address": "0x31c84",
+    "role": "Builds and sends CCVS1 (PGN 65265). It is scheduled every 100 ms from 70 ms and is table entry 0, registered by cm550_initializePgn65265CruiseControlVehicleSpeedHandler. Byte 1 is 0xf3 or 0xf7 from bit 0x40 of the cruise switch status word (parking brake field); when 0x803d48 is 1, bits 1-2 come from switch 19 (0x80bcd0 bit 2, two-speed axle). Bytes 2-3 are the road speed capped at 0x9c00, x103 >> 6 (mph to km/h), low byte first. Byte 4 holds cruise active / enable / brake / clutch from switch 16 bits and the cruise switch word. Byte 5 holds set / coast / resume / accelerate. Byte 6 is the cruise set speed (0x80a9c6 x 103/64 >> 8). Byte 7 is 0x20 when cruise is active, ORed with 0x80dc2b. Byte 8 holds the idle increment / decrement / test switches.",
+    "discriminator": "The only writer of the CCVS1 payload 0x801ee2-0x801ee9.",
+    "suggested_name": "cm550_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65265CruiseControlVehicleSpeedMessage @ 0x24178: COUNTERPART (CM848 gates on the datalink source bits and the cruise / power take-off enables, and scales x412 >> 16). The current CM550 name is unprefixed with no CM848 namesake."
+   },
+   {
+    "address": "0x32e4c",
+    "role": "Builds and sends EEC2 (PGN 61443). It is scheduled every 50 ms from 10 ms and is table entry 1, registered by 0x33064. Byte 1 (0x8034aa): 0xf4 / 0xf0 for kickdown from commanded_throttle against the kickdown threshold, 0xf8 on throttle faults. Each fault counts when its status word 4 bit is set and its processing enable bit is set. Bits 1-2 come from accelerator_off_idle, or 3 with idle_switch_override_enable, or 2 on switch faults. Byte 2 (0x8034ab): commanded throttle x 5/8, 0xff with sampled_throttle_override_enable, 0xfe on faults. Byte 3 (0x8034ac): the percent load high byte after cm550_param_lookup_3, 0xfe when j1939_torque_and_load_not_available_flag is set. Byte 4: the remote throttle x 5/8, 0xff when disabled or overridden, 0xfe on its faults. Bytes 5-8 are 0xff.",
+    "discriminator": "The only writer of 0x8034aa-0x8034b1. Those payload globals are misnamed vp44_feedback_pulse_*, lift_pump_timing_smoothed, derate_threshold_previous and fso_fault_previous_value.",
+    "suggested_name": "cm550_buildPgn61443ElectronicEngineController2Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn61443ElectronicEngineController2Message @ 0x25b10: COUNTERPART (CM848 tests fault_detected_cal bits directly, the datalink source bits instead of idle_switch_override_enable, and the held value enable bits). The current CM550 name is unprefixed with no CM848 namesake."
+   },
+   {
+    "address": "0x31f30",
+    "role": "The PGN 65261 (CCSS Cruise Control/Vehicle Speed Setup) request responder, table entry 12 (registered directly by 0x2f538); its descriptor comes from initPgn65261CruiseControlSetupStruct. Bytes 1-3 (0x801efa-0x801efc) are 0x80a9dc / 0x804fc6 / 0x807bf6 (maximum vehicle speed, cruise high and low set limits), each x161/100 >> 8, or 0xff when the value is at or above 0x9e01. Then it sends j1939_pgn65261_tx_message. Request only.",
+    "discriminator": "The only writer of 0x801efa-0x801efc.",
+    "suggested_name": "cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage",
+    "confidence": "medium",
+    "cm848_counterpart": "j1939HandlePgn65261CruiseControlSetup @ 0x246fc (the shared name today): COUNTERPART by the twin rule. CM848 sends 0xff for byte 1 unless road_speed_governor_enable is set and for bytes 2-3 unless cruise_control_enable is set; CM550 checks only the range. If the judge agrees, the CM848 row needs a cm848_ prefix too."
+   },
+   {
+    "address": "0x322ae",
+    "role": "The DM1 (PGN 65226) builder: the request responder of table entries 2 and 18 (0x323be runs twice) and the periodic DM1 through 0x3229a when the active count is not 0. While the status nibble is idle it builds the lamp byte (cm550_buildJ1939LampStatusByte) and 4 bytes per active DTC that is not flagged 0x4000: SPN / FMI from ROM 0x60fac / 0x60fae and the occurrence count capped at 127. With no DTCs it sends 0 and 0xffffffff, 6 bytes. Then it sends j1939_dm1_tx_message.",
+    "discriminator": "Reads active_dtc_list; DM2 0x3241c reads previously_active_dtc_list.",
+    "suggested_name": "j1939HandlePgn65226Dm1ActiveDtc",
+    "confidence": "medium",
+    "cm848_counterpart": "j1939HandlePgn65226Dm1ActiveDtc @ 0x24be8 (existing shared name): a near-twin. CM848's loop has an extra bound (cmpwi r6,20 / ble: at most 20 entries); CM550's loop is bounded only by the count (cmp.b 0x8058d4)."
+   },
+   {
+    "address": "0x3241c",
+    "role": "The DM2 (PGN 65227 Previously Active DTCs) request responder, table entry 19, registered by 0x3252c. While the status nibble is idle: length 2, the lamp byte, then 4 bytes (SPN / FMI / occurrence count capped at 127) per previously active DTC not flagged 0x4000, or 0xffffffff with none. Then it sends j1939_dm2_tx_message. Request only.",
+    "discriminator": "Reads previously_active_dtc_list (count 0x8058f4); the DM1 builder reads the active list.",
+    "suggested_name": "cm550_j1939HandlePgn65227Dm2PreviouslyActiveDtc",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_j1939HandlePgn65227Dm2PreviousDtc @ 0x24e78: the same relation as DM1 (CM848 adds the cmpwi r7,20 bound). This is a counterpart by the strict rule; if the judge keeps DM1 as a shared name, this pair should share j1939HandlePgn65227Dm2PreviousDtc."
+   },
+   {
+    "address": "0x32052",
+    "role": "The PGN 65259 (Component Identification) request responder, table entry 3, registered by 0x320f6 (descriptor 0xfeeb00, 40 bytes). It fills the make / model / serial / unit fields with '*' separators and sends j1939_pgn65259_tx_message. Round 95 name, confirmed.",
+    "discriminator": "PGN 65259 payload.",
+    "suggested_name": "cm550_buildPgn65259ComponentIdentificationMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65259ComponentId @ 0x24870: counterpart (round 95)"
+   },
+   {
+    "address": "0x33716",
+    "role": "The PGN 65253 (Engine Hours, Revolutions) request responder, table entry 4: bytes 1-4 = byteSwap32(total_engine_operating_time x 20 / 36000), then it sends j1939_pgn65253_tx_message. Round 95 name, confirmed.",
+    "discriminator": "The only scaling of total_engine_operating_time to SPN 247.",
+    "suggested_name": "cm550_buildPgn65253EngineHoursRevolutionsMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x337c4",
+    "role": "ET1 (PGN 65262) builder: table entry 5 and scheduled every 1000 ms from 430 ms. Bytes 1 and 2 are the coolant and fuel temperatures. Round 95 name, confirmed.",
+    "discriminator": "PGN 65262.",
+    "suggested_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65262EngineTemperature1Message: counterpart (round 95)"
+   },
+   {
+    "address": "0x33a62",
+    "role": "The PGN 65257 (LFC Fuel Consumption) request responder, table entry 6, registered by 0x33aea. Trip fuel and total fuel are converted from gallons to 0.5 L and byte-swapped. Round 95 name, confirmed.",
+    "discriminator": "The only reader of trip_fuel_consumed / total_fuel_consumed for J1939.",
+    "suggested_name": "cm550_buildPgn65257FuelConsumptionMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x34232",
+    "role": "The PGN 65248 (Vehicle Distance) request responder, table entry 8: trip and total distance from 0x804fac / 0x804fa8 x 12904 / 64000. Round 95 name, confirmed.",
+    "discriminator": "PGN 65248.",
+    "suggested_name": "cm550_buildPgn65248VehicleDistanceMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65248VehicleDistance @ 0x26bb0: counterpart (round 95)"
+   },
+   {
+    "address": "0x34394",
+    "role": "The PGN 65255 (Vehicle Hours) request responder, table entry 9: bytes 5-8 are the power take-off time 0x804fbc x 20 / 36000. Round 95 name, confirmed.",
+    "discriminator": "PGN 65255.",
+    "suggested_name": "cm550_buildPgn65255VehicleHoursMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x33d38",
+    "role": "SHUTDN (PGN 65252) builder: table entry 11 (registered directly by 0x2f538) and scheduled every 1000 ms from 110 ms. Round 94 / 95 name and plate, unchanged.",
+    "discriminator": "PGN 65252 from idle_shutdown_state.",
+    "suggested_name": "cm550_buildPgn65252ShutdownMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none (CM848 receives 65252)"
+   },
+   {
+    "address": "0x33164",
+    "role": "EFL/P1 (PGN 65263) builder: table entry 13 and scheduled every 500 ms. Byte 4 is the oil pressure. Round 95 name, confirmed.",
+    "discriminator": "PGN 65263.",
+    "suggested_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65263EngineFluidLevelPressure1Message: counterpart (round 95)"
+   },
+   {
+    "address": "0x33f5a",
+    "role": "PTO (PGN 65264) builder: table entry 14 and scheduled every 100 ms. Round 95 name, unchanged.",
+    "discriminator": "PGN 65264.",
+    "suggested_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65264PowerTakeOffInformationMessage @ 0x2bd58: counterpart (round 95)"
+   },
+   {
+    "address": "0x31bce",
+    "role": "AMB (PGN 65269) builder: table entry 15 and scheduled every 1000 ms. Byte 1 is the barometric pressure. Round 95 name, confirmed.",
+    "discriminator": "PGN 65269.",
+    "suggested_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65269AmbientConditionsMessage: counterpart (round 95)"
+   },
+   {
+    "address": "0x33e58",
+    "role": "IC1 (PGN 65270) builder: table entry 16 and scheduled every 500 ms. Byte 2 is boost and byte 3 the intake manifold temperature. Round 95 name, confirmed.",
+    "discriminator": "PGN 65270.",
+    "suggested_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_buildPgn65270InletExhaustConditions1Message: counterpart (round 95)"
+   },
+   {
+    "address": "0x3258a",
+    "role": "The DM4 (PGN 65229 freeze frame) request responder, table entry 21, registered by cm550_initializePgn65229Dm4Handler. Round 93 name, unchanged.",
+    "discriminator": "PGN 65229.",
+    "suggested_name": "cm550_j1939HandlePgn65229Dm4FreezeFrame",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939HandlePgn65229Dm4FreezeFrame @ 0x25390: counterpart (round 93)"
+   }
+  ],
+  "enum_roles": [
+   {
+    "enum_name": "J1939_ACK_TYPE",
+    "value": 0,
+    "meaning": "Positive acknowledgement (J1939_ACK): the PGN 59392 control byte that cm550_diagnosticCanResponseSender writes to 0x801eb2",
+    "evidence": "0x2ef1c (the DM3 responder) pushes clr.w (0) after it accepts the clear request. CM550 has no J1939_ACK_TYPE enum yet, and the acknowledgement_type parameter of cm550_diagnosticCanResponseSender is a ushort. CM848 has the same values (enums.csv, J1939_ACK_TYPE 0 J1939_ACK)."
+   },
+   {
+    "enum_name": "J1939_ACK_TYPE",
+    "value": 1,
+    "meaning": "Negative acknowledgement (J1939_NACK)",
+    "evidence": "0x2f4be pushes 1 when no responder matches a request that was not global (0x2f524). 0x2ef4a pushes 1 for an unsupported DM7 test (0x2efa8). CM848 J1939_ACK_TYPE 1 = J1939_NACK."
+   }
+  ],
+  "notes": "TABLE / COUNT / STRUCT. 0x801d5a = 32 entries of 6 bytes (0x801d5a-0x801e19). It is written only by 0x2f47e and read only by 0x2f4be; the RAM dump holds 24 entries. Proposed j1939_request_responder_table, type j1939_request_responder_entry_t[32]. Alternatively CM550 takes CM848's names, as was done for j1939_diagnostic_service_table: CM848 0x3fa9a2 j1939_pgn_dispatch_table, whose row is typed as ONE j1939_pgn_handler_entry_t and should be [32]. 0x801e1a = the COUNT, a BYTE, not a word as the lead said: cmpi.b #0x20 / move.b / addq.b in 0x2f47e, move.b / cmp.b in 0x2f4be, 0x801e1b has no reference (pad), dump value 0x18. Proposed j1939_request_responder_count (byte); CM848 j1939_pgn_handler_count 0x3faa62 is a byte too. Entry struct (6 bytes, proven by the stores in 0x2f47e and the byte compares in 0x2f4be): +0 requested_pgn_pdu_format, byte, 1 (PGN bits 8-15, e.g. 0xfe; compared with request data byte 2 = data[1]; the registrar writes +0/+1 as one word, the key); +1 requested_pgn_pdu_specific, byte, 1 (PGN bits 0-7, e.g. 0xca; compared with data byte 1 = data[0]); +2 handler, pointer, 4 (called with the received request record). This is CM848's j1939_pgn_handler_entry_t layout (pgn_byte_1 / pgn_byte_0 / handler_func). The same 6-byte shape as CM550's j1939_receive_handler_entry_t (pgn_key word + handler pointer), which could be reused instead. OTHER GLOBALS: 0x801d3c byte, written only by 0x2ef4a = the DM7 test identifier; proposed j1939_dm7_test_identifier, CM848's name for its 0x3fa97a. 0x801c78 (remote_throttle_active_flag) plays CM848's remote_throttle_transition_verified_flag role. Retarder TSC1 bytes with no row: 0x801e1c controlling priority bits, 0x801e1d controlling torque byte, 0x801e1e received control byte, 0x801e21 received torque byte (CM848 engine_retarder_controlling_override_priority_bits / _controlling_tsc1_torque_byte / engine_retarder_received_tsc1_control_byte / _received_tsc1_torque_byte). Misnamed payload words: 0x8035e2 protection_state_enable_flags = IO bytes 5-8 (idle hours); 0x80367e loop_termination_flag = VEP1 bytes 5-6; 0x80345a / 0x80345c (base_timing_table_lookup_arg_345a / vp44_timing_idle_cmd_ptr) = DM5 bytes 3 / 5-6; 0x8034aa-0x8034b0 (vp44_feedback_pulse_low/high_fault_counter, lift_pump_timing_smoothed, derate_threshold_previous, fso_fault_previous_value) = EEC2 bytes 1-7. TABLE ORDER (RAM dump): [0] 65265 0x31c84, [1] 61443 0x32e4c, [2] 65226 0x322ae (these three from mc68k_initializeJ1939Datalink, which calls 0x323be once before 0x2f538 and once through it), [3]-[23] from 0x2f538 (DM1 again at [18]). DESCRIPTOR SET-UPS (outside the range; each builds the PGN's descriptor and registers its responder; names here only as leads): 0x33aea registers 65257 (named cm550_retarderConfigPGN_65249_Builder: wrong), 0x323be DM1 (cm550_engineCoolantPGN_65226_Builder: wrong), 0x32244 DM10 (cm550_diagnosticDM11PGN_65234_Builder: DM11 is wrong), 0x33064 EEC2 61443 (vp44_cumminsProprietaryDM_983_Builder: wrong), 0x33ce2 65244 and 0x343d2 65255 (vp44_ prefixes; nothing VP44), 0x320f6 65259, 0x33880 65262, 0x3429a 65248, 0x3252c DM2, 0x32ae2 DM5. The round 95 pattern cm550_initializePgn<N><Name>Handler fits all of them. CM550 0x32244 runs the same steps as CM848 cm848_initializePgn65234Dm10Handler (likely twin); the others were not compared. FLAGS FOR THE JUDGE: (1) the existing shared name j1939HandlePgn65261CruiseControlSetup covers a counterpart pair (CM848 adds the road speed governor and cruise enable gates); (2) the shared j1939HandlePgn65226Dm1ActiveDtc pair differs by CM848's 20-entry loop bound, and DM2 has the same relation; (3) CM550's unprefixed j1939HandlePgn65265CruiseVehicleSpeed and j1939HandlePgn61443Eec2 have no CM848 namesake and are counterparts. Precedent for the send-wrapper twins: sendPgn61444ElectronicEngineController1Message is a twin although CM550 sends with cm550_sendCanMessage. All proposed function names checked free in both function_renames.csv. Notes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q2/describer/ (notes.md, dump_tables.py, containing.py, check_names.py)."
+ },
+ "verdict": {
+  "batch": "Q2",
+  "overall": "Q2 judge, round 96. Checked 39 CM550 functions, 4 CM848 functions, 19 globals, 3 CM848 enum members and 4 CM550 prototypes against the code (m68k.py, disasm_func.py, abs_refs, the RAM dump, e2m, J1939 Mongo). The investigator's skipped[] list is empty, so nothing is held back. The core findings are right. 0x2f47e is the registrar and a twin of 0x23188. 0x2f4be is the PGN 59904 dispatcher, a counterpart: CM848 stores 1 to j1939_dm1_active_flag before calling the handler. 0x2f538 is the registration list, a counterpart. The table 0x801d5a has 32 entries of 6 bytes, and its count 0x801e1a is a BYTE (every access is .b). The RAM dump holds 24 entries, with DM1 at 2 and 18 (CM848 also calls its DM1 set-up twice).\n\nTWO RELATIONS CHANGED to twin. (1) 0x2f632 and CM848 0x234a4 run the same instructions, steps and constants. CM848's full-scale pick is an if/else (bne 0x23504); the decompiler's 'load stage 6 then override' is only rendering. Only the 1-D lookup call follows each platform's API, as in the existing twins runHighSpeedGovernorPid and selectEngineSpeedLimit. Shared name: selectEngineRetarderStagePercent. (2) 0x342f0 and CM848 0x26cf0: lsl2 / add / lsl2 / lsr3 is x20>>3, identical to CM848's mulli 20 / srwi 3. The decompiler shows x5>>1. Both are registered and scheduled the same way (ENGINE, 0xfef7, 1000, 0xd2). Shared name: buildPgn65271VehicleElectricalPower1Message, which Q1's judge also confirmed.\n\nSTALE TYPES. The frozen copies predate round 96 stage C (7b3c9fd3), which renamed j1939_ccss_tx_payload_t to j1939_pgn65261_payload_t. HEAD already has the CM848 row 0x3fab0a j1939_pgn65261_payload. CM550 can_std_rx_desc_t is unchanged, so the CM550 prototypes stand.\n\nSTRUCTS TO ADD.\n- CM550 j1939_pgn_handler_entry_t, portable rows: +0 pgn_byte_1 byte 1 (PGN bits 8-15, compared with data[1]), +1 pgn_byte_0 byte 1 (bits 0-7, compared with data[0]), +2 handler_func dword 4. The 22-byte struct j1939_powertrain_messages_received ends exactly at 0x801d5a, so the table overlaps nothing.\n- CM550 j1939_pgn65261_payload_t: CM848's eight byte rows.\n- New j1939_pgn65230_payload_t in both firmwares (the investigator's six fields).\n\nROWS TO DELETE (all inside the new types, no references): CM550 0x80345a, 0x80345c and 0x8035e0 fuel_temp_control_flags (the investigator missed this one; it sits inside the 0x8035de dword). CM848 0x3fad5a and 0x3fad5c.\n\nFUNCDEF ROWS TO RETARGET: CM550 0x2f4be and 0x2f606, and 0x2ef4a (replaced by the new prototype). CM848 0x23188, 0x231cc, 0x221f0 and 0x23b38; 0x23b38 has duplicate param-0 rows at lines 87 and 244, so keep one.\n\nCOMMENT SWEEP: plates and comments in other rows cite the renamed names. CSV mentions include cm848_selectEngineRetarderStagePercent 24, cm848_j1939DispatchPgnHandler 20, cm550_retarderControlModeHandler 15 and j1939FormatMultiFrameResponse 8; there are more in docs. Regenerate the headers for both firmwares.\n\nTHE NEW 0x2f47e ROW MAY EXPORT NO BODY: its siblings 0x21272 and 0x2ee62 have rows but no body in the .cpp. Verify it through the call sites, which will show (pgn, handler).\n\nQ1 OVERLAP: my verdicts agree with Q1's judge (0x342f0 twin; 0x32e4c and 0x31c84 counterparts). Q1 owns those builders' plates. The CM848 DM1 plate cites 0x24d78 by Q1's new name.\n\nLEADS:\n- Type CM848 0x3fa9a2 as j1939_pgn_handler_entry_t[32] and drop its rows 0x3fa9a3 and 0x3fa9a4.\n- CM550 0x80da10 is 1227 +2 JCMIFISS, CM848's misfire_monitor_result.\n- CM848 J1939_PGN_LOWER still holds short forms: PGN_65262_ENGINE_TEMP, PGN_65228_DM3_CLEAR_DIAG, PGN_65271_VEHICLE_ELECTRICAL.\n- These set-ups have wrong names: 0x32244 (DM10, a twin of 0x24b64), 0x323be (DM1), 0x33aea (65257, not 65249), 0x33064 (EEC2), 0x33ce2 and 0x343d2 (vp44_ prefixes).\n- 0x31b22 is the PGN 59392 acknowledgement sender (control byte 0 = ACK, 1 = NACK).\n- 0x32b38 is the DM8 sender.\n- The describer's J1587 length helpers 0x2ed6a / 0x2edb2 and the dispatcher 0x2eea2 were not proposed here.\n\nNotes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q2/judge/.",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f47e",
+    "verdict": "CONFIRMED",
+    "final_name": "registerJ1939PgnRequestHandler",
+    "final_relation": "twin",
+    "final_cm848_address": "0x23188",
+    "own_role": "Registrar of the PGN 59904 request table: byte count 0x801e1a == 32 -> return 1; else count+1, entry 0x801d5a+6*index gets the PGN word (+0) and the handler long (+2), return 0.",
+    "reason": "Own asm 0x2f47e-0x2f4bc matches CM848 0x23188 step for step: compare count with 32, return 1, count*6 + table, store count+1 before the entry stores, halfword at +0, word at +2, return 0. The callers are 16 jsr plus the movea.l #0x2f47e,a2 at 0x2f53a (7 jsr (a2)), and all are followed by addq.l #6 (none reads d0). The name is free in both firmwares."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f4be",
+    "verdict": "AMENDED",
+    "final_name": "cm550_dispatchJ1939PgnRequest",
+    "final_relation": "counterpart",
+    "final_comment": "The PGN 59904 Request receive handler, registered for 0xea00 by cm550_registerJ1939PgnRequestHandlers. For a request addressed to j1939_engine_node_source_address or global (0xff), it scans j1939_pgn_dispatch_table up to j1939_pgn_handler_count for the entry whose PGN bytes match request data bytes 0 and 1 (the data page byte is not compared) and calls that handler with the request. With no match and a request that was not global, it sends a negative acknowledgement through cm550_diagnosticCanResponseSender(request, 1) (PGN 59392). Counterpart of CM848 cm848_dispatchJ1939PgnRequest (0x231cc), which also sets j1939_dm1_active_flag before the call.",
+    "own_role": "PGN 59904 receive handler: destination test (engine SA or 0xff), scan of 0x801d5a (entry+1 vs data[0], entry+0 vs data[1]), jsr handler(request); no match and not global -> 0x31b22(request, 1).",
+    "reason": "Name and relation confirmed: CM848 0x231cc has one extra step (stb 1 to 0x40ad53 at 0x23248-0x23250 before blrl). The comment is amended only because it named the CM848 row by its old name cm848_j1939DispatchPgnHandler, which this batch renames."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f538",
+    "verdict": "AMENDED",
+    "final_name": "cm550_registerJ1939PgnRequestHandlers",
+    "final_relation": "counterpart",
+    "final_comment": "Start-up step of mc68k_initializeJ1939Datalink. It registers cm550_dispatchJ1939PgnRequest for PGN 59904 with registerJ1939ReceiveHandler, then calls initPgn65261CruiseControlSetupStruct. It then calls eight descriptor set-ups that each register their responder: 65259, 65253, 65262, 65257, 65244, 65248, 65255, 65260. It registers seven responders directly with registerJ1939PgnRequestHandler: 65252, 65261, 65263, 65264, 65269, 65270, 65271. Last come the DM set-ups DM1 / DM2 / DM3 / DM4 / DM5 / DM10. Entries 3-23 of j1939_pgn_dispatch_table come from here. Counterpart of CM848 cm848_registerJ1939PgnRequestHandlers (0x232b4), which has the same frame but another message set (set-ups 65259 / 65262 / 65242 / 65248 / 65260; direct 65261 / 65263 / 65264 / 65269 / 65270 / 65271 / 65504).",
+    "own_role": "Start-up list: registerJ1939ReceiveHandler(0xea00, 0x2f4be), initPgn65261CruiseControlSetupStruct, 8 set-ups, 7 direct registrations through a2 = 0x2f47e, then the DM1/DM2/DM3/DM4/DM5/DM10 set-ups.",
+    "reason": "Asm 0x2f538-0x2f604 verified. The only caller is 0x28e2c in mc68k_initializeJ1939Datalink, at the same place as CM848 0x232b4 (bl at 0x539514). It has the same frame with a different set, so it is a counterpart. The old name was wrong: it dumps no diagnostic data. The comment is amended to cite CM848's new name instead of cm848_initJ1939ProtocolHandlers."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2ec50",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_claimRemoteThrottleOverride",
+    "final_relation": "counterpart",
+    "own_role": "20 ms task: claims alternate_throttle_priority / alternate_throttle for the remote throttle (priority CTRMTHPZ 0x8089a4, value 0x80a3a4) when RMTHSW or, with verification on, the latch 0x801c78 selects it; releases its own unconsumed claim otherwise or when the feature is disabled.",
+    "reason": "Asm 0x2ec50-0x2ed60 agrees with both agents. 0x80bcd0 bit 3 is RMTHSW and DS20SWSS (both mask 08), so switch 20 is the remote throttle switch. The CM550 selection (around 0x10580) also clears alternate_throttle_priority after it takes a claim, as CM848's does, so the 'claim' stem states the role; the release only withdraws a claim the selection has not used. CM848 0x50e610 plus 0x50e534 differ (fault-bit mirror, no release), so it is a counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2ed62",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeRemoteThrottle",
+    "final_relation": "counterpart",
+    "own_role": "Start-up: clr.w 0x801c78 (remote_throttle_active_flag), the remote throttle's only state.",
+    "reason": "The body is clr.w (0x801c78).l / rts. The single caller is mc68k_applicationMain at 0x2882e. CM848 0x50e768 also clears fault bits 0x1800 when the feature is disabled, so it is a counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2ef4a",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage",
+    "final_relation": "counterpart",
+    "own_role": "DM7 receive handler: stores data[0] in 0x801d3c; test 0 with JCNTCTMR bit 0x100 -> DM8 sender 0x32b38(0, 0x100); test 1 with bit 0x200 -> 0x32b38(1, 0x200); every other case -> 0x31b22(request, 1).",
+    "reason": "Asm 0x2ef4a-0x2efba verified. 0x2efbc registers it for 0xe300 with 0x21272. CM848 0x227a0 sends intake_air_heater / misfire monitor results and NACKs only identifiers below 2, so it is a counterpart. The name follows the receivePgn<number><J1939 name>Message pattern (Mongo: DM7 Command Non-continuously Monitored Test)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f606",
+    "verdict": "CONFIRMED",
+    "final_name": "decodeRetarderTorqueRequestPercent",
+    "final_relation": "twin",
+    "final_cm848_address": "0x2346c",
+    "own_role": "Decodes the TSC1 torque byte: below 25 -> 100, 125 or above -> 0, else 125 - byte.",
+    "reason": "cmpi.b #0x19 / moveq #100, cmpi.b #0x7d / clr.w, then moveq #125 minus the byte, match CM848 0x2346c (cmpwi 25 -> 100, cmpwi 125 -> 0, subfic 125) in the same order. Both are reached only from the retarder TSC1 processors, by bsr.w at 0x2f980 and 0x2fa5a and twice in CM848."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2faa4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeEngineRetarderTsc1RequestState",
+    "final_relation": "counterpart",
+    "own_role": "Start-up: retarder_torque_percent = 125, mode / device 0, 0x801e28 = sum of 0x808200-0x80820a, five lookup records (axis 0x6052a, values 0x60534..0x6055c, offset 2).",
+    "reason": "Asm 0x2faa4-0x2fb6e verified. The caller jsr at 0x28c1e comes right after 0x341e6, the same place as CM848's call at 0x539278. CM848 0x23a9c stores 100 instead of 125, so the constant differs and it is a counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2fbb2",
+    "verdict": "CONFIRMED",
+    "final_name": "registerTsc1DestinationAddressDispatcher",
+    "final_relation": "twin",
+    "final_cm848_address": "0x23bb4",
+    "own_role": "Start-up: registerJ1939ReceiveHandler(0 = TSC1, 0x2fb70).",
+    "reason": "pea 0x2fb70 / clr.w / jsr 0x21272 equals CM848 0x23bb4 (li r3,0; r4 = 0x23b38; bl registerJ1939ReceiveHandler). Both are the second registration of the J1939 start-up (0x28e20 / 0x539508), and the registered dispatcher is itself a twin. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2fb70",
+    "verdict": "CONFIRMED",
+    "final_name": "dispatchTsc1ByDestinationAddress",
+    "final_relation": "twin",
+    "final_cm848_address": "0x23b38",
+    "own_role": "TSC1 receive handler: destination == engine SA (0x80da01) or 0xff -> processEngineTsc1Request; then == retarder SA (0x80da0b) or 0xff -> 0x2f7e6.",
+    "reason": "Asm 0x2fb70-0x2fbb0 runs the same two tests in the same order with 255 as CM848 0x23b38 (lbz 2(r30); low byte of the engine SA or 255 -> bl 0x22d60; retarder SA or 255 -> bl 0x236f0). The only reference is the pea in 0x2fbb2."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2ef08",
+    "verdict": "CONFIRMED",
+    "final_name": "registerJ1939DiagnosticServiceDispatcher",
+    "final_relation": "twin",
+    "final_cm848_address": "0x221f0",
+    "own_role": "Start-up: registerJ1939ReceiveHandler(0xef00 = PGN 61184, 0x2eea2 the diagnostic service table scanner).",
+    "reason": "One call with the same constant and the twin callee. It is the first registration in both start-ups (0x28e1a / 0x539504). The registered dispatchers are counterparts, but per the registerJ1939DiagnosticHandlers precedent the twin claim rests on the registrar's own code. The describer's counterpart view is overruled by that precedent."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2efbc",
+    "verdict": "CONFIRMED",
+    "final_name": "registerJ1939Dm7Handler",
+    "final_relation": "twin",
+    "final_cm848_address": "0x22840",
+    "own_role": "Start-up: registerJ1939ReceiveHandler(0xe300 = PGN 58112 DM7, 0x2ef4a).",
+    "reason": "pea 0x2ef4a / move.w #0xe300 / jsr 0x21272 equals CM848 0x22840 (58112, 0x227a0, bl 0x538eb0). Both run after the request registration list (CM848 has two CM848-only registrations in between). This is CM848's own name without its prefix, and it is free in both firmwares."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f114",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_registerJ1939ElectronicTransmissionController1Handler",
+    "final_relation": "counterpart",
+    "own_role": "Start-up: registerJ1939ReceiveHandler(0xf002 = ETC1, 0x2efd0) and nothing else.",
+    "reason": "The CM848 counterpart 0x22bc4 first zeroes the ETC1 timeout, loads the output shaft speed timeout, sets the hold-off flag and clears fault bits when vehicle_speed_sensor_type_cal is 4 (0x22bd0-0x22c34). Those are extra steps, so it is a counterpart. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2ef36",
+    "verdict": "CONFIRMED",
+    "final_name": "registerJ1939Dm3RequestHandler",
+    "final_relation": "twin",
+    "final_cm848_address": "0x22770",
+    "own_role": "Registers 0x2ef1c for PGN 65228 (DM3) with the request registrar 0x2f47e.",
+    "reason": "pea 0x2ef1c / move.w #0xfecc / jsr 0x2f47e equals CM848 0x22770 (65228, 0x22674, bl 0x23188). Both are called between the DM2 and DM4 set-ups of the request lists (0x2f5ea / 0x23380). It transmits nothing, so the old name was wrong."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f632",
+    "verdict": "AMENDED",
+    "final_name": "selectEngineRetarderStagePercent",
+    "final_relation": "twin",
+    "final_cm848_address": "0x234a4",
+    "final_comment": "Quantizes the decoded retarder torque request jcomm_req_torque_braking_override_or_limit_value_0_125 (0-100 %) into a stage percent in retarder_torque_level_stepped. A request of 0 gives 0, and a request of 100 or more in torque limit mode (retarder_control_mode 3) gives 100. Otherwise the full-scale torque is the stage 4 values [4] (0x6055a) when engine_retarder_stage_count is 4, else the stage 6 values [4] (0x6056e), and the request is scaled by it / 100 into retarder_torque_demand_scaled. The first stage 1-5 curve (engine_retarder_torque_stage_1..5_lookup at engine_rpm_primary) whose value covers the scaled request gives 0 / 17 / 33 / 50 / 67 (83 above stage 5), one stage up in torque control mode (2): 17 / 33 / 50 / 67 / 83 (100 above stage 5). Called twice by cm550_processEngineRetarderTsc1Request (torque control and torque limit). Twin of CM848 0x234a4 (was cm848_selectEngineRetarderStagePercent): the same tests in the same order with the same constants; only the 1-D lookup call follows each platform's API (a table_lookup_1d_arguments_t record here, register arguments with a cached offset in CM848), as in the twins runHighSpeedGovernorPid and selectEngineSpeedLimit. One shared name. It formats no multi-frame response (was j1939FormatMultiFrameResponse, which CM848 0x234a4 was also once called).",
+    "own_role": "Retarder stage quantizer: 0 -> 0; mode 3 with request >= 100 -> 100; full scale = stage 4 or stage 6 values[4] by the stage count; scaled = request*full/100; first of the stage 1-5 lookups at engine speed that covers it -> 0/17/33/50/67/83, or one stage up in mode 2.",
+    "reason": "The investigator called this a counterpart for two reasons, and neither holds. (1) CM848 does not load stage_6 and then override it: at 0x234e8-0x2350c the asm is an if/else (bne 0x23504), the same shape as CM550's bne 0x2f68e / bra. (2) The lookup call convention differs, which the repository's twin standard accepts (runHighSpeedGovernorPid and selectEngineSpeedLimit are twins with the same API split). Everything else matches instruction by instruction: request == 0, mode 3 and >= 100, count == 4, x full / 100, five stages, 0x11 / 0x21 / 0x32 / 0x43 / 0x53 / 100, and the mode 2 round-up. Both are called at the same two points (CM550 bsr.w 0x2f98e / 0x2fa90; CM848 mode 2 after decode and the end of mode 3). The describer reached the same twin verdict. selectEngineRetarderStagePercent is free in both firmwares. CM848 comments that cite cm848_selectEngineRetarderStagePercent (24 CSV mentions) need the comment sweep."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2f7e6",
+    "verdict": "AMENDED",
+    "final_name": "cm550_processEngineRetarderTsc1Request",
+    "final_relation": "counterpart",
+    "final_comment": "Handles a TSC1 (PGN 0) frame addressed to the engine retarder (from dispatchTsc1ByDestinationAddress). It ignores the frame when the ECM has no engine brake output driver, for a length other than 8 and for speed control (mode 1), and gates transmission senders on j1939_retarder_shift_assist_enable. It applies the retarder ignored request list and findTsc1SourceConfiguration, and arbitrates a new sender by the priority bits (byte 1 & 0x30) and the torque byte. Then: mode 0 clears the control. Mode 2 (torque control) and mode 3 (torque limit) decode byte 4 with decodeRetarderTorqueRequestPercent and set the stage percent with selectEngineRetarderStagePercent, the timeouts and the control device. Counterpart of CM848 cm848_processEngineRetarderTsc1Request.",
+    "own_role": "TSC1 handler for the retarder address: length / mode / shift-assist filters, ignored request list, source configuration, priority arbitration, then mode 0 / 2 / 3 handling with the decode and stage selection.",
+    "reason": "Name and relation confirmed. CM848 0x236f0 masks j1939_blocked_message_bits & 5 in mode 0 and keeps the speed control flag and zero torque timer tails, so it is a counterpart. The only caller is the jsr at 0x2fba4. The comment is amended only because it named the stage selector cm550_selectEngineRetarderStagePercent, which this verdict makes the shared twin name selectEngineRetarderStagePercent."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x2ef1c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_j1939HandlePgn65228Dm3ClearInactiveFaults",
+    "final_relation": "counterpart",
+    "own_role": "DM3 request handler: diagnostic_clear_request_state = 1 (CLEAR_INACTIVE), then 0x31b22(request, 0), the positive acknowledgement.",
+    "reason": "Asm 0x2ef1c-0x2ef34 verified. RAM dump entry 20 is 0xfecc / 0x2ef1c. CM848 0x22674 gates on not_safe_to_program_flag / key switch / obd_fault_handler_enable, steps the 0-3 state machine and chooses ACK or NACK by j1939_dm1_active_flag, so it is a counterpart. The name mirrors CM848's counterpart and CM550's own cm550_j1939HandlePgn65229Dm4FreezeFrame."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33d38",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65252ShutdownMessage",
+    "final_relation": "standalone",
+    "own_role": "Builds and sends SHUTDN (PGN 65252); request handler (entry 11) and 1000 ms broadcast.",
+    "reason": "The round 95 name is kept. The registration 0xfee4 at 0x2f586 is confirmed. CM848 registers no 65252 responder (it only receives 65252). Q1 owns the builder plate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x31f30",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage",
+    "final_relation": "counterpart",
+    "own_role": "CCSS request handler: bytes 1-3 of 0x801efa from 0x80a9dc / 0x804fc6 / 0x807bf6, each x161/100 >> 8 or 0xff above 0x9e00, with no enable gates; then send 0x801eec.",
+    "reason": "Asm 0x31f30-0x31fec verified (cmpi.w #0x9e00 / bhi, x161, divu #100, asr #8). CM848 0x246fc gates byte 1 on road_speed_governor_enable and bytes 2-3 on cruise_control_enable, so the old shared name falsely claimed a twin. Both rows need prefixes, and the name follows Mongo's 'Cruise Control/Vehicle Speed Setup'."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33164",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65263EngineFluidLevelPressure1Message",
+    "final_relation": "counterpart",
+    "own_role": "Builds and sends EFL/P1 (PGN 65263); request handler (entry 13) and 500 ms broadcast.",
+    "reason": "The round 95 name and counterpart relation are kept. The registration 0xfeef at 0x2f59e is confirmed. Q1 owns the plate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33f5a",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65264PowerTakeOffInformationMessage",
+    "final_relation": "counterpart",
+    "own_role": "Builds and sends PTO (PGN 65264); request handler (entry 14) and 100 ms broadcast.",
+    "reason": "The round 95 name is kept. The registration 0xfef0 at 0x2f5aa is confirmed. Q1 owns the plate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x31bce",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65269AmbientConditionsMessage",
+    "final_relation": "counterpart",
+    "own_role": "Builds and sends AMB (PGN 65269); request handler (entry 15) and 1000 ms broadcast.",
+    "reason": "The round 95 name is kept. The registration 0xfef5 at 0x2f5b6 is confirmed. Q1 owns the plate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33e58",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65270InletExhaustConditions1Message",
+    "final_relation": "counterpart",
+    "own_role": "Builds and sends IC1 (PGN 65270); request handler (entry 16) and 500 ms broadcast.",
+    "reason": "The round 95 name is kept. The registration 0xfef6 at 0x2f5c2 is confirmed. Q1 owns the plate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x342f0",
+    "verdict": "AMENDED",
+    "final_name": "buildPgn65271VehicleElectricalPower1Message",
+    "final_relation": "twin",
+    "final_cm848_address": "0x26cf0",
+    "final_comment": "Builds and sends PGN 65271 (VEP1 Vehicle Electrical Power 1): it copies battery_voltage_sensor_state.filtered_value into a local, scales it x 20 >> 3 (the decompiler shows x 5 >> 1) and stores it byte-swapped (low byte first) at payload bytes 5-6 (0x80367e, SPN 168 battery potential), then sends j1939_pgn65271_tx_message. It is the 65271 request handler (registered directly by cm550_registerJ1939PgnRequestHandlers) and the 1000 ms broadcast (from 210 ms). Twin of CM848 0x26cf0 (was cm848_j1939HandlePgn65271VehicleElectrical): the same steps in the same order with the same constants (copy to a local, x 20 >> 3, byte swap into payload +4, send), registered and scheduled the same way in both firmwares. One shared name.",
+    "own_role": "VEP1 builder: local = battery voltage; local = local*20 >> 3; byteSwap16 -> payload +4 (0x80367e); send 0x80366c.",
+    "reason": "The investigator's 'other constants' does not hold. 0x342fa-0x34310 is move.w (0x80a3d0) to a local, lsl #2, add, lsl #2, lsr #3, which is x20>>3, the same as CM848's lhz / sth local / mulli 20 / srwi 3 (0x26d00-0x26d10). Then both byte-swap into payload +4 and send. The source is each firmware's own battery voltage, which is not a step difference. Both firmwares register it directly (0xfef7) and schedule it (ENGINE, 0xfef7, 1000, 0xd2). The describer and Q1's judge (notes line 25) reach the same twin verdict. The name is free in both firmwares."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x31c84",
+    "verdict": "AMENDED",
+    "final_name": "cm550_buildPgn65265CruiseControlVehicleSpeedMessage",
+    "final_relation": "counterpart",
+    "final_comment": "Builds and sends PGN 65265 (CCVS1). Byte 1 comes from the cruise switch bits (0xf3 / 0xf7, the two-speed axle field when 0x803d48 is 1). Bytes 2-3 are the filtered road speed x 412 >> 8 (mph to km/h, capped at 0x9c00), low byte first. Bytes 4-5 are the cruise, brake and clutch switch fields, byte 6 the cruise set speed and byte 7 the cruise state. It is the 65265 request handler registered by cm550_initializePgn65265CruiseControlVehicleSpeedHandler and the 100 ms broadcast. Counterpart of CM848 cm848_buildPgn65265CruiseControlVehicleSpeedMessage: the speed scale is the same (x 412 >> 8), but CM848 sends 0xffff for the speed when vehicle_speed_sensor_type_cal is below 1, reports datalink-sourced switches as not available and gates fields on its enables.",
+    "own_role": "CCVS1 builder / 65265 request handler (entry 0): switch-derived bytes, road speed x412>>8 low byte first, set speed and cruise state; send 0x801ed4.",
+    "reason": "The name and counterpart relation are confirmed (Q1's judge agrees). The plate's comparison was wrong: 0x31d18-0x31d28 computes ((((x*8-x)*2-x)*8-x)*4)>>8 = x*412>>8, CM848's own x*0x19c>>8. So 'which scales the speed x 412 / 256' is not a difference. The real differences (the vehicle_speed_sensor_type_cal < 1 -> 0xffff test, datalink-source 0xc0 / 0x30 forms, enable gates) are in the corrected text. Q1 owns this builder's plate; use this text if Q2's plate is applied."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x32052",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65259ComponentIdentificationMessage",
+    "final_relation": "counterpart",
+    "own_role": "CI (PGN 65259) request handler, entry 3, registered by 0x320f6.",
+    "reason": "The round 95 name and counterpart relation are kept. RAM dump entry 3 is 0xfeeb / 0x32052."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x32222",
+    "verdict": "CONFIRMED",
+    "final_name": "buildPgn65234Dm10TestIdentifiersSupportMessage",
+    "final_relation": "twin",
+    "final_cm848_address": "0x24b28",
+    "own_role": "DM10 request handler: 0x801f4c = byteSwap16(&supported_non_continuous_monitors_bits); send 0x801f3e.",
+    "reason": "This is a new row. The body 0x32222-0x32242 starts after the rts at 0x32220 and ends at its own rts. Its only reference is the pea at 0x32286 (RAM dump entry 23). It matches CM848 0x24b28 step for step (pointer 0x5a494, reverseByteOrder16, sth 0x3fab60, send 0x3fab52). The name is free, and Mongo calls 65234 DM10 Non-Continuously Monitored Systems Test Identifiers Support."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x322ae",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage",
+    "final_relation": "counterpart",
+    "own_role": "DM1 builder: when the status nibble is idle, sends the lamp byte and one 4-byte DTC per active fault not flagged 0x4000 (SPN bits of ROM 0x60fac, FMI, count capped at 127, bit 0x80), or lamp 0 + 0xffffffff when none.",
+    "reason": "Asm 0x322ae-0x323bc verified: the loop bound is only cmp.b (0x8058d4) and there is no byte swap. CM848 0x24be8 has cmpwi r6,20 (0x24d54) and a stack byte swap (0x24ce4-0x24d04), so the old shared name falsely claimed a twin and both rows take prefixes. CM848 also calls its DM1 set-up twice, so 'registered twice, as in CM848' holds."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x3241c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65227Dm2PreviouslyActiveDiagnosticTroubleCodesMessage",
+    "final_relation": "counterpart",
+    "own_role": "DM2 builder: lamp byte first, then 0xffffffff or one DTC per previously active fault (list 0x8058f4) not flagged 0x4000; send 0x80265c.",
+    "reason": "Asm verified (lamp built at 0x3243c before the empty test; bound only cmp.b (0x8058f4) at 0x32512). CM848 0x24e78 has cmpwi r7,20 (0x24fd8) and the same byte swap (0x24f6c-0x24f88), so it is a counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x3258a",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_j1939HandlePgn65229Dm4FreezeFrame",
+    "final_relation": "counterpart",
+    "own_role": "DM4 request handler, entry 21.",
+    "reason": "The round 93 name is kept. RAM dump entry 21 is 0xfecd / 0x3258a."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x32a42",
+    "verdict": "CONFIRMED",
+    "final_name": "buildPgn65230Dm5DiagnosticReadiness1Message",
+    "final_relation": "twin",
+    "final_cm848_address": "0x25458",
+    "own_role": "DM5 builder: payload 0x803458 = two DTC counts, low bytes of JCOBDG / JCCTMR, swapped JCNTCTMR, swapped status word (0x1000 when 0x80da0e == 1 or bit 0x100 unsupported, else 0); send 0x80344a.",
+    "reason": "Asm 0x32a42-0x32ae0 matches CM848 0x25458 step for step: clr local; stb counts +0 / +1; low bytes +2 / +3; swap +4; ==1 -> 0x1000; bit 0x100 == 0 -> 0x1000; else & 0xfeff; swap +6; send. Both are registered for 0xfece by the DM5 set-ups. Nothing in it touches the VP44. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x32e4c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn61443ElectronicEngineController2Message",
+    "final_relation": "counterpart",
+    "own_role": "EEC2 builder / 61443 request handler (entry 1) and 50 ms broadcast: byte 1 kickdown (0xf4 above the threshold, else 0xf0; 0xf8 on faults) plus idle switch bits, byte 2 commanded throttle x 0.625, byte 3 load, byte 4 remote throttle, bytes 5-8 0xff.",
+    "reason": "Counterpart confirmed: CM550 sends commanded_throttle_state.commanded_throttle where CM848 0x25b10 sends all_speed_governor_equivalent_throttle, and the fault tests differ. Q1's judge reached the same verdict and name, and Q1 owns the plate. Read the plate's '0xf0 / 0xf4 above the kickdown threshold' as 0xf4 above and 0xf0 otherwise."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33716",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65253EngineHoursRevolutionsMessage",
+    "final_relation": "standalone",
+    "own_role": "HOURS (PGN 65253) request handler, entry 4.",
+    "reason": "The round 95 name is kept. CM848 registers no 0xfee5 (its registrar calls were checked)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x337c4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65262EngineTemperature1Message",
+    "final_relation": "counterpart",
+    "own_role": "ET1 builder; request handler (entry 5) and 1000 ms broadcast.",
+    "reason": "The round 95 name is kept. Q1 owns the plate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33a62",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65257FuelConsumptionMessage",
+    "final_relation": "standalone",
+    "own_role": "LFC (PGN 65257) request handler, entry 6, registered by 0x33aea.",
+    "reason": "The round 95 name is kept. CM848 registers no 0xfee9."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x33c6c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65244IdleOperationMessage",
+    "final_relation": "standalone",
+    "own_role": "IO (PGN 65244) request handler: bytes 1-4 = swap32(scale(TIGAIST2 >> 2, 3785411, 1000000)) SPN 236; bytes 5-8 = swap32(scale(TITMIS, 20, 36000)) SPN 235; send 0x8035d0.",
+    "reason": "Asm 0x33c6c-0x33ce0 verified. The registration is 0xfedc at 0x33d24 (entry 7). Mongo: 65244 Idle Operation, SPN 236 at bytes 1-4 and SPN 235 at bytes 5-8, which matches the 0.5 L and 0.05 h scalings. CM848 has no 0xfedc. The old name ioControlDataBuilder was wrong."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x34232",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65248VehicleDistanceMessage",
+    "final_relation": "counterpart",
+    "own_role": "VD (PGN 65248) request handler, entry 8.",
+    "reason": "The round 95 name and relation are kept."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x34394",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65255VehicleHoursMessage",
+    "final_relation": "standalone",
+    "own_role": "VH (PGN 65255) request handler, entry 9.",
+    "reason": "The round 95 name is kept. CM848 registers no 0xfee7."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x34430",
+    "verdict": "CONFIRMED",
+    "final_name": "sendPgn65260VehicleIdentificationMessage",
+    "final_relation": "twin",
+    "final_cm848_address": "0x26db4",
+    "own_role": "VI request handler: one cm550_sendCanMessage(&j1939_pgn65260_tx_message).",
+    "reason": "This is a new row. The body 0x34430-0x3443e is pea 0x80369c / jsr 0x104e8 / addq / rts, and its only reference is the pea at 0x34482 (entry 10). It is the same single step as CM848 0x26db4 (bl 0x539fc with 0x3faef8), registered for 0xfeec by the VI set-ups; the set-ups differ (CM848 copies the VIN and appends '*'), the handlers do not. The plate is verified (0x803e7f is vehicle_vin_string_cal byte[20]). It follows the sendPgn61444ElectronicEngineController1Message precedent."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x246fc",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage",
+    "final_relation": "counterpart",
+    "own_role": "CCSS request handler with road speed governor and cruise enable gates (0xff when off), x161/100 >> 8 scaling, then send.",
+    "reason": "The decompiled gates on algorithm_enable_flags_3_cal.road_speed_governor_enable / cruise_control_enable are absent from CM550 0x31f30, so the unprefixed shared name was a false twin claim. The name is free."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x24be8",
+    "verdict": "AMENDED",
+    "final_name": "cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage",
+    "final_relation": "counterpart",
+    "final_comment": "Builds and sends DM1 (PGN 65226) while j1939_dm1_transmit_status is idle. With no active fault it sends lamp byte 0 and 0xffffffff (6 bytes). Otherwise it sends the lamp byte of cm848_buildJ1939LampStatusByte and one DTC per active_dtc_list_cal slot (at most 20) whose fault definition lacks flag 0x4000: the SPN bits of its fault_111_j1939_data table word with the first two bytes swapped, the FMI, the count byte of its fault state record (at most 127) and bit 0x80. It is the 65226 request handler (registered twice) and is called by 0x24d78 (cm848_processDm1FaultBroadcast, renamed cm848_broadcastPgn65226Dm1UntilFaultsClear by batch Q1). Counterpart of CM550 cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage, which has no 20-slot cap and no byte swap.",
+    "own_role": "DM1 builder: lamp byte and up to 20 DTCs with a byte-swapped SPN word, or lamp 0 + 0xffffffff.",
+    "reason": "The name is confirmed. Two fixes in the comment. With no fault the code stores j1939_dm1_lamp_status = 0 (0x24c40-0x24c44), not the built lamp byte. And 0x24d78 is being renamed by Q1, whose judge confirmed it."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x231cc",
+    "verdict": "AMENDED",
+    "final_name": "cm848_dispatchJ1939PgnRequest",
+    "final_relation": "counterpart",
+    "final_comment": "The PGN 59904 Request receive handler, registered for 0xea00 by cm848_registerJ1939PgnRequestHandlers. For a request addressed to j1939_source_address or global, it scans j1939_pgn_dispatch_table up to j1939_pgn_handler_count for the entry matching request data bytes 0-1. It sets j1939_dm1_active_flag and calls that handler with the request. With no match and a request that was not global, it sends cm848_sendJ1939NegativeAcknowledgement (J1939_NACK). Counterpart of CM550 cm550_dispatchJ1939PgnRequest, which has no flag store. It is renamed for the CM550 pair; it dispatches requests, not handlers. | earlier note: jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate",
+    "own_role": "PGN 59904 dispatcher: destination test, table scan, flag store, blrl handler, NACK when not global.",
+    "reason": "The rename is confirmed (asm 0x231cc-0x232b0). The proposed plate dropped the HEAD comment 'jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate'. Repository practice keeps such notes as 'earlier note:', so it is restored; the review note is not a veto. The funcdef row 0x231cc (msg j1939_received_message_t* at HEAD) needs its function_name updated."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x232b4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_registerJ1939PgnRequestHandlers",
+    "final_relation": "counterpart",
+    "own_role": "Start-up list: registerJ1939ReceiveHandler(59904, 0x231cc), initPgn65261CruiseControlSetupStruct, 5 set-ups, 7 direct registrations, 6 DM set-ups.",
+    "reason": "Asm 0x232b4-0x2339c verified. The caller bl is at 0x539514 in cm848_j1939_system_init. The name is free and states the role; the old name said init / protocol."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d5a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn_dispatch_table",
+    "final_type": "j1939_pgn_handler_entry_t[32]",
+    "reason": "The writer is 0x2f47e (move.w +0 / move.l +2) and the only reader is 0x2f4be (byte compares at +0 / +1, call through +2). 0x801d5a + 192 = 0x801e1a, the count. No row lies inside, and the 22-byte struct at 0x801d44 ends exactly at 0x801d5a. There is no e2m record. The dump holds 24 entries. The CM848 name is reused, and the struct-array type follows the siblings j1939_receive_handler_table / j1939_diagnostic_service_table. Add CM550 struct rows j1939_pgn_handler_entry_t (portable): pgn_byte_1 byte 1, pgn_byte_0 byte 1, handler_func dword 4."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801e1a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn_handler_count",
+    "final_type": "byte",
+    "reason": "Every access is a byte (cmpi.b #0x20 / move.b / addq.b in 0x2f47e; move.b / cmp.b in 0x2f4be); the only absolute references are the two movea.l loads. The dump value is 0x18 with 0x801e1b = 0. It is outside the EEPROM window, so there is no _cal."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d3c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_dm7_test_identifier",
+    "final_type": "byte",
+    "reason": "The only reference is a3 at 0x2ef52: move.b (a0),(a3), move.b (a3), cmpi.b #1,(a3), all bytes. It holds DM7 data[0] (SPN 1224), the same role as CM848's 0x3fa97a. No e2m record."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801f4c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_dm10_payload",
+    "final_type": "word",
+    "reason": "move.w d0,(0x801f4c) at 0x3222e, plus the data pointer at 0x3226e (length 2). It sits right after j1939_dm10_tx_message (0x801f3e + 14), the same role as CM848's 0x3fab60."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803458",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65230_payload",
+    "final_type": "j1939_pgn65230_payload_t",
+    "reason": "All accesses go through a2 = 0x803458 in 0x32a42 (bytes +0..+3, words +4 / +6), and the data pointer is at 0x32b0e (length 8). The rows 0x80345a / 0x80345c have no ROM reference and must be deleted. The new struct j1939_pgn65230_payload_t needs adding in both firmwares; its fields match Mongo SPNs 1218-1223."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fad56",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65230_payload",
+    "final_type": "j1939_pgn65230_payload_t",
+    "reason": "r31 = 0x3fad56 in 0x25458 (stb +0..+3, sth +4 / +6). cm848_initPgn65230Dm5Handler's data_pointer is &DAT_003fad56. The rows 0x3fad5a j1939_feature_config_tx_word and 0x3fad5c j1939_dm1_active_faults_tx_word render only in the DM5 builder and must be deleted. It is not in the EEPROM window."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801efa",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn65261_payload",
+    "final_type": "j1939_pgn65261_payload_t",
+    "final_comment": "The 8-byte CCSS (PGN 65261) payload: bytes 1-3 (SPN 74 / 87 / 88 in km/h) are written by cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage; bytes 4-8 are set to 0xff by initPgn65261CruiseControlSetupStruct. The layout is CM848's j1939_pgn65261_payload_t (CM848's instance j1939_pgn65261_payload, 0x3fab0a).",
+    "reason": "The address, accesses and dump (00 00 00 ff ff ff ff ff) are confirmed, and no row lies inside 0x801efa-0x801f01. The type is amended: round 96 stage C (HEAD 7b3c9fd3) renamed CM848's j1939_ccss_tx_payload_t to j1939_pgn65261_payload_t, so the proposed type no longer exists. Copy CM848's eight byte rows to CM550 as portable struct rows."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fab0a",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn65261_payload",
+    "final_type": "j1939_pgn65261_payload_t",
+    "final_comment": "the CCSS (PGN 65261 Cruise Control / Vehicle Speed Setup) payload: 8 bytes - SPN 74 maximum vehicle speed limit / SPN 87 and 88 the cruise control high and low set limit speeds / five 0xff bytes - sent through j1939_pgn65261_tx_message (it had no row and rendered as the default label j1939_ccss_tx_payload_t_003fab0a; PR #53 round 96)",
+    "reason": "Already applied: HEAD's global_variables.csv has 0x003fab0a,j1939_pgn65261_payload,j1939_pgn65261_payload_t from round 96 stage C (pgn65261_payload_r96.py). The proposal's type j1939_ccss_tx_payload_t no longer exists. Keep the HEAD row unchanged (its comment is given here); nothing needs to be applied."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080da0e",
+    "verdict": "CONFIRMED",
+    "final_name": "intake_air_heater_monitor_result",
+    "final_type": "word",
+    "reason": "e2m 1227 +0 JCGPSS resolves here. Word accesses: cmpi.w #1,(a5) and tst.w (a5) with a5 = 0x80da0e (0x32a5a). Other references are only the parameter ID table (0x364d4 / 0x364d8). This is the same record as CM848's intake_air_heater_monitor_result (Intake_Air_Heater_Status). It is outside the EEPROM window."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00060fa4",
+    "verdict": "CONFIRMED",
+    "final_name": "obd_compliance_code",
+    "final_type": "word",
+    "reason": "e2m 1228 +4 JCOBDG, length 2. The only access is the low-byte read move.b (0x60fa5) at 0x32a74, which a big-endian word typed at 0x60fa4 explains. It is CM848's obd_compliance_code (lhz + stb in the twin), in ROM beyond the dump."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00060fa6",
+    "verdict": "CONFIRMED",
+    "final_name": "supported_continuous_monitors_bits",
+    "final_type": "word",
+    "reason": "e2m 1228 +6 JCCTMR, length 2. The only access is move.b (0x60fa7) at 0x32a7c (the low byte). It is CM848's supported_continuous_monitors_bits."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035de",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pgn65244_total_idle_fuel_used",
+    "final_type": "dword",
+    "final_comment": "PGN 65244 (IO) bytes 1-4, SPN 236 engine total idle fuel used (0.5 L/bit, low byte first), written by cm550_buildPgn65244IdleOperationMessage from total_idle_fuel_consumed; the data pointer of j1939_pgn65244_tx_message. It replaces the row 0x8035e0 fuel_temp_control_flags (type undefined), which lies inside it (IO bytes 3-4) and has no reference.",
+    "reason": "The name and type are confirmed: move.l d0,(0x8035de) at 0x33ca0 and the data pointer at 0x33d0c (length 8). The investigator missed that the dword swallows the named row 0x8035e0 fuel_temp_control_flags. abs_refs finds no reference to it and the .cpp does not use it, so the row must be deleted with this change; the comment now says so."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008035e2",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65244_total_idle_hours",
+    "final_type": "dword",
+    "reason": "Its only reference is move.l d0,(0x8035e2) at 0x33cc8, after byteSwap32 of scale(TITMIS, 20, 36000). Mongo gives SPN 235 at bytes 5-8. The old name protection_state_enable_flags had no basis. No row lies inside 0x8035e2-0x8035e5."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00804fb8",
+    "verdict": "CONFIRMED",
+    "final_name": "total_idle_fuel_consumed",
+    "final_type": "dword",
+    "reason": "e2m 117F +18 TIGAIST2, 4 bytes, 0.125 per count. Other e2m files of the family read '...WHILE UNDER I(DLE)'. Accesses: move.l at 0xf5d0 / 0x33c76 and the pea at 0x30440 (the accumulator in cm550_runTimeCountersUpdate). The name pairs with total_fuel_consumed (TIGAT2). It is outside 0x803b0a-0x804f93, so there is no _cal. Dump 1463.5 gal."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00804fb4",
+    "verdict": "CONFIRMED",
+    "final_name": "total_idle_operating_time",
+    "final_type": "dword",
+    "reason": "e2m 117F +14 TITMIS, 4 bytes, 0.1 s per count. Other e2m files read '...WHILE UNDER IDLE CONDITION'. Accesses: move.l (0x806152),(0x804fb4) at 0x30420, and reads at 0xf580 / 0x33cb0. It pairs with total_engine_operating_time. There is no _cal. No row lies inside."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801e28",
+    "verdict": "AMENDED",
+    "final_name": "engine_retarder_stage_count",
+    "final_type": "word",
+    "final_comment": "The sum of the six engine brake driver cylinder counts (0x808200-0x80820a), set once by cm550_initializeEngineRetarderTsc1RequestState. selectEngineRetarderStagePercent tests it for 4 to pick the stage 4 full-scale torque. This is CM848's engine_retarder_stage_count (0x3faa72). 6 in the dump.",
+    "reason": "Name and type confirmed. The only references are move.w d0 at 0x2faf8 and cmpi.w #4 at 0x2f678, and the dump value is 6. The comment is amended only to name the stage selector by its new shared twin name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a9dc",
+    "verdict": "CONFIRMED",
+    "final_name": "maximum_road_speed",
+    "final_type": "word",
+    "reason": "e2m 117D +18 RSMXRZ, length 2, MPH/256, the record CM848 calls Max_Road_Speed / maximum_road_speed. Word accesses at 0xf00c and in 0x31f30. It is outside the EEPROM window, and no row overlaps it."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00804fc6",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_maximum_road_speed",
+    "final_type": "word",
+    "reason": "e2m 117F +26 CRMXRZ, length 2, which CM848 names cruise_maximum_road_speed_cal (EEPROM there). Here 0x804fc6 is above the image end 0x804f93, so there is no _cal. Word accesses at 0xf0e0 / 0x31f76 / 0x31f82."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807bf6",
+    "verdict": "CONFIRMED",
+    "final_name": "cruise_speed_low_limit",
+    "final_type": "word",
+    "reason": "e2m 117E +0 CRMNRUVS, length 2, the same record as CM848's cruise_speed_low_limit. Word accesses at 0xf0ec and in 0x31f30 (a3). It is in the ROM-calibration RAM copy, so there is no _cal. No row overlaps it."
+   },
+   {
+    "kind": "enum_member",
+    "firmware": "CM848",
+    "address": "J1939_PGN_LOWER:65234",
+    "verdict": "CONFIRMED",
+    "final_name": "PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT",
+    "reason": "Mongo: 65234 = DM10, and 65235 = DM11. 0xfed2 is registered with the DM10 handler. The enum is applied to no global, parameter or field (only enums.csv and firmware_types.hpp), so there is no store or compare to check. The name is unique in the enum. Regenerate the header."
+   },
+   {
+    "kind": "enum_member",
+    "firmware": "CM848",
+    "address": "J1939_PGN_LOWER:65504",
+    "verdict": "CONFIRMED",
+    "final_name": "PGN_65504_PROPRIETARY_B",
+    "reason": "Mongo: 65504 = Proprietary B (PropB_E0). The enum is not applied anywhere, and the name is unique."
+   },
+   {
+    "kind": "enum_member",
+    "firmware": "CM848",
+    "address": "J1939_PGN_LOWER:65264",
+    "verdict": "CONFIRMED",
+    "final_name": "PGN_65264_POWER_TAKE_OFF_INFORMATION",
+    "reason": "The naming rules ban PTO, and J1939-71 calls 65264 Power Takeoff Information. The enum is not applied anywhere, and the name is unique. Lead: PGN_65262_ENGINE_TEMP, PGN_65228_DM3_CLEAR_DIAG and PGN_65271_VEHICLE_ELECTRICAL still use short forms."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM550",
+    "address": "0x2f47e",
+    "verdict": "CONFIRMED",
+    "final_name": "registerJ1939PgnRequestHandler",
+    "reason": "byte return (moveq #1 / clr.b d0). pgn ushort at +4 (move.w (8,a7) after the a2 push) and handler void* at +6 (move.l (0xa,a7)), per stack_parameter_layout.csv: 2-byte slots, a long right after a word, a row for every parameter. Callers push pea handler then move.w pgn and pop 6. Note that the sibling registrars 0x21272 / 0x2ee62 have rows but export no body, so check the call sites when verifying."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM550",
+    "address": "0x2ef4a",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage",
+    "reason": "movem of 3 registers, then movea.l (0x10,a7),a2: a long at +4. It dereferences (6,a2) and passes a2 to 0x31b22. This replaces the stale row 'msg_ptr int'."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM550",
+    "address": "0x2ef1c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_j1939HandlePgn65228Dm3ClearInactiveFaults",
+    "reason": "movea.l (0x4,a7),a0 (no saved registers) is the request long at +4, handed to 0x31b22. The dispatcher pushes the request (move.l a3,-(a7) at 0x2f504). It returns nothing."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM550",
+    "address": "0x2fb70",
+    "verdict": "CONFIRMED",
+    "final_name": "dispatchTsc1ByDestinationAddress",
+    "reason": "movem of 2 registers, then movea.l (0xc,a7),a2: a long at +4. It reads byte 2 and passes a2 on to 0x2f128 / 0x2f7e6. In the CM848 twin's funcdefs, keep only one of the duplicate param-0 rows at 0x23b38 (lines 87 and 244)."
+   }
+  ]
+ }
+}

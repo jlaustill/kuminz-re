@@ -1,0 +1,14 @@
+air_conditioning_clutch_relay DAT_003fcf40
+intake_heater_1 DAT_003fcf42
+intake_heater_2 DAT_003fcf44
+fuel_transfer_pump DAT_003fcf46
+wait_to_start_lamp DAT_003fcf48
+exhaust_brake DAT_003fcf4a
+fuel_control cold_start_sync_protection_countdown
+cooling_fan cold_start_injection_protection_countdown
+converter_clutch_solenoid DAT_003fcf50
+overdrive_solenoid DAT_003fcf52
+cruise_vent_solenoid DAT_003fcf54
+cruise_vacuum_solenoid DAT_003fcf56
+cruise_servo_supply DAT_003fcf58
+transmission_relay DAT_003fcf5a

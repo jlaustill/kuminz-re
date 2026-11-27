@@ -1,0 +1,10 @@
+0x0001999c: 2 token changes: ' \ =>  | ' => 
+0x00019caa: 2 token changes: ' \ =>  | ' => 
+0x0001a350: 2 token changes: ' \ =>  | ' => 
+0x0001a746: 2 token changes: ' \ =>  | ' => 
+0x0003478c: 2 token changes: ' \ =>  | ' => 
+0x00034a82: 3 token changes: ' \ =>  | ' =>  | ' \ x01 ' => 1
+---- census of distinct changes
+   6 ' \ => 
+   6 ' => 
+   1 ' \ x01 ' => 1

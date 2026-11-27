@@ -1,0 +1,14 @@
+cm848: round 26 closing - the peer cruise review recorded, the session archive, verify
+
+- task 046, the round 26 section:
+  - stage A;
+  - the vehicle speed finding: cm848_calculateVehicleSpeed always rewrites vehicle_speed_unfiltered from the TPU
+    sensor before filtering it, so a mode-4 (J1939 gear ratio) speed never reaches vehicle_speed;
+  - the review's firmware/CLAUDE.md item. Its claim is that the J1939 input layer's CCVS mechanism is described
+    wrongly. I did not verify it and did not apply it: CLAUDE.md is left for the user, because it was a peer's
+    request.
+- PR body, README, the todo line.
+- The session archive: the round 26 worklist and map, the build and verify logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

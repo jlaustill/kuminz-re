@@ -1,0 +1,6 @@
+Round 11 stage C pilot (switch_input_state_t, all 32 switches as bitfields), measured 2026-11-21:
+- 216 reads of switch_input_state_bits.<field>
+- 10 piece lines (._N_1_) in 3 setters: cm848_checkSwitch31OnTimeFault (6), cm848_updateAirConditioningSwitchFromPci (2), cm848_deriveSecondBrakeSwitchSignal (2); the ._N_1_ line count went 183 -> 193
+- 2 of the 5 setter functions folded into field assignments (cm848_detectThreeAcceleratorPedalPresses, cm848_updateSwitch31FromAcceleratorPedal: unwired_switch = 1 / 0)
+- the scanner (cm848_scanAndDebounceSwitchInputs) printed (&switch_input_state_bits.field_0x0)[i]
+Not shipped (it failed the no-pieces gate and the firmware/CLAUDE.md wave 11 rule); the narrowed form (bytes 0 / 1 / 3 as byte fields, byte 2 as bitfields) replaces it.

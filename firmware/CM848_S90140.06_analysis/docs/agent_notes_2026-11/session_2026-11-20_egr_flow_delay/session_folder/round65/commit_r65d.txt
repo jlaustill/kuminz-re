@@ -1,0 +1,13 @@
+firmware/CLAUDE.md: two round 65 lines on the current names
+
+Quoting the round's four refreshed CLAUDE.md lines for the report showed two that were still out of date:
+- Line 217 named the J1939 receive handlers as the brace list j1939_receivePgn{57344,...}Handler. The reference
+  refresh had changed only the registrar on that line. It now lists the six cm848_receivePgn<N>...Message names,
+  and keeps the old form as "were".
+- Line 230 said the ROM CCVS1 / EEC2 transmit builders at 0x24178 / 0x25b10 had their "names not yet fixed".
+  function_renames.csv has had them as cm848_buildPgn65265CruiseControlVehicleSpeedMessage /
+  cm848_buildPgn61443ElectronicEngineController2Message since earlier rounds. It now uses those names, and keeps the
+  old ones as "were".
+Task 046 records both. CLAUDE.md does not feed the build.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

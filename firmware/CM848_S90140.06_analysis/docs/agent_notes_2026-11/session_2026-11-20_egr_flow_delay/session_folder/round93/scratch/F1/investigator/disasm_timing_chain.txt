@@ -1,0 +1,130 @@
+=== timingRunner 30b34-30b62
+030b34: 4eb900026af0             jsr (0x26af0).l
+030b3a: 4eb90000c2ee             jsr (0xc2ee).l
+030b40: 4eb900012484             jsr (0x12484).l
+030b46: 4eb900034dba             jsr (0x34dba).l
+030b4c: 4eb90000b4ce             jsr (0xb4ce).l
+030b52: 61bc                     bsr.s 0x30b10
+030b54: 4eb900017cf0             jsr (0x17cf0).l
+030b5a: 4eb900049f32             jsr (0x49f32).l
+030b60: 4e75                     rts
+=== misfire 26af0-26b3a
+026af0: 48e70030                 movem.l a3/a2,-(a7)
+026af4: 247c0080d346             movea.l #0x80d346,a2
+026afa: 267c0080d34a             movea.l #0x80d34a,a3
+026b00: 227c0080a26e             movea.l #0x80a26e,a1
+026b06: 207c0080d348             movea.l #0x80d348,a0
+026b0c: 303900803cd4             move.w (0x803cd4).l,d0
+026b12: 028000000001             andi.l #0x1,d0
+026b18: 671a                     beq.s 0x26b34
+026b1a: 4a50                     tst.w (a0)
+026b1c: 6616                     bne.s 0x26b34
+026b1e: 33d20080a270             move.w (a2),(0x80a270).l
+026b24: 3011                     move.w (a1),d0
+026b26: b052                     cmp.w (a2),d0
+026b28: 630a                     bls.s 0x26b34
+026b2a: 3491                     move.w (a1),(a2)
+026b2c: 0253fffe                 andi.w #0xfffe,(a3)
+026b30: 30bc000b                 move.w #0xb,(a0)
+026b34: 4cdf0c00                 movem.l (a7)+,a2/a3
+026b38: 4e75                     rts
+=== afcTiming c2ee-c340
+00c2ee: 227c0080d346             movea.l #0x80d346,a1
+00c2f4: 207c0080d34a             movea.l #0x80d34a,a0
+00c2fa: 7000                     moveq #0,d0
+00c2fc: 3011                     move.w (a1),d0
+00c2fe: 32390080de68             move.w (0x80de68).l,d1
+00c304: 48c1                     ext.l d1
+00c306: d081                     add.l d1,d0
+00c308: 6a04                     bpl.s 0xc30e
+00c30a: 4251                     clr.w (a1)
+00c30c: 6008                     bra.s 0xc316
+00c30e: 30390080de68             move.w (0x80de68).l,d0
+00c314: d151                     add.w d0,(a1)
+00c316: 3010                     move.w (a0),d0
+00c318: 0240fffb                 andi.w #0xfffb,d0
+00c31c: 8079008000d6             or.w (0x8000d6).l,d0
+00c322: 3080                     move.w d0,(a0)
+00c324: 4e75                     rts
+00c326: 48e7003c                 movem.l a5/a4/a3/a2,-(a7)
+00c32a: 247c0080a8f8             movea.l #0x80a8f8,a2
+00c330: 267c0080a8fc             movea.l #0x80a8fc,a3
+00c336: 287c0080d0c8             movea.l #0x80d0c8,a4
+00c33c: 2a7c0080a8fa             movea.l #0x80a8fa,a5
+=== cylPressure 12484-124e4
+012484: 227c0080d346             movea.l #0x80d346,a1
+01248a: 207c0080d34a             movea.l #0x80d34a,a0
+012490: 33f90080d3460080aaa4     move.w (0x80d346).l,(0x80aaa4).l
+01249a: 3211                     move.w (a1),d1
+01249c: d2790080aa9e             add.w (0x80aa9e).l,d1
+0124a2: 48c1                     ext.l d1
+0124a4: 2201                     move.l d1,d1
+0124a6: 6a04                     bpl.s 0x124ac
+0124a8: 4251                     clr.w (a1)
+0124aa: 6016                     bra.s 0x124c2
+0124ac: 0c8100000400             cmpi.l #0x400,d1
+0124b2: 6f06                     ble.s 0x124ba
+0124b4: 32bc0400                 move.w #0x400,(a1)
+0124b8: 6008                     bra.s 0x124c2
+0124ba: 30390080aa9e             move.w (0x80aa9e).l,d0
+0124c0: d151                     add.w d0,(a1)
+0124c2: 3010                     move.w (a0),d0
+0124c4: 0240fff7                 andi.w #0xfff7,d0
+0124c8: 80790080021c             or.w (0x80021c).l,d0
+0124ce: 3080                     move.w d0,(a0)
+0124d0: 4e75                     rts
+0124d2: 48e70030                 movem.l a3/a2,-(a7)
+0124d6: 247c008001d4             movea.l #0x8001d4,a2
+0124dc: 267c008001f8             movea.l #0x8001f8,a3
+0124e2: 227c0080ccf6             movea.l #0x80ccf6,a1
+=== wetStack 34dba-34de0
+034dba: 227c0080d346             movea.l #0x80d346,a1
+034dc0: 207c0080dee4             movea.l #0x80dee4,a0
+034dc6: 33d10080dee6             move.w (a1),(0x80dee6).l
+034dcc: 3010                     move.w (a0),d0
+034dce: b051                     cmp.w (a1),d0
+034dd0: 630c                     bls.s 0x34dde
+034dd2: 3290                     move.w (a0),(a1)
+034dd4: 33f9008036e20080d348     move.w (0x8036e2).l,(0x80d348).l
+034dde: 4e75                     rts
+=== ancTiming b4ce-b4f8
+00b4ce: 227c0080d346             movea.l #0x80d346,a1
+00b4d4: 207c0080a28e             movea.l #0x80a28e,a0
+00b4da: 33d10080a29e             move.w (a1),(0x80a29e).l
+00b4e0: 3010                     move.w (a0),d0
+00b4e2: b051                     cmp.w (a1),d0
+00b4e4: 640a                     bcc.s 0xb4f0
+00b4e6: 3290                     move.w (a0),(a1)
+00b4e8: 33fc00030080d348         move.w #0x3,(0x80d348).l
+00b4f0: 4e75                     rts
+00b4f2: 48e70030                 movem.l a3/a2,-(a7)
+00b4f6: 247c0080a290             movea.l #0x80a290,a2
+=== maxLimit 30b10-30b34
+030b10: 227c0080d346             movea.l #0x80d346,a1
+030b16: 207c00808a74             movea.l #0x808a74,a0
+030b1c: 3011                     move.w (a1),d0
+030b1e: b050                     cmp.w (a0),d0
+030b20: 6310                     bls.s 0x30b32
+030b22: 33d10080de70             move.w (a1),(0x80de70).l
+030b28: 3290                     move.w (a0),(a1)
+030b2a: 33fc00040080d348         move.w #0x4,(0x80d348).l
+030b32: 4e75                     rts
+=== crankTiming 30b62-30bb0
+030b62: 48e7003c                 movem.l a5/a4/a3/a2,-(a7)
+030b66: 247c0080d34a             movea.l #0x80d34a,a2
+030b6c: 267c0080d34c             movea.l #0x80d34c,a3
+030b72: 287c0080de6a             movea.l #0x80de6a,a4
+030b78: 2a7c0080d330             movea.l #0x80d330,a5
+030b7e: 61b4                     bsr.s 0x30b34
+030b80: 33f90080d3460080de6e     move.w (0x80d346).l,(0x80de6e).l
+030b8a: 0c55001b                 cmpi.w #0x1b,(a5)
+030b8e: 660e                     bne.s 0x30b9e
+030b90: 38b900808a76             move.w (0x808a76).l,(a4)
+030b96: 36bc000a                 move.w #0xa,(a3)
+030b9a: 4252                     clr.w (a2)
+030b9c: 604a                     bra.s 0x30be8
+030b9e: 0c550019                 cmpi.w #0x19,(a5)
+030ba2: 660e                     bne.s 0x30bb2
+030ba4: 38b900808a70             move.w (0x808a70).l,(a4)
+030baa: 36bc0009                 move.w #0x9,(a3)
+030bae: 4252                     clr.w (a2)

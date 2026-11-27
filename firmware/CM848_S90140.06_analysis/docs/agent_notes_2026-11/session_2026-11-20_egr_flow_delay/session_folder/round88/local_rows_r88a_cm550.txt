@@ -1,0 +1,9 @@
+2 changed functions have local rows
+  0x0b7bc validateServiceDataLength channel_record: DIFFERENT
+     after:  channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
+     after:  channel_record->sample_counter = 0;
+     after:  channel_record->sample_counter = channel_record->sample_counter + 1;
+  0x0bcf0 cm550_initADCChannelConfiguration channel_record: DIFFERENT
+     after:  for (channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
+     after:  channel_record < (sensor_debounce_state_t *)0x80a4d0; channel_record = channel_record + 1) {
+     after:  (channel_record->filter).accumulator = 0;

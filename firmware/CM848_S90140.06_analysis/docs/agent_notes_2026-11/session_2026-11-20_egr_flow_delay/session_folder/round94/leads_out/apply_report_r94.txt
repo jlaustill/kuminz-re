@@ -1,0 +1,203 @@
+CM550 removed global 0x00806abe fault_confirm_status_word_1 (inside a new instance: fault_processing_enable_flags[1])
+CM550 removed global 0x00806ac0 fault_latch_status_word_2 (inside a new instance: fault_processing_enable_flags[2])
+CM550 removed global 0x00806ac2 fault_latch_status_word_3 (inside a new instance: fault_processing_enable_flags[3])
+CM550 removed global 0x00806ac4 fault_confirm_status_word_4 (inside a new instance: fault_processing_enable_flags[4])
+CM550 removed global 0x00806aca fault_first_occurrence_word_7 (inside a new instance: fault_processing_enable_flags[7])
+CM550 removed global 0x008000ac diagnostic_table_pointer_4 (inside a new instance: air_fuel_control_fuel_limit_lookup.x_axis_pointer)
+CM550 removed global 0x008000ae diagnostic_table_5_ptr (inside a new instance)
+CM550 removed global 0x008000b2 diag_mode_0_target_rpm_arg (inside a new instance: air_fuel_control_fuel_limit_lookup.y_axis_offset)
+CM550 removed global 0x008000b4 diagnostic_table_pointer_3 (inside a new instance: air_fuel_control_fuel_limit_lookup.y_axis_pointer)
+CM550 removed global 0x008000b8 diagnostic_table_pointer_2 (inside a new instance: air_fuel_control_fuel_limit_lookup.y_input)
+CM550 removed global 0x008000ba diagnostic_table_6_ptr (inside a new instance: air_fuel_control_fuel_limit_lookup.z_values_pointer)
+CM550 removed global 0x008000be diag_mode_1_target_rpm_arg (inside a new instance: air_fuel_control_fuel_limit_lookup.no_interpolation_flag)
+CM550 removed global 0x008000c4 tpu_timer_channel_config (inside a new instance)
+CM550 removed global 0x008000c8 io_can_fault_monitor_state (inside a new instance: air_fuel_control_cold_temperature_fuel_increment_lookup.y_axis_offset)
+CM550 removed global 0x008000c9 can_pin_fault_persistence_counter (inside a new instance)
+CM550 removed global 0x008000ca io_control_fault_persistence_counter_1 (inside a new instance: air_fuel_control_cold_temperature_fuel_increment_lookup.y_axis_pointer)
+CM550 removed global 0x008000cb io_control_fault_persistence_counter_2 (inside a new instance)
+CM550 removed global 0x008000cc can_fault_monitor_counter (inside a new instance)
+CM550 removed global 0x008000cd io_control_fault_persistence_counter_4 (inside a new instance)
+CM550 removed global 0x008000ce io_control_fault_persistence_counter_5 (inside a new instance: air_fuel_control_cold_temperature_fuel_increment_lookup.y_input)
+CM550 removed global 0x008000cf io_control_fault_persistence_counter_6 (inside a new instance)
+CM550 removed global 0x008000d0 accelerator_throttle_fault_counter (inside a new instance: air_fuel_control_cold_temperature_fuel_increment_lookup.z_values_pointer)
+CM550 removed global 0x008000d1 io_control_fault_persistence_counter_7 (inside a new instance)
+CM550 removed global 0x008000d2 accel_throttle_fault_delay_counter (inside a new instance)
+CM550 removed global 0x008000d4 accelerator_throttle_fault_state (inside a new instance: air_fuel_control_cold_temperature_fuel_increment_lookup.no_interpolation_flag)
+CM550 removed global 0x008000de param_lookup_rpm_input (inside a new instance)
+CM550 removed global 0x008000e0 diagnostic_data_table_1_base (inside a new instance: altitude_derate_fuel_limit_lookup.x_input)
+CM550 removed global 0x008000e2 diagnostic_data_table_2_ptr (inside a new instance: altitude_derate_fuel_limit_lookup.y_axis_offset)
+CM550 removed global 0x008000e6 diagnostic_data_table_limit (inside a new instance)
+CM550 removed global 0x008000e8 diagnostic_data_intake_temp_ptr (inside a new instance: altitude_derate_fuel_limit_lookup.y_input)
+CM550 removed global 0x008000ec fuel_blend_table_1_base (inside a new instance)
+CM550 removed global 0x008000ee fuel_blend_table_1_ptr (inside a new instance: altitude_derate_fuel_limit_lookup.no_interpolation_flag)
+CM550 removed global 0x008001d6 engine_runtime_histogram_config_type_a (inside a new instance: desired_cylinder_pressure_lookup.x_axis_pointer)
+CM550 removed global 0x008001d8 hour_meter_table_1_ptr (inside a new instance)
+CM550 removed global 0x008001dc rpm_histogram_threshold_saved (inside a new instance: desired_cylinder_pressure_lookup.y_axis_offset)
+CM550 removed global 0x008001de hour_meter_table_2_base (inside a new instance: desired_cylinder_pressure_lookup.y_axis_pointer)
+CM550 removed global 0x008001e0 hour_meter_table_2_ptr (inside a new instance)
+CM550 removed global 0x008001e4 hour_meter_table_1_limit (inside a new instance: desired_cylinder_pressure_lookup.z_values_pointer)
+CM550 removed global 0x008001e6 hour_meter_intake_temp_ptr (inside a new instance)
+CM550 removed global 0x008001fa hour_meter_table_5_ptr (inside a new instance: compression_ratio_raised_to_polytropic_exponent_lookup.x_axis_pointer)
+CM550 removed global 0x008001fe manifold_temp_table_1_type (inside a new instance: compression_ratio_raised_to_polytropic_exponent_lookup.x_input)
+CM550 removed global 0x00800200 manifold_temp_table_1_x_ptr (inside a new instance: compression_ratio_raised_to_polytropic_exponent_lookup.y_axis_offset)
+CM550 removed global 0x00800204 speed_diff_interp_input (inside a new instance)
+CM550 removed global 0x00800206 manifold_temp_table_1_y_type (inside a new instance: compression_ratio_raised_to_polytropic_exponent_lookup.y_input)
+CM550 removed global 0x00800208 manifold_temp_table_1_y_ptr (inside a new instance: compression_ratio_raised_to_polytropic_exponent_lookup.z_values_pointer)
+CM550 removed global 0x0080020c manifold_temp_table_1_count (inside a new instance: compression_ratio_raised_to_polytropic_exponent_lookup.no_interpolation_flag)
+CM550 removed global 0x00800224 multi_speed_throttle_input (inside a new instance: cylinder_balance_stop_compensation_lookup.x_axis_pointer)
+CM550 removed global 0x00800226 manifold_temp_table_3_z_ptr (inside a new instance)
+CM550 removed global 0x0080022a speed_difference_interpolation_result (inside a new instance: cylinder_balance_stop_compensation_lookup.y_axis_offset)
+CM550 removed global 0x0080022c fault_scanner_loop_timestamp (inside a new instance: cylinder_balance_stop_compensation_lookup.y_axis_pointer)
+CM550 removed global 0x00800230 diagnostic_queue_index (inside a new instance: cylinder_balance_stop_compensation_lookup.y_input)
+CM550 removed global 0x00800232 diagnostic_fault_group_index (inside a new instance: cylinder_balance_stop_compensation_lookup.z_values_pointer)
+CM550 removed global 0x00800234 vp44_comm_bit0_prev_state (inside a new instance)
+CM550 removed global 0x00800236 vp44_comm_bit2_debounce_timer (inside a new instance: cylinder_balance_stop_compensation_lookup.no_interpolation_flag)
+CM550 removed global 0x0080023a vp44_sensor_fault_debounce_timer (inside a new instance: cylinder_balance_component_3_adjustment_lookup.x_axis_pointer)
+CM550 removed global 0x0080023c vp44_derate_fault_debounce_timer (inside a new instance)
+CM550 removed global 0x0080023e vp44_status_mask_array (inside a new instance: cylinder_balance_component_3_adjustment_lookup.x_input)
+CM550 removed global 0x00800242 vp44_buffer_index (inside a new instance: cylinder_balance_component_3_adjustment_lookup.y_axis_pointer)
+CM550 removed global 0x00800243 vp44_buffer_index_reserved (inside a new instance)
+CM550 removed global 0x00800244 vp44_status_data_table (inside a new instance)
+CM550 removed global 0x0080d380 fuel_table_primary_throttle_input (inside a new instance: four_dimensional_fueling_steady_state_lookup.y_input)
+CM550 removed global 0x0080d396 fuel_table_secondary_throttle_input (inside a new instance: four_dimensional_fueling_transient_lookup.y_input)
+CM550 removed global 0x00807d20 rpm_timer_interrupt_threshold_7d20 (inside a new instance: duty_cycle_monitor_engine_speed_axis[1])
+CM550 removed global 0x00807d2c rpm_source_selector_init (inside a new instance: duty_cycle_monitor_engine_speed_axis[7])
+CM550 removed global 0x00807d2e throttle_frictional_load_upper_threshold (inside a new instance: duty_cycle_monitor_engine_speed_axis[8])
+CM550 removed global 0x00807d30 throttle_frictional_load_lower_threshold (inside a new instance: duty_cycle_monitor_engine_speed_axis[9])
+CM550 removed global 0x00807d34 intake_temp_frictional_load_threshold (inside a new instance: duty_cycle_monitor_load_axis[1])
+CM550 removed global 0x00807d36 rpm_fuel_limit_blend_offset (inside a new instance: duty_cycle_monitor_load_axis[2])
+CM550 removed global 0x00807d38 frictional_load_fuel_init (inside a new instance: duty_cycle_monitor_load_axis[3])
+CM550 removed global 0x00807d3a rpm_fuel_limit_threshold_max (inside a new instance: duty_cycle_monitor_load_axis[4])
+CM550 removed global 0x00807d3c frictional_load_state_init (inside a new instance: duty_cycle_monitor_load_axis[5])
+CM550 removed global 0x00807d3e rpm_fuel_limit_state_max (inside a new instance: duty_cycle_monitor_load_axis[6])
+CM550 removed global 0x00807d40 frictional_load_torque_init (inside a new instance: duty_cycle_monitor_load_axis[7])
+CM550 removed global 0x0080734a sensor_fault_rpm_selector_param (inside a new instance: cylinder_balance_component_3_adjustment_grid[3])
+CM550 removed global 0x0080734e vp44_state_processing_timeout_reload (inside a new instance: cylinder_balance_stop_compensation_x_axis[1])
+CM550 removed global 0x00807350 vp44_state2_transition_param (inside a new instance: cylinder_balance_stop_compensation_x_axis[2])
+CM550 removed global 0x008037b6 can_priority_table_start (inside a new instance)
+CM550 removed global 0x008037b8 j1939_priority_pgn65269 (inside a new instance)
+CM550 removed global 0x008037ba j1939_priority_pgn65265 (inside a new instance)
+CM550 removed global 0x008037bc j1939_priority_pgn65259 (inside a new instance)
+CM550 removed global 0x008037be j1939_priority_pgn65226 (inside a new instance)
+CM550 removed global 0x008037c0 j1939_priority_pgn65227 (inside a new instance)
+CM550 removed global 0x008037c2 j1939_priority_pgn65229 (inside a new instance)
+CM550 removed global 0x008037c4 j1939_priority_pgn65230 (inside a new instance)
+CM550 removed global 0x008037c6 j1939_priority_pgn65232 (inside a new instance)
+CM550 removed global 0x008037c8 j1939_priority_pgn65234 (inside a new instance)
+CM550 removed global 0x008037ca j1939_priority_vp44_cmd_256 (inside a new instance)
+CM550 removed global 0x008037cc can_priority_dm983 (inside a new instance)
+CM550 removed global 0x008037ce j1939_priority_pgn65247 (inside a new instance)
+CM550 removed global 0x008037d0 j1939_priority_pgn65251 (inside a new instance)
+CM550 removed global 0x008037d2 j1939_priority_pgn65263 (inside a new instance)
+CM550 removed global 0x008037d4 retarder_mode_threshold_value_37d4 (inside a new instance)
+CM550 removed global 0x008037d6 j1939_priority_pgn15728640 (inside a new instance)
+CM550 removed global 0x008037d8 j1939_priority_pgn65262 (inside a new instance)
+CM550 removed global 0x008037da j1939_priority_pgn65257 (inside a new instance)
+CM550 removed global 0x008037dc j1939_priority_pgn65266 (inside a new instance)
+CM550 removed global 0x008037de j1939_priority_pgn65244 (inside a new instance)
+CM550 removed global 0x008037e0 j1939_priority_pgn65252 (inside a new instance)
+CM550 removed global 0x008037e2 j1939_priority_pgn65526 (inside a new instance)
+CM550 removed global 0x008037e6 j1939_priority_pgn65264 (inside a new instance)
+CM550 removed global 0x008037e8 j1939_priority_pgn65249 (inside a new instance)
+CM550 removed global 0x008037ea j1939_priority_pgn65248 (inside a new instance)
+CM550 removed global 0x008037ec j1939_priority_pgn65527 (inside a new instance)
+CM550 removed global 0x008037ee j1939_priority_pgn65255 (inside a new instance)
+proposed names rewritten in comments: 3
+L1 CM550 function 0x00016dd4 cm550_highRpmEngineProtectionStateMachine -> cm550_runEngineWarmupProtection [standalone]
+L1 CM550 function 0x0001709e cm550_fuelTemperatureLimitingSecondary -> cm550_initializeEngineWarmupProtection [standalone]
+L1 CM550 function 0x0001c0d4 cm550_FUN_0001c0d4 -> cm550_convertTorqueDerateTorqueLimitToFuelLimit [counterpart]
+L1 CM550 function 0x0001c308 cm550_FUN_0001c308 -> cm550_initializeTorqueDerateTorqueLimit [standalone]
+L1 CM550 function 0x0001cc72 cm550_FUN_0001cc72 -> cm550_calculateThrottle100Fuelings [counterpart]
+L1 CM550 function 0x0003452a cm550_FUN_0003452a -> loadHourMetersFromEeprom [twin]
+L1 CM848 function 0x005067bc cm848_loadHourMetersFromEeprom -> loadHourMetersFromEeprom [twin of CM550 0x0003452a]
+L1 CM550 global 0x0080ccb6 (no row)  -> engine_warmup_protection_rifle_to_turbocharger_delay_timer word
+L1 CM550 global 0x0080ccb8 (no row)  -> engine_warmup_protection_rifle_to_turbocharger_delay_time word
+L1 CM550 global 0x0080ccba (no row)  -> engine_warmup_protection_overall_timer word
+L1 CM550 global 0x0080ccbc (no row)  -> engine_warmup_protection_fault_timer word
+L1 CM550 global 0x0080ccbe (no row)  -> engine_warmup_protection_oil_drain_back_timer word
+L1 CM550 global 0x0080ccc0 (no row)  -> engine_warmup_protection_run_state_achieved_flag word
+L1 CM550 global 0x0080ccc2 (no row)  -> engine_warmup_protection_rifle_to_turbocharger_delay_started_flag word
+L1 CM550 global 0x0080ccc4 timer_counting_against_oil_pressure_threshold_time_0_60 word -> engine_warmup_protection_oil_pressure_timer word
+L1 CM550 global 0x0080ccc8 (no row)  -> engine_warmup_protection_inhibit_flag word
+L1 CM550 global 0x0080ccca (no row)  -> engine_warmup_protection_torque_or_speed_limiting_flag word
+L1 CM550 global 0x0080a8f4 (no row)  -> low_speed_governor_lock_flag word
+L1 CM550 global 0x00807dde (no row)  -> engine_warmup_protection_low_speed_governor_lock_enable word
+L1 CM550 global 0x00807dd4 calibratible_threshold_for_rifle_oil_pressure_for_engine_warmu_0_100 word -> engine_warmup_protection_oil_pressure_threshold word
+L1 CM550 global 0x00807dd6 time_oil_pressure_must_continuously_be_above_oil_pressure_thres_0_60 word -> engine_warmup_protection_oil_pressure_time word
+L1 CM550 global 0x00807dd8 maximum_time_engine_warmup_algorithm_will_run_0_100 word -> engine_warmup_protection_maximum_time word
+L1 CM550 global 0x00807dda max_time_algorithm_will_run_with_active_cool_or_oil_press_fa_0_100 word -> engine_warmup_protection_maximum_time_with_fault word
+L1 CM550 global 0x00807ddc time_for_oil_to_drain_back_to_sump_with_engine_off_0_54 word -> engine_warmup_protection_oil_drain_back_time word
+L1 CM550 global 0x00803b3e eeprom_hour_meter_buffer undefined -> key_on_hour_meter_cal dword
+L1 CM550 global 0x00803b50 eeprom_engine_run_time_buffer undefined -> engine_hour_meter_cal dword
+L1 CM550 global 0x0080d370 max_fueling_without_programmable_power_for_esp_tau_0_0_100 undefined -> throttle_100_fueling_without_programmable_power word
+L1 CM550 global 0x0080d36c full_fueling_value_at_hsg_bef_droop_speed_0_100 word -> engine_speed_limit_ramped_maximum_fuel_quantity word
+L1 CM550 global 0x0080d654 the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 word -> engine_speed_limit_ramped word
+L1 CM550 global 0x0080db1a max_torque_at_current_rpm_in_foot_pounds_0_10000 word -> maximum_torque_at_current_engine_speed word
+L1 CM848 global 0x0040aee6 fuel_demand_filter_dimension word -> maximum_torque_at_current_engine_speed word
+L2 CM550 function 0x0001fe84 cm550_FUN_0001fe84 -> scheduleJ1939PeriodicMessage [twin]
+L2 CM848 function 0x00538c8c cm848_scheduleJ1939PeriodicMessage -> scheduleJ1939PeriodicMessage [twin of CM550 0x0001fe84]
+L2 CM550 function 0x00033d38 cm550_FUN_00033d38 -> cm550_buildPgn65252ShutdownMessage [standalone]
+L2 CM550 function 0x00033dfa vp44_engineHoursPGN_65252_Builder -> cm550_initializePgn65252ShutdownBuffer [standalone]
+L2 CM550 function 0x000269f2 cm550_FUN_000269f2 -> cm550_calculateMaximumTorqueAtCurrentEngineSpeed [counterpart]
+L2 CM550 function 0x00026a2e cm550_FUN_00026a2e -> cm550_initializeMaximumTorqueAtCurrentEngineSpeed [counterpart]
+L2 CM550 function 0x00026a7e cm550_fuelDemandTablePointersInit -> cm550_initializeInjectionTimingMisfireLimit [counterpart]
+L2 CM550 function 0x00026ab8 cm550_rpmLoadParameterLookup -> cm550_calculateInjectionTimingMisfireLimit [counterpart]
+L2 CM550 global 0x00801d44 tsc1_message_byte_0 undefined -> j1939_received_pgn61442_byte_1 byte
+L2 CM550 global 0x00801d48 tsc1_message_control_byte undefined -> j1939_received_pgn61442_byte_5 byte
+L2 CM550 global 0x00801d4c torque_control_message_byte_0 undefined -> j1939_received_tsc1_control_byte byte
+L2 CM550 global 0x00801d4d (no row)  -> j1939_received_tsc1_requested_speed byte[2]
+L2 CM550 global 0x00801d4f torque_control_percent_byte undefined -> j1939_received_tsc1_requested_torque byte
+L2 CM550 global 0x00801d54 (no row)  -> tsc1_accepted_priority byte
+L2 CM550 global 0x00801d56 (no row)  -> tsc1_accepted_requested_speed word
+L2 CM550 global 0x00801d58 (no row)  -> tsc1_accepted_requested_torque byte
+L2 CM550 global 0x00806abc fault_confirm_status_word_0 undefined -> fault_processing_enable_flags word[19]
+L2 CM550 global 0x0080a26e output_of_the_misfire_timing_limit_table_60_to_60 word -> injection_timing_misfire_limit word
+L2 CM550 global 0x00803f78 (no row)  -> j1939_pgn65252_priority_cal word
+L2 CM550 global 0x0080bcd7 (no row)  -> air_conditioner_pressure_switch_state byte
+L2 NOTE verdict with no proposal element: ('cm848_function', '', '0x00538c8c')
+L3 CM550 global 0x008000aa target_rpm_rate_limiter_reserved_aa undefined -> air_fuel_control_fuel_limit_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008000c0 diagnostic_table_pointer_1 undefined -> air_fuel_control_cold_temperature_fuel_increment_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008000da diagnostic_data_table_1_ptr undefined -> altitude_derate_fuel_limit_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008001d4 engine_runtime_histogram_interpolation_b undefined -> desired_cylinder_pressure_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008001f8 hour_meter_table_3_limit undefined -> compression_ratio_raised_to_polytropic_exponent_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x00800222 (no row)  -> cylinder_balance_stop_compensation_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x00800238 vp44_comm_bit1_debounce_timer undefined -> cylinder_balance_component_3_adjustment_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x0080d372 fuel_table_primary_descriptor undefined -> four_dimensional_fueling_steady_state_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x0080d388 fuel_table_secondary_descriptor undefined -> four_dimensional_fueling_transient_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008005c2 (no row)  -> crank_four_dimensional_timing_steady_state_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008005d8 (no row)  -> crank_four_dimensional_timing_transient_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008006b8 (no row)  -> four_dimensional_injection_timing_steady_state_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008006ce (no row)  -> four_dimensional_injection_timing_transient_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x008006ea (no row)  -> throttle_100_fueling_low_horsepower_curve_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x00800700 (no row)  -> full_fueling_cold_temperature_fuel_increment_lookup table_lookup_2d_arguments_t
+L3 CM550 global 0x00807d1e (no row)  -> duty_cycle_monitor_engine_speed_axis word[10]
+L3 CM550 global 0x00807d32 DCMNLDTB undefined -> duty_cycle_monitor_load_axis word[8]
+L3 CM848 global 0x0005c2c0 (no row)  -> duty_cycle_monitor_engine_speed_axis word[10]
+L3 CM848 global 0x0005c2d4 (no row)  -> duty_cycle_monitor_load_axis word[12]
+L3 CM550 global 0x00807338 (no row)  -> cylinder_balance_component_3_adjustment_x_axis word[3]
+L3 CM550 global 0x0080733e (no row)  -> cylinder_balance_component_3_adjustment_y_axis word[3]
+L3 CM550 global 0x00807344 (no row)  -> cylinder_balance_component_3_adjustment_grid word[4]
+L3 CM550 global 0x0080734c vp44_state_debounce_threshold undefined -> cylinder_balance_stop_compensation_x_axis word[3]
+L3 CM550 global 0x00807352 (no row)  -> cylinder_balance_stop_compensation_y_axis word[3]
+L3 CM550 global 0x00807358 (no row)  -> cylinder_balance_stop_compensation_grid word[4]
+L4 CM848 function 0x0000bb68 cm848_periodicTaskSet_protection -> cm848_runEvery8FramesTaskSetPhase2 [CM848 only]
+L4 CM848 function 0x0000bce8 cm848_periodicTaskSet_protection2 -> cm848_runEvery10FramesTaskSetPhase4 [CM848 only]
+L4 CM848 function 0x0000beb4 cm848_periodicTaskSet_protection3 -> cm848_runEvery20FramesTaskSetPhase8 [CM848 only]
+L4 CM848 function 0x0000c050 hpcr_periodicTaskSet_protection4 -> cm848_runEvery20FramesTaskSetPhase18 [CM848 only]
+L4 CM848 function 0x0001e4e8 cm848_calculateProtectionRateLimited -> cm848_convertTorqueDerateTorqueLimitToFuelLimit [CM848 only]
+L4 CM848 function 0x0001ea6c cm848_initProtectionTableSizes -> cm848_initializeFourDimensionalInjectionTimingLookupCaches [CM848 only]
+L4 CM848 function 0x00020b84 cm848_updateProtectionParameters -> cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling [CM848 only]
+L4 CM848 function 0x00020bfc cm848_updateProtectionInputs -> cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling [CM848 only]
+L4 CM848 function 0x00021c3c cm848_updateProtectionThresholdsIfLow -> cm848_setThrottle100J1939TorqueCurveSpeedPoints [CM848 only]
+L4 CM848 function 0x00023a9c cm848_initGovernorProtectionState -> cm848_initializeEngineRetarderTsc1RequestState [CM848 only]
+L4 CM848 function 0x00029e24 cm848_initProtectionFilterAccumulators -> cm848_initializeInjectionTimingMainMisfireLimit [CM848 only]
+L4 CM848 function 0x0002c100 cm848_initProtectionLimitVariables -> cm848_initializeAllSpeedGovernorTuningSetBlendWeight [CM848 only]
+L4 CM848 function 0x00038a98 cm848_initProtectionFilterLimits -> cm848_initializeFuelPressureGovernorFaultBlend [CM848 only]
+L4 CM848 function 0x0003eccc cm848_setThermalProtectionMode5 -> cm848_setTorqueManagementTransmissionType3Code [CM848 only]
+L4 CM848 function 0x0004280c cm848_processProtectionLimits -> cm848_runFuelLimitChains [CM848 only]
+L4 CM848 function 0x0004eeb8 hpcr_initProtectionAndOutputCycle -> cm848_initializeSwitchInputStates [CM848 only]
+L4 CM848 function 0x0050e000 cm848_validateFuelDemandRelativeToTiming -> cm848_calculateEngineLoadLowHorsepowerCurvePercent [CM848 only]
+L4 TYPE FORCED CM848 0x0040aeea: word -> i16 (L4's judge: e2m 8A3D +2 SOI_Before_MST is a signed record (0.1171875 deg); the stores are sth only (0x29e40 / 0x29f04) and the copied value is an lha of main_injection_timing_copy)
+L4 CM848 global 0x0040aeea injection_timing_pid_init_flag word -> main_injection_timing_before_misfire_limit i16
+L4 TYPE FORCED CM848 0x003fb500: word -> dword (L4's judge: the only access is stw (the 32-bit value 5 at 0x3ecd4); 0x3fb502 has no row)
+L4 CM848 global 0x003fb500 subsystem_init_code word -> torque_management_transmission_type_3_code dword

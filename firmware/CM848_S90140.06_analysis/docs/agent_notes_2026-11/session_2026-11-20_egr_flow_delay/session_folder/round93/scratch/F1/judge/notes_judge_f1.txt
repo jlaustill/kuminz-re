@@ -1,0 +1,45 @@
+Round 93 batch F1 - JUDGE notes (read-only; scratch only)
+==========================================================
+
+Checked myself (files in this folder):
+- disasm_chain.txt / disasm_1c03c_1c31c.txt / disasm_misc1.txt / disasm_16dd4.txt / disasm_anc.txt / disasm_wetstack.txt /
+  disasm_304f4.txt : CM550 disassembly (m68k.py) of every batch function and its neighbours.
+- disasm_cm848_chain.txt : CM848 0x1f318 0x2a918 0xe0c4 0x502af4 0x509510 0x427cc 0x4279c 0x4280c 0x506780.
+- globals_table.txt (globals_table.py) : frozen row, rows inside the proposed width, uniqueness, CM848 row of the same name.
+- e2m_cm550_globals.txt / e2m_cm848_globals.txt : the e2m record at every proposed address and at the CM848 address of the
+  same record (matched by bracket mnemonic).
+- abs_refs_1.txt / abs_refs_2.txt : every absolute reference to the 43 proposed addresses.
+- uniqueness.py : every proposed name against the frozen AND the live CSVs of both firmwares - no collision.
+- scan_imm_17_33_18_36_39.txt (scan_imm.py) : word immediates 17 / 33 / 18 / 36 / 39 in the CM550 ROM.
+- scan_cm848_37_38.txt / scan_cm848_49_50.txt (scan_cm848_li.py) : li / cmpwi 37 38 49 50 47 in both CM848 images.
+- ram_values.py : RAM dump values at the declared width.
+
+FUNCTIONS (22): all roles confirmed from the code.
+- 8 twins proved instruction for instruction (same compare, same constants, same records by mnemonic, same position):
+  0xc2a0=0xe0c4 (16), 0xc742=0x502af4 (15), 0x196e4=0x509510 (29), 0x1ce58=0x1f318 (19/40), 0x2d9a8=0x2a918 (34),
+  0x30bf6=0x4279c (28), 0x30c14=0x427cc (20, mode 3), 0x34512=0x506780 (hour meters, last task of executive phase 0).
+- runner 0x30c3c vs 0x4280c: 7 shared steps in the same order, lists differ -> counterpart.
+- 0x1c152 = cm848_arbitrateRequestedFueling + cm848_selectFinalFueling -> counterpart.
+- 0x26af0: CM848 does the misfire raise inside cm848_calculateMainInjectionTiming (source 11) -> counterpart.
+- timing chain 0x30b34: stamps 11 / (1|13) / 3 / 4 / 5 = CHR SOI_State labels MISFIRE / WETSTACK|WTSTCOOL / ANC / MAX / CRANK.
+- every function has exactly one caller (jsr / bsr scan); 0x1ca5c 0x2659a 0x26b00 have none (mid-body rows, already
+  removed from the LIVE function_renames.csv by round 93's mid-body pass -> the three plate comments that mention them
+  are stale: corrected comments given).
+
+GLOBALS (43): names and records confirmed; amendments
+- 0x8000d6: the row main_loop_iteration_counter sits at 0x8000d7 (no reference in the ROM, none in the decompilation)
+  inside the proposed word -> keep the type 'undefined' (ApplyGlobalVariableTypes would fail the 0x8000d7 row).
+- 0x80aaa4: e2m TSAJ4DTA is signed (column 10 = S) -> i16 (the repository's rule for signed Calterm records).
+- 0x801a82: the code sign-extends it (ext.l d1 at 0x264e6 / 0x26524; it goes below 0 when the minimum trim is under the
+  base idle speed) and its saved copy LSICBKRF is a signed record -> i16.
+- 0x80dc26: the comment says cm550_runPowerTakeOffGovernor writes it. Wrong: 0x2d994 is move.w (0x80dc26).l,(0x801c0c).l
+  (33f9 0080dc26 00801c0c - PTSS is the SOURCE). Nothing in the dumped ROM writes PTSS. Corrected comment given.
+
+ENUM MEMBERS (8)
+- 17 / 33: the only stores (0xb3c6 / 0x17146); the other move.w #17 / #33 go to 0x80068c (executive phase), 0x80d61a
+  (high speed governor gain set) and 0x801e2a (a retarder level word in 0x2f632).
+- 18: one compare (0x306b4) gating TIT3DQTM; no store. Quote of the e2m text corrected (the record text is cut).
+- 37 / 38: never stored in either firmware; compared only (CM848 0xea3c 0x208fc 0x2bc04 0x407b8 0x412c4 0x5253f4 0x5255c4
+  and the 38 partners; 0x521188 / 0x52121c are command bytes of cm848_sciCommand37Callback). T2 = TOP2 in every one of
+  the 64 e2m files (5 mnemonics T2HGSXDR T2LGSXDR T2NUSXDR T2LOSXDR T2SISXDR, group TOP208).
+- 3 / 36 / 39 stay; CM848 49 / 50 stay (compared only, class not algorithm).

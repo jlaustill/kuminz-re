@@ -1,0 +1,196 @@
+{
+ "global|CM848|0x003fdba6": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbaa": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbae": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbb2": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbba": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbbe": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbc2": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbc6": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbca": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbd4": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbd6": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbda": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbde": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbe2": {
+  "drop": true,
+  "reason": "entry 1 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "remove_globals": {
+  "CM848": {
+   "0x003fdbe2": "cmf_program_control_step_bits[1]",
+   "0x003fdbe6": "cmf_program_control_step_bits[2]",
+   "0x003fdbea": "cmf_program_control_step_bits[3]",
+   "0x003fdbee": "cmf_program_control_step_bits[4]",
+   "0x003fdbf2": "cmf_program_control_step_bits[5]",
+   "0x003fdbf6": "cmf_program_control_step_bits[6]",
+   "0x003fdbfa": "cmf_program_control_step_bits[7]",
+   "0x003fdc20": "cmf_program_step_pulse_limits[1]",
+   "0x003fdc22": "cmf_program_step_pulse_limits[2]",
+   "0x003fdc24": "cmf_program_step_pulse_limits[3]",
+   "0x003fdc26": "cmf_program_step_pulse_limits[4]",
+   "0x003fdc28": "cmf_program_step_pulse_limits[5]",
+   "0x003fdc2a": "cmf_program_step_pulse_limits[6]",
+   "0x003fdc2c": "cmf_program_step_pulse_limits[7]"
+  }
+ },
+ "global|CM848|0x003fdbe6": {
+  "drop": true,
+  "reason": "entry 2 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbea": {
+  "drop": true,
+  "reason": "entry 3 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbee": {
+  "drop": true,
+  "reason": "entry 4 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbf2": {
+  "drop": true,
+  "reason": "entry 5 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbf6": {
+  "drop": true,
+  "reason": "entry 6 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbfa": {
+  "drop": true,
+  "reason": "entry 7 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc02": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc06": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc0a": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc0e": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc12": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc16": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc1a": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc1e": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdc20": {
+  "drop": true,
+  "reason": "entry 1 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc22": {
+  "drop": true,
+  "reason": "entry 2 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc24": {
+  "drop": true,
+  "reason": "entry 3 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc26": {
+  "drop": true,
+  "reason": "entry 4 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc28": {
+  "drop": true,
+  "reason": "entry 5 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc2a": {
+  "drop": true,
+  "reason": "entry 6 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc2c": {
+  "drop": true,
+  "reason": "entry 7 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc2e": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc32": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc36": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc38": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbb6": {
+  "force_type": true,
+  "reason": "the Q5 judge's width (the live type was a guessed wider / narrower row)"
+ },
+ "global|CM848|0x003fdbd2": {
+  "force_type": true,
+  "reason": "the Q5 judge's width (the live type was a guessed wider / narrower row)"
+ },
+ "global|CM848|0x003fdbfe": {
+  "force_type": true,
+  "reason": "the Q5 judge's width (the live type was a guessed wider / narrower row)"
+ }
+}

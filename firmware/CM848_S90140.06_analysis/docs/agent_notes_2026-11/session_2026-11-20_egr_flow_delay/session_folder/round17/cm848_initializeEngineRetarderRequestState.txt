@@ -1,0 +1,35 @@
+=== cm848_initializeEngineRetarderRequestState (lines 44999-45038, 34 non-blank)
+// Function: cm848_initializeEngineRetarderRequestState @ 0x000421c8
+//
+/* Start-up initialisation of the engine retarder request chain: clears logical outputs 11 to 15,
+   the request, shift hold, release, enable and delay words, and sets the request source codes to 5
+   (was cm848_initProtectionEventStates). */
+void cm848_initializeEngineRetarderRequestState(void)
+{
+  cm848_clearLogicalOutputRequest(0xb,0);
+  cm848_clearLogicalOutputRequest(0xc,0);
+  cm848_clearLogicalOutputRequest(0xd,0);
+  cm848_clearLogicalOutputRequest(0xe,0);
+  cm848_clearLogicalOutputRequest(0xf,0);
+  engine_retarder_request_percent = 0;
+  engine_retarder_request_shift_hold_flag = 0;
+  engine_retarder_arbitrated_request_percent_previous = 0;
+  engine_retarder_arbitrated_request_percent_previous_2 = 0;
+  engine_retarder_request_age_counter = 0;
+  engine_retarder_request_percent_previous = 0;
+  engine_retarder_release_pending_flag = 0;
+  engine_retarder_release_counter = 0;
+  service_brake_release_delay_counter = 0;
+  engine_retarder_active_flag = 0;
+  engine_retarder_tsc1_request_source_code = 5;
+  engine_retarder_request_source_code = 5;
+  service_brake_delayed_active_flag = 0;
+  service_brake_active_governor_mode_config_bit_0_flag._0_2_ = 0;
+  engine_retarder_enable_state = 0;
+  engine_retarder_internal_override_control_mode = 0;
+  engine_retarder_request_arbitration_inhibit_flag = 0;
+  mass_charge_flow_engine_retarder_command = 0;
+  tc_lockup_disengage_state = 0;
+  return;
+}
+//

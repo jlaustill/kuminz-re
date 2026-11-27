@@ -1,0 +1,956 @@
+struct_name,address,field_name,type,size,comment,dependency,Status
+# =============================================================================
+# J90350.00 Structure Definitions
+# Created: 2024-12-17
+# Based on CM550 firmware analysis
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Generic Structures (No Fixed Address - Portable)
+# -----------------------------------------------------------------------------
+
+# J1939 Message Header
+j1939_message_header_t,,can_id,dword,4,The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88),,verified
+j1939_message_header_t,,data_length,word,2,The payload length in bytes: above 8 goes out as a transport session (was j1939_header_t.length; PR #53 round 88),,verified
+j1939_transmit_message_t,,header,j1939_message_header_t,6,The CAN identifier and the payload length,j1939_message_header_t,verified
+j1939_transmit_message_t,,data_pointer,pointer,4,Points at the first payload byte,,verified
+j1939_transmit_message_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status: the send result or the transport session code (CM848's layout; PR #53 round 88),,verified
+engine_overspeed_event_t,,start_key_on_hour_meter,dword,4,key_on_hour_meter when the overspeed began,,verified
+engine_overspeed_event_t,,engine_speed_at_detection,word,2,engine_rpm_primary on the pass the overspeed latch set,,verified
+engine_overspeed_event_t,,duration,word,2,The passes the overspeed lasted (PR #53 round 88),,verified
+j1939_diagnostic_service_entry_t,,service_id,J1939_DIAGNOSTIC_SERVICE,1,The PGN 61184 service byte,,verified
+j1939_diagnostic_service_entry_t,,pad,byte,1,Unused,,verified
+j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler registerJ1939DiagnosticService stored (PR #53 round 88),,verified
+
+# Standard CAN RX Descriptor
+can_std_rx_desc_t,,id,uint32_t,4,11-bit CAN ID stored in 32-bit (ABI),,verified
+can_std_rx_desc_t,,length,uint16_t,2,DLC,,verified
+can_std_rx_desc_t,,data_ptr,ptr:uint8_t,4,Pointer to payload bytes,,verified
+
+# Parameter Lookup Arguments - used by param_address_calc
+param_lookup_args_t,,calculated_block,dword,4,Block x 256 x 4 calculation result,,verified
+param_lookup_args_t,,offset,word,2,Parameter offset within block,,verified
+param_lookup_args_t,,result_value,word,2,Retrieved parameter value (capped at 32000),,verified
+
+# DMA Descriptor
+dma_descriptor_t,,source_address,dword,4,DMA transfer source memory address,,verified
+dma_descriptor_t,,dest_address,dword,4,DMA transfer destination memory address,,verified
+dma_descriptor_t,,transfer_count,word,2,Number of bytes/words to transfer,,verified
+dma_descriptor_t,,control_flags,word,2,DMA control flags (mode type enable etc),,verified
+dma_descriptor_t,,next_descriptor,dword,4,Pointer to next descriptor in chain,,verified
+
+# Memory Operation Request
+memory_operation_request_t,,source_data_ptr,dword,4,Pointer to source data for memory operation,,verified
+memory_operation_request_t,,target_data_ptr,dword,4,Pointer to destination memory location,,verified
+memory_operation_request_t,,operation_size,word,2,Number of bytes to copy (max 1764 bytes),,verified
+memory_operation_request_t,,metadata_value,word,2,Logging metadata/timestamp for circular buffer,,verified
+
+# Q16.16 Fixed Point - 32-bit with 16-bit integer and 16-bit fractional
+q16_fixed_point_t,,integer_part,word,2,High 16 bits - integer/whole number portion,,verified
+q16_fixed_point_t,,fractional_part,word,2,Low 16 bits - fractional portion,,verified
+
+# Division Operand - 32-bit value with embedded value and limit fields
+division_operand_t,,value,word,2,Primary 16-bit value (used for division),,verified
+division_operand_t,,limit,word,2,Secondary 16-bit limit/clamp value,,verified
+
+# MC68336 16-bit Hardware Register - for registers accessed at byte level
+
+# SIM Timer Block @ 0xFFF404 - Multi-register timer structure
+# Accessed at offsets 0, 4, 12, 16, 20 as 16-bit words
+
+# MC68336 Hardware Register Instances (peripheral space 0xFFxxxx)
+# TPU DSCR Block @ 0xFFFC04 - Multi-register TPU development support
+# Note: Offsets 0-1 accessed as bytes, 4-10 as words
+# TPU HSQ Block @ 0xFFFC14 - Host Sequence register group
+# HSQR0/1 accessed as bytes, config/status/data as words
+
+# QSM Serial Port Block @ 0xFFD800 - Serial port register group
+# Accessed at offsets 0, 1, 2 as single bytes
+
+# A/D channel config record (24 bytes; e2m block 1003 = 25 of them from 0x806ae2 in channel order). Replaces the unused sensor_fault_config_t template (PR #53 round 89)
+sensor_config_t,,filter_coefficient,word,2,+0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's sensor_state_t.filter.coefficient points here and cm550_exponentialMovingAverage reads it (Calterm ...CS),,verified
+sensor_config_t,,default_value,word,2,+2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading (Calterm ...GD or ADDF + the channel code),,verified
+sensor_config_t,,fault_clear_threshold,short,2,+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (Calterm ...CC or ...FC),,verified
+sensor_config_t,,debounce_counter_decrement,short,2,+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) (Calterm ...DT or ...FD),,verified
+sensor_config_t,,debounce_counter_increment,short,2,+8: A/D fault increment: added to debounce_counter on each out-of-range sample (Calterm ...IC or ...FI),,verified
+sensor_config_t,,fault_set_threshold,short,2,+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there (Calterm ...SE or ...FS),,verified
+sensor_config_t,,high_error_limit,word,2,+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number (Calterm ...HL),,verified
+sensor_config_t,,low_error_limit,word,2,+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number (Calterm ...LL),,verified
+sensor_config_t,,qadc_result_register_index,word,2,+16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value (Calterm ...CA: channel address),,verified
+sensor_config_t,,multiplexer_setting,byte,1,+18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) (Calterm ...MU),,verified
+sensor_config_t,,tri_state_error_enable,byte,1,+19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) (Calterm ...TS),,verified
+sensor_config_t,,high_error_fault_number,byte,1,+20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) (Calterm ...HE),,verified
+sensor_config_t,,low_error_fault_number,byte,1,+21: the fault the low limit sets (Calterm ...LE),,verified
+sensor_config_t,,tri_state_error_fault_number,byte,1,+22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading (Calterm ...TE),,verified
+sensor_config_t,,sample_period,byte,1,+23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured (Calterm ...SA or ...SR),,verified
+
+# Filter records (PR #53 round 88): CM848's ema_filter_state_t layout; cm550_signedFirstOrderFilter / cm550_exponentialMovingAverage take one, cm550_secondOrderFilter / cm550_secondOrderFilterUnsigned the second order record
+ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient word: the weight of the previous value in 1/65536 (0 = no filtering),,verified
+ema_filter_state_t,,accumulator,dword,4,Q16.16 filtered value (offset binary in the signed filter); the filters return its rounded integer part,,verified
+second_order_filter_state_t,,coefficient_1,word*,4,+0: points at coefficient 1 (1/65535): the weight of the new input,,verified
+second_order_filter_state_t,,coefficient_3,word*,4,+4: points at coefficient 3 (1/65535): the weight of the output before last,,verified
+second_order_filter_state_t,,output,dword,4,+8: the filter output (its integer part is returned),,verified
+second_order_filter_state_t,,output_previous,dword,4,+12: the output of the previous call,,verified
+# A/D channel runtime record (22 bytes; e2m block 1004 = 25 of them from 0x80a2aa in channel order; the pair of sensor_config_t) (was sensor_debounce_state_t; PR #53 round 89)
+sensor_state_t,,filter,ema_filter_state_t,8,+0: the channel's filter record (its coefficient points at the channel config's +0 filter constant) (was reserved_00; PR #53 round 88),,verified
+sensor_state_t,,filtered_value,word,2,+8: the filter output - or the config default while the fault is active - or the channel's override value (Calterm ...FT: filtered and linearized) (was interpolated_value; PR #53 round 88),,verified
+sensor_state_t,,unfiltered_value,word,2,+10: the linearized reading before the filter - the table lookup result (Calterm ...UF: unfiltered and linearized) (was lookup_result; PR #53 round 89),,verified
+sensor_state_t,,debounce_counter,short,2,+12: the fault debounce count (signed: floored at 0),,verified
+sensor_state_t,,fault_active_flag,byte,1,+14: fault currently active flag,,verified
+sensor_state_t,,sample_counter,byte,1,+15: sample phase counter,,verified
+sensor_state_t,,adc_raw_value,word,2,+16: raw A/D conversion value (Calterm ...RC: raw counts),,verified
+sensor_state_t,,reserved_18,dword,4,+18-+21: no access; 0 in all 25 dumped records. One dword: as byte[4] the decompiler made it the base of byte arithmetic (the array end and indexed channel reads) (was reserved_12 - the hex offset; PR #53 round 88; byte[4] until round 89),,verified
+
+# -----------------------------------------------------------------------------
+# EEPROM Structures (Fixed Addresses - Same Across Firmware Versions)
+# -----------------------------------------------------------------------------
+
+# Module ID Header @ EEPROM 0x0100003A
+cummins_data_plate_header_t,0x0100003A,data_plt_module_id,word,2,Module identifier (EN=0x454E for CM550/VP44 ECUs),,verified
+
+# Module Variant Offsets
+module_variant_offsets_t,,cm550_data_plate_offset,word,2,CM550 data plate offset (0x2C0),,verified
+module_variant_offsets_t,,vp44_data_plate_offset,word,2,VP44 data plate offset (0x2C0-0x22=0x29E),,verified
+module_variant_offsets_t,,incal_variant_code,byte,1,InCal calibration variant (A/B/C),,verified
+
+# Data Plate @ EEPROM 0x010002C0
+cummins_data_plate_t,0x010002C0,data_plate_length,word,2,Data plate length field,,verified
+cummins_data_plate_t,0x010002C0,engine_make,byte,5,Engine manufacturer identifier (JCMMNS),,verified
+cummins_data_plate_t,0x010002C0,engine_model,byte,17,Engine model designation (ISB 195),,verified
+cummins_data_plate_t,0x010002C0,engine_serial_number,dword,4,Engine serial number,,verified
+cummins_data_plate_t,0x010002C0,engine_build_month,byte,1,Engine manufacturing month,,verified
+cummins_data_plate_t,0x010002C0,engine_build_day,byte,1,Engine manufacturing day,,verified
+cummins_data_plate_t,0x010002C0,engine_build_year,byte,1,Engine manufacturing year,,verified
+cummins_data_plate_t,0x010002C0,engine_cpl,word,2,Engine CPL (Component Parts List),,verified
+cummins_data_plate_t,0x010002C0,peak_torque_low_range,word,2,Peak torque low range value,,verified
+cummins_data_plate_t,0x010002C0,peak_torque_high_range,word,2,Peak torque high range value,,verified
+cummins_data_plate_t,0x010002C0,peak_torque_rpm_low,word,2,Peak torque RPM low range,,verified
+cummins_data_plate_t,0x010002C0,peak_torque_rpm_high,word,2,Peak torque RPM high range,,verified
+cummins_data_plate_t,0x010002C0,governed_speed_low,word,2,Governed speed low range,,verified
+cummins_data_plate_t,0x010002C0,governed_speed_high,word,2,Governed speed high range,,verified
+cummins_data_plate_t,0x010002C0,horsepower_low_range,word,2,Horsepower low range value,,verified
+cummins_data_plate_t,0x010002C0,horsepower_high_range,word,2,Horsepower high range value,,verified
+cummins_data_plate_t,0x010002C0,ecm_part_number,dword,4,ECM part number (98502),,verified
+cummins_data_plate_t,0x010002C0,ecm_serial_number,dword,4,ECM serial number (T03942860),,verified
+
+# -----------------------------------------------------------------------------
+# VP44 Communication Structures (RAM - Need J90350.00 Address Mapping)
+# -----------------------------------------------------------------------------
+
+# VP44 Message State @ RAM 0x800F5E (J90350.00 verified)
+
+# J1939 TX Message Buffer @ RAM 0x803036 (J90350.00 verified)
+j1939_tx_msg_buffer_t,0x00803036,data,byte,8,J1939 message payload data array,,verified
+j1939_tx_msg_buffer_t,0x00803036,header,j1939_message_header_t,6,CAN message header (ID + length),j1939_message_header_t,verified
+
+# J1939/VP44 Dual Protocol Message (generic - addresses vary by usage)
+j1939_vp44_msg_t,,j1939_status_byte,byte,1,J1939 transmission message status/header byte,,verified
+j1939_vp44_msg_t,,fuel_amount_high,byte,1,Fuel amount high byte,,verified
+j1939_vp44_msg_t,,fuel_amount_low,byte,1,Fuel amount low byte,,verified
+j1939_vp44_msg_t,,rpm_low,byte,1,Engine RPM low byte,,verified
+j1939_vp44_msg_t,,rpm_high,byte,1,Engine RPM high byte,,verified
+j1939_vp44_msg_t,,vp44_header,dword,4,VP44 0x100 command message header,,verified
+j1939_vp44_msg_t,,timing_byte3,byte,1,VP44 timing advance data byte 3,,verified
+j1939_vp44_msg_t,,timing_byte4,byte,1,VP44 timing advance data byte 4,,verified
+j1939_vp44_msg_t,,timing_byte5,byte,1,VP44 timing advance data byte 5,,verified
+j1939_vp44_msg_t,,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
+
+# -----------------------------------------------------------------------------
+# Diagnostic/CLIP Structures (RAM - J90350.00 Addresses Verified)
+# -----------------------------------------------------------------------------
+
+# Diagnostic Mode Buffer @ RAM 0x809658 (J90350.00 verified)
+# Main diagnostic mode state buffer for CLIP service requests
+
+# VP44 Diagnostic Mode State @ RAM 0x8096B6 (J90350.00 verified)
+
+# Diagnostic Mode Fuel/Boost @ RAM 0x8096C4 (J90350.00 verified)
+
+# Diagnostic Service Request
+diag_service_request_t,,message_length,byte,1,Total message length including header,,verified
+diag_service_request_t,,service_id,byte,1,Service identifier (3=secured 4=control 5=memory),,verified
+diag_service_request_t,,sub_function,byte,1,Sub-function code for service routing,,verified
+diag_service_request_t,,data_payload,byte,16,Variable-length request data payload,,verified
+
+# Diagnostic Transport Protocol State
+diag_tp_state_t,,diag_state,byte,1,State flag: 0=idle 1=active,,verified
+diag_tp_state_t,,expected_id_low,byte,1,Expected low byte of std CAN ID,,verified
+diag_tp_state_t,,expected_guard,word,2,Guard word; must match (payload[6]<<8),,verified
+diag_tp_state_t,,total_packets,byte,1,((total_bytes-1)/7)+1,,verified
+diag_tp_state_t,,req_start,byte,1,Current sequence index (1-based),,verified
+diag_tp_state_t,,req_count,byte,1,Remaining packets to send,,verified
+diag_tp_state_t,,pre_status,byte,1,Abort/status flag (non-zero aborts with 7),,verified
+diag_tp_state_t,,total_bytes,word,2,Total payload length,,verified
+diag_tp_state_t,,src_data_ptr,ptr:uint8_t,4,Pointer to source payload,,verified
+diag_tp_state_t,,resp_byte_ptr,ptr:uint8_t,4,Pointer to 1-byte response/status,,verified
+diag_tp_state_t,,status_code,byte,1,Countdown/NACK (0x37 init or 0x70 delay),,verified
+diag_tp_state_t,,reserved_0x47,byte,1,Padding,,verified
+diag_tp_state_t,,tx_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,verified
+diag_tp_state_t,,tx_length,uint16_t,2,DLC for frame (8 or tail),,verified
+diag_tp_state_t,,tx_cm_buf,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,verified
+
+# Multi-packet Transfer State
+diag_transfer_state_t,,target_address,word,2,Target memory address for transfer,,verified
+diag_transfer_state_t,,data_pointer,dword,4,Pointer to source/dest data buffer,,verified
+diag_transfer_state_t,,remaining_length,word,2,Remaining bytes to transfer,,verified
+diag_transfer_state_t,,byte_count,word,2,Total byte count for operation,,verified
+diag_transfer_state_t,,tx_active_flag,byte,1,Transmit operation active (0/1),,verified
+diag_transfer_state_t,,rx_active_flag,byte,1,Receive operation active (0/1),,verified
+
+# -----------------------------------------------------------------------------
+# Fuel Control Structures
+# -----------------------------------------------------------------------------
+
+# Fuel Governor State (PID controller)
+fuel_governor_state_t,,out_cmd,short,2,Final clamped output (governor/fueling command),,verified
+fuel_governor_state_t,,cmd_raw,short,2,Current raw command (signed),,verified
+fuel_governor_state_t,,term_ff,short,2,Feed-forward/scaling term (signed),,verified
+fuel_governor_state_t,,term_rate,short,2,Rate/derivative term (signed saturating),,verified
+fuel_governor_state_t,,accum_lo,ushort,2,Q16.16 accumulator low 16 bits (fractional part),,verified
+fuel_governor_state_t,,accum_hi,ushort,2,Q16.16 accumulator high 16 bits (integer part),,verified
+fuel_governor_state_t,,limit_hi,short,2,Accumulator integer ceiling (upper clamp),,verified
+fuel_governor_state_t,,limit_cap,short,2,Accumulator/output cap,,verified
+fuel_governor_state_t,,rpm_window,short,2,RPM window/threshold term used for gating,,verified
+
+# Fuel Demand State
+fuel_demand_state_t,,command,word,2,Current fuel demand value,,verified
+fuel_demand_state_t,,source_identifier,byte,1,Source of fuel command (FUEL_SOURCE_ID enum),,verified
+fuel_demand_state_t,,reserved_03,byte,1,Padding byte,,verified
+fuel_demand_state_t,,diagnostic_buffer,word,2,Diagnostic parameter buffer,,verified
+fuel_demand_state_t,,timing_blend_factor,word,2,Fuel timing blend factor 0-16384,,verified
+fuel_demand_state_t,,table_output,word,2,Fuel demand table output,,verified
+fuel_demand_state_t,,limit_minimum,word,2,Fuel limit minimum value,,verified
+fuel_demand_state_t,,demand_source_id,word,2,Fuel demand source identifier,,verified
+fuel_demand_state_t,,adjustment_active,word,2,Fuel adjustment active flag,,verified
+
+# Fuel Limit Arbitration State @ RAM 0x80CC4E (J90350.00 verified)
+fuel_limit_arbitration_t,0x0080CC4E,source_id,word,2,ID of current fuel limit source,,verified
+fuel_limit_arbitration_t,0x0080CC4E,demand_limited,word,2,Rate-limited fuel demand,,verified
+fuel_limit_arbitration_t,0x0080CC4E,arbitration_threshold,word,2,Fuel limit arbitration threshold,,verified
+fuel_limit_arbitration_t,,demand_delta,word,2,Fuel demand delta for rate limiting,,verified
+fuel_limit_arbitration_t,,maximum_limit,word,2,Maximum fuel demand limit,,verified
+fuel_limit_arbitration_t,,offset_value,word,2,Fuel limit offset value,,verified
+fuel_limit_arbitration_t,,comparison_low,word,2,Fuel limit comparison low value,,verified
+fuel_limit_arbitration_t,,comparison_high,word,2,Fuel limit comparison high value,,verified
+fuel_limit_arbitration_t,,rate_limit,word,2,Fuel demand rate limiting value,,verified
+
+# Shutdown Minimum Selector State @ RAM 0x80D496 (J90350.00 verified)
+
+# Fuel Arbitrator Diagnostic State @ RAM 0x80D01A (J90350.00 verified)
+
+# -----------------------------------------------------------------------------
+# Engine Speed/RPM Structures (RAM - J90350.00 Addresses Verified)
+# -----------------------------------------------------------------------------
+
+# Engine RPM Circular Buffer @ RAM 0x80C404 (J90350.00 verified)
+# Core engine speed tracking structure
+
+# Engine RPM History @ RAM 0x80000C (J90350.00 verified)
+# Historical RPM tracking for rate calculations
+
+# Target Engine RPM @ RAM 0x809CFE (J90350.00 verified)
+engine_rpm_target_t,0x00809CFE,target_engine_rpm,word,2,Commanded/target engine RPM,,verified
+
+# EPS Engine RPM Snapshot @ RAM 0x801712 (J90350.00 verified)
+# Engine Position Sensor derived RPM values
+
+# -----------------------------------------------------------------------------
+# Engine Protection Structures
+# -----------------------------------------------------------------------------
+
+# Engine Operating Mode State
+engine_operating_mode_t,,state,word,2,Engine operating mode state 1-8,,verified
+engine_operating_mode_t,,shutdown_complete_flag,word,2,Engine shutdown complete flag,,verified
+
+# High RPM Protection State
+high_rpm_protection_t,,fault_flag,word,2,High RPM protection fault active flag,,verified
+high_rpm_protection_t,,state,word,2,State machine state,,verified
+high_rpm_protection_t,,timer,word,2,Countdown timer,,verified
+high_rpm_protection_t,,reserved_06,word,2,Reserved/gap,,verified
+high_rpm_protection_t,,warning_flag,word,2,Warning active flag,,verified
+
+# RPM Fuel Protection State (30 bytes)
+rpm_fuel_protection_t,,fuel_limit_shutdown,word,2,Fuel limit during shutdown,,verified
+rpm_fuel_protection_t,,high_rpm_fuel_limit,word,2,High RPM fuel control limit,,verified
+rpm_fuel_protection_t,,low_rpm_fuel_protection_limit,word,2,Low RPM fuel protection limit,,verified
+rpm_fuel_protection_t,,rpm_rate_limiter_output,word,2,RPM rate limiter output,,verified
+rpm_fuel_protection_t,,rpm_rate_limited_value,word,2,RPM rate limited value,,verified
+rpm_fuel_protection_t,,rpm_rate_secondary_calc,word,2,Secondary RPM rate calculation,,verified
+rpm_fuel_protection_t,,rpm_state_accumulator,word,2,RPM state accumulator,,verified
+rpm_fuel_protection_t,,high_rpm_fuel_accumulator,word,2,High RPM fuel accumulator,,verified
+rpm_fuel_protection_t,,low_rpm_fuel_accumulator,word,2,Low RPM fuel accumulator,,verified
+rpm_fuel_protection_t,,fuel_demand_before_limiting,word,2,Fuel demand saved before limiting,,verified
+rpm_fuel_protection_t,,low_rpm_threshold_exceeded_flag,word,2,Low RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,rpm_threshold_exceeded_flag,word,2,RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,high_rpm_threshold_exceeded_flag,word,2,High RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,fuel_protection_timer_enable,word,2,Timer enable for protection state machines,,verified
+rpm_fuel_protection_t,,fuel_system_protection_enabled,word,2,Master fuel protection system enable (1=active),,verified
+
+# -----------------------------------------------------------------------------
+# Fault System Structures
+# -----------------------------------------------------------------------------
+
+# Fault Persistence Counters (8 bytes)
+fault_persistence_counters_t,,periodic_monitor_phase,byte,1,5-phase counter for periodic fault monitoring,,verified
+fault_persistence_counters_t,,can_pin_fault,byte,1,CAN pin switching fault persistence counter,,verified
+fault_persistence_counters_t,,io_fault_1,byte,1,I/O control fault 1 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_2,byte,1,I/O control fault 2 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_3,byte,1,I/O control fault 3 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_4,byte,1,I/O control fault 4 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_5,byte,1,I/O control fault 5 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_6,byte,1,I/O control fault 6 persistence counter,,verified
+
+# Fault Status Registers (16 bytes)
+fault_status_registers_t,,sensor_fault_status,word,2,Sensor fault status register,,verified
+fault_status_registers_t,,fault_status_2,word,2,Fault status flags register 2,,verified
+fault_status_registers_t,,engine_fault_status,word,2,Engine fault status register,,verified
+fault_status_registers_t,,reserved_06,word,2,Reserved/gap,,verified
+fault_status_registers_t,,io_fault_status_1,word,2,IO fault status register 1,,verified
+fault_status_registers_t,,io_fault_status_2,word,2,IO fault status register 2,,verified
+fault_status_registers_t,,io_fault_status_3,word,2,IO fault status register 3,,verified
+fault_status_registers_t,,io_fault_status_4,word,2,IO fault status register 4,,verified
+
+# VP44 Fault State
+vp44_fault_state_t,,fault_status,word,2,VP44 fault status register,,verified
+vp44_fault_state_t,,fso_fault_status,word,2,VP44 FSO fault status register 2,,verified
+
+# -----------------------------------------------------------------------------
+# Timing Control Structures
+# -----------------------------------------------------------------------------
+
+# Timing Mode Control State (36 bytes)
+timing_mode_control_t,,blend_factor,word,2,Fuel timing mode blend factor Q14,,verified
+timing_mode_control_t,,protection_blend_ramp,word,2,Timing protection blend ramp 0-16384,,verified
+timing_mode_control_t,,source_selector,word,2,Timing mode source selector 0-4,,verified
+timing_mode_control_t,,transition_result,word,2,Timing mode transition result,,verified
+timing_mode_control_t,,fuel_blend_result,word,2,Timing fuel blend result,,verified
+timing_mode_control_t,,oil_pressure_result,word,2,Timing oil pressure condition result,,verified
+timing_mode_control_t,,mode_11_result,word,2,Timing mode 11 countdown result,,verified
+timing_mode_control_t,,protection_counter_1,word,2,Timing protection counter 1,,verified
+timing_mode_control_t,,protection_counter_2,word,2,Timing protection counter 2,,verified
+timing_mode_control_t,,blend_state,word,2,Timing blend state,,verified
+timing_mode_control_t,,reserved_14,word,2,Gap/reserved,,verified
+timing_mode_control_t,,reserved_16,word,2,Gap/reserved,,verified
+timing_mode_control_t,,blend_accumulator,word,2,Timing blend accumulator,,verified
+timing_mode_control_t,,reserved_1A,word,2,Gap/reserved,,verified
+timing_mode_control_t,,fuel_source_mode_11_state,word,2,Fuel source mode 11 state,,verified
+timing_mode_control_t,,fuel_source_mode_11_timer,word,2,Fuel source mode 11 timer,,verified
+timing_mode_control_t,,fuel_mode_transition_state,word,2,Fuel mode transition state,,verified
+timing_mode_control_t,,fuel_mode_transition_timer,word,2,Fuel mode transition timer,,verified
+
+# -----------------------------------------------------------------------------
+# Scheduler Structures (RAM - J90350.00 Addresses Verified)
+# -----------------------------------------------------------------------------
+
+# Scheduler Phase Slot (16 bytes per slot)
+scheduler_phase_slot_t,,last_execution_time,dword,4,Timer value of last task execution,,verified
+scheduler_phase_slot_t,,runtime_ticks,word,2,Task runtime duration in timer ticks,,verified
+scheduler_phase_slot_t,,deadline_ticks,word,2,Task execution deadline (0xFFFF = disabled),,verified
+scheduler_phase_slot_t,,execution_count,word,2,Number of times task has been executed,,verified
+scheduler_phase_slot_t,,overrun_count,word,2,Number of deadline overruns detected,,verified
+scheduler_phase_slot_t,,reserved,dword,4,Reserved/padding bytes for alignment,,verified
+
+# Scheduler Phase Table @ RAM 0x809782 (J90350.00 verified)
+# Array of scheduler_phase_slot_t entries, one per task phase
+scheduler_phase_table_t,0x00809782,slots,scheduler_phase_slot_t[],variable,Array of phase slots - size depends on scheduler_phase_slot_count,scheduler_phase_slot_t,verified
+
+# Scheduler Control Variables @ RAM 0x809770-0x809780 (J90350.00 verified)
+
+# System Callback Table (12 bytes)
+system_callback_table_t,,engine_position_sensor_isr,dword,4,EPS position sensor ISR handler,,verified
+system_callback_table_t,,tpu_adc_isr,dword,4,TPU/QADC interrupt handler,,verified
+system_callback_table_t,,main_loop_callback,dword,4,Main scheduler loop callback,,verified
+
+# -----------------------------------------------------------------------------
+# A/D Sensor Configuration
+# -----------------------------------------------------------------------------
+
+# (ad_sensor_config_t removed in PR #53 round 89: no user; the A/D channel config record is sensor_config_t)
+
+# -----------------------------------------------------------------------------
+# Address Range Validation (ROM-based)
+# Used by Service 0x4A memory reads to validate addresses
+# -----------------------------------------------------------------------------
+
+address_range_entry_t,,start_address,dword,4,Start of valid address range (big-endian),,verified
+address_range_entry_t,,end_address,dword,4,End of valid address range (big-endian),,verified
+address_range_entry_t,,special_mode_flag,byte,1,Access flag when water_in_fuel_detection_flag==1,,verified
+address_range_entry_t,,normal_mode_flag,byte,1,Access flag in normal operation,,verified
+
+# -----------------------------------------------------------------------------
+# Circular Buffer Structures (Generic + RAM Instances)
+# Used by circularBufferInit/Push/Pop functions
+# -----------------------------------------------------------------------------
+
+# Generic Circular Buffer Control (20 bytes)
+# Used by multiple subsystems - addresses vary by instance
+circular_buffer_control_t,,read_ptr,dword,4,Current read position pointer,,verified
+circular_buffer_control_t,,write_ptr,dword,4,Current write position pointer,,verified
+circular_buffer_control_t,,base_ptr,dword,4,Start address of buffer data,,verified
+circular_buffer_control_t,,end_ptr,dword,4,End address of buffer data,,verified
+circular_buffer_control_t,,full_flag,byte,1,Buffer full indicator (1=full 0=space available),,verified
+
+# Parameter Circular Buffer @ RAM 0x80BDFA (J90350.00 verified)
+# Main parameter logging circular buffer
+
+# QADC Circular Buffer @ RAM 0x801720 (J90350.00 verified)
+
+# -----------------------------------------------------------------------------
+# Huffman Compression Structures (ROM-based)
+# Used by huffmanTreeBuilder/huffmanDecompress for boot decompression
+# -----------------------------------------------------------------------------
+
+# Huffman Tree Node (6 bytes per node, up to 513 nodes)
+huffman_tree_node_t,,frequency,word,2,Symbol frequency or combined weight,,verified
+huffman_tree_node_t,,left_child,word,2,Index of left child node (0-512),,verified
+huffman_tree_node_t,,right_child,word,2,Index of right child node (0-512),,verified
+
+# Huffman Tree Control Structure
+# Tree array is 513 nodes * 6 bytes = 3078 bytes (0xC06)
+huffman_tree_t,,nodes,huffman_tree_node_t,3078,Array of 513 tree nodes (256 leaves + 257 internal),huffman_tree_node_t,verified
+huffman_tree_t,,root_marker,word,2,Root node marker at offset 0x600,,verified
+huffman_tree_t,,terminator,word,2,Tree terminator at offset 0xC06 (set to 0xFFFF),,verified
+
+# -----------------------------------------------------------------------------
+# J1708 Protocol Structures @ RAM 0x80DC94 (J90350.00 verified)
+# SAE J1708 serial communication protocol state
+# -----------------------------------------------------------------------------
+
+# J1708 Transmit State
+
+# J1708 Receive State
+
+# J1708 Multi-Packet Message Structure (256 bytes)
+# This is the structured layout of the J1708 transmit/receive buffers
+# Offsets based on access pattern analysis
+
+# J1708 Multipacket Message Buffer @ 0x0080DDC6 (single instance)
+# The struct definition with all fields is above - this just places one instance
+
+# J1708 Receive Buffer @ 0x0080DEC6
+
+# -----------------------------------------------------------------------------
+# Diagnostic Buffer Structures @ RAM 0x808B00 (J90350.00 verified)
+# CLIP diagnostic service buffers
+# -----------------------------------------------------------------------------
+
+
+# Diagnostic Buffer Pointers @ RAM 0x80D3E6 (J90350.00 verified)
+
+# (can_buffer_setup_t @ 0x801A8A removed in PR #53 round 94: the words there are the serial EEPROM driver's state - eeprom_byte_write_state / eeprom_mirror_base_pointer / eeprom_mirror_loaded_flag in global_variables.csv)
+
+# CAN Message Buffer Range @ RAM 0x8034F8 (J90350.00 verified)
+
+# -----------------------------------------------------------------------------
+# Data Collector Buffer @ RAM 0x80AAAA (J90350.00 verified)
+# Snapshot/logging data collection
+# -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
+# Insite Response Buffer @ RAM 0x80D40C (J90350.00 verified)
+# Buffer for Insite diagnostic tool responses
+# -----------------------------------------------------------------------------
+
+# --- memory_region_t: a write-permission map entry - application_memory_region_table (5 x 10 bytes @ ROM 0x345dc); the first matching entry wins; the layout of CM848's memory_region_t (PR #53 round 72) ---
+insite_parameter_schedule_entry_t,,parameter_id,byte,1,The parameter's ID (0 ends the list) - vp44_insiteParameterTableIterator tests its bit in the 32-byte bitmap at ROM 0x6134a before it calls cm550_activeParamReadFunction,,verified
+insite_parameter_schedule_entry_t,,period,byte,1,Schedule ticks between two sends: the iterator adds it to the parameter's next due tick each time that tick comes,,verified
+insite_parameter_schedule_entry_t,,first_due_offset,byte,1,Ticks added to the period for the first due tick (the initializer mc68k_initializeJ1708Datalink sets next due = period + this),,verified
+memory_region_t,,start_address,dword,4,First address of the region,,verified
+memory_region_t,,end_address,dword,4,Last address of the region (inclusive),,verified
+memory_region_t,,region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag (0x80de30) is 1,,verified
+memory_region_t,,development_mode_off_region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag is not 1 (the registers become REFUSED),,verified
+
+# Parameter ID table entry (8 bytes; parameter_id_table at 0x35224, read by cm550_lookupParameterIdAddress) (PR #53 round 90)
+parameter_id_table_entry_t,,address_ram_refresh_disabled,dword,4,+0: the parameter's address while ram_refresh_enable is RAM_REFRESH_DISABLED (development mode); 0 = no parameter,,verified
+parameter_id_table_entry_t,,address_ram_refresh_enabled,dword,4,+4: the address otherwise; equal to +0 in all 1806 J90350.00 entries,,verified
+
+# fault_count_record_t (10 bytes; PR #53 round 91, item S1)
+fault_count_record_t,,status_change_time,dword,4,+0: key_on_hour_meter (0.2 s counts) when the fault last became active (status 3) or inactive (status 2) - cm550_processFaultScanGroup stores it (move.l at 0x14972 / 0x14bd0). The first countdown step waits until key_on_hour_meter minus it reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode); cm550_findOldestFreezeFrameEntryByFaultStatus picks the snapshot slot whose fault has the smallest one (cmp.l at 0x146fa); cm550_resetFaultStatus zeroes it. Unsigned (sub.l then cmp.l / bls),,verified
+fault_count_record_t,,last_countdown_time,dword,4,+4: key_on_hour_meter at the last countdown step (move.l at 0x145bc); 0 until the first step - the activation (clr.l at 0x14988) and cm550_resetFaultStatus (clr.l at 0x2fe0e) zero it. While it is not 0 each step waits until key_on_hour_meter minus it reaches the mode's count down rate (e2m DGnnCUDN at 0x806550 + 8 x mode). Unsigned (sub.l then cmp.l / bhi),,verified
+fault_count_record_t,,status,byte,1,+8: bit 0 = active / bit 1 = given a snapshot slot in fault_freeze_frame_entries_cal[0].fault_code_index. cm550_processFaultScanGroup writes 3 on activation (after cm550_assignFaultFreezeFrameEntry assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_runTrendingIntervalAndStoreSamples / cm550_evaluateDataloggerTrigger),,verified
+fault_count_record_t,,occurrence_count,byte,1,+9: times the fault became active: +1 on each new fault bit mapped to it up to 255 (cmpi.b #0xff / bcc at 0x1491e) and -1 per countdown step (subq.b at 0x145d4); at 0 the record is cleared and the fault leaves previously_active_dtc_list. DM1 / DM2 send it capped at 127 (cmpi.b #0x7f / bls) and the InSite fault list (J1587 PID 194 layout) sends it whole; cm550_insitePidDtcHandler skips a fault whose count is 0. Unsigned,,verified
+
+# datalogger_trigger_t (16 bytes; PR #53 round 91, item S2)
+datalogger_trigger_t,,value_length,byte,1,+0 (e2m UD0nTRBY 'DATALOGGER TRIGGER LENGTH' 0-4): the width in bytes of the value the trigger compares: 1 = byte / 2 = word / any other value = dword (move.b (0;a0;d0.w*8);d0b at 0x13f30 then cmp.b #1 / #2 / #4); 2 in all four dump records,,verified
+datalogger_trigger_t,,disable_flag,byte,1,+1 (UD0nTRDB 'DISABLES DATALOGGER TRIGGER INPUT'): nonzero = not evaluated; the trigger task then stores 1 (satisfied) for triggers 1-3 so the AND condition ignores them and 0 for trigger 4 (tst.b (0;a0;d3.w) at 0x1396c with a0 = 0x803d65 / tst.b $803d95 at 0x13994); 1 in all four dump records,,verified
+datalogger_trigger_t,,fault_code_flag,word,2,+2 (UD0nTRFU 'SET TRIGGER INPUT TO A FAULT CODE'): 1 = the trigger watches a fault code's status in the fault count table / 0 = it compares a parameter with threshold. The address is resolved only for 0 (tst.w at 0x13dd2) and the fault is looked up only for 1 (cmpi.w #1 at 0x13cf4 / 0x13e78); the evaluation takes the fault path for any nonzero value (tst.w at 0x13f00); 0 in the dump,,verified
+datalogger_trigger_t,,above_threshold_or_fault_active_flag,word,2,+4 (UD0nTRMD 'TRIGGER => THRESHOLD OR < THRESHOLD'): parameter trigger: nonzero = satisfied while the value is above threshold / 0 = while it is below; both strict (bls / bcc / ble / bge after cmp; tst.w at 0x13f0e). Fault trigger: nonzero = satisfied on the pass the fault status turns from inactive (0 or 2) to active (1 or 3) / 0 = on the pass it turns from active to inactive (tst.w at 0x1419c); 1 in the dump,,verified
+datalogger_trigger_t,,parameter_id_or_fault_code,word,2,+6 (UD0nTRNM 'NAME TABLE NAME'): with fault_code_flag 0 the parameter ID passed to cm550_lookupParameterIdAddress (move.w (0;a0;d2.w);-(sp) at 0x13de0); with 1 the fault code matched against the code word of the 125 six-byte fault definitions at 0x8067c4 (cmp.w (a2);d0w at 0x13ea0); dump 0x100c / 0x1004 / 0x1051 / 0x1047,,verified
+datalogger_trigger_t,,parameter_offset,word,2,+8 (UD0nTROF 'NAME TABLE OFFSET'): byte offset added zero-extended to the parameter ID's address (move.w (0;a0;d2.w);d0w / andi.l #0xffff / add.l d0;(a2) at 0x13df2-0x13dfc); dump 2 / 0x76 / 0 / 0,,verified
+datalogger_trigger_t,,threshold,dword,4,+10 = +0xA (UD0nTRTD 'TRIGGER THRESHOLD' 0-FFFFFFFF): read as one dword (move.l (0;a0;d2.w)) and compared through its low byte for value_length 1 (andi.l #0xff - also in signed mode so a 1-byte threshold is 0-255) / its low word for 2 / the whole dword otherwise; dump 0x18fc / 0 / 0 / 0x4f,,verified
+datalogger_trigger_t,,signed_value_flag,word,2,+14 = +0xE (UD0nTRTY 'DATA TYPE (SET: SIGNED; CLEAR: UNSIGNED)'): nonzero = signed compares (extb.l / ble / bge) / 0 = unsigned (bls / bcc) (tst.w at 0x13f1c and 0x1405c with a0 = 0x803d72); 0 in the dump,,verified
+
+# datalogger_data_parameter_t (6 bytes; PR #53 round 91, item S2)
+datalogger_data_parameter_t,,value_length,word,2,+0 (e2m 1283 UD0nDXBY 'DATALOGGER DATA LENGTH' 0-10): bytes copied from the parameter's address into the ring buffer at each sample (move.w (0;a0;d4.w);d0w at 0x13bb2); the set-up counts the parameters whose running byte total stays at or below 10 (move.w at 0x13abe / add.b d0b;d2b / cmpi.b #10 at 0x13ac4); 2 in all five dump records,,verified
+datalogger_data_parameter_t,,parameter_id,word,2,+2 (UD0nDXNM 'NAME TABLE NAME'): the parameter ID passed to cm550_lookupParameterIdAddress (move.w (0;a0;d2.w);-(sp) at 0x13e2a); dump 0x100c / 0x1004 / 0x1051 / 0x1047 / 0x1004,,verified
+datalogger_data_parameter_t,,parameter_offset,word,2,+4 (UD0nDXOF 'NAME TABLE OFFSET'): byte offset added zero-extended to that address (move.w at 0x13e3c / andi.l #0xffff / add.l d0;(a2) at 0x13e46); dump 2 / 0x76 / 0 / 0 / 0x8c,,verified
+
+# datalogger_trigger_information_t (8 bytes; PR #53 round 91, item S2)
+datalogger_trigger_information_t,,ring_buffer_trigger_offset,word,2,+0: the ring buffer write pointer minus the ring buffer start (0x800374) when the event began (move.l $800504;d0 / subi.l #0x800374;d0 / move.w d0w;$800522 at 0x13b06-0x13b12): where the first post-trigger byte sits in the saved 400-byte copy,,verified
+datalogger_trigger_information_t,,trigger_key_on_hour_meter,dword,4,+2: key_on_hour_meter when the event began (move.l $80bda4;$800524 at 0x13b18),,verified
+datalogger_trigger_information_t,,and_inputs_trigger_flag,byte,1,+6: the low byte of the AND trigger flag word 0x80bac6 (e2m 1285 +2 UDADTR; move.b $80bac7;$800528 at 0x13b22): 1 when triggers 1-3 together started the event,,verified
+datalogger_trigger_information_t,,or_input_trigger_flag,byte,1,+7: the low byte of the OR trigger flag word 0x80bac8 (e2m 1285 +4 UDORTR; move.b $80bac9;$800529 at 0x13b2c): 1 when trigger 4 started the event,,verified
+
+# all_speed_governor_gain_set_t (18 bytes; PR #53 round 91, item S3)
+all_speed_governor_gain_set_t,,proportional_gain_1,short,2,+0: e2m ASPP01GN / ASJ1nnPP / ASAP01PP 'ASG proportional gain 1' (%F/R 8.29282E-6 per count; signed). cm550_runAllSpeedGovernor multiplies (this + integral_gain_1) by asg_error_difference (move.w (a3) + ext.l @ 0xcd86) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,proportional_gain_2,short,2,+2: e2m ASPP02GN / ASJ2nnPP / ASAP02PP 'ASG proportional gain 2' (%F/R; signed). cm550_runAllSpeedGovernor subtracts asg_feedback_difference_term x this from the PI sum (muls.w (2;a3) = c1eb 0002 @ 0xcdc2) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,integral_gain_1,short,2,+4: e2m ASIT01GN / ASJ1nnIT / ASAP01IT 'ASG integral gain 1' (F/RS 0.000414641 per count; signed). cm550_runAllSpeedGovernor: the reference preset divides by asg_droop_gain_2 x (this + integral_gain_2) (move.w (4;a0) + ext.l @ 0xc9b8); the PI sum uses (proportional_gain_1 + this) and (this + integral_gain_2) (move.w (a2) + ext.l @ 0xcd8a / 0xcda2 with a2 = pointer + 4) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,integral_gain_2,short,2,+6: e2m ASIT02GN / ASJ2nnIT / ASAP02IT 'ASG integral gain 2' (F/RS; signed). cm550_runAllSpeedGovernor: the reference preset (move.w (6;a0) + ext.l @ 0xc9c4) and (integral_gain_1 + this) x the previous speed error X1 in the PI sum (move.w (6;a3) + ext.l @ 0xcda6) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,derivative_gain_1,short,2,+8: e2m ASDV01GN / ASJ1nnDV / ASAP01DV 'ASG derivative gain 1' (FS/R 3.31713E-7 per count; signed). cm550_runAllSpeedGovernor: derivative term = (asg_error_difference x this - asg_feedback_difference_term x derivative_gain_2) >> 13 (muls.w (8;a0) = c1e8 0008 @ 0xce16) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,derivative_gain_2,short,2,+10: e2m ASDV02GN / ASJ2nnDV / ASAP02DV 'ASG derivative gain 2' (FS/R; signed). cm550_runAllSpeedGovernor subtracts asg_feedback_difference_term x this in the derivative term (muls.w (10;a0) = c1e8 000a @ 0xce28) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,compensation_filter_coefficient_1,short,2,+12: e2m AS01CF / ASJ1nnCF / ASAP01CF 'ASG compensation filter coef. 1' (0.00390625 per count; signed). cm550_runAllSpeedGovernor: state X6 = (X5 x this - previous X5 x coefficient 2 + previous X6 x coefficient 3) >> 8 (muls.w (12;a2) = c1ea 000c @ 0xcfea); in the state preset this equal to coefficient 2 (cmp.w (14;a0) @ 0xcbce) gives a zero preset and otherwise the preset divides by this - coefficient 2 (move.w (12;a2) + ext.l @ 0xcbfa / 0xcc58) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,compensation_filter_coefficient_2,short,2,+14: e2m AS02CF / ASJ2nnCF / ASAP02CF 'ASG compensation filter coef. 2' (signed). cm550_runAllSpeedGovernor: the previous X5 term of X6 (muls.w (14;a2) = c1ea 000e @ 0xcff2; subtracted) and the preset compare and divisor (cmp.w (14;a0) @ 0xcbce; move.w (14;a2) + ext.l @ 0xcc00 / 0xcc5e) (PR #53 round 91),,verified
+all_speed_governor_gain_set_t,,compensation_filter_coefficient_3,short,2,+16: e2m AS03CF / ASJ3nnCF / ASAP03CF 'ASG compensation filter coef. 3' (signed). cm550_runAllSpeedGovernor: the previous X6 term of X6 (muls.w (16;a2) = c1ea 0010 @ 0xcffa) and the preset factor 0x100 - this (move.w (16;a2) + ext.l @ 0xcc0a / 0xcc68) (PR #53 round 91),,verified
+
+# j1939_receive_handler_entry_t (6 bytes; PR #53 round 91, item T1)
+j1939_receive_handler_entry_t,,pgn_key,word,2,The PGN key: the PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1),,verified
+j1939_receive_handler_entry_t,,handler,pointer,4,The receive handler: the dispatcher mc68k_dispatchJ1939ReceivedMessages calls it with the received frame's record,,verified
+
+# j1939_input_signal_descriptor_t (10 bytes; PR #53 round 91, item T1)
+j1939_input_signal_descriptor_t,,signal_value,byte*,4,The received signal byte (a j1939_received_* switch byte),,verified
+j1939_input_signal_descriptor_t,,timeout_slot,byte,1,Index into j1939_input_signal_timeouts_cal,,verified
+j1939_input_signal_descriptor_t,,reserved_5,byte,1,Always 0 (no reader),,verified
+j1939_input_signal_descriptor_t,,logical_switch,dword,4,The logical switch this input drives: cm550_processJ1939SwitchInput indexes the e2m 12A8 input priority bytes (0x80bd4a) and the switch bitmaps with it and tests enable bit switch + 0xd0 of the calibration feature words (it reads the low word at +8 for that),,verified
+
+# tsc1_source_configuration_t (20 bytes; PR #53 round 91, item T2)
+tsc1_source_configuration_t,,data_link,word,2,"e2m 10E7 JCNES{n}SW 'JCOMM NETWORK TYPE SA n' (0 = J1922 / 1 = J1939): findTsc1SourceConfiguration compares it with the data link (cmp.w (a0)); only data link 1 takes the 0xff source address wildcard. 1 in all five entries of the RAM dump. CM848's field is typed CONTROL_NETWORK, an enum CM550 does not have yet",,verified
+tsc1_source_configuration_t,,source_address_filter,word,2,"e2m JCSA{n} 'JCOMM SOURCE ADDRESS n' (2 bytes, 0-255): findTsc1SourceConfiguration compares the low byte (+3, cmp.b (3,a0)) with the source address; 0xff on data link 1 matches any sender. RAM dump 0x03 / 0x0b / 0x21 / 0xfe / 0xfe, high byte 0 (CM848 reads the word and masks the low byte)",,verified
+tsc1_source_configuration_t,,speed_control_request_timeout,word,2,e2m JCRPS{n}TM (10 ms per count): the request timeout of a speed control request (mode 1); processEngineTsc1Request and the J1922 command handlers reload datalink_command_timeout_counter with it + 1. 5 = 50 ms in the dump,,verified
+tsc1_source_configuration_t,,speed_control_time_limit,word,2,e2m JCRPS{n}TL (10 ms per count): the time limit of a speed control request; cm550_runJ1939PowertrainControlTimeouts reloads the time limit word 0x80da7e with it + 1 when the request starts or changes. 0 in the dump,,verified
+tsc1_source_configuration_t,,torque_control_request_timeout,word,2,e2m JCTQS{n}TM (10 ms per count): the request timeout of a torque control request (mode 2). 5 in the dump,,verified
+tsc1_source_configuration_t,,torque_control_time_limit,word,2,e2m JCTQS{n}TL (10 ms per count): the time limit of a torque control request (the 0x80da7e reload). 0 in the dump,,verified
+tsc1_source_configuration_t,,speed_torque_limit_control_request_timeout,word,2,e2m JCLMS{n}TM (10 ms per count): the request timeout of a speed / torque limit control request (mode 3). 5 in the dump,,verified
+tsc1_source_configuration_t,,retarder_torque_control_request_timeout,word,2,e2m JCRDT{n}TM (10 ms per count): cm550_retarderControlModeHandler reloads retarder_command_timeout_counter (and retarder_disengage_hold_timer) with it + 1 for a retarder torque control request (mode 2). 25 = 250 ms in the dump,,verified
+tsc1_source_configuration_t,,retarder_torque_control_time_limit,word,2,e2m JCRDT{n}TL (10 ms per count): cm550_runJ1939PowertrainControlTimeouts reloads retarder_tsc1_request_time_limit_timer with it + 1. 0 in the dump,,verified
+tsc1_source_configuration_t,,retarder_speed_torque_limit_control_request_timeout,word,2,e2m JCRDL{n}TM (10 ms per count): the retarder speed / torque limit control (mode 3) request timeout (retarder_command_timeout_counter / retarder_disengage_hold_timer reload). 25 in the dump,,verified
+
+# algorithm_enable_flags_1_t: algorithm enable flags word 1 (e2m 106B +0x4; PR #53 round 92) - CM848's type of the same name (the same 16 bits)
+algorithm_enable_flags_1_t,,alpha_user_override_enable,bitfield:1@0,2,APUOAPEN 'BIT 0 WORD 1. EEPROM INDICATOR SET BY ENGR APPLICATION(S TO CONTROL ALPHA)'; andi 0x1 at 0xc3a2: calculateAlpha takes alpha_state 1 with the user alpha 0x803d4c; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,user_override_fueling_enable,bitfield:1@1,0,FSUOFLEN 'BIT 1 WORD 1. ENABLE INDICATOR FOR ENGINEERING FUEL OV(ERRIDE)'; andi 0x2 at 0x1c204: cm550_selectFinalFueling takes the fuel limit from 0x803f2c (selection state 0x17); clear,,verified
+algorithm_enable_flags_1_t,,test_cell_throttle_switch_override_enable,bitfield:1@2,0,CTTHSWOD 'DISABLES AUTOZERO & IDLE VALIDATION' (bit 2 of 0-15); andi.l 0x4 at 0x10602 / 0x1084e: the throttle processing skips its idle validation fault checks while set; clear,,verified
+algorithm_enable_flags_1_t,,user_override_timing_enable,bitfield:1@3,0,TSUOTAEN 'BIT 3 WORD 1. INDICATOR OF WHICH ALGORITHM IS IN CONTR(OL OF THE OVERRIDE TIMING)'; andi 0x8 at 0x30bc2: vp44InjectionSystemStateController selects the override timing 0x804024 (timing state 7); clear,,verified
+algorithm_enable_flags_1_t,,torque_derate_override_enable,bitfield:1@4,0,FSTQUOEN 'BIT 4 WORD 1. ENABLE INDICATOR FOR TORQUE DERATE FUEL (OVERRIDE)'; andi 0x10 at 0x1c16e: cm550_selectFinalFueling sets torque_derate_fuel_quantity from 0x803f2a (state 0xd); clear,,verified
+algorithm_enable_flags_1_t,,altitude_derate_enable,bitfield:1@5,0,ATAGEN 'BIT 5 OF 0-15. CALIBRATION TRIM USED TO ENABLE THE ALTITUDE (DERATE)'; andi 0x20 at 0xc686: _altitude_derate_fuel_limit_0_100 comes from the ambient air pressure table only while set; clear,,verified
+algorithm_enable_flags_1_t,,reserved_bit_6,bitfield:1@6,0,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,reserved_bit_7,bitfield:1@7,0,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,reserved_bit_8,bitfield:1@8,0,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,reserved_bit_9,bitfield:1@9,0,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,reserved_bit_10,bitfield:1@10,0,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,reserved_bit_11,bitfield:1@11,0,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+algorithm_enable_flags_1_t,,low_speed_governor_aggressive_gain_set_enable,bitfield:1@12,0,LSAGGNEN 'LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE' (no bit in the CM550 text; CM848 S mask 0x1000); andi 0x1000 at 0x26188: cm550_epsAccelerationMonitor selects LSG PID gain set 1; set in the dumps,,verified
+algorithm_enable_flags_1_t,,low_speed_governor_high_gear_gain_set_enable,bitfield:1@13,0,LSHGGNEN 'ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS' (CM848 S mask 0x2000); andi.l 0x2000 at 0x26408: cm550_epsDiagnosticModeHandler selects gain set 3 (the high gear gains); clear,,verified
+algorithm_enable_flags_1_t,,low_speed_governor_middle_gear_gain_set_enable,bitfield:1@14,0,LSMGGNEN 'ENABLE PARAMETER FOR LSG GAIN SET USED WHEN IN MIDDLE (GEARS)' (CM848 S mask 0x4000); andi.l 0x4000 at 0x263e0: cm550_epsDiagnosticModeHandler selects gain set 2 (the middle gear gains); clear,,verified
+algorithm_enable_flags_1_t,,low_speed_governor_tsc1_gain_set_enable,bitfield:1@15,0,LSJCGNEN 'ENABLES/DISABLES THE LSG JCOMM PID GAINS' (CM848 S mask 0x8000); andi.l 0x8000 at 0x265ee: cm550_epsRpmTargetModeChecker selects gain set 4 while _datalink_speed_control_mode is set; clear,,verified
+
+# cm550_algorithm_enable_flags_2_t: algorithm enable flags word 2 (e2m 106B +0x6; PR #53 round 92) - against CM848: Only bit 3 differs (CM550 ISRPEN S mask 0x8; CM848 reserved_bit_3). CM848 reads bit 6 (cm848_updateEngineRetarderAllowedState) and has no reader for bits 7 and 8; CM550 reads bits 7 (0x1fdc6) and 8 (0x1fd6c) and has no reader for bits 3, 6 and 15.
+cm550_algorithm_enable_flags_2_t,,engine_protection_shutdown_enable,bitfield:1@0,2,EPSOEN 'BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM'; andi 0x1 at 0x18ade / 0x18cba / 0x18fe6 (cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator / processDiagnosticLimitStatus); clear in the dumps,,verified
+cm550_algorithm_enable_flags_2_t,,reserved_bit_1,bitfield:1@1,0,no record belongs here: JC22CCSW's text says 'BIT 1 OF BITS 0:15' but the code tests that flag at 0x100 (bit 8); no reader in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_2_t,,reserved_bit_2,bitfield:1@2,0,no e2m record; no reader in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_2_t,,idle_shutdown_during_power_take_off_enable,bitfield:1@3,0,ISRPEN S mask 0x8 'BIT 3 WORD2. 1 - PTO WILL NOT OVERRIDE SHUTDOWN' (0 = power take-off overrides the idle shutdown; another e2m: Idle_Shutdown_PTO_Enable 0x8); no reader in the dumped ROM; CM848 has no record (reserved_bit_3); clear,,verified
+cm550_algorithm_enable_flags_2_t,,engine_protection_enable,bitfield:1@4,0,EPEN 'BIT 4 OF 0-15. ENGINE PROTECTION FEATURES ENABLE'; andi 0x10 at 0x18628: cm550_engineProtectionMultiStateSlowCycle40Coordinator runs the protection phases only while set (else no derate); also 0x18ace / 0x1cade; set,,verified
+cm550_algorithm_enable_flags_2_t,,engine_protection_restart_enable,bitfield:1@5,0,EPRYEN 'BIT 5 OF 0-15. ENABLE RESTART ALGORITHM'; andi.l 0x20 at 0x18aee / 0x18cca (the restart checks after a protection shutdown); set,,verified
+cm550_algorithm_enable_flags_2_t,,engine_retarder_clutch_deactivation_enable,bitfield:1@6,0,EBCHDBEN 'BIT 6 OF 0-15. CALIBRATION INDICATOR USED TO ENABLE EN(GINE BRAKE DEACTIVATION)'; CM848 label EB_Clutch_Enable mask 0x40; no reader in the dumped ROM; set,,verified
+cm550_algorithm_enable_flags_2_t,,j1922_monitor_enable,bitfield:1@7,0,JC22MRSW 'J1922 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x80); andi.w 0x80 at 0x1fdc6: cm550_recordJ1922ControlOccurrence counts the control sessions of modes 1 / 2 / 3 with key-on hour stamps; clear,,verified
+cm550_algorithm_enable_flags_2_t,,j1922_monitor_clear_enable,bitfield:1@8,0,JC22CCSW 'J1922 MONITOR CLEAR ENABLE' (its text says bit 1; CM848 and other e2m S mask 0x100); andi.l 0x100 at 0x1fd6c: cm550_clearExpiredJ1922ControlOccurrences clears those session counters once the J1922 clear occurrence time has passed; clear,,verified
+cm550_algorithm_enable_flags_2_t,,reserved_bit_9,bitfield:1@9,0,no e2m record; no reader in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_2_t,,reserved_bit_10,bitfield:1@10,0,no e2m record; no reader in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_2_t,,j1939_monitor_enable,bitfield:1@11,0,JC39MREA 'J1939 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x800); andi.w 0x800 at 0x22080: trackJ1939ControlSessions records the J1939 speed control session history; set,,verified
+cm550_algorithm_enable_flags_2_t,,j1939_retarder_shift_assist_enable,bitfield:1@12,0,JCRDTXEA 'ENABLE FOR SPEED CONTROL / ENGINE BRAKING INTERACTION' (CM848 S mask 0x1000); andi 0x1000 at 0x21432 (endRetarderShiftAssistAboveFuelDemandLimit ends retarder mode 2 at or above the user fueling limit) / 0x2f850 (cm550_retarderControlModeHandler) / 0x33900 (cm550_dutyCycleMonitorAltIsrHandler status 0x40); set,,verified
+cm550_algorithm_enable_flags_2_t,,power_take_off_throttle_override_enable,bitfield:1@13,0,PTTHOVEN 'BIT 13 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER (THROTTLE DEPRESSION DISABLES PTO)'; andi.l 0x2000 at 0x2dd34: cm550_oil_pressure_shutdown_controller lets throttle fueling override power take-off fueling; clear,,verified
+cm550_algorithm_enable_flags_2_t,,user_commanded_timing_increment_enable,bitfield:1@14,0,TSUCICEN 'BIT 14 WORD 2. PARAMETER USED TO ENABLE THE USER TIMING (INCREMENT)'; andi 0x4000 at 0x1c770: cm550_fuelDemandTableBlendCalculator adds 0x803f3c to the 4D timing; clear,,verified
+cm550_algorithm_enable_flags_2_t,,zero_vehicle_speed_power_take_off_limit_enable,bitfield:1@15,0,ZVPTLMEN 'BIT 15 WORD 2 - ENABLE ENGINE SPEED TO BE LIMITED (WHEN IN PTO MODE)'; no reader in the dumped ROM; clear,,verified
+
+# cm550_algorithm_enable_flags_3_t: algorithm enable flags word 3 (e2m 106B +0x8; PR #53 round 92) - against CM848: CM550 names bits 1 and 2 (idle shutdown), 5 (remote PTO), 9 (trip information) and 11 (cylinder pressure maintenance). CM848 leaves those reserved, with no record in its own e2m and no reader. CM848 leaves bits 12-14 reserved although its own e2m names them; a rename is proposed. For bit 8, CM550's e2m says gear down protection (GRGDPNEN) and CM848 has road_speed_governor_without_droops_below_top_gear; a rename is proposed as a reviewer's call. Bits 3, 4, 6, 7, 10 and 15 match CM848's field names, and bit 0 is reserved in both.
+cm550_algorithm_enable_flags_3_t,,reserved_bit_0,bitfield:1@0,2,no e2m record; no reader in the dumped ROM; clear in the dumps,,verified
+cm550_algorithm_enable_flags_3_t,,idle_shutdown_enable,bitfield:1@1,0,ISAGEN S mask 0x2 '1 - IDLE SHUTDOWN ENABLED' (word 3 bit 1); andi 0x2 at 0x1d9ca (cm550_runIdleShutdownStateMachine = the idle shutdown state machine) / 0xefbe (J1587 PID 71 status bit 0x08) / 0x33d80 (PGN 65252 payload byte 0x8035f7 = 0x7f or 0x3f); CM848 reserved_bit_1; clear,,verified
+cm550_algorithm_enable_flags_3_t,,idle_shutdown_override_enable,bitfield:1@2,0,ISODEN S mask 0x4 '1 - ISOD IS ABLE TO BE SET' (ISOD = idle shutdown overridden until the vehicle moves); andi.l 0x4 at 0x1dab0 (cm550_runIdleShutdownStateMachine) / 0xefd6 (J1587 PID 71 status bit 0x04); CM848 reserved_bit_2; clear,,verified
+cm550_algorithm_enable_flags_3_t,,idle_speed_adjust_enable,bitfield:1@3,0,LSISAJEN 'BIT 3 OF 0-15. ENABLE ALLOWS OPERATOR TO ADJUST SPEED'; andi.l 0x8 at 0x26490: the idle increment / decrement switches move the low speed governor reference only while set; set,,verified
+cm550_algorithm_enable_flags_3_t,,power_take_off_enable,bitfield:1@4,0,PTAGEN S mask 0x10 'BIT 4 OF 0-15. PARAMETER USED TO ENABLE/DISABLE PTO'; andi.l 0x10 at 0x2dd0a: cm550_oil_pressure_shutdown_controller (the power take-off / user fueling selection) uses the closed-loop PTO fueling only while set; clear,,verified
+cm550_algorithm_enable_flags_3_t,,remote_power_take_off_enable,bitfield:1@5,0,PTRXEN 'BIT 5 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER REMOTE PTO IS ALLO(WED)' (full text and S mask 0x20 from other e2m files); no reader in the dumped ROM; CM848 reserved_bit_5; set,,verified
+cm550_algorithm_enable_flags_3_t,,cruise_control_enable,bitfield:1@6,0,CRAGEN 'BIT 6 OF 0-15. STATUS INDICATOR WHICH ENABLES/DISABL(ES CRUISE CONTROL)'; no reader in the dumped ROM; set,,verified
+cm550_algorithm_enable_flags_3_t,,road_speed_governor_enable,bitfield:1@7,0,RSAGEN 'ENABLE/DISABLE ROAD SPEED GOVERNOR FOR ENGINEERING USE' (bit 7); no reader in the dumped ROM; set,,verified
+cm550_algorithm_enable_flags_3_t,,gear_down_protection_enable,bitfield:1@8,0,GRGDPNEN 'GEAR DOWN PROTECTION ENABLE' (bit 8 of 0-15; another e2m: Gear_Down_Protection_Enable S mask 0x100); no reader in the dumped ROM; CM848 reads this bit below top gear (no road speed governor droops there) and its field takes the same name in this change; clear,,verified
+cm550_algorithm_enable_flags_3_t,,trip_information_enable,bitfield:1@9,0,TIEN 'BIT 9 OF 0-15 IN WORD 3. TRIP INFO SYSTEM ENABLED = 1' (another e2m: Fuel_Log_Enable S mask 0x200); andi 0x200 at 0x306e0 (cm550_updateTripInformation resets the trip records) / 0x30a64 (fuel statistics flags); CM848 reserved_bit_9; set,,verified
+cm550_algorithm_enable_flags_3_t,,cruise_governor_droop_enable,bitfield:1@10,0,CRDPEN 'BIT 10 OF 0-15. BIT 10 IS CRUISE_RSG_DROOP_ENABLE'; no reader in the dumped ROM; set,,verified
+cm550_algorithm_enable_flags_3_t,,cylinder_pressure_maintenance_enable,bitfield:1@11,0,CPAGEN 'BIT 11 OF 0-15. ENABLES AND DISABLES THE CYLINDER PRESSURE MAINTENANC(E)'; andi.l 0x800 at 0x11e74: cm550_coldStartFuelControlSlowCycle40Coordinator zeroes _cylinder_pressure_maintenance_status and its timing increment while clear; CM848 reserved_bit_11; clear,,verified
+cm550_algorithm_enable_flags_3_t,,acceleration_noise_control_fuel_limit_enable,bitfield:1@12,0,NZFLAGEN 'ENABLE FOR FUEL LIMITING OF THE ACCELERATION NOISE C(ONTROL)' (no bit in the CM550 text; CM848 e2m ANC_Fuel_Algorithm_Enable S mask 0x1000); andi 0x1000 at 0xb2c6: cm550_rpm_system_state_controller computes _anc_fuel_limit_value; clear,,verified
+cm550_algorithm_enable_flags_3_t,,acceleration_noise_control_timing_limit_enable,bitfield:1@13,0,NZTAAGEN 'ENABLE FOR TIMING ADVANCE OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Timing_Algorithm_Enable S mask 0x2000); andi 0x2000 at 0xb3ec: cm550_FUN_0000b3d0 = the ANC timing limit; clear,,verified
+cm550_algorithm_enable_flags_3_t,,acceleration_noise_control_engine_speed_limit_enable,bitfield:1@14,0,NZESAGEN 'ENABLE FOR SPEED LIMITING OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Speed_Algorithm_Enable S mask 0x4000); andi 0x4000 at 0xb50e: cm550_engineStateFuelLimitInterpolator = the ANC engine speed limit; clear,,verified
+cm550_algorithm_enable_flags_3_t,,cruise_save_set_speed_at_power_down_enable,bitfield:1@15,0,CRSVPWEN 'ENABLES/DISABLES SAVING CRUISE SET SP(EED)' (bit 15 of 0-15); no reader in the dumped ROM; set,,verified
+
+# algorithm_enable_flags_4_t: algorithm enable flags word 4 (e2m 106B +0xa; PR #53 round 92) - CM848's type of the same name (the same 16 bits)
+algorithm_enable_flags_4_t,,user_commanded_fueling_enable,bitfield:1@0,2,FSUCFLEN 'BIT 0 WORD 4. ENABLES THE USE OF USER_COMMANDED_FUELING'; andi.l 0x1 at 0x3456e: cm550_setDiagnosticSourceFromEngineFlags sets user_fueling_state 5 with the fuel demand from 0x80404a; clear in the dumps,,verified
+algorithm_enable_flags_4_t,,reserved_bit_1,bitfield:1@1,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_2,bitfield:1@2,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_3,bitfield:1@3,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_4,bitfield:1@4,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_5,bitfield:1@5,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_6,bitfield:1@6,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_7,bitfield:1@7,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,user_commanded_timing_enable,bitfield:1@8,0,TSUCTAEN and ADV_OVER 'BIT 8 OF WORD 4. ENABLE INDICATOR FOR THE ENGINE(ERING COMMAND TIMING ADVANCE)'; andi 0x100 at 0x1c67a: cm550_fuelDemandTableBlendCalculator takes the 4D timing from 0x803f3e (intermediate timing state 2); clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_9,bitfield:1@9,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_10,bitfield:1@10,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_11,bitfield:1@11,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_12,bitfield:1@12,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_13,bitfield:1@13,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_14,bitfield:1@14,0,no e2m record; no reader in the dumped ROM; clear,,verified
+algorithm_enable_flags_4_t,,reserved_bit_15,bitfield:1@15,0,no e2m record; no reader in the dumped ROM; clear,,verified
+
+# cm550_algorithm_enable_flags_5_t: algorithm enable flags word 5 (e2m 106B +0xc; PR #53 round 92) - against CM848: Entirely different. In CM550 the word holds the A/D channel 0-15 override enables. In CM848 it holds the combustion manager user overrides and the charge pressure, charge temperature and exhaust pressure estimate enables.
+cm550_algorithm_enable_flags_5_t,,intake_manifold_temperature_override_enable,bitfield:1@0,2,ADIMTPOD S mask 0x1 'INTAKE_MANIFOLD_TEMPERATURE_OVERRIDE'; channel 0 intake_manifold_temperature_sensor_state: mc68k_processAnalogSensorChannels (word load at 0xb7d2) takes analog_sensor_override_values[0] while set; clear in the dumps,,verified
+cm550_algorithm_enable_flags_5_t,,fuel_temperature_override_enable,bitfield:1@1,0,ADFLTPOD S mask 0x2 'FUEL_TEMPERATURE_OVERRIDE'; channel 1 fuel_temperature_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,coolant_level_override_enable,bitfield:1@2,0,ADCVOD S mask 0x4 'COOLANT_LEVEL_OVERRIDE'; channel 2 coolant_level_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,fuel_pressure_override_enable,bitfield:1@3,0,ADSYFPOD S mask 0x8 'ALGORITHM_ENABLE_FLAGS WORD 5 BIT 3' (other e2m files: 'OVERRIDE FOR FUEL PRESSURE FILTERED VALUE'); channel 3 fuel_pressure_sensor_state (stem ADSYFP) via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,oil_pressure_override_enable,bitfield:1@4,0,ADOLPROD S mask 0x10 'OIL_PRESSURE_OVERRIDE'; channel 4 oil_pressure_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,boost_pressure_override_enable,bitfield:1@5,0,ADBSPROD S mask 0x20 'BOOST_PRESSURE_OVERRIDE'; channel 5 boost_pressure_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,coolant_temperature_override_enable,bitfield:1@6,0,ADCLTPOD S mask 0x40 'COOLANT_TEMPERATURE_OVERRIDE'; channel 6 coolant_temperature_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,ambient_air_temperature_override_enable,bitfield:1@7,0,ADAATPOD S mask 0x80 'AMBIENT_AIR_TEMPERATURE_OVERRIDE'; channel 7 ambient_air_temperature_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,power_steering_temperature_override_enable,bitfield:1@8,0,ADPOTPOD S mask 0x100 'POWER_STEERING_TEMPERATURE_OVERRIDE'; channel 8 power_steering_temperature_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,exhaust_pressure_override_enable,bitfield:1@9,0,ADSYEPOD S mask 0x200 'SPARE_CHANNEL_1_OVERRIDE' (other e2m files: ADEXPROD 0x200 'OVERRIDE FOR EXHAUST PRESSURE FILTERED VALUE'); channel 9 exhaust_pressure_sensor_state (stem ADSYEP) via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,sampled_throttle_override_enable,bitfield:1@10,0,ADSATHOD S mask 0x400 'SAMPLED_THROTTLE_OVERRIDE'; channel 10 sampled_throttle_sensor_state via the channel loop; also andi 0x400 at 0x10584 / 0x1083e (throttle processing skipped) / 0x20cae / 0x20e4a (a J1939 accelerator pedal fills analog_sensor_override_values[10]) / 0x2582e / 0x32f78 (EEC2 pedal position 0xff); clear,,verified
+cm550_algorithm_enable_flags_5_t,,remote_throttle_override_enable,bitfield:1@11,0,ADROTHOD S mask 0x800 'REMOTE_THROTTLE_OVERRIDE'; channel 11 remote_throttle_sensor_state via the channel loop; also andi.l 0x800 at 0x32fd8 (j1939HandlePgn61443Eec2 sends the remote accelerator position as 0xff); clear,,verified
+cm550_algorithm_enable_flags_5_t,,ambient_air_pressure_override_enable,bitfield:1@12,0,ADAAPROD S mask 0x1000 'AMBIENT_AIR_PRESSURE_OVERRIDE'; channel 12 ambient_air_pressure_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,battery_voltage_override_enable,bitfield:1@13,0,ADBTVTOD S mask 0x2000 'ALGORITHM_ENABLE_FLAGS WORD 5 BIT 13' (other e2m files: 'OVERRIDE FOR BATTERY VOLTAGE OVERRIDE FILTERED VALUE'); channel 13 battery_voltage_sensor_state (stem ADBTVT) via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,engine_speed_sensor_supply_voltage_override_enable,bitfield:1@14,0,ADESSVOD S mask 0x4000 'ENGINE_SPEED_SENSOR_SV_OVERRIDE'; channel 14 engine_speed_sensor_supply_voltage_sensor_state via the channel loop; clear,,verified
+cm550_algorithm_enable_flags_5_t,,throttle_position_sensor_supply_voltage_override_enable,bitfield:1@15,0,ADTHSVOD S mask 0x8000 'THROTTLE_POSITION_SENSOR_SV_OVERRIDE'; channel 15 throttle_position_sensor_supply_voltage_sensor_state via the channel loop; clear,,verified
+
+# cm550_algorithm_enable_flags_7_t: algorithm enable flags word 7 (e2m 106B +0x10; PR #53 round 92) - against CM848: No bit differs: CM848's word 7 (0x3fd5aa) has the same 16 e2m records at the same masks (Coolant_Level / Coolant_Temperature / IMT / Oil_Pressure x Fueling_Limiting / RPM_Limiting / Shutdown / Restart). But CM848 keeps it a plain word (its engine protection loops start at table bit 128 so nothing reads it) and has no algorithm_enable_flags_7_t, so there is no CM848 type to share: the type is CM550's own, with field names spelled from CM848's e2m record names. In CM550 the loops start at table bit 112 and channels 0-3 read all 16 bits.
+cm550_algorithm_enable_flags_7_t,,coolant_level_fueling_limiting_enable,bitfield:1@0,2,EPCVFLEN 'BIT 0 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITIN(G DUE TO COOLANT LEVEL)'; table bit 112 = 0x70 + 4 x 0 + 0 (channel 0): read by the fuel limit loop cm550_FUN_00019702; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_level_rpm_limiting_enable,bitfield:1@1,0,EPCVRPEN 'BIT 1 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING (DUE TO COOLANT LEVEL)'; table bit 113 = 0x70 + 4 x 0 + 1 (channel 0): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_level_shutdown_enable,bitfield:1@2,0,EPCVSOEN 'BIT 2 OF 0-15. ENABLE SHUTDOWN ON COOLANT LEVEL (ERRORS)'; table bit 114 = 0x70 + 4 x 0 + 2 (channel 0): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_level_restart_enable,bitfield:1@3,0,EPCVRYEN 'B3. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > (MAX SHUTDN CNT DUE TO CLT LEV)'; table bit 115 = 0x70 + 4 x 0 + 3 (channel 0): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_temperature_fueling_limiting_enable,bitfield:1@4,0,EPCQFLEN 'BIT 4 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITIN(G DUE TO COOLANT TEMPERATURE)'; table bit 116 = 0x70 + 4 x 1 + 0 (channel 1): read by the fuel limit loop cm550_FUN_00019702; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_temperature_rpm_limiting_enable,bitfield:1@5,0,EPCQRPEN 'BIT 5 OF 5-15. EPF COOLANT TEMPERATURE RPM LIMIT(ING ENABLE)'; table bit 117 = 0x70 + 4 x 1 + 1 (channel 1): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_temperature_shutdown_enable,bitfield:1@6,0,EPCQSOEN 'BIT 6 OF 0-15. ENABLE SHUTDOWN ON COOLANT TEMPER(ATURE ERRORS)'; table bit 118 = 0x70 + 4 x 1 + 2 (channel 1): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,coolant_temperature_restart_enable,bitfield:1@7,0,EPCQRYEN 'BIT 7 OF 0-15. PREVENTS RESTART AT POWERUP WHEN S(HUTDN CNT > MAX SHUTDN CNT)'; table bit 119 = 0x70 + 4 x 1 + 3 (channel 1): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,intake_manifold_temperature_fueling_limiting_enable,bitfield:1@8,0,EPIMFLEN 'BIT 8 OF 0-15 ENABLE FOR TVO LIMITING DUE TO INTA(KE MANIFOLD TEMP)'; table bit 120 = 0x70 + 4 x 2 + 0 (channel 2): read by the fuel limit loop cm550_FUN_00019702; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,intake_manifold_temperature_rpm_limiting_enable,bitfield:1@9,0,EPIMRPEN 'BIT 9 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING (DUE TO IMT)'; table bit 121 = 0x70 + 4 x 2 + 1 (channel 2): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,intake_manifold_temperature_shutdown_enable,bitfield:1@10,0,EPIMSOEN 'BIT 10 OF 0-15. ENABLE SHUTDOWN ON INTAKE MANIFO(LD TEMPERATURE ERRORS)'; table bit 122 = 0x70 + 4 x 2 + 2 (channel 2): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,intake_manifold_temperature_restart_enable,bitfield:1@11,0,EPIMRYEN 'BIT 11 OF 0-15. PREVENTS RESTART AT POWERUP WHEN (SHUTDN CNT > MAX SHUTDN CNT)'; table bit 123 = 0x70 + 4 x 2 + 3 (channel 2): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,oil_pressure_fueling_limiting_enable,bitfield:1@12,0,EPO2FLEN 'BIT 12 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITI(NG DUE TO OIL PRESSURE)'; table bit 124 = 0x70 + 4 x 3 + 0 (channel 3): read by the fuel limit loop cm550_FUN_00019702; also tested directly: andi.w #0x1000 at 0x1983e (cm550_FUN_00019702) - while set and oil_pressure_fault_inhibit_timer is below the power-up period 0x807f34 the oil pressure fueling severity index and the loop maximum are forced to 0x100 (the full derate); set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,oil_pressure_rpm_limiting_enable,bitfield:1@13,0,EPO2RPEN 'BIT 13 OF 0-15. EPF OIL PRESSURE FAULT ENABLE PA(RAMETER)' (CM848 label Oil_Pressure_RPM_Limiting_Enable); table bit 125 = 0x70 + 4 x 3 + 1 (channel 3): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,oil_pressure_shutdown_enable,bitfield:1@14,0,EPO2SOEN 'BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE (ERRORS)'; table bit 126 = 0x70 + 4 x 3 + 2 (channel 3): read by the shutdown loop processDiagnosticLimitStatus and by the restart check cm550_protectionState1DiagnosticValidator (cm550_diagnosticProtectionEvaluator skips channel 3); set in the dumps,,verified
+cm550_algorithm_enable_flags_7_t,,oil_pressure_restart_enable,bitfield:1@15,0,EPO2RYEN 'BIT 15 OF 0-15. PREVENTS RESTART AT POWERUP WHEN (SHUTDN CNT > MAX SHUTDN CNT)'; table bit 127 = 0x70 + 4 x 3 + 3 (channel 3): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; cm550_diagnosticProtectionEvaluator skips channel 3 so only cm550_protectionState1DiagnosticValidator reads this one; set in the dumps,,verified
+
+# cm550_algorithm_enable_flags_8_t: algorithm enable flags word 8 (e2m 106B +0x12; PR #53 round 92) - against CM848: Different channels. CM848 word 8 (0x3fd5ac, a plain word): bits 0-3 fuel temperature / 4-7 C_Out (compressor outlet) temperature / 8-11 T_In (turbine inlet) temperature / 12-15 no record. CM550: bits 0-3 water in fuel / 4-7 boost pressure / 8-11 engine sync fuel pressure / 12-15 fuel temperature. The fuel temperature channel is in both, at bits 12-15 here and 0-3 in CM848.
+cm550_algorithm_enable_flags_8_t,,water_in_fuel_fueling_limiting_enable,bitfield:1@0,2,EPWFFLEN S mask 0x1 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO WATER IN( FUEL)'; table bit 128 = 0x70 + 4 x 4 + 0 (channel 4): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,water_in_fuel_rpm_limiting_enable,bitfield:1@1,0,EPWFRPEN S mask 0x2 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO WATE(R IN FUEL)'; table bit 129 = 0x70 + 4 x 4 + 1 (channel 4): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,water_in_fuel_shutdown_enable,bitfield:1@2,0,EPWFSOEN S mask 0x4 'ENABLE SHUTDOWN ON WATER IN FUEL ERRORS'; table bit 130 = 0x70 + 4 x 4 + 2 (channel 4): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,water_in_fuel_restart_enable,bitfield:1@3,0,EPWFRYEN S mask 0x8 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 131 = 0x70 + 4 x 4 + 3 (channel 4): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,boost_pressure_fueling_limiting_enable,bitfield:1@4,0,EPBSFLEN S mask 0x10 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC' (the text is the engine sync record's; the mnemonic and its three siblings say boost pressure); table bit 132 = 0x70 + 4 x 5 + 0 (channel 5): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,boost_pressure_rpm_limiting_enable,bitfield:1@5,0,EPBSRPEN S mask 0x20 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO BOOS(T PRESSURE)'; table bit 133 = 0x70 + 4 x 5 + 1 (channel 5): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,boost_pressure_shutdown_enable,bitfield:1@6,0,EPBSSOEN S mask 0x40 'ENABLE SHUTDOWN ON BOOST PRESSURE ERRORS'; table bit 134 = 0x70 + 4 x 5 + 2 (channel 5): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,boost_pressure_restart_enable,bitfield:1@7,0,EPBSRYEN S mask 0x80 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 135 = 0x70 + 4 x 5 + 3 (channel 5): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,engine_sync_fuel_pressure_fueling_limiting_enable,bitfield:1@8,0,EPFPFLEN S mask 0x100 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC( FUEL PRESSURE)'; table bit 136 = 0x70 + 4 x 6 + 0 (channel 6): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,engine_sync_fuel_pressure_rpm_limiting_enable,bitfield:1@9,0,EPFPRPEN S mask 0x200 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO ENG (SYNC FUEL PRESSURE)'; table bit 137 = 0x70 + 4 x 6 + 1 (channel 6): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,engine_sync_fuel_pressure_shutdown_enable,bitfield:1@10,0,EPFPSOEN S mask 0x400 'ENABLE SHUTDOWN ON ENGINE SYNC FUEL PRESSURE ERRORS'; table bit 138 = 0x70 + 4 x 6 + 2 (channel 6): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,engine_sync_fuel_pressure_restart_enable,bitfield:1@11,0,EPFPRYEN S mask 0x800 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 139 = 0x70 + 4 x 6 + 3 (channel 6): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,fuel_temperature_fueling_limiting_enable,bitfield:1@12,0,EPFTFLEN 'BIT 12 OF 0-15 ENABLES FUEL LIMITING DUE TO FUEL (TEMPERATURE ERRORS)'; table bit 140 = 0x70 + 4 x 7 + 0 (channel 7): read by the fuel limit loop cm550_FUN_00019702; also tested directly: andi.l #0x1000 at 0x1caec (vp44_FUN_0001cad6) - with engine protection enabled (word 2 bit 4) and this bit or bit 13 set it updates the channel input vp44_fuel_temperature_value; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,fuel_temperature_rpm_limiting_enable,bitfield:1@13,0,EPFTRPEN 'BIT 13 OF 0-15 ENABLES RPM LIMITING DUE TO FUEL T(EMPERATURE ERRORS)'; table bit 141 = 0x70 + 4 x 7 + 1 (channel 7): read by cm550_calculateFaultDerateEngineSpeedLimit; also tested directly: andi.l #0x2000 at 0x1cafa (vp44_FUN_0001cad6) - the second operand of the fuel temperature input update (see bit 12); clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,fuel_temperature_shutdown_enable,bitfield:1@14,0,EPFTSOEN 'BIT 14 OF 0-14 ENABLES SHUTDOWN ON FUEL TEMPERATU(RE ERRORS)'; table bit 142 = 0x70 + 4 x 7 + 2 (channel 7): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps,,verified
+cm550_algorithm_enable_flags_8_t,,fuel_temperature_restart_enable,bitfield:1@15,0,EPFTRYEN 'BIT 15 OF 0-15 PREVENTS RESTART AT POWERUP WHEN S(HUTDN CNT > MAX SHUTDN CNT)'; table bit 143 = 0x70 + 4 x 7 + 3 (channel 7): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps,,verified
+
+# algorithm_enable_flags_11_t: algorithm enable flags word 11 (e2m 106B +0x18; PR #53 round 92) - CM848's type of the same name (the same 16 bits)
+algorithm_enable_flags_11_t,,proprietary_communication_enable,bitfield:1@0,2,JCJPEA 'PARAMETER INDICATING WHETHER DATALINK PROTOCOLS ARE TURNED ON' (an N record with no bit; CM848's label Proprietary_Communication_Enable has S mask 0x1); andi.w #0x1 at 0x15fe8: mc68k_dispatchJ1708ReceivedMessages handles the proprietary J1708 messages (message identifier below 8: the security key / development mode / shutdown / restart commands) only while set; set in the dumps (0x000b),,verified
+algorithm_enable_flags_11_t,,j1587_communication_enable,bitfield:1@1,0,JC87CZEA 'BIT 1 OF 0-15 INDICATES WHETHER J1587 COMMUNICATION IS ENABLED'; andi.w #0x2 at 0xebe0 (cm550_diagnosticMessageTransmissionManager: the periodic J1587 broadcast vp44_insiteParameterTableIterator) and 0x16396 (mc68k_dispatchJ1708ReceivedMessages: message identifiers 0x80 and up); set,,verified
+algorithm_enable_flags_11_t,,j1922_communication_enable,bitfield:1@2,0,JC22CZEA 'BIT 2 OF 0-15 INDICATES WHETHER J1922 COMMUNICATION IS ENABLED'; andi.w #0x4 at 0xebac (cm550_diagnosticMessageTransmissionManager: the periodic cm550_diagnosticMessage45Builder / cm550_diagnosticMessage53Builder) and 0x163be (mc68k_dispatchJ1708ReceivedMessages: message identifiers 0x45-0x56 = 69-86 the J1922 range); clear,,verified
+algorithm_enable_flags_11_t,,j1939_communication_enable,bitfield:1@3,0,JC39CZEA 'BIT 3 OF 0-15 INDICATES WHETHER J1939 COMMUNICATI(ON IS ENABLED)'; andi.w #0x8 at 0x1ff4e (cm550_runJ1939PeriodicTransmitQueues = the J1939 periodic transmit schedule) and 0x212c0 (mc68k_dispatchJ1939ReceivedMessages = the J1939 receive dispatch) - the twins of CM848's two readers; set,,verified
+algorithm_enable_flags_11_t,,reserved_bit_4,bitfield:1@4,0,no record in v64t6_s and no reader in the dumped ROM; guess JCRWDXEN 'J1587 TRANSPORT PROTOCOL ENABLE' (S mask 0x10 in 13 other ISB e2m files); CM848 reserved_bit_4 too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_5,bitfield:1@5,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_6,bitfield:1@6,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_7,bitfield:1@7,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_8,bitfield:1@8,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_9,bitfield:1@9,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_10,bitfield:1@10,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_11,bitfield:1@11,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_12,bitfield:1@12,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_13,bitfield:1@13,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_14,bitfield:1@14,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+algorithm_enable_flags_11_t,,reserved_bit_15,bitfield:1@15,0,no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps,,verified
+
+# cm550_algorithm_enable_flags_12_t: algorithm enable flags word 12 (e2m 106B +0x1a; PR #53 round 92) - against CM848: Bits 0 / 2-9 / 11-13 have CM848's positions and meanings (the same Calterm records), so CM848's field names are reused for bits 0 / 2-8 / 11-13; bit 9 is the same record but keeps the e2m wording because the CM848 name describes the CM848 detector. Bit 1 (EPOSFSO) has the same record in CM848's own e2m (Overspeed_FSO_Override 0x2): CM848's reserved_bit_1 takes the same name in this change. Bit 10 is obd_fault_handler_enable in CM848 (DGOBFUHN 0x400); J90350.00 has no record and no reader, so it is reserved here. Bits 14 (LSCIIHEN) and 15 (EDEN) are CM550's: CM848 keeps reserved_bit_14 / reserved_bit_15 with no record in its own e2m and no reader. Three bits differ in meaning (10 / 14 / 15) and bit 9 in name only, so the type is cm550_.
+cm550_algorithm_enable_flags_12_t,,idle_speed_save_enable,bitfield:1@0,2,LSISSVEN 'BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT(DOWN)'; andi.w #0x1 at 0x26546 (cm550_engineModeTimingAdjuster: set keeps the operator idle adjustment in rpm_added_to_lsg_reference_300_300 0x805f0a - clear zeroes it) and 0x265a0 (cm550_initializeLowSpeedGovernorIdleAdjustment: the start-up restore of that adjustment); CM848 field name; set in the dumps (0xbb87),,verified
+cm550_algorithm_enable_flags_12_t,,overspeed_fuel_shutoff_enable,bitfield:1@1,0,EPOSFSO 'IF T FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI(T 1 OF 0 - 15 OF WORD C)' (FSO = fuel shut off: e2m DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER'); andi.l #0x2 at 0x1ca9a (cm550_commandFuelShutoffDriver): in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit 0x20 of fuel_system_output_driver_control is cleared only while set; CM848 reserved_bit_1 with the same record (rename proposed); set,,verified
+cm550_algorithm_enable_flags_12_t,,water_in_fuel_enable,bitfield:1@2,0,WFAGEN 'BIT 2 ENABLE FLAG USED FOR WATER_IN_FUEL ALGORITHM.'; andi.w #0x4 at 0x34c3e (vp44FaultRegisterBit2Monitor): set = a wet water_in_fuel_sensor_state sets fault status word 4 bit 0x2000 and lamp driver bit 0x10 - clear = that fault bit is cleared; CM848 field name; set,,verified
+cm550_algorithm_enable_flags_12_t,,air_fuel_control_override_enable,bitfield:1@3,0,AFENMAN 'BIT 3 OF 0-15 IN WORD C'; andi.w #0x8 at 0xc19c (cm550_fuelTimingTransitionStateMachine): set takes the derate fuel adjustment from afc_fueling_derate_value_when_afc_override_is_enabled_0_100 instead of the engine speed x boost pressure table; CM848 field name; clear,,verified
+cm550_algorithm_enable_flags_12_t,,electronic_smart_power_enable,bitfield:1@4,0,SPAGEN '0 - DISBALE 1 - ENABLE ESP ALGORITHM BIT 4 OF 0 - 15.' (e2m group ESP_08 'ELECTRONIC SMART POWER GROUP'); andi #0x10 at 0x1abcc (gates cm550_updateElectronicSmartPowerTau) / 0xc3ea (calculateAlpha copies the alpha into the timing alpha only while clear) / 0x1cd96 (cm550_calculateThrottle100Fuelings: the maximum fueling without programmable power comes from the low horsepower curve while set); CM848 field name; clear,,verified
+cm550_algorithm_enable_flags_12_t,,reverse_electronic_smart_power_enable,bitfield:1@5,0,SPRVEN '0 - DISBALE 1 - ENABLE ESP LAUNCH APPLICATION ALGORITH(M BIT 5 OF 0 - 15.)' (CM848 label Reverse_ESP_Enable S mask 0x20); andi.l #0x20 at 0x1ad52: cm550_updateElectronicSmartPowerTau enters ESP tau source state 1 (e2m 11DC +6 SPTUST lists NORMAL / LAUNCH / STEEP) only while set; CM848 field name; clear,,verified
+cm550_algorithm_enable_flags_12_t,,low_speed_governor_droop_enable,bitfield:1@6,0,LSDPEN 'LSG DROOP ENABLE BIT 6 OF 0 - 15 IN WORD C'; andi.l #0x40 at 0xfa1c (vp44State2TransitionHandler) and 0x1850e (cm550_FUN_000184c6): set lowers the torque curve speed point 1 by fueling x the selected droop slope 0x80daf4 (e2m LSDPSE) / 167 - the same droop as CM848's reader; CM848 field name; clear,,verified
+cm550_algorithm_enable_flags_12_t,,accelerator_interlock_enable,bitfield:1@7,0,ANEN 'BIT 7 OF 0-15 IN WORD C ACCELERATOR INTERLOCK ENABLE B(IT)'; no reader in the dumped ROM; CM848 field name; set,,verified
+cm550_algorithm_enable_flags_12_t,,vehicle_speed_sensor_signal_loss_enable,bitfield:1@8,0,VSMVEN 'BIT 8 WORD C. ENABLES VSS SENSOR LOST WHILE MOVING( DETECTION)'; no reader in the dumped ROM; CM848 field name (named there after the detector it gates); set,,verified
+cm550_algorithm_enable_flags_12_t,,vehicle_speed_sensor_lost_while_stopped_detection_enable,bitfield:1@9,0,VSSTEN 'BIT 9 WORD C. ENABLES VSS SENSOR LOST WHILE STOPPE(D DETECTION)'; no reader in the dumped ROM; the same record as CM848 vehicle_speed_sensor_zero_under_load_enable (CM848 named that field after its own detector - nothing proves that detector for J90350.00); set,,verified
+cm550_algorithm_enable_flags_12_t,,reserved_bit_10,bitfield:1@10,0,no record in v64t6_s and no reader in the dumped ROM; guess DGOBFUHN 'INDICATES WHETHER OBDII FAULT HANDLER IS ENABLED' (S mask 0x400 here in 28 other e2m files - the 23 CHR files and 5 ISB files - and an N record with no bit in 4 more ISB files; CM848 obd_fault_handler_enable); clear in the dumps,,verified
+cm550_algorithm_enable_flags_12_t,,power_take_off_brake_override_enable,bitfield:1@11,0,PTBRODEN 'WHEN ENABLED IT ALLOWS THE BRAKE TO CANCEL CAB PTO. WORD C BIT (B)' (v64t6_s cuts the bit letter: 22 other e2m files give it and every S record has mask 0x800); no reader in the dumped ROM; CM848 field name; set,,verified
+cm550_algorithm_enable_flags_12_t,,power_take_off_clutch_override_enable,bitfield:1@12,0,PTCHODEN 'WHEN ENABLED IT ALLOWS THE CLUTCH TO CANCEL CAB PTO. WORD C BIT( C)' (v64t6_s cuts the bit letter: 22 other e2m files give it and every S record has mask 0x1000); no reader in the dumped ROM; CM848 field name; set,,verified
+cm550_algorithm_enable_flags_12_t,,oil_change_monitor_enable,bitfield:1@13,0,OCEA 'ENABLES OIL CHANGE MONITOR FEATURE BIT 13 OF 0-15 OF W(ORD C)'; no reader in the dumped ROM; CM848 field name; set,,verified
+cm550_algorithm_enable_flags_12_t,,low_speed_governor_cold_idle_override_enable,bitfield:1@14,0,LSCIIHEN 'ENABLE FOR OVERRIDING THE COLD IDLE ADJUST IN THE LSG' (9 other e2m files go on '- BIT 14'); andi.w #0x4000 at 0x26646 (cm550_FUN_00026616): the cold idle speed adder raises the idle reference unless this bit is set and the cold idle override flag 0x80db08 (e2m 1049 +6 LSCIOD 'TRUE INHIBITS COLD IDLE ADJUSTMEN(T)') is non-zero; CM848 reserved_bit_14 (no record there); clear,,verified
+cm550_algorithm_enable_flags_12_t,,engine_data_files_enable,bitfield:1@15,0,EDEN 'BIT 15 OF 0 - 15; ENABLES/DISABLES EDF FEATURE.' in e2m group 12C ENDTFL07 'ENGINE DATA FILES ENABLE AND POWER-DOWNS' (EDF = engine data files); no reader in the dumped ROM; CM848 reserved_bit_15 (no record there); set,,verified
+
+# cm550_algorithm_enable_flags_13_t: algorithm enable flags word 13 (e2m 106B +0x1c; PR #53 round 92) - against CM848: Unrelated: CM848's word 13 (0x3fd5b6, algorithm_enable_flags_13_t) is EB_Switch_Level_Override / Active_Driver_Demand_With_Jcomm / Net_Torque_Derate_Enable / Fuel_Press_Idle_Diag_Enable, and no CHR e2m has the switch user override records. CM848 keeps its per-switch datalink source bits elsewhere (switch_input_datalink_source_bits_cal, EEPROM 0x74c, outside this table).
+cm550_algorithm_enable_flags_13_t,,key_switch_override_enable,bitfield:1@0,2,no 106B record; logical switch 0: status e2m 000E +0 DSKYSWSS 'BIT 0 OF BYTE 0 STATUS OF THE VEHICLE KEY SWITCH - DEBOUNCED' (cm550_updateEngineState and mc68k_runPowerDownSequence read that bit as the key); named from the code and the status record; code: mask byte [1] bit 0 over status 0x80bcce / set = the key switch state comes from user value 0x80bcd8 bit 0; clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,cruise_control_resume_switch_override_enable,bitfield:1@1,0,DSCRRUUO S mask 0x2 'BIT 1 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL( RESUME SWITCH)' / DS01SWUO 'SWITCH 1'; logical switch 1: status DSRUSWSS 'STATUS OF CRUISE RESUME/ACCEL SWITCH INPUT' / priority 12A8 +1 DSPZCRRU; code: mask byte [1] bit 1 over status 0x80bcce / table bit 209 tested by cm550_processJ1939SwitchInput for J1939 entry 6 (j1939_received_cruise_control_resume_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,cruise_control_set_switch_override_enable,bitfield:1@2,0,DSCRSEUO S mask 0x4 'BIT 2 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL( SWITCH SET ACTIVATION)' / DS02SWUO 'SWITCH 2'; logical switch 2: status DSSESWSS 'STATUS OF CRUISE SET/COAST SWITCH INPUT' / priority 12A8 +2 DSPZCRSE; code: mask byte [1] bit 2 over status 0x80bcce / table bit 210 tested by cm550_processJ1939SwitchInput for J1939 entry 7 (j1939_received_cruise_control_set_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,cruise_control_on_off_switch_override_enable,bitfield:1@3,0,DSCRONUO S mask 0x8 'BIT 3 USER OVERRIDE ENABLE FLAG FOR THE CC/PTO ON/OFF S(WITCH)' / DS03SWUO 'SWITCH 3'; logical switch 3: the cruise control and power take-off on/off switch - status DSCRSWSS 'STATUS OF CRUISE ON SWITCH INPUT' / priority 12A8 +3 DSPZCRON; code: mask byte [1] bit 3 over status 0x80bcce / table bit 211 tested by cm550_processJ1939SwitchInput for J1939 entry 5 (j1939_received_cruise_control_enable_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,manual_fan_switch_override_enable,bitfield:1@4,0,DSMNFNUO S mask 0x10 'BIT 4 USER OVERRIDE ENABLE FLAG FOR THE MANUAL FAN INPU(T SWITCH)' / DSFACLUO 'USER OVERRIDE ENABLE FLAG FOR FAN CLUTCH SWITCH' / DS05SWUO 'SWITCH 5'; logical switch 4: status DSFMSW 'STATUS OF THE MANUAL FAN INPUT SWITCH - DEBOUNCED VALUE' / priority 12A8 +4 DSPZFMIP; code: mask byte [1] bit 4 over status 0x80bcce; clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,powertrain_protection_switch_override_enable,bitfield:1@5,0,DSPPSWUO S mask 0x20 'USER OVERRIDE ENABLE FLAG FOR PTP SWITCHED INPUT SWITCH' (PTP = powertrain protection: e2m group PTP_07) / DS06SWUO 'SWITCH 6'; logical switch 5: status PTSWINSW 'DEBOUNCED VALUE OF THE PTP SWITCHED INPUT SWIT(CH)' / priority 12A8 +5 DSP2PTSW (12A8 and 12FC also keep the older alias PTO_VALIDATE); code: mask byte [1] bit 5 over status 0x80bcce; clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,high_speed_governor_droop_select_switch_override_enable,bitfield:1@6,0,DSHSDPUO S mask 0x40 'USER OVERRIDE ENABLE FLAG FOR HSG DROOP SELECT SWITCH' / DS07SWUO 'SWITCH 7'; logical switch 6: status HSDRSLSW 'DEBOUNCED VALUE FOR THE HSG DROOOP SELECT SWIT(CH)' / priority 12A8 +6 DSPZHGSW; code: mask byte [1] bit 6 over status 0x80bcce; clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,idle_switch_override_enable,bitfield:1@7,0,DSIVSWUO S mask 0x80 'BIT 7 USER OVERRIDE ENABLE FLAG FOR THE RAW IDLE SWITCH( INPUT)' / DS08SWUO 'SWITCH 8'; logical switch 7: status DSIVSWSS 'DEBOUNCED VALUE OF IDLE VALIDATION 1 SWITCH' / priority 12A8 +7 DSPZISSW IDLE_SWITCH; code: mask byte [1] bit 7 over status 0x80bcce / direct tests andi #0x80 at 0x204e6 (cm550_processJ1939AcceleratorLowIdleSwitch: the J1939 low idle switch writes the override value) - 0x20cbe (cm550_processJ1939AcceleratorPedalPosition: the J1939 accelerator pedal position becomes the throttle override) - 0x20e5a (cm550_processJ1939AcceleratorIdleSwitchPair: the idle switch pair values) - 0x32ed4 (j1939HandlePgn61443Eec2 sends the EEC2 low idle switch as 3 while set); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,not_idle_switch_override_enable,bitfield:1@8,0,DSNTIVUO S mask 0x100 'BIT 8 USER OVERRIDE ENABLE FLAG FOR THE RAW NOT IDLE SW(ITCH INPUT)' / DS09SWUO 'SWITCH 9'; logical switch 8: status DSIVNTSW 'DEBOUNCED VALUE OF IDLE VALIDATION 2 SWITCH' / priority 12A8 +8 DSPZNTIS NOT_IDLE_SWITCH; code: mask byte [0] bit 0 over status 0x80bccf; clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,accelerator_interlock_switch_override_enable,bitfield:1@9,0,DSOVAISW S mask 0x200 'WORD 13 BIT 9 OF BITS 0-15 STATUS OF OVERRIDE FLAG TO' (cut) / DS10SWUO 'SWITCH 10'; logical switch 9: priority 12A8 +9 DSPZAISW 'PRIORITY OF CLIENT CURRENTLY OVERRIDING ACCELERATOR INTERLOCK SWI(TCH)' / default 12FC DSGDAISW / status DSACILSS; code: mask byte [0] bit 1 over status 0x80bccf / table bit 217 tested by cm550_processJ1939SwitchInput for J1939 entry 1 (j1939_received_accelerator_interlock_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,clutch_switch_override_enable,bitfield:1@10,0,DSCHSWUO S mask 0x400 'BIT A USER OVERRIDE ENABLE FLAG FOR THE CLUTCH SWITCH' / DS11SWUO 'SWITCH 11'; logical switch 10: status DSCHSWSS 'DEBOUNCED VALUE OF CLUTCH SWITCH INPUT' / priority 12A8 +A DSPZCHSW; code: mask byte [0] bit 2 over status 0x80bccf / table bit 218 tested by cm550_processJ1939SwitchInput for J1939 entry 4 (j1939_received_clutch_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,brake_switch_override_enable,bitfield:1@11,0,DSBRSWUO S mask 0x800 'BIT B USER OVERRIDE ENABLE FLAG FOR THE BRAKE SWITCH' / DS12SWUO 'SWITCH 12'; logical switch 11: status DSBRSWSS 'DEBOUNCED VALUE OF SERVICE BRAKE SWITCH INPU(T)' / priority 12A8 +B DSPZBRSW; code: mask byte [0] bit 3 over status 0x80bccf / table bit 219 tested by cm550_processJ1939SwitchInput for J1939 entry 3 (j1939_received_brake_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,engine_brake_select_1_switch_override_enable,bitfield:1@12,0,DSEBUO01 S mask 0x1000 'BIT C USER OVERRIDE ENABLE ENGINE BRAKE SELECT 1' / DSOVEBSW 'USER OVERRIDE ENABLE FOR ENGINE_BRAKE_SWITCH' / DS13SWUO 'SWITCH 13'; logical switch 12: status DSEBS1 'DEBOUNCED VALUE OF ENGINE BRAKE SELECT 1 SWITCH INPUT' / priority 12A8 +C DSPZEBS1 (CM848 names its switch 12 from the same Engine_Brake_Select_1); code: mask byte [0] bit 4 over status 0x80bccf; clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,idle_increment_switch_override_enable,bitfield:1@13,0,DSICSWUO S mask 0x2000 'BIT D USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST INC(REMENT SWITCH)' / DS14SWUO 'SWITCH 14'; logical switch 13: status DSICSWSS 'DEBOUNCED VALUE OF IDLE INCREMENT SWITCH INP(UT)' / priority 12A8 +D DSPZICSW; code: mask byte [0] bit 5 over status 0x80bccf / table bit 221 tested by cm550_processJ1939SwitchInput for J1939 entry 9 (j1939_received_engine_idle_increment_switch) / direct test andi.w #0x2000 at 0x15830 (mc68k_sampleAndDebounceDiscreteInputs: after the increment / decrement decode from the cruise switches it takes status 0x80bccf bit 5 from switch_9_to_16_override_values again); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,idle_decrement_switch_override_enable,bitfield:1@14,0,DSDTSWUO S mask 0x4000 'BIT E USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST DEC(REMENT SWITCH)' / DS15SWUO 'SWITCH 15'; logical switch 14: status DSDTSWSS 'DEBOUNCED VALUE OF IDLE DECREMENT SWITCH INP(UT)' / priority 12A8 +E DSPZDTSW; code: mask byte [0] bit 6 over status 0x80bccf / table bit 222 tested by cm550_processJ1939SwitchInput for J1939 entry 8 (j1939_received_engine_idle_decrement_switch) / direct test andi.w #0x4000 at 0x15850 (mc68k_sampleAndDebounceDiscreteInputs: status 0x80bccf bit 6 from switch_9_to_16_override_values after the cruise switch decode); clear in the dumps,,verified
+cm550_algorithm_enable_flags_13_t,,diagnostic_test_switch_override_enable,bitfield:1@15,0,DSTESWUO S mask 0x8000 'BIT F USER OVERRIDE ENABLE FLAG FOR THE DIAGNOSTIC TEST( AND FAULT FLASH OUT)' / DS16SWUO 'SWITCH 16'; logical switch 15: status DSTESWSS 'DEBOUNCED VALUE OF THE DIAGNOSTIC/TEST SWITC(H)' / priority 12A8 +F DSPZTESW; code: mask byte [0] bit 7 over status 0x80bccf / table bit 223 tested by cm550_processJ1939SwitchInput for J1939 entry 15 (j1939_received_engine_diagnostic_test_mode_switch); clear in the dumps,,verified
+
+# cm550_algorithm_enable_flags_14_t: algorithm enable flags word 14 (e2m 106B +0x1e; PR #53 round 92) - against CM848: CM848 has no row, no e2m record (no CHR e2m has 106B +001E) and no reader for word 14 (0x3fd5b8; 0x0000 in its dump): no CM848 counterpart.
+cm550_algorithm_enable_flags_14_t,,switch_17_override_enable,bitfield:1@0,2,DS17SWUO S mask 0x1 'BIT 0 SWITCH 17 USER OVERRIDE ENABLE FLAG' is the only record; logical switch 16: no function name in 106B / 000E / 12A8 / 12FC / 1234 and no reader of the status bit; code: mask byte [3] bit 0 over status 0x80bcd0; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,air_conditioning_pressure_turnkey_switch_override_enable,bitfield:1@1,0,DSAKTKUO S mask 0x2 'WORD 14 BIT 1 OF BITS 0-15 STATUS OF OVERRIDE FLAG TO' (cut) / DS18SWUO 'SWITCH 18'; logical switch 17: default 12FC DSDFACTK 'DEFAULT/INITIALIZATION VALUE FOR THE AC PRESSURE TURNKEY SWITCH' / priority 12A8 +11 DSPZACPT / inversion 1234 DSINACPT; code: mask byte [3] bit 1 over status 0x80bcd0 / the debouncer copies status 0x80bcd0 bit 1 into 0x80bcd7 bit 0 (e2m 000E +9 DSAKPRSW 'SOFTWARE VALUE OF AIR CONDITIONER PRESSURE S(WITCH)'); clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,rear_axle_ratio_switch_override_enable,bitfield:1@2,0,DSRARSUO S mask 0x4 'USER OVERRIDE ENABLE FLAG FOR REAR AXLE RATIO SWITCH' / DS19SWUO 'SWITCH 19'; logical switch 18: status DSRARASW 'DEBOUNCED VALUE FOR REAR_AXLE_RATIO_SWITCH' (j1939HandlePgn65265CruiseVehicleSpeed reads it) / priority 12A8 +12 DSPZRARA; code: mask byte [3] bit 2 over status 0x80bcd0; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,remote_throttle_switch_override_enable,bitfield:1@3,0,DSRMTHUO S mask 0x8 'BIT 3 USER OVERRIDE ENABLE FLAG FOR THE REMOTE THROTTLE( SWITCH)' / DS20SWUO 'SWITCH 20'; logical switch 19: status RMTHSW 'DEBOUNCED VALUE OF REMOTE THROTTLE SWITCH INPU(T)' / priority 12A8 +13 DSPZRTSW; code: mask byte [3] bit 3 over status 0x80bcd0 / table bit 227 tested by cm550_processJ1939SwitchInput for J1939 entry 14 (j1939_received_remote_accelerator_enable_switch) / direct test andi.l #0x8 at 0x207d0 (cm550_processJ1939RemoteAcceleratorPedalPosition: with word 18 bit 12 it lets the J1939 remote accelerator pedal position into analog_sensor_override_values[11]); clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,remote_power_take_off_switch_override_enable,bitfield:1@4,0,DSRXSWUO S mask 0x10 'BIT 4 USER OVERRIDE ENABLE FLAG FOR THE REMOTE PTO SWIT(CH)' / DS21SWUO 'SWITCH 21'; logical switch 20: status DSRXSWSS 'DEBOUNCED VALUE OF REMOTE PTO SWITCH INPUT' / priority 12A8 +14 DSPZRXSW; code: mask byte [3] bit 4 over status 0x80bcd0 / table bit 228 tested by cm550_processJ1939SwitchInput for J1939 entry 13 (j1939_received_remote_power_take_off_switch); clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,coolant_level_low_switch_override_enable,bitfield:1@5,0,DSCLLOUO S mask 0x20 'USER OVERRIDE ENABLE FLAG FOR COOLANT LEVEL LOW SWITCH' / DS22SWUO 'SWITCH 22'; logical switch 21: status DSCLLOSW 'STATUS OF THE SWITCH (COOLANT LEVEL LOW)' (the debouncer's coolant level switch pair check reads it) / priority 12A8 +15 DSPZCLLO; code: mask byte [3] bit 5 over status 0x80bcd0; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,user_datalogger_switch_override_enable,bitfield:1@6,0,DSUSDLUO and DSORUDSW S mask 0x40 'USER OVERRIDE ENABLE FLAG FOR USER DATALOGGER SWITCH' / DS26SWUO 'BIT 6 SWITCH 26'; logical switch 22: status DSILSSSW 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH' (cm550_updateDataloggerTriggers reads it) / priority 12A8 +16 DSPZININ (12A8 and 12FC also keep the alias PTO1); code: mask byte [3] bit 6 over status 0x80bcd0; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,parking_brake_switch_override_enable,bitfield:1@7,0,DSPRBRUO S mask 0x80 (its text 'USER OVERRIDE ENABLE FLAG MANUAL FAN INPUT SWITCH' is the manual fan record's - the mnemonic says parking brake) / DS24SWUO 'BIT 7 SWITCH 24'; logical switch 23: value 000E +C DSPRBRUC 'USER VALUE OF THE PARKING BRAKE SWITCH' / priority 12A8 +17 DSPZPRBR 'PARKING_BRAKE_SW(ITCH)' / inversion 1234 DSPRBRIV - no reader of the status bit; code: mask byte [3] bit 7 over status 0x80bcd0; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,coolant_level_high_switch_override_enable,bitfield:1@8,0,DSCLHIUO S mask 0x100 'USER OVERRIDE ENABLE FLAG FOR COOLANT LEVEL HIGH SWITCH' / DS25SWUO 'BIT 8 SWITCH 25'; logical switch 24: status DSCLHISW 'STATUS OF THE SWITCH (COOLANT LEVEL HIGH)' (the coolant level switch pair check reads it) / priority 12A8 +18 DSPZCLHI; code: mask byte [2] bit 0 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,switched_throttle_control_or_all_speed_governor_droop_switch_override_enable,bitfield:1@9,0,DSSTCNUO S mask 0x200 'USER OVERRIDE ENABLE FLAG FOR STCG ASG DROOP SWITCH' (STCG = switched throttle control governor per STCGASDS - ASG = all speed governor) / DS04SWUO 'BIT 9 SWITCH 4'; logical switch 25: status SLTHCNSW 'DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH' (cm550_acceleratorThrottleFaultDetector and cm550_FUN_0000d4ae read it with word 27 bit 3) / priority 12A8 +19 DSPZSTCN; code: mask byte [2] bit 1 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,switch_27_override_enable,bitfield:1@10,0,DS27SWUO S mask 0x400 'BIT A SWITCH 27 USER OVERRIDE ENABLE FLAG' is the only 106B record; logical switch 26: guess an air conditioning pressure switch (12A8 +1A DSPZAKPR 'AIR CONDITIONER' / 12FC DSDFAKPR 'AIR_CONDITIONER_PRESSURE_SWITC(H)' / 1234 DSINACHP 'AC HIGH PRESSURE SWIT(CH)') - but this ROM keeps the air conditioning pressure switch at logical switch 72 (J1939 entry 0) and nothing reads the status bit; code: mask byte [2] bit 2 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,switch_28_override_enable,bitfield:1@11,0,DS28SWUO S mask 0x800 'BIT B SWITCH 28 USER OVERRIDE ENABLE FLAG' plus two function records that disagree: DSAKHIUO 'WORD 14 BIT 11 OF BITS 0-15 STATUS OF OVERRIDE FLAG T' (cut - the AC high pressure switch: 12A8 +1B DSPZACHP / 12FC DSDFACHP) and DSTHILUO 'USER OVERRIDE ENABLE FLAG FOR THE ACCELERATOR INTERLOCK' (the throttle interlock: DSTHILSS / DSPZTHIL / DSDFTHIL); logical switch 27: undecided - this ROM routes the J1939 accelerator interlock to logical switch 9 (word 13 bit 9) so the interlock alias looks stale and nothing reads the status bit; code: mask byte [2] bit 3 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,switch_23_override_enable,bitfield:1@12,0,DS23SWUO S mask 0x1000 'BIT C SWITCH 23 USER OVERRIDE ENABLE FLAG' is the only 106B record; logical switch 28: guess engine brake select 2 (12FC DSDFEBS2 'DEFAULT/INITIALIZATION VALUE FOR ENGINE_BRAKE_SELECT_2' / 12A8 +1C DSPZEBS2) - no reader of the status bit; code: mask byte [2] bit 4 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,air_conditioning_cycle_switch_override_enable,bitfield:1@13,0,DSAKCYUO S mask 0x2000 'WORD 14 BIT 13 OF BITS 0-15 STATUS OF OVERRIDE FLAG T' (cut) / DS29SWUO 'SWITCH 29'; logical switch 29: default 12FC DSDFACCY 'DEFAULT/INITIALIZATION VALUE FOR THE AC CYCLE SWITCH' / inversion 1234 DSACCYIV / priority 12A8 +1D DSPZACCY (12A8 and 12FC also keep the alias PTO2) - no reader of the status bit; code: mask byte [2] bit 5 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,air_conditioning_on_off_switch_override_enable,bitfield:1@14,0,DSAKONUO S mask 0x4000 (its text 'BIT 6 OF 0-7 STATUS OF THE SWITCH' is the status record's) / DS30SWUO 'SWITCH 30'; logical switch 30: value 000E +D DSAKONUC 'USER SUPPLIED VALUE FOR AC_ON_OFF_SWITCH' / priority 12A8 +1E DSPZACOO 'AC ON OFF SWITCH' / default 12FC DSDFACOO - no reader of the status bit; code: mask byte [2] bit 6 over status 0x80bcd1; clear in the dumps,,verified
+cm550_algorithm_enable_flags_14_t,,switch_31_override_enable,bitfield:1@15,0,DS31SWUO S mask 0x8000 'BIT F SWITCH 31 USER OVERRIDE ENABLE FLAG' is the only record; logical switch 31: no function name in 106B / 000E / 12A8 / 12FC / 1234 and no reader of the status bit; code: mask byte [2] bit 7 over status 0x80bcd1; clear in the dumps,,verified
+
+# cm550_algorithm_enable_flags_16_t: algorithm enable flags word 16 (e2m 106B +0x22; PR #53 round 92) - against CM848: CM848 has no row, no e2m record at 106B +0022 (no CHR file) and no reader; no CM848 counterpart.
+cm550_algorithm_enable_flags_16_t,,cruise_control_resume_switch_override_enable,bitfield:1@0,2,"Set: the decoded cruise resume bit 0x80bcd4 bit 0 (e2m 000E +6 CRRESUSW) is ORed in from the override value 0x80bcde bit 0 (set only, not cleared) instead of switch input 0x80bcce bit 1. mc68k_sampleAndDebounceDiscreteInputs andi.w #0x0001 at 0x15648. Logical input 48; no 106B record. Unlike word 13's DSCRRUUO (raw switch) this overrides the debounced status byte. Clear",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_1,bitfield:1@1,0,No reader in the dumped ROM and no 106B record; by the logical input layout (49) the cruise accelerate bit 0x80bcd4 bit 1 (CRACELSW). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,cruise_control_set_switch_override_enable,bitfield:1@2,0,"Set: the decoded cruise set bit 0x80bcd4 bit 2 (CRSETSW) is ORed in from 0x80bcde bit 2 (set only, not cleared) instead of switch input 0x80bcce bit 2. andi.w #0x0004 at 0x1561a. Logical input 50; no 106B record. Clear",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_3,bitfield:1@3,0,No reader and no 106B record; by the layout (51) the cruise coast bit 0x80bcd4 bit 3 (CRCOASSW). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,cruise_control_on_switch_override_enable,bitfield:1@4,0,"Set: the decoded cruise on bit 0x80bcd4 bit 4 (CRONSW) is ORed in from 0x80bcde bit 4 (set only, not cleared) instead of switch input 0x80bcce bit 3. andi.w #0x0010 at 0x155ec. Logical input 52; no 106B record. Clear",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_5,bitfield:1@5,0,No reader and no 106B record; by the layout (53) the cruise set and resume bit 0x80bcd4 bit 5 (CRSERUSW). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,auxiliary_shutdown_switch_override_enable,bitfield:1@6,0,"e2m DSAUSHUO 0x40 'USER OVERRIDE ENABLE FLAG FOR THE AUXILIARY SHUTDOWN SW'. Code: table bit 262 (logical input 54) tested by cm550_processJ1939SwitchInput for J1939 descriptor entry 2 (j1939_received_engine_auxiliary_shutdown_switch) and by cm550_copyOutputBitToSwitchOverrideValue(0x36 ...) three times. Caveats: entry 16 (engine derate switch) also points at 54; the e2m value / status / priority records (DSAUSHUC E +11 0x40; DSAUSHSW E +7 0x40; 12A8 +3E DSPZAUSH) sit at logical input 62 = bit 14. Clear In the dumped ROM the override value bit 54 (0x80bcde bit 6) has no reader, and cm550_copyOutputBitToSwitchOverrideValue(0x36, 1 / 4 / 2) also stores output image bits 1 / 4 / 2 (the stop / engine protection / water in fuel lamp commands) into it after the J1939 entries. The status bit 54 (0x80bcd4 bit 6) is no auxiliary shutdown status: mc68k_sampleAndDebounceDiscreteInputs sets it on the power take-off on switch's rising edge at zero road speed while word 28 bit 4 (e2m ISTAEN) is set and clears it on set / resume, and j1939HandlePgn65265CruiseVehicleSpeed sends it as the CCVS1 parking brake switch (byte 1 0xF7 instead of 0xF3).",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_7,bitfield:1@7,0,No reader and no record; logical input 55 = 0x80bcd4 bit 7 (no e2m name). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,power_take_off_resume_switch_override_enable,bitfield:1@8,0,"Set: the power take-off resume bit (power_take_off_switch_state_bits 0x80bcd5 bit 0; DSPTRUSW) is ORed in from 0x80bcdf bit 0 (DSPTRUUC 0x01) (set only, not cleared) instead of switch input 0x80bcce bit 1. andi.w #0x0100 at 0x153fc; J1939 entry 11 (logical input 56 = table bit 264); 12A8 +38 DSPZPTRU. The 106B record DSPTRUUO claims mask 0x2000 but the code uses this bit. Clear",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_9,bitfield:1@9,0,No reader and no 106B record; by the layout (57) the power take-off accelerate bit 0x80bcd5 bit 1 (PTACELSW). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,power_take_off_set_switch_override_enable,bitfield:1@10,0,"Set: 0x80bcd5 bit 2 (DSPTSESW) is ORed in from 0x80bcdf bit 2 (DSPTSEUC 0x04) (set only, not cleared) instead of switch input 0x80bcce bit 2. e2m DSPTSEUO 0x400 'PTO SET SWITCH'; andi.w #0x0400 at 0x153c8; J1939 entry 12 (logical input 58); 12A8 +3A DSPZPTSE. Clear",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_11,bitfield:1@11,0,No reader and no 106B record; by the layout (59) the power take-off coast bit 0x80bcd5 bit 3 (PTCOASSW). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,power_take_off_on_switch_override_enable,bitfield:1@12,0,"Set: 0x80bcd5 bit 4 (DSPTONSW) is ORed in from 0x80bcdf bit 4 (DSPTONUC 0x10) (set only, not cleared) instead of switch input 0x80bcce bit 3. e2m DSPTONUO 0x1000 'PTO ENABLE SWITCH'; andi.w #0x1000 at 0x15394; J1939 entry 10 (logical input 60); 12A8 +3C DSPZPTON. Clear",,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_13,bitfield:1@13,0,e2m DSPTRUUO 0x2000 'USER OVERRIDE ENABLE FLAG FOR THE PTO RESUME SWITCH' but the code reads the power take-off resume override at bit 8; no reader here; by the layout (61) the set and resume bit 0x80bcd5 bit 5 (PTSERUSW). Clear,,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_14,bitfield:1@14,0,No reader and no 106B record; by the layout (62) the auxiliary shutdown status 0x80bcd5 bit 6 (DSAUSHSW; 12A8 +3E DSPZAUSH; value DSAUSHUC 0x80bcdf bit 6) - see bit 6. Clear,,verified
+cm550_algorithm_enable_flags_16_t,,reserved_bit_15,bitfield:1@15,0,No reader and no record; logical input 63 = 0x80bcd5 bit 7. Clear,,verified
+
+# cm550_algorithm_enable_flags_18_t: algorithm enable flags word 18 (e2m 106B +0x26; PR #53 round 92) - against CM848: Bits 0 2 3 6 8 9 11-15 match CM848's algorithm_enable_flags_18_t (field names reused) and bit 10 is reserved in both. CM550 names bits 1 (WPEAFG engine warmup protection), 4 (TRAGEN trending) and 5 (UDEN datalogger), each code-tested and set in the dump, where CM848 has reserved_bit_1 / 4 / 5 (no CHR record and no CM848 reader). CM848 names bit 7 executive_timing_enable (CHR SSECTMEA, read by its executive frame interrupt handler); CM550 has no record or reader for it. So the type is cm550_algorithm_enable_flags_18_t, not shared. CM848 also reads bits 8 and 14, which CM550 does not.
+cm550_algorithm_enable_flags_18_t,,high_speed_governor_gain_scheduling_enable,bitfield:1@0,2,e2m HSGNSDEN (N) 'BIT 0 OF 0-15 OF WORD 12H ENABLES HSG GAIN SCHEDULING' (HS_GOV); CM848 same name and bit. Code: selectHighSpeedGovernorGainSet andi.w #0x0001 at 0x1d3ae (the cross-firmware twin of CM848 0x1fa20 which tests the same bit). Clear in the dump (0x303a),,verified
+cm550_algorithm_enable_flags_18_t,,engine_warmup_protection_enable,bitfield:1@1,0,e2m WPEAFG (N) 'ENABLE ENGINE WARMUP PROTECTION ALGORITHM WORD 12 BIT 1' (EWP_HDR). Code: cm550_runEngineWarmupProtection (0x16df0 0x16e32; the oil drain-back time and maximum warmup time state machine) and cm550_initializeEngineWarmupProtection (0x170c0). CM848 leaves it reserved_bit_1 (no CHR record). Set in the dump,,verified
+cm550_algorithm_enable_flags_18_t,,driver_reward_enable,bitfield:1@2,0,e2m DREN (N) 'WORD 12H BIT 2 OF 0 TO 15 DRIVER REWARD ENABLE' (DRVRWD07); CM848 same name and bit. No reference in the dumped 256 KB ROM (none in CM848 either). Clear,,verified
+cm550_algorithm_enable_flags_18_t,,duty_cycle_monitor_enable,bitfield:1@3,0,e2m DCMNEN (N) 'DUTY CYCLE MONITOR ENABLE BIT 3 OF 0-15' and DMAGEN 0x08 (DCMN); CM848 same name and bit. Code: cm550_updateDutyCycleMonitorLoadHistogram andi.w #0x0008 at 0xac52 (the duty cycle monitor long and short term maps). Set in the dump,,verified
+cm550_algorithm_enable_flags_18_t,,trending_enable,bitfield:1@4,0,e2m TRAGEN 0x10 'ENABLE FLAG FOR TRENDING ALGORITHM' (TRENDING group). Code: cm550_evaluateTrendingTriggers (0x314b2) cm550_runTrendingIntervalAndStoreSamples (0x315e6) and cm550_restartTrendingAfterEngineRebuild (0x31a68) - the trending capture (_trending_data_capture_active / _trending_total_sample_count). CM848 leaves it reserved_bit_4 (no CHR record). Set in the dump,,verified
+cm550_algorithm_enable_flags_18_t,,datalogger_enable,bitfield:1@5,0,e2m UDEN (N) 'TRIM FOR ENABLING THE DATALOGGER. BIT 5 OF 0-15.' (USERDATA). Code: cm550_updateDataloggerTriggers (0x138f4; clear = triggers and set-up cleared) and cm550_recordDataloggerSamples (0x13a70). CM848 leaves it reserved_bit_5 (no CHR record). Set in the dump,,verified
+cm550_algorithm_enable_flags_18_t,,smart_air_compressor_enable,bitfield:1@6,0,e2m ACEN (N) 'WORD 12H BIT 6 OF 0 TO 15 - SMART AIR COMPRESSOR ENABLE' (AIRCOMP7); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear,,verified
+cm550_algorithm_enable_flags_18_t,,reserved_bit_7,bitfield:1@7,0,No CM550 e2m record and no reference in the dumped ROM. Guess: CM848 names this bit executive_timing_enable (CHR Executive_Timing_Enable SSECTMEA; read by its executive frame interrupt handler). Clear,,verified
+cm550_algorithm_enable_flags_18_t,,high_speed_governor_gear_ratio_gain_enable,bitfield:1@8,0,e2m HSGRGSEN (N) 'GEAR RATIO BASED GAIN SET SELECTION (ENABLED/DISABLED) BIT 8' (HSGGRGS); CM848 same name and bit (read by cm848_loadHighSpeedGovernorWorkingGainSet). No reference in the CM550 dumped ROM. Clear,,verified
+cm550_algorithm_enable_flags_18_t,,programmable_power_enable,bitfield:1@9,0,e2m PPEN (N) 'PROGRAMMABLE POWER BIT 9 OF 0 TO 15 WORD 12H/18D' (PROG_PWR); CM848 same name and bit. Code: cm550_FUN_0000ff48 (0xff48; clear = J1939 reference peak fueling) cm550_FUN_0001c8a0 (0x1c8d8) cm550_calculateThrottle100Fuelings (0x1cc8e) and cm550_FUN_0001de58 (0x1de70 0x1df10 0x1df90) - torque curve and fueling paths. Clear,,verified
+cm550_algorithm_enable_flags_18_t,,reserved_bit_10,bitfield:1@10,0,No e2m record in either firmware and no reader in either. Clear,,verified
+cm550_algorithm_enable_flags_18_t,,cruise_control_auto_resume_enable,bitfield:1@11,0,e2m AREN (N) 'BIT 11 OF 0-15. CRUISE CONTROL AUTO RESUME ENABLE/DISABLE' (CC_AR); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear,,verified
+cm550_algorithm_enable_flags_18_t,,remote_throttle_enable,bitfield:1@12,0,e2m CTRMTHEN 0x1000 'REMOTE THROTTLE ENABLE BIT 12 OF 0-15' (APL_ADJ); CM848 same name and bit. Code: cm550_processJ1939RemoteAcceleratorPedalPosition (0x207c0; J1939 remote accelerator into analog_sensor_override_values[11]) cm550_FUN_0002ec50 (0x2ec6c; alternate throttle arbitration) and j1939HandlePgn61443Eec2 (0x32fca). Set in the dump,,verified
+cm550_algorithm_enable_flags_18_t,,remote_throttle_transition_verification_enable,bitfield:1@13,0,e2m CTRTTZEN 0x2000 'ENABLES REMTHROT/THROT PERC CALC BEFORE TRANS. BIT 13/15 WORD C'; CM848 same name and bit. Code: cm550_FUN_0002ec50 andi.l #0x2000 at 0x2ec90 (the remote throttle hand-over branch). Set in the dump,,verified
+cm550_algorithm_enable_flags_18_t,,engine_retarder_service_brake_activate_enable,bitfield:1@14,0,e2m EBBREN (N) 'WORD 12H BIT E OF 0-F - SERVICE BRAKE MUST BE TAPPED' (ENGBRK05 engine brake); CM848 same name and bit (read by cm848_updateEngineRetarderAllowedState). No reference in the CM550 dumped ROM. Clear,,verified
+cm550_algorithm_enable_flags_18_t,,engine_retarder_rate_limit_enable,bitfield:1@15,0,e2m EBRTLMEA (N) 'BIT 15 OF 0-15 - RATE LIMIT BETWEEN CURRENT AND DESIRED EB LEVELS'; CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear,,verified
+
+# algorithm_enable_flags_25_t: algorithm enable flags word 25 (e2m 106B +0x34; PR #53 round 92) - CM848's type of the same name (the same 16 bits)
+algorithm_enable_flags_25_t,,engine_retarder_rate_limit_defeat_enable,bitfield:1@0,2,e2m EBRTDFEN 'BIT 0 OF 0-15 - ENABLE BRAKE RATE LIMIT DEFEAT DURING ON/OFF TRANS'; no test in the dumped ROM; clear in the bench EEPROM (0x0180); same as CM848,,verified
+algorithm_enable_flags_25_t,,powertrain_protection_enable,bitfield:1@1,0,e2m TCEN 'POWERTRAIN PROTECTION ENABLE WORD 19H BIT 1 OF 0 TO 15'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,powertrain_protection_lugback_enable,bitfield:1@2,0,e2m TCLDEN 'POWERTRAIN PROTECTION LUGBACK ENABLE WORD 19H BIT 2 OF 0 TO 15'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,j1939_multiplex_limp_home_on_analog_throttle_enable,bitfield:1@3,0,e2m MXLPANEA (mask 8) 'BIT 3 ENABLED INDICATES LIMPHOME VIA MUXING SHALL USE RAW SAMPLED THROTTLE' (v64t6_s puts it at +36 but the 7x/8x ISB e2m files and CM848's CHR e2m have +34); read by mc68k_updateIdleSwitchesFromLocalInputs (andi.w #8 at 0x205e0): set = idle switch states from the raw sampled throttle ADC (idle_check_accelerator_pedal_raw below 0x169 = at idle) / clear = the debounced hardware idle switch (timer 100 minus 50 per pass) - the twin of cm848_updateIdleSwitchesFromLocalInputs; clear in the bench EEPROM,,verified
+algorithm_enable_flags_25_t,,reserved_bit_4,bitfield:1@4,0,no record in v64t6_s and no test in the dumped ROM; guess ISTSRVEN 'ENABLE TO FORCE THE RPM TO RAMP UP TO IS_TAS_PEAK_IDLE' (mask 0x10 at +34 in 13 7x/8x ISB e2m files); CM848 keeps reserved_bit_4 too; clear,,verified
+algorithm_enable_flags_25_t,,smart_road_speed_governor_enable,bitfield:1@5,0,e2m SREN 'SMART RSG ENABLE WORD 19H BIT 5 OF 0 TO 15' (RSG = road speed governor); no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_1_air_conditioning_enable,bitfield:1@6,0,e2m FCAKINEN 'AC INPUT ENABLE BIT 6 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_1_coolant_temperature_enable,bitfield:1@7,0,e2m FCCLINEN 'CT INPUT ENABLE BIT 7 OF WORD 19H'; no test in the dumped ROM (a fan clutch reader may sit in the undumped code above 0x40000); SET in the bench EEPROM; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_1_intake_manifold_temperature_enable,bitfield:1@8,0,e2m FCIMINEN 'IMT INPUT ENABLE BIT 8 OF WORD 19H'; no test in the dumped ROM; SET in the bench EEPROM; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_2_air_conditioning_enable,bitfield:1@9,0,e2m FCAKI2EN 'AC INPUT ENABLE BIT 9 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_2_air_conditioning_pressure_enable,bitfield:1@10,0,e2m FCAK02EN 'AC SWITCH ENABLE BIT 10 OF WORD 19H' (CM848's CHR e2m names the same mnemonic Fan_Clutch_2_AC_Pressure_Enable); no test in the dumped ROM; clear,,verified
+algorithm_enable_flags_25_t,,fan_clutch_2_coolant_temperature_enable,bitfield:1@11,0,e2m FCCLI2EN 'CT INPUT ENABLE BIT 11 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_2_engine_retarder_enable,bitfield:1@12,0,e2m FCEBINEN 'FAN_CLUTCH_2_EB_ENABLE BIT 12 OF WORD 19H' (EB = engine brake); no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_2_intake_manifold_temperature_enable,bitfield:1@13,0,e2m FCIMI2EN 'IMT INPUT ENABLE BIT 13 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,fan_clutch_2_manual_input_enable,bitfield:1@14,0,e2m FCSW02EN 'FAN_CLUTCH_2_MANUAL_INPUT_ENABLE BIT 14 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848,,verified
+algorithm_enable_flags_25_t,,manual_fan_level_override,bitfield:1@15,0,e2m ADMNFMOD (mask 0x8000) 'A/D OVERRIDE FOR MANUAL FAN LEVEL (REQUESTED % FAN SPEED)'; read by cm550_processJ1939EngineFanRequestedSpeed (andi.w #0x8000 at 0x20440): set and the commanding source priority at least j1939_engine_fan_request_source_priority = j1939_engine_fan_requested_speed from the J1939 CM1 fan request (raw x 16 / 10; timeout or 0xfe = the global default) - the twin of cm848_processJ1939EngineFanRequestedSpeed; clear,,verified
+
+# cm550_algorithm_enable_flags_27_t: algorithm enable flags word 27 (e2m 106B +0x38; PR #53 round 92) - against CM848: bits 0-10 have CM848's positions and meanings, so CM848's field names are reused (0 and 1 reserved in both). Bits 11-13 are named in CM848 (anti_theft_enable / anti_theft_automatic_lock_enable / road_speed_governor_reference_speed_ramp_enable, from its CHR e2m) but J90350.00's e2m has no record and the dumped ROM no test for them, so they stay reserved and the type is cm550_. 18 7x/8x ISB e2m files carry AT01EN 0x800 / ATAULOEN 0x1000 / SRRMEN 0x2000, and bit 13 is SET in the bench EEPROM (0x2010): if sibling e2m files are accepted as proof, the word could take CM848's type. Also: v64t6_s's AHEN / TBAMEN / TBSPTMEN / TUWGEN / TUWGOVEN are N records whose text gives two bit numbers (5-9 and 11-15); bits 5-9 follow the leading number and the S-record masks of the later files and CM848.
+cm550_algorithm_enable_flags_27_t,,reserved_bit_0,bitfield:1@0,2,no record in v64t6_s and no test in the dumped ROM; guess RTEN 'ENABLES/DISABLE REAL TIME CLOCK FUNCTION' (an S record with mask 1 at +38 in 11 other e2m files; an N record with no bit in 10 more); CM848 reserved_bit_0 too; clear in the bench EEPROM (0x2010),,verified
+cm550_algorithm_enable_flags_27_t,,reserved_bit_1,bitfield:1@1,0,e2m CRMFOGEA 'IF ENABLED USES CC/RSG MIN FUEL TRANSTION RAMP DURING' (N record with no bit; mask 2 in CM848's CHR e2m and 18 later ISB files) - OOG is never spelled out; no test in the dumped ROM; CM848 keeps reserved_bit_1 for the same reason; clear,,verified
+cm550_algorithm_enable_flags_27_t,,engine_retarder_fuel_to_brake_delay_enable,bitfield:1@2,0,e2m EBAEDYEN 'BIT 2 TO DELAY ON E-BRAKE TRANSITION'; no test in the dumped ROM; clear; same as CM848,,verified
+cm550_algorithm_enable_flags_27_t,,switched_throttle_control_governor_select,bitfield:1@3,0,e2m STCGASDS 'SWITCHED THROTTLE CONTROL GOVERNOR SELECT (BIT 3 OF 0 - 15)'; read by cm550_acceleratorThrottleFaultDetector (0xd306: clear + throttle interlock switch bit 1 = the switch toggles the all speed governor throttle source) and cm550_FUN_0000d4ae (0xd4e8: set + interlock switch = the switch toggles the switched throttle control governor enable); clear; same as CM848,,verified
+cm550_algorithm_enable_flags_27_t,,boost_pressure_in_range_diagnostic_enable,bitfield:1@4,0,e2m DGBSIREN 'ENABLE FLAG FOR BOOST PRESSURE IN-RANGE DIAGNOSTIC ALGORITHM' (N record with no bit; mask 0x10 in CM848's CHR e2m); read by cm550_monitorBoostPressureSensorInRangeHighReading (andi.w #0x10 at 0xe9b4): the boost in-range high check (boost_pressure_sensor_high_reading_minimum_boost_pressure / boost_pressure_sensor_high_reading_debounce_limit) while RUNNING; SET in the bench EEPROM; same as CM848,,verified
+cm550_algorithm_enable_flags_27_t,,air_handling_enable,bitfield:1@5,0,e2m AHEN 'BIT 5 ENABLE/DISABLE FOR AIR HANDELING FEATURE. BIT 11' (two bit numbers in the text; 0x20 in CM848's CHR e2m and the 7x/8x S records); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_27_t,,air_mass_calculation_enable,bitfield:1@6,0,e2m TBAMEN 'BIT 6 ENABLE/DISABLE FOR AIRMASS CALCULATION. BIT 12 OF 0-15' (two bit numbers; 0x40 in CM848 and the later S records); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_27_t,,turbine_speed_and_temperature_calculation_enable,bitfield:1@7,0,e2m TBSPTMEN 'BIT 7 ENABLE/DISABLE TURBIN SPEED /TEMP. CALC. BIT 13 OF 0-15' (two bit numbers; 0x80 in CM848 and the later S records); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_27_t,,four_step_wastegate_control_enable,bitfield:1@8,0,e2m TUWGEN 'ENABLE/DISABLE FOR 4 STEP WG CONTROL. BIT8 15 OF 0-15' (two bit numbers; 0x100 in CM848 and the later S records); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_27_t,,wastegate_tool_override_enable,bitfield:1@9,0,e2m TUWGOVEN 'BIT9 ENABLE/DISABLE FOR TOOL OVERRIDE OF WASTEGATES. BIT 14 OF' (two bit numbers; 0x200 in CM848 and the later S records); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_27_t,,idle_shutdown_temperature_enable,bitfield:1@10,0,e2m ISAATPEN (mask 0x400) 'BIT 10 OF 15. SELECTS THE TEMP. INTERACTION OPTION FOR I[DLE SHUTDOWN]'; read by cm550_runIdleShutdownStateMachine (andi.l #0x400 at 0x1da6c; the idle shutdown state machine): set with its temperature condition flag (idle_shutdown_override_successful_flag = 1) sends state 1 to the 600-pass wait state 3 instead of counting down to the warning state 2; clear; same as CM848,,verified
+cm550_algorithm_enable_flags_27_t,,reserved_bit_11,bitfield:1@11,0,no record in v64t6_s and no test in the dumped ROM; guess AT01EN 'BIT 11 OF 15. ENABLES THE ANTI THEFT AT_AUTO MODULE' (0x800 in 18 7x/8x ISB e2m files; CM848 anti_theft_enable) or AHEN's second number; clear,,verified
+cm550_algorithm_enable_flags_27_t,,reserved_bit_12,bitfield:1@12,0,no record in v64t6_s and no test in the dumped ROM; guess ATAULOEN 'BIT 12 OF 15. ENABLES THE AUTOMATIC LOCKING FUNCTIONALITY' (0x1000 in 18 later ISB e2m files; CM848 anti_theft_automatic_lock_enable) or TBAMEN's second number; clear,,verified
+cm550_algorithm_enable_flags_27_t,,reserved_bit_13,bitfield:1@13,0,no record in v64t6_s and no test in the dumped ROM but SET in the bench EEPROM (0x2010); guess SRRMEN 'IF ENABLED RSG REF SPEED IS ALLOWED TO RAMP' (0x2000 in 18 later ISB e2m files; CM848 road_speed_governor_reference_speed_ramp_enable) or TBSPTMEN's second number (BIT 13 OF 0-15),,verified
+cm550_algorithm_enable_flags_27_t,,reserved_bit_14,bitfield:1@14,0,no record in v64t6_s and no test in the dumped ROM; guess CZEN continuous oil replacement system enable (0x4000 in one later ISB e2m) or TUWGOVEN's second number (BIT 14); CM848 reserved_bit_14 too; clear,,verified
+cm550_algorithm_enable_flags_27_t,,reserved_bit_15,bitfield:1@15,0,no record in v64t6_s and no test in the dumped ROM; guess OMEN oil level monitor enable (0x8000 in one later ISB e2m) or TUWGEN's second number (15 OF 0-15); CM848 reserved_bit_15 too; clear,,verified
+
+# cm550_algorithm_enable_flags_28_t: algorithm enable flags word 28 (e2m 106B +0x3a; PR #53 round 92) - against CM848: CM848 names bits 3 / 5 / 7 / 8 / 10 / 12 / 13 (keyless restart / alarm during automatic start / starter lockout / wastegate table control / J1939 multiplex / anti-theft random number generator / starter lockout normally open contact) from its CHR e2m and reads bit 10 in its J1939 input layer; J90350.00's e2m has only ISTAEN (0x10) and the dumped ROM tests only bit 4. CM848 keeps bit 4 reserved (no record at 0x10 and no reader there), so no CM848 rename.
+cm550_algorithm_enable_flags_28_t,,reserved_bit_0,bitfield:1@0,2,no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_0 too; clear in the bench EEPROM (0x0000),,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_1,bitfield:1@1,0,no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_1 too; clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_2,bitfield:1@2,0,no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_2 too; clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_3,bitfield:1@3,0,no record in v64t6_s and no test in the dumped ROM; guess ESNKASEN 'ALLOWS ENGINE TO RUN WHILE KEYSWITCH IS OFF' (0x8 in 18 7x/8x ISB e2m files; CM848 keyless_restart_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,integrated_idle_management_enable,bitfield:1@4,0,e2m ISTAEN (mask 0x10) 'ENABLES TAS FEATURE.' in group 133 IIMSGR0 'INTEGRATED IDLE MANAGEMENT' (TAS is never spelled out in any e2m; CM848's STLOCKEN says starter lockout is exclusive of ISTAEN); read by cm550_runIdleShutdownStateMachine (0x1d9da: the idle shutdown state machine runs only while word 3 bit 1 ISAGEN is set and this bit is clear) and mc68k_sampleAndDebounceDiscreteInputs (0x15470: set + a rising edge of power_take_off_switch_state_bits bit 0x10 at zero road speed sets bit 0x40 of switch_status_cruise_coast_switch_bit_3_on_off); clear in the bench EEPROM; CM848 reserved_bit_4,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_5,bitfield:1@5,0,no record in v64t6_s and no test in the dumped ROM; guess ESALASEN 'ENABLES ALARM SOUNDING FOR AUTO-START KEYSWITCH ON' (0x20 in 18 later ISB e2m files; CM848 alarm_during_automatic_start_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_6,bitfield:1@6,0,no record in v64t6_s and no test in the dumped ROM; guess ISEKGEN 'SELECTS PULSED SIGNAL TAMPER DETERRENCE FOR BUNK THERMO[STAT]' (0x40 in 18 later ISB e2m files); CM848 reserved_bit_6; clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_7,bitfield:1@7,0,no record in v64t6_s and no test in the dumped ROM; guess STLOCKEN 'ENABLES STARTER LOCKOUT FEATURE (EXCLUSIVE OF ISTAEN)' (0x80 in 18 later ISB e2m files; CM848 starter_lockout_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_8,bitfield:1@8,0,no record in v64t6_s and no test in the dumped ROM; guess TCWGTCEN 'ENABLE/DISABLE DIRECT TABLE CONTROL OF WG' (0x100 in 18 later ISB e2m files; CM848 wastegate_table_control_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_9,bitfield:1@9,0,no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_9 too; clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_10,bitfield:1@10,0,no record in v64t6_s and no test in the dumped ROM (J90350.00's J1939 input handlers gate on word 25 bit 15 / word 33 bit 4 instead); guess JC39MXEA 'BIT 10 OF 0-15 ENABLES OR DISABLES MULTIPLEX PROCESSING' (0x400 in 18 later ISB e2m files; CM848 j1939_multiplex_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_11,bitfield:1@11,0,no record in v64t6_s and no test in the dumped ROM; guess ISBKDLEN 'ENABLE TO TURN ON SENSING OF THE BUNK THERMOSTAT DATALINK' (0x800 in 18 later ISB e2m files) or AILSISEN alternate idle function enable (4 files); CM848 reserved_bit_11; clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_12,bitfield:1@12,0,no record in v64t6_s and no test in the dumped ROM; guess ATRNGNEN 'ENABLE FOR GENERATION OF RANDOM NUMBERS (FOR VAT)' (0x1000 in 18 later ISB e2m files; CM848 anti_theft_random_number_generator_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_13,bitfield:1@13,0,no record in v64t6_s and no test in the dumped ROM; guess SLNOCTEN 'ENABLES NORMALLY OPEN CONTACTS FOR SL RELAY' (0x2000 in 18 later ISB e2m files; CM848 starter_lockout_normally_open_contact_enable); clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_14,bitfield:1@14,0,no record in v64t6_s and no test in the dumped ROM; guess OTIRDGEN 'SELECTS OIL TEMPERATURE STUCK IN RANGE DIAGNOSTIC' (0x4000 in 13 later ISB e2m files); CM848 reserved_bit_14; clear,,verified
+cm550_algorithm_enable_flags_28_t,,reserved_bit_15,bitfield:1@15,0,no record in v64t6_s and no test in the dumped ROM; guess LSQAIHEN 'WHEN ENABLED LSG QPID IS INHIBITED FOR MIDDLE AND HIGH GEAR GAIN' (0x8000 in 13 later ISB e2m files; CM848 reserved_bit_15 for the same unexpanded QPID); clear,,verified
+
+# cm550_algorithm_enable_flags_32_t: algorithm enable flags word 32 (e2m 106B +0x42; PR #53 round 92) - against CM848: nothing in common with CM848's word 32 (CM848: bit 0 intake air heater control / 1 end of injection limit / 2 equivalent throttle / 4 intake air heater 24 V, the rest reserved). CM550 has intake air heater control at bit 6 and the other bits are different features. CM848's CHR e2m has no records at bits 5-15, so no CM848 rename.
+cm550_algorithm_enable_flags_32_t,,misfire_timing_limit_enable,bitfield:1@0,2,e2m BSTALMEN (mask 01) 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; read by cm550_calculateInjectionTimingMisfireLimit (0x26ac0: injection_timing_misfire_limit from the boost pressure x engine speed table e2m 8191 BSTATBZA) and cm550_applyMisfireTimingLimit (0x26b0c: raises the timing advance to that limit and sets intermediate timing state 11); SET in the bench EEPROM (0xf241),,verified
+cm550_algorithm_enable_flags_32_t,,reserved_bit_1,bitfield:1@1,0,no record in v64t6_s and no test in the dumped ROM; guess MPCACGEN 'ENABLES CASE SYSTEM CONFIGURATION MESSAGE PROCESSING' (0x2 in 16 later ISB e2m files); CM848 bit 1 is end_of_injection_limit_enable (different build); clear,,verified
+cm550_algorithm_enable_flags_32_t,,reserved_bit_2,bitfield:1@2,0,no record in any ISB e2m and no test in the dumped ROM; CM848 bit 2 is equivalent_throttle_enable (different build); clear,,verified
+cm550_algorithm_enable_flags_32_t,,reserved_bit_3,bitfield:1@3,0,no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_3 too; clear,,verified
+cm550_algorithm_enable_flags_32_t,,ford_air_conditioning_enable,bitfield:1@4,0,e2m ACFDEN (mask 0x10) 'WHETHER OR NOT AND HOW THE FORD AC IS ENABLED'; no test in the dumped ROM; clear; CM848 bit 4 is intake_air_heater_24_volt_enable,,verified
+cm550_algorithm_enable_flags_32_t,,cooling_system_monitor_enable,bitfield:1@5,0,e2m CLMREN (mask 0x20) 'WHETHER OR NOT THE COOLING SYSTEM MONITOR IS ENABLED'; no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_32_t,,intake_air_heater_control_enable,bitfield:1@6,0,e2m IHEN (mask 0x40) 'INTAKE AIR HEATER CONTROL ALGORITHM ENABLE'; no test in the dumped ROM (a reader may sit in the undumped code above 0x40000); SET in the bench EEPROM; CM848 has the same flag at bit 0,,verified
+cm550_algorithm_enable_flags_32_t,,reserved_bit_7,bitfield:1@7,0,e2m IHMREN (mask 0x80) 'WHETHER OR NOT AND HOW THE MISFIRE MONITOR IS ENA[BLED]' but the mnemonic reads intake heater monitor (IH as in IHEN / MR as in TBMREN and CLMREN); no test in the dumped ROM; guess misfire monitor enable or intake air heater monitor enable; clear,,verified
+cm550_algorithm_enable_flags_32_t,,turbocharger_monitor_enable,bitfield:1@8,0,e2m TBMREN (mask 0x100) 'TURBOCHARGER MONITOR ENABLE'; no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_32_t,,low_speed_governor_no_load_fuel_enable,bitfield:1@9,0,e2m LSNLFLEN (mask 0x200) '(BIT X OF WORD Y) LSG USE OF LSG_NO_LOAD_FUEL_ENA[BLE]'; read by vp44_FUN_00025a34 (0x25ab0: subtracts no_load_fuel_quantity from the low speed governor integrator preset) and cm550_runLowSpeedGovernor (0x25f72: adds it to the low speed governor PID output before the clamp); SET in the bench EEPROM,,verified
+cm550_algorithm_enable_flags_32_t,,clutch_switch_inversion_cancel_enable,bitfield:1@10,0,e2m CHSWICEN (mask 0x400) 'TO CANCEL CLUTCH_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #0x400 at 0x150c6): XORs 0x400 into the discrete input sample; clear,,verified
+cm550_algorithm_enable_flags_32_t,,brake_switch_inversion_cancel_enable,bitfield:1@11,0,e2m BRSWICEN (mask 0x800) 'TO CANCEL BRAKE_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #0x800 at 0x150ea): XORs 0x800 into the discrete input sample; clear,,verified
+cm550_algorithm_enable_flags_32_t,,oil_pressure_high_error_disable,bitfield:1@12,0,e2m ADO2DBEN (mask 0x1000) 'FLAG (B12 W 020H) OIL PR. HIGH ERROR DISABLE FEAT[URE]'; no test in the dumped ROM; SET in the bench EEPROM,,verified
+cm550_algorithm_enable_flags_32_t,,vp44_governor_watchdog_enable,bitfield:1@13,0,e2m VPGVWDEN (mask 0x2000) 'FLAG (B13 W 020H) VP44 GOVERNOR WATCHDOG FEATURE' (VP44 = the Bosch VP44 injection pump; the sibling file 64t4 carries the same record under the mnemonic ADO2DBEN); no test in the dumped ROM; SET in the bench EEPROM,,verified
+cm550_algorithm_enable_flags_32_t,,air_fuel_control_coolant_temperature_adjustment_enable,bitfield:1@14,0,e2m AFCLAJEN (mask 0x4000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO AFC' (AFC = air fuel control); read by cm550_fuelTimingTransitionStateMachine (andi.l #0x4000 at 0xc1d4): adds the coolant temperature x engine speed table to air_fuel_control_fuel_limit unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM,,verified
+cm550_algorithm_enable_flags_32_t,,full_fueling_coolant_temperature_adjustment_enable,bitfield:1@15,0,"e2m 5DCLAJEN (mask 0x8000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE[LING]'; read by cm550_calculateThrottle100Fuelings (andi.l #0x8000 at 0x1cc9e): adds the coolant temperature x engine speed table to all three full fueling values it computes: throttle_100_fueling, engine_speed_limit_ramped_maximum_fuel_quantity and throttle_100_fueling_low_horsepower_curve (the block runs only while word 18 bit 9 is clear) unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM",,verified
+
+# cm550_algorithm_enable_flags_33_t: algorithm enable flags word 33 (e2m 106B +0x44; PR #53 round 92) - against CM848: CM848 has no row and no CHR e2m record for its word 33 (0x3fd5de). CM848 keeps the same engine brake datalink override (ADEBLVOD) at algorithm_enable_flags_13_t bit 0 (engine_retarder_switch_level_override, read by cm848_processJ1939EngineRetarderSelection); CM550 bit 4 takes that field name.
+cm550_algorithm_enable_flags_33_t,,cruise_resume_switch_inversion_cancel_enable,bitfield:1@0,2,e2m RUSWICEN (mask 01) 'TO CANCEL CRUISE_RESUME_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #1 at 0x1510e): XORs 2 into the discrete input sample; clear in the bench EEPROM (0x0000),,verified
+cm550_algorithm_enable_flags_33_t,,cruise_set_switch_inversion_cancel_enable,bitfield:1@1,0,e2m SESWICEN (mask 02) 'TO CANCEL CRUISE_SET_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #2 at 0x1512e): XORs 4 into the discrete input sample; clear,,verified
+cm550_algorithm_enable_flags_33_t,,cruise_on_switch_inversion_cancel_enable,bitfield:1@2,0,e2m CRSWICEN (mask 04) 'TO CANCEL CRUISE_ON_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #4 at 0x1514e): XORs 8 into the discrete input sample; clear,,verified
+cm550_algorithm_enable_flags_33_t,,battery_voltage_low_at_cranking_enable,bitfield:1@3,0,e2m DGBTCKEN (mask 08) 'BATTERY VOLTAGE LOW AT CRANKING FEATURE ENABLE FLAG'; no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,engine_retarder_switch_level_override,bitfield:1@4,0,no record in v64t6_s; ADEBLVOD 'A/D OVERRIDE FOR ENGINE BRAKE SWITCH LEVEL' sits at +44 mask 0x10 in 10 later ISB e2m files (74be62rls .. Isbp700) and is CM848's algorithm_enable_flags_13_t bit 0 (same field name); read by cm550_processJ1939EngineRetarderSelection (andi.w #0x10 at 0x203a8): set and the commanding source priority at least j1939_engine_retarder_selection_source_priority = j1939_engine_retarder_selection_percent from the J1939 EBC1 engine retarder selection (raw x 4 / 10; timeout or 0xfe = j1939_engine_retarder_selection_default_percent) - the twin of cm848_processJ1939EngineRetarderSelection; clear,,verified
+cm550_algorithm_enable_flags_33_t,,reserved_bit_5,bitfield:1@5,0,no record in any ISB e2m and no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,actual_sensor_values_enable,bitfield:1@6,0,e2m ADACSNEN (mask 40) 'ENABLE FLAG FOR ACTUAL SENSOR VALUES ALGORITHM'; no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,variable_geometry_turbocharger_enable,bitfield:1@7,0,e2m VGAGEN (mask 80) 'ENABLE FLAG FOR VGT ALGORITHM' (VGT = variable geometry turbocharger; 4 other files put VPTPMREN fuel temperature monitor here); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,turbocharger_speed_enable,bitfield:1@8,0,e2m TBAGEN (mask 100) 'ENABLE FLAG FOR TURBOCHARGER SPEED ALGORITHM'; no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,low_speed_governor_temperature_idle_adjust_override_enable,bitfield:1@9,0,e2m LSTPIHEN (mask 200) 'ENABLE FOR OVERRIDING THE TEMP IDLE ADJUST IN THE LSG' (LSG = low speed governor); no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,missing_tooth_found_enable,bitfield:1@10,0,e2m MSTTFNEN (mask 400) 'MISSING TOOTH FOUND ENABLED = 1'; no test in the dumped ROM; clear,,verified
+cm550_algorithm_enable_flags_33_t,,reserved_bit_11,bitfield:1@11,0,no record in v64t6_s and no test in the dumped ROM; guess EQTHEN 'EQUIVALENT THROTTLE FEATURE ENABLE FLAG' (0x800 in 20 other ISB e2m files) or EXRSDVEN exhaust restrictor device (3 files); clear,,verified
+cm550_algorithm_enable_flags_33_t,,reserved_bit_12,bitfield:1@12,0,no record in v64t6_s and no test in the dumped ROM; guess MPCARSEN 'ENABLES CASE ASG AUTOMATIC RESCALING ALGORITHM' (0x1000 in 18 later ISB e2m files) or IHAAPREN ambient air pressure for the intake heater (3 files); clear,,verified
+cm550_algorithm_enable_flags_33_t,,reserved_bit_13,bitfield:1@13,0,no record in v64t6_s and no test in the dumped ROM; guess PTFTEN 'FIRE TRUCK SET/RESUME PTO ENABLE FLAG' (0x2000 in 18 later ISB e2m files) or TCSTLEN torque converter stall torque management (3 files); clear,,verified
+cm550_algorithm_enable_flags_33_t,,reserved_bit_14,bitfield:1@14,0,no record in v64t6_s and no test in the dumped ROM; guess SMS_EN shift management system (0x4000 in 13 later files) / TCTCPTEN powertrain protection torque converter (4) / VSBKSWEN brake switch diagnostics (3); clear,,verified
+cm550_algorithm_enable_flags_33_t,,ambient_pressure_control_enable,bitfield:1@15,0,e2m AAPRCOEN (mask 8000) 'AMBIENT PRESSURE CONTROL ALGORITHM ENABLE'; no test in the dumped ROM; clear,,verified
+
+# cm550_fault_entry_t: a fault freeze frame record (48 bytes; PR #53 round 93) - CM848's fault_entry_t with a word fault code index, the engine hour meter at +26 and the VP44 words in place of the common rail ones
+cm550_fault_entry_t,,key_on_hour_meter,dword,4,key_on_hour_meter (0x80bda4) at capture (move.l),,verified
+cm550_fault_entry_t,,fault_code_index,word,2,the fault code index (0-124) that owns the entry; 125 = free (cm550_releaseFaultFreezeFrameEntry). CM848 fault_entry_t.fault_code is a byte with 0xAA = free,,verified
+cm550_fault_entry_t,,vehicle_speed,word,2,0x80a9d0 at capture: e2m 117D +C VSFTAVVS 'sampled road speed after it has been filtered',,verified
+cm550_fault_entry_t,,filtered_rpm,word,2,0x80ccf4 at capture: e2m 100C +2 ESCMES 'engine speed based from period of one cam rev',,verified
+cm550_fault_entry_t,,system_switch_status,word,2,system_switch_status (0x80bcc8; e2m 1092 +0 SSSWSS01) at capture,,verified
+cm550_fault_entry_t,,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent (0x80db5e; e2m 10BF +0 JCPCLD) at capture,,verified
+cm550_fault_entry_t,,accelerator_pedal_position,word,2,0x80aa82 at capture: e2m 1047 +0 THROTTLE 'validated percent throttle commanded by driver',,verified
+cm550_fault_entry_t,,intake_manifold_pressure,word,2,boost_pressure_sensor_state.filtered_value at capture,,verified
+cm550_fault_entry_t,,coolant_temperature,word,2,coolant_temperature_sensor_state.filtered_value at capture,,verified
+cm550_fault_entry_t,,intake_manifold_temperature,word,2,intake_manifold_temperature_sensor_state.filtered_value at capture,,verified
+cm550_fault_entry_t,,oil_pressure,word,2,oil_pressure_sensor_state.filtered_value at capture,,verified
+cm550_fault_entry_t,,system_switch_status_2,word,2,system_switch_status_2 (0x80bcca; e2m 1092 +2 SSSWSS02) at capture,,verified
+cm550_fault_entry_t,,engine_hour_meter,dword,4,engine_hour_meter (0x80ccee; e2m 11BC +0 CMEGTR 'time that the engine is not in stop state') at capture (move.l). CM848's fault_entry_t leaves these four bytes unwritten,,verified
+cm550_fault_entry_t,,final_fueling_state,FUELING_STATE,2,final_fueling_state (0x80d330) at capture; CM848 keeps only its low byte,,verified
+cm550_fault_entry_t,,battery_voltage,word,2,battery_voltage_sensor_state.filtered_value at capture,,verified
+cm550_fault_entry_t,,final_fueling,word,2,final_fueling (0x80d32e; e2m 1051 +0 FSFNFL) at capture,,verified
+cm550_fault_entry_t,,selected_timing_advance,word,2,selected_timing_advance_output_0_120 (0x80de6a; e2m 105B +2 TSFNTA) at capture; CM848's field here is main_injection_timing,,verified
+cm550_fault_entry_t,,vp44_pump_status,word,2,vp44_pump_status (0x80a18e; e2m 801A +1C FLFLSS) at capture. From here on CM848's fault_entry_t holds its common rail words instead,,verified
+cm550_fault_entry_t,,vp44_fuel_temperature,word,2,vp44_fuel_temperature (0x80a188; e2m 801A +16 FLFLTP) at capture,,verified
+cm550_fault_entry_t,,cruise_control_switch_multiplexer,word,2,cruise_control_switch_multiplexer_sensor_state.filtered_value at capture,,verified
+cm550_fault_entry_t,,vp44_engine_speed,word,2,vp44_engine_speed (0x80a17e; e2m 801A +C FLDFES) at capture,,verified
+cm550_fault_entry_t,,system_switch_status_3,word,2,system_switch_status_3 (0x80bccc; e2m 1092 +4 SSSWSS03) at capture,,verified
+
+# cm550_commanded_throttle_state_t: e2m 1047 (26 bytes), the commanded throttle block - CM848's commanded_throttle_state_t with CTIVIH inserted at +0x14 and no delta words (PR #53 round 94)
+cm550_commanded_throttle_state_t,,commanded_throttle,word,2,e2m 1047 +0x0 THROTTLE 'VALIDATED PERCENT THROTTLE COMMANDED BY DRIVER' (0 - 100); CM848's commanded_throttle (+0x0),,verified
+cm550_commanded_throttle_state_t,,idle_validation_state,word,2,e2m 1047 +0x2 CTTHID 'IDENTIFIES DIFFERENT COMBINATIONS OF THE THROTTLE POT AND SWITCHES' (0-9); CM848's idle_validation_state (+0x2),,verified
+cm550_commanded_throttle_state_t,,accelerator_off_idle,word,2,e2m 1047 +0x4 CTTHSS 'STATUS OF THE IDLE VALIDATION SWITCH IDLE = 0; NOT_IDLE' (IDLE/NOT_IDLE); CM848's accelerator_off_idle (+0x4),,verified
+cm550_commanded_throttle_state_t,,throttle_transition_state,word,2,e2m 1047 +0x6 CTTZST 'STATE OF POTENTIOMETER AND IDLE VALIDATION SWITCH READINGS' (0-3); CM848's throttle_transition_state (+0x6),,verified
+cm550_commanded_throttle_state_t,,throttle_minimum_confidence_counter,word,2,e2m 1047 +0x8 CTCBCU 'CURRENT TIME OF COUNTER THAT MUST TIME OUT BEFORE A NEW THROTT' (0-25500); CM848's throttle_minimum_confidence_counter (+0x8),,verified
+cm550_commanded_throttle_state_t,,throttle_minimum,word,2,e2m 1047 +0xa CTMNSATH 'MINIMUM SAMPLED_THROTTLE DETECTED' (0-21); CM848's throttle_minimum (+0xa),,verified
+cm550_commanded_throttle_state_t,,alternate_throttle,word,2,e2m 1047 +0xc CTALTH 'PERCENT THROTTLE OVERRIDEN BY OTHER ALGORITHM' (0.0 - 100.0); CM848's alternate_throttle (+0xc),,verified
+cm550_commanded_throttle_state_t,,alternate_throttle_priority,word,2,"e2m 1047 +0xe CTTHSL 'ALTERNATE THROTTLE PRIORITY #, 0=NORMAL, 9=HIGHPR' (0 - 9); CM848's alternate_throttle_priority (+0xe)",,verified
+cm550_commanded_throttle_state_t,,calculated_commanded_throttle,word,2,e2m 1047 +0x10 CTEVTETH 'INTERMEDIATE CALCULATED VALUE OF COMMANDED THROTTLE BASED ON S' (0 - 100); CM848's calculated_commanded_throttle (+0x10),,verified
+cm550_commanded_throttle_state_t,,selected_alternate_throttle_priority,word,2,e2m 1047 +0x12 CTALSLST 'STATE OF SELECTED ALTERNATE THROTTLE PRIORITY' (0 - 9); CM848's selected_alternate_throttle_priority (+0x12),,verified
+cm550_commanded_throttle_state_t,,idle_validation_inhibit_flag,word,2,e2m 1047 +0x14 CTIVIH 'INHIBITS IDLE VALIDATION CALCULATIONS AND DIAGNOSTICS WHEN = 1' (0 - 1); CM550 only,,verified
+cm550_commanded_throttle_state_t,,sampled_frequency_throttle,word,2,e2m 1047 +0x16 FQTHSATH 'REQUESTED THROTTLE AFTER BEING LIN. AND FIL. VIA FREQ. THR. ALGO' (0-100); CM848's sampled_frequency_throttle (+0x14),,verified
+cm550_commanded_throttle_state_t,,frequency_throttle_active_flag,word,2,e2m 1047 +0x18 FQTHAC 'INDICATES FREQUENCY THROTTLE HAS BEEN ENABLED' (0 - 1); CM848's frequency_throttle_active_flag (+0x16),,verified
+
+# j1939_control_session_t: CM848's struct copied as a twin - CM550's Calterm labels for its records are the same (PR #53 round 94)
+j1939_control_session_t,,session_kind,byte,1,"0 = an engine control (TSC1) session, 1 = a retarder control session; 0xFE (with the source address 0xFE) in an empty record",,verified
+j1939_control_session_t,,controlling_source_address,byte,1,the J1939 source address of the controlling device,,verified
+j1939_control_session_t,,control_device,J1939_CONTROL_DEVICE,2,engine_control_device_indicator / engine_retarder_control_device_indicator at the start,,verified
+j1939_control_session_t,,override_control_mode_count,word,2,"how many override_control_modes are filled: 1 at the start, + 1 per mode change, at most 5 (then the history shifts)",,verified
+j1939_control_session_t,,override_control_modes,TSC1_OVERRIDE_MODE,10,the session's override control modes in order (the last five when there were more),,verified
+j1939_control_session_t,,start_time,dword,4,key_on_hour_meter at the start (0.2 s counts),,verified
+j1939_control_session_t,,duration,dword,4,"key_on_hour_meter - start_time, stored when the session ends (0.2 s counts)",,verified
+
+# j1939_periodic_transmit_entry_t (10 bytes; PR #53 round 94)
+j1939_periodic_transmit_entry_t,,pgn_key,word,2,the PGN key of the periodic message (J2: the queue entry's +0),,verified
+j1939_periodic_transmit_entry_t,,interval_ticks,word,2,the transmit interval in 10 ms ticks,,verified
+j1939_periodic_transmit_entry_t,,next_tick,word,2,the tick of the next transmission,,verified
+j1939_periodic_transmit_entry_t,,builder,pointer,4,the address of the message's builder function,,verified
+
+# engine_tsc1_ignored_request_t (8 bytes; PR #53 round 94)
+engine_tsc1_ignored_request_t,,data_link,word,2,the network the request came on (the data link compared by findTsc1SourceConfiguration),,verified
+engine_tsc1_ignored_request_t,,source_address,byte,1,the source address of the ignored TSC1 request,,verified
+engine_tsc1_ignored_request_t,,reserved_3,byte,1,no access,,verified
+engine_tsc1_ignored_request_t,,control_mode,word,2,the override control mode of the ignored request,,verified
+engine_tsc1_ignored_request_t,,countdown,word,2,counts down; the entry is removed at 0,,verified
+
+# cm550_retarder_tsc1_ignored_request_t (4 bytes; PR #53 round 94)
+cm550_retarder_tsc1_ignored_request_t,,source_address,byte,1,the source address of the ignored retarder TSC1 request,,verified
+cm550_retarder_tsc1_ignored_request_t,,reserved_1,byte,1,no access,,verified
+cm550_retarder_tsc1_ignored_request_t,,countdown,word,2,counts down; the entry is removed at 0 (CM848's retarder entry is 6 bytes),,verified
+
+# table_lookup_2d_arguments_t (22 bytes; PR #53 round 94)
+table_lookup_2d_arguments_t,,x_axis_offset,word,2,"the byte offset of the last x axis point found; cached, written back by cm550_tableLookup2D",,verified
+table_lookup_2d_arguments_t,,x_axis_pointer,word*,4,the x axis table (its first word is the byte count),,verified
+table_lookup_2d_arguments_t,,x_input,word,2,the x input value,,verified
+table_lookup_2d_arguments_t,,y_axis_offset,word,2,"the byte offset of the last y axis point found; cached, written back",,verified
+table_lookup_2d_arguments_t,,y_axis_pointer,word*,4,the y axis table (its first word is the byte count),,verified
+table_lookup_2d_arguments_t,,y_input,word,2,the y input value,,verified
+table_lookup_2d_arguments_t,,z_values_pointer,word*,4,"the grid of z values, one row of x points per y point",,verified
+table_lookup_2d_arguments_t,,no_interpolation_flag,word,2,nonzero: the lookup returns the grid value without interpolating,,verified
+
+# table_lookup_1d_arguments_t (14 bytes; PR #53 round 95)
+table_lookup_1d_arguments_t,,x_axis_offset,word,2,the byte offset of the x axis point the previous lookup found (2 = the first point); the search starts there and cm550_lookupTableInterpolation writes it back (the only field it writes),,verified
+table_lookup_1d_arguments_t,,x_axis_pointer,word*,4,the x axis table: its first word is the byte count of the points that follow (compared unsigned),,verified
+table_lookup_1d_arguments_t,,x_input,word,2,the x input value (compared unsigned),,verified
+table_lookup_1d_arguments_t,,y_values_pointer,word*,4,"the y values: the value of the x point at byte offset n is read at y_values_pointer + n, so the word at +0 is never read (in a Calterm Y table it is the byte count)",,verified
+table_lookup_1d_arguments_t,,no_interpolation_flag,word,2,nonzero: the lookup returns the value of the point at or below the input without interpolating (no code writes it; 0 in every record of the dump),,verified
+
+# cm550_j1939_powertrain_messages_received_t (22 bytes; PR #53 round 95)
+cm550_j1939_powertrain_messages_received_t,,etc1_status_byte_1,byte,1,"ETC1 (PGN 61442) data byte 1, stored by the ETC1 handler 0x2efd0",,verified
+cm550_j1939_powertrain_messages_received_t,,etc1_bytes_2_to_4,byte,3,never written (CM550 keeps no ETC1 output shaft speed),,verified
+cm550_j1939_powertrain_messages_received_t,,etc1_status_byte_5,byte,1,ETC1 data byte 5,,verified
+cm550_j1939_powertrain_messages_received_t,,etc1_bytes_6_to_8,byte,3,never written,,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_control_byte,byte,1,TSC1 (PGN 0) data byte 1: the override control mode and priority bits,,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_requested_speed,byte,2,TSC1 bytes 2-3 stored high byte first (data[2] at +0 and data[1] at +1),,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_requested_torque,byte,1,TSC1 data byte 4,,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_bytes_5_to_8,byte,4,never written,,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_accepted_priority,byte,1,the priority of the accepted TSC1 request,,verified
+cm550_j1939_powertrain_messages_received_t,,padding_1,byte,1,no access (aligns the next word),,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_accepted_requested_speed,word,2,the accepted TSC1 requested speed,,verified
+cm550_j1939_powertrain_messages_received_t,,tsc1_accepted_requested_torque,byte,1,the accepted TSC1 requested torque,,verified
+cm550_j1939_powertrain_messages_received_t,,padding_2,byte,1,no access,,verified
+
+# trending_sample_record_t (14 bytes; PR #53 round 95)
+trending_sample_record_t,,oil_pressure,word,2,the oil pressure at the sample (sensor 4 filtered),,verified
+trending_sample_record_t,,boost_pressure,word,2,the boost pressure at the sample (sensor 5),,verified
+trending_sample_record_t,,coolant_temperature,word,2,the coolant temperature at the sample (sensor 6),,verified
+trending_sample_record_t,,average_fuel_consumption,word,2,the interval's average fuel consumption (e2m TRAVFLCN),,verified
+trending_sample_record_t,,average_load,word,2,the interval's average load (e2m TRLDINAV),,verified
+trending_sample_record_t,,time_stamp,dword,4,engine_hour_meter with its low byte replaced by throttle_100_fueling >> 8,,verified

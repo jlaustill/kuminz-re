@@ -1,0 +1,12 @@
+cm550: round 81 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 81" records the hardware name check (16 CM550 functions name hardware they do not touch)
+  and stage A (f522aa24: the serial EEPROM driver and the CS4 CAN controller's functions renamed). It also corrects
+  round 80: the EEPROM "log" is a write queue.
+- Leads: the TPU-only can1* / pwmTimerMode* functions, the CS4 message object handlers, the 182 rows inside the write
+  queue's range, and the earlier leads.
+- The PR body: the Round 81 bullet, "Beyond CM848" for rounds 72-81, and the test plan line.
+- work/todo.md, the session README, session_folder/round81/, the large-files tarball (the round's verify log),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,24 @@
+== 8A7F at 0x40b532 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b532 OPG_Check_Gauges [N2] dump 0: Set TRUE to light "Check Gauges" lamp when OPG_Pressure too low
+        row: low_oil_pressure_active_flag word | Set by cm848_processEngineOilPressure after a debounced low engine_oil_pressure (or the switch) above the mini
+   +02 0x40b534 OPG_Chime [N2] dump 0: Set TRUE to activate chime when OPG_Pressure too low
+        row: low_oil_pressure_derate_flag word | Set together with low_oil_pressure_active_flag; cm848_updateEngineWarningFlags gates the protection ramp on it
+   +04 0x40b536 OPG_Error_Count [N2] dump 300: Time that OPG_Pressure must be < OPG_Threshold to establish error
+        row: low_oil_pressure_debounce_limit word | Debounce limit for the low-oil-pressure check - picked by coolant temperature from the ROM tables at 0x5b4be /
+   +06 0x40b538 OPG_Pressure [N2] dump 0: Gauge oil pressure = Oil_Pressure - Ambient_Air_Pressure
+        row: engine_oil_pressure word | Engine oil pressure (gauge - 1/18.56 kPa per count) from cm848_processEngineOilPressure: oil_pressure_sensor_f
+   +08 0x40b53a OPG_Threshold_Value [N2] dump 0: Minimum allowable gauge oil pressure from OPG_Threshold_Table
+        row: oil_pressure_model_unfiltered word | RPM-indexed oil pressure model (table 0x3fceae) before the EMA - used when oil_pressure_switch_only_cal is set
+== 8A7C at 0x40b1ee (CHR_CC_11.45.01.07.e2m; 3 layout(s) in 16 releases: 10x CHR_CC_11.45.01.07.e2m / 2x CHR_CC_11.12.09.00.e2m / 4x CHR_CC_11.10.24.00.e2m)
+   +00 0x40b1ee Jcomm_Torque_Mgmt_Request [N2] dump 1: Indicates backup Powertrain Protection mode is enabled when true, TRUE
+        row: fuel_demand_timing_enable_flag word | 
+   +02 0x40b1f0 Transmission_Output_Shaft_Speed [N2] dump 8: Filtered value of RE_Trans_OSS_Average
+        row: transmission_output_speed_in_use word | EMA of transmission_output_speed_in_use_unfiltered: 48RE output shaft speed in 1/8 rpm (8 = the 1 rpm floor) -
+   +04 0x40b1f2 RE_Trans_Temp [N2] dump 2669: Transmission oil temperature value determined by the trans_temp.doc SD
+        row: transmission_temperature_in_use word | Transmission fluid temperature the ECM acts on (1/64 deg F): transmission_temperature_sensor_filtered - or whi
+   +06 0x40b1f4 RE_Current_Gear [S2] dump 3: Current gear based on measured gear ratio
+        row: transmission_current_gear word | Current gear 1-4 inferred from transmission_speed_ratio (80 or more first / 46 or more second / below that thi
+   +08 0x40b1f6 TC_Rock_Cycle_Flag [N2] dump 0: Flag to trigger Rock Cycle Torque Management
+        row: park_neutral_exit_engine_speed_limit_active_flag word | Family rename with the park/neutral exit window function: the words of this family are used only by cm848_upda
+   +0A 0x40b1f8 RE_RCTM_Timer [N2] dump 0: Dwell timer for rock cycle torque mgt. @ zero = no speed derate.
+        row: park_neutral_exit_engine_speed_limit_countdown word | Family rename with the park/neutral exit window function: the words of this family are used only by cm848_upda

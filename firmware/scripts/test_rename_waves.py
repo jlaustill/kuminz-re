@@ -149,8 +149,10 @@ def check_refresh(d):
     write(f"{out}/global_variables.csv", "address,name,type,comment\n"
           "0x00401000,new_name,word,set by the loop (was old_name) and old_name is read twice\n"
           "0x00401002,still_used,word,\n")
+    long_list = " / ".join(f"filler_name_{i} at +{i}" for i in range(12))
     write(f"{out}/function_renames.csv", "address,name,plate_comment\n"
-          "0x00001000,cm848_fn,reads old_name and still_used; the inputs were old_name / still_used\n")
+          "0x00001000,cm848_fn,reads old_name and still_used; the inputs were old_name / still_used\n"
+          f"0x00001010,cm848_fn2,the record (were {long_list} / old_name at +99)\n")
     write(f"{d}/repo/notes.md", "old_name feeds the loop\n")
     with open(f"{d}/refresh.csv", "w", newline="") as f:
         w = csv.writer(f)
@@ -166,6 +168,7 @@ def check_refresh(d):
              "(was old_name) and new_name is read twice" in gv),
             ("refresh: a name that is still in use is left alone", "reads new_name and still_used;" in fr),
             ("refresh: a 'were a / b' list is history", "were old_name / still_used" in fr),
+            ("refresh: a list longer than 120 characters is history to its end", "/ old_name at +99)" in fr),
             ("refresh: --text files are refreshed", notes.startswith("new_name feeds"))]
 
 

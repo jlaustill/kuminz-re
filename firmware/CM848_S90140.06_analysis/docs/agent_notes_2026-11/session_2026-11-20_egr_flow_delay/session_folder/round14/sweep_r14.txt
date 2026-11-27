@@ -1,0 +1,50 @@
+firmware/classification.csv:1363: ...028ba4,calculateSpeedRateLimiting,unknown,cm848_,,cm848_calculateSpeedRateLimiting
+firmware/classification.csv:1365: ...28d44,updateSpeedLimitFromCoolant,unknown,cm848_,,cm848_updateSpeedLimitFromCoolant
+firmware/classification.csv:1366: ...6c,calculateProtectionSpeedLimits,unknown,cm848_,,cm848_calculateProtectionSpeedLimits
+firmware/classification.csv:1367: ...0298a0,applySpeedLimitConstraints,unknown,cm848_,,cm848_applySpeedLimitConstraints
+firmware/classification.csv:1368: ...0029afc,updateGovernorSpeedLimits,unknown,cm848_,,cm848_updateGovernorSpeedLimits
+firmware/classification.csv:1369: ...b38,calculateGovernorCompensation,unknown,cm848_,,cm848_calculateGovernorCompensation
+firmware/classification.csv:1370: ...029bf8,initGovernorStateVariables,unknown,cm848_,,cm848_initGovernorStateVariables
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:166827: ...166820 [function] cm848_calculateSpeedRateLimiting
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:167243: ...167236 [function] cm848_updateSpeedLimitFromCoolant
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:168051: ...168044 [function] cm848_calculateProtectionSpeedLimits
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:170151: ...170144 [function] cm848_applySpeedLimitConstraints
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:170755: ...170748 [function] cm848_updateGovernorSpeedLimits
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:170815: ...170808 [function] cm848_calculateGovernorCompensation
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:171007: ...171000 [function] cm848_initGovernorStateVariables
+firmware/CM848_S90140.06_analysis/output/enums.csv:907: ...njection_timing_main_governor_limit_minimum while governor_speed_limit_active_flag is set,2
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:1631: ..._updateEngineRetarderActiveState (0x41e5c): while governor_speed_limit_active_flag is set and this bit is set th
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:1464: ...extern dword governor_speed_limit_exceeded_flag;  // 0x003faf7a
+firmware/CM848_S90140.06_analysis/output/firmware_types.hpp:1029: ...njection_timing_main_governor_limit_minimum while governor_speed_limit_active_flag is set */
+firmware/CM848_S90140.06_analysis/output/firmware_types.hpp:2779: ..._updateEngineRetarderActiveState (0x41e5c): while governor_speed_limit_active_flag is set and this bit is set th
+firmware/scripts/test_lookup_tables.py:162: ...s.csv cruise_switch_adc_band_table_x is word[21]; governor_minimum_speed_by_vehicle_speed_axis word[10]
+work/tasks/046-cm848-egr-flow-estimate.md:329: ...    `governor_resetModeStateOnCondition`, `cm848_initGovernorStateVariables` and `initGovernorJ1939Bypass
+work/tasks/046-cm848-egr-flow-estimate.md:385: ...  - `cm848_initGovernorStateVariables`, a mixed governor initializa
+work/tasks/046-cm848-egr-flow-estimate.md:822: ...ss timeout. The LSG target selection takes it as `low_speed_governor_service_speed_floor`.
+work/tasks/046-cm848-egr-flow-estimate.md:833: ...    - `cm848_updateSpeedLimitFromCoolant` is the coolant idle speed (e
+work/tasks/046-cm848-egr-flow-estimate.md:835: ...    - `cm848_calculateProtectionSpeedLimits` is the LSG target selection.
+work/tasks/046-cm848-egr-flow-estimate.md:839: ...    - `cm848_applySpeedLimitConstraints` ramps `idle_reference_speed`
+work/tasks/025-cm848-naming-wave-followups.md:193: ...ceived (status 0x10 / timer 0xff37), and the gate governor_speed_limit_droop_enable_cal (0x407110) is 0. That gate ke
+work/tasks/025-cm848-naming-wave-followups.md:195: ...- cm848_calculateProtectionSpeedLimits (0x2906c) and cm848_applySpee
+work/tasks/025-cm848-naming-wave-followups.md:195: ...m848_calculateProtectionSpeedLimits (0x2906c) and cm848_applySpeedLimitConstraints (0x298a0) look like the low-i
+work/tasks/025-cm848-naming-wave-followups.md:195: ...winning source, a ramp, and clamps at 750 rpm and governor_output_mode_limit_cal. The governor_speed_limit_* a
+work/tasks/025-cm848-naming-wave-followups.md:200: ...- 0x00407110 governor_speed_limit_droop_enable_cal is the enable for the PCI RX[
+work/tasks/025-cm848-naming-wave-followups.md:204: ...- governor_speed_limit_active and its candidates are the id
+work/tasks/025-cm848-naming-wave-followups.md:204: ...00 = 750 / 700 / 1000 rpm in the dump), ramped in cm848_applySpeedLimitConstraints and compared with engine_rpm_
+work/tasks/025-cm848-naming-wave-followups.md:204: ...d compared with engine_rpm_state_t.current_rpm in cm848_calculateSpeedRateLimiting. Protection and speed_limit i
+work/tasks/025-cm848-naming-wave-followups.md:204: ...eSpeedRateLimiting. Protection and speed_limit in cm848_calculateProtectionSpeedLimits and that family are misleadin
+work/tasks/025-cm848-naming-wave-followups.md:206: ...- 0x00407110 governor_speed_limit_droop_enable_cal: the only gate in this chain 
+work/tasks/025-cm848-naming-wave-followups.md:312: ...0532 A/C refrigerant pressure circuit; idle floor governor_speed_limit_b_cal = 750 rpm). Confirm live: tog
+work/tasks/025-cm848-naming-wave-followups.md:442: ...- 0x407100 governor_cold_idle_up_maximum_vehicle_speed sits beside temperature_sourc
+work/tasks/025-cm848-naming-wave-followups.md:461: ...x3fee9e. Fault speed limit = 0x40b5c4. 0x40715e = governor_speed_limit_dynamic output table (700 rpm).
+work/tasks/025-cm848-naming-wave-followups.md:551: ...libration); whether governor mode 0xb at 0 mph in cm848_calculateProtectionSpeedLimits is the elevated cold idle (co
+work/tasks/025-cm848-naming-wave-followups.md:551: ...idle_battery_temperature_threshold - its siblings governor_speed_limit_load_threshold_cal is really an intake manifold 
+work/tasks/025-cm848-naming-wave-followups.md:563: ...122 (e2m LSG; all working RAM with a wrong _cal): governor_speed_limit_coolant_threshold_cal 0x4070fc / governor_speed_lim
+work/tasks/025-cm848-naming-wave-followups.md:563: ...rnor_speed_limit_coolant_threshold_cal 0x4070fc / governor_speed_limit_load_threshold_cal 0x4070fe / governor_speed_lim
+work/tasks/025-cm848-naming-wave-followups.md:563: ...or_speed_limit_fuel_temp_threshold_cal 0x407100 / governor_speed_limit_value_cal 0x407102 / governor_speed_deb
+work/tasks/025-cm848-naming-wave-followups.md:563: ...07100 / governor_speed_limit_value_cal 0x407102 / governor_speed_debounce_count_cal 0x407104 / governor_speed_deb
+work/tasks/025-cm848-naming-wave-followups.md:563: ...02 / governor_speed_debounce_count_cal 0x407104 / governor_speed_debounce_enable_cal 0x407128 = LSG_Extended_Idle_
+work/tasks/025-cm848-naming-wave-followups.md:563: ... / _Time (6000 x 0.02 s) / _Coolant_State_Enable. governor_disengage_timer_threshold_cal 0x4070ee and governor_speed_d
+work/tasks/025-cm848-naming-wave-followups.md:563: ...vernor_disengage_timer_threshold_cal 0x4070ee and governor_speed_disengage_timer_limit 0x4070f0 = the separate Cold_
+work/tasks/042-table-campaign-rename-leads.md:55: ...- `protection_iat_scaled`, `governor_cold_start_iat_correction`, `iat_fuel_trim_*` use barom
+work/tasks/045-cm848-fueling-state-enum.md:320: ...  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr

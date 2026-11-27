@@ -254,7 +254,7 @@ If you see no frames after 2 seconds, the enable sequence did not take. Check th
 
 ## CLIP EF00 Service Dispatch Table (Partial)
 
-From `cm848_j1939DiagnosticServiceHandler @ ROM[0x00022128]`:
+From `cm848_dispatchJ1939DiagnosticServiceRequest @ ROM[0x00022128]`:
 
 | Service byte | Handler | Notes |
 |-------------|---------|-------|

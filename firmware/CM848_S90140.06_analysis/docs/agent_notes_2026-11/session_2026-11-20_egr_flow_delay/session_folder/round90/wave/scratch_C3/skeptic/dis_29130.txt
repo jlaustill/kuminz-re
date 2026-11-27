@@ -1,0 +1,358 @@
+029130: movem.l 2038,-(a7)
+029134: movea.l #$80de1e,a2
+02913a: movea.l #$80ddfa,a3
+029140: movea.l #$80dcbe,a4
+029146: move.l a4,$80de32
+02914c: move.w #$c8,$80de3a
+029154: move.l #$80dd86,$80de28
+02915e: clr.w $80de2c
+029164: move.l a4,$80ddc2
+02916a: jsr $1dd2c
+029170: clr.b $80dcb3
+029176: clr.b $80dcbb
+02917c: move.b #$1,$80dcb0
+029184: clr.b $80dcba
+02918a: clr.b $80dcbc
+029190: clr.b $80dde2
+029196: clr.b $80dde3
+02919c: move.w $803f88,$80aa12
+0291a6: move.l #$80de00,(a3)
+0291ac: move.l #$612ee,(a2)
+0291b2: clr.b d2
+0291b4: bra 291cc
+0291b6: movea.l (a2),a0
+0291b8: move.b (1,a0),d0
+0291bc: movea.l (a2),a0
+0291be: add.b (2,a0),d0
+0291c2: movea.l (a3),a0
+0291c4: move.b d0,(a0)
+0291c6: addq.l #1,(a3)
+0291c8: addq.l #3,(a2)
+0291ca: addq.b #1,d2
+0291cc: movea.l (a2),a0
+0291ce: tst.b (a0)
+0291d0: beq 291d8
+0291d2: cmpi.b #$1e,d2
+0291d6: bcs 291b6
+0291d8: move.w #$34,$fffc08
+0291e0: move.w $fffc0c,d0
+0291e6: move.w #$102c,$fffc0a
+0291ee: movem.l 1c04,(a7)+ (->regs)
+0291f2: rts
+0291f4: ori.l #$0,d1
+0291fa: ori.b #$0,(a6)+
+0291fe: .word 3abe   ; ea 7 6
+029200: or.l (a4),d4
+029202: .word 776c   ; moveq bit8
+029204: move.w (55,a4,d3.w*1),d0
+029208: move.w $202.w,-(a4)
+02920c: btst d1,d0
+02920e: cmpi.b #$0,d5
+029212: move.w #$604f,$fffa00
+02921a: move.w #$7f08,$fffa04
+029222: move.b #$a1,$fffa11
+02922a: move.b #$f6,$fffa15
+029232: move.b #$1,$fffa17
+02923a: move.b #$ff,$fffa19
+029242: move.b #$c9,$fffa1d
+02924a: move.b #$30,$fffa1f
+029252: move.b #$ae,$fffa21
+02925a: move.w #$2bbf,$fffa44
+029262: clr.w $fffa46
+029268: move.w #$6,$fffa48
+029270: move.w #$6830,$fffa4a
+029278: move.w #$8003,$fffa4c
+029280: move.w #$5830,$fffa4e
+029288: move.w #$8003,$fffa50
+029290: move.w #$3830,$fffa52
+029298: move.w #$ffd0,$fffa54
+0292a0: move.w #$5830,$fffa56
+0292a8: move.w #$6,$fffa58
+0292b0: move.w #$1030,$fffa5a
+0292b8: move.w #$ffd8,$fffa5c
+0292c0: move.w #$5bf0,$fffa5e
+0292c8: move.w #$ffc8,$fffa60
+0292d0: move.w #$5bf0,$fffa62
+0292d8: clr.w $fffa64
+0292de: clr.w $fffa66
+0292e4: move.w #$fffb,$fffa68
+0292ec: move.w #$2801,$fffa6a
+0292f4: clr.w $fffa6c
+0292fa: clr.w $fffa6e
+029300: clr.w $fffa70
+029306: clr.w $fffa72
+02930c: clr.w $fffa74
+029312: clr.w $fffa76
+029318: jsr (14702,pc)
+02931c: rts
+02931e: roxl.b #4,d7
+029320: move.l a6,-(a0)
+029322: move.b d6,-(a2)
+029324: move.b d5,-(a0)
+029326: btst d7,d2
+029328: btst d6,d2
+02932a: move.b d1,-(a4)
+02932c: btst d2,d4
+02932e: move.b d4,d7
+029330: btst #5,a5
+029334: btst d2,d1
+029336: subi.b #$1,d2
+02933a: btst d2,d2
+02933c: btst d0,d1
+02933e: move.b d1,d5
+029340: btst d2,d4
+029342: cmpi.b #$3,d1
+029346: btst d2,d1
+029348: btst d2,d3
+02934a: subi.b #$f,d1
+02934e: cmpi.b #$3,d1
+029352: btst d1,d1
+029354: andi.b #$f,d1
+029358: btst d0,d1
+02935a: move.b d1,d0
+02935c: .word 010d   ; movep
+02935e: eori.b #$2,d6
+029362: btst d1,d1
+029364: btst d0,d1
+029366: move.b d1,-(a2)
+029368: btst #1,d1
+02936c: move.l d4,d5
+02936e: btst d1,d1
+029370: move.b d4,-(a2)
+029372: subi.b #$1,d3
+029376: btst d3,d1
+029378: btst d0,d0
+02937a: andi.b #$1,d0
+02937e: move.b d0,d3
+029380: andi.b #$4,d1
+029384: move.b a5,-(a0)
+029386: btst d0,d1
+029388: btst d1,d1
+02938a: andi.b #$3,d1
+02938e: move.b d1,d2
+029390: btst d3,d1
+029392: andi.b #$0,(a1)
+029396: .word 090e   ; movep
+029398: btst #1,d1
+02939c: btst d0,d1
+02939e: move.w a0,-(a5)
+0293a0: btst d0,d1
+0293a2: btst d0,d1
+0293a4: andi.b #$1,d1
+0293a8: btst d1,d1
+0293aa: btst d0,d1
+0293ac: btst d0,d6
+0293ae: btst d1,d1
+0293b0: btst d1,d1
+0293b2: btst d0,d1
+0293b4: btst d0,d1
+0293b6: btst d0,d1
+0293b8: btst d0,d0
+0293ba: btst d0,d0
+0293bc: btst d0,d1
+0293be: andi.b #$1,d1
+0293c2: btst d0,d0
+0293c4: btst d0,d1
+0293c6: btst d0,d1
+0293c8: btst d0,d1
+0293ca: btst d0,d1
+0293cc: andi.b #$1,d1
+0293d0: andi.b #$1,d1
+0293d4: btst d0,d1
+0293d6: btst d0,d3
+0293d8: move.b d2,d1
+0293da: addi.b #$1,d1
+0293de: btst d3,d1
+0293e0: btst d0,d1
+0293e2: btst d0,d1
+0293e4: andi.b #$1,d1
+0293e8: btst d0,d1
+0293ea: btst d0,d1
+0293ec: btst d0,d1
+0293ee: addi.b #$1,d2
+0293f2: btst d0,d1
+0293f4: btst d0,d1
+0293f6: subi.b #$1,d1
+0293fa: btst d0,d1
+0293fc: btst d0,d4
+0293fe: andi.b #$1,d1
+029402: btst d0,d1
+029404: btst d0,d6
+029406: andi.b #$1,d1
+02940a: btst d0,d1
+02940c: btst #1,d3
+029410: andi.b #$1,d1
+029414: andi.b #$1,d1
+029418: btst #4,d2
+02941c: bchg #96,d5
+029420: eor.w d5,(-18724,a5)
+029424: chk (full bd=4528,a5,a7.w*4),d2
+02942a: cmp.b (-9363,a6),d3
+02942e: cmpa.w (a3)+,a3
+029430: blt 293e8
+029432: addx
+029434: cmpa.w (a7),a3
+029436: .word 496d   ; grp4 496d
+029438: .word 7530   ; moveq bit8
+02943a: .word f5ec   ; f-line f5ec
+02943c: moveq #-101,d7
+02943e: blt 293ee
+029440: .word a40d   ; a-line a40d
+029442: cmpa.w (a1),a3
+029444: blt 29488
+029446: adda.l (full bd=dafe4bfb,a2,a2.w*2),a3
+029450: adda.w (-117,a6,a1.w*8),a5
+029454: bra 2941c
+029456: move.l d5,(full bd=ed98b6d,a6,d2.l*4)
+029462: movea.l (a6),a6
+029464: bhi 294d8
+029466: move.l d6,-(a4)
+029468: .word fd4f   ; f-line fd4f
+02946a: .word f4ec   ; f-line f4ec
+02946c: .word b47e   ; ea 7 6
+02946e: .word f325   ; f-line f325
+029470: move.b (a0),(full bd=6b48,a5,d6.w*4)
+029476: .word f5d7   ; f-line f5d7
+029478: addq.l #1,(a3)+
+02947a: move.l (a5)+,(29993,a7)
+02947e: eor.w d1,(full bd=0,a5,a5.w*8)
+029482: bpl 294ee
+029484: addq.l #8,(6890,a4)
+029488: move sr/ccr (full bd=-56be,a4,d0.l*1)
+02948e: cmp.w (-22269,a3),d0
+029492: and.l d6,(765,a7)
+029496: move.w (22029,a0),-(a2)
+02949a: .word 7520   ; moveq bit8
+02949c: moveq #47,d2
+02949e: cmpa.w (40,a6,a3.w*8),a3
+0294a2: move.b -(a0),(a7)+
+0294a4: btst #174,(-23538,a1)
+0294aa: move.b (16340,a6),-(a2)
+0294ae: bmi 2946c
+0294b0: .word a0cf   ; a-line a0cf
+0294b2: muls.w (1,a4,d5.l*4),d0
+0294b6: bset d3,(a0)
+0294b8: move.w a6,$fffffe89.w
+0294bc: move.b d0,d2
+0294be: negx.b (a0)
+0294c0: cmp.w a1,d4
+0294c2: sbcd
+0294c4: .word 1253   ; movea.b
+0294c6: eor.l d7,(d8,pc,xn)
+0294ca: .word f25e   ; f-line f25e
+0294cc: .word a7f5   ; a-line a7f5
+0294ce: bclr d5,-(a1)
+0294d0: cmp.w (24290,a2),d1
+0294d4: subq.b #1,-(a0)
+0294d6: .word f283   ; f-line f283
+0294d8: movea.w (a6)+,a5
+0294da: lsr.w #8,d2
+0294dc: .word 7941   ; moveq bit8
+0294de: sub.b d6,(full bd=c4a62c88,a0,a0.l*8)
+0294e6: .word 18ff   ; ea 7 7
+0294e8: subq.b #7,d2
+0294ea: bchg d7,(a5)+
+0294ec: nbcd (a6)+
+0294ee: sub.l d3,(a7)+
+0294f0: lsl.l d0,d1
+0294f2: or.w d1,d2
+0294f4: move.l a7,(full bd=cc18dfb3,a7,a2.w*8)
+0294fc: addq.l #1,(-51,a3,d6.w*8)
+029500: sub.b d5,(11,a2,d1.w*2)
+029504: muls.w (a2),d5
+029506: move.b (a2),d1
+029508: move.b (a6),d1
+02950a: .word 7996   ; moveq bit8
+02950c: bcs 294dd
+02950e: moveq #-100,d1
+029510: cmp.w a0,d5
+029512: move.w -(a5),(a7)
+029514: slt d1
+029516: blt 294b4
+029518: or.b d3,(a5)
+02951a: .word 75fb   ; moveq bit8
+02951c: bvs 29526
+02951e: .word 7157   ; moveq bit8
+029520: lsl.w d2,d5
+029522: .word fd43   ; f-line fd43
+029524: or.l (4145,pc),d5
+029528: .word ab66   ; a-line ab66
+02952a: addi.b #$20,-(a5)
+02952e: bsr 294cc
+029530: .word b9bf   ; ea 7 7
+029532: .word fafa   ; f-line fafa
+029534: eor.l d5,d2
+029536: and.w d4,(-25170,pc)
+02953a: move.l (341,a5),$8a304cd4
+029542: suba.l (97,a5,d3.w*2),a5
+029546: add.w d4,(-513,a0)
+02954a: and.b d2,(a2)+
+02954c: .word 7918   ; moveq bit8
+02954e: .word 597d   ; ea 7 5
+029550: sub.b (a6),d3
+029552: lsl.b #6,d5
+029554: cmpm
+029556: adda.l d3,a1
+029558: .word fd47   ; f-line fd47
+02955a: .word 97be   ; ea 7 6
+02955c: subq.w #1,d5
+02955e: .word 06df   ; grp0 sz3
+029560: divs.w (26805,pc),d4
+029564: add.b (a2)+,d1
+029566: sf -(a5)
+029568: roxl.l #7,d4
+02956a: and.w d1,d7
+02956c: cmp.b -(a6),d0
+02956e: sub.b d2,(a3)+
+029570: sub.l (42,a0,d1.w*1),d2
+029574: addq.w #6,(1552,a3)
+029578: or.w d6,-(a3)
+02957a: .word f40b   ; f-line f40b
+02957c: rol.b #8,d7
+02957e: cmp.b (18903,a0),d3
+029582: eori.b #$c1,(a1)+
+029586: cmp.w (full bd=b039548b,a7,d4.w*1),d4
+02958e: moveq #-86,d4
+029590: lsr.b #7,d3
+029592: blt 2953a
+029594: .word 1661   ; movea.b
+029596: .word f988   ; f-line f988
+029598: subq.l #6,a2
+02959a: cmp.w -(a0),d3
+02959c: clr.l (-10018,a2)
+0295a0: move.l -(a5),(a6)+
+0295a2: .word dcbe   ; ea 7 6
+0295a4: roxr.w (-23113,a3)
+0295a8: scs (19885,a5)
+0295ac: moveq #-95,d2
+0295ae: .word f1c1   ; f-line f1c1
+0295b0: ble 29568
+0295b2: cmp.b (24991,a4),d5
+0295b6: rol.l #3,d0
+0295b8: lea d7,a2
+0295ba: .word 4d74   ; grp4 4d74
+0295bc: eor.b d7,(full bd=f8ff19a9,a5,a3.w*8)
+0295c6: .word f958   ; f-line f958
+0295c8: .word 7518   ; moveq bit8
+0295ca: movea.w -(a4),a6
+0295cc: blt 29639
+0295ce: .word a42e   ; a-line a42e
+0295d0: not.b a5
+0295d2: add.b d7,(-1979,a7)
+0295d6: movea.w (a1)+,a6
+0295d8: and.l d5,(a7)
+0295da: cmpa.w -(a0),a7
+0295dc: .word f557   ; f-line f557
+0295de: and.w d0,(full bd=85ca7a6b,a6,d0.l*4)
+0295e6: .word a42e   ; a-line a42e
+0295e8: .word 4f7d   ; grp4 4f7d
+0295ea: moveq #-123,d2
+0295ec: move.l (full bd=0,a6,a0.l*8),(a0)+
+0295f0: blt 29663
+0295f2: move.b d1,d0
+0295f4: .word ae90   ; a-line ae90
+0295f6: cmpm
+0295f8: .word 4d74   ; grp4 4d74
+0295fa: divs.w a0,d2
+0295fc: moveq #13,d3
+0295fe: moveq #-128,d2

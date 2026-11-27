@@ -1,0 +1,12 @@
+setting,value,comment
+# How the CM550 compiler passes stack arguments. The PR #53 round 85 survey walked 747 call sites and 1411 argument
+# reads and found no exception: every 1- or 2-byte argument takes one 2-byte slot (move.w / clr.w / a word store - a
+# byte value is the slot's low byte at the odd address) and every 4-byte argument the next 4 bytes with no alignment
+# padding (a long can start at +6 after a word). Ghidra's 68000.cspec gives each argument a 4-byte slot and
+# right-justifies it there, so a word lands at +6 and reads of +4 render in_stack_00000004 / param_N._0_2_.
+# With this file, ApplyFunctionDefinitions.java places each parameter in function_definitions.csv itself (custom
+# storage). Declare each parameter with the width the callee loads, and give every parameter a row: a function with a
+# missing or unknown row is skipped (its prototype is not applied) because the later offsets would move.
+language,68000:BE:32:CPU32,The Ghidra language this layout belongs to - the script refuses any other program
+first_stack_offset,4,The first argument's offset from sp at function entry - jsr / bsr push the 4-byte return address
+slot_size,2,Each argument takes ceil(length / 2) 2-byte slots and sits right-justified in them

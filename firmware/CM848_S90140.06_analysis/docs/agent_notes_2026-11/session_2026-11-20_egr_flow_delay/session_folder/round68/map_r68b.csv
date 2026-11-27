@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x003fee26,boot_ecm_part_number,boot_eeprom_status_block,global,1
+0x0100000c,ecm_part_number_cal,eeprom_status_block,global,1

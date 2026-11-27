@@ -1,0 +1,55 @@
+F1 describer notes (round 93) - read-only work, nothing in the repository was changed.
+
+== Derate chain (CM550 0x30c3c) vs CM848 cm848_processProtectionLimits 0x4280c ==
+CM550 order: 0x1ce58 init -> 0x2d9a8 PTO torque limit -> 0xb3b2 ANC (17) -> 0xc2a0 AFC (16, group 2) -> 0xc742 altitude (15)
+             -> 0x196e4 EPFLLM (29) -> 0x30c14 TSC1 limit (20) -> 0x30bf6 fuel system derate (28) -> 0x17120 warm-up (33)
+             -> 0x45252 -> 0x455c8 (both above 0x40000, undumped)
+CM848 order: 0x1f318 init -> 0x2a918 PTO -> 0xe0c4 AFC -> 0x502af4 altitude -> 0x509510 fault derate -> 0x427cc TSC1
+             -> 0x4279c fuel system -> coolant overheat 46 -> torque management 45 -> rpm+demand 42 -> net torque 59
+             -> rail shortfall 61 -> governor fault blend 62
+Twins proved by disassembly (same compare / store / constant) AND by the same e2m record for every operand:
+  0x1ce58  == 0x1f318   FSMXTHFL 105A+0 -> FSLMFL 105D+0 / 19 -> FLLMAHFL 105D+6 / 40
+  0x2d9a8  == 0x2a918   PTSS 109E+2 == 1, PTMXEGLD 1268 < TQDQTQ 1051+A -> TQDQTQST 1051+C = 34
+  0xc2a0   == 0xe0c4    AFFL 104C+0 < FLLMAHFL -> FSLMAHST = 16
+  0xc742   == 0x502af4  ATFLLM 109F+0 < FSLMFL -> 15
+  0x196e4  == 0x509510  EPFLLM 10B1+A < FSLMFL -> 29
+  0x30c14  == 0x427cc   JCEGMD 10E8+4 == 3, JCTQLMFL 10E8+16(CM550)/+14(CM848) < FSLMFL -> 20
+  0x30bf6  == 0x4279c   FSAPLMFL 105D+4 < FSLMFL -> 28   (ROM adjacency [28][20][runner] is the same in both ROMs)
+No CM848 function: 0xb3b2 (ANC, NZFLLM 10A4+0, 17), 0x17120 (warm-up protection, WPTQLM 11EA+14 / WPLMFG 11EA+0, 33)
+0x1c0d4 == CM848 0x1e4e8 cm848_calculateProtectionRateLimited (torque limit -> fuel; CM550 also resets TQDQTQ 0xffff / 40 at its end)
+
+== 0x1c152 ==
+= CM848 cm848_arbitrateRequestedFueling 0x1e5a4 (first half) + cm848_selectFinalFueling 0x1e22c (engine state part),
+merged (CM848 put the combustion reference stage between them). Counterpart, not twin.
+
+== Timing chain 0x30b34 (called at 0x30b7e by the final timing selection 0x30b62) ==
+0x26af0 misfire floor (BSTAMNLM 818E+0, state 11 MISFIRE) -> 0xc2ee AFC increment (AFCNICTA 105B+0, flag 4)
+-> 0x12484 cylinder pressure maintenance increment (CPTAIC 1090+2, clamp 0..0x400, flag 8, snapshot TSAJ4DTA 1090+8)
+-> 0x34dba wet stack floor (WSTA 1077+0, state word 0x8036e2 = 1 WETSTACK / 13 WTSTCOOL)
+-> 0xb4ce ANC limit (NZTALM 10A4+2, state 3 ANC) -> 0x30b10 maximum limit (TSMXTA 105C+6, state 4 MAX)
+-> 0x17cf0 cranking timing (state 5 CRANK) -> 0x49f32 (undumped)
+Labels of the timing state (CHR SOI_State / v64t6 TSFNTAST): 0 FOUR_D 1 WETSTACK 2 USERCOMD 3 ANC 4 MAX 5 CRANK 6 ENGBRAKE
+7 USEROVRD 8 STOP 9 OVERSPED A SHUTDOWN B MISFIRE C MSOVRIDE D WTSTCOOL
+
+== FUELING_STATE ==
+17 ANCDERAT: stored by 0xb3b2 with NZFLLM (ANC = acceleration noise control, NZFLAGEN text)
+33 ESUOILLM: stored by 0x17120 with WPTQLM while engine_state RUNNING and WPLMFG (engine warmup protection, WP family)
+18 EPF: only tested: 0x306b4 cmpi.w #0x12,(0x80d330) -> addq.l #1,(0x806192) = e2m 1216+6C TIT3DQTM 'time the fueling has
+        been under control of engine protection since last reset'. Never stored in the dumped ROM (EPFLLM stamps 29).
+3 PSSPEED: only tested (0xc982 all speed governor gate 7/3/2/30; 0x2dcb0 PTO bypass 1/2/30/3; 0xf796 driver demand
+        8/3/7; EEC1 switch -> 0xf1/0xfb). Selectors called by 0x3458c store only 30,1,2,5,6,7,8. PS = Prog. Shift only by
+        PSAGEN (106B+2 bit 5) - no code link.
+36 PTPDERAT: only in the EEC1 switch (0xf8 torque limiting). PTP = powertrain protection (group PTP_07, TCEN).
+37 T2SPD / 38 T2TORQ / 39 T2DERAT: T2 = 'TOP2 SPICER TRANSMISSION' (T2HGSXDR / T2LGSXDR / T2NUSXDR, group TOP208).
+        CM848: 37 gates the all speed governor (7/2/30/37 at 0xea00), 37+38 bypass PTO, cruise, cruise ramp-down with 1/2.
+        CM550: only the EEC1 switch (37 -> 0xf1 / 0xfb with 1,2,3,7,8,30; 38, 39 -> 0xf8).
+CM848 49 OFCSTATE / 50 AFRSTATE: only tested (49: all speed governor deadband compensation with 16 / 19; 50: fuel
+        pressure setpoint offset with 16 / 58). Never stored.
+
+== Others ==
+0x1ca54: fuel shutoff (FSO) driver command, bit 5 of 0x80bcfb (DRFSEA), slot 45 priority 0x80bd47. 0x1ca5c is a mid-body
+         row (no reference in the ROM). CM848: no reader of EBODEN / EPOSFSO -> none.
+0x2658c: start-up initializer of the idle speed adjustment (0x801a82 <- LSICBKRF 0x805f0a or 0), clears LSCIOD, clamps the
+         idle range trims 0x803fca / 0x803fcc into LSMNRF / LSMXRF. Pair of 0x26474 (the idle increment / decrement switches).
+0x30ade: start-up initializer of the trip information working copies. 0x30b0e: rts only. 0x30b04: empty rte handler.
+0x34512: == CM848 0x506780 cm848_advanceHourMeters (phase 0 of the 40-phase executive in both).

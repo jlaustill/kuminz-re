@@ -1,0 +1,44 @@
+cm848: round 41 stage A - the injector driver booster capacitor monitor, its ROM records typed as structs
+
+cm848_processFaultScanLookup (0x35fa8) is the injector driver booster capacitor monitor, now
+cm848_monitorInjectorDriverBoosterCapacitorVoltage. engine_injectionAngle_tpuChannel6EventHandler runs it for each
+cylinder event, and it reads that cylinder's capacitor channel (54 / 55) through a ROM record. Its tables were
+loose rows.
+- **injector_driver_booster_capacitor_monitor_record_t[2] at 0x5762c** (52 bytes each, decoded from the ROM), one
+  record per capacitor. Each record holds:
+  - the sensor channel;
+  - pointers to the channel config's high / low threshold and debounce limit;
+  - the high / low fault numbers, 328 / 329 and 330 / 331 (booster_capacitor_N_voltage_high / low_error);
+  - pointers to the channel state's raw / value / held value;
+  - the linearization axis / values pointers;
+  - the high / low / spare count pointers;
+  - the low voltage mask (1 / 2).
+
+  These replace 12 loose rows. Two of them, j1939_pgn_lookup_ptr / j1939_message_def_ptr bytes, were the fault
+  numbers.
+- **injector_driver_booster_capacitor_cylinder_record_t[8] at 0x57694** (10 bytes each; was the word
+  calibration_constant_1). Each record holds the capacitor index and the four injector circuit faults that skip the
+  cylinder: fast decay, open circuit, short to ground, short to battery.
+  - Records 0-5 are injectors 1-6, and their capacitors alternate 0 / 1.
+  - The table ends at the watchdog answer table.
+- **The RAM:**
+  - the shared linearization lookup cache (0x3fb228);
+  - per-capacitor word[2] counts: high (0x3fb22a), low (0x3fb22e), spare (0x3fb232; cleared only);
+  - per-cylinder word[8] counts. Three rows were renamed and widened: per_cylinder_timing_array (a byte),
+    per_cylinder_sync_counter and per_cylinder_timing_counter. They are now the high / low fault debounce counts and
+    the low voltage counts.
+  - injection_check_flags -> injector_driver_booster_capacitor_low_voltage_mask. It holds the low capacitor's mask,
+    which the cutout logic compares with 1 / 2 / 0.
+- **Functions:** mpc555_initSensorCalibrationTables -> cm848_initializeInjectorDriverBoosterCapacitorMonitor, and the
+  monitor's plate describes its three checks: review-function-readability, Readability Medium (temps and one goto
+  remain), Accuracy High.
+
+Proof:
+- prove_records.py maps the old raw addresses and the new struct accesses to field tokens, by the field at each
+  offset. The monitor then has 112 statements on each side, identical apart from the function name.
+- The initializer was checked address by address.
+- The other 1966 functions match the label-only canonical form or differ only in the order of local declarations.
+- lookup_tables.py: 920 typed, 0 sizing problems. Thunks 18 / 14. Headers regenerated with the two types (0 g++
+  errors), tests pass. CM550 has neither function name.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

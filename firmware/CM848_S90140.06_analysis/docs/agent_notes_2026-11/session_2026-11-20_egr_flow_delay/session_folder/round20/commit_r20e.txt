@@ -1,0 +1,11 @@
+cm848: round 20 stage E - the cold delta fuel lookup cache initializer (label-only)
+
+Stage D typed 0x3fb35c as cold_delta_fuel_cached_axis_offsets (word[2]), and the type showed what
+mpc555_initFuelDemandOffsetFilter (0x3744c) does: it sets both cache words to 2 (the first segment), and nothing
+else. It is cm848_initializeColdDeltaFuelLookupCache, named like its sibling cache initializers
+(cm848_initializePumpingTorqueLookupCache, cm848_initializeCombustionLimitLookupCaches, ...).
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT. Headers regenerated (0 g++
+errors), the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

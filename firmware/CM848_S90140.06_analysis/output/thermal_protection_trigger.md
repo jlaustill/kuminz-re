@@ -1,5 +1,7 @@
 # CM848 Thermal Protection Trigger — what engages the `fuel_temp_trim_raw` protection loop
 
+> **Renamed since (2026-11-20, PR #53):** `cm848_fuelDemandSmoothingController` is `cm848_monitorAcceleratorPedalIdleValidationFaults` (the accelerator pedal idle validation faults P2121 / P2127 / P2128), and 0x5c2a4 / 0x5c29a are `accelerator_pedal_fault_delay_at_idle` / `accelerator_pedal_fault_delay` (e2m 1048 +16 / +C).
+>
 > **SUPERSEDED (2026-11-13, PR #46) — there is no thermal protection loop here.** `fuel_temp_trim_raw` /
 > `fuel_temperature_trim` are the vehicle speed chain (`vehicle_speed`, 1/256 mph), and the gate threshold
 > `0x0005c2a0` is `idle_validation_fault_minimum_vehicle_speed` (10 mph — the idle validation fault debounce
@@ -8,7 +10,7 @@
 > `protection_mode_enable_flag` = `accelerator_pedal_sensor_fault_hold_flag`, `cm848_processProtectionControlLogic`
 > = `cm848_updateSwitch31FromAcceleratorPedal` (the "protection_active" bit was logical switch 31 in
 > `switch_input_state_bits`), `cm848_fuelTrimFromOutputShaftSpeed` = `cm848_calculateVehicleSpeedFromOutputShaft`
-> (switch 31 picks the second axle ratio), `j1939_feature_enable_flags` = `j1939_feature_enable_flags_cal`,
+> (switch 31 picks the second axle ratio), `j1939_feature_enable_flags` = `algorithm_enable_flags_29_cal`,
 > `protection_fault_latch_update` = `cm848_updateEngineWarningFlags`, `j1939FaultStateUpdate` =
 > `cm848_monitorGovernorPressureSensorOffset`. Kept below for history; current picture in `firmware/CLAUDE.md`
 > (switch-input layer, vehicle speed).
@@ -58,7 +60,7 @@ while actively fueling — a sustained-overtemperature, debounced condition, not
 The debounce counters act as the software "thermal mass": transients decay (reset path), sustained
 heat latches.
 
-## `system_status_flags_t_003fe974` safety-bit map (this firmware)
+## `fault_detected_cal` (was `system_status_flags_t_003fe974`) safety-bit map (this firmware)
 
 The protection-engage gate (`checkSafetyConditionsForProtection`) ORs these — but only some are
 ever *set* in this calibration:

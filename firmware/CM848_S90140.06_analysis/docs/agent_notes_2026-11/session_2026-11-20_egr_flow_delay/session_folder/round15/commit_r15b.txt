@@ -1,0 +1,38 @@
+cm848: round 15 stage B - the tachometer outputs, the 4D fueling maps, the LSG leftovers, checked singles (label-only)
+
+From the e2m pool above wave 15's 0.2 overlap. Each record was checked against its code use and its width.
+- **The tachometer outputs:**
+  - e2m 1565 / 151C / 1527 name the output channel map (0x3fdc94) and its duty / period caches (0x40c138 /
+    0x40c198) entry by entry.
+  - They agree with every entry round 10 proved by DTCs (1 fan clutch, 10 transmission VFS, 11 wastegate, 20 CP3
+    pump regulator, 27 EVR), and with waves 6 / 7 (39 EGA, 43 VGA).
+  - Entries 25 / 26, todo 035's 'actuators c / d' (identity open), are Tachometer_Highside / Lowside_Driver.
+    Their only driver, now cm848_driveTachometerOutputs (was cm848_processEngineRpmDiagnostic), sets period
+    tachometer_base_period x 1e6 / engine speed at 50 % duty.
+  - Also e2m 116B (override speed / mode, signal period - was protection_timeout_sentinel), the minimum speed, and
+    the initializer (was cm848_dispatchCalibrationFunctions).
+- **The 4D fueling maps:** e2m 1054-1059 steady state / transient x axis / y axis / grid (were
+  fuel_demand_rpm_*_cal / governor_fuel_table_*_cal, ROM) and their caches.
+- **The LSG leftovers:**
+  - the ran-last-pass flag, the previous engine acceleration, and the minimum average acceleration (the preset's
+    acceleration-limit input);
+  - the 100 % throttle fueling at the LSG reference speed and its function (was
+    cm848_processSpeedSensorCompensation).
+- **Singles:**
+  - initial_ambient_air_pressure (8A26 +2, was protection_iat_scaled), the AFC fueling thresholds 1-3 (11D5),
+    oil_change_monitor_reset_flag (1094 +4).
+  - no_load_fuel_quantity (109C, was fuel_demand_base_offset), zero_torque_fueling (10E7 +16),
+    vehicle_speed_sensor_noise_count_cal (132C).
+  - The axle ratio learn delay count and limit (8C54), the wastegate battery voltage factor (16A2), the HSG droop
+    select port type (1401).
+  - flash_write_failure_flag_cal (1069 +12), engine_startup_inhibit_cal (1096), and the engine position sensor
+    error detection minimum speed (8194 +1A).
+- **firmware/CLAUDE.md:** two rename refreshes. The output-table note no longer calls entries 25 / 26 'identity
+  open', and todo 035's actuators c / d / e / g are marked resolved. These are factual corrections; no rule was
+  added.
+- **Checks:**
+  - reverse_names.py EQUIVALENT (41 names render); every row width matches its e2m size.
+  - 19 thunks / 13 call overrides; lookup_tables 0 sizing problems; the headers compile.
+  - No old name is in CM550.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

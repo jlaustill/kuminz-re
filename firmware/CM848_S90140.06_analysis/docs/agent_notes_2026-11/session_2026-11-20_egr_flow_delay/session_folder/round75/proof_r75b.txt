@@ -1,0 +1,1 @@
+CM848: of 1968 functions, 2 differ after the renames, both from the new widths (cm848_loadVersionConfigFromEeprom: the byte[6] source renders without '&'; mpc555_systemInitialization: the word drops a '(word *)' cast); verify DETERMINISTIC (thunks 18 / call overrides 14); headers 0 g++ errors; _cal audit HARD 0 / MISSING 206 (was 210).

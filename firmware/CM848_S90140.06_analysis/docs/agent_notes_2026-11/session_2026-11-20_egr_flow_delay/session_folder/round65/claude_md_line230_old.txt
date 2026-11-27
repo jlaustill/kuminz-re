@@ -1,0 +1,1 @@
+- The ROM `j1939HandlePgn65265CruiseVehicleSpeed` (0x24178) and `j1939HandlePgn61443Eec2` (0x25b10) are the ECM's own CCVS1 / EEC2 **transmit** builders (they end in `sendJ1939Message`), not receive handlers — names not yet fixed.

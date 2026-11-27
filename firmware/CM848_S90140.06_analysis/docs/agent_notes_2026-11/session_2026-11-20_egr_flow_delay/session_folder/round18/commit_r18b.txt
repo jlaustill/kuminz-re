@@ -1,0 +1,25 @@
+cm848: round 18 stage B - the main injection timing selection, the 4D and user commanded timing, the timing sources (label-only)
+
+The round 15 'user commanded timing' lead, from e2m 8085 / 125C / 103B / 106B (placed by the ECU's parameter ID
+table) and the code:
+- main_injection_timing_selection (was injection_delivery_mode; 8085 +0 Main_SOI_Selection_Switch): 0 no change, 1
+  calculated, 2 the user commanded timing, 3 calculated plus the user timing; cm848_selectMainInjectionTiming (was
+  cm848_updateMainInjectionTimingByDeliveryMode).
+- user_commanded_injection_timing_cal / _increment_cal (were injection_timing_offset_cal / _increment_cal; 125C +2
+  / +0) and four_dimensional_injection_timing (was injection_timing_offset_map_output; 103B +0 Four_D_Timing) with
+  its maps a / b (were injection_timing_offset_map_*); cm848_calculateFourDimensionalInjectionTiming (was
+  cm848_calculateInjectionTimingOffset).
+- algorithm_enable_flags_4_cal (was engine_mode_control_flags; EEPROM 0x122): bit 0 User_Commanded_Fueling_Enable,
+  bit 8 User_Commanded_Timing_Enable.
+- The timing source members from the e2m value labels of 103B +8 Final_Timing_State (shared with +4 SOI_State),
+  each checked at its store: CRANK, USER_OVERRIDE, ENGINE_STOPPED (power-up), MISFIRE_LIMIT, COMBUSTION_MANAGER,
+  EXTENDED_IDLE and COOLANT_OVERHEAT_DERATE; the intermediate FOUR_DIMENSIONAL_TIMING / USER_COMMANDED_TIMING /
+  COMBUSTION_REFERENCE. With them the limit words: main_injection_timing_misfire_limit (8A3D Misfire_Timing_Limit),
+  main_injection_timing_extended_idle_minimum (8085 +4), and the coolant overheat derate's minimum timing family
+  (cm848_rampCoolantOverheatDerateMinimumInjectionTiming, was governor_injectionTiming_modeAdj).
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (30 names). The renamed rows
+with records match their e2m sizes. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the
+four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

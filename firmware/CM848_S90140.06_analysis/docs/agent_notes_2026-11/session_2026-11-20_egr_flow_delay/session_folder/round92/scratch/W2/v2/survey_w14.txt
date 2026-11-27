@@ -1,0 +1,119 @@
++0x1e DS04SWUO   types={'S': 93} masks={'200': 93} files=41 labels=['DS04SWUO']
+      [41 files e.g. 00V2.e2m] BIT 9 SWITCH 4 USER OVERRIDE ENABLE FLAG
++0x1e DS17SWUO   types={'S': 94} masks={'1': 94} files=41 labels=['DS17SWUO']
+      [41 files e.g. 00V2.e2m] BIT 0 SWITCH 17 USER OVERRIDE ENABLE FLAG
++0x1e DS18SWUO   types={'S': 94} masks={'2': 94} files=41 labels=['DS18SWUO']
+      [41 files e.g. 00V2.e2m] BIT 1 SWITCH 18 USER OVERRIDE ENABLE FLAG
++0x1e DS19SWUO   types={'S': 94} masks={'4': 94} files=41 labels=['DS19SWUO']
+      [41 files e.g. 00V2.e2m] BIT 2 SWITCH 19 USER OVERRIDE ENABLE FLAG
++0x1e DS20SWUO   types={'S': 94} masks={'80': 22, '8': 72} files=41 labels=['DS20SWUO']
+      [41 files e.g. 00V2.e2m] BIT 3 SWITCH 20 USER OVERRIDE ENABLE FLAG
++0x1e DS21SWUO   types={'S': 93} masks={'10': 93} files=41 labels=['DS21SWUO']
+      [41 files e.g. 00V2.e2m] BIT 4 SWITCH 21 USER OVERRIDE ENABLE FLAG
++0x1e DS22SWUO   types={'S': 93} masks={'20': 93} files=41 labels=['DS22SWUO']
+      [41 files e.g. 00V2.e2m] BIT 5 SWITCH 22 USER OVERRIDE ENABLE FLAG
++0x1e DS23SWUO   types={'S': 93} masks={'1000': 93} files=41 labels=['DS23SWUO']
+      [41 files e.g. 00V2.e2m] BIT C SWITCH 23 USER OVERRIDE ENABLE FLAG
++0x1e DS24SWUO   types={'S': 93} masks={'80': 93} files=41 labels=['DS24SWUO']
+      [41 files e.g. 00V2.e2m] BIT 7 SWITCH 24 USER OVERRIDE ENABLE FLAG
++0x1e DS25SWUO   types={'S': 93} masks={'100': 93} files=41 labels=['DS25SWUO']
+      [41 files e.g. 00V2.e2m] BIT 8 SWITCH 25 USER OVERRIDE ENABLE FLAG
++0x1e DS26SWUO   types={'S': 93} masks={'40': 93} files=41 labels=['DS26SWUO']
+      [41 files e.g. 00V2.e2m] BIT 6 SWITCH 26 USER OVERRIDE ENABLE FLAG
++0x1e DS27SWUO   types={'S': 93} masks={'400': 93} files=41 labels=['DS27SWUO']
+      [41 files e.g. 00V2.e2m] BIT A SWITCH 27 USER OVERRIDE ENABLE FLAG
++0x1e DS28SWUO   types={'S': 93} masks={'800': 93} files=41 labels=['DS28SWUO']
+      [41 files e.g. 00V2.e2m] BIT B SWITCH 28 USER OVERRIDE ENABLE FLAG
++0x1e DS29SWUO   types={'S': 93} masks={'2000': 93} files=41 labels=['DS29SWUO']
+      [41 files e.g. 00V2.e2m] BIT D SWITCH 29 USER OVERRIDE ENABLE FLAG
++0x1e DS30SWUO   types={'S': 93} masks={'4000': 93} files=41 labels=['DS30SWUO']
+      [41 files e.g. 00V2.e2m] BIT E SWITCH 30 USER OVERRIDE ENABLE FLAG
++0x1e DS31SWUO   types={'S': 93} masks={'8000': 93} files=41 labels=['DS31SWUO']
+      [41 files e.g. 00V2.e2m] BIT F SWITCH 31 USER OVERRIDE ENABLE FLAG
++0x1e DSAKCYUO   types={'N': 5, 'S': 61} masks={'2000': 61} files=33 labels=['DSAKCYUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 14 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER IN
+      [29 files e.g. 64c6.e2m] WORD 14, BIT 13 OF BITS 0-15, STATUS OF OVERRIDE FLAG T
++0x1e DSAKFDUO   types={'N': 5, 'S': 4} masks={'400': 4} files=7 labels=['DSAKFDUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 10 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER IN
+      [ 2 files e.g. 64t4.e2m] WORD 14, BIT 10 OF BITS 0-15, STATUS OF OVERRIDE FLAG T
++0x1e DSAKHIUO   types={'N': 5, 'S': 62} masks={'800': 62} files=33 labels=['DSAKHIUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 11 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER IN
+      [29 files e.g. 64c6.e2m] WORD 14, BIT 11 OF BITS 0-15, STATUS OF OVERRIDE FLAG T
++0x1e DSAKONUO   types={'S': 61} masks={'4000': 61} files=29 labels=['DSAKONUO']
+      [29 files e.g. 64c6.e2m] BIT 6 OF 0-7, STATUS OF THE SWITCH
++0x1e DSAKPRUO   types={'S': 10} masks={'400': 10} files=5 labels=['DSAKPRUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT A USER OVERRIDE ENABLE FLAG FOR THE AIR CONDITIONER PRESSURE SWITC
++0x1e DSAKTKUO   types={'N': 5, 'S': 68} masks={'2': 68} files=36 labels=['DSAKTKUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 1 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
+      [32 files e.g. 63c5.e2m] WORD 14, BIT 1 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO
++0x1e DSALIDUO   types={'S': 14} masks={'1': 14} files=6 labels=['DSALIDUO']
+      [ 6 files e.g. 63c5.e2m] WORD 14, BIT 0 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO
++0x1e DSALISUO   types={'N': 5} masks={} files=5 labels=['DSALISUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 0 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
++0x1e DSAUSHUO   types={'S': 18} masks={'8000': 18} files=9 labels=['DSAUSHUO']
+      [ 9 files e.g. 63t10r4.e2m] WORD 14, BIT 15 OF 0-15, USER OVERRIDE ENABLE FLAG
++0x1e DSAXGSUO   types={'S': 12} masks={'10': 12} files=4 labels=['DSAXGSUO']
+      [ 4 files e.g. 63t10r4.e2m] USER OVERRRIDE ENABLE FLAG
++0x1e DSCLHIUO   types={'S': 98} masks={'100': 98} files=41 labels=['DSCLHIUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 8 USER OVERRIDE ENABLE FLAG FOR THE RADIATOR COOLANT LEVEL HIGH
+      [ 7 files e.g. 00V2.e2m] BIT 8 USER OVERRIDE ENABLE FLAG FOR THE RADIATOR COOLAN
++0x1e DSCLLOUO   types={'S': 98} masks={'20': 98} files=41 labels=['DSCLLOUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 5 USER OVERRIDE ENABLE FLAG FOR THE RADIATOR COOLANT LEVEL LOW
+      [ 7 files e.g. 00V2.e2m] BIT 5 USER OVERRIDE ENABLE FLAG FOR THE RADIATOR COOLAN
++0x1e DSEBUO02   types={'S': 22} masks={'1000': 22} files=10 labels=['DSEBUO02']
+      [10 files e.g. 00V2.e2m] BIT C USER OVERRIDE ENABLE ENGINE BRAKE SELECT 2
++0x1e DSEBUO03   types={'S': 12} masks={'4000': 12} files=6 labels=['DSEBUO03']
+      [ 6 files e.g. 00V2.e2m] USER OVERRIDE ENABLE ENGINE BRAKE SELECT 1
++0x1e DSOPSWUO   types={'S': 6} masks={'400': 6} files=3 labels=['DSOPSWUO']
+      [ 3 files e.g. 74be84.e2m] WORD NN, BIT N OF BITS 0-15, STATUS OF OVERRIDE FLAG TO
++0x1e DSORESSW   types={'S': 14} masks={'4000': 14} files=6 labels=['DSORESSW']
+      [ 6 files e.g. 63c5.e2m] USER OVERRRIDE ENABLE FLAG
++0x1e DSORMASW   types={'S': 4} masks={'400': 4} files=2 labels=['DSORMASW']
+      [ 2 files e.g. 63t10r4.e2m] USER OVERRRIDE ENABLE FLAG
++0x1e DSOROESW   types={'S': 52} masks={'1000': 52} files=23 labels=['DSOROESW']
+      [23 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FOR OEM_SWITCH
++0x1e DSORP2SW   types={'S': 14} masks={'4': 14} files=6 labels=['DSORP2SW']
+      [ 6 files e.g. 63c5.e2m] USER OVERRRIDE ENABLE FLAG
++0x1e DSORSLSW   types={'S': 14} masks={'800': 14} files=6 labels=['DSORSLSW']
+      [ 6 files e.g. 63c5.e2m] USER OVERRRIDE ENABLE FLAG
++0x1e DSORTSSW   types={'S': 4} masks={'100': 4} files=2 labels=['DSORTSSW']
+      [ 2 files e.g. 63c5.e2m] USER OVERRRIDE ENABLE FLAG
++0x1e DSORUDSW   types={'S': 68} masks={'40': 68} files=32 labels=['DSORUDSW']
+      [32 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FLAG FOR USER DATALOGGER SWITCH
++0x1e DSPRBRUO   types={'S': 71} masks={'80': 71} files=33 labels=['DSPRBRUO']
+      [33 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FLAG MANUAL FAN INPUT SWITCH, BYTE
++0x1e DSPT01UO   types={'S': 22} masks={'40': 22} files=10 labels=['DSPT01UO']
+      [10 files e.g. 00V2.e2m] BIT 6 USER OVERRIDE ENABLE FLAG FOR THE PTO1 SWITCH
++0x1e DSPT02UO   types={'S': 36} masks={'2000': 36} files=14 labels=['DSPT02UO']
+      [14 files e.g. 00V2.e2m] BIT D USER OVERRIDE ENABLE FLAG FOR THE PTO2 SWITCH
++0x1e DSRARSUO   types={'S': 58} masks={'4': 58} files=28 labels=['DSRARSUO']
+      [28 files e.g. 64c6.e2m] USER OVERRIDE ENABLE FLAG FOR REAR AXLE RATIO SWITCH
++0x1e DSRIO2UO   types={'N': 5} masks={} files=5 labels=['DSRIO2UO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 2 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
++0x1e DSRMO1UO   types={'S': 42} masks={'1': 42} files=20 labels=['DSRMO1UO']
+      [20 files e.g. 74be62rls.e2m] FUNCTION ENABLE FOR OLM REMOTE OIL SWITCH
++0x1e DSRMTHUO   types={'S': 94} masks={'8': 94} files=41 labels=['DSRMTHUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 3 USER OVERRIDE ENABLE FLAG FOR THE REMOTE THROTTLE SWITCH
+      [37 files e.g. 00V2.e2m] BIT 3 USER OVERRIDE ENABLE FLAG FOR THE REMOTE THROTTLE
++0x1e DSRXSWUO   types={'S': 83} masks={'10': 83} files=37 labels=['DSRXSWUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 4 USER OVERRIDE ENABLE FLAG FOR THE REMOTE PTO SWITCH
+      [33 files e.g. 00V2.e2m] BIT 4 USER OVERRIDE ENABLE FLAG FOR THE REMOTE PTO SWIT
++0x1e DSSTCNUO   types={'S': 72} masks={'200': 72} files=33 labels=['DSSTCNUO']
+      [ 2 files e.g. 64t4.e2m] USER OVERRIDE ENABLE FLAG FOR SELECTED THROTTLE CONTROL
+      [32 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FLAG FOR STCG ASG DROOP SWITCH
++0x1e DSSX01UO   types={'N': 5} masks={} files=5 labels=['DSSX01UO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 12 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER IN
++0x1e DSSX02UO   types={'N': 5} masks={} files=5 labels=['DSSX02UO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 6 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
++0x1e DSSX03UO   types={'N': 5} masks={} files=5 labels=['DSSX03UO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 13 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER IN
++0x1e DSTHILUO   types={'S': 83} masks={'1000': 12, '800': 71} files=37 labels=['DSTHILUO']
+      [37 files e.g. 00V2.e2m] USER OVERRIDE ENABLE FLAG FOR THE ACCELERATOR INTERLOCK
++0x1e DSUSDLUO   types={'S': 71} masks={'40': 71} files=33 labels=['DSUSDLUO']
+      [33 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FLAG FOR USER DATALOGGER SWITCH
++0x1e DSVAFTUO   types={'N': 5} masks={} files=5 labels=['DSVAFTUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 7 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
++0x1e DSVLO1UO   types={'S': 42} masks={'200': 42} files=20 labels=['DSVLO1UO']
+      [20 files e.g. 74be62rls.e2m] FUNCTION ENABLE FOR OLM VERY LOW OIL SWITCH
++0x1e DSWFUO     types={'N': 5} masks={} files=5 labels=['DSWFUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 14, BIT 9 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP

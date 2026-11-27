@@ -1,0 +1,30 @@
+scripts: load the two shifted RAM dumps at their real addresses (ScriptUtils.imageFromDumpWithGaps)
+
+Both builds loaded a 0x80-short dump as-is, so the Ghidra programs held most of those RAM bytes 0x80 too low and
+had no memory for the region's last 0x80 bytes:
+- CM848 cm848_ram.bin (0x45F80 bytes from 0x3FA000) misses the chunk at 0x40c200 (rename wave 14). The RAM block is
+  now 0x3FA000-0x43FFFF: the chunk is left 0 and every later byte sits at its own address.
+- CM550 J90350.00.extended_ram.bin (0x6DBE bytes) misses its first or second chunk (round 87). Under both readings the
+  file's bytes from offset 0x80 on belong at 0x8092C2, so EXT_RAM is now 0x8091C2-0x80FFFF with those bytes there and
+  the uncertain 0x8091C2-0x8092C1 left 0.
+
+ScriptUtils.imageFromDumpWithGaps(dump, dumpStart, imageLength, gaps, fill) builds the image (5 new JUnit tests: a gap
+in the middle, a dropped prefix with a gap at the start, a short dump, a long dump with a clipped gap, a bad gap). The
+two loaders use it through a new addMemoryRegionFromBytes; the other blocks load as before.
+
+Docs: the CM550 README / memory_map.md say how the file is loaded now; firmware/CLAUDE.md gains two lines on the
+loaders under the CM848 RAM gap, and its test count is 109.
+
+firmware/CLAUDE.md:
+- old: **Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 104 JUnit 5 tests covering ScriptUtils and CsvCommentIndex. ...
+- new: **Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 109 JUnit 5 tests covering ScriptUtils and CsvCommentIndex. ...
+- added after the three cause lines:
+    - The build puts the bytes back: `SetupMemoryMapCM848.java` builds the RAM block (0x3FA000-0x43FFFF) with
+      `ScriptUtils.imageFromDumpWithGaps`, leaving 0x40c200-0x40c27f 0, and `SetupMemoryMap.java` does the same for
+      CM550's extended RAM.
+
+Proof: CM550 and CM848 verify DETERMINISTIC; the build logs show the new blocks (EXT_RAM 0x8091c2-0x80ffff, RAM
+0x3fa000-0x43ffff) and no new warning; both .cpp files are byte-identical to stage A's apart from the Generated
+line (the decompilations do not depend on these RAM bytes), so they are not committed; 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,17 @@
+cm848: round 71 follow-up - the region lookups' parameters stop colliding with their callers; a junk row out
+
+From the round's closing review:
+- The lookups' parameters are range_start / range_length. Named address / length, they collided with their callers'
+  own address / length, so Ghidra named the callers' temps length_00 / address_00 (20 renders, none before 8755bedb).
+- MEMORY_REGION_TYPE_BANK_2_FLASH's comment: the application writer passes the code back, which
+  J1939_DIAGNOSTIC_RESULT reads as 0x02 WRONG_LENGTH (the codes coincide).
+- 0x3fee03 "j1939_cruise_state_t_003fee00.cruise_state_pad_03" is removed. No such struct exists and nothing renders
+  it: it was a junk field row inside supervisor_watchdog_serious_error_events_cal.
+
+Proof (round 69's prove_r69.py, no renames): 5 of 1968 functions differ, the five callers whose temps lost the _00
+suffix. Casts and placeholders are unchanged, and no length_00 / address_00 renders remain (20 after 8755bedb).
+verify is byte-identical with stage A's WARNING lines; thunks 18 / 14; prototype and local rows 0 failed; locals
+Skipped 8. Headers regenerated, tests pass, audit_cal_suffixes.py HARD 0 / MISSING 210 (was 211: the junk row was
+an EEPROM mirror name without _cal).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

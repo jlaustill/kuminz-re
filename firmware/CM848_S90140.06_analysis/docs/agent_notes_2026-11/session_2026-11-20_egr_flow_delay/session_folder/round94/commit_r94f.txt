@@ -1,0 +1,34 @@
+both firmwares: round 94 stage F - local rows re-targeted at their functions' own auto-names; the definition rows' function names; 22 rows inside typed rows
+
+- **Local rows (six functions).** Rows match the decompiler's names before any row applies, so a row written against
+  an older decompilation lands nowhere ('Variable X not found': 11 CM550 rows, 8 CM848 rows) or on another variable.
+  CM550 unscrambleSecurityKey's backward_write_ptr row had named the mask table pointer, and its bit_position row the
+  bit value written. One build without the six functions' rows showed each body's own auto-names
+  (r94/cleanup_step1_r94.py), and the rows are written against those (r94/cleanup_step2_r94.py), with the names spelled
+  out (src_ptr / dest_ptr -> source_pointer / destination_pointer ...).
+  - A register that holds unrelated values in turn gets no row (naming it pins its first value): CM550
+    unscrambleSecurityKey's loop / scratch registers and both temporaries of CM848 mpc555_keyOnStateMachine (whose
+    three old rows had all been skipped).
+  - No row for the mask byte: named, its stack slot stayed declared and unused while the value moved to a register.
+  - key_matches is the decompiler's bool (bool rows apply since round 90), so its two (bool) casts are gone.
+  - The build logs now show 'Skipped: 0' in both firmwares (33 / 135 rows applied).
+- **Definition rows' function names:** 29 CM550 function_definitions rows, 4 CM550 and 2 CM848 local_variables rows
+  carried an old name of their function (the build matched them by address and warned 'Function name mismatch').
+- **22 CM550 global rows inside a typed row:** the byte rows inside the j1939_tx_msg_buffer / fuel_limit_arbitration
+  struct instances and five rows inside dwords whose accesses are whole (sub.l / add.l on 0x80d03e, move.l on
+  0x80dca2); none rendered.
+
+Proof (both firmwares built twice, deterministic; base = HEAD 2117349b), r94/prove_r94f.py splits both .cpp files by
+function:
+- CM550: 705 functions, none added or removed; the only changed functions are clearWorkingRam and
+  unscrambleSecurityKey (local names; statements 11 -> 11 and 67 -> 69: the old rows had folded the widened input
+  index, now its own named temporary input_byte_offset, and one register held both bit values written, so naming
+  output_bit leaves the front branch's value as the unnamed bVar3). Every other function is byte-identical, so the
+  name sync and the row removals change nothing.
+- CM848: 1968 functions; the changed functions are the three expected ones (local names, equal statement counts) and
+  cm848_checkPciMessageTimeouts, whose two local declarations swap order (the same lines). mpc555_keyOnStateMachine is
+  unchanged.
+- Headers regenerated (g++ 0 errors); the _cal audit is unchanged; the five Python suites and the 109 JUnit tests
+  pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

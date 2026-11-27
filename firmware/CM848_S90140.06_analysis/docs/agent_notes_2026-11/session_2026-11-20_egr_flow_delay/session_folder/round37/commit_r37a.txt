@@ -1,0 +1,30 @@
+cm848: round 37 stage A - 120 lookup cache words named from their own lookups (labels, types)
+
+Round 32's messy_functions.py ranking led with the injection state initializers, such as
+cm848_initializePilotInjectionQuantityState: 25 DAT_ words, each set to 2. They are the lookup caches, the last
+segment offset of each table lookup.
+- cache_names.py names every unnamed cache word from its own interpolator calls, following the round 10
+  convention: <table>_cached_axis_offset (a word) for lookupTableInterpolation, <table>_cached_axis_offsets
+  (word[2]: the x and y segment offsets) for cm848_dualAxisTableInterpolation. <table> is the lookup's data table
+  (its _values / _grid name), which is unique to that lookup where an axis can be shared.
+- 119 caches are named this way.
+- Skipped for review:
+  - six more caches of tables that another cache already names (water_saturation_vapor_pressure_by_temperature
+    x4, combustion_torque_by_fuel_quantity, fuel_demand_compensation_target_by_pressure). These tables are looked
+    up from several functions with separate caches, and each needs a per-function word.
+  - three whose table is still unnamed (WORD_ARRAY_ / a PTR_ label).
+  - two whose name would inherit a legacy table name with a banned abbreviation or a _cal
+    (injection_timing_temp_corr_axis1_cal, safety_fuel_limit_rpm_axis_cal).
+- By hand: 0x3fd134 timing_limit_boost_blend_cached_axis_offset (word) is the shared 2-D cache of the pilot quantity
+  blend maps injection_quantity_pilot_map_1-4. It is now injection_quantity_pilot_blend_map_cached_axis_offsets
+  (word[2]); the initializer resets both words.
+- Each 2-D cache's second word was checked to hold no row and no other cache. 0x3fd275 is an odd-address word cache:
+  cm848_initAdaptiveControl stores it with sth r3,-11659(r9).
+
+Proof: prove_caches.py maps both .cpp files to one canonical form and compares every function. A 2-D cache reads
+&DAT_a -> name / DAT_a, DAT_(a+2) -> name[0], name[1]. All functions match except the known declaration reorder in
+mpc555_tickTransferTimeoutAndRuntimeCounter, and one cache whose old render was WORD_003fba2e (a type-only row), not
+DAT_ (the same rename). No pieces of the new names and no underscore renders. (word *) casts are unchanged.
+lookup_tables.py: 920 tables typed, 0 sizing problems. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

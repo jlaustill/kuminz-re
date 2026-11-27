@@ -1,0 +1,446 @@
+=== executiveFrameInterruptHandler
+undefined8 executiveFrameInterruptHandler(void)
+{
+  word wVar1;
+  undefined4 in_D0;
+  undefined4 in_D1;
+  byte *pbVar2;
+  if (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0) {
+    _DAT_0080068a = 0;
+  }
+  else {
+    if (_DAT_0080068a == 0) {
+      _scheduler_timing_record_ptr = executive_frame_timings + _scheduler_phase_index * 0x10;
+      for (pbVar2 = executive_frame_timings;
+          pbVar2 < &fuel_limit_from_pump_analog_error_algorithm_0_to_300; pbVar2 = pbVar2 + 0x10) {
+        pbVar2[0] = 0;
+        pbVar2[1] = 0;
+        pbVar2[2] = 0;
+        pbVar2[3] = 0;
+        pbVar2[4] = 0;
+        pbVar2[5] = 0;
+        pbVar2[6] = 0xff;
+        pbVar2[7] = 0xff;
+        pbVar2[8] = 0;
+        pbVar2[9] = 0;
+        pbVar2[10] = 0;
+        pbVar2[0xb] = 0;
+      }
+      _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 = 0;
+      _DAT_00809ee2 = 0;
+      _DAT_0080068a = 1;
+    }
+    _DAT_0080068e = CTM4_BIUTBR;
+  }
+  switch(_scheduler_phase_index) {
+  case 0:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b668();
+    cm550_FUN_0001b6b4();
+    cm550_FUN_0001b73a();
+    cm550_FUN_00034512();
+    _scheduler_timing_record_ptr = executive_frame_timings;
+    _scheduler_phase_index = 1;
+    break;
+  case 1:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b66a();
+    cm550_FUN_0001b6c8();
+    cm550_FUN_0001b754();
+    updateEngineSyncStatus();
+    _scheduler_phase_index = 2;
+    break;
+  case 2:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b678();
+    cm550_FUN_0001b6d6();
+    cm550_FUN_0001b768();
+    mc68k_engineRpmHardwareTimerSetup();
+    _scheduler_phase_index = 3;
+    break;
+  case 3:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b686();
+    cm550_FUN_0001b6e4();
+    cm550_FUN_0001b788();
+    cm550_FUN_000315be();
+    _scheduler_phase_index = 4;
+    break;
+  case 4:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b694();
+    cm550_FUN_0001b6f2();
+    cm550_auxiliarySystemControlWrapper();
+    _scheduler_phase_index = 5;
+    break;
+  case 5:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b6a2();
+    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
+    cm550_FUN_0001b7b0();
+    cm550_FUN_000133fc();
+    _scheduler_phase_index = 6;
+    break;
+  case 6:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b6aa();
+    cm550_rpmBasedFuelLimiterCoordinator();
+    vp44DiagnosticFaultMonitoringSlowCycle20Coordinator();
+    _scheduler_phase_index = 7;
+    break;
+  case 7:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b6b2();
+    cm550_shutdownProtectionSlowCycle10Coordinator();
+    cm550_FUN_0001b7d2();
+    vp44_liftPumpFuelDeliveryController();
+    _scheduler_phase_index = 8;
+    break;
+  case 8:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b668();
+    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    cm550_FUN_0001b7e0();
+    cm550_coldStartFuelControlSlowCycle40Coordinator();
+    vp44FaultRegisterBit2Monitor();
+    _scheduler_phase_index = 9;
+    break;
+  case 9:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b66a();
+    cm550_FUN_0001b732();
+    cm550_FUN_0001b7e2();
+    _scheduler_phase_index = 10;
+    break;
+  case 10:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b678();
+    cm550_FUN_0001b6b4();
+    cm550_FUN_0001b7ea();
+    hpcr_injectorPulseWidthCalc();
+    _scheduler_phase_index = 0xb;
+    break;
+  case 0xb:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b686();
+    cm550_FUN_0001b6c8();
+    vp44_FUN_0001b7f2();
+    cm550_ioOutputFlagMappingSlowCycle40Coordinator();
+    _scheduler_phase_index = 0xc;
+    break;
+  case 0xc:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b694();
+    cm550_FUN_0001b6d6();
+    cm550_FUN_0001b80c();
+    cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator();
+    _scheduler_phase_index = 0xd;
+    break;
+  case 0xd:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b6a2();
+    cm550_FUN_0001b6e4();
+    cm550_FUN_0001b81a();
+    cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator();
+    _scheduler_phase_index = 0xe;
+    break;
+  case 0xe:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b6aa();
+    cm550_FUN_0001b6f2();
+    cm550_FUN_0001b828();
+    fuelDemandProportionalCalculationSlowCycle40Coordinator();
+    _scheduler_phase_index = 0xf;
+    break;
+  case 0xf:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b6b2();
+    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
+    cm550_FUN_0001b836();
+    cm550_epsTimingCalculationSlowCycle40Coordinator();
+    vp44_FUN_0001cad6();
+    cm550_engineProtectionMultiStateSlowCycle40Coordinator();
+    _scheduler_phase_index = 0x10;
+    break;
+  case 0x10:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b668();
+    cm550_rpmBasedFuelLimiterCoordinator();
+    cm550_FUN_0001b83e();
+    func_0x000487fe();
+    _scheduler_phase_index = 0x11;
+    break;
+  case 0x11:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b66a();
+    cm550_shutdownProtectionSlowCycle10Coordinator();
+    cm550_FUN_0001b846();
+    _scheduler_phase_index = 0x12;
+    break;
+  case 0x12:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b678();
+    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    vp44DiagnosticControlSlowCycle20Coordinator();
+    func_0x0004a322();
+    _scheduler_phase_index = 0x13;
+    break;
+  case 0x13:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b686();
+    cm550_FUN_0001b732();
+    cm550_FUN_0001b862();
+    _scheduler_phase_index = 0x14;
+    break;
+  case 0x14:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b694();
+    cm550_FUN_0001b6b4();
+    cm550_FUN_0001b73a();
+    _scheduler_phase_index = 0x15;
+    break;
+  case 0x15:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b6a2();
+    cm550_FUN_0001b6c8();
+    cm550_FUN_0001b754();
+    _scheduler_phase_index = 0x16;
+    break;
+  case 0x16:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b6aa();
+    cm550_FUN_0001b6d6();
+    cm550_FUN_0001b768();
+    _scheduler_phase_index = 0x17;
+    break;
+  case 0x17:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b6b2();
+    cm550_FUN_0001b6e4();
+    cm550_FUN_0001b788();
+    _scheduler_phase_index = 0x18;
+    break;
+  case 0x18:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b668();
+    cm550_FUN_0001b6f2();
+    cm550_auxiliarySystemControlWrapper();
+    _scheduler_phase_index = 0x19;
+    break;
+  case 0x19:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b66a();
+    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
+    cm550_FUN_0001b7b0();
+    _scheduler_phase_index = 0x1a;
+    break;
+  case 0x1a:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b678();
+    cm550_rpmBasedFuelLimiterCoordinator();
+    vp44DiagnosticFaultMonitoringSlowCycle20Coordinator();
+    _scheduler_phase_index = 0x1b;
+    break;
+  case 0x1b:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b686();
+    cm550_shutdownProtectionSlowCycle10Coordinator();
+    cm550_FUN_0001b7d2();
+    _scheduler_phase_index = 0x1c;
+    break;
+  case 0x1c:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b694();
+    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    cm550_FUN_0001b7e0();
+    _scheduler_phase_index = 0x1d;
+    break;
+  case 0x1d:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b6a2();
+    cm550_FUN_0001b732();
+    cm550_FUN_0001b7e2();
+    _scheduler_phase_index = 0x1e;
+    break;
+  case 0x1e:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b6aa();
+    cm550_FUN_0001b6b4();
+    cm550_FUN_0001b7ea();
+    _scheduler_phase_index = 0x1f;
+    break;
+  case 0x1f:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b6b2();
+    cm550_FUN_0001b6c8();
+    vp44_FUN_0001b7f2();
+    cm550_refreshRamCalibration();
+    _scheduler_phase_index = 0x20;
+    break;
+  case 0x20:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b668();
+    cm550_FUN_0001b6d6();
+    cm550_FUN_0001b80c();
+    _scheduler_phase_index = 0x21;
+    break;
+  case 0x21:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b66a();
+    cm550_FUN_0001b6e4();
+    cm550_FUN_0001b81a();
+    _scheduler_phase_index = 0x22;
+    break;
+  case 0x22:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b678();
+    cm550_FUN_0001b6f2();
+    cm550_FUN_0001b828();
+    _scheduler_phase_index = 0x23;
+    break;
+  case 0x23:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b686();
+    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
+    cm550_FUN_0001b836();
+    _scheduler_phase_index = 0x24;
+    break;
+  case 0x24:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    vp44_engine_management_system();
+    cm550_FUN_0001b694();
+    cm550_rpmBasedFuelLimiterCoordinator();
+    cm550_FUN_0001b83e();
+    _scheduler_phase_index = 0x25;
+    break;
+  case 0x25:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    vp44_periodicTaskSet_governorProtection();
+    cm550_FUN_0001b6a2();
+    cm550_shutdownProtectionSlowCycle10Coordinator();
+    cm550_FUN_0001b846();
+    _scheduler_phase_index = 0x26;
+    break;
+  case 0x26:
+    cm550_ioDriverStrobeHandlerWrapper();
+    vp44_evenPhaseSchedulerTaskSet();
+    cm550_periodicTaskSet_fuelTiming();
+    cm550_FUN_0001b6aa();
+    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    vp44DiagnosticControlSlowCycle20Coordinator();
+    vp44_FUN_000127c2();
+    _scheduler_phase_index = 0x27;
+    break;
+  case 0x27:
+    cm550_ioDriverStrobeHandlerWrapper();
+    cm550_oddPhaseSchedulerTaskSet();
+    periodicTaskSet_fuelDemand();
+    cm550_FUN_0001b6b2();
+    cm550_FUN_0001b732();
+    cm550_FUN_0001b862();
+    _scheduler_phase_index = 0;
+    break;
+  default:
+    _scheduler_phase_index = 0;
+  }
+  if (_enable_for_the_executive_timing_data_gatherer_enabled_disabled != 0) {
+    wVar1 = CTM4_BIUTBR;
+    _scheduler_phase_elapsed_ticks = wVar1 - _DAT_0080068e;
+    if (*(ushort *)(_scheduler_timing_record_ptr + 8) < _scheduler_phase_elapsed_ticks) {
+      *(ushort *)(_scheduler_timing_record_ptr + 8) = _scheduler_phase_elapsed_ticks;
+    }
+    if (_scheduler_phase_elapsed_ticks < *(ushort *)(_scheduler_timing_record_ptr + 6)) {
+      *(ushort *)(_scheduler_timing_record_ptr + 6) = _scheduler_phase_elapsed_ticks;
+    }
+    *(uint *)_scheduler_timing_record_ptr =
+         (uint)_scheduler_phase_elapsed_ticks + *(int *)_scheduler_timing_record_ptr;
+    *(short *)(_scheduler_timing_record_ptr + 4) = *(short *)(_scheduler_timing_record_ptr + 4) + 1;
+    if ((executive_frame_timing_header[2] < _scheduler_phase_elapsed_ticks) &&
+       (*(short *)(_scheduler_timing_record_ptr + 10) =
+             *(short *)(_scheduler_timing_record_ptr + 10) + 1,
+       _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 != -1)) {
+      _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 =
+           _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 + 1;
+    }
+    _scheduler_timing_record_ptr = _scheduler_timing_record_ptr + 0x10;
+  }
+  SIM_SWSR = 0x55;
+  SIM_SWSR = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
+  return CONCAT44(in_D0,in_D1);
+}

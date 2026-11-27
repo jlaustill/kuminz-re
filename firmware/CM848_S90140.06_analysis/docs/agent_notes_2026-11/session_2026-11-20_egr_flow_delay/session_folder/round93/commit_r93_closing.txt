@@ -1,0 +1,14 @@
+docs: round 93 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: the round 93 entry - the round 91 plate comment fix, the 52 function rows that sat in the middle of
+  a function, the fault freeze frame struct with its parallel function names, the 45 executive frame task sets, the
+  two typing passes (1943 rows), each with its proof - and the round 94 leads: the function naming workflow's four
+  batches are still to apply (seven of its agents died on 529 Overloaded server errors; it was relaunched in a form
+  that restarts a dead agent from its notes), the families not started, the typing that is left.
+  Two round 92 leads gave an instruction address for a function row (0x1d9ca / 0x1ff4e): the rows are 0x1d9b4 / 0x1ff38.
+- work/todo.md: round 93 on the task 046 line.
+- The session archive: session_folder/round93/ (111 scripts, maps, proofs and commit messages; the agents' scratch
+  folders follow with the round that applies their results), the round 93 logs in the large-files tarball, the
+  README section, the PR body copy.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

@@ -1,0 +1,387 @@
+	.text
+	link.w	%a6, #65532
+	movem.l	%d2-%d5/%a2-%a5, -(%sp)
+	lea	(65532,%a6), %a4
+	lea	(65532,%a6), %a5
+	jsr	$d23c
+	cmpi.w	#7, $80ded4
+	beq	$20
+	cmpi.w	#3, $80ded4
+	beq	$16
+	cmpi.w	#2, $80ded4
+	beq	$c
+	cmpi.w	#30, $80ded4
+	bne	$72e
+	move.w	$80ded4, %d0
+	beq	$110
+	move.l	$80a9a8, %a0
+	move.w	(4,%a0), %d0
+	ext.l	%d0
+	move.l	$80a9a8, %a0
+	move.w	(6,%a0), %d1
+	ext.l	%d1
+	add.l	%d1, %d0
+	move.w	$80a994, %d1
+	mulu.l	%d1, %d0
+	move.l	%d0, %d2
+	bne	$e
+	move.w	$80ccf6, $80a972
+	bra	$90
+	move.w	$80a992, %d0
+	move.l	#1024, %d1
+	sub.l	%d0, %d1
+	move.l	%d1, %d0
+	move.w	$80d32e, %d1
+	move.w	$8091de, %d3
+	sub.l	%d3, %d1
+	mulu.l	%d1, %d0
+	move.l	%d0, %d3
+	lsl.l	#7, %d0
+	move.l	%d2, %d1
+	divs.l	%d1, %d0
+	move.l	%d0, %d2
+	cmpi.l	#12500, %d2
+	blt	$8
+	move.l	#32000, %d2
+	bra	$1c
+	cmpi.l	#4294954796, %d2
+	bgt	$8
+	move.l	#4294935296, %d2
+	bra	$c
+	move.l	%d2, %d0
+	lsl.l	#0, %d0
+	divs.l	%d1, %d0
+	move.l	%d0, %d2
+	move.w	$80ccf6, %d0
+	add.l	%d0, %d2
+	cmpi.l	#65535, %d2
+	ble	$a
+	move.w	#65535, $80a972
+	bra	$12
+	bge	$8
+	bra	$6
+	move.w	%d2, $80a972
+	move.w	$80a972, %d0
+	lsl.l	%d1, %d0
+	move.l	%d0, $80a988
+	move.w	$80a972, %d0
+	move.w	$80ccf6, %d1
+	sub.l	%d1, %d0
+	move.l	%d0, (%a4)
+	cmpi.l	#32000, (%a4)
+	blt	$6
+	move.w	#32000, %d3
+	bra	$1a
+	cmpi.l	#4294935296, (%a4)
+	bgt	$6
+	move.w	#33536, %d3
+	bra	$c
+	move.w	(2,%a5), %d3
+	bra	$6
+	move.w	$80a978, %d3
+	cmpi.w	#7, $80ded4
+	beq	$32
+	move.w	$80a990, -(%sp)
+	jsr	$34f8a
+	move.w	%d0, $80a972
+	move.l	$80a984, %a0
+	move.w	(%a0), %d0
+	asr.l	#2, %d0
+	move.w	%d0, $800110
+	bra	$4
+	bsr.w	$fd9c
+	move.w	$80a972, %d0
+	move.w	$80ccf6, %d1
+	sub.l	%d1, %d0
+	move.l	%d0, (%a4)
+	cmpi.l	#32000, (%a4)
+	blt	$a
+	move.w	#32000, $80a978
+	bra	$1a
+	cmpi.l	#4294935296, (%a4)
+	bgt	$a
+	move.w	#33536, $80a978
+	bra	$8
+	move.w	(2,%a5), $80a978
+	cmpi.w	#1, $80a9a0
+	bne	$48
+	move.w	#1, $80a974
+	move.w	$80a932, %d3
+	move.w	$80a934, $8000fa
+	move.w	$80a936, $8000f4
+	move.w	$80a938, %d4
+	move.w	$80a93a, %d2
+	move.w	$80a93c, %d5
+	move.w	$8091de, $800112
+	bra	$162
+	move.w	$800100, %d0
+	add.b	%d1, (26128,%a6)
+	move.w	$80ded4, %d0
+	beq	$12c
+	move.w	#1, $80a974
+	move.l	$80a9a8, %a0
+	move.w	(12,%a0), %d0
+	move.l	$80a9a8, %a0
+	cmp.w	(14,%a0), %d0
+	bne	$12
+	bra	$d8
+	move.w	$80d32e, %d0
+	move.l	$80a9a8, %a2
+	bls	$5e
+	move.w	(12,%a2), %d0
+	ext.l	%d0
+	move.w	(14,%a2), %d1
+	ext.l	%d1
+	sub.l	%d1, %d0
+	move.l	%d0, -(%sp)
+	move.w	(16,%a2), %d0
+	ext.l	%d0
+	move.l	#256, %d1
+	sub.l	%d0, %d1
+	move.l	%d1, -(%sp)
+	move.w	$80d32e, %d0
+	move.w	$8091de, %d1
+	sub.l	%d1, %d0
+	move.l	%d0, -(%sp)
+	jsr	$35076
+	lea	(12,%sp), %sp
+	move.l	%d0, %d2
+	cmpi.l	#5888, %d2
+	ble	$6
+	move.l	#5888, %d2
+	move.w	%d2, %d0
+	move.w	%d0, $8000fa
+	bra	$64
+	move.w	(12,%a2), %d0
+	ext.l	%d0
+	move.w	(14,%a2), %d1
+	ext.l	%d1
+	sub.l	%d1, %d0
+	move.l	%d0, -(%sp)
+	move.w	(16,%a2), %d0
+	ext.l	%d0
+	move.l	#256, %d1
+	sub.l	%d0, %d1
+	move.l	%d1, -(%sp)
+	move.w	$8091de, %d0
+	move.w	$80d32e, %d1
+	sub.l	%d1, %d0
+	move.l	%d0, -(%sp)
+	jsr	$35076
+	lea	(12,%sp), %sp
+	move.l	%d0, %d2
+	cmpi.l	#5888, %d2
+	ble	$6
+	move.l	#5888, %d2
+	move.w	%d2, %d0
+	move.w	%d0, $8000fa
+	neg.w	%d2
+	move.w	$80ccf6, $8000f4
+	move.w	$80d32e, %d5
+	move.w	$8091de, $800112
+	bra	$18
+	move.w	$80a97c, %d4
+	move.w	$80a97e, %d2
+	move.w	$80a980, %d5
+	move.w	$80ccf6, %d0
+	move.w	$8000f4, %d1
+	sub.l	%d1, %d0
+	move.l	%d0, (%a4)
+	cmpi.l	#8000, (%a4)
+	blt	$a
+	move.w	#8000, $80a970
+	bra	$1a
+	cmpi.l	#4294959296, (%a4)
+	bgt	$a
+	move.w	#57536, $80a970
+	bra	$8
+	move.w	(2,%a5), $80a970
+	move.w	$80ccf6, $8000f4
+	move.w	$80a978, %d0
+	sub.w	%d3, %d0
+	move.w	%d0, $80a96e
+	cmpi.w	#32000, $80a96e
+	blt	$a
+	move.w	#32000, $80a96e
+	bra	$18
+	move.w	$80a96e, %d0
+	ext.l	%d0
+	cmpi.l	#4294935296, %d0
+	bgt	$8
+	move.w	#33536, $80a96e
+	move.l	$80a9a8, %a3
+	move.l	%a3, %a2
+	move.w	(%a3), %d0
+	ext.l	%d0
+	move.w	(%a2), %d1
+	ext.l	%d1
+	add.l	%d1, %d0
+	move.w	$80a96e, %d1
+	ext.l	%d1
+	mulu.l	%d1, %d0
+	move.l	%d0, $8000f6
+	move.w	(%a2), %d0
+	ext.l	%d0
+	move.w	(6,%a3), %d1
+	ext.l	%d1
+	add.l	%d1, %d0
+	move.w	%d3, %d1
+	ext.l	%d1
+	mulu.l	%d1, %d0
+	move.w	$80a970, %d0
+	move.l	$8000f6, %d0
+	asr.l	%d1, %d0
+	move.l	%d0, $8000f6
+	cmpi.l	#942080, $8000f6
+	blt	$c
+	move.l	#942080, $8000f6
+	bra	$16
+	cmpi.l	#4294025216, $8000f6
+	bgt	$a
+	move.l	#4294025216, $8000f6
+	move.l	$80a9a8, %a0
+	move.w	$80a96e, %d0
+	move.l	%d0, (%a4)
+	move.l	$80a9a8, %a0
+	move.w	$80a970, %d0
+	sub.l	%d0, (%a4)
+	move.l	(%a4), %d0
+	asr.l	%d1, %d0
+	move.l	%d0, (%a4)
+	move.w	(2,%a5), %d0
+	blt	$2c
+	move.w	$807abe, %d0
+	sub.w	%d0, (2,%a5)
+	move.w	(2,%a5), %d0
+	blt	$c
+	move.w	$807ac2, $80a96c
+	bra	$56
+	move.w	(2,%a5), $80a96c
+	bra	$4c
+	move.w	(2,%a5), %d0
+	ext.l	%d0
+	move.w	$807abe, %d1
+	ext.l	%d1
+	neg.l	%d1
+	cmp.l	%d1, %d0
+	bgt	$32
+	move.w	$807abe, %d0
+	add.w	%d0, (2,%a5)
+	move.w	(2,%a5), %d0
+	ext.l	%d0
+	move.w	$807ac2, %d1
+	ext.l	%d1
+	neg.l	%d1
+	move.l	%d1, %d3
+	cmp.l	%d1, %d0
+	bgt	$8
+	move.w	%d3, $80a96c
+	bra	$10
+	move.w	(2,%a5), $80a96c
+	bra	$6
+	move.w	$80a96c, %d0
+	ext.l	%d0
+	move.w	$80a994, %d1
+	mulu.l	%d1, %d0
+	asr.l	%d1, %d0
+	move.l	%d0, (%a4)
+	move.w	%d4, %d0
+	asr.l	%d1, %d0
+	add.l	%d0, (%a4)
+	cmpi.w	#5888, (2,%a5)
+	blt	$a
+	move.w	#5888, $80a97c
+	bra	$20
+	move.w	(2,%a5), %d0
+	ext.l	%d0
+	cmpi.l	#4294961408, %d0
+	bgt	$a
+	move.w	#59648, $80a97c
+	bra	$8
+	move.w	(2,%a5), $80a97c
+	move.w	$80a994, %d0
+	asr.l	#1, %d0
+	move.l	%d0, (%a4)
+	move.l	$8000fa, %d0
+	asr.l	%d1, %d0
+	move.w	$80a992, %d1
+	mulu.l	%d1, %d0
+	asr.l	#3, %d0
+	add.l	%d0, (%a4)
+	move.w	$80a992, %d0
+	move.w	%d4, %d1
+	ext.l	%d1
+	mulu.l	%d1, %d0
+	lsl.l	#4, %d0
+	add.l	%d0, (%a4)
+	cmpi.l	#4198498304, (%a4)
+	bge	$16
+	move.w	#5888, $8000fa
+	bra	$22
+	cmpi.l	#96468992, (%a4)
+	blt	$10
+	move.w	#5888, $8000fa
+	bra	$a
+	move.l	(%a4), %d0
+	lsl.l	#2, %d0
+	move.l	%d0, $8000fa
+	move.w	$8000fa, $80a97a
+	move.w	$80a97a, %d0
+	move.w	%d0, $80a97e
+	ext.l	%d0
+	cmpi.l	#4294961408, %d0
+	bgt	$a
+	move.w	#59648, $80a97e
+	bra	$12
+	cmpi.w	#5888, $80a97e
+	ble	$8
+	move.w	#5888, $80a97e
+	move.l	$80a9a8, %a2
+	move.w	$80a97e, %d0
+	move.l	%d0, (%a4)
+	move.w	%d2, %d0
+	sub.l	%d0, (%a4)
+	move.w	%d5, %d0
+	add.l	%d0, (%a4)
+	move.l	(%a4), %d0
+	asr.l	#0, %d0
+	move.l	%d0, (%a4)
+	cmpi.l	#4294961408, (%a4)
+	bgt	$a
+	move.w	#59648, $80a980
+	bra	$1a
+	cmpi.l	#5888, (%a4)
+	blt	$a
+	move.w	#5888, $80a980
+	bra	$8
+	move.w	(2,%a5), $80a980
+	move.w	$800110, %d0
+	move.l	#16384, %d1
+	sub.l	%d0, %d1
+	move.l	%d1, %d0
+	move.w	$8091de, %d1
+	mulu.l	%d1, %d0
+	move.w	$800112, %d1
+	btst	%d0, (%a0)
+	add.l	%d1, %d0
+	asr.l	%d1, %d0
+	move.w	%d0, $800112
+	cmpi.w	#5888, $800112
+	bls	$8
+	move.w	#5888, $800112
+	move.w	$80a980, %d0
+	btst	%d0, (%a2)
+	move.w	%d0, $800100
+	blt	$c
+	move.w	$80a99c, $80a976
+	bra	$24
+	move.w	$800100, %d0
+	bgt	$c
+	move.w	$80a99e, $80a976
+	bra	$a
+	move.w	$800100, $80a976
+	move.w	$80a976, $80ded2
+	move.w	$80ded4, $8000fe
+	movem.l	(65500,%a6), %d2-%d5/%a2-%a5
+	unlk	%a6
+	rts

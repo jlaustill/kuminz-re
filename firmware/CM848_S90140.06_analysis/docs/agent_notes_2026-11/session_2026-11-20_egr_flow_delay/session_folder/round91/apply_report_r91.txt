@@ -1,0 +1,224 @@
+S1 CM550 struct fault_count_record_t added (4 fields)
+S1 CM550 function 0x000144bc cm550_diagnosticCodeDebounceHandler -> cm550_countDownPreviouslyActiveFault
+S1 CM550 function 0x00014670 cm550_FUN_00014670 -> cm550_countDownPreviouslyActiveFaults
+S1 CM550 function 0x00014872 cm550_FUN_00014872 -> cm550_processFaultScanGroup
+S1 CM550 function 0x0002fddc cm550_diagnosticTableEntryClear -> cm550_resetFaultStatus
+S1 CM848 function 0x0001c9a0 cm848_faultTimeoutHandler -> cm848_countDownPreviouslyActiveFault
+S1 CM848 function 0x0001cd1c cm848_activeFaultScanProcessor -> cm848_countDownPreviouslyActiveFaults
+S1 CM550 global 0x00805a1c diagnostic_fault_status_change_time -> fault_count_table fault_count_record_t[125]
+S1 CM550 removed global 0x00805a24 diagnostic_fault_status_table
+S1 CM550 removed global 0x00805a25 diagnostic_fault_occurrence_count
+S1 CM550 removed global 0x00805a36 diagnostic_fault_status_array
+S1 CM550 removed global 0x00805a38 diagnostic_snapshot_throttle_value
+S1 CM550 removed global 0x00805a3e diagnostic_snapshot_fuel_value
+S1 CM550 removed global 0x00805a42 diagnostic_snapshot_sensor_reading
+S1 CM550 removed global 0x00805a44 diagnostic_snapshot_throttle_raw
+S1 CM550 removed global 0x00805df2 fault_flags_active_base
+S1 CM550 removed global 0x00805df4 fault_status_flags_2
+S1 CM550 removed global 0x00805df6 engine_fault_status_reg
+S1 CM550 removed global 0x00805dfa io_fault_status_reg_1
+S1 CM550 removed global 0x00805dfc io_fault_status_reg_2
+S1 CM550 removed global 0x00805dfe io_fault_status_reg_3
+S1 CM550 removed global 0x00805e00 io_fault_status_reg_4
+S1 CM550 removed global 0x00805e12 vp44_status_register_5e12
+S1 CM550 removed global 0x00805e14 vp44_fault_status_reg
+S1 CM550 removed global 0x00805e16 vp44_fso_fault_flags_active
+S1 CM550 removed global 0x00805e32 fault_flags_history_base
+S1 CM550 removed global 0x00805e34 fault_status_flags_8_previous
+S1 CM550 removed global 0x00805e36 engine_fault_latch_reg
+S1 CM550 removed global 0x00805e3a io_fault_latch_reg_1
+S1 CM550 removed global 0x00805e3c io_fault_latch_reg_2
+S1 CM550 removed global 0x00805e3e io_fault_latch_reg_3
+S1 CM550 removed global 0x00805e40 io_fault_latch_reg_4
+S1 CM550 removed global 0x00805e52 vp44_fso_fault_flags
+S1 CM550 removed global 0x00805e54 vp44_fso_fault_accumulator
+S1 CM550 removed global 0x00805e56 vp44_fso_fault_flags_history
+S1 CM550 removed global 0x00805e72 diagnostic_fault_group_bitmask_array
+S1 CM550 removed global 0x00805eb4 rpm_histogram_buffer_start
+S1 CM550 function 0x0001452e cm550_phase2_sensor_data_processor -> deleted_functions.csv
+S2 CM550 struct datalogger_trigger_t added (8 fields)
+S2 CM550 struct datalogger_data_parameter_t added (3 fields)
+S2 CM550 struct datalogger_trigger_information_t added (4 fields)
+S2 CM550 function 0x000138b6 cm550_FUN_000138b6 -> cm550_updateDataloggerTriggers
+S2 CM550 function 0x00013a5c cm550_FUN_00013a5c -> cm550_recordDataloggerSamples
+S2 CM550 function 0x00013cc8 cm550_FUN_00013cc8 -> cm550_initializeDatalogger
+S2 CM550 function 0x00013d42 cm550_FUN_00013d42 -> cm550_selectDataloggerSamplePeriod
+S2 CM550 function 0x00013dbe cm550_FUN_00013dbe -> cm550_resolveDataloggerTriggerAddresses
+S2 CM550 function 0x00013e12 cm550_FUN_00013e12 -> cm550_resolveDataloggerDataParameterAddresses
+S2 CM550 function 0x00013e64 cm550_FUN_00013e64 -> cm550_findDataloggerTriggerFaultIndexes
+S2 CM550 function 0x00013ed8 cm550_FUN_00013ed8 -> cm550_evaluateDataloggerTrigger
+S2 CM550 function 0x00014292 cm550_FUN_00014292 -> cm550_copyDataloggerSampleBuffer
+S2 CM550 global 0x00803d64 (new) -> datalogger_triggers_cal datalogger_trigger_t[4]
+S2 CM550 global 0x00803da4 datalogger_data_1_length_cal -> datalogger_data_parameters_cal datalogger_data_parameter_t[5]
+S2 CM550 global 0x00803dc4 (new) -> datalogger_sample_rate_code_cal word
+S2 CM550 global 0x00803dc6 (new) -> datalogger_trigger_mode_cal word
+S2 CM550 global 0x00803dc8 (new) -> datalogger_data_parameter_count_cal word
+S2 CM550 global 0x0080bac4 snapshot_capture_active_flag -> datalogger_event_logging_active_flag word
+S2 CM550 global 0x0080bac6 (new) -> datalogger_and_inputs_trigger_flag word
+S2 CM550 global 0x0080bac8 (new) -> datalogger_or_input_trigger_flag word
+S2 CM550 global 0x0080baca trending_trigger_detected_flag -> datalogger_trigger_detected_flag word
+S2 CM550 global 0x00800352 (new) -> datalogger_setup_complete_flag byte
+S2 CM550 global 0x00800353 trending_sample_rate_divisor -> datalogger_sample_period_passes byte
+S2 CM550 global 0x00800354 scheduler_phase_execution_time -> datalogger_sample_due_flag byte
+S2 CM550 global 0x00800356 scheduler_reserved_padding -> datalogger_trigger_parameter_addresses dword[4]
+S2 CM550 global 0x00800366 flash_write_data_pointer -> datalogger_trigger_fault_indexes byte[4]
+S2 CM550 global 0x0080036a flash_write_end_address -> datalogger_trigger_satisfied_flags byte[4]
+S2 CM550 global 0x0080036e fuel_demand_rating_table_size -> datalogger_trigger_previous_fault_status byte[4]
+S2 CM550 global 0x00800372 (new) -> datalogger_ring_buffer_cleared_flag byte
+S2 CM550 global 0x00800374 fuel_demand_blend_input -> datalogger_sample_ring_buffer byte[400]
+S2 CM550 global 0x00800504 data_record_buffer_write_ptr -> datalogger_ring_buffer_write_pointer byte *
+S2 CM550 global 0x00800508 (new) -> datalogger_data_parameter_addresses dword[5]
+S2 CM550 global 0x0080051c data_record_byte_counter -> datalogger_post_trigger_byte_count byte
+S2 CM550 global 0x0080051e trending_sample_counter -> datalogger_sample_period_counter word
+S2 CM550 global 0x00800520 (new) -> datalogger_manual_trigger_switch_latch byte
+S2 CM550 global 0x00800521 trending_valid_channel_count -> datalogger_logged_parameter_count byte
+S2 CM550 global 0x00800522 (new) -> datalogger_pending_trigger_information datalogger_trigger_information_t
+S2 CM550 global 0x0080052a (new) -> datalogger_event_capture_complete_flag byte
+S2 CM550 global 0x00804fca (new) -> datalogger_event_sample_buffers byte[800]
+S2 CM550 global 0x008052ea (new) -> datalogger_event_trigger_information datalogger_trigger_information_t[2]
+S2 CM550 global 0x008052fa (new) -> datalogger_event_1_logged_flag word
+S2 CM550 global 0x008052fc (new) -> datalogger_event_2_logged_flag word
+S2 CM550 removed global 0x00803d65 datalogger_trigger_1_disable_cal
+S2 CM550 removed global 0x00803d66 datalogger_trigger_1_fault_code_flag_cal
+S2 CM550 removed global 0x00803d6a datalogger_trigger_1_parameter_id_or_fault_code_cal
+S2 CM550 removed global 0x00803d95 datalogger_trigger_4_disable_cal
+S2 CM550 removed global 0x00803da6 datalogger_data_1_parameter_id_cal
+S2 CM550 removed global 0x00800358 main_loop_phase_index
+S2 CM550 removed global 0x0080035a main_loop_reserved
+S2 CM550 removed global 0x0080035c scheduler_phase_pointer
+S2 CM550 removed global 0x00800360 engine_operating_mode_cached
+S2 CM550 removed global 0x00800362 flash_control_register_ptr
+S2 CM550 removed global 0x00800370 fuel_demand_table_1_ptr_370
+S2 CM550 removed global 0x00800376 fuel_demand_rating_ptr
+S2 CM550 removed global 0x0080037a fuel_demand_blend_table_1_size
+S2 CM550 removed global 0x0080037c fuel_demand_table_2_ptr_37c
+S2 CM550 removed global 0x00800380 rpm_snapshot_0
+S2 CM550 removed global 0x00800382 fuel_demand_table_2_base
+S2 CM550 removed global 0x00800384 fuel_demand_table_3_ptr_384
+S2 CM550 removed global 0x00800388 fuel_snapshot_0
+S2 CM550 removed global 0x0080038a fuel_demand_table_4_ptr
+S2 CM550 removed global 0x0080038e fuel_demand_blend_table_2_size
+S2 CM550 removed global 0x00800390 fuel_demand_table_5_ptr
+S2 CM550 removed global 0x00800394 rpm_snapshot_1
+S2 CM550 removed global 0x00800396 fuel_demand_table_5_base
+S2 CM550 removed global 0x00800398 fuel_demand_table_6_ptr
+S2 CM550 removed global 0x0080039c fuel_snapshot_1
+S2 CM550 removed global 0x0080039e fuel_demand_table_7_ptr
+S2 CM550 removed global 0x008003a4 fuel_limit_table_1_ptr
+S2 CM550 removed global 0x008003ac fuel_limit_table_2_ptr
+S2 CM550 removed global 0x008003b0 fuel_limit_table_1_base_ptr
+S2 CM550 removed global 0x008003b2 fuel_limit_lookup_1_base
+S2 CM550 removed global 0x008003b8 fuel_limit_lookup_1_divisor
+S2 CM550 removed global 0x008003ba fuel_limit_table_3_ptr
+S2 CM550 removed global 0x008003be fuel_limit_table_1_limit
+S2 CM550 removed global 0x008003c0 fuel_limit_intake_temp_ptr
+S2 CM550 removed global 0x008003c6 fuel_limit_table_4_ptr
+S2 CM550 removed global 0x008003cc fuel_limit_lookup_2_divisor
+S2 CM550 removed global 0x008003ce fuel_limit_table_5_ptr
+S2 CM550 removed global 0x008003d2 fuel_limit_table_2_limit
+S2 CM550 removed global 0x008003d4 fuel_limit_table_6_ptr
+S2 CM550 removed global 0x008003d8 fuel_delivery_param_ptr
+S2 CM550 removed global 0x008003e0 fuel_delivery_pid_integral
+S2 CM550 removed global 0x008003e4 derate_bit4_previous_state
+S2 CM550 removed global 0x008003e6 derate_bit4_changed_flag
+S2 CM550 removed global 0x008003e8 derate_bit8_previous_state
+S2 CM550 removed global 0x008003ea derate_bit8_changed_flag
+S2 CM550 removed global 0x008003ec derate_reference_value
+S2 CM550 removed global 0x008003ee derate_value_changed_flag
+S2 CM550 removed global 0x008003f0 interpolation_table_1_base
+S2 CM550 removed global 0x008003f2 fuel_timing_mode_table_1_ptr
+S2 CM550 removed global 0x008003f6 fuel_timing_mode_rpm_input_1
+S2 CM550 removed global 0x008003f8 fuel_timing_mode_lookup_1_base
+S2 CM550 removed global 0x008003fa fuel_timing_mode_table_2_ptr
+S2 CM550 removed global 0x008003fe derate_interpolation_value_1
+S2 CM550 removed global 0x00800400 fuel_timing_mode_intake_temp_ptr
+S2 CM550 removed global 0x00800404 interpolation_table_2_base
+S2 CM550 removed global 0x00800406 fuel_timing_mode_table_3_ptr
+S2 CM550 removed global 0x0080040a fuel_timing_mode_rpm_input_2
+S2 CM550 removed global 0x0080040c fuel_timing_mode_lookup_2_base
+S2 CM550 removed global 0x0080040e fuel_timing_mode_table_4_ptr
+S2 CM550 removed global 0x00800412 derate_interpolation_value_2
+S2 CM550 removed global 0x00800414 fuel_timing_mode_table_5_ptr
+S2 CM550 removed global 0x00800418 general_counter_0
+S2 CM550 removed global 0x00804fcd diagnostic_pid_dtc_index
+S3 CM550 struct all_speed_governor_gain_set_t added (9 fields)
+S3 CM550 global 0x00807b92 j1939_tsc1_speed_control_condition_gain_sets -> j1939_tsc1_speed_control_condition_gain_sets all_speed_governor_gain_set_t[4]
+S3 CM550 global 0x00807be0 asg_proportional_gain_1_calibration_0_0_135 -> all_speed_governor_throttle_mode_gain_set all_speed_governor_gain_set_t
+S3 CM550 global 0x0080a95a asg_application_specific_proportional_gain_1_0_0_135 -> all_speed_governor_application_gain_set all_speed_governor_gain_set_t
+S3 CM550 global 0x0080a9a8 asg_governor_gains_ptr -> all_speed_governor_gain_set_pointer all_speed_governor_gain_set_t *
+S3 CM550 removed global 0x00807be2 ASPP02GN
+S3 CM550 removed global 0x00807be4 asg_integral_gain_1_calibration_0_6_75
+S3 CM550 removed global 0x00807be6 asg_integral_gain_2_calibration_0_6_75
+S3 CM550 removed global 0x00807be8 asg_derivative_gain_1_calibration_0_0_0025
+S3 CM550 removed global 0x00807bea ASDV02GN
+S3 CM550 removed global 0x00807bec AS01CF
+S3 CM550 removed global 0x00807bee AS02CF
+S3 CM550 removed global 0x00807bf0 AS03CF
+S3 CM550 removed global 0x0080a95c asg_application_specific_proportional_gain_2_0_0_135
+S3 CM550 removed global 0x0080a95e asg_application_specific_integral_gain_1_0_6_75
+S3 CM550 removed global 0x0080a960 asg_application_specific_integral_gain_2_0_6_75
+S3 CM550 removed global 0x0080a962 asg_application_specific_derivative_gain_1_0_0_0025
+S3 CM550 removed global 0x0080a964 asg_application_specific_derivative_gain_2_0_0_0025
+S3 CM550 removed global 0x0080a966 asg_application_specific_compensation_filter_coef_1_0_10
+S3 CM550 removed global 0x0080a968 asg_application_specific_compensation_filter_coef_2_0_10
+S3 CM550 removed global 0x0080a96a asg_application_specific_compensation_filter_coef_3_0_10
+T1 CM550 struct j1939_receive_handler_entry_t added (2 fields)
+T1 CM550 struct j1939_input_signal_descriptor_t added (4 fields)
+T1 CM550 function 0x00021a5c (new) -> receivePgn57344CabMessage1
+T1 CM848 function 0x0050b734 cm848_receivePgn57344CabMessage1 -> receivePgn57344CabMessage1
+T1 CM550 function 0x00021a8c cm550_FUN_00021a8c -> receivePgn61441ElectronicBrakeController1Message
+T1 CM848 function 0x0050b77c cm848_receivePgn61441ElectronicBrakeController1Message -> receivePgn61441ElectronicBrakeController1Message
+T1 CM550 function 0x00021b88 cm550_FUN_00021b88 -> receivePgn61443ElectronicEngineController2Message
+T1 CM848 function 0x0050b8a4 cm848_receivePgn61443ElectronicEngineController2Message -> receivePgn61443ElectronicEngineController2Message
+T1 CM550 function 0x00021c3c (new) -> receivePgn65252ShutdownMessage
+T1 CM848 function 0x0050b98c cm848_receivePgn65252ShutdownMessage -> receivePgn65252ShutdownMessage
+T1 CM550 function 0x00021c74 cm550_FUN_00021c74 -> receivePgn65264PowerTakeoffInformationMessage
+T1 CM848 function 0x0050b9d8 cm848_receivePgn65264PowerTakeoffInformationMessage -> receivePgn65264PowerTakeoffInformationMessage
+T1 CM550 function 0x00021d44 cm550_FUN_00021d44 -> receivePgn65265CruiseControlVehicleSpeedMessage
+T1 CM848 function 0x0050bacc cm848_receivePgn65265CruiseControlVehicleSpeedMessage -> receivePgn65265CruiseControlVehicleSpeedMessage
+T1 CM550 function 0x00021272 cm550_canTransmissionController -> registerJ1939ReceiveHandler
+T1 CM848 function 0x00538eb0 cm848_registerJ1939ReceiveHandler -> registerJ1939ReceiveHandler
+T1 CM550 function 0x00021ef6 cm550_FUN_00021ef6 -> cm550_registerJ1939InputMessageHandlers
+T1 CM550 function 0x00021edc cm550_FUN_00021edc -> cm550_tickJ1939InputSupervision
+T1 CM550 global 0x00804234 (new) -> j1939_input_signal_timeouts word[25]
+T1 CM550 global 0x00800ab0 (new) -> j1939_receive_handler_table j1939_receive_handler_entry_t[16]
+T1 CM550 global 0x00800b10 (new) -> j1939_receive_handler_count byte
+T1 CM550 global 0x00020108 (new) -> j1939_input_signal_descriptor_table j1939_input_signal_descriptor_t[17]
+T1 CM550 global 0x00803f9c (new) -> j1939_engine_fan_requested_percent_speed_source_address_filter_cal byte
+T1 CM550 global 0x00803fa6 (new) -> j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal byte
+T1 CM550 global 0x0080d9dc can_received_source_address -> j1939_received_source_address byte
+T1 CM550 global 0x0080d70f multiplex_value_for_air_conditioner_pressure_switch_on_off -> j1939_received_air_conditioner_high_pressure_fan_switch byte
+T1 CM550 global 0x0080d710 multiplex_value_for_throttle_interlock_switch_on_off -> j1939_received_accelerator_interlock_switch byte
+T1 CM550 global 0x0080d711 multiplex_value_for_auxiliary_shutdown_switch_on_off -> j1939_received_engine_auxiliary_shutdown_switch byte
+T1 CM550 global 0x0080d712 multiplex_value_for_brake_switch_on_off -> j1939_received_brake_switch byte
+T1 CM550 global 0x0080d713 multiplex_value_for_clutch_switch_on_off -> j1939_received_clutch_switch byte
+T1 CM550 global 0x0080d714 multiplexed_accelerator_pedal_position -> j1939_received_accelerator_pedal_position_1 byte
+T1 CM550 global 0x0080d715 multiplex_value_for_cruise_enable_switch_switch_on_off -> j1939_received_cruise_control_enable_switch byte
+T1 CM550 global 0x0080d716 multiplex_value_for_cruise_resume_switch_on_off -> j1939_received_cruise_control_resume_switch byte
+T1 CM550 global 0x0080d717 multiplex_value_for_cruise_set_switch_on_off -> j1939_received_cruise_control_set_switch byte
+T1 CM550 global 0x0080d718 multiplex_value_for_decrement_switch_on_off -> j1939_received_engine_idle_decrement_switch byte
+T1 CM550 global 0x0080d719 muxed_value_for_the_amount_of_engine_brake_requested_0_100 -> j1939_received_engine_retarder_selection byte
+T1 CM550 global 0x0080d71a multiplex_value_for_idle_switch_on_off -> j1939_received_accelerator_pedal_1_low_idle_switch byte
+T1 CM550 global 0x0080d71b multiplex_value_for_increment_switch_on_off -> j1939_received_engine_idle_increment_switch byte
+T1 CM550 global 0x0080d71c multiplexed_value_for_requested_fan_speed_0_100 -> j1939_received_engine_fan_requested_percent_speed byte
+T1 CM550 global 0x0080d71d multiplex_value_for_pto_on_switch_on_off -> j1939_received_power_take_off_on_switch byte
+T1 CM550 global 0x0080d71e multiplex_value_for_pto_resume_switch_on_off -> j1939_received_power_take_off_resume_switch byte
+T1 CM550 global 0x0080d71f multiplex_value_for_pto_set_switch_on_off -> j1939_received_power_take_off_set_switch byte
+T1 CM550 global 0x0080d720 muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250 -> j1939_received_wet_tank_pressure byte
+T1 CM550 global 0x0080d721 multiplex_value_for_remote_pto_switch_on_off -> j1939_received_remote_power_take_off_switch byte
+T1 CM550 global 0x0080d722 multiplexed_value_for_remote_accelerator_0_100 -> j1939_received_remote_accelerator_pedal_position byte
+T1 CM550 global 0x0080d723 multiplex_value_for_remote_throttle_switch_on_off -> j1939_received_remote_accelerator_enable_switch byte
+T1 CM550 global 0x0080d724 multiplex_value_for_test_switch_on_off -> j1939_received_engine_diagnostic_test_mode_switch byte
+T1 CM550 global 0x0080d725 multiplex_value_for_torque_derate_switch_on_off -> j1939_received_engine_derate_switch byte
+T1 CM848 global 0x0040aaba j1939_received_accelerator_pedal_position_2 -> j1939_received_wet_tank_pressure byte
+T1 CM550 removed global 0x00800b00 diagnostic_request_buffer
+T2 CM550 struct tsc1_source_configuration_t added (10 fields)
+T2 CM550 function 0x00031ace cm550_diagnosticSessionValidator -> findTsc1SourceConfiguration
+T2 CM848 function 0x00027cc4 cm848_findTsc1SourceConfiguration -> findTsc1SourceConfiguration
+T2 CM550 global 0x00808196 tsc1_source_configuration_1_data_link -> tsc1_source_configuration_table tsc1_source_configuration_t[5]
+T2 CM550 global 0x0080da72 datalink_session_config_pointer -> tsc1_matched_source_configuration_pointer tsc1_source_configuration_t *
+T2 CM550 global 0x0080da76 datalink_active_session_pointer -> tsc1_source_configuration_pointer tsc1_source_configuration_t *
+T2 CM550 global 0x0080da7a retarder_session_config_pointer -> retarder_tsc1_source_configuration_pointer tsc1_source_configuration_t *
+T2 CM848 field j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr -> j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer
+T2 CM848 field j1939_powertrain_control_state.tsc1_source_configuration_ptr -> j1939_powertrain_control_state.tsc1_source_configuration_pointer
+T2 CM848 field j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr -> j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer

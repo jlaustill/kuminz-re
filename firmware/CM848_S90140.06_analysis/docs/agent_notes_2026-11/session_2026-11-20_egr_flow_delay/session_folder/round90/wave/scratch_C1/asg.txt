@@ -1,0 +1,460 @@
+00c962: link.w	%a6, #65532
+00c966: movem.l	%d2-%d5/%a2-%a5, -(%sp)
+00c96a: lea	(65532,%a6), %a4
+00c96e: lea	(65532,%a6), %a5
+00c972: jsr	$d23c
+00c978: cmpi.w	#7, $80ded4
+00c980: beq	$20
+00c982: cmpi.w	#3, $80ded4
+00c98a: beq	$16
+00c98c: cmpi.w	#2, $80ded4
+00c994: beq	$c
+00c996: cmpi.w	#30, $80ded4
+00c99e: bne	$72e
+00c9a2: move.w	$80ded4, %d0
+00c9a8: cmp.w	$8000fe, %d0   [manual]
+00c9ae: beq	$110
+00c9b2: move.l	$80a9a8, %a0
+00c9b8: move.w	(4,%a0), %d0
+00c9bc: ext.l	%d0
+00c9be: move.l	$80a9a8, %a0
+00c9c4: move.w	(6,%a0), %d1
+00c9c8: ext.l	%d1
+00c9ca: add.l	%d1, %d0
+00c9cc: moveq	#0, %d1   [manual]
+00c9ce: move.w	$80a994, %d1
+00c9d4: mulu.l	%d1, %d0
+00c9d8: move.l	%d0, %d2
+00c9da: bne	$e
+00c9dc: move.w	$80ccf6, $80a972
+00c9e6: bra	$90
+00c9ea: moveq	#0, %d0   [manual]
+00c9ec: move.w	$80a992, %d0
+00c9f2: move.l	#1024, %d1
+00c9f8: sub.l	%d0, %d1
+00c9fa: move.l	%d1, %d0
+00c9fc: moveq	#0, %d1   [manual]
+00c9fe: move.w	$80d32e, %d1
+00ca04: moveq	#0, %d3   [manual]
+00ca06: move.w	$8091de, %d3
+00ca0c: sub.l	%d3, %d1
+00ca0e: mulu.l	%d1, %d0
+00ca12: move.l	%d0, %d3
+00ca14: lsl.l	#7, %d0
+00ca16: move.l	%d2, %d1
+00ca18: divs.l	%d1, %d0
+00ca1c: move.l	%d0, %d2
+00ca1e: cmpi.l	#12500, %d2
+00ca24: blt	$8
+00ca26: move.l	#32000, %d2
+00ca2c: bra	$1c
+00ca2e: cmpi.l	#4294954796, %d2
+00ca34: bgt	$8
+00ca36: move.l	#4294935296, %d2
+00ca3c: bra	$c
+00ca3e: move.l	%d2, %d0
+00ca40: lsl.l	#0, %d0
+00ca42: moveq	#100, %d1   [manual]
+00ca44: divs.l	%d1, %d0
+00ca48: move.l	%d0, %d2
+00ca4a: moveq	#0, %d0   [manual]
+00ca4c: move.w	$80ccf6, %d0
+00ca52: add.l	%d0, %d2
+00ca54: cmpi.l	#65535, %d2
+00ca5a: ble	$a
+00ca5c: move.w	#65535, $80a972
+00ca64: bra	$12
+00ca66: tst.l	%d2   [manual]
+00ca68: bge	$8
+00ca6a: clr.w	$80a972   [manual]
+00ca70: bra	$6
+00ca72: move.w	%d2, $80a972
+00ca78: moveq	#0, %d0   [manual]
+00ca7a: move.w	$80a972, %d0
+00ca80: moveq	#16, %d1   [manual]
+00ca82: lsl.l	%d1, %d0
+00ca84: move.l	%d0, $80a988
+00ca8a: moveq	#0, %d0   [manual]
+00ca8c: move.w	$80a972, %d0
+00ca92: moveq	#0, %d1   [manual]
+00ca94: move.w	$80ccf6, %d1
+00ca9a: sub.l	%d1, %d0
+00ca9c: move.l	%d0, (%a4)
+00ca9e: cmpi.l	#32000, (%a4)
+00caa4: blt	$6
+00caa6: move.w	#32000, %d3
+00caaa: bra	$1a
+00caac: cmpi.l	#4294935296, (%a4)
+00cab2: bgt	$6
+00cab4: move.w	#33536, %d3
+00cab8: bra	$c
+00caba: move.w	(2,%a5), %d3
+00cabe: bra	$6
+00cac0: move.w	$80a978, %d3
+00cac6: cmpi.w	#7, $80ded4
+00cace: beq	$32
+00cad0: pea	$80a984   [manual]
+00cad6: move.w	$80a990, -(%sp)
+00cadc: jsr	$34f8a
+00cae2: addq.l	#6, %a7   [manual]
+00cae4: move.w	%d0, $80a972
+00caea: move.l	$80a984, %a0
+00caf0: move.w	(%a0), %d0
+00caf2: andi.l	#65535, %d0   [manual]
+00caf8: asr.l	#2, %d0
+00cafa: move.w	%d0, $800110
+00cb00: bra	$4
+00cb02: bsr.w	$fd9c
+00cb06: moveq	#0, %d0   [manual]
+00cb08: move.w	$80a972, %d0
+00cb0e: moveq	#0, %d1   [manual]
+00cb10: move.w	$80ccf6, %d1
+00cb16: sub.l	%d1, %d0
+00cb18: move.l	%d0, (%a4)
+00cb1a: cmpi.l	#32000, (%a4)
+00cb20: blt	$a
+00cb22: move.w	#32000, $80a978
+00cb2a: bra	$1a
+00cb2c: cmpi.l	#4294935296, (%a4)
+00cb32: bgt	$a
+00cb34: move.w	#33536, $80a978
+00cb3c: bra	$8
+00cb3e: move.w	(2,%a5), $80a978
+00cb46: cmpi.w	#1, $80a9a0
+00cb4e: bne	$48
+00cb50: move.w	#1, $80a974
+00cb58: move.w	$80a932, %d3
+00cb5e: move.w	$80a934, $8000fa
+00cb68: clr.w	$8000fc   [manual]
+00cb6e: move.w	$80a936, $8000f4
+00cb78: move.w	$80a938, %d4
+00cb7e: move.w	$80a93a, %d2
+00cb84: move.w	$80a93c, %d5
+00cb8a: move.w	$8091de, $800112
+00cb94: bra	$162
+00cb98: move.w	$800100, %d0
+00cb9e: cmp.w	$80d32e, %d0   [manual]
+00cba4: bne	$10
+00cba6: move.w	$80ded4, %d0
+00cbac: cmp.w	$8000fe, %d0   [manual]
+00cbb2: beq	$12c
+00cbb6: move.w	#1, $80a974
+00cbbe: move.l	$80a9a8, %a0
+00cbc4: move.w	(12,%a0), %d0
+00cbc8: move.l	$80a9a8, %a0
+00cbce: cmp.w	(14,%a0), %d0
+00cbd2: bne	$12
+00cbd4: clr.w	$8000fc   [manual]
+00cbda: clr.w	$8000fa   [manual]
+00cbe0: clr.w	%d2   [manual]
+00cbe2: bra	$d8
+00cbe6: move.w	$80d32e, %d0
+00cbec: cmp.w	$8091de, %d0   [manual]
+00cbf2: move.l	$80a9a8, %a2
+00cbf8: bls	$5e
+00cbfa: move.w	(12,%a2), %d0
+00cbfe: ext.l	%d0
+00cc00: move.w	(14,%a2), %d1
+00cc04: ext.l	%d1
+00cc06: sub.l	%d1, %d0
+00cc08: move.l	%d0, -(%sp)
+00cc0a: move.w	(16,%a2), %d0
+00cc0e: ext.l	%d0
+00cc10: move.l	#256, %d1
+00cc16: sub.l	%d0, %d1
+00cc18: move.l	%d1, -(%sp)
+00cc1a: moveq	#0, %d0   [manual]
+00cc1c: move.w	$80d32e, %d0
+00cc22: moveq	#0, %d1   [manual]
+00cc24: move.w	$8091de, %d1
+00cc2a: sub.l	%d1, %d0
+00cc2c: move.l	%d0, -(%sp)
+00cc2e: jsr	$35076
+00cc34: lea	(12,%sp), %sp
+00cc38: move.l	%d0, %d2
+00cc3a: cmpi.l	#5888, %d2
+00cc40: ble	$6
+00cc42: move.l	#5888, %d2
+00cc48: clr.w	$8000fc   [manual]
+00cc4e: move.w	%d2, %d0
+00cc50: move.w	%d0, $8000fa
+00cc56: bra	$64
+00cc58: move.w	(12,%a2), %d0
+00cc5c: ext.l	%d0
+00cc5e: move.w	(14,%a2), %d1
+00cc62: ext.l	%d1
+00cc64: sub.l	%d1, %d0
+00cc66: move.l	%d0, -(%sp)
+00cc68: move.w	(16,%a2), %d0
+00cc6c: ext.l	%d0
+00cc6e: move.l	#256, %d1
+00cc74: sub.l	%d0, %d1
+00cc76: move.l	%d1, -(%sp)
+00cc78: moveq	#0, %d0   [manual]
+00cc7a: move.w	$8091de, %d0
+00cc80: moveq	#0, %d1   [manual]
+00cc82: move.w	$80d32e, %d1
+00cc88: sub.l	%d1, %d0
+00cc8a: move.l	%d0, -(%sp)
+00cc8c: jsr	$35076
+00cc92: lea	(12,%sp), %sp
+00cc96: move.l	%d0, %d2
+00cc98: cmpi.l	#5888, %d2
+00cc9e: ble	$6
+00cca0: move.l	#5888, %d2
+00cca6: clr.w	$8000fc   [manual]
+00ccac: move.w	%d2, %d0
+00ccae: move.w	%d0, $8000fa
+00ccb4: .word 0x4479  (undecodable)
+00ccb6: ori.l	#16401474, %d0   [manual]
+00ccbc: move.w	$80ccf6, $8000f4
+00ccc6: clr.w	%d4   [manual]
+00ccc8: move.w	$80d32e, %d5
+00ccce: .word 0x9a79  (undecodable)
+00ccd0: ori.l	#2447258617, %d0   [manual]
+00ccd6: ori.l	#2447245440, %d0   [manual]
+00ccdc: btst	%d0, (%a2)
+00ccde: bra	$18
+00cce0: move.w	$80a97c, %d4
+00cce6: move.w	$80a97e, %d2
+00ccec: move.w	$80a980, %d5
+00ccf2: clr.w	$80a974   [manual]
+00ccf8: moveq	#0, %d0   [manual]
+00ccfa: move.w	$80ccf6, %d0
+00cd00: moveq	#0, %d1   [manual]
+00cd02: move.w	$8000f4, %d1
+00cd08: sub.l	%d1, %d0
+00cd0a: move.l	%d0, (%a4)
+00cd0c: cmpi.l	#8000, (%a4)
+00cd12: blt	$a
+00cd14: move.w	#8000, $80a970
+00cd1c: bra	$1a
+00cd1e: cmpi.l	#4294959296, (%a4)
+00cd24: bgt	$a
+00cd26: move.w	#57536, $80a970
+00cd2e: bra	$8
+00cd30: move.w	(2,%a5), $80a970
+00cd38: move.w	$80ccf6, $8000f4
+00cd42: move.w	$80a978, %d0
+00cd48: sub.w	%d3, %d0
+00cd4a: move.w	%d0, $80a96e
+00cd50: cmpi.w	#32000, $80a96e
+00cd58: blt	$a
+00cd5a: move.w	#32000, $80a96e
+00cd62: bra	$18
+00cd64: move.w	$80a96e, %d0
+00cd6a: ext.l	%d0
+00cd6c: cmpi.l	#4294935296, %d0
+00cd72: bgt	$8
+00cd74: move.w	#33536, $80a96e
+00cd7c: move.l	$80a9a8, %a3
+00cd82: move.l	%a3, %a2
+00cd84: addq.l	#4, %a2   [manual]
+00cd86: move.w	(%a3), %d0
+00cd88: ext.l	%d0
+00cd8a: move.w	(%a2), %d1
+00cd8c: ext.l	%d1
+00cd8e: add.l	%d1, %d0
+00cd90: move.w	$80a96e, %d1
+00cd96: ext.l	%d1
+00cd98: mulu.l	%d1, %d0
+00cd9c: move.l	%d0, $8000f6
+00cda2: move.w	(%a2), %d0
+00cda4: ext.l	%d0
+00cda6: move.w	(6,%a3), %d1
+00cdaa: ext.l	%d1
+00cdac: add.l	%d1, %d0
+00cdae: move.w	%d3, %d1
+00cdb0: ext.l	%d1
+00cdb2: mulu.l	%d1, %d0
+00cdb6: .word 0xd1b9  (undecodable)
+00cdb8: ori.l	#16134201, %d0   [manual]
+00cdbe: ori.l	#2842739179, %d0   [manual]
+00cdc4: ori.b	#185, %d2   [manual]
+00cdc8: ori.l	#16130105, %d0   [manual]
+00cdce: ori.l	#16151049, %d0   [manual]
+00cdd4: asr.l	%d1, %d0
+00cdd6: move.l	%d0, $8000f6
+00cddc: cmpi.l	#942080, $8000f6
+00cde6: blt	$c
+00cde8: move.l	#942080, $8000f6
+00cdf2: bra	$16
+00cdf4: cmpi.l	#4294025216, $8000f6
+00cdfe: bgt	$a
+00ce00: move.l	#4294025216, $8000f6
+00ce0a: move.l	$80a9a8, %a0
+00ce10: move.w	$80a96e, %d0
+00ce16: muls.w	8(%a0), %d0   [manual]
+00ce1a: move.l	%d0, (%a4)
+00ce1c: move.l	$80a9a8, %a0
+00ce22: move.w	$80a970, %d0
+00ce28: muls.w	10(%a0), %d0   [manual]
+00ce2c: sub.l	%d0, (%a4)
+00ce2e: move.l	(%a4), %d0
+00ce30: moveq	#13, %d1   [manual]
+00ce32: asr.l	%d1, %d0
+00ce34: move.l	%d0, (%a4)
+00ce36: move.w	(2,%a5), %d0
+00ce3a: cmp.w	$807abe, %d0   [manual]
+00ce40: blt	$2c
+00ce42: move.w	$807abe, %d0
+00ce48: sub.w	%d0, (2,%a5)
+00ce4c: move.w	(2,%a5), %d0
+00ce50: cmp.w	$807ac2, %d0   [manual]
+00ce56: blt	$c
+00ce58: move.w	$807ac2, $80a96c
+00ce62: bra	$56
+00ce64: move.w	(2,%a5), $80a96c
+00ce6c: bra	$4c
+00ce6e: move.w	(2,%a5), %d0
+00ce72: ext.l	%d0
+00ce74: move.w	$807abe, %d1
+00ce7a: ext.l	%d1
+00ce7c: neg.l	%d1
+00ce7e: cmp.l	%d1, %d0
+00ce80: bgt	$32
+00ce82: move.w	$807abe, %d0
+00ce88: add.w	%d0, (2,%a5)
+00ce8c: move.w	(2,%a5), %d0
+00ce90: ext.l	%d0
+00ce92: move.w	$807ac2, %d1
+00ce98: ext.l	%d1
+00ce9a: neg.l	%d1
+00ce9c: move.l	%d1, %d3
+00ce9e: cmp.l	%d1, %d0
+00cea0: bgt	$8
+00cea2: move.w	%d3, $80a96c
+00cea8: bra	$10
+00ceaa: move.w	(2,%a5), $80a96c
+00ceb2: bra	$6
+00ceb4: clr.w	$80a96c   [manual]
+00ceba: move.w	$80a96c, %d0
+00cec0: ext.l	%d0
+00cec2: moveq	#0, %d1   [manual]
+00cec4: move.w	$80a994, %d1
+00ceca: mulu.l	%d1, %d0
+00cece: moveq	#10, %d1   [manual]
+00ced0: asr.l	%d1, %d0
+00ced2: move.l	%d0, (%a4)
+00ced4: move.w	%d4, %d0
+00ced6: muls.w	$807ac0, %d0   [manual]
+00cedc: moveq	#10, %d1   [manual]
+00cede: asr.l	%d1, %d0
+00cee0: add.l	%d0, (%a4)
+00cee2: cmpi.w	#5888, (2,%a5)
+00cee8: blt	$a
+00ceea: move.w	#5888, $80a97c
+00cef2: bra	$20
+00cef4: move.w	(2,%a5), %d0
+00cef8: ext.l	%d0
+00cefa: cmpi.l	#4294961408, %d0
+00cf00: bgt	$a
+00cf02: move.w	#59648, $80a97c
+00cf0a: bra	$8
+00cf0c: move.w	(2,%a5), $80a97c
+00cf14: moveq	#0, %d0   [manual]
+00cf16: move.w	$80a994, %d0
+00cf1c: .word 0x4c39  (undecodable)
+00cf1e: ori.b	#128, %d0   [manual]
+00cf22: .word 0x00f6  (undecodable)
+00cf24: asr.l	#1, %d0
+00cf26: move.l	%d0, (%a4)
+00cf28: move.l	$8000fa, %d0
+00cf2e: moveq	#9, %d1   [manual]
+00cf30: asr.l	%d1, %d0
+00cf32: moveq	#0, %d1   [manual]
+00cf34: move.w	$80a992, %d1
+00cf3a: mulu.l	%d1, %d0
+00cf3e: asr.l	#3, %d0
+00cf40: add.l	%d0, (%a4)
+00cf42: moveq	#0, %d0   [manual]
+00cf44: move.w	$80a992, %d0
+00cf4a: subi.l	#1024, %d0   [manual]
+00cf50: move.w	%d4, %d1
+00cf52: ext.l	%d1
+00cf54: mulu.l	%d1, %d0
+00cf58: lsl.l	#4, %d0
+00cf5a: add.l	%d0, (%a4)
+00cf5c: cmpi.l	#4198498304, (%a4)
+00cf62: bge	$16
+00cf64: move.w	#5888, $8000fa
+00cf6c: clr.w	$8000fc   [manual]
+00cf72: .word 0x44b9  (undecodable)
+00cf74: ori.l	#16408610, %d0   [manual]
+00cf7a: cmpi.l	#96468992, (%a4)
+00cf80: blt	$10
+00cf82: move.w	#5888, $8000fa
+00cf8a: clr.w	$8000fc   [manual]
+00cf90: bra	$a
+00cf92: move.l	(%a4), %d0
+00cf94: lsl.l	#2, %d0
+00cf96: move.l	%d0, $8000fa
+00cf9c: move.w	$8000fa, $80a97a
+00cfa6: move.w	$80a97a, %d0
+00cfac: .word 0xd079  (undecodable)
+00cfae: ori.l	#2843489216, %d0   [manual]
+00cfb4: ori.l	#2843625664, %d0   [manual]
+00cfba: cmpi.l	#4294961408, %d0
+00cfc0: bgt	$a
+00cfc2: move.w	#59648, $80a97e
+00cfca: bra	$12
+00cfcc: cmpi.w	#5888, $80a97e
+00cfd4: ble	$8
+00cfd6: move.w	#5888, $80a97e
+00cfde: move.l	$80a9a8, %a2
+00cfe4: move.w	$80a97e, %d0
+00cfea: muls.w	12(%a2), %d0   [manual]
+00cfee: move.l	%d0, (%a4)
+00cff0: move.w	%d2, %d0
+00cff2: muls.w	14(%a2), %d0   [manual]
+00cff6: sub.l	%d0, (%a4)
+00cff8: move.w	%d5, %d0
+00cffa: muls.w	16(%a2), %d0   [manual]
+00cffe: add.l	%d0, (%a4)
+00d000: move.l	(%a4), %d0
+00d002: asr.l	#0, %d0
+00d004: move.l	%d0, (%a4)
+00d006: cmpi.l	#4294961408, (%a4)
+00d00c: bgt	$a
+00d00e: move.w	#59648, $80a980
+00d016: bra	$1a
+00d018: cmpi.l	#5888, (%a4)
+00d01e: blt	$a
+00d020: move.w	#5888, $80a980
+00d028: bra	$8
+00d02a: move.w	(2,%a5), $80a980
+00d032: moveq	#0, %d0   [manual]
+00d034: move.w	$800110, %d0
+00d03a: move.l	#16384, %d1
+00d040: sub.l	%d0, %d1
+00d042: move.l	%d1, %d0
+00d044: moveq	#0, %d1   [manual]
+00d046: move.w	$8091de, %d1
+00d04c: mulu.l	%d1, %d0
+00d050: move.w	$800112, %d1
+00d056: mulu.w	$800110, %d1   [manual]
+00d05c: add.l	%d1, %d0
+00d05e: moveq	#14, %d1   [manual]
+00d060: asr.l	%d1, %d0
+00d062: move.w	%d0, $800112
+00d068: cmpi.w	#5888, $800112
+00d070: bls	$8
+00d072: move.w	#5888, $800112
+00d07a: move.w	$80a980, %d0
+00d080: .word 0xd079  (undecodable)
+00d082: ori.l	#17970112, %d0   [manual]
+00d088: ori.l	#16822393, %d0   [manual]
+00d08e: ori.l	#2845601036, %d0   [manual]
+00d094: move.w	$80a99c, $80a976
+00d09e: bra	$24
+00d0a0: move.w	$800100, %d0
+00d0a6: cmp.w	$80a99e, %d0   [manual]
+00d0ac: bgt	$c
+00d0ae: move.w	$80a99e, $80a976
+00d0b8: bra	$a
+00d0ba: move.w	$800100, $80a976
+00d0c4: move.w	$80a976, $80ded2
+00d0ce: move.w	$80ded4, $8000fe
+00d0d8: movem.l	(65500,%a6), %d2-%d5/%a2-%a5
+00d0de: unlk	%a6
+00d0e0: rts

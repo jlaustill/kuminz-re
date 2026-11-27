@@ -1,0 +1,74 @@
+file	line	label	name	context
+global_variables.csv	492	WORD_ARRAY_0005c976	injection_quantity_auxiliary_base_map_x_axis	- read by cm848_dualAxisTableInterpolation callers with the WORD_ARRAY_0005c976 rpm axis (was the boost_in_ra
+global_variables.csv	668	DAT_003fd1ae	end_of_line_test_time_since_engine_start	lternatorTestStep, step 3): the engine running time counter DAT_003fd1ae must exceed it before the bat
+global_variables.csv	1464	DAT_0005c316	high_speed_governor_transient_gain_set_time_limit	Code: = pass counter x 20 (0x1fa4c), compared with DAT_0005c316 (the transient set time) and 
+global_variables.csv	2041	WORD_ARRAY_0005f8ac	auxiliary_quantity_main_correction_x_axis	.2 us counts); x input of the main-pulse interaction table (WORD_ARRAY_0005f8ac). Same construction as the pi
+global_variables.csv	2740	DAT_00408a66	oil_change_monitor_fuel_threshold_hundredth_gallons	mm3 = 0.01 US gallon) and compared with the dword 250000 at DAT_00408a66 (2500 gallons); cleared by th
+global_variables.csv	2741	DAT_003fee42	oil_change_monitor_reset_distance_pulses_cal	in cm848_updateOilChangeMonitor: lifetime_distance_pulses - DAT_003fee42 (the lifetime distance at the
+global_variables.csv	2741	DAT_00408a6a	oil_change_monitor_distance_threshold_pulses	ce at the last reset), compared with the dword 120000000 at DAT_00408a6a = 15000 miles at 8000 pulses 
+global_variables.csv	2741	DAT_003fd8ec	oil_change_monitor_minimum_distance_pulses_cal	ses per mile, and with the 16000000 (2000 miles) minimum at DAT_003fd8ec; cleared by the reset command
+global_variables.csv	2743	DAT_00408a6e	oil_change_monitor_engine_power_accumulator_threshold	il change monitor, soot by elimination: it is compared with DAT_00408a6e, the third of three consecuti
+global_variables.csv	3744	DAT_003fcdae	cruise_steady_state_debounce_counter	ntegrateCruiseRpmRatioChange; when the steady-cycle counter DAT_003fcdae reaches it the speed-error in
+global_variables.csv	4574	DAT_0005a48a	injection_timing_top_dead_center_offset	 x 3128 / 4096 = 162. Read by the PGN 65504 builder as (x + DAT_0005a48a) x 120 / 1024 and, via main_i
+global_variables.csv	4590	DAT_0005c318	high_speed_governor_high_reference_speed_threshold	, picks the filter coefficient set by comparing it with the DAT_0005c318 / DAT_0005c322 thresholds), b
+global_variables.csv	4590	DAT_0005c322	high_speed_governor_low_reference_speed_threshold	ter coefficient set by comparing it with the DAT_0005c318 / DAT_0005c322 thresholds), buildPgn65251Eng
+global_variables.csv	4844	DAT_00405a9c	injection_timing_torque_to_fuel_adjustment_minimum_limit	tion_timing_combustion_map_1_output) x 10 / 371 clamped to [DAT_00405a9c, injection_timing_torque_to_f
+global_variables.csv	5823	DAT_0005c93e	drivetrain_ratio_when_loaded_minimum_fueling	in_ratio_save_pending_flag is 1) and final_fueling is above DAT_0005c93e, i.e. in gear at high load; i
+global_variables.csv	5935	DAT_0040b86d	injection_angle_sequence_state_prev	previous-value snapshot of injection_angle_sequence_state (DAT_0040b86d = DAT_0040b86c before each tr
+global_variables.csv	5935	DAT_0040b86c	injection_angle_sequence_state	 snapshot of injection_angle_sequence_state (DAT_0040b86d = DAT_0040b86c before each transition) | e2m
+global_variables.csv	5936	DAT_0040b86f	injection_timing_tooth_phase	e TPU-A ch6 injection-timing event; written with phase byte DAT_0040b86f to TPU param 0x304162 via CON
+global_variables.csv	5938	DAT_0040b876	injection_timing_tooth_b_phase	eduleInjectionAnglesInSpeedLimpHome; paired with phase byte DAT_0040b876 into TPU param 0x304162 | e2m
+global_variables.csv	5964	DAT_00409e68	injection_quantity_pilot_fuel_pressure_limp_home_default	essure limp-home substitutions: the pilot quantity default (DAT_00409e68), the main timing  (was engin
+global_variables.csv	5997	DAT_00409e6e	injection_timing_pilot_override_switch	erm set the pilot timing: 0 computed offset, 7 the override DAT_00409e6e, 8 the governor-limit floor (
+global_variables.csv	6279	DAT_003fcff6	road_speed_governor_top_droop_gain_for_rear_axle_ratio_high	or_rear_axle_ratio_low (0x3fcff4, the normal path), or from DAT_003fcff6 while switch 31 (switch_input
+global_variables.csv	6435	DAT_0040b95c	injection_quantity_pilot_cold_correction_map_value	(DAT_0040b95c cold correction map value x f
+global_variables.csv	6458	DAT_0040b8dc	fuel_pressure_allowed_decay_model_copy	ounts passes with fuel_pressure_feedback_filtered below it; DAT_0040b8dc is a copy of it. Check B is o
+global_variables.csv	6463	DAT_00409e7e	injection_timing_pilot_offset_fuel_pressure_normal_value	 correction when in fuel press limp home'; the code selects DAT_00409e7e (512, normal) or DAT_00409e7c
+global_variables.csv	6463	DAT_00409e7c	injection_timing_pilot_offset_fuel_pressure_limp_home_default	 limp home'; the code selects DAT_00409e7e (512, normal) or DAT_00409e7c (85, while fuel_pressure_limp
+global_variables.csv	6526	DAT_0040b8c4	fuel_pressure_setpoint_deadband_active_flag	 otherwise it holds - a dead-band follower. It is used (and DAT_0040b8c4 = 1) only below 1500 rpm and 
+global_variables.csv	6553	DAT_0006442a	intake_air_heater_performance_test_loaded_sample_delay_ticks	Dwell countdown between test phases, reloaded from ROM DAT_0006442a / 00064424 / 00064428 (25 / 3
+global_variables.csv	6553	DAT_0006442c	intake_air_heater_performance_test_baseline_sample_delay_ticks	m848_monitorIntakeAirHeaterPerformance and initialised from DAT_0006442c in cm848_armIntakeAirHeaterPe
+global_variables.csv	6557	DAT_0006442e	intake_air_heater_performance_test_loaded_voltage_lower_window_adc	d of state 2); state 2 checks the ring average against it (-DAT_0006442e / +DAT_00064438) and state 3 
+global_variables.csv	6557	DAT_00064438	intake_air_heater_performance_test_loaded_voltage_upper_window_adc	tate 2 checks the ring average against it (-DAT_0006442e / +DAT_00064438) and state 3 subtracts it fro
+global_variables.csv	6647	DAT_00408886	cooling_fan_pwm_frequency_hz	art_fuel_* names are the fan control) and period (1000000 / DAT_00408886 us) - this calibration: 7 = r
+global_variables.csv	6676	DAT_00409fe4	wastegate_monitor_pass_high_load_threshold	f the pass-window check (boost inside the window at load >= DAT_00409fe4 and rpm >= minimum); reaching
+global_variables.csv	6915	DAT_0005a48a	injection_timing_top_dead_center_offset	= main_injection_timing - retard (dump 162 - 0), or -(DAT_0005a48a + retard) when ROM flag 0x409
+global_variables.csv	6929	DAT_004090f8	auxiliary_injection_end_limit_separation	el 6 handler then forces the auxiliary pulse off when (it - DAT_004090f8) < auxiliary start + s (was i
+global_variables.csv	6933	DAT_0040b8c8	fuel_pressure_setpoint_override_additive_flag	nning term 5), 2 adds the value to the final setpoint (flag DAT_0040b8c8). Only the setpoint calculato
+global_variables.csv	6967	DAT_00409aba	fuel_pressure_governor_demand_residual_override	word: DAT_00409aba (41) when that is non-zero, o
+global_variables.csv	6982	DAT_0040b940	injection_quantity_pilot_coolant_map_value	(DAT_0040b940 coolant map value x injection
+global_variables.csv	7042	DAT_00407802	transmission_cruise_resume_downshift_delay_time	table) (10 ms per count; 150 = 1.5 s here, the reload value DAT_00407802): the hold-off before a 4-3 d
+global_variables.csv	7042	DAT_00407802	transmission_cruise_resume_downshift_delay_time	and mode_flags bit 0x10 (cruise) is set and reloads it from DAT_00407802 otherwise; the 4-3 downshift 
+global_variables.csv	7042	DAT_00407804	transmission_cruise_resume_downshift_speed_difference	it is 0, vehicle_speed_copy is below cruise_speed_command - DAT_00407804, the output speed is below ov
+global_variables.csv	7042	DAT_00407808	transmission_cruise_resume_downshift_engine_speed	ownshift_maximum_output_speed and the engine speed is below DAT_00407808. lhz x2, sth x1 (was protecti
+global_variables.csv	7246	DAT_003fcef6	park_neutral_switch_start_check_failed_flag	e counted; fail (over 9 of them with switch 20 off) goes to DAT_003fcef6 (was fuel_temp_derate_cycles_
+global_variables.csv	7247	DAT_003fcef6	park_neutral_switch_start_check_failed_flag	 10 mph with the output shaft turning; 0 = it was off; with DAT_003fcef6 (the start-check result) it s
+global_variables.csv	7282	DAT_003fcff2	cruise_top_droop_gain_for_rear_axle_ratio_high	king gain at 0x40b6b0 (e2m 1187 +1A Cruise_Top_Droop_Gain). DAT_003fcff2 is the high-ratio twin (switc
+global_variables.csv	7284	DAT_003fcff6	road_speed_governor_top_droop_gain_for_rear_axle_ratio_high	top_droop_gain (e2m 1187 +26 RSG_Top_Droop_Gain, 0x40b6bc). DAT_003fcff6 is the high-ratio twin. A dro
+global_variables.csv	7286	DAT_003fcff2	cruise_top_droop_gain_for_rear_axle_ratio_high	ulateTopDroopGain) and, with rear_axle_ratio_high_cal, into DAT_003fcff2; vehicle_speed_sensor_type_ca
+global_variables.csv	7298	DAT_0005c93e	drivetrain_ratio_when_loaded_minimum_fueling	visor is unchanged, the flag is 0 and final_fueling exceeds DAT_0005c93e (1 read / 2 writes). Time-sha
+global_variables.csv	7327	DAT_0040b9e6	intake_air_heater_performance_test_recovery_voltage_rise_adc	e, and the recovery (this minus the loaded average) goes to DAT_0040b9e6. (was hpcr_pressure_diag_samp
+global_variables.csv	7436	DAT_0040a670	egr_valve_autozero_enabled_monitor	ag and the logic enable word set; copied to 0x40a670 and to DAT_0040a670. e2m: EGR_Valve_Autozero_Enab
+global_variables.csv	7471	DAT_0040bd0a	battery_temperature_adc_forced_reading	k case 10. The same pattern for slot 69 in SCI case 1 reads DAT_0040bd0a with word +80 mask 0x20, and 
+global_variables.csv	8034	DAT_0005a48a	injection_timing_top_dead_center_offset	jection_timing = main_injection_timing - retard; nonzero: -(DAT_0005a48a + retard). e2m Aux_SOI_Is_TDC
+global_variables.csv	8076	DAT_00409a82	fuel_pressure_setpoint_deadband_engine_speed_limit	1 while average_engine_speed is below DAT_00409a82 (12000 = 1500 rpm) and final_
+global_variables.csv	8076	DAT_00409a80	fuel_pressure_setpoint_deadband_fuel_quantity_limit	low DAT_00409a82 (12000 = 1500 rpm) and final_fueling below DAT_00409a80 (736 = 50 mm3), i.e. the dead
+global_variables.csv	8126	DAT_0040bd0a	battery_temperature_adc_forced_reading	tery_voltage_adc_forced_reading); the SCI case 1 code reads DAT_0040bd0a unless word +80 of diagnostic
+global_variables.csv	8208	DAT_004067d8	egr_valve_steady_state_command_deviation_threshold	final position command - its filtered average| is below it (DAT_004067d8). e2m: C_EGA_Cmd_Rate_Thd (0x
+global_variables.csv	8400	DAT_0005a9be	warm_up_cycle_minimum_coolant_temperature	 r12,-22082(r12) @ 0x5341f0 (cm848_monitorWarmUpCycle: (int)DAT_0005a9be < (short)coolant_temp sets bi
+global_variables.csv	8426	DAT_0040bbc8	egr_orifice_temperature_sensor_filtered	600 = 150 deg F: after a cold soak the orifice temperature (DAT_0040bbc8) above it is the startup erro
+function_renames.csv	844	DAT_0005c39a	j1939_high_idle_override_speed	e select 1 request (the e2m Jcomm high idle override speed, DAT_0005c39a), 9 j1939_powertrain_control_
+function_renames.csv	1681	DAT_0040a166	barometric_pressure_selection_fault_flags	t_status_array entry allows it. The combined status goes to DAT_0040a166 (write-only) (was hpcr_fuelFi
+function_renames.csv	1797	DAT_003fbd4e	fault_derate_fuel_limit_by_engine_speed_cached_axis_offset	l limit: fault_derate_ramp_times_256 to 0, its lookup state DAT_003fbd4e to 2, fault_derate_fuel_limit
+function_renames.csv	2153	DAT_00409e66	injection_quantity_pilot_ratio_limit	 the RAM dump), slew-limited, and capped at final_fueling x DAT_00409e66 / 4096 (half in the dump). Th
+function_renames.csv	2153	DAT_00409e62	injection_quantity_pilot_speed_limp_home_switch	s 0 when engine_speed_limp_home_active_flag is set with the DAT_00409e62 switch on, or in the free-acc
+function_renames.csv	2206	DAT_00064430	intake_air_heater_performance_test_drop_recovery_agreement_window_adc	rop at turn-on and the recovery after turn-off agree within DAT_00064430 counts, then both below the i
+function_renames.csv	2256	DAT_003fd270	wastegate_monitor_armed_flag	_met mask 0x1000000 and the start battery temperature test (DAT_003fd270) allow it, and it clears its 
+function_renames.csv	2256	DAT_00409fe0	wastegate_monitor_driver_duty_threshold	d_threshold and wastegate_solenoid_duty_command at or below DAT_00409fe0. It also counts the passes (w
+function_renames.csv	2256	DAT_00409fe4	wastegate_monitor_pass_high_load_threshold	ass-low and pass-high thresholds at engine load of at least DAT_00409fe4; boost is intake_manifold_pre
+function_renames.csv	2304	DAT_003fcf60	sci_command_37_received_byte_count	11-12 - Readability Medium Accuracy Confidence Low | clears DAT_003fcf60 then installs cm848_sciComman
+function_renames.csv	2326	DAT_0005b57c	obd_dtc_code_table	searches the SPN table DAT_0005b57c for a matching SPN and return
+structure_definitions.csv	1432	DAT_0005c28a	cruise_speed_low_limit	88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a
+enums.csv	769	DAT_003fcf3c	sci_output_test_active_count	Timer channel 43 (DAT_003fcf3c)
+enums.csv	770	DAT_003fcf3e	sci_output_test_phase_countdown	Timer channel 44 (DAT_003fcf3e)
+enums.csv	771	DAT_003fcf40	sci_output_test_timers	Timer channel 53 (DAT_003fcf40)

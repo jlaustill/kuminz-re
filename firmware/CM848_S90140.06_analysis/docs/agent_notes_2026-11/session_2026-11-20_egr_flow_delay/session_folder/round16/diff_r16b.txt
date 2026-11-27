@@ -1,0 +1,283 @@
+2c2
+< // Generated: Sat Nov 21 20:46:11 MST 2026
+---
+> // Generated: Sat Nov 21 20:51:14 MST 2026
+58439d58438
+<   word modulus_period_value;
+58440a58440
+>   word modulus_period_value;
+59596c59596
+< int cm848_secondOrderFilter(short param_1,undefined4 *param_2)
+---
+> sword cm848_secondOrderFilter(sword input,second_order_filter_state_t *filter)
+59608,59611c59608,59611
+<   uVar6 = ((uint)*(ushort *)param_2[1] - (uint)*(ushort *)*param_2) + 0x10000;
+<   uVar8 = param_2[2];
+<   uVar2 = (uint)*(ushort *)*param_2;
+<   uVar1 = param_1 * 0x10000;
+---
+>   uVar6 = ((uint)*filter->coefficient_3 - (uint)*filter->coefficient_1) + 0x10000;
+>   uVar8 = filter->output;
+>   uVar2 = (uint)*filter->coefficient_1;
+>   uVar1 = input * 0x10000;
+59613,59614c59613,59614
+<   uVar3 = (uint)*(ushort *)param_2[1];
+<   uVar7 = param_2[3];
+---
+>   uVar3 = (uint)*filter->coefficient_3;
+>   uVar7 = filter->output_previous;
+59616,59619c59616,59618
+<   uVar1 = ((((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) +
+<             uVar2 * ((uint)(int)param_1 >> 0x10)) -
+<            ((int)((ulonglong)uVar3 * (ulonglong)uVar7 >> 0x20) + uVar3 * ((int)uVar7 >> 0x1f) +
+<            (uint)(uVar4 < uVar3 * uVar7))) +
+---
+>   uVar1 = ((((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) + uVar2 * ((uint)(int)input >> 0x10)
+>             ) - ((int)((ulonglong)uVar3 * (ulonglong)uVar7 >> 0x20) + uVar3 * ((int)uVar7 >> 0x1f) +
+>                 (uint)(uVar4 < uVar3 * uVar7))) +
+59622,59624c59621,59623
+<   param_2[3] = uVar8;
+<   param_2[2] = uVar1 | uVar5 + uVar6 * uVar8 >> 0x10;
+<   return (int)(short)(uVar1 >> 0x10);
+---
+>   filter->output_previous = uVar8;
+>   filter->output = uVar1 | uVar5 + uVar6 * uVar8 >> 0x10;
+>   return (sword)(uVar1 >> 0x10);
+59677c59676
+< undefined4 cm848_secondOrderFilterUnsigned(int param_1,undefined4 *param_2)
+---
+> word cm848_secondOrderFilterUnsigned(dword input,second_order_filter_state_t *filter)
+59682c59681
+<   int iVar3;
+---
+>   dword dVar3;
+59684,59689c59683,59689
+<   uVar1 = *(ushort *)*param_2;
+<   uVar2 = *(ushort *)param_2[1];
+<   iVar3 = param_2[3];
+<   param_2[3] = param_2[2];
+<   param_2[2] = ((uint)uVar1 * param_1 * 0x10000 - (uint)uVar2 * iVar3) +
+<                (((uint)uVar2 - (uint)uVar1) + 0x10000) * param_2[2] >> 0x10;
+---
+>   uVar1 = *filter->coefficient_1;
+>   uVar2 = *filter->coefficient_3;
+>   dVar3 = filter->output_previous;
+>   filter->output_previous = filter->output;
+>   filter->output =
+>        ((uint)uVar1 * input * 0x10000 - uVar2 * dVar3) +
+>        (((uint)uVar2 - (uint)uVar1) + 0x10000) * filter->output >> 0x10;
+85515,85516c85515,85517
+<                    (&DAT_003fcffe,drivetrain_ratio_user_filtered,
+<                     cruise_governor_gear_ratio_gain_axis,cruise_governor_gear_ratio_gain_values,0);
+---
+>                    (&cruise_governor_gear_ratio_gain_cached_axis_offset,
+>                     drivetrain_ratio_user_filtered,cruise_governor_gear_ratio_gain_axis,
+>                     cruise_governor_gear_ratio_gain_values,0);
+85603c85604
+<     cruise_governor_gain_set_pointer = (undefined *)&cruise_zone_1_proportional_gain;
+---
+>     cruise_governor_gain_set_pointer = &cruise_governor_gain_set_1;
+85606c85607
+<     cruise_governor_gain_set_pointer = (undefined *)&cruise_zone_2_proportional_gain;
+---
+>     cruise_governor_gain_set_pointer = &cruise_governor_gain_set_2;
+85609c85610
+<     cruise_governor_gain_set_pointer = (undefined *)&cruise_zone_3_proportional_gain;
+---
+>     cruise_governor_gain_set_pointer = &cruise_governor_gain_set_3;
+85611c85612
+<   if (DAT_003fcffa != cruise_governor_gain_set_number) {
+---
+>   if (cruise_governor_gain_set_number_previous != cruise_governor_gain_set_number) {
+85614,85619c85615,85621
+<   cruise_pid_proportional_gain = *(sword *)cruise_governor_gain_set_pointer;
+<   cruise_pid_integral_acceleration_gain = *(sword *)(cruise_governor_gain_set_pointer + 6);
+<   cruise_pid_integral_gain = *(sword *)(cruise_governor_gain_set_pointer + 2);
+<   cruise_pid_derivative_gain = *(sword *)(cruise_governor_gain_set_pointer + 4);
+<   DAT_003fcffc = (short)uVar4;
+<   DAT_003fcffa = cruise_governor_gain_set_number;
+---
+>   cruise_pid_proportional_gain = cruise_governor_gain_set_pointer->proportional_gain;
+>   cruise_pid_integral_acceleration_gain =
+>        cruise_governor_gain_set_pointer->integral_acceleration_gain;
+>   cruise_pid_integral_gain = cruise_governor_gain_set_pointer->integral_gain;
+>   cruise_pid_derivative_gain = cruise_governor_gain_set_pointer->derivative_gain;
+>   cruise_governor_speed_error_after_droop_magnitude = (word)uVar4;
+>   cruise_governor_gain_set_number_previous = cruise_governor_gain_set_number;
+85645,85646c85647,85649
+<       cruise_top_droop_gain = DAT_003fcff2;
+<       road_speed_governor_top_droop_gain = DAT_003fcff6;
+---
+>       cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_high;
+>       road_speed_governor_top_droop_gain =
+>            road_speed_governor_top_droop_gain_for_rear_axle_ratio_high;
+85806c85809
+<   DAT_003fcffe = 2;
+---
+>   cruise_governor_gear_ratio_gain_cached_axis_offset = 2;
+85838,85842c85841,85846
+<   DAT_003fcff2 = cm848_calculateTopDroopGain
+<                            (cruise_top_droop_width_cal,&local_30,uVar2,
+<                             four_dimensional_fueling_transient_x_axis,400,
+<                             four_dimensional_fueling_transient_y_axis,
+<                             four_dimensional_fueling_transient_grid,4);
+---
+>   cruise_top_droop_gain_for_rear_axle_ratio_high =
+>        cm848_calculateTopDroopGain
+>                  (cruise_top_droop_width_cal,&local_30,uVar2,
+>                   four_dimensional_fueling_transient_x_axis,400,
+>                   four_dimensional_fueling_transient_y_axis,four_dimensional_fueling_transient_grid,
+>                   4);
+85846,85850c85850,85855
+<   DAT_003fcff6 = cm848_calculateTopDroopGain
+<                            (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
+<                             four_dimensional_fueling_transient_x_axis,400,
+<                             four_dimensional_fueling_transient_y_axis,
+<                             four_dimensional_fueling_transient_grid,4);
+---
+>   road_speed_governor_top_droop_gain_for_rear_axle_ratio_high =
+>        cm848_calculateTopDroopGain
+>                  (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
+>                   four_dimensional_fueling_transient_x_axis,400,
+>                   four_dimensional_fueling_transient_y_axis,four_dimensional_fueling_transient_grid,
+>                   4);
+85957d85961
+< /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+86021,86022c86025,86026
+<   DAT_003fd01a = (int)sVar2 << 0x10;
+<   DAT_003fd02a = iVar7 << 0x10;
+---
+>   cruise_pid_driveline_filter.output = (int)sVar2 << 0x10;
+>   cruise_pid_derivative_filter.output = iVar7 << 0x10;
+86057c86061
+<     _cruise_speed_upper_limit_ptr = &cruise_governor_fueling_maximum;
+---
+>     cruise_governor_fueling_maximum_pointer = &cruise_governor_fueling_maximum;
+86060c86064
+<     _cruise_speed_upper_limit_ptr = &current_horsepower_peak_fueling_cal;
+---
+>     cruise_governor_fueling_maximum_pointer = &current_horsepower_peak_fueling_cal;
+86062,86063c86066,86067
+<   pwVar6 = _cruise_speed_upper_limit_ptr;
+<   if ((short)cruise_pid_integrator_q16 < (short)*_cruise_speed_upper_limit_ptr) {
+---
+>   pwVar6 = cruise_governor_fueling_maximum_pointer;
+>   if ((short)cruise_pid_integrator_q16 < (short)*cruise_governor_fueling_maximum_pointer) {
+86073,86074c86077,86078
+<   DAT_003fd01e = DAT_003fd01a;
+<   DAT_003fd02e = DAT_003fd02a;
+---
+>   cruise_pid_driveline_filter.output_previous = cruise_pid_driveline_filter.output;
+>   cruise_pid_derivative_filter.output_previous = cruise_pid_derivative_filter.output;
+86105c86109
+<   short sVar4;
+---
+>   sword sVar4;
+86112d86115
+<   sword sVar13;
+86115c86118
+<   uint uVar14;
+---
+>   uint uVar13;
+86123c86126
+<   DAT_003fd044 = (word)dVar3;
+---
+>   cruise_governor_preset_fueling_filtered = (word)dVar3;
+86126,86127c86129
+<                  (vehicle_speed_rise_limited,
+<                   &PTR_cruise_pid_derivative_filter_coefficient_1_003fd022);
+---
+>                  ((uint)vehicle_speed_rise_limited,&cruise_pid_derivative_filter);
+86149c86151
+<       DAT_003fd046 = DAT_003fd044;
+---
+>       cruise_governor_preset_fueling_snapshot = cruise_governor_preset_fueling_filtered;
+86156,86157c86158,86159
+<       DAT_003fd04e = '\x01';
+<       cruise_governor_preset_fueling = DAT_003fd046;
+---
+>       cruise_governor_preset_fueling_learned_flag = 1;
+>       cruise_governor_preset_fueling = cruise_governor_preset_fueling_snapshot;
+86161c86163
+<   if (DAT_003fd04e == '\0') {
+---
+>   if (cruise_governor_preset_fueling_learned_flag == 0) {
+86182,86185c86184,86187
+<     uVar14 = (uint)cruise_rate_limited_reference_speed_previous;
+<     if (uVar14 < uVar5) {
+<       wVar2 = (word)(uVar14 + cruise_reference_speed_rate_limit_increase);
+<       if ((uVar14 + cruise_reference_speed_rate_limit_increase & 0xffff) < uVar5) {
+---
+>     uVar13 = (uint)cruise_rate_limited_reference_speed_previous;
+>     if (uVar13 < uVar5) {
+>       wVar2 = (word)(uVar13 + cruise_reference_speed_rate_limit_increase);
+>       if ((uVar13 + cruise_reference_speed_rate_limit_increase & 0xffff) < uVar5) {
+86190c86192
+<     else if ((uVar5 < uVar14) && (uVar5 + cruise_reference_speed_rate_limit_decrease < uVar14)) {
+---
+>     else if ((uVar5 < uVar13) && (uVar5 + cruise_reference_speed_rate_limit_decrease < uVar13)) {
+86206c86208
+<   sVar13 = cruise_governor_speed_error_maximum;
+---
+>   sVar4 = cruise_governor_speed_error_maximum;
+86208c86210
+<      (sVar13 = cruise_governor_speed_error_minimum,
+---
+>      (sVar4 = cruise_governor_speed_error_minimum,
+86210c86212
+<     cruise_governor_speed_error = sVar13;
+---
+>     cruise_governor_speed_error = sVar4;
+86226,86227c86228
+<   sVar4 = cm848_secondOrderFilter
+<                     ((int)sVar4,&PTR_cruise_pid_driveline_filter_coefficient_1_003fd012);
+---
+>   sVar4 = cm848_secondOrderFilter(sVar4,&cruise_pid_driveline_filter);
+86271,86272c86272,86273
+<     pwVar6 = _cruise_speed_upper_limit_ptr;
+<     if ((int)(uint)*_cruise_speed_upper_limit_ptr < iVar10) {
+---
+>     pwVar6 = cruise_governor_fueling_maximum_pointer;
+>     if ((int)(uint)*cruise_governor_fueling_maximum_pointer < iVar10) {
+86289,86293c86290,86296
+<     DAT_003fd057 = (short)(iVar9 << 5) -
+<                    (short)(((int)cruise_governor_sump_threshold_gain *
+<                            (int)cruise_governor_speed_error_after_droop) / 0x19);
+<     if ((DAT_00408e7c < DAT_003fd057) &&
+<        ((int)cruise_governor_speed_error_after_droop < (int)DAT_00408e7e)) {
+---
+>     cruise_governor_sump_activation =
+>          (short)(iVar9 << 5) -
+>          (short)(((int)cruise_governor_sump_threshold_gain *
+>                  (int)cruise_governor_speed_error_after_droop) / 0x19);
+>     if ((cruise_governor_sump_acceleration_threshold < cruise_governor_sump_activation) &&
+>        ((int)cruise_governor_speed_error_after_droop <
+>         (int)cruise_governor_sump_speed_error_threshold)) {
+86328,86329c86331,86332
+<   pwVar6 = _cruise_speed_upper_limit_ptr;
+<   if ((short)cruise_pid_integrator_q16 < (short)*_cruise_speed_upper_limit_ptr) {
+---
+>   pwVar6 = cruise_governor_fueling_maximum_pointer;
+>   if ((short)cruise_pid_integrator_q16 < (short)*cruise_governor_fueling_maximum_pointer) {
+86383c86386
+<   pwVar6 = _cruise_speed_upper_limit_ptr;
+---
+>   pwVar6 = cruise_governor_fueling_maximum_pointer;
+86385c86388
+<   if ((short)wStack_36 < (short)*_cruise_speed_upper_limit_ptr) {
+---
+>   if ((short)wStack_36 < (short)*cruise_governor_fueling_maximum_pointer) {
+86415,86422c86418,86421
+<   PTR_cruise_pid_driveline_filter_coefficient_1_003fd012 =
+<        (undefined *)&cruise_pid_driveline_filter_coefficient_1;
+<   PTR_cruise_pid_driveline_filter_coefficient_3_003fd016 =
+<        (undefined *)&cruise_pid_driveline_filter_coefficient_3;
+<   PTR_cruise_pid_derivative_filter_coefficient_1_003fd022 =
+<        (undefined *)&cruise_pid_derivative_filter_coefficient_1;
+<   PTR_cruise_pid_derivative_filter_coefficient_3_003fd026 =
+<        (undefined *)&cruise_pid_derivative_filter_coefficient_3;
+---
+>   cruise_pid_driveline_filter.coefficient_1 = &cruise_pid_driveline_filter_coefficient_1;
+>   cruise_pid_driveline_filter.coefficient_3 = &cruise_pid_driveline_filter_coefficient_3;
+>   cruise_pid_derivative_filter.coefficient_1 = &cruise_pid_derivative_filter_coefficient_1;
+>   cruise_pid_derivative_filter.coefficient_3 = &cruise_pid_derivative_filter_coefficient_3;

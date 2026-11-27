@@ -1,0 +1,23 @@
+cm848: round 12 stage C - the rest of the fuel metering names, the plate, stale text (label-only, after the review)
+
+Stage B's scan of cm848_calculateFuelMeteringCommand printed only the first 420 of its 757 lines, so seven names
+were left. A full scan now finds no cam_sync_* / engine_sync_* / WORD_ name in the function.
+- **The current integrator preset table** (e2m 8B49 / 8B4A HPCR_Current_Integrator_Preset_Temp_Axis / _Axis):
+  fuel_metering_current_integrator_preset_temperature_axis / _values (were engine_sync_speed_scale_*_cal, ROM) and
+  its cache. It presets fuel_metering_feedback_trim_integrator, the current loop, by the coil temperature. The
+  inner loop selector is 5 for the coil temperature: values 0-4 pick sensor channels or the intake temperature.
+- **The three derivative gain scaling caches** (were WORD_003fb652 / 654 / 656).
+- **fuel_metering_coil_resistance_raw** (was engine_sync_rpm_raw_working): the unfiltered resistance sample.
+- **The plate:** its second early return is the service tool's fuel control test (fuel_control_actuator_test_active_
+  flag, DRB 13-5E, with fuel_metering_tool_override_command), not 'a cranking value'. The e2m text of 8B3C +8 / +C
+  ('tool override request for CP3 driver', '0=Allow CP3 driver override for tool in STOP state only') confirms stage
+  B's tool override names.
+- **Stale text:**
+  - an enums.csv comment (engine_sync_state_a);
+  - function_definitions.csv row 14 (the cache name patterns);
+  - work/todo.md (task 045's open start-mode tables, task 046's output 54 name);
+  - task 046's round 10 / 11 leads that rounds 11 / 12 resolved.
+- **Checks:** reverse_names.py: equivalent except one function (cm848_validateWriteAuth) whose local declarations reorder (its sorted lines are identical; the tool did not classify it). No history mention ('was <name>') carries a round 12 name, so the refresh
+  rewrote no history.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

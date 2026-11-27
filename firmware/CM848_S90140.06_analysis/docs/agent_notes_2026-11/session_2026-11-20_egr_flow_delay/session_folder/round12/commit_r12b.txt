@@ -1,0 +1,32 @@
+cm848: round 12 stage B - the CP3 M-PROP fuel metering names from the e2m HPCR_* records (label-only)
+
+cm848_calculateFuelMeteringCommand's own plate called its cam_sync_* / engine_sync_* names older guesses. The e2m
+HPCR_* records name them; 43 rows, all CM848-only.
+- **e2m 8B3C** aligns at 0x40913a: all 18 records land on existing rows, and the code confirms them.
+  - The coil temperature estimate is fuel_metering_coil_temperature = gain x filtered resistance / 0x138 + offset,
+    once fuel_metering_coil_resistance_sample_count reaches its minimum. That matches +1C HPCR_MPROP_Temperature_Gain,
+    +1E _Offset and +10 HPCR_Current_Sample_Minimum_Counts.
+  - The names:
+    - fuel_metering_cold_start_temperature / _hot_start_temperature;
+    - the outer / inner loop preset temperature-source selectors;
+    - fuel_metering_tool_override_command / _while_running_enable;
+    - the coil resistance filter coefficient, minimum samples and initial resistance;
+    - the startup pulse duty / time;
+    - the resistance minimum current / duty cycle.
+- **The pump control tables at 0x40915e-0x40948b**, each placed by its use (the 11.45 column-5 order does not reach
+  this layout):
+  - fuel_metering_current_by_duty_cycle (HPCR_Current_Scaling: the duty demand to the current target)
+  - fuel_metering_start_duty_cycle / _hot_start_duty_cycle (blended by the coil temperature to preset the governor
+    integrator)
+  - fuel_pressure_governor_feed_forward (the 8 x 8 HPCR_Dutycycle_Precontrol_Map)
+  - fuel_pressure_governor_maximum_duty_cycle (the demand's upper clamp by engine speed)
+  - fuel_metering_battery_correction
+- **Also renamed:**
+  - their lookup caches (were engine_sync_init_state_a / b / j / k / l / n / o; p / q are unused);
+  - the coil temperature ready flags of the outer and inner loop, fuel_metering_integrator_preset_done_flag and the
+    coil resistance sample count;
+  - fuel_metering_coil_resistance_filter / fuel_metering_battery_voltage_filter.
+- **The _cal suffix:** the ROM words lose it (the memory-map rule).
+- **Proof:** reverse_names.py EQUIVALENT.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

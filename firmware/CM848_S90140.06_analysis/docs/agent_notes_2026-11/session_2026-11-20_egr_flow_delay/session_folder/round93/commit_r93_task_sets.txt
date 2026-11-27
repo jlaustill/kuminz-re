@@ -1,0 +1,24 @@
+cm550: round 93 - the 45 executive frame task sets named by their schedule slot
+
+executiveFrameInterruptHandler (0x1b876) switches on a phase index 0-39, one phase per interrupt (a frame). Each
+phase calls, in a fixed order, the every-frame task set, then that phase's every-2-frames, every-4, every-8, every-10
+and every-20 task sets, then one or two functions that run once per cycle. The 45 task sets (straight jsr lists at
+0x1b4d0-0x1b875) had names from an old automatic pass: cycle numbers that did not match (a "SlowCycle20Coordinator"
+that runs every 10 frames), subsystem words unrelated to the calls (vp44_engine_management_system), 31 placeholders.
+
+- New names say the slot: cm550_runEveryFrameTaskSet and cm550_runEvery<N>FramesTaskSetPhase<P> for N = 2 (2 sets),
+  4 (4), 8 (8), 10 (10) and 20 (20), P = the first phase of the 40-frame cycle that calls it.
+- Each row gets a plate comment: the slot in frames and milliseconds, its position among the phase's calls, and the
+  functions it calls, in order (three slots are empty: a single rts).
+- A frame is 5 ms: the hour meters step once per 40-frame cycle (0x34512, phase 0) and count 0.2 s (e2m 0004 +0
+  CMECTR and 11BC +0 CMEGTR, scale 0.2 SEC).
+
+Proof:
+- The schedule from the ROM (apply_r93_task_sets.py refuses otherwise): the switch table has 40 cases; every task set
+  is called from phases that are evenly spaced (40 / 20 / 10 / 5 / 4 / 2 calls per cycle) and always at the same
+  position of its phases; all 45 function rows of the layer are called by the handler.
+- CM550 verify DETERMINISTIC; 0 functions removed / added; the only changes are the 45 names (0 other token
+  changes; 333 renders; 46 functions differ by text: the 45 and the handler that calls them). No new build warning.
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

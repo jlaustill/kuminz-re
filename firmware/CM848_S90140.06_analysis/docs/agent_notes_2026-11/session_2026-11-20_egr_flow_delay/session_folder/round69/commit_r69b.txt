@@ -1,0 +1,15 @@
+cm848: round 69 follow-up - the smart boot indicator's readers, two stale image-header comments
+
+From the round's closing review:
+- smart_boot_indicator:
+  - no CM848 code builds 0x98765432: there is no lis 0x9876 / ori 0x5432 pair in the ROM or the Bank 2 image;
+  - CM550's boot code compares it (cmpi.l #$98765432,(a0) at CM550 0x3c02). CM550's ROM holds no header there, so it
+    gives no second block count to name the count words from.
+- Round 67's BOOT_DIAGNOSTIC_RESULT 0x15 row and the download_block_list comment said "the image header at ROM
+  0x8104". They now name checksum_region_table / block_data_structure.
+
+Proof (prove_r69.py): 0 of 1968 functions differ. verify is byte-identical, with the same WARNING lines as the
+stage A verify; thunks 18 / 14; prototype and local rows 0 failed; locals Skipped 8. Headers regenerated, tests
+pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

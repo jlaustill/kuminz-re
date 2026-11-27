@@ -1,0 +1,23 @@
+  748  natural: 4-byte read of a 4-byte push
+         call 003858 -> cm550_huffmanTreeBuilder(0x3640)  48 6e f3 fa | pea (-3078,a6) | movea.l (20,sp),a1
+         call 003864 -> cm550_huffmanDecompress(0x3792)  48 6e f3 fa | pea (-3078,a6) | movea.l (8,a6),a1
+         call 010504 -> call_target_103ba(0x103ba)  2f 2a 00 06 | move.l (6,a2),-(sp) | movea.l (14,a6),a3
+         call 0224e0 -> cm550_sendCanMessage(0x104e8)  2e 8c | move.l a4,(sp) | movea.l (8,sp),a2
+         call 010e92 -> cm550_arrayRangeSum(0x10520)  2f 0c | move.l a4,-(sp) | movea.l (4,sp),a1
+         call 013de4 -> cm550_diagnosticMemoryAddressResolver(0x10e16)  2f 0a | move.l a2,-(sp) | movea.l (10,sp),a2
+  591  natural: 2-byte read of a 2-byte push
+         call 003864 -> cm550_huffmanDecompress(0x3792)  3e 80 | move.w d0,(sp) | move.w (12,a6),d2
+         call 0038a0 -> cm550_busyWaitDelayLoop(0x3870)  3f 3c 00 01 | move.w #0x1,-(sp) | cmp.w (4,sp),d1
+         call 03217e -> cm550_FUN_0000b688(0xb688)  3f 00 | move.w d0,-(sp) | move.w (8,sp),d2
+         call 011a10 -> cm550_diagnosticMessageQueueWrite(0xb6e8)  42 67 | clr.w -(sp) | move.w (8,a6),d2
+         call 01e1c6 -> cm550_modeBasedDataDispatcher(0xc80e)  3f 00 | move.w d0,-(sp) | move.w (16,sp),d2
+         call 0345a4 -> cm550_diagnosticStatus2Initializer(0xd1a4)  3f 02 | move.w d2,-(sp) | cmpi.w #0x2,(4,sp)
+   70  byte read at low (+1) byte of a word push
+         call 00fcc8 -> cm550_calculateGovernorDroopSpeed(0xfaa6)  3f 3c 00 01 | move.w #0x1,-(sp) | tst.b (15,sp)
+         call 014ad8 -> cm550_circularBufferPush(0x1bfa2)  3f 00 | move.w d0,-(sp) | move.b (9,sp),(a0)
+         call 01045c -> call_target_1e0bc(0x1e0bc)  3f 00 | move.w d0,-(sp) | move.b (13,sp),d0
+         call 0200ac -> cm550_j1939TorqueControlModeParser(0x1ffd6)  42 67 | clr.w -(sp) | cmpi.b #0x1,(21,sp)
+         call 0220ee -> cm550_diagnosticGroupPositionBufferStore(0x21f4e)  42 67 | clr.w -(sp) | tst.b (13,sp)
+         call 022170 -> cm550_diagnosticGroupSnapshotCapture(0x21fac)  42 57 | clr.w (sp) | tst.b (13,sp)
+    2  byte read at +3 of a long push
+         call 0162b6 -> cm550_crc16Calculate(0x11da6)  2f 2e ff f8 | move.l (-8,a6),-(sp) | addq.b #1,(a1)

@@ -132,7 +132,7 @@ Some features can be identified by the engine configuration:
 
 | Engine Type | Fuel System | Indicator Functions |
 |-------------|-------------|---------------------|
-| ISB (1998-2002) | VP44 Rotary Pump | `vp44CanMessageDispatcher`, `vp44TimingConditionChecker` |
+| ISB (1998-2002) | VP44 Rotary Pump | `vp44_dispatchReceivedPumpMessage` (frames from the 82527 CAN controller on chip select 5, which carries the VP44 pump link); the names of this row until PR #53 round 98 were not VP44 code |
 | ISB (2003+) | CP3 Common Rail | CP3-specific functions (different CAN IDs) |
 
 ### Feature Persistence Theory
@@ -201,7 +201,7 @@ Both ECU generations use the **same 40-phase cooperative scheduler**:
 | Aspect | CM550 (J90350.00) | CM848D (S90140.06) |
 |--------|-------------------|---------------------|
 | Phase count | 40 (0x00-0x27) | 40 (0x00-0x27) |
-| Phase index variable | `_main_loop_phase_index` | `main_loop_phase_index` |
+| Phase index variable | `scheduler_phase_index` (0x80068c) | `executive_frame_phase` (0x3fa008) |
 | Wrap behavior | 0x27 → 0 | 0x27 → 0 |
 | Tasks per phase | 5-7 | 6-7 |
 | Even/odd alternation | Yes | Yes |

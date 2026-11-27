@@ -1,0 +1,12 @@
+gap 0x005c30e +2 after 1052 before 1034: 1 accessed, unnamed read 0x5c30e; 5 access-consistent candidates
+   1 records hit: 1468@0 ['Current_Torque_Output']
+   1 records hit: 1585@0 ['Throttle_Diff_Threshold']
+   1 records hit: 8AFC@0 ['Vehicle_Fuel_Adjustment']
+   1 records hit: 8B48@0 ['EOI']
+gap 0x04086c8 +10 after 8A2A before 8C49: 4 accessed, unnamed read 0x4086ca, 0x4086ce; 1098 access-consistent candidates
+   4 records hit: 1CB8@0 ['Engine_Start_Timer', 'Idle_Speed_Timer', 'Ignition_Cycle_Timer']
+   4 records hit: 8A6F@0 ['Lift_Pump_Override_State', 'Lift_Pump_Time_Cranking', 'Lift_Pump_Time_Running']
+   4 records hit: 8A7B@0 ['J1939_TSC_Lost_TL', 'TSC_Lost_Counter_Init', 'J1939_TSC_Intermittent_TL']
+   4 records hit: 8A7F@0 ['OPG_Check_Gauges', 'OPG_Chime', 'OPG_Error_Count']
+gap 0x0408d38 +62 after 8A57 before 8D79: 29 accessed, unnamed read 0x408d74; 0 access-consistent candidates
+gap 0x040b592 +52 after 8C34 before 1269: 18 accessed, unnamed read 0x40b5c0; 0 access-consistent candidates

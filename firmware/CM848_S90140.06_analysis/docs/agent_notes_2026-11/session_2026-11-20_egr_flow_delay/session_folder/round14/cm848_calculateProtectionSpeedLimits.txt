@@ -1,0 +1,219 @@
+=== cm848_calculateProtectionSpeedLimits (lines 28002-28225, 218 non-blank)
+// Function: cm848_calculateProtectionSpeedLimits @ 0x0002906c
+//
+void cm848_calculateProtectionSpeedLimits(void)
+{
+  word wVar1;
+  ushort uVar2;
+  uint uVar3;
+  if ((transmission_park_or_neutral_flag == 0) ||
+     (governor_speed_limit_cal_temp = governor_speed_limit_temp_fuel_mode_cal,
+     governor_park_neutral_maximum_vehicle_speed < vehicle_speed)) {
+    governor_speed_limit_cal_temp = governor_speed_limit_temp_cal;
+  }
+  governor_speed_limit_pci_request = pci_requested_idle_speed;
+  if (governor_speed_limit_droop_enable_cal != 1) {
+    governor_speed_limit_pci_request = 0;
+  }
+  governor_speed_limit_cal_b = governor_speed_limit_b_cal;
+  if ((switch_input_state_bits.switches_8_to_15 & 0x20) == 0) {
+    governor_speed_limit_cal_b = 0;
+  }
+  if (((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
+        (engine_state == ENGINE_STATE_RUNNING)) && (transmission_park_or_neutral_flag != 0)) &&
+      (((short)battery_temperature_sensor_filtered <
+        (short)extended_idle_battery_temperature_threshold &&
+       ((short)sensor_readings_t_0040baf2.coolant_temp <
+        (short)governor_speed_limit_coolant_threshold_cal)))) &&
+     (((((switch_input_state_bits.switches_8_to_15 & 8) == 0 &&
+        (((switch_input_state_bits.switches_0_to_7 & 4) == 0 &&
+         ((short)intake_manifold_temperature_sensor_filtered <=
+          (short)governor_speed_limit_load_threshold_cal)))) &&
+       (fuel_demand_control_t_0040a57a.accelerator_off_idle == 0)) &&
+      (vehicle_speed <= governor_cold_idle_up_maximum_vehicle_speed)))) {
+    governor_speed_limit_exceeded_flag._0_2_ = 1;
+  }
+  else {
+    governor_speed_limit_exceeded_flag._0_2_ = 0;
+  }
+  if (governor_speed_limit_exceeded_flag._0_2_ == 0) {
+    governor_speed_debounce_count = 0;
+    governor_speed_limit_cal_a = 0;
+  }
+  else {
+    governor_speed_debounce_count = governor_speed_debounce_count + 1;
+  }
+  if ((governor_speed_debounce_count_cal <= governor_speed_debounce_count) ||
+     (((governor_output_t_0040aec2.governor_output == 0 && (governor_speed_debounce_enable_cal != 0)
+       ) && (governor_speed_limit_exceeded_flag._0_2_ != 0)))) {
+    governor_speed_limit_cal_a = governor_speed_limit_value_cal;
+    governor_speed_debounce_count = governor_speed_debounce_count_cal;
+  }
+  if (governor_iat_correction_enable_cal == 0) {
+    uVar2 = lookupTableInterpolation
+                      (&governor_idle_speed_by_barometric_pressure_cached_axis_offset,
+                       sensor_readings_t_0040baf2.barometric_pressure,
+                       governor_idle_speed_by_barometric_pressure_axis,
+                       governor_idle_speed_by_barometric_pressure_values,0);
+  }
+  else {
+    uVar3 = 1;
+    do {
+      if ((int)(short)sensor_readings_t_0040baf2.barometric_pressure <=
+          (int)(uint)governor_idle_speed_by_barometric_pressure_axis[uVar3]) break;
+      uVar3 = uVar3 + 1 & 0xffff;
+    } while (uVar3 < 6);
+    if (5 < uVar3) {
+      uVar3 = 5;
+    }
+    if (governor_protection_phase_b_flag == 0) {
+      governor_protection_phase_b_flag = 1;
+    }
+    else if (((governor_output_t_0040aec2.idle_speed_barometric_ramped >> 8 !=
+               (uint)governor_idle_speed_by_barometric_pressure_values[uVar3]) && (1 < uVar3)) &&
+            ((int)((int)(short)sensor_readings_t_0040baf2.barometric_pressure -
+                  (uint)governor_iat_correction_enable_cal) <=
+             (int)(uint)governor_speed_limit_by_coolant_temperature_values[uVar3 + 8])) {
+      uVar3 = uVar3 + 0xffff & 0xffff;
+    }
+    uVar2 = governor_idle_speed_by_barometric_pressure_values[uVar3];
+  }
+  governor_cold_start_iat_correction = (uint)uVar2 * 0x100;
+  if ((governor_iat_correction_mode_enable_cal == 0) &&
+     ((transmission_park_or_neutral_flag == 0 ||
+      (governor_park_neutral_maximum_vehicle_speed < vehicle_speed)))) {
+    governor_output_t_0040aec2.idle_speed_barometric_ramped = 0;
+  }
+  else {
+    governor_output_t_0040aec2.idle_speed_barometric_ramped = governor_cold_start_iat_correction;
+    if ((governor_cold_start_band_cal != 0) &&
+       ((((governor_output_t_0040aec2.governor_output == 9 && (engine_state == ENGINE_STATE_RUNNING)
+          ) && (governor_output_t_0040aec2.idle_speed_barometric_ramped =
+                     governor_speed_setpoint_snapshot + governor_cold_start_band_cal,
+               governor_cold_start_iat_correction <=
+               governor_speed_setpoint_snapshot + governor_cold_start_band_cal)) &&
+        (governor_output_t_0040aec2.idle_speed_barometric_ramped =
+              governor_cold_start_iat_correction,
+        governor_cold_start_iat_correction + governor_cold_start_band_cal <
+        governor_speed_setpoint_snapshot)))) {
+      governor_output_t_0040aec2.idle_speed_barometric_ramped =
+           governor_speed_setpoint_snapshot - governor_cold_start_band_cal;
+    }
+  }
+  if (((((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR) ||
+        (engine_state != ENGINE_STATE_RUNNING)) ||
+       (((transmission_park_or_neutral_flag == 0 ||
+         (((switch_input_state_bits.switches_8_to_15 & 8) != 0 ||
+          ((switch_input_state_bits.switches_0_to_7 & 4) != 0)))) ||
+        (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)))) ||
+      ((vehicle_speed != 0 ||
+       (wVar1 = sci_set_engine_speed_request, sci_set_engine_speed_request_key != 0xe5c1)))) &&
+     (wVar1 = low_speed_governor_service_speed_floor,
+     high_pressure_safety_valve_test_state != SERVICE_TOOL_TEST_RUNNING)) {
+    wVar1 = 0;
+  }
+  low_speed_governor_service_speed_floor = wVar1;
+  if (high_pressure_safety_valve_test_request_flag == 0) {
+    high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_NOT_RUN;
+  }
+  else if ((((((protection_feature_flags & 0x10) == 0) ||
+             (adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR)) ||
+            (engine_state != ENGINE_STATE_RUNNING)) ||
+           ((transmission_park_or_neutral_flag == 0 ||
+            ((switch_input_state_bits.switches_8_to_15 & 8) != 0)))) ||
+          ((((switch_input_state_bits.switches_0_to_7 & 4) != 0 ||
+            ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 || (vehicle_speed != 0)))) ||
+           (high_pressure_safety_valve_test_maximum_engine_speed <
+            engine_speed_state.filtered_engine_speed)))) {
+    high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_ABORTED;
+  }
+  else {
+    low_speed_governor_service_speed_floor = high_pressure_safety_valve_test_engine_speed_setpoint;
+    high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_RUNNING;
+  }
+  governor_speed_setpoint_snapshot = governor_output_t_0040aec2.idle_speed_barometric_ramped;
+  if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
+     ((switch_input_state_bits.switches_0_to_7 & 4) == 0)) {
+    governor_speed_limit_dynamic =
+         lookupTableInterpolation
+                   (&governor_minimum_speed_by_vehicle_speed_cached_axis_offset,vehicle_speed,
+                    governor_minimum_speed_by_vehicle_speed_axis,
+                    governor_minimum_speed_by_vehicle_speed_table,0);
+  }
+  else {
+    governor_speed_limit_dynamic = 0;
+  }
+  if ((j1939_powertrain_control_state.etc1_spn574_shift_in_process == 1) &&
+     (governor_speed_debounce_timer < governor_speed_debounce_limit)) {
+    governor_output_t_0040aec2.governor_output = 10;
+    thermal_governor_cal_a = 0;
+    thermal_governor_cal_b = 0;
+  }
+  else {
+    governor_speed_limit_active = low_speed_governor_base_reference_speed_cal;
+    governor_output_t_0040aec2.governor_output = 5;
+    if (low_speed_governor_base_reference_speed_cal < governor_speed_limit_cal) {
+      governor_speed_limit_active = governor_speed_limit_cal;
+      governor_output_t_0040aec2.governor_output = 0;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if (governor_speed_limit_active < governor_speed_limit_cal_temp) {
+      governor_speed_limit_active = governor_speed_limit_cal_temp;
+      governor_output_t_0040aec2.governor_output = 1;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if (governor_speed_limit_active < governor_speed_limit_cal_a) {
+      governor_speed_limit_active = governor_speed_limit_cal_a;
+      governor_output_t_0040aec2.governor_output = 2;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if (governor_speed_limit_active < governor_speed_limit_cal_b) {
+      governor_speed_limit_active = governor_speed_limit_cal_b;
+      governor_output_t_0040aec2.governor_output = 3;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if (governor_speed_limit_active < governor_speed_limit_pci_request) {
+      governor_speed_limit_active = governor_speed_limit_pci_request;
+      governor_output_t_0040aec2.governor_output = 4;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if ((uint)governor_speed_limit_active << 8 <
+        governor_output_t_0040aec2.idle_speed_barometric_ramped) {
+      governor_speed_limit_active =
+           (word)(governor_output_t_0040aec2.idle_speed_barometric_ramped >> 8);
+      governor_output_t_0040aec2.governor_output = 9;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if (governor_speed_limit_active < low_speed_governor_service_speed_floor) {
+      governor_speed_limit_active = low_speed_governor_service_speed_floor;
+      governor_output_t_0040aec2.governor_output = 0xb;
+      thermal_governor_cal_a = 0;
+      thermal_governor_cal_b = 0;
+    }
+    if (governor_speed_limit_active < governor_speed_limit_dynamic) {
+      governor_output_t_0040aec2.governor_output = 0xc;
+      thermal_governor_cal_a = thermal_governor_a_cal;
+      thermal_governor_cal_b = thermal_governor_b_cal;
+      governor_speed_limit_active = governor_speed_limit_dynamic;
+    }
+    if (governor_speed_limit_exceeded_flag._2_2_ != low_speed_governor_base_reference_speed_cal) {
+      governor_speed_limit_active = low_speed_governor_base_reference_speed_cal;
+      governor_output_t_0040aec2.governor_output = 5;
+    }
+  }
+  if ((governor_etc1_override_enable_cal == 1) &&
+     (j1939_powertrain_control_state.tsc1_override_control_mode != TSC1_OVERRIDE_OFF)) {
+    governor_speed_limit_active = governor_rpm_limit_cal;
+    governor_output_t_0040aec2.governor_output = 6;
+    thermal_governor_cal_a = 0;
+    thermal_governor_cal_b = 0;
+  }
+  return;
+}
+//

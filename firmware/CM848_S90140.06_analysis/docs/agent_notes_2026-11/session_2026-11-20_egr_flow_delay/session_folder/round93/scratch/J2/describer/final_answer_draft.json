@@ -1,0 +1,14 @@
+{
+  "batch": "J2",
+  "roles": [
+    {
+      "address": "0x0001fdc0",
+      "role": "J1922 monitor counter with one word argument, a datalink control mode. Only while bit 0x80 of algorithm_enable_flags_2_cal (e2m JC22MRSW, J1922 monitor enable) is set: mode 1 / 2 / 3 adds 1 to the control count 0x804164 (e2m 1101 +0 JC22CU) and to that mode's count 0x804170 (speed, JC22RPCU) / 0x804176 (torque, JC22TQCU) / 0x80416a (limit, JC22LMCU), and stores key_on_hour_meter in that mode's time long 0x804172 / 0x804178 / 0x80416c and in the last-control time 0x804166 (JC22TM); any other mode changes nothing.",
+      "discriminator": "The only code that increments or stamps the e2m block 1101 cells and the only reader of bit 0x80. Its neighbour 0x1fd6c (bit 0x100, monitor clear enable) zeroes the same eight cells once 0x804166 + 0x808190 (JC22CCTM) is below key_on_hour_meter. It keeps per-mode counts and last times only; records with source, mode list and duration are the J1939 monitor's (0x22070). Call sites: 0x231da passes the mode it ends with no network test; 0x23244 passes the previous mode on a mode / network / source change only when the previous network type 0x801984 is 0 (J1922) - so a J1939 control that ends by timeout or time limit is counted too.",
+      "suggested_name": "cm550_recordJ1922ControlOccurrence",
+      "confidence": "high",
+      "cm848_counterpart": "none - CM848's algorithm_enable_flags_2_t keeps both bits ('no reader in this build'), its labelled e2m has no block 1101 record, and the frozen CM848 decompilation has no reader of j1922_monitor_enable."
+    }
+  ],
+  "notes": "draft - the full answer is assembled in the StructuredOutput call; see notes.txt in this folder for the evidence trail"
+}

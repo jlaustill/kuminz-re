@@ -1,0 +1,1482 @@
+{
+ "batch": "J1",
+ "proposal": {
+  "batch": "J1",
+  "summary": "0x201d6-0x21270 is CM550's J1939 multiplexing input layer: it turns the j1939_received_* bytes that the six receive handlers store into engine inputs. Two tasks drive it: the 10 ms task 0x21070 runs the 17 two-bit switch inputs of j1939_input_signal_descriptor_table, the fan request, the retarder selection and five output-bit copies; the 50 ms task 0x21146 runs the accelerator inputs (low idle switch, idle switch pair, pedal position, remote accelerator) and the wet tank pressure. Each processor clears its input's bits in three one-dword bitmaps (0x800aa0 not-available data, 0x800aa4 message timeout, 0x800aa8 pedal input message timeout), tests its calibration enable bit and the module priority 0x808158 (e2m 12FE MXMOPZ) against the input's client priority, and then writes the override value (a switch's user value bit, an A/D channel's override word or a percent word) from the received byte, or the default when the message timed out or the value is not available. It is CM848's layer 0x509d98-0x50ae5c in the same address order: the nine bitmap helpers are step-for-step twins; the processors and the two tasks are counterparts, because CM848 adds the DM13 and monitor inhibit gates, a multiplex enable bit and a start delay and has its own fault bits, while CM550 has two processors CM848 lacks (remote accelerator, wet tank pressure) and files every fault under bit 0 of 0x806000.",
+  "functions": [
+   {
+    "address": "0x000201d6",
+    "current_name": "cm550_FUN_000201d6",
+    "proposed_name": "clearJ1939InputDataErrorBit",
+    "role": "Clears bit N (the J1939 input number) of the one-dword bitmap at 0x800aa0.",
+    "discriminator": "It is the clear helper for 0x800aa0, the bitmap that 0x202d8 sets where a received value is 'not available' (a byte of 0xfb-0xfd or 0xff, a two-bit switch state of 3); its siblings 0x20210 and 0x2024a clear 0x800aa8 and 0x800aa4.",
+    "relation": "twin",
+    "cm848_address": "0x00509d98",
+    "cm848_current_name": "cm848_clearJ1939InputDataErrorBit",
+    "plate_comment": "(J1939 input number): clears bit N of j1939_input_data_error_bitmap (dword N >> 5 - mask 1 << (N & 31)), the bit that marks input N as delivering a not-available value. Each input processor calls it for its own input before it evaluates the input again. The same instructions and the same place in the layer in CM550 (0x201d6) and CM848 (0x509d98): one shared name.",
+    "evidence": "CM550 0x201da move.w (12,a7),d2; 0x201de-0x201e8 low byte sign-extended then lsr.l #5 = dword index; 0x201ea-0x201f8 mask = not (1 << (byte and 0x1f)); 0x20200 movea.l #0x800aa0,a0; 0x20206 and.l d2,(0,a0,d0.l*4). CM848 0x509d98: srawi r4,r3,5 / slw of 1 by r3 mod 32 / not / lwz - and - stw at 0x3fbd5a + 4 x index (lis r12,64; addi -17062). Step match: same index, same mask, same 32-bit and-store, base = the first of three consecutive dword bitmaps (CM550 0x800aa0 / a4 / a8 = CM848 0x3fbd5a / 5e / 62: +0 / +4 / +8 in both). Position: first of nine helpers that stand in the same order in both firmwares (clear +0 +8 +4, any +0 +8 +4, set +0 +8 +4: 0x201d6-0x20348 and 0x509d98-0x509f90). Call sites 0x2039a 0x20434 0x204d0 0x207a4 0x208c6 0x20e2e 0x20fc6 (retarder, fan, low idle switch, remote accelerator, switch entry, idle switch pair, wet tank); CM848's callers are the five of these processors that exist there. abs_refs: 0x800aa0 is referenced only at 0x20202 0x2028a 0x20302.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020210",
+    "current_name": "cm550_FUN_00020210",
+    "proposed_name": "clearJ1939PedalInputTimeoutBit",
+    "role": "Clears bit N (the J1939 input number) of the one-dword bitmap at 0x800aa8.",
+    "discriminator": "It is the clear helper for 0x800aa8, the bitmap that 0x20310 sets only for the accelerator inputs (6 low idle switch, 7 pedal position, 1 remote accelerator) when their message timed out, and whose 'any bit' result becomes the flag 0x80d70e.",
+    "relation": "twin",
+    "cm848_address": "0x00509dd8",
+    "cm848_current_name": "cm848_clearJ1939PedalInputTimeoutBit",
+    "plate_comment": "(J1939 input number): clears bit N of j1939_pedal_input_timeout_bitmap, the bit that marks an accelerator input's message as lost. Used for inputs 6 and 7 (accelerator low idle switch and pedal position) in both firmwares and for input 1 (remote accelerator) in CM550 only. The same instructions and the same place in the layer in CM550 (0x20210) and CM848 (0x509dd8): one shared name.",
+    "evidence": "CM550 0x20210-0x20248: the instructions of 0x201d6 with movea.l #0x800aa8,a0 (0x2023a) and and.l d2,(0,a0,d0.l*4) (0x20240). CM848 0x509dd8: the instructions of 0x509d98 on 0x3fbd62 (addi -17054), the +8 bitmap. Second of the nine helpers in both. Call sites 0x204e0 (low idle switch), 0x207b8 (remote accelerator), 0x20e42 (idle switch pair); CM848: the low idle switch and idle switch pair processors. abs_refs: 0x800aa8 only at 0x2023c 0x202a6 0x2033a.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002024a",
+    "current_name": "cm550_FUN_0002024a",
+    "proposed_name": "clearJ1939InputTimeoutBit",
+    "role": "Clears bit N (the J1939 input number) of the one-dword bitmap at 0x800aa4.",
+    "discriminator": "It is the clear helper for 0x800aa4, the bitmap that 0x20348 sets exactly where an input's j1939_input_signal_timeouts word has reached 0.",
+    "relation": "twin",
+    "cm848_address": "0x00509e18",
+    "cm848_current_name": "cm848_clearJ1939InputTimeoutBit",
+    "plate_comment": "(J1939 input number): clears bit N of j1939_input_timeout_bitmap, the bit that marks input N's message as timed out (its j1939_input_signal_timeouts word reached 0). Each input processor calls it for its own input before it evaluates the input again. The same instructions and the same place in the layer in CM550 (0x2024a) and CM848 (0x509e18): one shared name.",
+    "evidence": "CM550 0x2024a-0x20282: the instructions of 0x201d6 with movea.l #0x800aa4,a0 (0x20274) and and.l (0x2027a). CM848 0x509e18: the instructions of 0x509d98 on 0x3fbd5e (addi -17058), the +4 bitmap. Third of the nine helpers in both. Call sites 0x203a2 0x2043a 0x204d8 0x207ae 0x208bc 0x20e38 0x20fd0 (the same seven processors as 0x201d6); CM848: the same five as its data error clear. abs_refs: 0x800aa4 only at 0x20276 0x202c2 0x20372.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020284",
+    "current_name": "cm550_FUN_00020284",
+    "proposed_name": "anyJ1939InputDataErrorActive",
+    "role": "Returns 1 when the dword at 0x800aa0 is not zero, else 0.",
+    "discriminator": "It tests 0x800aa0 (the not-available data bitmap); 0x202a0 tests 0x800aa8 and 0x202bc tests 0x800aa4. Both input tasks call it first and turn its result into the fault bit.",
+    "relation": "twin",
+    "cm848_address": "0x00509e58",
+    "cm848_current_name": "cm848_anyJ1939InputDataErrorActive",
+    "plate_comment": "Returns 1 while any bit of j1939_input_data_error_bitmap is set (a loop over its one dword), else 0. Both J1939 input tasks call it and set or clear the data error fault from the result. The same instructions and the same place in the layer in CM550 (0x20284) and CM848 (0x509e58): one shared name.",
+    "evidence": "CM550 0x20284 clr.w d0 / clr.w d1; 0x20288 movea.l #0x800aa0,a0; 0x2028e tst.l (a0)+; not zero -> moveq #1,d0 (0x20292); zero -> addq.w #1,d1, tst.w d1, beq back to 0x2028e = a loop of one element; result in d0. CM848 0x509e58: li r4,0 / li r5,0; lwzx at 0x3fbd5a + 4 x r5; not zero -> li r4,1; else r5 + 1 and loop while r5 <= 0 (cmpwi r5,0; ble) = one element; extsh r3,r4. Fourth of the nine helpers in both. Call sites 0x210ce (10 ms task) and 0x2116c (50 ms task); CM848: cm848_processJ1939SwitchAndRequestInputs and cm848_processJ1939AcceleratorInputs.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000202a0",
+    "current_name": "cm550_FUN_000202a0",
+    "proposed_name": "anyJ1939PedalInputTimeoutActive",
+    "role": "Returns 1 when the dword at 0x800aa8 is not zero, else 0.",
+    "discriminator": "It tests 0x800aa8 (the pedal input timeout bitmap). Its single caller, the 50 ms accelerator task, stores the result as 0 / 1 in the flag 0x80d70e.",
+    "relation": "twin",
+    "cm848_address": "0x00509e98",
+    "cm848_current_name": "cm848_anyJ1939PedalInputTimeoutActive",
+    "plate_comment": "Returns 1 while any bit of j1939_pedal_input_timeout_bitmap is set (a loop over its one dword), else 0. Its one caller, the J1939 accelerator input task, stores the result in j1939_pedal_input_timeout_active_flag. The same instructions and the same place in the layer in CM550 (0x202a0) and CM848 (0x509e98): one shared name.",
+    "evidence": "CM550 0x202a0-0x202ba: the instructions of 0x20284 with movea.l #0x800aa8,a0 (0x202a4). CM848 0x509e98: the instructions of 0x509e58 on 0x3fbd62. Fifth of the nine helpers in both. One call site in each firmware: CM550 0x211dc, followed by move.b #1,(a2) / clr.b (a2) with a2 = 0x80d70e (0x211e6 / 0x211ee); CM848 0x50ae28 in cm848_processJ1939AcceleratorInputs, followed by stb to 0x40aaa8 - 0x80d70e and 0x40aaa8 are the same record, e2m 12F7 +2 MXACTMER.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000202bc",
+    "current_name": "cm550_FUN_000202bc",
+    "proposed_name": "anyJ1939InputTimeoutActive",
+    "role": "Returns 1 when the dword at 0x800aa4 is not zero, else 0.",
+    "discriminator": "It tests 0x800aa4 (the message timeout bitmap). Both input tasks call it second, after the data error test, and write the fault bit again from its result.",
+    "relation": "twin",
+    "cm848_address": "0x00509ed8",
+    "cm848_current_name": "cm848_anyJ1939InputTimeoutActive",
+    "plate_comment": "Returns 1 while any bit of j1939_input_timeout_bitmap is set (a loop over its one dword), else 0. Both J1939 input tasks call it and set or clear the timeout fault from the result. The same instructions and the same place in the layer in CM550 (0x202bc) and CM848 (0x509ed8): one shared name.",
+    "evidence": "CM550 0x202bc-0x202d6: the instructions of 0x20284 with movea.l #0x800aa4,a0 (0x202c0). CM848 0x509ed8: the instructions of 0x509e58 on 0x3fbd5e. Sixth of the nine helpers in both. Call sites 0x21106 (10 ms task) and 0x211a4 (50 ms task); CM848: the same two tasks (bl 0x509ed8 at 0x50ac98 and 0x50adb8).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000202d8",
+    "current_name": "setBitInArray",
+    "proposed_name": "setJ1939InputDataErrorBit",
+    "role": "Sets bit N (the J1939 input number) of the one-dword bitmap at 0x800aa0.",
+    "discriminator": "It is not a generic bit setter: the base 0x800aa0 is fixed in the code. Its eight call sites are exactly the 'not available' branches of the processors - byte values 0xfb-0xfd / 0xff and two-bit switch state 3 - never a timeout.",
+    "relation": "twin",
+    "cm848_address": "0x00509f18",
+    "cm848_current_name": "cm848_setJ1939InputDataErrorBit",
+    "plate_comment": "(J1939 input number): sets bit N of j1939_input_data_error_bitmap: input N delivered a not-available value (a byte of 0xfb-0xfd or 0xff, or a two-bit switch state of 3) while its message is still arriving. The input tasks report any set bit as the data error fault. The same instructions and the same place in the layer in CM550 (0x202d8) and CM848 (0x509f18): one shared name.",
+    "evidence": "CM550 0x202d8-0x2030e: index and mask as 0x201d6 without the not; 0x20300 movea.l #0x800aa0,a0; 0x20306 or.l d2,(0,a0,d0.l*4). CM848 0x509f18: srawi / slw / lwz - or - stw at 0x3fbd5a + 4 x index. Seventh of the nine helpers in both. Call sites and the test before each: 0x20410 retarder (after cmpi.b #0xfe failed at 0x203fc), 0x204a2 fan, 0x20854 remote accelerator (0xff or 0xfb-0xfd, 0x2083e-0x2084e), 0x20e04 pedal position, 0x21062 wet tank, 0x20542 low idle switch (cmpi.b #3 at 0x20538), 0x20a46 switch entry (cmpi.b #3,(a0) at 0x20a3a), 0x20f9e idle switch pair. CM848's callers: the six of these processors that exist there. CM848's function_renames.csv header records that an earlier 'setBitInArray' twin at 0x4ef5c was removed as wrong; this is the real one.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020310",
+    "current_name": "cm550_FUN_00020310",
+    "proposed_name": "setJ1939PedalInputTimeoutBit",
+    "role": "Sets bit N (the J1939 input number) of the one-dword bitmap at 0x800aa8.",
+    "discriminator": "It is the setter for 0x800aa8 and is called only for the accelerator inputs 6, 7 and 1, each time right after the timeout bit setter in the 'timer is 0' branch.",
+    "relation": "twin",
+    "cm848_address": "0x00509f54",
+    "cm848_current_name": "cm848_setJ1939PedalInputTimeoutBit",
+    "plate_comment": "(J1939 input number): sets bit N of j1939_pedal_input_timeout_bitmap: the message of an accelerator input was lost - input 6 or 7 (low idle switch, pedal position) in both firmwares, also input 1 (remote accelerator) in CM550. Always called together with setJ1939InputTimeoutBit. The same instructions and the same place in the layer in CM550 (0x20310) and CM848 (0x509f54): one shared name.",
+    "evidence": "CM550 0x20310-0x20346: the instructions of 0x202d8 with movea.l #0x800aa8,a0 (0x20338) and or.l (0x2033e). CM848 0x509f54: the instructions of 0x509f18 on 0x3fbd62. Eighth of the nine helpers in both. Call sites 0x2052c (input 6, after tst.w (0x804240).l found 0), 0x20808 (input 1, after tst.w (0x804236).l), 0x20cfe (input 7, after tst.w (0x804242).l); CM848: the low idle switch and pedal position processors.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020348",
+    "current_name": "cm550_FUN_00020348",
+    "proposed_name": "setJ1939InputTimeoutBit",
+    "role": "Sets bit N (the J1939 input number) of the one-dword bitmap at 0x800aa4.",
+    "discriminator": "It is the setter for 0x800aa4; every one of its seven call sites directly follows a tst.w of the input's j1939_input_signal_timeouts word that found 0.",
+    "relation": "twin",
+    "cm848_address": "0x00509f90",
+    "cm848_current_name": "cm848_setJ1939InputTimeoutBit",
+    "plate_comment": "(J1939 input number): sets bit N of j1939_input_timeout_bitmap: input N's message timed out (its j1939_input_signal_timeouts word has counted down to 0). The input tasks report any set bit as the timeout fault. The same instructions and the same place in the layer in CM550 (0x20348) and CM848 (0x509f90): one shared name.",
+    "evidence": "CM550 0x20348-0x2037e: the instructions of 0x202d8 with movea.l #0x800aa4,a0 (0x20370) and or.l (0x20376). CM848 0x509f90: the instructions of 0x509f18 on 0x3fbd5e. Ninth of the nine helpers in both. Call sites 0x203d4 (after tst.w (0x80423e).l, slot 5), 0x2046a (0x804234, slot 0), 0x20524 (0x804240, slot 6), 0x207fe (0x804236, slot 1), 0x20986 (tst.w (0,a0,d0.w*2) on 0x804234 with the entry's slot), 0x20cf4 (0x804242, slot 7), 0x2100a (0x804246, slot 9); CM848's callers: the five of these processors that exist there.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020380",
+    "current_name": "cm550_FUN_00020380",
+    "proposed_name": "cm550_processJ1939EngineRetarderSelection",
+    "role": "Converts the received J1939 engine retarder selection byte (input 5) into the retarder selection percent word, or loads the default and flags the input when its message timed out or the value is not available.",
+    "discriminator": "Input number 5: timer word 0x80423e, source byte 0x80d719 (j1939_received_engine_retarder_selection), scale x 4 / 10, output word 0x80d728 with the default 0x80815a and the client priority byte 0x80d726; its enable is bit 4 of algorithm_enable_flags_33_cal (0x803cd6), which no sibling reads.",
+    "relation": "counterpart",
+    "cm848_address": "0x00509fcc",
+    "cm848_current_name": "cm848_processJ1939EngineRetarderSelection",
+    "plate_comment": "J1939 input 5, the engine retarder selection (EBC1 byte 5, j1939_received_engine_retarder_selection): while algorithm_enable_flags_33_cal bit 4 is set and j1939_input_source_priority is not below j1939_engine_retarder_selection_source_priority it writes j1939_engine_retarder_selection_percent = raw x 4 / 10 for a raw value up to 250. A timed out message (j1939_input_signal_timeouts[5] = 0), the error value 0xfe and a not-available value load j1939_engine_retarder_selection_default_percent instead; the timeout sets the input's timeout bit and a not-available value its data error bit. Called from the 10 ms J1939 input task (0x21070). The counterpart of cm848_processJ1939EngineRetarderSelection (0x509fcc), which adds the DM13 and monitor inhibit gates and takes its enable from word 13 bit 0.",
+    "evidence": "0x20396 / 0x2039e clear data error and timeout bit 5 (bsr 0x201d6, 0x2024a); 0x203a8 move.w (0x803cd6).l,d0 / andi.w #0x10 / beq exit; 0x203b6-0x203c6 word 0x808158 against byte 0x80d726, blt exit; 0x203c8 tst.w (0x80423e).l; zero: 0x203d0 set timeout bit 5, 0x203da move.w (a3),(a2) = 0x80815a -> 0x80d728; 0x203e2 cmpi.b #0xfa,(a4) (a4 = 0x80d719): at most 250 -> lsl.l #2, divu.l #10, move.w d0,(a2); 0x203fc cmpi.b #0xfe -> default only; otherwise 0x2040a default and 0x2040c set data error bit 5. Called once: jsr at 0x21094. CM848 0x509fcc: the same steps and constants (li r3,5; cmpwi 250; slwi 2 / divwu 10; cmpwi 254; priority 0x5c340 against byte 0x40aac0; output 0x40aac2, default 0x5c342) plus lhz 0x40adda (DM13 flag) at 0x50a018 and lhz 0x40aaca (monitor inhibit) at 0x50a038 and 0x50a0a8, and the enable is lhz 0x3fd5b6 bit 0 (0x509fec). CM550's family has no operand for either flag (every absolute operand of 0x201d6-0x21270 was listed).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002041c",
+    "current_name": "cm550_FUN_0002041c",
+    "proposed_name": "cm550_processJ1939EngineFanRequestedSpeed",
+    "role": "Converts the received J1939 engine fan requested percent speed byte (input 0) into the fan request word, or loads the default and flags the input when its message timed out or the value is not available.",
+    "discriminator": "Input number 0: timer word 0x804234, source byte 0x80d71c (j1939_received_engine_fan_requested_percent_speed), scale x 16 / 10, output word 0x80d72a with the default 0x80815c and the client priority byte 0x80d727; its enable is bit 15 of algorithm_enable_flags_25_cal (0x803cc6).",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a0cc",
+    "cm848_current_name": "cm848_processJ1939EngineFanRequestedSpeed",
+    "plate_comment": "J1939 input 0, the engine fan requested percent speed (CM1 byte 1, j1939_received_engine_fan_requested_percent_speed): while algorithm_enable_flags_25_cal bit 15 (manual fan level override) is set and j1939_input_source_priority is not below j1939_engine_fan_request_source_priority it writes j1939_engine_fan_requested_speed = raw x 16 / 10 (0.25 percent per count) for a raw value up to 250. A timed out message (j1939_input_signal_timeouts[0] = 0), the error value 0xfe and a not-available value load j1939_engine_fan_requested_speed_default instead; the timeout sets the input's timeout bit and a not-available value its data error bit. Called from the 10 ms J1939 input task (0x21070); the output word has no reader in the dumped ROM. The counterpart of cm848_processJ1939EngineFanRequestedSpeed (0x50a0cc), which adds the DM13 and monitor inhibit gates.",
+    "evidence": "0x20432 / 0x20438 clear data error and timeout bit 0; 0x20440 move.w (0x803cc6).l,d0 / andi.w #0x8000 / beq exit; 0x2044c-0x2045e word 0x808158 against byte 0x80d727, blt exit; 0x20460 tst.w (0x804234).l; zero: 0x20468 set timeout bit 0, 0x20470 move.w (a3),(a2) = 0x80815c -> 0x80d72a; 0x20478 cmpi.b #0xfa,(a4) (a4 = 0x80d71c): lsl.l #4, divu.l #10, move.w d0,(a2); 0x20492 cmpi.b #0xfe -> default only; otherwise 0x204a0 set data error bit 0 and 0x204a8 default. Called once: jsr at 0x2108e. abs_refs: 0x80d72a only at 0x20422. CM848 0x50a0cc: the same steps and constants (li r3,0; enable lhz 0x3fd5ce bit 15; priority 0x5c340 against byte 0x40aac1; slwi 4 / divwu 10; output 0x40aac4, default 0x5c344) plus the DM13 flag 0x40adda (0x50a11c) and the monitor inhibit flag 0x40aaca (0x50a13c, 0x50a180).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000204b0",
+    "current_name": "cm550_outputControlState1Handler",
+    "proposed_name": "cm550_processJ1939AcceleratorLowIdleSwitch",
+    "role": "Writes the received J1939 accelerator pedal low idle switch state (input 6) into the override value of logical switch 7, the idle switch, or the switch's default state when the value is error or not available.",
+    "discriminator": "Input number 6: it tests the timer word 0x804240 itself and writes only switch 7 (bit 7 of 0x80bcd8, priority byte 0x80bd4a + 7), setting the timeout and pedal input timeout bits 6 on a lost message. Its sibling 0x20e14 reads the same byte but writes both switches 7 and 8, tests no timer and needs the sampled throttle override bit as well.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a1b4",
+    "cm848_current_name": "cm848_processJ1939AcceleratorLowIdleSwitch",
+    "plate_comment": "J1939 input 6, the accelerator pedal low idle switch (EEC2 byte 1 bits 1-2, j1939_received_accelerator_pedal_1_low_idle_switch), into logical switch 7, the idle switch: while the switch's override enable (algorithm_enable_flags_13_cal bit 7) is set and j1939_input_source_priority is not below switch_input_source_priority[7] it claims the switch and - at priority 0 - writes the switch's override value (switch_1_to_8_override_values bit 7): on for 1, off for 0, the default state bit (j1939_switch_input_default_state_bits bit 7) for 2 (error) and 3 (not available, which also sets the input's data error bit). A timed out message (j1939_input_signal_timeouts[6] = 0) sets the input's timeout and pedal input timeout bits and leaves the switch as it is. Called from the 50 ms J1939 accelerator input task (0x21146). The counterpart of cm848_processJ1939AcceleratorLowIdleSwitch (0x50a1b4), which adds the monitor inhibit gate and writes the switch through its priority helpers.",
+    "evidence": "0x204cc-0x204e0 clear data error, timeout and pedal input timeout bit 6 (bsr 0x201d6, 0x2024a, 0x20210); 0x204e6 move.w (0x803cae).l,d0 / andi.w #0x80 / beq exit; 0x204f4-0x20500 word (a5) = 0x808158 against byte (7,a2) = 0x80bd51, blt exit; 0x20512 move.b (1,a5),(7,a2) (the priority word's low byte into the switch priority); 0x20518 tst.w (0x804240).l; zero: 0x20520 set timeout bit 6, 0x20528 set pedal input timeout bit 6, return; 0x20538 cmpi.b #3,(a4) (a4 = 0x80d71a): set data error bit 6 (0x2053e), then if (7,a2) is 0: move.l (0x807d6a).l,d0 / btst #7 -> ori.b #0x80,(a3) or andi.b #0x7f,(a3) (a3 = 0x80bcd8); 0x20572 cmpi.b #2: the same default write; else 0x205ac tst.b (a4) -> ori.b #0x80 / andi.b #0x7f. Called once: jsr at 0x2114e. CM848 0x50a1b4: li r3,6 three clears in the same order; enable lbz 0x3fdbce bit 7; priority 0x5c340 against 0x40c058 + 7; timer 0x3feab0; values 3 / 2 / else; default lbz 0x6456e bit 7; writes through 0x4ea40 / 0x4ea84 with (7, 0); plus the monitor inhibit flag 0x40aaca at 0x50a22c and 0x50a260.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000205c4",
+    "current_name": "cm550_FUN_000205c4",
+    "proposed_name": "mc68k_updateIdleSwitchesFromLocalInputs",
+    "role": "Sets the idle and not idle switch override values and throttle_above_idle_flag from local inputs: the raw sampled throttle A/D reading, or the debounced raw not idle switch.",
+    "discriminator": "The only function of the family that reads no J1939 byte and no timer: its sources are the QADC result register of the sampled throttle (0xfff2b0 + 2 x index, compared with 360 counts) and the raw not idle switch bit (0x80bced bit 0 XOR 0x800aaf bit 0) with the debounce timer 0x800aac and the previous state 0x800aae. Its one caller is the pedal position processor's timeout branch (0x20d0c). It reads an MC68336 register directly, hence the mc68k_ prefix.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a2cc",
+    "cm848_current_name": "cm848_updateIdleSwitchesFromLocalInputs",
+    "plate_comment": "The local fallback for the idle validation switches while the J1939 pedal message is lost (its one caller is cm550_processJ1939AcceleratorPedalPosition on a timeout): it sets the override values of logical switch 7 (idle) and 8 (not idle) and throttle_above_idle_flag. With algorithm_enable_flags_25_cal bit 3 set (limp home on the analog throttle) it stores the sampled throttle's QADC result register in idle_check_accelerator_pedal_raw and takes more than 360 counts as off idle. Otherwise it debounces the raw not idle switch (switch_9_to_16_raw_values bit 0 XOR switch_9_to_16_polarity_bits_snapshot bit 0) with accelerator_idle_switch_debounce_timer (100, minus 50 per unchanged pass, applied at 0) and accelerator_idle_switch_previous_state. The counterpart of cm848_updateIdleSwitchesFromLocalInputs (0x50a2cc), which also has a debounce armed flag and writes the switches through its priority helpers.",
+    "evidence": "0x205e0 move.w (0x803cc6).l,d0 / andi.w #8. Set: 0x205ee index = word 0x806be2 (sampled_throttle_sensor_config + 16, the QADC result register index), 0x205f8 move.w (0xfff2b0 + 2 x index),(0x80d72c).l, 0x20604 cmpi.w #0x168,(0x80d72c).l; at most 360: andi.b #0xfe,(1,a1) (0x80bcd9 bit 0 off), ori.b #0x80,(a4) (0x80bcd8 bit 7 on), clr.w (a3) (0x80aa86); above: the opposite and move.w #1,(a3). Clear: 0x20636 d2 = byte 0x80bced, 0x2063c-0x20652 (d2 XOR byte 0x800aaf) and 1; 0x20658 cmp.b (0x800aae).l,d2; different: 0x20698 store d2 in 0x800aae and move.w #0x64,(a2) (a2 = 0x800aac); same: tst.w (a2), subi.w #0x32,(a2), bgt exit, clr.w (a2), then the same two switch writes and the flag from d2. No priority test anywhere. One call site: 0x20d0c. 0xfff2b0 is referenced by only one other function, mc68k_processAnalogSensorChannels (0xb856). 0x80bced is the raw image byte of inputs 8-15: mc68k_sampleAndDebounceDiscreteInputs stores it at 0x1502c before the polarity XOR at 0x15070. CM848 0x50a2cc: enable lhz 0x3fd5ce bit 3; analog branch cmpwi 360 with the result stored in 0x40aac6; switch branch reads cm848_readSwitchHardwareInput(8), previous state 0x3fbd68, timer 0x3fbd66 100 / minus 50; differences: the armed flag 0x3fbd69, a forced A/D reading option (0x3fdb78 bit 13) and writes through 0x4ea40 / 0x4ea84 at priority 0.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000206a8",
+    "current_name": "cm550_FUN_000206a8",
+    "proposed_name": "cm550_copyOutputBitToSwitchOverrideValue",
+    "role": "(logical input, output number): copies one bit of the output image into the override value bit of one logical input when that input's override is enabled and the priority allows.",
+    "discriminator": "The only function of the family that reads the output image (0x80bcf6 + output / 8): its source is an output command bit, not a received J1939 byte, and it touches no timer and no fault bitmap. Both of its numbers are arguments; the 10 ms task calls it five times with constants.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a4a0",
+    "cm848_current_name": "cm848_copyStatusBitToDatalinkSwitch",
+    "plate_comment": "(logical input, output number): while the input's override enable bit is set (bit input + 208 of the algorithm enable words, that is words 13-17) and j1939_input_source_priority is not below switch_input_source_priority[output number] it claims the input and - at priority 0 - copies the output's bit of the output image (0x80bcf6 + output / 8) into the input's override value bit (0x80bcd8 + input / 8). The 10 ms J1939 input task (0x21070) calls it with (54, 1) (54, 4) (33, 6) (32, 0) (54, 2). The priority test is indexed with the output number and the claim with the input, exactly as in its counterpart cm848_copyStatusBitToDatalinkSwitch (0x50a4a0), which writes the switch through its priority helpers.",
+    "evidence": "0x206ac d2 = (0x14,a7) (argument 1), 0x206b0 d3 = (0x18,a7) (argument 2). 0x206c6-0x206f8: bit (d2 + 0xd0) mod 16 of word (d2 + 0xd0) >> 4 at 0x803c94, beq exit. 0x206fc-0x20708: word (a3) = 0x808158 against byte (0,a2,d3.l) = 0x80bd4a + argument 2, blt exit. 0x2070a-0x20718: if byte 0x80bd4a + d2 <= the word: move.b (1,a3),(0,a2,d2.l). 0x2071e tst.b (0,a2,d2.l), bne exit; 0x20724 clr.b. 0x20728-0x2074a: bit d3 and 7 of byte (d3 >> 3) at 0x80bcf6. Set: 0x2075e or.b d1,(0,a1,d0.l) with a1 = 0x80bcd8, index d2 >> 3, bit d2 and 7; clear: 0x2077a and.b of the inverted mask. Callers: only 0x21070 through a2 (movea.l #0x206a8,a2 at 0x21074; jsr (a2) at 0x210a2 0x210ac 0x210b6 0x210be 0x210c8 with pea pairs (1, 0x36) (4, 0x36) (6, 0x21) (0, 0x20) (2, 0x36); the last pushed is argument 1). CM848 0x50a4a0: enable lbzx 0x3fdbce bit r3; priority lhz 0x5c340 against lbzx 0x40c058[r4] (the status bit index, the same quirk); claim on [r3]; bit r4 of lbzx 0x40c080 (logical_output_request_bits); write through 0x4ea40 / 0x4ea84 with (r3, 0); called five times with (31, 1) (31, 35) (31, 0) (4, 4) (31, 5). Differences: the helpers do the priority 0 test after the bit is read, the enable array is separate, and the constants differ.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x00020784",
+    "current_name": "cm550_FUN_00020784",
+    "proposed_name": "cm550_processJ1939RemoteAcceleratorPedalPosition",
+    "role": "Converts the received J1939 remote accelerator pedal position byte into the override value of A/D channel 11 (the remote throttle), or loads the channel default and flags the input when the message timed out or the value is invalid.",
+    "discriminator": "Source byte 0x80d722 (j1939_received_remote_accelerator_pedal_position) into analog_sensor_override_values[11] (0x80a744) with remote_throttle_sensor_config.default_value (0x806bec) and the priority word 0x80a6e0; its enables are bit 12 of word 18 and bit 3 of word 14, and it works under input number 1 (timer 0x804236).",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "J1939 remote accelerator pedal position (EEC2 byte 4, j1939_received_remote_accelerator_pedal_position) into A/D channel 11, the remote throttle: while algorithm_enable_flags_18_cal bit 12 (remote throttle enable) and algorithm_enable_flags_14_cal bit 3 (remote throttle switch override enable) are set and j1939_input_source_priority is not below remote_throttle_override_priority it writes analog_sensor_override_values[11] = raw x 16 / 10 for a raw value up to 250 and clears fault bit 0 of 0x806000. It works under input number 1, the remote accelerator enable switch's timer and bits: a timed out message loads remote_throttle_sensor_config.default_value and sets the timeout and pedal input timeout bits, 0xfe loads the default and sets fault bit 0, 0xfb-0xfd and 0xff load the default and set the data error bit. Called from the 50 ms J1939 accelerator input task (0x21146). CM848 has no such function: nothing there reads the received byte.",
+    "evidence": "0x207a0-0x207b8 clear data error, timeout and pedal input timeout bit 1; 0x207c0 move.w (0x803cb8).l / andi.l #0x1000 / beq exit; 0x207d0 move.w (0x803cb0).l / andi.l #8 / beq exit; 0x207e0 move.w (0x808158).l,d0 / cmp.w (0x80a6e0).l,d0 / bcs exit (no store into 0x80a6e0); 0x207f0 tst.w (0x804236).l; zero: 0x207f8 move.w (a5),(a3) (0x806bec -> 0x80a744), set timeout bit 1 (0x207fe) and pedal input timeout bit 1 (0x20808); 0x20816 cmpi.b #0xfe,(a2) (a2 = 0x80d722): default, then with interrupts masked ori.w #1,(0x806000).l and ori.w #1,(0x806040).l; 0x2083e-0x2084e 0xff or 0xfb-0xfd: set data error bit 1 (0x20854) and default; 0x20864 at most 0xfa: andi.w #0xfffe,(0x806000).l, lsl.l #4, divu.l #10, move.w d0,(a3). Called once: jsr at 0x21166. CM848: xref_addr.py 0x40aabc (j1939_received_remote_accelerator_pedal_position) lists one store (receivePgn61443ElectronicEngineController2Message) and no read, and 0x509fcc-0x50ae5c has no body with these steps.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020890",
+    "current_name": "cm550_FUN_00020890",
+    "proposed_name": "cm550_processJ1939SwitchInput",
+    "role": "(table entry index): processes one two-bit J1939 switch input of j1939_input_signal_descriptor_table - it clears and sets the entry's timeout and data error bits and writes the received state, or the default state, into the logical switch's override value.",
+    "discriminator": "The only function that reads j1939_input_signal_descriptor_table (movea.l #0x20108,a4): the signal byte pointer, the timeout slot and the logical switch all come from the entry its argument selects, so it serves 17 inputs where each sibling serves one fixed input.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a57c",
+    "cm848_current_name": "cm848_evaluateJ1939InputSignalFault",
+    "plate_comment": "(entry index 0-16): processes one two-bit J1939 switch input of j1939_input_signal_descriptor_table. It clears the entry's timeout and data error bits; then, while the logical switch's override enable bit is set (bit switch + 208 of the algorithm enable words) and j1939_input_source_priority is not below switch_input_source_priority[switch], it claims the switch and - at priority 0 - writes the switch's override value bit: on for a received 1, off for 0, and the switch's default state bit for 2 (error), 3 (not available, which sets the data error bit) and a timed out message (which sets the timeout bit). The 10 ms J1939 input task (0x21070) calls it for all 17 entries. The counterpart of cm848_evaluateJ1939InputSignalFault (0x50a57c), which adds the DM13 and monitor inhibit gates and writes the switch through its priority helpers.",
+    "evidence": "0x20894 d3 = argument (word); 0x20898 a4 = 0x20108; entry = a4 + 10 x d3 (0x208a4-0x208ae); 0x208b8 / 0x208c2 the entry's byte +4 (timeout slot) pushed for 0x2024a then 0x201d6; 0x208ce d2 = word (8,a3) (low word of the switch) + 0xd0; 0x208da-0x208fc bit d2 mod 16 of word d2 >> 4 at 0x803c94, beq exit; 0x2090a-0x20922 byte 0x80bd4a[switch] against word 0x808158, bgt exit; 0x20958 move.b (0x808159).l,(0,a5,d0.l) (claim); 0x2096a-0x2097e tst.w of 0x804234[slot]; zero: 0x20986 set timeout bit, then if the priority byte is 0: 0x209c4-0x209dc bit switch and 31 of dword switch >> 5 at 0x807d6a -> or.b (0x209fc) / and.b (0x20a22) on 0x80bcd8[switch >> 3]; 0x20a3a cmpi.b #3,(a0) with a0 = the entry's pointer: 0x20a46 set data error bit, then the same default write (0x20a8a-0x20b06); 0x20b1e cmpi.b #2: default write (0x20b62-0x20bde); else 0x20c1a tst.b (a0): or.b (0x20c50) / and.b (0x20c8e). Called once, in the loop at 0x2107c-0x2108c for d2 = 0..16. Table values up to 72 index the arrays (ROM 0x20108: slots / switches (10,72) (4,9) (2,54) (16,11) (15,10) (17,3) (18,1) (19,2) (21,14) (20,13) (12,60) (13,56) (14,58) (11,20) (1,19) (22,15) (3,54)). CM848 0x50a57c: the same order (clear timeout, clear data error, enable 0x3fdbce, priority 0x5c340 against 0x40c058[switch], claim, timer, value 3 / 2 / 0 / else, default 0x6456e, writes through 0x4ea40 / 0x4ea84) plus the DM13 flag 0x40adda (0x50a628) and the monitor inhibit flag 0x40aaca (0x50a650, 0x50a67c).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020c98",
+    "current_name": "cm550_FUN_00020c98",
+    "proposed_name": "cm550_processJ1939AcceleratorPedalPosition",
+    "role": "Converts the received J1939 accelerator pedal position byte (input 7) into the override value of A/D channel 10 (the sampled throttle) and the throttle above idle flag, with fallbacks for a lost message, the error value and a not-available value.",
+    "discriminator": "Input number 7 with its own timer test (0x804242): source byte 0x80d714 (j1939_received_accelerator_pedal_position_1) into analog_sensor_override_values[10] (0x80a742) with the priority word 0x80a6de; it alone writes the flag 0x80d70c, writes throttle_above_idle_flag from the position and calls the local idle switch fallback 0x205c4.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a700",
+    "cm848_current_name": "cm848_processJ1939AcceleratorPedalPosition",
+    "plate_comment": "J1939 input 7, the accelerator pedal position (EEC2 byte 2, j1939_received_accelerator_pedal_position_1), into A/D channel 10, the sampled throttle: while algorithm_enable_flags_5_cal bit 10 and algorithm_enable_flags_13_cal bit 7 are set and j1939_input_source_priority is not below sampled_throttle_override_priority it claims the channel and writes analog_sensor_override_values[10] = raw x 16 / 10 and throttle_above_idle_flag = raw is not 0 (the channel default and 0 while j1939_accelerator_low_idle_switch_unavailable_flag is set). A timed out message (j1939_input_signal_timeouts[7] = 0) sets the timeout and pedal input timeout bits, loads sampled_throttle_sensor_config.default_value and runs mc68k_updateIdleSwitchesFromLocalInputs. The error value 0xfe loads the default, sets fault bit 0 of 0x806000 and takes the above idle flag from the low idle switch (j1939_accelerator_position_error_fallback_flag = 1); any other invalid value loads the default and sets the data error bit. Called from the 50 ms J1939 accelerator input task (0x21146); the counterpart of cm848_processJ1939AcceleratorPedalPosition (0x50a700), which adds the DM13 and monitor inhibit gates.",
+    "evidence": "0x20cae move.w (0x803c9e).l / andi.l #0x400 / beq exit; 0x20cbe move.w (0x803cae).l / andi.l #0x80 / beq exit; 0x20cce-0x20cde word 0x80a6de against word 0x808158, bhi exit; 0x20ce2 move.w (0x808158).l,(a2) (claim); 0x20ce8 tst.w (0x804242).l; zero: 0x20cf4 set timeout bit 7, 0x20cfe set pedal input timeout bit 7, 0x20d06 move.w (0x806bd4).l,(a4) (a4 = 0x80a742), 0x20d0c jsr 0x205c4; 0x20d18 cmpi.b #0xfa,(0x80d714).l: at most 250 and 0x80d70d is 0: lsl.l #4 / divu.l #10 -> (a4), (a3) = 0x80aa86 = 1 or 0 from tst.b (0x80d714).l, and when bit 0 of 0x806000 is set and the low idle switch byte is not 2: clr.b (0x80d70c).l and andi.w #0xfffe,(0x806000).l; 0x80d70d not 0 (0x20d86): clr.b 0x80d70c, default, flag 0; above 250 (0x20d9a): clr.b 0x80d70c, default; 0xfe (0x20da6): ori.w #1 on 0x806000 and 0x806040, then low idle switch above 1 -> flag 0, else move.b #1,(0x80d70c).l and flag = switch is not 1; otherwise 0x20e00 set data error bit 7 and flag 0. Called once: jsr at 0x21160. CM848 0x50a700: the same structure on sensor channel 13 (enable 0x3fda68 bit 13 and 0x3fdbce bit 7; held value and its priority in accelerator_pedal_sensor_channel_state; cmpwi 250 / x 16 / 10 / 254; flags 0x40aaa6 and 0x40aaa7 = the same e2m 12F7 +0 / +1 records) plus the DM13 flag (0x50a770), the monitor inhibit flag and the debounce armed flag.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020e14",
+    "current_name": "cm550_FUN_00020e14",
+    "proposed_name": "cm550_processJ1939AcceleratorIdleSwitchPair",
+    "role": "In J1939 pedal mode it drives both idle validation switches - logical switch 7 (idle) and 8 (not idle) - from the received low idle switch state, with the default states and a fault or the unavailable flag for the error and not-available values.",
+    "discriminator": "It writes two switches, 7 and 8, as a complementary pair (0x80bcd8 bit 7 and 0x80bcd9 bit 0) and claims both priority bytes; it clears the three bits of input 7, tests no timer but skips its work while the flag 0x80d70e is set, and it alone sets the flag 0x80d70d.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050a9d4",
+    "cm848_current_name": "cm848_processJ1939AcceleratorIdleSwitchPair",
+    "plate_comment": "J1939 pedal mode (algorithm_enable_flags_5_cal bit 10 and algorithm_enable_flags_13_cal bit 7): drives the idle validation switch pair from j1939_received_accelerator_pedal_1_low_idle_switch through the switches' override values - logical switch 7 (idle) = the received state, logical switch 8 (not idle) = its inverse - after clearing input 7's three bits and claiming both switches at j1939_input_source_priority. The values 2 (error) and 3 (not available) load both switches' default state bits; 2 also sets fault bit 0 of 0x806000, 3 sets j1939_accelerator_low_idle_switch_unavailable_flag and input 7's data error bit. It does nothing while j1939_pedal_input_timeout_active_flag is set. Called from the 50 ms J1939 accelerator input task (0x21146); the counterpart of cm848_processJ1939AcceleratorIdleSwitchPair (0x50a9d4), which adds the monitor inhibit gate.",
+    "evidence": "0x20e2a-0x20e42 clear data error, timeout and pedal input timeout bit 7; 0x20e4a move.w (0x803c9e).l / andi.l #0x400; 0x20e5a move.w (0x803cae).l / andi.l #0x80; 0x20e6a-0x20e86 word (a4) = 0x808158 against bytes (7,a3) and (8,a3) of 0x80bd4a, blt exit; 0x20e98 move.b (1,a4),(7,a3); 0x20eb4 move.b (1,a4),(a2) (a2 = 0x80bd52); 0x20eb8 tst.b (0x80d70e).l, bne exit; 0x20ec2 cmpi.b #1,(0x80d71a).l: at most 1: if (7,a3) is 0: ori.b #0x80 / andi.b #0x7f on 0x80bcd8 from tst.b (0x80d71a).l (0x20ed6-0x20ee8); if (a2) is 0: not.l of the byte, btst #0 -> ori.b #1 / andi.b #0xfe on (1,a5) = 0x80bcd9 (0x20ef8-0x20f14); above 1 (0x20f20): move.l (0x807d6a).l,d0 / btst #7 for switch 7 and btst #8 for switch 8 (0x20f2a, 0x20f4e); 0x20f68 cmpi.b #2: ori.w #1 on 0x806000 and 0x806040; else 0x20f92 move.b #1,(0x80d70d).l and 0x20f9e set data error bit 7. Called once: jsr at 0x2115a. CM848 0x50a9d4: three clears with 7; enable 0x3fda68 bit 13 and 0x3fdbce bit 7; priorities 0x40c058 + 7 and + 8; skip on 0x40aaa8; value below 2 -> switch 7 and inverse switch 8; else defaults 0x6456e bit 7 and 0x6456f bit 0, 2 -> fault, 3 -> 0x40aaa7 = 1 and data error bit 7; plus the monitor inhibit flag.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020fac",
+    "current_name": "cm550_FUN_00020fac",
+    "proposed_name": "cm550_processJ1939WetTankPressure",
+    "role": "Converts the received J1939 wet tank pressure byte (input 9) into the override value of A/D channel 25, or loads that channel's default and flags the input when the message timed out or the value is not available.",
+    "discriminator": "Input number 9: timer word 0x804246, source byte 0x80d720 (j1939_received_wet_tank_pressure), scale x 9282 / 100, enable bit 9 of algorithm_enable_flags_20_cal (0x803cbc) - an enable word no sibling reads - and the three channel 25 addresses 0x80a6fc / 0x80a760 / 0x806d3c.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "J1939 input 9, the wet tank pressure (EEC2 byte 5, j1939_received_wet_tank_pressure, 5 kPa per count): while algorithm_enable_flags_20_cal bit 9 is set (AD25OD 'A/D channel 25 override' in other ISB e2m files) it writes raw x 9282 / 100 (psi x 128) as the override value of A/D channel 25, claims the channel's client priority and sets the input's timeout / data error bits; a timed out message, 0xfe and a not-available value load the channel 25 default. This build has 25 channels (0-24), so the three channel 25 addresses lie one element past their arrays: the value lands on analog_sensor_raw_override_values[0] (0x80a760), the priority on intake_manifold_temperature_raw_override_priority (0x80a6fc) and the default is read from 0x806d3c, the first breakpoint of the intake manifold temperature linearization table. Called from the 50 ms J1939 accelerator input task (0x21146). CM848 has no such function: nothing there reads the received byte.",
+    "evidence": "0x20fc2 / 0x20fcc clear data error and timeout bit 9; 0x20fd8 move.w (0x803cbc).l,d0 / andi.w #0x200 / beq exit; 0x20fe6-0x20ff6 word 0x80a6fc against word 0x808158, bhi exit; 0x20ff8 move.w (0x808158).l,(a2) (claim); 0x20ffe tst.w (0x804246).l; zero: 0x21006 set timeout bit 9, 0x21012 move.w (a5),(a3) (0x806d3c -> 0x80a760); 0x2101a cmpi.b #0xfa,(0x80d720).l: 0x2102c-0x2103a ((v x 9 x 16 + v) x 32 + v) x 2 = v x 9282, divu.l #100, move.w d0,(a3); 0x2104a cmpi.b #0xfe -> default; else default and 0x2105e set data error bit 9. Called once: jsr at 0x21154. Channel index 25 in all three arrays: priority 0x80a6fc = 0x80a6ca (12D0) + 2 x 25, value 0x80a760 = 0x80a72e (12D2) + 2 x 25, default 0x806d3c = 0x806ae2 + 24 x 25 + 2, where 0x20c98 (channel 10) uses 0x80a6de / 0x80a742 / 0x806bd4 and 0x20784 (channel 11) uses 0x80a6e0 / 0x80a744 / 0x806bec. The ECU's parameter ID table puts 12D1 at 0x80a6fc, 12D3 at 0x80a760 and 101B at 0x806d3a, each 25 elements after the block before it; RAM 0x806d3a = 50, 0, 30, 31, 34 ... 1023 (a length word and 25 breakpoints). 63c5.e2m / 64c6 / 74c0 / 74c5 / 74c6: AD25GLDF 1003 +25A 'CHANNEL 25 GLOBAL DEFAULT', AD25OD 106B +2A mask 0x200 'A/D CHANNEL 25 OVERRIDE'. Scale: 5 kPa = 0.72519 psi, x 128 = 92.82. CM848: xref_addr.py 0x40aaba lists one store and no read.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00021070",
+    "current_name": "cm550_FUN_00021070",
+    "proposed_name": "cm550_processJ1939SwitchAndRequestInputs",
+    "role": "The 10 ms J1939 input task: runs the 17 switch inputs, the fan request, the retarder selection and five output bit copies, then sets or clears the fault bit from the data error and the timeout bitmaps.",
+    "discriminator": "It is the task that loops over the 17 descriptor entries (0x2107c-0x2108c) and calls 0x2041c, 0x20380 and 0x206a8; it does not touch the pedal input timeout bitmap or the flag 0x80d70e. Its sibling task 0x21146 calls the five accelerator / pressure processors instead.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050aba8",
+    "cm848_current_name": "cm848_processJ1939SwitchAndRequestInputs",
+    "plate_comment": "The J1939 switch and request input task, run every 10 ms from the task set at 0x1b4d8 right after cm550_tickJ1939InputSupervision: cm550_processJ1939SwitchInput for the 17 descriptor entries, then the fan request and retarder selection processors and five cm550_copyOutputBitToSwitchOverrideValue calls. Then it sets bit 0 of the fault status word 0x806000 (and its latch in 0x806040) while any data error bit is set, else clears it, and does the same again from the timeout bitmap - both summaries use the same bit, so the timeout result is the one that stays. The counterpart of cm848_processJ1939SwitchAndRequestInputs (0x50aba8), which needs the J1939 multiplex enable bit, holds the faults off during a start delay and uses two different fault bits.",
+    "evidence": "0x2107a-0x2108c d2 = 0..16: jsr 0x20890; 0x2108e jsr 0x2041c; 0x21094 jsr 0x20380; 0x2109a-0x210c8 five jsr (a2) = 0x206a8 with (0x36,1) (0x36,4) (0x21,6) (0x20,0) (0x36,2); 0x210ce jsr 0x20284: not zero -> ori.w #1,(0x806000).l and ori.w #1,(0x806040).l (0x210e0, 0x210e8), zero -> andi.w #0xfffe,(0x806000).l (0x210fc); 0x21106 jsr 0x202bc: the same two writes on the same bit (0x21118 / 0x21120, 0x21136); every write between move sr / ori #0x700,sr and the restore. Reached by jsr at 0x1b4f6 in the task set 0x1b4d8, after jsr 0x21edc (cm550_tickJ1939InputSupervision) at 0x1b4f0. Bit 0 of 0x806000 is also written by the two TPU speed interrupt handlers (0x19be4, 0x1a644) and the duty cycle monitor (0x1b05a 0x1b17a 0x1b1be). CM848 0x50aba8: the same loop (cmpwi r31,17), fan then retarder, five copies with (31,1) (31,35) (31,0) (4,4) (31,5), then the data error summary on bit 2 and the timeout summary on bit 0 of the fault word at 0x3fe974 + 16; plus the enable test (lhz 0x3fd5d4 bit 10) and the start delay 0x40aaa4 (0x50ac3c, 0x50acac). Called from cm848_phase_group_a_processing right after cm848_tickJ1939InputSupervision.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00021146",
+    "current_name": "cm550_FUN_00021146",
+    "proposed_name": "cm550_processJ1939AcceleratorInputs",
+    "role": "The 50 ms J1939 input task: runs the low idle switch, wet tank pressure, idle switch pair, pedal position and remote accelerator processors, then the two fault summaries, and stores whether any accelerator message is lost in the flag 0x80d70e.",
+    "discriminator": "It is the task that calls 0x204b0, 0x20fac, 0x20e14, 0x20c98 and 0x20784 and the only code that calls 0x202a0 and writes the flag 0x80d70e.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050ad1c",
+    "cm848_current_name": "cm848_processJ1939AcceleratorInputs",
+    "plate_comment": "The J1939 accelerator input task, run every 50 ms from the task set at 0x1b714: the low idle switch, wet tank pressure, idle switch pair, pedal position and remote accelerator processors in that order, then the same two summaries on bit 0 of the fault status word 0x806000 as the 10 ms task (data error bitmap, then timeout bitmap). Last it stores 1 in j1939_pedal_input_timeout_active_flag while any bit of j1939_pedal_input_timeout_bitmap is set, else 0. The counterpart of cm848_processJ1939AcceleratorInputs (0x50ad1c), which has no wet tank or remote accelerator step and adds the multiplex enable bit and the start delay.",
+    "evidence": "0x2114e jsr 0x204b0; 0x21154 jsr 0x20fac; 0x2115a jsr 0x20e14; 0x21160 jsr 0x20c98; 0x21166 jsr 0x20784; 0x2116c jsr 0x20284 -> ori.w #1 on 0x806000 / 0x806040 (0x2117e, 0x21186) or andi.w #0xfffe (0x2119a); 0x211a4 jsr 0x202bc -> the same on the same bit (0x211b6 / 0x211be, 0x211d2); 0x211dc jsr 0x202a0 -> move.b #1,(a2) (0x211e6) or clr.b (a2) (0x211ee) with a2 = 0x80d70e. Reached by jsr at 0x1b71a in the task set 0x1b714. CM848 0x50ad1c: bl 0x50a1b4 (low idle switch), 0x50a9d4 (idle switch pair), 0x50a700 (pedal position), then the two summaries and bl 0x509e98 -> stb 0x40aaa8 (0x50ae48); plus the enable test (0x50ad2c) and the start delay 0x40aaa4. Called from cm848_periodicTaskGroup18_calibration6.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000211f4",
+    "current_name": "cm550_FUN_000211f4",
+    "proposed_name": "cm550_initializeJ1939InputProcessing",
+    "role": "Sets the start values of the J1939 input layer: a copy of the polarity byte of logical switches 8-15, the previous idle switch state 0xff, the fault bit cleared and the low idle switch unavailable flag cleared.",
+    "discriminator": "It only stores start values into the layer's state (0x800aaf, 0x800aae, bit 0 of 0x806000, 0x80d70d) and calls nothing; it is the one function of the family with no reference in the dumped ROM. The decompiler shows 5 lines because of the jump table at 0x2122c; the body is 0x211f4-0x21270.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050ae5c",
+    "cm848_current_name": "cm848_initJ1939InputProcessing",
+    "plate_comment": "Start values of the J1939 input layer: copies the polarity byte of logical switches 8-15 (byte 2 of switch_input_polarity_bits) to switch_9_to_16_polarity_bits_snapshot, sets accelerator_idle_switch_previous_state to 0xff, clears bit 0 of the fault status word 0x806000 and clears j1939_accelerator_low_idle_switch_unavailable_flag. Nothing in the dumped ROM calls it or holds its address, and the RAM dump does not show its values (in this calibration nothing else would overwrite them). The counterpart of cm848_initJ1939InputProcessing (0x50ae5c), which CM848's start-up list calls and which also loads the debounce timer and sets the monitor inhibit flag.",
+    "evidence": "0x211f4 link a6,#-4; 0x211fc a2 = 0x800aaf; 0x21206 move.l (0x807d5e).l,(-4,a6); 0x2120e moveq #8,d2 / andi.w #0x1f / lsr.w #3 = 1; 0x21224 jump through the table at 0x2122c (words 0x0008 0x000e 0x0014 0x001a -> 0x21234 0x2123a 0x21240 0x21246): case 1 = 0x2123a move.b (2,a3),(a2) = byte 2 of the copied dword (0x807d60, bits 8-15); 0x2124a move.b #0xff,(0x800aae).l; 0x21252-0x21260 andi.w #0xfffe,(0x806000).l with interrupts masked; 0x21262 clr.b (0x80d70d).l; unlk / rts at 0x2126e / 0x21270. Reach: find_callers.py finds no absolute long, no bsr / bcc and no pc-relative reference to 0x211f4 in the 256 KB dump (calls above 0x40000 are not dumped; cm550_initIoControlRegister 0x2481e is unreferenced in the same way). RAM dump: 0x800aae = 0x00 and 0x800aaf = 0x00 while 0x807d60 = 0xf1; the only other writer of 0x800aae is 0x20698, behind enable bits that are 0 in this calibration (0x803c9e = 0x0000, 0x803cae = 0x0000). CM848 0x50ae5c: stb 0xff to 0x3fbd68 (previous state), sth 100 to 0x3fbd66 (timer), clears bit 2 of the fault words at 0x3fe974 + 16 and 0x3fe9d8 + 16, stb 0 to 0x40aaa7 (the 12F7 +1 flag = CM550 0x80d70d), sth 1 to 0x40aaca (monitor inhibit); it stands right after the accelerator task, as 0x211f4 does, and is called from cm848_applicationMain.",
+    "confidence": "medium"
+   }
+  ],
+  "skipped": [],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00800aa0",
+    "current_name": "",
+    "proposed_name": "j1939_input_data_error_bitmap",
+    "proposed_type": "dword",
+    "comment": "CM848's j1939_input_data_error_bitmap (0x3fbd5a): bit N = J1939 input N (the number of its j1939_input_signal_timeouts word) delivered a not-available value - a byte of 0xfb-0xfd or 0xff, or a two-bit switch state of 3. One dword. Its only users are clearJ1939InputDataErrorBit / setJ1939InputDataErrorBit / anyJ1939InputDataErrorActive; both J1939 input tasks set bit 0 of the fault status word 0x806000 while any bit is set. 0 in the RAM dump.",
+    "evidence": "and.l at 0x20206, tst.l at 0x2028e, or.l at 0x20306, index bit >> 5 scaled by 4; the any-loop runs for one element (0x20296-0x2029a). abs_refs: 0x20202 0x2028a 0x20302 only. The three bitmaps stand at +0 / +4 / +8 in both firmwares (CM848 0x3fbd5a / 5e / 62) and their helper functions are step for step the same.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800aa4",
+    "current_name": "",
+    "proposed_name": "j1939_input_timeout_bitmap",
+    "proposed_type": "dword",
+    "comment": "CM848's j1939_input_timeout_bitmap (0x3fbd5e): bit N = J1939 input N's message timed out (its j1939_input_signal_timeouts word has counted down to 0). One dword. Its only users are clearJ1939InputTimeoutBit / setJ1939InputTimeoutBit / anyJ1939InputTimeoutActive; both J1939 input tasks set bit 0 of the fault status word 0x806000 while any bit is set. 0 in the RAM dump.",
+    "evidence": "and.l at 0x2027a, tst.l at 0x202c6, or.l at 0x20376. abs_refs: 0x20276 0x202c2 0x20372 only. Every call of the setter 0x20348 follows a tst.w of a j1939_input_signal_timeouts word that found 0 (0x203c8, 0x20460, 0x20518, 0x207f0, 0x2097a, 0x20ce8, 0x20ffe).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800aa8",
+    "current_name": "",
+    "proposed_name": "j1939_pedal_input_timeout_bitmap",
+    "proposed_type": "dword",
+    "comment": "CM848's j1939_pedal_input_timeout_bitmap (0x3fbd62): bits 6 / 7 = the message of the accelerator low idle switch / pedal position input was lost; CM550 also sets bit 1 for the remote accelerator. One dword. Its only users are clearJ1939PedalInputTimeoutBit / setJ1939PedalInputTimeoutBit / anyJ1939PedalInputTimeoutActive; cm550_processJ1939AcceleratorInputs stores 'any bit set' in j1939_pedal_input_timeout_active_flag. 0 in the RAM dump.",
+    "evidence": "and.l at 0x20240, tst.l at 0x202aa, or.l at 0x2033e. abs_refs: 0x2023c 0x202a6 0x2033a only. Setter calls: 0x2052c (6), 0x20808 (1), 0x20cfe (7).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800aac",
+    "current_name": "idle_switch_debounce_timer",
+    "proposed_name": "accelerator_idle_switch_debounce_timer",
+    "proposed_type": "short",
+    "comment": "CM848's accelerator_idle_switch_debounce_timer (0x3fbd66): the debounce of the raw not idle switch in mc68k_updateIdleSwitchesFromLocalInputs - loaded with 100 when the reading changes, minus 50 per unchanged pass, and the reading is applied when it reaches 0 or less. Signed word. 0 in the RAM dump.",
+    "evidence": "a2 = 0x800aac in 0x205c4: move.w #0x64,(a2) at 0x2069e; tst.w (a2) / subi.w #0x32,(a2) / tst.w / bgt / clr.w at 0x20660-0x2066c. abs_refs: 0x205ca only. Same place after the three bitmaps as in CM848 (0x3fbd66 = 0x3fbd5a + 12; 0x800aac = 0x800aa0 + 12), same constants 100 and 50.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800aae",
+    "current_name": "",
+    "proposed_name": "accelerator_idle_switch_previous_state",
+    "proposed_type": "byte",
+    "comment": "CM848's accelerator_idle_switch_previous_state (0x3fbd68): the last polarity-corrected reading of the raw not idle switch (0 / 1) that mc68k_updateIdleSwitchesFromLocalInputs compares each new reading with; cm550_initializeJ1939InputProcessing sets 0xff. 0x00 in the RAM dump.",
+    "evidence": "cmp.b (0x800aae).l,d2 at 0x20658; move.b d2,(0x800aae).l at 0x20698; move.b #0xff,(0x800aae).l at 0x2124a. Same place as in CM848 (bitmaps + 14 in both), same 0xff start value.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800aaf",
+    "current_name": "",
+    "proposed_name": "switch_9_to_16_polarity_bits_snapshot",
+    "proposed_type": "byte",
+    "comment": "A copy of the polarity (inversion) bits of logical switches 8-15 (Calterm switches 9-16): byte 2 of switch_input_polarity_bits, taken by cm550_initializeJ1939InputProcessing. mc68k_updateIdleSwitchesFromLocalInputs XORs its bit 0 with bit 0 of switch_9_to_16_raw_values to get the not idle switch's state. CM848 has no such byte (its fallback reads the switch through cm848_readSwitchHardwareInput). 0x00 in the RAM dump.",
+    "evidence": "a2 = 0x800aaf in 0x211f4; move.b (2,a3),(a2) at 0x2123a where a3 points at the stack copy of the dword 0x807d5e (case 1 of the table at 0x2122c, selected by switch number 8 >> 3). Readers: and.b (0x800aaf).l,d0 at 0x20640 and move.b (0x800aaf).l,d1 at 0x20646 (the XOR with byte 0x80bced, masked with 1).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00808158",
+    "current_name": "j1939_source_address_of_commanding_device",
+    "proposed_name": "j1939_input_source_priority",
+    "proposed_type": "word",
+    "comment": "e2m 12FE +0 MXMOPZ 'PRIORITY GIVEN WHICH MUXED PARAMETERS WILL USE FOR THE PRIORITY' (0-255) = CM848's j1939_input_source_priority (0x5c340, Mux_Module_Priority): the client priority the J1939 input layer works at. Each processor skips its input while the input's current client priority is above this word. The switch processors (low idle switch, idle switch pair, the descriptor table switches, the output bit copy) then store its low byte (0x808159) as the switch's priority and write the switch's override value only while that priority is 0; the pedal position and wet tank pressure processors store the word as the A/D channel's priority; the retarder, fan and remote accelerator processors only compare. Not a source address. 0 in the RAM dump.",
+    "evidence": "Word reads compared with a client priority at 0x203b6 (byte 0x80d726), 0x2044e (0x80d727), 0x204f6 / 0x2050c through a5 (0x80bd51), 0x206fe / 0x20712 through a3, 0x2091a / 0x20940, 0x20cd8 (word 0x80a6de), 0x207e0 (0x80a6e0), 0x20ff0 (0x80a6fc), 0x20e6c-0x20eae through a4; stores of the word at 0x20ce2 and 0x20ff8; byte stores of its low byte at 0x20512 and 0x20718 ((1,a5) / (1,a3)), 0x20958 (move.b (0x808159).l), 0x20e98 and 0x20eb4. Outside the family: the throttle code at 0x107d0 compares it with 0x80a6de. The ECU's parameter ID table gives 12FE = 0x808158; CM848's gives 12FE = 0x5c340 with the same three records at +0 / +2 / +4. The row at 0x808159 (j1939_switch_override_source_address) is this word's low byte and has to go when the word is typed.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080815a",
+    "current_name": "global_default_for_engine_brake_0_100",
+    "proposed_name": "j1939_engine_retarder_selection_default_percent",
+    "proposed_type": "word",
+    "comment": "e2m 12FE +2 ADDFEBLV 'GLOBAL DEFAULT FOR ENGINE BRAKE' (percent) = CM848's j1939_engine_retarder_selection_default_percent (0x5c342): cm550_processJ1939EngineRetarderSelection copies it to j1939_engine_retarder_selection_percent while the J1939 retarder selection is timed out, error (0xfe) or not available. 0 in the RAM dump.",
+    "evidence": "a3 = 0x80815a in 0x20380; move.w (a3),(a2) at 0x203da, 0x20402, 0x2040a with a2 = 0x80d728. abs_refs: 0x2038c only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080815c",
+    "current_name": "global_default_for_manual_fan_level_requested_fan_speed_0_100",
+    "proposed_name": "j1939_engine_fan_requested_speed_default",
+    "proposed_type": "word",
+    "comment": "e2m 12FE +4 ADDFMNFM 'GLOBAL DEFAULT FOR MANUAL FAN LEVEL (REQUESTED % FAN SPEED)' (0.25 percent per count) = CM848's j1939_engine_fan_requested_speed_default (0x5c344): cm550_processJ1939EngineFanRequestedSpeed copies it to j1939_engine_fan_requested_speed while the J1939 fan request is timed out, error (0xfe) or not available. 0 in the RAM dump.",
+    "evidence": "a3 = 0x80815c in 0x2041c; move.w (a3),(a2) at 0x20470, 0x20498, 0x204a8 with a2 = 0x80d72a. abs_refs: 0x20428 only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d70c",
+    "current_name": "aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false",
+    "proposed_name": "j1939_accelerator_position_error_fallback_flag",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +0 MXACDXER 'APS ERROR FLAG FOR THROTTLE INDICATING BAD DATA. NOT LOGGED' = CM848's j1939_accelerator_position_error_fallback_flag (0x40aaa6): cm550_processJ1939AcceleratorPedalPosition sets 1 while the J1939 pedal position is the error value 0xfe and the low idle switch is still valid (0 or 1), and clears it otherwise; the function at 0x25806 enters the accelerator pedal fault fueling state on it. 0 in the RAM dump.",
+    "evidence": "clr.b at 0x20d6a, 0x20d86, 0x20d9a; move.b #1 at 0x20ddc (after cmpi.b #0xfe at 0x20da6 and the low idle switch at most 1 at 0x20dca); read at 0x2583a in the function at 0x25806 (with 0x80d70e -> FUELING_STATE_ACCELERATOR_PEDAL_FAULT), as CM848's cm848_transitionEngineOperatingMode reads 0x40aaa6 and 0x40aaa8. 12F7 is the same block with the same mnemonics in both e2m files (CM550 0x80d70c, CM848 0x40aaa6).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d70d",
+    "current_name": "ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false",
+    "proposed_name": "j1939_accelerator_low_idle_switch_unavailable_flag",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +1 MXIVCFER 'IVS PARAMETER NOT PROPERLY CONFIGURED. NOT LOGGED AS A FAUL' (cut) = CM848's j1939_accelerator_low_idle_switch_unavailable_flag (0x40aaa7): cm550_processJ1939AcceleratorIdleSwitchPair sets 1 when the J1939 low idle switch reads 3 (not available); while it is set cm550_processJ1939AcceleratorPedalPosition uses the channel default instead of the J1939 pedal position. Cleared only by cm550_initializeJ1939InputProcessing. 0 in the RAM dump.",
+    "evidence": "move.b #1,(0x80d70d).l at 0x20f92; tst.b at 0x20d24; clr.b at 0x21262. abs_refs: these three only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d70e",
+    "current_name": "pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false",
+    "proposed_name": "j1939_pedal_input_timeout_active_flag",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +2 MXACTMER 'PGN TIMEOUT ERROR FLAG FOR APS/IVS/REMOTE THROTTLE. NOT LOG' (cut) = CM848's j1939_pedal_input_timeout_active_flag (0x40aaa8): 1 while any bit of j1939_pedal_input_timeout_bitmap is set (inputs 6, 7 and 1), written every 50 ms by cm550_processJ1939AcceleratorInputs. While set cm550_processJ1939AcceleratorIdleSwitchPair leaves the idle switch pair alone, and the function at 0x25806 enters the accelerator pedal fault fueling state on it. 0 in the RAM dump.",
+    "evidence": "a2 = 0x80d70e in 0x21146: move.b #1,(a2) at 0x211e6 / clr.b (a2) at 0x211ee after jsr 0x202a0; tst.b (0x80d70e).l at 0x20eb8; read at 0x25842 in the function at 0x25806.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d726",
+    "current_name": "priority_of_client_which_is_currently_overriding_engine_brake_swi_0_ff",
+    "proposed_name": "j1939_engine_retarder_selection_source_priority",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +1A ADEBLVPZ 'PRIORITY OF CLIENT WHICH IS CURRENTLY OVERRIDING ENGINE BRAKE SWI' (cut; CM848's e2m: 'Engine Brake switch level') = CM848's j1939_engine_retarder_selection_source_priority (0x40aac0): cm550_processJ1939EngineRetarderSelection skips the J1939 retarder selection while this is above j1939_input_source_priority. No writer in the dumped ROM. 0 in the RAM dump.",
+    "evidence": "move.b (0x80d726).l,d1 at 0x203be, compared with the word 0x808158 (cmp.l / blt at 0x203c4). abs_refs: 0x203c0 only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d727",
+    "current_name": "a_d_priority_for_manual_fan_level_requested_fan_speed_0_ff",
+    "proposed_name": "j1939_engine_fan_request_source_priority",
+    "proposed_type": "byte",
+    "comment": "e2m 12F7 +1B ADMNFMPZ 'A/D PRIORITY FOR MANUAL FAN LEVEL (REQUESTED % FAN SPEED)' = CM848's j1939_engine_fan_request_source_priority (0x40aac1): cm550_processJ1939EngineFanRequestedSpeed skips the J1939 fan request while this is above j1939_input_source_priority. No writer in the dumped ROM. 0 in the RAM dump.",
+    "evidence": "move.b (0x80d727).l,d1 at 0x20456, compared with the word 0x808158 (cmp.l / blt at 0x2045c). abs_refs: 0x20458 only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d728",
+    "current_name": "user_value_for_engine_brake_0_100",
+    "proposed_name": "j1939_engine_retarder_selection_percent",
+    "proposed_type": "word",
+    "comment": "e2m 12F7 +1C ADUVEBLV 'USER VALUE FOR ENGINE BRAKE' (percent) = CM848's j1939_engine_retarder_selection_percent (0x40aac2): the engine retarder selection from J1939 EBC1 byte 5 in 1 percent per count (raw x 4 / 10), or j1939_engine_retarder_selection_default_percent while the input is timed out, error or not available. Written only by cm550_processJ1939EngineRetarderSelection; no reader in the dumped ROM. 0 in the RAM dump.",
+    "evidence": "a2 = 0x80d728 in 0x20380: move.w d0,(a2) at 0x203f4 after lsl.l #2 / divu.l #10; move.w (a3),(a2) at 0x203da 0x20402 0x2040a. abs_refs: 0x20386 only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d72a",
+    "current_name": "user_value_for_manual_fan_level_requested_fan_speed_0_100",
+    "proposed_name": "j1939_engine_fan_requested_speed",
+    "proposed_type": "word",
+    "comment": "e2m 12F7 +1E ADUVMNFM 'USER VALUE FOR MANUAL FAN LEVEL (REQUESTED % FAN SPEED)' (0.25 percent per count) = CM848's j1939_engine_fan_requested_speed (0x40aac4): the fan speed request from J1939 CM1 byte 1 (raw x 16 / 10), or j1939_engine_fan_requested_speed_default while the input is timed out, error or not available. Written only by cm550_processJ1939EngineFanRequestedSpeed; no reader in the dumped ROM, as in CM848. 0 in the RAM dump.",
+    "evidence": "a2 = 0x80d72a in 0x2041c: move.w d0,(a2) at 0x2048a after lsl.l #4 / divu.l #10; move.w (a3),(a2) at 0x20470 0x20498 0x204a8. abs_refs: 0x20422 only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d72c",
+    "current_name": "takes_raw_throttle_for_mux_limphome_on_a2d_0_1023",
+    "proposed_name": "idle_check_accelerator_pedal_raw",
+    "proposed_type": "word",
+    "comment": "e2m 12F7 +20 MXLPRWTH 'TAKES RAW THROTTLE FOR MUX LIMPHOME ON A2D' (counts 0-1023) = CM848's idle_check_accelerator_pedal_raw (0x40aac6): the sampled throttle's raw QADC result that mc68k_updateIdleSwitchesFromLocalInputs stores and compares with 360 counts (above = off idle) when algorithm_enable_flags_25_cal bit 3 is set. 0 in the RAM dump.",
+    "evidence": "move.w (0xfff2b0 + 2 x index),(0x80d72c).l at 0x205f8; cmpi.w #0x168,(0x80d72c).l at 0x20604. abs_refs: 0x20600 and 0x20608 only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bd4a",
+    "current_name": "",
+    "proposed_name": "switch_input_source_priority",
+    "proposed_type": "byte[80]",
+    "comment": "e2m 12A8, the client priority of each logical input ('PRIORITY OF CLIENT WHICH IS CURRENTLY OVERRIDING <switch>') = CM848's switch_input_source_priority (0x40c058, byte[32] there): element n belongs to logical input n - 0-31 the switches (1 cruise resume, 2 cruise set, 3 cruise on, 7 idle, 8 not idle, 9 accelerator interlock, 10 clutch, 11 brake, 13 / 14 idle increment / decrement, 15 diagnostic test, 19 remote throttle, 20 remote power take-off), 32 upward the lamp and driver feedbacks, 56 / 58 / 60 the power take-off resume / set / on switches. The J1939 input layer skips an input whose element is above j1939_input_source_priority, otherwise stores that priority's low byte here and writes the input's override value only while the element is 0. Indexed up to 72 by j1939_input_signal_descriptor_table. All 0 in the RAM dump.",
+    "evidence": "The ECU's parameter ID table: 12A8 = 0x80bd4a, next block 0x80bd9a = 80 bytes; every 12A8 record in v64t6_s.e2m is one byte (+1 to +3E). Indexed byte accesses: 0x20702 / 0x2070c / 0x20718 / 0x2071e / 0x20724 in 0x206a8 ((0,a2,d3.l) and (0,a2,d2.l) with a2 = 0x80bd4a), 0x2090e / 0x20958 / 0x2099c / 0x209b8 ... in 0x20890 ((0,a5,d0.l) with the table's switch number, largest 72 = 0x80bd92), fixed offsets (7,a2) in 0x204b0 and (7,a3) / (8,a3) in 0x20e14. abs_refs: the base only (0x204b6 0x206b6 0x208a0 0x20e1a), no element address. CM848's table gives 12A8 = 0x40c058. The 56 rows now inside the array (0x80bd4b-0x80bd98) are all type undefined; the seven at 0x80bd8c-0x80bd98 (fuel_demand_percentage_current to speed_difference_interp_result_4) have no reference anywhere and sit on elements 66-78.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807d6a",
+    "current_name": "default_initialization_value_for_switch_31_on_off",
+    "proposed_name": "j1939_switch_input_default_state_bits",
+    "proposed_type": "dword[3]",
+    "comment": "e2m 12FC DSGLDFSW 'COVERTS ALL GLOBAL DEFAULT SWITCH BITS' (sic) (the DSDF.. 'DEFAULT/INITIALIZATION VALUE FOR <switch>' records): the default state of each logical input, bit n & 31 of dword n >> 5. The J1939 input layer writes it as a multiplexed switch's override value while the switch's J1939 state is error (2), not available (3) or timed out. The same role as CM848's j1939_switch_input_default_state_bits (0x6456e), which is laid out by bytes. No other reader in the dumped ROM. RAM dump: 00000000 0000ffff 00000000.",
+    "evidence": "The ECU's parameter ID table: 12FC = 0x807d6a, next block 0x807d76 = 12 bytes. Dword reads: move.l (0x807d6a).l,d0 + btst #7 at 0x20552 / 0x20582 / 0x20f2a (switch 7) and btst #8 at 0x20f4e (switch 8); and.l (0,a0,d.w*4) with index switch >> 5 and mask 1 << (switch & 31) at 0x209dc, 0x20a90, 0x20b68 (table switches up to 72 = dword 2). abs_refs: only these seven sites. The row at 0x807d6e (default_initialization_value_for_auxiliary_shutdown_switch_on_off, 12FC +4) is dword 1 of the array.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807d5e",
+    "current_name": "user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert",
+    "proposed_name": "switch_input_polarity_bits",
+    "proposed_type": "dword[3]",
+    "comment": "e2m 1234 DSSWIV 'COVERTS ALL INVERSION SWITCH BITS (TRUE=INVERT; FALSE=NO IN' (sic, cut): the polarity bit of each logical input, bit n & 31 of dword n >> 5 - a set bit inverts the sampled input. mc68k_sampleAndDebounceDiscreteInputs XORs the three sampled input dwords with the three dwords and mc68k_ioDriverStrobeHandler uses the same three; cm550_initializeJ1939InputProcessing copies byte 2 of dword 0 (inputs 8-15) to switch_9_to_16_polarity_bits_snapshot. The same role as CM848's switch_input_polarity_bits_cal; here it is outside the EEPROM mirror, so no _cal. RAM dump: 765df1ae 0000ffff 00000000.",
+    "evidence": "The ECU's parameter ID table: 1234 = 0x807d5e, next block 0x807d6a = 12 bytes. move.l (0x807d5e).l,d1 / eor.l d1,d0 at 0x15070, the same with 0x807d62 at 0x1508e and 0x807d66 at 0x150ac, each XORed with one sampled dword from the stack; and.l / move.l of the same three addresses at 0x15bfe-0x15c34; move.l (0x807d5e).l,(-4,a6) at 0x21206. The decompile shows the XORs as '_engine_overspeed_counter_limit ^ local_c' and '_protection_state_config_table ^ local_10' (J90350.00.ghidra.cpp lines 9936 / 9938): the rows at 0x807d60 / 0x807d62 / 0x807d64 / 0x807d66 (engine_rpm_overspeed_exit_threshold, engine_overspeed_counter_limit, engine_rpm_idle_threshold, protection_state_config_table) are old names inside this record; 0x807d60 and 0x807d64 have no reference at all.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bcd8",
+    "current_name": "user_supplied_value_for_ptp_switched_input_input_on_off",
+    "proposed_name": "switch_1_to_8_override_values",
+    "proposed_type": "byte",
+    "comment": "e2m 000E +A: the user supplied (override) values of logical inputs 0-7, Calterm switches 1-8 (DS01SWUC..DS08SWUC: bit 1 cruise resume / 2 cruise set / 3 cruise on / 4 manual fan / 5 powertrain protection switched input / 6 high speed governor droop select / 7 idle switch) - the byte before switch_9_to_16_override_values and byte 0 of the ten value bytes 0x80bcd8-0x80bce1 that the J1939 input layer indexes with input / 8. A switch's status takes its bit from here while the switch's override enable bit (algorithm_enable_flags_13_cal) is set. The J1939 layer writes bit 7 (the idle switch, from the J1939 low idle switch or the local fallback) and bits 1-3 (the cruise switches of the descriptor table). 0x00 in the RAM dump.",
+    "evidence": "ori.b #0x80 / andi.b #0x7f on 0x80bcd8 at 0x2055e / 0x20568 (a3), 0x20614 / 0x20626 (a4), 0x20ede / 0x20ee8, 0x20f36 / 0x20f40; base of or.b / and.b (0,a0,d0.w) with index input >> 3 and bit input & 7 at 0x209fc, 0x20a22, 0x20ac8, 0x20b06, 0x20ba0, 0x20bde, 0x20c50, 0x20c8e and at 0x2075e / 0x2077a (a1). Readers outside the family: mc68k_sampleAndDebounceDiscreteInputs 0x151ac and mc68k_ioDriverStrobeHandler 0x15c78 (and.b with the override mask). e2m: DS01SWUC 'BYT 0 BIT 1 USER SUPPLIED VALUE FOR SWITCH 1' ... DS08SWUC 'BYT 0 BIT 7 ... SWITCH 8'; the row 0x80bcd9 is already switch_9_to_16_override_values.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bced",
+    "current_name": "binary_value_of_not_idle_switch_off_on",
+    "proposed_name": "switch_9_to_16_raw_values",
+    "proposed_type": "byte",
+    "comment": "e2m 000E +1F (DSRWNTSW 'BINARY VALUE OF NOT IDLE SWITCH' = bit 0): the raw sampled states of logical inputs 8-15, Calterm switches 9-16, before the polarity XOR and before any override - byte 1 of the raw input image that mc68k_sampleAndDebounceDiscreteInputs stores at 0x80bcec upward. mc68k_updateIdleSwitchesFromLocalInputs reads bit 0, the not idle switch, and XORs it with the switch's polarity bit. 0xff in the RAM dump (the raw image 0x80bcec-0x80bcef is ff ff ff 7f).",
+    "evidence": "move.b (-2,a6),(0x80bced).l at 0x1502c, in the run 0x15024-0x15064 that stores stack bytes -1 .. -9 to 0x80bcec .. 0x80bcf4, before move.l (-4,a6),d0 / eor.l with the dword 0x807d5e at 0x1506c-0x15076 (so -2(a6) is bits 8-15 of the first sampled dword). move.b (0x80bced).l,d2 at 0x20636, then XOR with byte 0x800aaf and andi.b #1 (0x2063c-0x20652). abs_refs: 0x15030 and 0x20638 only.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a6de",
+    "current_name": "priority_of_client_overriding_final_sampled_throttle_0_ff",
+    "proposed_name": "sampled_throttle_override_priority",
+    "proposed_type": "word",
+    "comment": "e2m 12D0 +14 ADSTPZ 'PRIORITY OF CLIENT OVERRIDING FINAL SAMPLED THROTTLE': the client priority of the override value of A/D channel 10 (word 10 of the 25 priority words 0x80a6ca-0x80a6fb, one per channel, that go with analog_sensor_override_values). cm550_processJ1939AcceleratorPedalPosition writes the J1939 pedal position into analog_sensor_override_values[10] only while this is not above j1939_input_source_priority, and stores that priority here; the throttle code at 0x107d0 makes the same comparison before it takes the sampled throttle sensor filtered value (0x80a38e). 0 in the RAM dump.",
+    "evidence": "move.w (a0),d0 / cmp.w (0x808158).l,d0 / bhi at 0x20cd6-0x20cde with a0 = 0x80a6de; move.w (0x808158).l,(a2) at 0x20ce2; cmp.w (0x80a6de).l,d0 at 0x107d6. 0x80a6de = 12D0 base 0x80a6ca + 2 x 10; the value it guards is 0x80a742 = 12D2 base + 2 x 10 and the default 0x806bd4 = sampled_throttle_sensor_config + 2.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a6e0",
+    "current_name": "priority_of_client_overriding_final_remote_throttle_0_ff",
+    "proposed_name": "remote_throttle_override_priority",
+    "proposed_type": "word",
+    "comment": "e2m 12D0 +16 ADROTHPZ 'PRIORITY OF CLIENT OVERRIDING FINAL REMOTE THROTTLE': the client priority of the override value of A/D channel 11 (word 11 of the 25 priority words 0x80a6ca-0x80a6fb). cm550_processJ1939RemoteAcceleratorPedalPosition writes the J1939 remote accelerator position into analog_sensor_override_values[11] only while this is not above j1939_input_source_priority; it does not store the priority. 0 in the RAM dump.",
+    "evidence": "move.w (0x808158).l,d0 / cmp.w (0x80a6e0).l,d0 / bcs exit at 0x207e0-0x207ec. abs_refs: 0x207e8 only. 0x80a6e0 = 12D0 base + 2 x 11; the value it guards is 0x80a744 = 12D2 base + 2 x 11.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a6fc",
+    "current_name": "priority_of_client_overriding_raw_intake_manifold_temperature_0_ff",
+    "proposed_name": "intake_manifold_temperature_raw_override_priority",
+    "proposed_type": "word",
+    "comment": "e2m 12D1 +0 ADIMTPPR 'PRIORITY OF CLIENT OVERRIDING RAW INTAKE MANIFOLD TEMPERATURE': the client priority of the raw override value of A/D channel 0, the first of the 25 raw priority words 0x80a6fc-0x80a72d that go with analog_sensor_raw_override_values. Its only code user in the dumped ROM is cm550_processJ1939WetTankPressure, which addresses it as word 25 of the 25-word final priority block before it (12D0 + 2 x 25, the priority of an A/D channel 25 this build does not have): it compares it with j1939_input_source_priority and stores that priority here. 0 in the RAM dump.",
+    "evidence": "movea.l #0x80a6fc,a0 / move.w (a0),d0 / cmp.w (0x808158).l,d0 / bhi at 0x20fe6-0x20ff6; move.w (0x808158).l,(a2) at 0x20ff8. abs_refs: 0x20fe8 only (plus the parameter ID table). The ECU's parameter ID table: 12D0 = 0x80a6ca, 12D1 = 0x80a6fc, 12D2 = 0x80a72e, 12D3 = 0x80a760 (50 bytes apart).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a760",
+    "current_name": "analog_sensor_raw_override_values",
+    "proposed_name": "analog_sensor_raw_override_values",
+    "proposed_type": "word[25]",
+    "comment": "The raw (A/D count) override of each A/D channel: mc68k_processAnalogSensorChannels uses element [channel] as the channel's adc_raw_value instead of the QADC result while the channel's bit of 0x803cc0 (0-15) / 0x803cc2 (16-24) is set (e2m 106B +2E 'OVERRIDE RAW ENABLE'). Element 0 is Calterm ADIMTPUR (12D3 +0 intake manifold temperature raw user value). cm550_processJ1939WetTankPressure also stores into element 0, but as element 25 of analog_sensor_override_values (12D2 + 2 x 25): it writes the J1939 wet tank pressure in psi x 128 for an A/D channel 25 that this 25-channel build does not have, behind algorithm_enable_flags_20_cal bit 9 (0 in the dumps).",
+    "evidence": "a3 = a4 = 0x80a760 in 0x20fac: move.w d0,(a3) at 0x21042 after x 9282 / 100; move.w (a5),(a3) at 0x21012 / 0x21054 / 0x2105c with a5 = 0x806d3c. 0x80a760 = 0x80a72e + 2 x 25. The current comment calls the store 'a priority-arbitrated client' of the intake manifold temperature raw value; the value's scale and the two sibling processors (channels 10 and 11 at 12D2 + 2 x channel) show it is channel 25's engineering value.",
+    "confidence": "high"
+   }
+  ],
+  "enum_members": [],
+  "notes": "ROW REMOVALS that the proposals need (CM550 global_variables.csv). (1) 0x808159 j1939_switch_override_source_address: the low byte of the word 0x808158. (2) For switch_input_source_priority byte[80] at 0x80bd4a: the 56 rows 0x80bd4b 0x80bd4c 0x80bd4d 0x80bd4e 0x80bd4f 0x80bd50 0x80bd51 0x80bd52 0x80bd53 0x80bd54 0x80bd55 0x80bd56 0x80bd57 0x80bd58 0x80bd59 0x80bd5a 0x80bd5b 0x80bd5c 0x80bd5d 0x80bd5e 0x80bd5f 0x80bd60 0x80bd61 0x80bd62 0x80bd63 0x80bd64 0x80bd65 0x80bd66 0x80bd67 0x80bd68 0x80bd69 0x80bd6a 0x80bd6b 0x80bd6c 0x80bd6d 0x80bd6e 0x80bd6f 0x80bd70 0x80bd71 0x80bd72 0x80bd73 0x80bd74 0x80bd75 0x80bd76 0x80bd79 0x80bd82 0x80bd84 0x80bd86 0x80bd8a 0x80bd8c 0x80bd8e 0x80bd90 0x80bd92 0x80bd94 0x80bd96 0x80bd98 (all type undefined in the frozen copy; the last seven are old wrong names). Fallback if the array is not wanted: keep the element rows and rename 0x80bd51 -> idle_switch_override_priority and 0x80bd52 -> not_idle_switch_override_priority (byte each; e2m 12A8 +7 DSPZISSW / +8 DSPZNTIS; the pattern of the 12A7 rows such as water_in_fuel_lamp_override_priority); the indexed accesses then stay as base + offset. (3) For switch_input_polarity_bits dword[3] at 0x807d5e: 0x807d60 0x807d62 0x807d64 0x807d66. (4) For j1939_switch_input_default_state_bits dword[3] at 0x807d6a: 0x807d6e. Since the freeze the two round 93 typing passes have typed some of these rows in the live CSV (seen read-only: 0x808159 byte, 0x80bd51 / 0x80bd52 byte, 0x807d6e dword, 0x80bced byte, 0x80a6de / 0x80a6fc / 0x80815a / 0x80d728 word, 0x80d70c / 0x80d726 byte, each with a 'typed ...' comment). Those widths agree with the types proposed here; where an array or the word 0x808158 is proposed it replaces the typed element rows, and the comments proposed here replace the 'typed ...' comments. | TWIN / COUNTERPART: only the nine bitmap helpers are twins. Round 92's bitfield comments (algorithm_enable_flags_25_t bits 3 and 15, cm550_algorithm_enable_flags_33_t bit 4) call 0x205c4, 0x2041c and 0x20380 'the twin of cm848_...'; the instruction-level comparison here supersedes that: CM848's retarder and fan processors add the DM13 flag (0x40adda) and the monitor inhibit flag (0x40aaca) and the retarder enable sits in another word; CM848's local idle switch fallback adds the armed flag (0x3fbd69) and a forced A/D reading. CM550 has no operand for the DM13 flag, the inhibit flag, the start delay or a multiplex enable bit anywhere in 0x201d6-0x21270 (all absolute operands were listed). | PARALLEL NAMES: two CM550 names differ in their base from CM848's because CM848's under-describe the code; to make the pairs parallel rename CM848 0x50a57c cm848_evaluateJ1939InputSignalFault -> cm848_processJ1939SwitchInput (it also writes the switch state, like its siblings cm848_processJ1939...) and CM848 0x50a4a0 cm848_copyStatusBitToDatalinkSwitch -> cm848_copyOutputBitToSwitchOverrideValue (its 'status bit' is a bit of logical_output_request_bits; CM848's own e2m calls the switch records <switch>_User_Override (block 1575) and <switch>_User_Value 'User override value' (1576), <switch>_Global_Default (1571), <switch>_Inversion (1572) - but 1571-1576 are not in CM848's dumped parameter table, so the address link is not proven). CM848 0x50ae5c cm848_initJ1939InputProcessing -> cm848_initializeJ1939InputProcessing would match the 'initialize' rule. If one base per pair is preferred the other way, cm550_processJ1939SwitchInput / cm550_copyOutputBitToSwitchOverrideValue can take CM848's bases instead. | PREFIX: 0x205c4 gets mc68k_ because it reads the QADC result register table (0xfff2b0 + 2 x index at 0x205f8), the only function besides mc68k_processAnalogSensorChannels that does; if the prefix rule is meant for drivers only, the name is cm550_updateIdleSwitchesFromLocalInputs. The functions that only mask interrupts through SR keep cm550_ (30 cm550_ functions do that). | function_definitions.csv: the parameter rows of 0x201d6 0x20210 0x2024a 0x202d8 0x20310 0x20348 0x20890 carry the old function names; 0x206a8 has the name ptpSwitchedInputDebouncer and the parameters input_state / debounce_mask, which the code shows to be (logical_input, output_number) - argument 1 = (0x14,a7) = the input whose enable, priority and value bit are used, argument 2 = (0x18,a7) = the output image bit and the priority test index. | 0x211f4: no caller found; the start-up list of this ECU is not in the dumped ROM (cm550_initIoControlRegister 0x2481e is also unreferenced). The RAM dump shows 0x800aae = 0 and 0x800aaf = 0 where the function would leave 0xff and 0xf1; that only proves it had not run because both J1939 pedal enables are 0 in this calibration (nothing else then rewrites 0x800aae). So either the undumped code calls it conditionally or nothing calls it. | LEADS, not proposed: (a) 0x201b2-0x201d5, right after the descriptor table: six 6-byte records {timeout slot byte, 0, logical switch dword} = (2,54) (16,11) (15,10) (17,3) (18,1) (19,2) (auxiliary shutdown, brake, clutch, cruise enable / resume / set); no reference in the dumped ROM. (b) 0x80bcf6 (bit_6_which_enables_the_warning_lamp_driver_enable_disable) is byte 0 of the output image 0x80bcf6-0x80bcfb (e2m 000E +28: lamp driver commands bits 0-6, bit 7 the fuel shutoff / pump enable command); the family only proves a bit array indexed by output number, so no name is proposed. (c) Bit 0 of the fault status word 0x806000 (latched in 0x806040) takes all four J1939 multiplexing fault conditions here, where CM848 uses faults 127 / 128 / 129 / 130 and v64t6_s.e2m lists MXPRTMER / MXRTDXER / MXCFER at 1036 +10 bits 0 / 1 / 2; the same bit is written by the two TPU channel 10 speed interrupt handlers (0x19be4, 0x1a644) and the duty cycle monitor (0x1b05a 0x1b17a 0x1b1be). What fault 0 is has not been shown. (d) Logical input 54 is the switch number of descriptor entries 2 (auxiliary shutdown) and 16 (engine derate) and of three of the five output bit copies, as 31 is in CM848's table and calls; v64t6_s.e2m places the auxiliary shutdown priority at 12A8 +3E (62), so this build's numbering is its own. (e) A J1939_SWITCH_STATE enum (0 off, 1 on, 2 error, 3 not available) would fit the 17 j1939_received_*_switch bytes in both firmwares: the code treats 2 and 3 as error / not available everywhere (cmpi.b #3 / #2 at 0x20538 / 0x20572, 0x20a3a / 0x20b1e, 0x20f68). (f) The global rows at 0x80bcda-0x80bce0 are the other bytes of the value array (inputs 16-71) and still carry description names. | Addresses of CM848 data used above: bitmaps 0x3fbd5a / 0x3fbd5e / 0x3fbd62, timer 0x3fbd66, previous state 0x3fbd68, armed flag 0x3fbd69; 12FE 0x5c340; 12F7 0x40aaa6; 12A8 0x40c058. | FALLBACK NAMES IN COMMENTS: the plate comments and global comments use the proposed names; if a fallback is chosen the same swap is needed in them - mc68k_updateIdleSwitchesFromLocalInputs (in the plate comments of 0x20c98 and in the comments of 0x800aac / 0x800aae / 0x800aaf / 0x80bced / 0x80d72c) and switch_input_source_priority[7] / [switch] / [output number] (in the plate comments of 0x204b0, 0x206a8, 0x20890). | VERB PHRASES: the three any...Active names are CM848's reviewed names without the prefix (the twin rule) and are predicates, not verb phrases; that is deliberate. | SCOPE: the describer's scratch directory was not opened; everything here is from the frozen copies, the ROM / RAM images and the e2m files. Scratch: /home/linux/.claude/jobs/374b0424/tmp/w15/r93/scratch/J1/investigator/ (notes.md, draft_output.json, cm550_201a0_21290_fresh.asm, cm848_509fcc_50aec0_fresh.asm, find_callers.py)."
+ },
+ "blind": {
+  "batch": "J1",
+  "roles": [
+   {
+    "address": "0x000201d6",
+    "role": "Clears bit N of the long at 0x800aa0 (word index N>>5, bit N&31; and.l with the inverted mask), N being the low byte of its word argument. Every input processor calls it first with its J1939 input number (0, 1, 5, 6, 7, 9 or a descriptor entry's timeout slot).",
+    "discriminator": "Clear on 0x800aa0, the long whose bit 0x202d8 sets when a received value is in the not-available range (the data error bitmap). 0x2024a is the same code on 0x800aa4 (message timeout bits) and 0x20210 on 0x800aa8 (accelerator input timeout bits); 0x20284 tests this long.",
+    "suggested_name": "clearJ1939InputDataErrorBit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_clearJ1939InputDataErrorBit @ 0x509d98 - TWIN. The PowerPC body does the same steps (word N>>5, mask 1<<(N mod 32), and-not into the long); it is the first of the same nine helpers in the same order (clear +0, +8, +4 / any +0, +8, +4 / set +0, +8, +4 of one static block) and the twin processors call it with the same input numbers. One shared unprefixed name, both rows change."
+   },
+   {
+    "address": "0x00020210",
+    "role": "Clears bit N of the long at 0x800aa8. Called with 6, 1 and 7 at the start of the low idle switch (0x204b0), remote accelerator (0x20784) and idle switch pair (0x20e14) processors.",
+    "discriminator": "Clear on 0x800aa8, the bitmap only the accelerator inputs use: 0x20310 sets a bit when that input's message timed out and 0x202a0 turns the long into the flag byte 0x80d70e (e2m MXACTMER 'PGN timeout error flag for APS/IVS/remote throttle'). Three callers where 0x201d6 / 0x2024a have seven.",
+    "suggested_name": "clearJ1939PedalInputTimeoutBit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_clearJ1939PedalInputTimeoutBit @ 0x509dd8 - TWIN: same code on the +8 long (0x3fbd62), second helper of the block in both; CM848 passes 6 and 7, CM550 also 1 (its remote accelerator processor has no CM848 version)."
+   },
+   {
+    "address": "0x0002024a",
+    "role": "Clears bit N of the long at 0x800aa4. Every input processor calls it beside 0x201d6 with the same input number.",
+    "discriminator": "Clear on 0x800aa4, the long whose bit N 0x20348 sets when j1939_input_signal_timeouts[N] has counted down to 0 (the message timeout bitmap).",
+    "suggested_name": "clearJ1939InputTimeoutBit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_clearJ1939InputTimeoutBit @ 0x509e18 - TWIN: same code on the +4 long (0x3fbd5e), third helper of the block in both."
+   },
+   {
+    "address": "0x00020284",
+    "role": "Returns 1 (word in d0) when the long at 0x800aa0 is not 0, else 0; the body is a loop over one long. Both task functions (0x21070, 0x21146) call it and set or clear fault bit 0 of the system error status word 0x806000 from the result.",
+    "discriminator": "Tests 0x800aa0 (data error bits); 0x202bc tests 0x800aa4 and 0x202a0 tests 0x800aa8.",
+    "suggested_name": "anyJ1939InputDataErrorActive",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_anyJ1939InputDataErrorActive @ 0x509e58 - TWIN: the PowerPC body is the same one-pass loop with a 16-bit index over the +0 long, called by both task functions."
+   },
+   {
+    "address": "0x000202a0",
+    "role": "Returns 1 when the long at 0x800aa8 is not 0, else 0. Only the accelerator task 0x21146 calls it, to write the flag byte 0x80d70e.",
+    "discriminator": "Tests 0x800aa8; one caller, and its result goes into a flag byte, not into the fault bit.",
+    "suggested_name": "anyJ1939PedalInputTimeoutActive",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_anyJ1939PedalInputTimeoutActive @ 0x509e98 - TWIN: same code on the +8 long; in CM848 too only the accelerator task calls it and stores the result in the same e2m 12F7 +2 flag."
+   },
+   {
+    "address": "0x000202bc",
+    "role": "Returns 1 when the long at 0x800aa4 is not 0, else 0. Both task functions call it after 0x20284 and set or clear the same fault bit 0 of 0x806000 from it.",
+    "discriminator": "Tests 0x800aa4 (message timeout bits).",
+    "suggested_name": "anyJ1939InputTimeoutActive",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_anyJ1939InputTimeoutActive @ 0x509ed8 - TWIN: same code on the +4 long, called by both task functions after the data error test."
+   },
+   {
+    "address": "0x000202d8",
+    "role": "Sets bit N of the long at 0x800aa0 (or.l). The processors pass their input number when the received value is in the not-available range: a 2-bit value of 3, or a byte of 0xFB-0xFD / 0xFF.",
+    "discriminator": "Set on 0x800aa0. Callers: 0x204b0, 0x20890, 0x20e14 (value 3) and 0x20380, 0x2041c, 0x20784, 0x20c98, 0x20fac (byte range). The current name setBitInArray hides that the array is fixed: it is always the J1939 input data error bitmap.",
+    "suggested_name": "setJ1939InputDataErrorBit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_setJ1939InputDataErrorBit @ 0x509f18 - TWIN: the PowerPC body has the same index, mask and or into the +0 long; seventh helper of the block in both."
+   },
+   {
+    "address": "0x00020310",
+    "role": "Sets bit N of the long at 0x800aa8. Called with 6, 1 and 7, each time right after 0x20348, when j1939_input_signal_timeouts[6] / [1] / [7] is 0 (0x204b0, 0x20784, 0x20c98).",
+    "discriminator": "Set on 0x800aa8 (accelerator input timeout bits); three callers.",
+    "suggested_name": "setJ1939PedalInputTimeoutBit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_setJ1939PedalInputTimeoutBit @ 0x509f54 - TWIN: same code on the +8 long; CM848 calls it for 6 and 7."
+   },
+   {
+    "address": "0x00020348",
+    "role": "Sets bit N of the long at 0x800aa4. Each processor calls it with its input number when its j1939_input_signal_timeouts slot is 0 (the message was lost).",
+    "discriminator": "Set on 0x800aa4 (message timeout bits).",
+    "suggested_name": "setJ1939InputTimeoutBit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_setJ1939InputTimeoutBit @ 0x509f90 - TWIN: same code on the +4 long; ninth helper of the block in both."
+   },
+   {
+    "address": "0x00020380",
+    "role": "J1939 input 5, the engine retarder selection byte (0x80d719): clears data error and timeout bit 5, then - when algorithm enable word 33 bit 4 (0x803cd6 & 0x10) is set and the multiplex priority word 0x808158 is at least the byte 0x80d726 - writes the word 0x80d728 with raw x 4 / 10 for a byte up to 0xFA, else with the default word 0x80815a. A slot 5 timeout sets timeout bit 5 and a not-available byte other than 0xFE sets data error bit 5.",
+    "discriminator": "Input 5, the retarder byte, scale x4/10 (0.4 % per bit to 1 % per count), output 0x80d728 with default 0x80815a and priority byte 0x80d726; it compares the priority but does not take it. 0x2041c has the same shape for input 0 with x16/10. The dumped ROM has no other reference to 0x80d728 (absolute-long scan and decompiled names).",
+    "suggested_name": "processJ1939EngineRetarderSelection",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_processJ1939EngineRetarderSelection @ 0x509fcc - TWIN: PowerPC body read; same steps in the same order with the same constants (5, 0xFA, 0xFE, x4/10) on the same e2m records (12F7 +D / +1A / +1C, 12FE +0 / +2), called at the same place of the same task. Deltas: CM848 also tests j1939_dm13_fault_log_inhibit_flag and j1939_input_monitor_inhibit_flag before it sets a bit, and its gate (the same Calterm bit ADEBLVOD) is word 13 bit 0 (0x3fd5b6 & 1), not word 33 bit 4."
+   },
+   {
+    "address": "0x0002041c",
+    "role": "J1939 input 0, the engine fan requested percent speed byte (0x80d71c): clears data error and timeout bit 0, then - when algorithm enable word 25 bit 15 (manual_fan_level_override) is set and the multiplex priority is at least the byte 0x80d727 - writes the word 0x80d72a with raw x 16 / 10 for a byte up to 0xFA, else with the default word 0x80815c. A slot 0 timeout sets timeout bit 0 and a not-available byte other than 0xFE sets data error bit 0.",
+    "discriminator": "Input 0, the fan request byte, scale x16/10, output 0x80d72a with default 0x80815c and priority byte 0x80d727 (compared, not taken). The dumped ROM has no other reference to 0x80d72a.",
+    "suggested_name": "processJ1939EngineFanRequestedSpeed",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_processJ1939EngineFanRequestedSpeed @ 0x50a0cc - TWIN: same steps, same constants (0, 0xFA, 0xFE, x16/10) and the same gate bit (word 25 bit 15 in both) on the same records (12F7 +10 / +1B / +1E, 12FE +4). Delta: CM848's two inhibit-flag guards."
+   },
+   {
+    "address": "0x000204b0",
+    "role": "J1939 input 6, the 2-bit accelerator pedal low idle switch (0x80d71a): clears data error, timeout and accelerator-timeout bit 6, then - when switch 7's override enable (algorithm enable word 13 bit 7) is set and the multiplex priority is at least switch 7's priority byte 0x80bd51 - takes that priority byte and writes bit 7 of the switch override values 0x80bcd8: the received state for 0 / 1, the global default bit (0x807d6a bit 7) for 2 (error) and 3 (not available, plus data error bit 6). A slot 6 timeout sets timeout and accelerator-timeout bit 6 and leaves the switch alone.",
+    "discriminator": "Input 6 and logical switch 7 (the idle validation switch) alone; on a timeout it writes no default, unlike 0x20890. 0x20e14 handles the same received byte for switches 7 and 8 together as input 7. The current name cm550_outputControlState1Handler matches nothing in the body: there is no output and no state.",
+    "suggested_name": "processJ1939AcceleratorLowIdleSwitch",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_processJ1939AcceleratorLowIdleSwitch @ 0x50a1b4 - TWIN: same steps and constants (6, switch 7, values 3 and 2, default bit 7, no switch write on timeout), first callee of the accelerator task in both. Deltas: CM848 calls cm848_set / clearDatalinkSwitchStateIfPriority(7, 0) where CM550 has that test inlined (it writes only while the priority byte is 0), tests j1939_input_monitor_inhibit_flag, and takes the enable from switch_input_datalink_source_bits_cal[0] & 0x80."
+   },
+   {
+    "address": "0x000205c4",
+    "role": "Local fallback for the idle switch pair: with algorithm enable word 25 bit 3 set it copies the sampled throttle's raw QADC result into 0x80d72c and treats more than 360 counts as off idle; otherwise it debounces the hardware not-idle switch (raw port byte 0x80bced XOR the inversion byte 0x800aaf, bit 0; timer 0x800aac = 100 on a change, minus 50 per pass, accepted at 0). It then writes switch 7 (idle, 0x80bcd8 bit 7), switch 8 (not idle, 0x80bcd9 bit 0) and the off-idle word 0x80aa86.",
+    "discriminator": "Called only by 0x20c98, when the J1939 pedal message has timed out. The only function of the family that reads local hardware (a QADC result register and the raw switch port image) and no received J1939 byte; it writes the two override bits with no priority test and touches no fault bitmap. Sole user of the statics 0x800aac / 0x800aae / 0x800aaf besides the initializer.",
+    "suggested_name": "updateIdleSwitchesFromLocalInputs",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_updateIdleSwitchesFromLocalInputs @ 0x50a2cc - TWIN (medium): the same two branches on the same bit (word 25 bit 3), the same constants (360 counts, 100, 50, switches 7 and 8), the same single caller (the pedal position processor on timeout). Deltas: CM848 re-arms the timer through accelerator_idle_switch_debounce_armed_flag, can use a forced A/D reading, reads the switch with cm848_readSwitchHardwareInput(8) (line XOR polarity bit, which CM550 does inline with a cached byte) and writes through the priority-0 helpers where CM550 writes unconditionally. If those deltas are judged to break the twin rule: cm550_updateIdleSwitchesFromLocalInputs."
+   },
+   {
+    "address": "0x000206a8",
+    "role": "Takes two long arguments (switch number, output number): when the switch's override enable bit is set (bit 0xD0 + switch of the algorithm enable words, i.e. word 13 onward) and the multiplex priority is at least the priority byte indexed by the OUTPUT number (0x80bd4a + output), it takes the switch's own priority byte and, only if that byte is then 0, copies bit 'output' of the output image 0x80bcf6 into bit 'switch' of the switch override values (0x80bcd8 bit array).",
+    "discriminator": "The only function whose source is an output command bit, not a received J1939 byte or a hardware input; no timeout slot and no fault bit. 0x21070 calls it five times with (54,1) (54,4) (33,6) (32,0) (54,2); inputs 32 / 33 are the lamp 1 / lamp 2 feedback inputs (e2m 12A8 +20 / +21) and outputs 0-6 the lamp drivers (e2m 12A7).",
+    "suggested_name": "copyOutputRequestBitToDatalinkSwitch",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_copyStatusBitToDatalinkSwitch @ 0x50a4a0 - TWIN: same steps in the same order, including the same odd priority read indexed by the output bit instead of the switch (CM848's plate comment calls it a slip), and the same caller position (five calls after the retarder processor; CM848's pairs are (31,1) (31,35) (31,0) (4,4) (31,5)). CM848's source array is logical_output_request_bits, so the 'status bit' of its name is an output request bit; the suggested shared name says that (the plain alternative is copyStatusBitToDatalinkSwitch)."
+   },
+   {
+    "address": "0x00020784",
+    "role": "J1939 remote accelerator pedal position (byte 0x80d722): clears data error, timeout and accelerator-timeout bit 1, then - when remote_throttle_enable (word 18 bit 12) and the remote throttle switch override enable (word 14 bit 3) are set and the multiplex priority is at least A/D channel 11's override priority word 0x80a6e0 - writes analog_sensor_override_values[11] with raw x 16 / 10 for a byte up to 0xFA (clearing fault bit 0 of 0x806000), else with remote_throttle_sensor_config.default_value. A slot 1 timeout sets timeout and accelerator-timeout bit 1, 0xFE sets fault bit 0 with its first-occurrence latch, and 0xFB-0xFD / 0xFF set data error bit 1.",
+    "discriminator": "Target A/D channel 11 (remote throttle) and bit / slot 1 - the slot of the EBC1 remote accelerator enable switch, although the EEC2 handler reloads slot 8 for this byte; descriptor entry 14 (that enable switch) drives the same bit 1 of the data error and timeout bitmaps from the other task. Unlike 0x20c98 and 0x20fac it does not store the multiplex priority into the channel's priority word, and it is the only processor that clears the fault bit on a valid value.",
+    "suggested_name": "cm550_processJ1939RemoteAcceleratorPedalPosition",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848's EEC2 handler stores j1939_received_remote_accelerator_pedal_position, but no CM848 function reads it (one hit in the .cpp, the store) and nothing tests timeout slot 1 or 8 outside the descriptor loop; its accelerator task calls three processors where CM550 calls five."
+   },
+   {
+    "address": "0x00020890",
+    "role": "Processes entry i of j1939_input_signal_descriptor_table (17 ten-byte entries: received byte pointer, timeout slot, logical switch): clears the slot's timeout and data error bits, then - when the switch's override enable bit is set and the multiplex priority is at least the switch's priority byte (0x80bd4a + switch) - takes that priority byte and, while it is 0, writes the switch's override value bit (0x80bcd8 bit array). The bit is the received 2-bit state for 0 / 1 and the switch's global default bit (longs at 0x807d6a) on a timeout (plus the timeout bit), on 3 (plus the data error bit) and on 2.",
+    "discriminator": "The only table-driven processor: input byte, slot and switch come from the descriptor entry given as the argument (0-16, from 0x21070); the other processors hard-code theirs. It clears the timeout bit before the data error bit, the reverse of the others.",
+    "suggested_name": "processJ1939SwitchInputSignal",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_evaluateJ1939InputSignalFault @ 0x50a57c - TWIN: same steps in the same order (also timeout bit before data error bit), same 10-byte entries and values 3 / 2; the two tables match pointer for pointer and slot for slot. Deltas: CM848's two inhibit-flag guards and its non-inlined priority-0 helpers; its default bits are bytes, CM550's longs. The CM848 base name covers only the fault half, while the body's main result is the switch state, hence the suggested shared name (the plain alternative is evaluateJ1939InputSignalFault)."
+   },
+   {
+    "address": "0x00020c98",
+    "role": "J1939 input 7, accelerator pedal position 1 (byte 0x80d714): when the sampled throttle override enable (word 5 bit 10) and switch 7's override enable (word 13 bit 7) are set and the multiplex priority is at least A/D channel 10's priority word 0x80a6de, it takes that priority word and writes analog_sensor_override_values[10] (raw x 16 / 10 with the off-idle word 0x80aa86 = raw != 0 for a byte up to 0xFA, else sampled_throttle_sensor_config.default_value). A slot 7 timeout sets timeout and accelerator-timeout bit 7 and runs the local fallback 0x205c4; 0xFE sets fault bit 0 and, when the low idle switch is 0 or 1, the flag 0x80d70c with off-idle taken from the switch; other not-available bytes set data error bit 7.",
+    "discriminator": "Target A/D channel 10 (sampled throttle), with ownership of its priority word; the only caller of 0x205c4 and the only writer of the flag 0x80d70c; while the flag 0x80d70d is set it discards a valid pedal value. It clears no bitmap bits itself (0x20e14 does that for input 7 just before it).",
+    "suggested_name": "processJ1939AcceleratorPedalPosition",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_processJ1939AcceleratorPedalPosition @ 0x50a700 - TWIN (medium): same decision tree and constants (7, 0xFA, 0xFE, x16/10, low idle switch 2 / 1) on the same 12F7 records (+0, +1, +8) with the same fallback call. Deltas: CM848 has a DM13 branch and the inhibit-flag guards, clears accelerator_idle_switch_debounce_armed_flag, and uses its own fault bit with a registered copy where CM550 uses fault bit 0 of 0x806000; the target is channel 13's held_value there, channel 10's override word here. If those deltas are judged to break the twin rule: cm550_processJ1939AcceleratorPedalPosition."
+   },
+   {
+    "address": "0x00020e14",
+    "role": "The switch half of J1939 input 7: clears data error, timeout and accelerator-timeout bit 7, then - under the same two enables as 0x20c98 and with the multiplex priority at least the priority bytes of switches 7 and 8 (0x80bd51, 0x80bd52) - takes both priority bytes and, unless the flag 0x80d70e is set, writes both override bits from the low idle switch byte 0x80d71a: switch 7 = the state and switch 8 = its inverse for 0 / 1, both global default bits for 2 and 3. A 2 also sets fault bit 0 with its latch; a 3 sets the flag 0x80d70d and data error bit 7.",
+    "discriminator": "Writes the pair of switches 7 and 8 (idle and not idle) from one received byte; the only function of the family that tests 0x80d70e and the only one that sets 0x80d70d. 0x204b0 handles switch 7 alone as input 6 with a different enable set.",
+    "suggested_name": "processJ1939AcceleratorIdleSwitchPair",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_processJ1939AcceleratorIdleSwitchPair @ 0x50a9d4 - TWIN: same steps and constants (7, switches 7 and 8, values 2 and 3, the same 12F7 +1 / +2 flags), same place between the low idle switch and pedal position processors. Deltas: CM848's inhibit-flag guards, its priority-0 helpers, its own fault bit."
+   },
+   {
+    "address": "0x00020fac",
+    "role": "J1939 input 9, the wet tank pressure byte (0x80d720): clears data error and timeout bit 9, then - when algorithm enable word 20 bit 9 is set and the multiplex priority is at least the word 0x80a6fc - takes that priority word and writes the word 0x80a760 with raw x 9282 / 100 for a byte up to 0xFA, else with the word 0x806d3c. A slot 9 timeout sets timeout bit 9 and a not-available byte other than 0xFE sets data error bit 9.",
+    "discriminator": "Its three operands are index 25 of the A/D override tables that 0x20c98 / 0x20784 use at 10 / 11 (priority 0x80a6ca + 2n, value 0x80a72e + 2n, config default 0x806ae2 + 24n + 2): A/D channel 25, one past the 25 channels this ROM has. They land on the first raw-override priority (e2m 12D1 +0), the first raw override value (12D3 +0) and the second word of the intake manifold temperature linearization axis (101B), so the round 92 lead describes that alias, not the role. Five sibling e2m files (63c5, 64c6, 74c0, 74c5, 74c6) label the gate bit 'A/D CHANNEL 25 OVERRIDE' (106B +2A mask 0x200) and have channel 25 records at 12D0 +32 / 12D2 +32 / 1003 +258. The scale 92.82 is the byte's e2m scale (0.7252683 psi per bit) x 128.",
+    "suggested_name": "cm550_processJ1939WetTankPressure",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848's EEC2 handler stores j1939_received_wet_tank_pressure and reloads slot 9, but nothing reads the byte or tests slot 9."
+   },
+   {
+    "address": "0x00021070",
+    "role": "Periodic task of the switch and request inputs: runs 0x20890 for descriptor entries 0-16, the fan request processor 0x2041c, the retarder selection processor 0x20380 and five output-to-switch copies 0x206a8 (54,1) (54,4) (33,6) (32,0) (54,2). It then sets fault bit 0 of 0x806000 with its first-occurrence latch 0x806040 when any data error bit is set (else clears the status bit) and does the same again for any timeout bit, so the status bit ends as the timeout result.",
+    "discriminator": "Handles every input except the four received in EEC2 and never touches the accelerator-timeout bitmap. One jsr at 0x1b4f6 in the task set 0x1b4d8, which also holds the J1939 receive dispatcher and the timeout tick and has 20 bsr sites in the executive; the frozen 'callers' 0x1b4ea / 0x1b4f6 are rows inside that one task set.",
+    "suggested_name": "processJ1939SwitchAndRequestInputs",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_processJ1939SwitchAndRequestInputs @ 0x50aba8 - TWIN (medium): same callee sequence (17 descriptor entries, fan, retarder, five copies, data error summary, timeout summary) from a periodic task. Deltas: CM848 gates everything on j1939_multiplex_enable, holds the faults off while j1939_input_fault_start_delay runs, uses two separate fault bits with registered copies, and its copy pairs are (31,1) (31,35) (31,0) (4,4) (31,5). If those deltas are judged to break the twin rule: cm550_processJ1939SwitchAndRequestInputs."
+   },
+   {
+    "address": "0x00021146",
+    "role": "Periodic task of the accelerator inputs: runs the low idle switch processor 0x204b0, the wet tank pressure processor 0x20fac, the idle switch pair 0x20e14, the pedal position 0x20c98 and the remote accelerator 0x20784. It then makes the same two fault bit 0 summaries as 0x21070 (data error, then timeout) and writes the byte 0x80d70e = 1 while any accelerator-timeout bit is set, else 0.",
+    "discriminator": "Runs the processors of the four inputs received in EEC2 (low idle switch, pedal position, remote accelerator, wet tank pressure); the only caller of 0x202a0 and the only writer of 0x80d70e. One jsr at 0x1b71a in the task set 0x1b714 (after jsr 0x24804), which has 4 bsr sites in the executive against 20 for 0x21070's task set; the frozen 'callers' 0x1b714 / 0x1b71a are rows inside that one task set.",
+    "suggested_name": "processJ1939AcceleratorInputs",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_processJ1939AcceleratorInputs @ 0x50ad1c - TWIN (medium): the three processors both firmwares have run in the same order, followed by the same three summaries and the same 12F7 +2 flag. Deltas: CM550 calls two more processors (wet tank pressure, remote accelerator) that CM848 does not have; CM848 adds the j1939_multiplex_enable gate, the start delay and separate fault bits. If the two extra calls are judged to break the twin rule: cm550_processJ1939AcceleratorInputs."
+   },
+   {
+    "address": "0x000211f4",
+    "role": "Initializer of the layer's statics: copies one byte of the switch inversion mask long 0x807d5e - bits 8-15, the byte that holds switch 8, picked by a 4-way jump table from the constant 8 - into 0x800aaf, sets the debounce previous state 0x800aae to 0xFF, clears fault bit 0 of 0x806000 and clears the flag 0x80d70d. It calls nothing.",
+    "discriminator": "The only writer of 0x800aaf and of 0xFF into 0x800aae; the last function of the module. No reference of any form in the dumped ROM (absolute long at any alignment, bsr / bra, PC-relative jsr / lea / pea), so its caller is not in 0x0-0x3FFFF; the ROM does call into the undumped area (jsr 0x420bc in 0x21070's task set), but the reach is unproven. The decompilation is broken by the jump table; this comes from the hand-decoded disassembly.",
+    "suggested_name": "cm550_initializeJ1939InputProcessing",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_initJ1939InputProcessing @ 0x50ae5c - COUNTERPART (same role, last function of the same module): three statements are common and in the same order (previous state 0xFF, clear the multiplex fault bit, clear the 12F7 +1 flag), but CM848 also loads the debounce timer with 100 and sets j1939_input_monitor_inhibit_flag, CM550 instead caches the inversion byte, and CM550's call site is not in the dump, so the call-graph half of a twin proof is missing. If the judge accepts it as a twin anyway: initializeJ1939InputProcessing in both (CM848's row says init)."
+   },
+   {
+    "address": "0x00800aa0",
+    "role": "GLOBAL, dword (and.l / or.l / tst.l), no row yet: bit N = J1939 input N delivered a not-available value. Cleared by 0x201d6 at the start of each processor, set by 0x202d8, tested by 0x20284.",
+    "discriminator": "+0 of the module's static block 0x800aa0-0x800aaf; only bits 0, 1, 5, 6, 7, 9 and the descriptor slots are used.",
+    "suggested_name": "j1939_input_data_error_bitmap",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_input_data_error_bitmap @ 0x3fbd5a - the same variable: +0 of the same static block (+0 / +4 / +8 bitmaps, +0xc timer, +0xe previous state), used by the twin helpers. No e2m record in either firmware."
+   },
+   {
+    "address": "0x00800aa4",
+    "role": "GLOBAL, dword, no row yet: bit N = the message of J1939 input N timed out (its j1939_input_signal_timeouts slot is 0). Cleared by 0x2024a, set by 0x20348, tested by 0x202bc.",
+    "discriminator": "+4 of the static block.",
+    "suggested_name": "j1939_input_timeout_bitmap",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_input_timeout_bitmap @ 0x3fbd5e - the same variable (+4 of the same block)."
+   },
+   {
+    "address": "0x00800aa8",
+    "role": "GLOBAL, dword, no row yet: bits 1, 6 and 7 = the message of the remote accelerator / low idle switch / accelerator pedal input timed out. Cleared by 0x20210, set by 0x20310, tested by 0x202a0 into the flag 0x80d70e.",
+    "discriminator": "+8 of the static block; only the accelerator inputs use it.",
+    "suggested_name": "j1939_pedal_input_timeout_bitmap",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_pedal_input_timeout_bitmap @ 0x3fbd62 - the same variable (+8 of the same block; CM848 uses bits 6 and 7 only)."
+   },
+   {
+    "address": "0x00800aac",
+    "role": "GLOBAL, word (tst.w / subi.w #50 / move.w #100, signed test), now idle_switch_debounce_timer with an undefined type: the not-idle switch debounce of 0x205c4 - 100 when the switch reading changes, minus 50 per unchanged pass, the reading is accepted when it reaches 0.",
+    "discriminator": "+0xc of the static block; referenced only by 0x205c4.",
+    "suggested_name": "accelerator_idle_switch_debounce_timer",
+    "confidence": "medium",
+    "cm848_counterpart": "accelerator_idle_switch_debounce_timer @ 0x3fbd66 - the same variable (+0xc of the same block, same 100 / 50 use). The current CM550 name is not wrong; the CM848 name only makes the two match."
+   },
+   {
+    "address": "0x00800aae",
+    "role": "GLOBAL, byte (cmp.b / move.b), no row yet: the last polarity-corrected not-idle switch reading (0 or 1) that 0x205c4 compares each new reading with. 0x211f4 sets it to 0xFF so the first reading restarts the debounce.",
+    "discriminator": "+0xe of the static block.",
+    "suggested_name": "accelerator_idle_switch_previous_state",
+    "confidence": "high",
+    "cm848_counterpart": "accelerator_idle_switch_previous_state @ 0x3fbd68 - the same variable (+0xe of the same block, 0xFF at initialization in both)."
+   },
+   {
+    "address": "0x00800aaf",
+    "role": "GLOBAL, byte, no row yet: a copy of the switch inversion mask byte for switches 8-15 (bits 8-15 of the long 0x807d5e), written once by 0x211f4. 0x205c4 XORs it with the raw port byte 0x80bced and keeps bit 0, the not-idle switch (logical switch 8).",
+    "discriminator": "+0xf of the static block; CM550 only.",
+    "suggested_name": "not_idle_switch_inversion_mask_byte",
+    "confidence": "medium",
+    "cm848_counterpart": "none: CM848's byte at +0xf (0x3fbd69) is accelerator_idle_switch_debounce_armed_flag; CM848 reads the polarity bit on each pass in cm848_readSwitchHardwareInput."
+   },
+   {
+    "address": "0x00808158",
+    "role": "GLOBAL, word (move.w / cmp.w): the priority at which the J1939 multiplexing layer overrides inputs. Each of its 13 code references compares it with a client priority (bytes 0x80d726 / 0x80d727 / 0x80bd4a + n, words 0x80a6de / 0x80a6e0 / 0x80a6fc; one of them at 0x107d0 outside the family) or stores it as the new priority.",
+    "discriminator": "The current names j1939_source_address_of_commanding_device (0x808158) and j1939_switch_override_source_address (0x808159) are wrong and are one variable: 0x808159 is the word's low byte, read with move.b at 0x20958 and as (1,An) in 0x204b0 / 0x206a8 / 0x20e14 when the priority goes into a byte. No use treats it as a source address, and e2m 12FE +0 MXMOPZ reads 'priority given which muxed parameters will use'; the 0x808159 row should go. 0 in the RAM dump.",
+    "suggested_name": "j1939_input_source_priority",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_input_source_priority @ 0x5c340 - the same record (e2m 12FE +0 Mux_Module_Priority [MXMOPZ] in both). Outside CM550's EEPROM mirror, so no _cal."
+   },
+   {
+    "address": "0x0080815a",
+    "role": "GLOBAL, word, now global_default_for_engine_brake_0_100: the value 0x20380 writes to 0x80d728 when the retarder selection message is lost, in error or not available.",
+    "discriminator": "e2m 12FE +2 ADDFEBLV; read only by 0x20380; 0 in the dump.",
+    "suggested_name": "j1939_engine_retarder_selection_default_percent",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_engine_retarder_selection_default_percent @ 0x5c342 - the same record (12FE +2)."
+   },
+   {
+    "address": "0x0080815c",
+    "role": "GLOBAL, word, now global_default_for_manual_fan_level_requested_fan_speed_0_100: the value 0x2041c writes to 0x80d72a when the fan request message is lost, in error or not available.",
+    "discriminator": "e2m 12FE +4 ADDFMNFM; read only by 0x2041c; 0 in the dump.",
+    "suggested_name": "j1939_engine_fan_requested_speed_default",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_engine_fan_requested_speed_default @ 0x5c344 - the same record (12FE +4)."
+   },
+   {
+    "address": "0x0080d70c",
+    "role": "GLOBAL, byte (clr.b / move.b #1), now aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false: set to 1 by 0x20c98 when the pedal position byte is 0xFE (error) while the low idle switch is 0 or 1 (off-idle then follows the switch), cleared on its other paths. cm550_FUN_00025806 ORs it with 0x80d70e and selects fueling state 6 (pedal fault mode) while either is set.",
+    "discriminator": "e2m 12F7 +0 MXACDXER; written only by 0x20c98.",
+    "suggested_name": "j1939_accelerator_position_error_fallback_flag",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_accelerator_position_error_fallback_flag @ 0x40aaa6 - the same record (12F7 +0), written at the same points of the twin."
+   },
+   {
+    "address": "0x0080d70d",
+    "role": "GLOBAL, byte, now ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false: set to 1 by 0x20e14 when the low idle switch reads 3 (not available) and cleared only by the initializer 0x211f4. While it is set 0x20c98 ignores a valid pedal position and writes the default.",
+    "discriminator": "e2m 12F7 +1 MXIVCFER; a latch (no clear in the periodic code).",
+    "suggested_name": "j1939_accelerator_low_idle_switch_unavailable_flag",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_accelerator_low_idle_switch_unavailable_flag @ 0x40aaa7 - the same record (12F7 +1), same set / test / clear points."
+   },
+   {
+    "address": "0x0080d70e",
+    "role": "GLOBAL, byte, now pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false: 0x21146 writes 1 while any bit of 0x800aa8 is set, else 0. 0x20e14 leaves switches 7 / 8 alone while it is set, and cm550_FUN_00025806 reads it for the pedal fault mode.",
+    "discriminator": "e2m 12F7 +2 MXACTMER; the byte image of 'any accelerator input timed out'.",
+    "suggested_name": "j1939_pedal_input_timeout_active_flag",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_pedal_input_timeout_active_flag @ 0x40aaa8 - the same record (12F7 +2)."
+   },
+   {
+    "address": "0x0080d726",
+    "role": "GLOBAL, byte (move.b, zero-extended), now priority_of_client_which_is_currently_overriding_engine_brake_swi_0_ff: the priority the multiplex priority must reach before 0x20380 may write the retarder selection value. It is compared only.",
+    "discriminator": "e2m 12F7 +1A ADEBLVPZ; 0x20380's read is the only reference in the dumped ROM (absolute-long scan and decompiled names).",
+    "suggested_name": "j1939_engine_retarder_selection_source_priority",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_engine_retarder_selection_source_priority @ 0x40aac0 - the same record (12F7 +1A)."
+   },
+   {
+    "address": "0x0080d727",
+    "role": "GLOBAL, byte, now a_d_priority_for_manual_fan_level_requested_fan_speed_0_ff: the priority the multiplex priority must reach before 0x2041c may write the fan request value. It is compared only.",
+    "discriminator": "e2m 12F7 +1B ADMNFMPZ; 0x2041c's read is the only reference in the dumped ROM.",
+    "suggested_name": "j1939_engine_fan_request_source_priority",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_engine_fan_request_source_priority @ 0x40aac1 - the same record (12F7 +1B)."
+   },
+   {
+    "address": "0x0080d728",
+    "role": "GLOBAL, word, now user_value_for_engine_brake_0_100: the retarder selection in percent that 0x20380 writes (received byte x 4 / 10, or the default 0x80815a).",
+    "discriminator": "e2m 12F7 +1C ADUVEBLV; 0x20380 is the only reference in the dumped ROM (absolute-long scan and decompiled names), so no reader is visible - CM848's copy has one (cm848_calculateEngineRetarderSelectionPercent).",
+    "suggested_name": "j1939_engine_retarder_selection_percent",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_engine_retarder_selection_percent @ 0x40aac2 - the same record (12F7 +1C)."
+   },
+   {
+    "address": "0x0080d72a",
+    "role": "GLOBAL, word, now user_value_for_manual_fan_level_requested_fan_speed_0_100: the fan request that 0x2041c writes (received byte x 16 / 10, or the default 0x80815c).",
+    "discriminator": "e2m 12F7 +1E ADUVMNFM; 0x2041c is the only reference in the dumped ROM, so no reader is visible.",
+    "suggested_name": "j1939_engine_fan_requested_speed",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_engine_fan_requested_speed @ 0x40aac4 - the same record (12F7 +1E); no reader in CM848 either."
+   },
+   {
+    "address": "0x0080d72c",
+    "role": "GLOBAL, word (move.w / cmpi.w #0x168), now takes_raw_throttle_for_mux_limphome_on_a2d_0_1023: the raw QADC result of the sampled throttle channel that 0x205c4 copies and compares with 360 counts in its analog fallback branch.",
+    "discriminator": "e2m 12F7 +20 MXLPRWTH; written and read only by 0x205c4.",
+    "suggested_name": "idle_check_accelerator_pedal_raw",
+    "confidence": "high",
+    "cm848_counterpart": "idle_check_accelerator_pedal_raw @ 0x40aac6 - the same record (12F7 +20)."
+   },
+   {
+    "address": "0x0080bd4a",
+    "role": "GLOBAL, base of a byte array indexed by logical switch number (no row at the base; elements 0x80bd4b onward have per-switch description names): the priority of the client that currently overrides each switch. 0x204b0, 0x206a8, 0x20890 and 0x20e14 compare an element with the multiplex priority, store the priority's low byte into it and write the switch value only while it is 0.",
+    "discriminator": "e2m 12A8 +n. Indexed up to 72 by descriptor entry 0 (0x80bd92, where the frozen CSV has an unreferenced row speed_difference_interp_result_1); [7] = 0x80bd51 and [8] = 0x80bd52 are the idle / not-idle switches that Calterm calls switch 8 / 9.",
+    "suggested_name": "switch_input_source_priority",
+    "confidence": "high",
+    "cm848_counterpart": "switch_input_source_priority @ 0x40c058 (byte[32]) - the same record block (e2m 12A8 +n: Keyswitch_Priority at +0, Idle_Switch_Priority at +7, Not_Idle_Switch_Priority at +8)."
+   },
+   {
+    "address": "0x0080bcd8",
+    "role": "GLOBAL, byte, base of the switch override value bit array (logical switch n = byte n>>3, bit n&7; now user_supplied_value_for_ptp_switched_input_input_on_off): the family writes bit 7 here (idle switch), bit 0 of 0x80bcd9 (not-idle switch) and any descriptor switch's bit with or.b / and.b.",
+    "discriminator": "e2m 000E +A. Bit 0 is logical switch 0 (the key switch) and bit 7 logical switch 7; Calterm's own numbers are uneven (DS01SWUC is bit 1, DS08SWUC bit 7), and the suggested name only follows the neighbour row switch_9_to_16_override_values at 0x80bcd9.",
+    "suggested_name": "switch_1_to_8_override_values",
+    "confidence": "medium",
+    "cm848_counterpart": "switch_input_datalink_state_bits @ 0x40c07c - counterpart (same role for the twin functions); not the same record (CM848 has nothing at 000E +A; its switch user values are block 1576), so a CM550 name in the style of its neighbour row."
+   },
+   {
+    "address": "0x00807d6a",
+    "role": "GLOBAL, dword array indexed by switch>>5 (and.l (0,a0,d0.w*4); btst on the first long in 0x204b0 / 0x20e14; now default_initialization_value_for_switch_31_on_off): bit n = the state logical switch n takes when its J1939 value is lost, in error or not available.",
+    "discriminator": "e2m 12FC +0 DSGLDFSW 'covers all global default switch bits', +4 at 0x807d6e and +8 at 0x807d72; referenced only by 0x204b0, 0x20890 and 0x20e14.",
+    "suggested_name": "switch_input_global_default_bits",
+    "confidence": "medium",
+    "cm848_counterpart": "j1939_switch_input_default_state_bits @ 0x6456e - counterpart (bytes in ROM; CM848 has no block 12FC), so a CM550 name."
+   },
+   {
+    "address": "0x00807d5e",
+    "role": "GLOBAL, dword (move.l; now user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert): the inversion mask of logical switches 0-31. 0x211f4 caches its bits 8-15 in 0x800aaf, and the discrete input sampler XORs the raw port long with it at 0x15070.",
+    "discriminator": "e2m 1234 +0 DSSWIV 'covers all inversion switch bits'; the current name is one bit's description.",
+    "suggested_name": "switch_input_inversion_mask",
+    "confidence": "medium",
+    "cm848_counterpart": "switch_input_polarity_bits_cal @ 0x3fdb8a - counterpart (EEPROM bytes; CM848 has no block 1234). CM550's long is outside its EEPROM mirror: no _cal."
+   },
+   {
+    "address": "0x0080bcf6",
+    "role": "GLOBAL, byte, base of the output image bit array (output n = byte n>>3, bit n&7; now bit_6_which_enables_the_warning_lamp_driver_enable_disable): 0x206a8 reads bit 'output' of it (outputs 0, 1, 2, 4, 6 = lamp drivers) as the source of its copy.",
+    "discriminator": "e2m 000E +28 (LCLP01EA..LCLP07EA lamp driver enables, bit 7 the fuel shut-off command); byte 0 of the 6-byte output image 0x80bcf6-0x80bcfb whose byte 2 is the row port_e_output_image.",
+    "suggested_name": "lamp_driver_output_image",
+    "confidence": "medium",
+    "cm848_counterpart": "logical_output_request_bits @ 0x40c080 - counterpart (the twin of 0x206a8 reads it the same way; CM848's record is e2m 1577, CM550's 000E +28)."
+   },
+   {
+    "address": "0x0080a6ca",
+    "role": "GLOBAL, word array [25] indexed by A/D channel (description-named element rows; base now priority_of_client_overriding_filtered_intake_manifold_temperatur_0_ff): the priority of the client that overrides each channel's engineering value. 0x20c98 compares and takes [10] (0x80a6de), 0x20784 compares [11] (0x80a6e0), 0x20fac compares and takes [25] (0x80a6fc, past the end).",
+    "discriminator": "e2m 12D0 +2n; the companion of analog_sensor_override_values (12D2) at the same indexes.",
+    "suggested_name": "analog_sensor_override_priorities",
+    "confidence": "medium",
+    "cm848_counterpart": "none as an array: CM848 has no block 12D0; its pedal channel keeps the priority in accelerator_pedal_sensor_channel_state.held_value_source_priority."
+   },
+   {
+    "address": "0x0080a6fc",
+    "role": "GLOBAL, word (cmp.w / move.w; now priority_of_client_overriding_raw_intake_manifold_temperature_0_ff): the only code reference in the dumped ROM is 0x20fac, which reaches it as element 25 of the 12D0 priority words (0x80a6ca + 50) and stores the multiplex priority in it.",
+    "discriminator": "Not a wet tank or intake manifold temperature variable of this family: the access is an index one past the 25-channel table. By e2m 12D1 +0 alone it is the first of 25 raw-override priority words, the companion of analog_sensor_raw_override_values (12D3); the suggested name rests on that record, not on code.",
+    "suggested_name": "analog_sensor_raw_override_priorities",
+    "confidence": "low",
+    "cm848_counterpart": "none: CM848 has no block 12D1."
+   },
+   {
+    "address": "0x0080bced",
+    "role": "GLOBAL, byte (now binary_value_of_not_idle_switch_off_on): the raw, not yet inverted image of input port 0xFFD001 (logical switches 8-15), stored by mc68k_sampleAndDebounceDiscreteInputs at 0x1502c. 0x205c4 XORs it with 0x800aaf and keeps bit 0, the not-idle switch.",
+    "discriminator": "e2m 000E +1F DSRWNTSW names only bit 0; the byte holds eight raw switch bits.",
+    "suggested_name": "switch_9_to_16_raw_values",
+    "confidence": "medium",
+    "cm848_counterpart": "none as a variable: CM848 reads the line on demand with cm848_readSwitchHardwareInput(8)."
+   }
+  ],
+  "enum_roles": [],
+  "notes": "MODULE. CM550 0x201d6-0x211f4 is the same source module as CM848's J1939 multiplexed input layer 0x509d98-0x50ae5c: the functions come in the same order in both (nine bit helpers, retarder, fan, low idle switch, local idle fallback, output copy, descriptor entry, pedal position, idle switch pair, switch task, accelerator task, initializer) and CM550 has two more processors in between (0x20784 remote accelerator, 0x20fac wet tank pressure) that CM848 lacks although it still receives both bytes. The layer acts as one override client: it compares the priority word 0x808158 with each input's client priority, then writes switch override bits, A/D channel override words or the two request words. | TWIN RULE USED. Twin = the same decision tree in the same order with the same logic constants (input numbers, 0xFA / 0xFE, 2-bit values 3 and 2, x4/10, x16/10, 360 counts, 100 / 50) at the same place in the call graph. Allowed deltas: guards only CM848 has (j1939_dm13_fault_log_inhibit_flag, j1939_input_monitor_inhibit_flag, j1939_multiplex_enable, j1939_input_fault_start_delay), CM550 inlining the priority-0 switch write helper, and each firmware's own addresses, calibration bit, fault bit, switch and output numbers. The frozen CSVs hold a precedent on each side of that line: writeJ1939DiagnosticMemory (CM848 0x50af58 / CM550 0x2148a: one shared name although CM550 returns another code and has no refresh-window refusal and no Bank 2) and cm550_tickJ1939InputSupervision (0x21edc, the tick of this same layer: labelled a counterpart of 0x50bca0 because most of CM848's body - gate, start delay, start-up timer, inhibit flag - is logic CM550 lacks before the one shared loop). The four medium twins (0x205c4, 0x20c98, 0x21070, 0x21146) sit on the twin side because nearly all of both bodies is the shared sequence and the rest is guards or bookkeeping for a feature one firmware lacks; each entry lists its deltas and the cm550_ fallback name in case 'same steps' is read strictly. 0x211f4 sits on the other side: three of its four statements match CM848's initializer, each side has effects the other lacks, and its call site is not in the dump, so the call-graph half of the proof is missing. | FAULT BIT. Every error path and both summaries use bit 0 of the system error status word 0x806000 with the first-occurrence word 0x806040, under an interrupt mask (move sr / ori #0x700). e2m block 1036 +0 has S records for masks 0x02-0x10 but none for 0x01; the same bit is also set and cleared by mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 / Mode2 and mc68k_dutyCycleMonitorIsrHandler, and fault number 0 is what the unused tri-state fault fields of all 25 sensor configs hold. It looks like an unassigned fault number; the code does not prove that. In both tasks the 'any timeout' summary overwrites the 'any data error' summary (CM848 uses two bits), so a data error alone leaves only the first-occurrence bit set. | INACTIVE, NOT DEAD. In the RAM dump every gate is clear (algorithm enable words 5, 13, 14, 16, 20, 33 = 0; word 25 = 0x0180 with bits 3 and 15 clear; only word 18 bit 12 remote_throttle_enable is set), the three bitmaps are 0 and 0x808158 is 0. | OTHER FINDINGS. (1) 0x808158 / 0x808159 are one word, a priority, not source addresses. (2) 0x20fac serves A/D channel 25, one past this ROM's 25-channel tables; algorithm_enable_flags_20_cal bit 9 (mask 0x200, a plain word today) could take the bitfield name analog_channel_25_override_enable (AD25OD in five sibling e2m files). (3) _DAT_00806d3c gets no name: by the code's arithmetic it is sensor config [25].default_value, which in this ROM is word 1 of the intake manifold temperature linearization axis (e2m 101B; row linearization_table_ch15_x_axis at 0x806d3a). (4) The 'two callers' of 0x21070 and of 0x21146 in the task list are mid-function rows of one task set each (0x1b4d8 with 20 bsr sites in the executive, 0x1b714 with 4). (5) 0x211f4 has no reference of any form in the dumped ROM; its reach is unproven. (6) 0x80aa86 throttle_above_idle_flag is e2m 1047 +4 CTTHSS, the same record as CM848's commanded_throttle_state.accelerator_off_idle; already named, left alone. (7) Only e2m blocks 12A7 / 12A8 / 12F6 / 12F7 / 12FE are the same records in both firmwares; CM848 has no 1234 / 12FC / 12D0-12D3, so those globals take CM550 names. (8) Descriptor entries 2 and 16 and three of the five output copies point at logical input 54, which has no 12A8 record (CM848 points its unused ones at switch 31); 0x20784 tests timeout slot 1 while the EEC2 handler reloads slot 8, which nothing tests in either firmware. | CHECKS. All suggested function names (and the cm550_ fallbacks) are free in both function_renames.csv files, frozen and live; all suggested global names are free in every CM550 output CSV. 'Only reference' claims rest on the absolute-long scan plus the decompiled names. Scratch: /home/linux/.claude/jobs/374b0424/tmp/w15/r93/scratch/J1/describer/ (notes.md, run2_*.txt disassembly, final_output_draft.json, globals_at.py, ram_peek.py, scan_refs.py, dump_descriptor_tables.py, e2m_grep.py, fault0_users.py)."
+ },
+ "verdict": {
+  "batch": "J1",
+  "overall": "I judged J1 against the frozen copies. Evidence: my own CPU32 and PowerPC disassembly of both layers (CM550 0x201d6-0x21270, CM848 0x509d98-0x50aec0), abs_refs, the ECU parameter ID table, the e2m records and the main and extended RAM dumps.\n\nFUNCTIONS. The nine bitmap helpers are step-for-step twins: same index N>>5, same mask 1<<(N&31), and/or into the +0/+4/+8 dwords, the same one-pass 'any' loop quirk and the same order of the nine. Six keep the proposed shared names. The three 'any...Active' predicates are AMENDED to isAny...: the rule asks for a verb phrase, they are the only predicates in either CSV without is/has/are/check, and both rows change anyway.\n\nEvery processor, both tasks and the initializer are COUNTERPARTS, as the investigator says, not twins as the describer says. Each CM848 body has steps CM550 lacks: the DM13 branch 0x40adda, the monitor inhibit gate 0x40aaca, the priority helpers 0x4ea40/0x4ea84, the armed flag 0x3fbd69, the forced A/D option, the multiplex enable 0x3fd5d4 bit 10, the start delay 0x40aaa4 and two fault bits. This layer's own precedent (0x21edc, 0x21ef6) makes such deltas counterparts.\n\n0x20784 and 0x20fac are standalone: CM848 only stores those two bytes (stb at 0x50b944 / 0x50b978).\n\nThe plate comments of 0x20c98 and 0x20e14 are corrected. In 0x20c98 the 0xfe fallback applies only while the low idle switch reads 0 or 1, and a valid value clears fault bit 0 and 0x80d70c. 0x20e14 still clears and claims while 0x80d70e is set.\n\nGLOBALS. All 26 addresses, widths, users and e2m records are verified. Three are amended:\n- 0x800aac takes type i16, the CSV spelling of a signed word. ImportAnalysis.java has no 'short' case and no global row uses 'short'.\n- The comments of the three bitmaps now name the isAny functions.\n- The 0x80d70c comment is corrected. The tasks end every pass with bit 0 = 'any timeout bit', so a valid pedal value alone does not clear the flag.\n\nROW REMOVALS. The removals in the investigator's notes are required and exact:\n- 0x808159.\n- The 56 rows 0x80bd4b-0x80bd98: exactly every row inside 0x80bd4b-0x80bd99, and no element has its own reference. 12A8 is 80 bytes; the next block, 128E, is at 0x80bd9a.\n- 0x807d60 / 62 / 64 / 66.\n- 0x807d6e.\nThey supersede round 93's live typed rows at those addresses.\n\nskipped[] is empty, so nothing stays skipped. There are no enum members.\n\nNOT ACCEPTED. The investigator's suggested CM848 renames of 0x50a57c, 0x50a4a0 and 0x50ae5c. Counterparts keep CM848's names, and init -> initialize for CM848's row is a separate change.\n\nLEADS FOR THE APPLY STEP.\n- function_definitions.csv rows of 0x201d6 0x20210 0x2024a 0x202d8 0x20310 0x20348 0x20890 carry the old function names.\n- 0x206a8's row (ptpSwitchedInputDebouncer: input_state, debounce_mask) should become (logical_input, output_number) under the new name: argument 1 is at (0x14,a7) and argument 2 at (0x18,a7).\n- analog_sensor_override_values (0x80a72e) says 'no writer in the dumped ROM', but 0x20c98 / 0x20784 write [10] / [11] (0x80a742 / 0x80a744).\n- The describer's names for 0x80bcf6 and 0x80a6ca were not proposed and get no verdict.\n\nNotes: /home/linux/.claude/jobs/374b0424/tmp/w15/r93/scratch/J1/judge/notes.md",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000201d6",
+    "verdict": "CONFIRMED",
+    "final_name": "clearJ1939InputDataErrorBit",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509d98",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Clears bit N (low byte of the word argument; dword N>>5, mask not(1<<(N&31))) of the dword 0x800aa0, the data error bitmap that 0x202d8 sets on not-available values.",
+    "reason": "Own disassembly of both. CM550 0x201da-0x20206: lsr.l #5, 1<<(N&31), not.l, and.l into 0x800aa0 + 4*index. CM848 0x509d98: srawi 5 / slw / not / lwz-and-stw at 0x3fbd5a. Same steps in the same place: first of the nine helpers, in the same order, on the +0/+4/+8 block in both. The investigator and describer agree. The name is free in both firmwares (frozen and live) and in the other batches."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00020210",
+    "verdict": "CONFIRMED",
+    "final_name": "clearJ1939PedalInputTimeoutBit",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509dd8",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Clears bit N of the dword 0x800aa8, the pedal input timeout bitmap; called with 6 (0x204e0), 1 (0x207b8) and 7 (0x20e42).",
+    "reason": "The same instructions as 0x201d6 on 0x800aa8 (movea at 0x2023a, and.l at 0x20240). CM848 0x509dd8 is the same code on 0x3fbd62 (the +8 dword). Second helper in both. The roles agree and the name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0002024a",
+    "verdict": "CONFIRMED",
+    "final_name": "clearJ1939InputTimeoutBit",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509e18",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Clears bit N of the dword 0x800aa4, the message timeout bitmap; every processor clears its input's bit with it.",
+    "reason": "The same instructions on 0x800aa4. CM848 0x509e18 is the same code on 0x3fbd5e (+4). Third helper in both. The roles agree and the name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00020284",
+    "verdict": "AMENDED",
+    "final_name": "isAnyJ1939InputDataErrorActive",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509e58",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Returns 1 when the dword 0x800aa0 is not 0, else 0 (the loop runs one element); both J1939 input tasks turn it into fault bit 0 of 0x806000.",
+    "reason": "The twin is proven. CM550: clr d0/d1, tst.l (a0)+ on 0x800aa0, addq/tst.w/beq runs once. CM848 0x509e58: lwzx on 0x3fbd5a, loop while r5<=0 runs once, extsh result. Same callers (both tasks). AMENDED name only: the naming rule asks for a verb phrase, and the 'any...Active' base is the only predicate in either CSV without is/has/are/check (CM848 has 7 is..., 2 has..., 2 are...). Both rows change anyway for the shared name, so it takes 'is'. isAnyJ1939InputDataErrorActive is free in both firmwares."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000202a0",
+    "verdict": "AMENDED",
+    "final_name": "isAnyJ1939PedalInputTimeoutActive",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509e98",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Returns 1 when the dword 0x800aa8 is not 0, else 0; its one caller (0x211dc) stores the result in 0x80d70e.",
+    "reason": "Twin: the same code as 0x20284 on 0x800aa8. CM848 0x509e98 is the same on 0x3fbd62, and its one caller stores the result in 0x40aaa8 (the same e2m 12F7 +2 record as 0x80d70e). Name amended to a verb phrase as for 0x20284. Free in both firmwares."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000202bc",
+    "verdict": "AMENDED",
+    "final_name": "isAnyJ1939InputTimeoutActive",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509ed8",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Returns 1 when the dword 0x800aa4 is not 0, else 0; both tasks call it second and its result is what stays in fault bit 0.",
+    "reason": "Twin: the same code on 0x800aa4. CM848 0x509ed8 is the same on 0x3fbd5e, called by both tasks after the data error test (0x50ac98, 0x50adb8). Name amended to a verb phrase as for 0x20284. Free in both firmwares."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000202d8",
+    "verdict": "CONFIRMED",
+    "final_name": "setJ1939InputDataErrorBit",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509f18",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Sets bit N of the dword 0x800aa0 (or.l); called only on the not-available branches (2-bit value 3, byte 0xfb-0xfd / 0xff).",
+    "reason": "The base 0x800aa0 is fixed in the code (0x20300), so setBitInArray is wrong. CM848 0x509f18 does the same or into 0x3fbd5a. Seventh helper in both. CM848 has no other setBitInArray row (the 0x4ef5c one was removed). The roles agree and the name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00020310",
+    "verdict": "CONFIRMED",
+    "final_name": "setJ1939PedalInputTimeoutBit",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509f54",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Sets bit N of the dword 0x800aa8; called for inputs 6 (0x2052c), 1 (0x20808) and 7 (0x20cfe), each right after setJ1939InputTimeoutBit in a timer-is-0 branch.",
+    "reason": "The same code as 0x202d8 on 0x800aa8. CM848 0x509f54 is the same on 0x3fbd62. Eighth helper in both. The roles agree and the name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00020348",
+    "verdict": "CONFIRMED",
+    "final_name": "setJ1939InputTimeoutBit",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00509f90",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Sets bit N of the dword 0x800aa4; each call follows a tst.w of the input's j1939_input_signal_timeouts word that found 0.",
+    "reason": "The same code on 0x800aa4. CM848 0x509f90 is the same on 0x3fbd5e. Ninth helper in both. The roles agree and the name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00020380",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939EngineRetarderSelection",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Input 5: J1939 retarder selection byte 0x80d719 -> word 0x80d728 (x4/10 up to 250), or the default 0x80815a on timeout (slot 5, 0x80423e), 0xfe or not available. Gated by flags_33 bit 4 (0x803cd6 & 0x10) and the priority byte 0x80d726 (compared only). Sets timeout / data error bit 5.",
+    "reason": "Own CM550 disassembly 0x20380-0x2041a matches the investigator. The describer said twin. Re-derived: CM848 0x509fcc has the same core, plus a DM13 branch (lhz 0x40adda at 0x50a018 -> default) and monitor inhibit tests (0x40aaca at 0x50a038 / 0x50a0a8) before each bit set, with the enable in word 13 bit 0. Those are steps CM550 lacks (no such operand in 0x201d6-0x21270). By the same-steps rule and this layer's precedent (0x21edc / 0x21ef6 are counterparts for CM848-only gates / one store) it is a counterpart. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0002041c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939EngineFanRequestedSpeed",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Input 0: J1939 fan request byte 0x80d71c -> word 0x80d72a (x16/10 up to 250), or the default 0x80815c on timeout (slot 0x804234), 0xfe or not available. Gated by flags_25 bit 15 and the priority byte 0x80d727 (compared only).",
+    "reason": "Matches the disassembly (0x20440 andi.w #0x8000, 0x20456 byte 0x80d727, 0x20482 lsl #4 / divu #10). CM848 0x50a0cc adds the DM13 flag (0x50a11c) and inhibit tests (0x50a13c / 0x50a180), so it is a counterpart, not the describer's twin. The output has no other reference (abs_refs 0x80d72a only at 0x20422). The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000204b0",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939AcceleratorLowIdleSwitch",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Input 6: J1939 low idle switch 0x80d71a -> override bit 7 of 0x80bcd8 (logical switch 7). It claims priority byte 0x80bd51 and writes only while that byte is 0; 2/3 load bit 7 of 0x807d6a (3 also sets data error 6). Timeout (0x804240 = 0) sets timeout and pedal timeout bit 6 and leaves the switch.",
+    "reason": "The name cm550_outputControlState1Handler matches nothing in the body. Own disassembly confirms the investigator: three clears in CM848's order, 0x803cae & 0x80, word 0x808158 vs byte (7,a2), claim at 0x20512, values 3 / 2 / else. CM848 0x50a1b4 adds the inhibit gate (0x50a22c, 0x50a260), writes via the helpers 0x4ea40/0x4ea84(7,0) and takes its enable from byte 0x3fdbce, so it is a counterpart. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000205c4",
+    "verdict": "CONFIRMED",
+    "final_name": "mc68k_updateIdleSwitchesFromLocalInputs",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Local idle switch fallback on a lost pedal message. With flags_25 bit 3 set: the QADC result register of the sampled throttle (0xfff2b0 + 2*word 0x806be2) -> 0x80d72c, above 360 counts = off idle. Otherwise: the raw not-idle switch (0x80bced XOR 0x800aaf, bit 0), debounced with timer 0x800aac (100, -50) and previous state 0x800aae. Writes switches 7/8 (0x80bcd8 bit 7, 0x80bcd9 bit 0) and 0x80aa86 with no priority test.",
+    "reason": "Its one caller is 0x20d0c. 0xfff2b0 is read only here and in mc68k_processAnalogSensorChannels (0xb856). That is a direct MC68336 QADC register access, so the mc68k_ prefix is right. CM848 0x50a2cc adds the armed flag 0x3fbd69 (test/set with timer 100, cleared in the analog branch), a forced A/D option (0x3fdb78 bit 13 -> 0x40bc9a), reads the switch via 0x4eac8(8) and writes via the priority helpers. Extra steps make it a counterpart, not the describer's medium twin. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000206a8",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_copyOutputBitToSwitchOverrideValue",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "(logical input, output number): when the input's enable bit (bit input+208 of the words at 0x803c94) is set and 0x808158 is not below 0x80bd4a[output], it claims 0x80bd4a[input]. While that byte is 0 it copies bit output of 0x80bcf6[output>>3] into bit input of 0x80bcd8[input>>3]. Called five times by 0x21070.",
+    "reason": "Argument order verified: d2=(0x14,a7) is argument 1 = input, d3=(0x18,a7) = output. Calls are (54,1) (54,4) (33,6) (32,0 via clr.l (a7)) (54,2). It is the only function reading the output image 0x80bcf6. CM848 0x50a4a0 has the same index quirk, but its enable is a separate byte array 0x3fdbce and it writes through 0x4ea40/0x4ea84 (the priority-0 test happens inside the helpers after the bit read), so it is a counterpart; CM848 keeps cm848_copyStatusBitToDatalinkSwitch. The CM550 name describes its own source and destination records (000E +28 output image, 000E +A user override values) and is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00020784",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939RemoteAcceleratorPedalPosition",
+    "final_relation": "standalone",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "J1939 remote accelerator byte 0x80d722 (EEC2 byte 4) -> analog_sensor_override_values[11] (0x80a744, x16/10 up to 250, which also clears fault bit 0) or the default 0x806bec. Gated by flags_18 bit 12 and flags_14 bit 3 and by priority word 0x80a6e0 (compared, not claimed). Uses slot / bits 1: timeout sets timeout and pedal timeout bit 1, 0xfe sets fault bit 0 with its latch, 0xfb-0xfd / 0xff set data error 1.",
+    "reason": "Matches the disassembly 0x20784-0x2088e. CM848 has no counterpart: the only absolute access to 0x40aabc is the stb at 0x50b944 in the EEC2 handler (lis/d-form scan of both CM848 images), and the .cpp has one hit, the store. Both roles agree. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00020890",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939SwitchInput",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "(entry 0-16): processes one entry of j1939_input_signal_descriptor_table (0x20108, 10-byte entries {byte pointer, slot, 0, switch}). It clears the slot's timeout then data error bit, tests the enable bit switch+208 and priority byte 0x80bd4a[switch], claims it, and while the byte is 0 writes the switch's override bit: the 2-bit state for 0/1, the default bit (0x807d6a) on timeout (+timeout bit), 3 (+data error bit) and 2.",
+    "reason": "The table was read from ROM (17 entries; values up to 72). It is the only table-driven processor, so the argument is its discriminator. CM848 0x50a57c has the same order, plus the DM13 branch (0x50a628), inhibit tests (0x50a650, 0x50a67c) and the priority helpers, so it is a counterpart, not the describer's twin; CM848 keeps cm848_evaluateJ1939InputSignalFault. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00020c98",
+    "verdict": "AMENDED",
+    "final_name": "cm550_processJ1939AcceleratorPedalPosition",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "J1939 input 7, the accelerator pedal position (EEC2 byte 2, j1939_received_accelerator_pedal_position_1), into A/D channel 10, the sampled throttle: while algorithm_enable_flags_5_cal bit 10 and algorithm_enable_flags_13_cal bit 7 are set and sampled_throttle_override_priority is not above j1939_input_source_priority it claims the channel (stores that priority in sampled_throttle_override_priority). For a raw value up to 250 it writes analog_sensor_override_values[10] = raw x 16 / 10 and throttle_above_idle_flag = raw is not 0, and while fault bit 0 of 0x806000 is set and the low idle switch is not 2 it clears that bit and j1939_accelerator_position_error_fallback_flag; while j1939_accelerator_low_idle_switch_unavailable_flag is set it writes the channel default, throttle_above_idle_flag = 0 and clears the fallback flag instead. A timed out message (j1939_input_signal_timeouts[7] = 0) sets the timeout and pedal input timeout bits, loads sampled_throttle_sensor_config.default_value and runs mc68k_updateIdleSwitchesFromLocalInputs. Every value above 250 loads the default and clears the fallback flag; the error value 0xfe then sets fault bit 0 of 0x806000 with its latch 0x806040 and, while the low idle switch reads 0 or 1, sets the fallback flag and takes throttle_above_idle_flag from the switch (1 for 0, 0 for 1), else throttle_above_idle_flag = 0; any other value above 250 sets the input's data error bit and clears throttle_above_idle_flag. It clears none of input 7's bits itself: cm550_processJ1939AcceleratorIdleSwitchPair does that just before it in the 50 ms J1939 accelerator input task (0x21146). The counterpart of cm848_processJ1939AcceleratorPedalPosition (0x50a700), which adds a DM13 branch, the monitor inhibit gate and the debounce armed flag and uses its own fault bit.",
+    "own_role": "Input 7: J1939 pedal position 0x80d714 -> analog_sensor_override_values[10] (0x80a742, x16/10) and throttle_above_idle_flag. It claims priority word 0x80a6de. Timeout -> default 0x806bd4 + 0x205c4; 0xfe -> fault bit 0 and, with the low idle switch 0/1, the fallback flag 0x80d70c; other invalid values -> data error bit 7.",
+    "reason": "The name and the counterpart relation stand: CM848 0x50a700 has a DM13 path (0x50a770), inhibit gates and armed flag clears (0x50a800, 0x50a9b8). The plate comment overstated the 0xfe path. In code the fallback flag is set only while the low idle switch is 0 or 1 (cmpi.b #1 / bls at 0x20dca); a switch value above 1 gives flag 0 and leaves 0x80d70c cleared (0x20d9a). It also omitted that a valid value clears 0x80d70c and fault bit 0 only while that bit is set and the switch is not 2 (0x20d50-0x20d76). Corrected comment given."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00020e14",
+    "verdict": "AMENDED",
+    "final_name": "cm550_processJ1939AcceleratorIdleSwitchPair",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "J1939 pedal mode (algorithm_enable_flags_5_cal bit 10 and algorithm_enable_flags_13_cal bit 7): drives the idle validation switch pair from j1939_received_accelerator_pedal_1_low_idle_switch through the switches' override values. It first clears input 7's data error, timeout and pedal input timeout bits (also for cm550_processJ1939AcceleratorPedalPosition, which runs right after it and clears none itself); then, while j1939_input_source_priority is not below switch_input_source_priority[7] and [8], it claims both switches and - unless j1939_pedal_input_timeout_active_flag is set, where it stops - writes each switch whose priority is 0: for a received 0 or 1 logical switch 7 (idle) = the received state and logical switch 8 (not idle) = its inverse, for 2 (error) and 3 (not available) both switches' default state bits (bits 7 and 8 of j1939_switch_input_default_state_bits). 2 also sets fault bit 0 of 0x806000 with its latch 0x806040; 3 sets j1939_accelerator_low_idle_switch_unavailable_flag and input 7's data error bit. It tests no timer. Called from the 50 ms J1939 accelerator input task (0x21146); the counterpart of cm848_processJ1939AcceleratorIdleSwitchPair (0x50a9d4), which adds the monitor inhibit gate, writes the switches through its priority helpers and uses its own fault bit.",
+    "own_role": "Input 7, switch half: clears input 7's three bits, claims priority bytes 0x80bd51 / 0x80bd52 and, unless 0x80d70e is set, writes switch 7 = low idle switch state and switch 8 = its inverse (defaults bits 7/8 of 0x807d6a for 2/3). 2 -> fault bit 0; 3 -> 0x80d70d = 1 and data error bit 7.",
+    "reason": "The name and the counterpart relation stand: CM848 0x50a9d4 differs by the inhibit gate (0x50ab40, 0x50ab7c), the helper calls and its own fault bit (emission_faults bit 15). The plate's 'It does nothing while j1939_pedal_input_timeout_active_flag is set' contradicts the code. The clears (0x20e2a-0x20e42) and both claims (0x20e98, 0x20eb4) run before the tst.b 0x80d70e at 0x20eb8, and only the writes and the 2/3 handling are skipped. Corrected comment given."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00020fac",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939WetTankPressure",
+    "final_relation": "standalone",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Input 9: J1939 wet tank pressure 0x80d720 (EEC2 byte 5) -> v x 9282 / 100 into the channel-25 slots one past the 25-channel arrays. Value 0x80a760, priority 0x80a6fc (compared and claimed), default 0x806d3c. Gated by flags_20 bit 9 (0 in the dump); timeout / data error bit 9.",
+    "reason": "Multiply verified: ((9v*16+v)*32+v)*2 = 9282v at 0x2102c-0x2103a. Channel-25 arithmetic verified against the parameter ID table (12D0/12D1/12D2/12D3 at 0x80a6ca/6fc/72e/760, 50 bytes apart). RAM 0x806d3a = 50, 0, 30 ... 1023 (e2m 101B ADIMTPXA), so 0x806d3c is its first breakpoint. CM848 only stores the byte (stb at 0x50b978), so standalone. Both roles agree. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00021070",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939SwitchAndRequestInputs",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "10 ms task: 0x20890 for entries 0-16, fan 0x2041c, retarder 0x20380, five 0x206a8 copies (54,1)(54,4)(33,6)(32,0)(54,2). Then fault bit 0 of 0x806000 (+ latch 0x806040) from the data error bitmap, then again from the timeout bitmap, so the timeout result stays.",
+    "reason": "Disassembly 0x21070-0x21144 matches. Round 93's live row 0x1b4d8 = cm550_runEvery2FramesTaskSetPhase0 (10 ms) calls it right after cm550_tickJ1939InputSupervision. CM848 0x50aba8 gates everything on 0x3fd5d4 bit 10, holds faults during the start delay 0x40aaa4 and uses bits 2 and 0 with a registered copy, so it is a counterpart, not the describer's medium twin. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00021146",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_processJ1939AcceleratorInputs",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "50 ms task: low idle switch 0x204b0, wet tank 0x20fac, idle switch pair 0x20e14, pedal position 0x20c98, remote accelerator 0x20784, the two fault bit 0 summaries, then 0x80d70e = 1/0 from isAnyJ1939PedalInputTimeoutActive.",
+    "reason": "Disassembly 0x21146-0x211f2 matches. Live row 0x1b714 = cm550_runEvery10FramesTaskSetPhase6 (50 ms). CM848 0x50ad1c runs only three processors and adds the enable gate and the start delay, so it is a counterpart. 'AcceleratorInputs' keeps CM848's base; the wet tank step is noted in the plate. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000211f4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeJ1939InputProcessing",
+    "final_relation": "counterpart",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Start values: 0x800aaf = byte 2 (bits 8-15) of 0x807d5e (jump table case 1 at 0x2123a), 0x800aae = 0xff, clear fault bit 0 of 0x806000 (masked), clear 0x80d70d. It calls nothing, and nothing in the dumped ROM reaches it.",
+    "reason": "Own scan finds no reference of any form: no absolute 4-byte at any alignment, no 3-byte form, no bsr/bra/bcc .s/.w/.l, no (d16,pc). RAM 0x800aaf = 0 and 0x800aae = 0 show it has not run. CM848 0x50ae5c (called from cm848_applicationMain, cpp line 59060) also loads the timer with 100 and sets the inhibit flag, and lacks the polarity copy, so it is a counterpart. 'initialize' follows the rule. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800aa0",
+    "verdict": "AMENDED",
+    "final_name": "j1939_input_data_error_bitmap",
+    "final_type": "dword",
+    "final_comment": "CM848's j1939_input_data_error_bitmap (0x3fbd5a): bit N = J1939 input N (the number of its j1939_input_signal_timeouts word) delivered a not-available value - a byte of 0xfb-0xfd or 0xff, or a two-bit switch state of 3. One dword. Its only users are clearJ1939InputDataErrorBit / setJ1939InputDataErrorBit / isAnyJ1939InputDataErrorActive; both J1939 input tasks set bit 0 of the fault status word 0x806000 while any bit is set. 0 in the RAM dump.",
+    "reason": "New row, verified: and.l 0x20206, tst.l 0x2028e, or.l 0x20306; abs_refs only those three; the indexes never reach 32, so one dword. 0 in RAM. Same block slot as CM848 0x3fbd5a. Name and type as proposed; the comment only follows the amended function name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800aa4",
+    "verdict": "AMENDED",
+    "final_name": "j1939_input_timeout_bitmap",
+    "final_type": "dword",
+    "final_comment": "CM848's j1939_input_timeout_bitmap (0x3fbd5e): bit N = J1939 input N's message timed out (its j1939_input_signal_timeouts word has counted down to 0). One dword. Its only users are clearJ1939InputTimeoutBit / setJ1939InputTimeoutBit / isAnyJ1939InputTimeoutActive; both J1939 input tasks set bit 0 of the fault status word 0x806000 while any bit is set. 0 in the RAM dump.",
+    "reason": "Verified: and.l 0x2027a, tst.l 0x202c6, or.l 0x20376, abs_refs only those three; every setter call follows a timer found 0. Only the function name in the comment changes."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800aa8",
+    "verdict": "AMENDED",
+    "final_name": "j1939_pedal_input_timeout_bitmap",
+    "final_type": "dword",
+    "final_comment": "CM848's j1939_pedal_input_timeout_bitmap (0x3fbd62): bits 6 / 7 = the message of the accelerator low idle switch / pedal position input was lost; CM550 also sets bit 1 for the remote accelerator. One dword. Its only users are clearJ1939PedalInputTimeoutBit / setJ1939PedalInputTimeoutBit / isAnyJ1939PedalInputTimeoutActive; cm550_processJ1939AcceleratorInputs stores 'any bit set' in j1939_pedal_input_timeout_active_flag. 0 in the RAM dump.",
+    "reason": "Verified: and.l 0x20240, tst.l 0x202aa, or.l 0x2033e, abs_refs only those; setter calls for 6 / 1 / 7. Only the function name in the comment changes."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800aac",
+    "verdict": "AMENDED",
+    "final_name": "accelerator_idle_switch_debounce_timer",
+    "final_type": "i16",
+    "final_comment": "",
+    "reason": "Role and name verified: a2 = 0x800aac only in 0x205c4; move.w #100, subi.w #50, signed bgt; same offset +12 and the same constants as CM848 0x3fbd66. The type is amended from 'short' to 'i16'. i16 is the CSV spelling of a signed word (164 CM550 / 640 CM848 rows, mapped to SignedWordDataType by ImportAnalysis.java). No global row uses 'short', and ImportAnalysis has no 'short' case."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800aae",
+    "verdict": "CONFIRMED",
+    "final_name": "accelerator_idle_switch_previous_state",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "Verified: cmp.b at 0x20658, move.b d2 at 0x20698, move.b #0xff at 0x2124a; abs_refs only these. Same offset +14 and 0xff start as CM848 0x3fbd68. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800aaf",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_9_to_16_polarity_bits_snapshot",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "Verified: written only at 0x2123a (byte 2 = bits 8-15 of the dword copy of 0x807d5e); read at 0x20640 / 0x20646 as the XOR with 0x80bced, masked to bit 0. The Calterm 9-16 numbering matches the neighbour row switch_9_to_16_override_values. CM848's +15 byte is a different variable (armed flag). The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00808158",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_input_source_priority",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 12FE +0 MXMOPZ 'PRIORITY GIVEN WHICH MUXED PARAMETERS WILL USE...' at 0x808158 (parameter table; next block 0x80815e). Word reads and compares at 13 sites (0x107d0 and the family). The low byte 0x808159 is read only at 0x20958. CM848 0x5c340 has the same record and name. The 0x808159 row must be removed. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080815a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_engine_retarder_selection_default_percent",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 12FE +2 ADDFEBLV at 0x80815a; a3 in 0x20380, copied to 0x80d728 at 0x203da / 0x20402 / 0x2040a; abs_refs only 0x2038c. Same record as CM848 0x5c342."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080815c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_engine_fan_requested_speed_default",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 12FE +4 ADDFMNFM at 0x80815c; a3 in 0x2041c; abs_refs only 0x20428. Same record as CM848 0x5c344."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d70c",
+    "verdict": "AMENDED",
+    "final_name": "j1939_accelerator_position_error_fallback_flag",
+    "final_type": "byte",
+    "final_comment": "e2m 12F7 +0 MXACDXER 'APS ERROR FLAG FOR THROTTLE INDICATING BAD DATA. NOT LOGGED' = CM848's j1939_accelerator_position_error_fallback_flag (0x40aaa6): cm550_processJ1939AcceleratorPedalPosition sets 1 when the J1939 pedal position is the error value 0xfe while the low idle switch is still valid (0 or 1). It clears it for every pedal value above 250, while j1939_accelerator_low_idle_switch_unavailable_flag is set, and for a valid value only while fault bit 0 of 0x806000 is still set and the low idle switch is not 2; both J1939 input tasks end every pass with that shared bit equal to 'any timeout bit set' (the 50 ms task right after this processor), so after a 0xfe a valid pedal value alone leaves the flag at 1 unless a timeout is active. The function at 0x25806 enters the accelerator pedal fault fueling state on it. 0 in the RAM dump.",
+    "reason": "Name, type and record verified (12F7 +0 at 0x80d70c, the same mnemonic as CM848 0x40aaa6). Its users are clr.b at 0x20d6a / 0x20d86 / 0x20d9a, move.b #1 at 0x20ddc and a read at 0x2583a, where 0x25806 stores FUELING_STATE 6 into user_fueling_state. The proposed 'clears it otherwise' is wrong. The valid-value clear at 0x20d6a needs fault bit 0 still set (0x20d50 beq exit). The 0xfe path sets no bitmap bit, and the task summaries recompute that bit right after, so the flag can stay 1. Comment corrected."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d70d",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_accelerator_low_idle_switch_unavailable_flag",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "12F7 +1 MXIVCFER at 0x80d70d. Set at 0x20f92 (low idle switch = 3), tested at 0x20d24, cleared only at 0x21262 (abs_refs: these three). Same record as CM848 0x40aaa7."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d70e",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pedal_input_timeout_active_flag",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "12F7 +2 MXACTMER at 0x80d70e. Written at 0x211e6 / 0x211ee from 0x202a0, tested at 0x20eb8, ORed at 0x25842. Same record as CM848 0x40aaa8."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d726",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_engine_retarder_selection_source_priority",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "12F7 +1A ADEBLVPZ at 0x80d726; one move.b read at 0x203be compared with 0x808158; no writer. Same record as CM848 0x40aac0."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d727",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_engine_fan_request_source_priority",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "12F7 +1B ADMNFMPZ at 0x80d727; one move.b read at 0x20456; no writer. Same record as CM848 0x40aac1."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d728",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_engine_retarder_selection_percent",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "12F7 +1C ADUVEBLV at 0x80d728; a2 in 0x20380 (move.w stores); abs_refs only 0x20386. Same record as CM848 0x40aac2."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d72a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_engine_fan_requested_speed",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "12F7 +1E ADUVMNFM at 0x80d72a; a2 in 0x2041c; abs_refs only 0x20422. Same record as CM848 0x40aac4."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d72c",
+    "verdict": "CONFIRMED",
+    "final_name": "idle_check_accelerator_pedal_raw",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "12F7 +20 MXLPRWTH at 0x80d72c; move.w from the QADC register at 0x205f8, cmpi.w #360 at 0x20604; abs_refs only these. Same record as CM848 0x40aac6."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080bd4a",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_input_source_priority",
+    "final_type": "byte[80]",
+    "final_comment": "",
+    "reason": "Parameter table: 12A8 = 0x80bd4a, and the next block 128E starts at 0x80bd9a, so 80 bytes. All 12A8 records are one byte (up to +3E). Indexed byte accesses come from 0x204b0 / 0x206a8 / 0x20890 / 0x20e14, up to index 72. No element address has an absolute reference (base only at 0x204b6 / 0x206b6 / 0x208a0 / 0x20e1a plus the table). The 56 rows the notes remove are exactly every row inside 0x80bd4b-0x80bd99. CM848's switch_input_source_priority (arrays.csv 0x40c058) is the same 12A8 block. All 0 in RAM."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807d6a",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_switch_input_default_state_bits",
+    "final_type": "dword[3]",
+    "final_comment": "",
+    "reason": "Parameter table: 12FC = 0x807d6a, next block 0x807d76, so 12 bytes. move.l / and.l (index switch>>5, up to 2) at 0x20552 0x20582 0x209d8 0x20a8c 0x20b64 0x20f2a 0x20f4e; abs_refs only these, all in the J1939 layer. The row 0x807d6e must be removed. Same role as CM848's j1939_switch_input_default_state_bits (byte-laid). RAM 00000000 0000ffff 00000000."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807d5e",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_input_polarity_bits",
+    "final_type": "dword[3]",
+    "final_comment": "",
+    "reason": "Parameter table: 1234 = 0x807d5e, next 12FC at 0x807d6a, so 12 bytes. The three dwords are read with move.l and XORed with the three sampled dwords at 0x15070 / 0x1508e / 0x150ac (mc68k_sampleAndDebounceDiscreteInputs). They are also used at 0x15bfe-0x15c34 (mc68k_ioDriverStrobeHandler) and 0x21206. 0x807d60 and 0x807d64 have no reference, so the four rows inside must go. RAM 0x807d5e is outside the EEPROM mirror, so no _cal; this matches CM848's switch_input_polarity_bits_cal."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080bcd8",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_1_to_8_override_values",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "e2m 000E +A DS01SWUC..DS08SWUC at 0x80bcd8 (bits 1-3, 4 manual fan, 5 powertrain protection switched input, 6 droop select, 7 idle switch), verified with e2m_block_addresses. Byte or/and writes from the family. Outside readers merge it under the override mask (0x151aa, 0x15c78). The name follows the neighbour row switch_9_to_16_override_values. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080bced",
+    "verdict": "CONFIRMED",
+    "final_name": "switch_9_to_16_raw_values",
+    "final_type": "byte",
+    "final_comment": "",
+    "reason": "Stored at 0x1502c from the byte of port 0xffd001 (bits 8-15 of the first sampled dword) before the polarity XOR at 0x15076. Read at 0x20636. abs_refs only these two. e2m 000E +1F DSRWNTSW names bit 0. 0xff in the extended RAM. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a6de",
+    "verdict": "CONFIRMED",
+    "final_name": "sampled_throttle_override_priority",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 12D0 +14 ADSTPZ at 0x80a6de (12D0 base 0x80a6ca + 2 x 10). Compared and claimed in 0x20c98 (0x20cd6, 0x20ce2), and compared at 0x107d6 in vp44_rpmDerateCalculationController, whose two branches both take 0x80a38e. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a6e0",
+    "verdict": "CONFIRMED",
+    "final_name": "remote_throttle_override_priority",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 12D0 +16 ADROTHPZ at 0x80a6e0. One reference: cmp.w at 0x207e6 (bcs exit), no store. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a6fc",
+    "verdict": "CONFIRMED",
+    "final_name": "intake_manifold_temperature_raw_override_priority",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "Parameter table 12D1 = 0x80a6fc; e2m 12D1 +0 ADIMTPPR names it. The only code user is 0x20fac (cmp.w / move.w at 0x20fee / 0x20ff8) via the channel-25 alias, which the comment explains. The name rests on the record at the address and does not claim the alias use. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a760",
+    "verdict": "CONFIRMED",
+    "final_name": "analog_sensor_raw_override_values",
+    "final_type": "word[25]",
+    "final_comment": "",
+    "reason": "Name and type already in the frozen CSV; only the comment changes. The old 'priority-arbitrated client' wording misread the store. 0x20fac writes 0x80a760 as 12D2 + 2 x 25 with the x 9282 / 100 wet tank value, next to the channel 10 / 11 siblings at 12D2 + 2 x channel. mc68k_processAnalogSensorChannels uses the base (0xb83a). Word 20 is 0 in the dump, as the comment says."
+   }
+  ]
+ }
+}

@@ -1,0 +1,39 @@
+firmware/CLAUDE.md:704: ...      (then `protection_status_flags_t.status_flags` / `protection_c
+firmware/CLAUDE.md:704: ...(then `protection_status_flags_t.status_flags` / `protection_condition_flags_t.fault_state_flags`).
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:33402: ...   cm848_protectionFuelDemandCheck) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:33860: ...   cm848_protectionStateTransitionCheck) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:79091: ...   cm848_throttleSetpoint_limit) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:79279: ...   cm848_throttleGain_timedAccumulate_update) */
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:2201: ... store (stw @ 0x51c9d0), so the word row rendered _throttle_setpoint_limit_arg (was throttle_setpoint_limit_
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:3636: ...yConverterUnlockConditions; renamed from a second protection_fuel_limit_l2_axis_cal (that name stays on the gover
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:3638: ...yConverterUnlockConditions; renamed from a second protection_fuel_limit_l3_axis_cal (that name stays on the gover
+firmware/scripts/test_lookup_tables.py:179: ...    # protection_fuel_limit_l2_axis_cal used to label 0x407d92 and 0x
+work/tasks/046-cm848-egr-flow-estimate.md:459: ...    0) clear and switch 12 on, `cm848_protectionStateTransitionCheck` uses the alternate `_c` 3-4 
+work/tasks/046-cm848-egr-flow-estimate.md:496: ...    - `cm848_protectionStateTransitionCheck` (0x31d98): the 3-4 / 4-3 shi
+work/tasks/046-cm848-egr-flow-estimate.md:500: ...    - `cm848_protectionCleanupHandler` (the 3rd gear lockup);
+work/tasks/046-cm848-egr-flow-estimate.md:501: ...    - the `protection_condition_flags_t` / `protection_status_flags_t
+work/tasks/046-cm848-egr-flow-estimate.md:501: ...    - the `protection_condition_flags_t` / `protection_status_flags_t` bits. e2m 8C19 aligns at 0x4
+work/tasks/025-cm848-naming-wave-followups.md:70: ...dition_cleared_flag, which this unit renames. The protection_condition_flags_t condition_flags_1 field comme
+work/tasks/025-cm848-naming-wave-followups.md:71: ...- protection_condition_flags_t threshold_current bit 5 is th
+work/tasks/025-cm848-naming-wave-followups.md:82: ...- protection_condition_flags_t field comments: condition_fla
+work/tasks/025-cm848-naming-wave-followups.md:399: ... fourth_gear_tcc_lockup_output_shaft_speed_axis / fourth_gear_tcc_lockup_boost_axis / fourth_gear_tcc_lockup_fuel
+work/tasks/025-cm848-naming-wave-followups.md:399: ..._speed_axis / fourth_gear_tcc_lockup_boost_axis / fourth_gear_tcc_lockup_fuel_demand_thresholds / fourth_gear_tcc_lockup_crui
+work/tasks/025-cm848-naming-wave-followups.md:412: ...- 0x40b0e4 protection_limit_active_flag = third gear lockup applied. 
+work/tasks/025-cm848-naming-wave-followups.md:463: ...RE current gear - the protection_* cluster around cm848_protectionStateTransitionCheck is probably the shift schedul
+work/tasks/025-cm848-naming-wave-followups.md:600: ...eeds the temperature-window bit and output 16 on. cm848_throttlePosition_clamp_update 0x51c2e4 clamps the zero into
+work/tasks/025-cm848-naming-wave-followups.md:600: ...mps the zero into 13-2048 and refreshes the duty. protection_throttle_position_clamp_low 0x408aec = 2048 is the upper 
+work/tasks/025-cm848-naming-wave-followups.md:600: ...iod / set-duty function tables and are not J1939. protection_throttle_hpcr_frequency (671 Hz) and protection_throt
+work/tasks/025-cm848-naming-wave-followups.md:600: .... protection_throttle_hpcr_frequency (671 Hz) and protection_throttle_invert_flag also belong to the solenoid d
+work/tasks/025-cm848-naming-wave-followups.md:604: ...- protection_condition_flags_t holds transmission control st
+work/tasks/025-cm848-naming-wave-followups.md:604: ...t request, bit 2 = 3-4 upshift request (both from cm848_protectionStateTransitionCheck, which is the overdrive shift
+work/tasks/025-cm848-naming-wave-followups.md:620: ...actually sent (9943 = 38.8 percent in the dump) / protection_throttle_hpcr_frequency 0x408b2a = 671 Hz / protectio
+work/tasks/025-cm848-naming-wave-followups.md:620: ...1 Hz / protection_throttle_hpcr_period 0x40c1c0 / protection_throttle_invert_flag 0x408b27 = 1 / j1939_pgn_hand
+work/tasks/025-cm848-naming-wave-followups.md:623: ...(standstill) / cm848_protectionThresholdMonitor + cm848_protectionStateTransitionCheck + cm848_processProtectionStat
+work/tasks/025-cm848-naming-wave-followups.md:624: ...- protection_condition_flags_t fields beyond overtemp_flags:
+work/tasks/044-cm848-dtc-code-name-clashes.md:104: ...**Reverted:** the bitfields on `protection_status_flags_t.status_flags` and
+work/tasks/044-cm848-dtc-code-name-clashes.md:105: ...`protection_condition_flags_t.fault_state_flags`. The code 
+work/tasks/027-cm848-naming-wave-2-followups.md:17: ...ounce names - only the threshold is renamed here. protection_condition_flags_t.threshold_current bit 0x2...
+work/tasks/027-cm848-naming-wave-2-followups.md:24: ...s system_status_flags.protection_active bit 0 and protection_condition_flags_t_0040b0e8.threshold_current ...
+work/tasks/027-cm848-naming-wave-2-followups.md:28: ...- protection_condition_flags_t_0040b0e8.threshold_current bit 0x20 is
+work/tasks/027-cm848-naming-wave-2-followups.md:65: ...- protection_status_flags_t @0x40b0f2 and protection_time
+work/tasks/027-cm848-naming-wave-2-followups.md:77: ...- cm848_protectionFuelDemandCheck = the shared fuel-demand clam

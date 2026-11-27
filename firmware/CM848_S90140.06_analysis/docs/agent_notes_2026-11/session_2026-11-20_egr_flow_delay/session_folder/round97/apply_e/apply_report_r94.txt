@@ -1,0 +1,565 @@
+CM550 struct cm550_low_speed_governor_gain_set_t added (3 fields)
+CM550 removed global 0x00808336 lsg_i_gain_passed_from_fuel_system_specific_algorithm_0_0_217_8336 (inside a new instance: j1939_low_speed_governor_gain_set.integral_gain)
+CM550 removed global 0x00808338 lsg_d_gain_passed_from_fuel_system_specific_algorithm_0_0_0144_8338 (inside a new instance: j1939_low_speed_governor_gain_set.derivative_gain)
+CM550 removed global 0x0080dad2 lsg_i_gain_passed_from_fuel_system_specific_algorithm_0_0_217_dad2 (inside a new instance: low_speed_governor_override_gain_set.integral_gain)
+CM550 removed global 0x0080dad4 lsg_d_gain_passed_from_fuel_system_specific_algorithm_0_0_0144_dad4 (inside a new instance: low_speed_governor_override_gain_set.derivative_gain)
+CM550 removed global 0x00808328 low_speed_governor_integral_gain_when_in_high_gears_0_0_21739 (inside a new instance: low_speed_governor_high_gear_gain_set.integral_gain)
+CM550 removed global 0x0080832a low_speed_governor_derivative_gain_when_in_high_gea_0_002265_0_0159 (inside a new instance: low_speed_governor_high_gear_gain_set.derivative_gain)
+CM550 removed global 0x0080832e low_speed_governor_integral_gain_when_in_middle_gears_for_0_0_21739 (inside a new instance: low_speed_governor_middle_gear_gain_set.integral_gain)
+CM550 removed global 0x00808330 low_speed_governor_derivative_gain_when_in_middle_g_0_002265_0_0159 (inside a new instance: low_speed_governor_middle_gear_gain_set.derivative_gain)
+CM550 removed global 0x008001a6 anc_default_fueling_ptr (inside a new instance)
+CM550 removed global 0x00807840 dzg_timing_control_params (inside a new instance)
+CM550 removed global 0x0080d044 io_control_bit6_state (inside a new instance)
+CM550 removed global 0x0080d050 crank_state_active_flag (inside a new instance)
+CM550 removed global 0x0080d07a eps_control_mode_param_2 (inside a new instance)
+CM550 removed global 0x0080d07e eps_acceleration_monitor_value (inside a new instance)
+CM550 removed global 0x0080d082 eps_override_checker_state (inside a new instance)
+CM550 removed global 0x0080d086 eps_control_mode_init_value_1 (inside a new instance)
+CM550 removed global 0x0080d076 eps_acceleration_active_flag (inside a new instance)
+CM550 removed global 0x008086f6 param_ref_base (inside a new instance)
+CM550 removed global 0x008086f8 diagnostic_session_validator_param (inside a new instance)
+CM550 removed global 0x0080875e io_control_index_limit (inside a new instance)
+CM550 removed global 0x00808760 lamp_blink_on_duration (inside a new instance)
+CM550 removed global 0x00808762 lamp_blink_off_duration (inside a new instance)
+CM550 removed global 0x00808768 io_control_mask_state_array (inside a new instance)
+CM550 removed global 0x0080878a cam_sync_scaling_factor (inside a new instance)
+CM550 removed global 0x0080878c cam_sync_upper_limit (inside a new instance)
+CM550 removed global 0x0080878e cam_sync_increment_rate (inside a new instance)
+CM550 removed global 0x00808790 cam_sync_base_offset (inside a new instance)
+CM550 removed global 0x00808792 cam_sync_default_value (inside a new instance)
+CM550 removed global 0x00808794 eps_diagnostic_mode_checker_param (inside a new instance)
+CM550 removed global 0x008087c0 governor_pid_fuel_sum_previous (inside a new instance)
+CM550 removed global 0x008087c2 eps_backup_duration_init (inside a new instance)
+CM550 removed global 0x008087c4 governor_pid_proportional_term_87c4 (inside a new instance)
+CM550 removed global 0x008087c6 governor_pid_integral_max (inside a new instance)
+CM550 removed global 0x008087ca governor_pid_integral_term (inside a new instance)
+CM550 removed global 0x008087cc governor_pid_integral_limit_low (inside a new instance)
+CM550 removed global 0x008087ce governor_pid_integral_limit_high (inside a new instance)
+CM550 removed global 0x008087d0 governor_pid_derivative_term_87d0 (inside a new instance)
+CM550 removed global 0x008087d2 governor_pid_integral_min (inside a new instance)
+CM550 removed global 0x008087d4 governor_pid_scale_factor (inside a new instance)
+CM550 removed global 0x008087d6 governor_pid_error_term (inside a new instance)
+CM550 removed global 0x008087d8 governor_pid_output_limit (inside a new instance)
+CM550 removed global 0x008087e0 governor_rpm_target_max (inside a new instance)
+CM550 removed global 0x008087e4 governor_pid_max_clamp (inside a new instance)
+CM550 removed global 0x008087e8 governor_pid_min_clamp (inside a new instance)
+CM550 removed global 0x008087ec eps_acceleration_timer_threshold (inside a new instance)
+CM550 removed global 0x008087ee rpm_offset_adjustment (inside a new instance)
+CM550 removed global 0x008087f0 eps_accel_threshold_lower (inside a new instance)
+CM550 removed global 0x008087f2 eps_accel_threshold_upper (inside a new instance)
+CM550 removed global 0x008087f4 throttle_position_threshold (inside a new instance)
+CM550 removed global 0x008087f6 eps_duration_lower_limit (inside a new instance)
+CM550 removed global 0x008087f8 eps_duration_upper_limit (inside a new instance)
+CM550 removed global 0x008087fa eps_accel_duration_counter (inside a new instance)
+CM550 removed global 0x008087fc eps_accel_mode_state (inside a new instance)
+CM550 removed global 0x00808804 eps_control_mode_duration_value_8804 (inside a new instance)
+CM550 removed global 0x00808806 eps_control_mode_duration_value_8806 (inside a new instance)
+CM550 removed global 0x00808808 eps_control_mode_selector_state_8808 (inside a new instance)
+CM550 removed global 0x0080880a eps_fuel_demand_upper (inside a new instance)
+CM550 removed global 0x0080880c eps_fuel_demand_threshold (inside a new instance)
+CM550 removed global 0x0080880e eps_diagnostic_lower_limit (inside a new instance)
+CM550 removed global 0x00808810 eps_diagnostic_upper_limit (inside a new instance)
+CM550 removed global 0x00808812 eps_diagnostic_counter_limit (inside a new instance)
+CM550 removed global 0x00808814 eps_fuel_demand_delta (inside a new instance)
+CM550 removed global 0x00808828 fuel_timing_offset_step (inside a new instance)
+CM550 removed global 0x0080882a fuel_timing_offset_max (inside a new instance)
+CM550 removed global 0x0080882c fuel_timing_offset_min (inside a new instance)
+CM550 removed global 0x0080882e engine_mode_timing_adjust_param_1 (inside a new instance)
+CM550 removed global 0x00808830 engine_mode_timing_adjust_param_2 (inside a new instance)
+CM550 removed global 0x00808832 fuel_arbitrator_timer_threshold (inside a new instance)
+CM550 removed global 0x00808834 engine_timing_decrement_step (inside a new instance)
+CM550 removed global 0x00808836 fuel_timing_offset_min_limit (inside a new instance)
+CM550 removed global 0x00808838 fuel_timing_offset_limit (inside a new instance)
+CM550 removed global 0x0080888a crank_debounce_threshold (inside a new instance)
+CM550 removed global 0x0080cf78 can_transmit_buffer_ptr_2 (inside a new instance)
+CM550 removed global 0x0080cf7c can_transmit_buffer_ptr_1 (inside a new instance)
+CM550 removed global 0x0080cf80 serial_receive_buffer_state (inside a new instance)
+CM550 removed global 0x0080cf84 timer_task_scheduler_state (inside a new instance)
+CM550 removed global 0x0080cf88 can_single_frame_transmit_flag (inside a new instance)
+CM550 removed global 0x0080cf89 serial_receive_timer (inside a new instance)
+CM550 removed global 0x0080cf8c serial_node_transmit_ptr (inside a new instance)
+CM550 removed global 0x0080cfa2 can_transmit_retry_count (inside a new instance)
+CM550 removed global 0x0080cfa4 can_transmission_scheduler_data (inside a new instance)
+CM550 removed global 0x0080cfa8 fuel_arbitrator_state (inside a new instance)
+CM550 removed global 0x0080cfaa retarder_mode_can_source_priority (inside a new instance)
+CM550 removed global 0x0080cfac retarder_control_can_source (inside a new instance)
+CM550 removed global 0x0080cfad retarder_control_source_byte (inside a new instance)
+CM550 removed global 0x0080cfae retarder_mode_control_byte_cached (inside a new instance)
+CM550 removed global 0x0080cfb0 retarder_mode_threshold_result (inside a new instance)
+CM550 removed global 0x0080cfb2 retarder_mode_table_count (inside a new instance)
+CM550 removed global 0x0080cfb4 retarder_percentage_scaled_output (inside a new instance)
+CM550 removed global 0x0080cfb6 serial_node_address_state (inside a new instance)
+CM550 removed global 0x0080cfb8 serial_node_address_limit (inside a new instance)
+CM550 removed global 0x0080cfba can_filter_mask_array_low (inside a new instance)
+CM550 removed global 0x0080cfc2 j1939_multiframe_source_address (inside a new instance)
+CM550 removed global 0x0080cfc3 j1939_source_address_primary (inside a new instance)
+CM550 removed global 0x0080cfc4 can_filter_mask_array_high (inside a new instance)
+CM550 removed global 0x0080cfcc can_cpu_interface_address (inside a new instance)
+CM550 removed global 0x0080cfcd j1939_source_address_secondary (inside a new instance)
+CM550 removed global 0x0080cfce diagnostic_mode_state (inside a new instance)
+CM550 removed global 0x0080cfd6 param_table_main (inside a new instance)
+CM550 removed global 0x0080cfd8 param_table_aux (inside a new instance)
+CM550 removed global 0x0080cfda param_table_ctrl (inside a new instance)
+CM550 removed global 0x0080cfdc param_table_ext (inside a new instance)
+CM550 removed global 0x0080cfde param_table_calc (inside a new instance)
+CM550 removed global 0x0080cfe0 calculated_2 (inside a new instance)
+CM550 removed global 0x0080cfe2 calculated_3 (inside a new instance)
+CM550 removed global 0x0080cfe4 calculated_4 (inside a new instance)
+CM550 removed global 0x0080cfe6 result_buffer (inside a new instance)
+CM550 removed global 0x0080cfe8 fuel_offset_blend_value (inside a new instance)
+CM550 removed global 0x0080cfea fuel_mode_selection_offset (inside a new instance)
+CM550 removed global 0x0080cfec fuel_mode_blend_state (inside a new instance)
+CM550 removed global 0x0080cfee fuel_mode_blend_result (inside a new instance)
+CM550 removed global 0x0080cff0 fuel_parameter_blend_value (inside a new instance)
+CM550 removed global 0x0080cff2 fuel_parameter_blend_state (inside a new instance)
+CM550 removed global 0x0080cff4 fuel_mode_selection_state (inside a new instance)
+CM550 removed global 0x0080cff6 param_system_mode_state (inside a new instance)
+CM550 removed global 0x0080d01a fuel_arbitrator_control_mode (inside a new instance)
+CM550 removed global 0x0080d01e timer_capture_value (inside a new instance)
+CM550 removed global 0x0080d022 retarder_control_mode_state (inside a new instance)
+CM550 removed global 0x0080d026 fuel_arbitrator_response_timer (inside a new instance)
+CM550 removed global 0x0080d028 torque_control_mode_timer (inside a new instance)
+CM550 removed global 0x0080d02a fuel_arbitrator_status_counter (inside a new instance)
+CM550 removed global 0x0080d02c retarder_control_mode_timer (inside a new instance)
+CM550 removed global 0x0080d02e fuel_arbitrator_speed_timer (inside a new instance)
+CM550 removed global 0x0080d030 fuel_arbitrator_status_timer (inside a new instance)
+CM550 removed global 0x0080d032 fuel_arbitrator_session_timer (inside a new instance)
+CM550 removed global 0x0080d034 fuel_arbitrator_session_counter (inside a new instance)
+CM550 removed global 0x0080d036 fuel_arbitrator_throttle_override (inside a new instance)
+CM550 removed global 0x0080d038 retarder_mode_override_flag (inside a new instance)
+CM550 removed global 0x0080d03a fuel_demand_change_flag (inside a new instance)
+CM550 removed global 0x0080d03c crank_state_transition_flag (inside a new instance)
+proposed names rewritten in comments: 15
+R1 function 0x00025b1c cm550_runLowSpeedGovernor: name kept
+R1 function 0x00025a34 cm550_presetLowSpeedGovernorIntegrator: name kept
+R1 function 0x00026078 cm550_initializeLowSpeedGovernor: name kept
+R1 function 0x00026616 cm550_calculateLowSpeedGovernorColdIdleSpeed: name kept
+R1 CM550 function 0x0002595a cm550_governorFuelPidController -> cm550_calculateLowSpeedGovernorReferenceMaximumFuelQuantity [counterpart]
+R1 CM550 function 0x0002629e cm550_enginePositionSensorControlModeSelector -> cm550_loadLowSpeedGovernorGainSet [counterpart]
+R1 CM550 function 0x0002609c cm550_enginePositionSensorAccelerationMonitor -> cm550_updateLowSpeedGovernorAggressiveGainLogic [counterpart]
+R1 CM550 function 0x000265e6 cm550_enginePositionSensorRpmTargetModeChecker -> selectLowSpeedGovernorTsc1GainSet [twin]
+R1 CM848 function 0x00028b38 cm848_selectLowSpeedGovernorTsc1GainSet -> selectLowSpeedGovernorTsc1GainSet [twin of CM550 0x000265e6]
+R1 CM550 function 0x00026272 cm550_enginePositionSensorOverrideChecker -> selectLowSpeedGovernorOverrideGainSet [twin]
+R1 CM848 function 0x000289d0 cm848_selectLowSpeedGovernorOverrideGainSet -> selectLowSpeedGovernorOverrideGainSet [twin of CM550 0x00026272]
+R1 CM550 function 0x00026308 cm550_initializeEnginePositionSensorControlMode -> cm550_initializeLowSpeedGovernorGainSelection [counterpart]
+R1 CM550 function 0x0002626a cm550_enginePositionSensorControlModeReset -> cm550_clearLowSpeedGovernorAggressiveGainsUsedFlag [counterpart]
+R1 CM550 function 0x00026340 cm550_enginePositionSensorDiagnosticModeHandler -> cm550_selectLowSpeedGovernorGearGainSet [counterpart]
+R1 function 0x00025ff2 cm550_presetLowSpeedGovernorSpeedError: name kept
+R1 CM550 function 0x000262fa cm550_enginePositionSensorInitializationWrapper -> cm550_resetLowSpeedGovernorGainLogic [standalone]
+R1 CM550 function 0x00026252 cm550_initializeEnginePositionSensorRpmTracking -> cm550_resetLowSpeedGovernorSettledCounts [standalone]
+R1 CM550 function 0x00026462 cm550_initializeOilPressureMonitoring -> cm550_resetLowSpeedGovernorGearGainLogic [standalone]
+R1 CM550 function 0x00026474 cm550_engineModeTimingAdjuster -> cm550_updateLowSpeedGovernorIdleAdjustment [standalone]
+R1 CM550 function 0x000266d2 cm550_timingOffsetCalculatorWrapper -> cm550_updateLowSpeedGovernorIdleAdjustmentWrapper [standalone]
+R1 function 0x0002658c cm550_initializeLowSpeedGovernorIdleAdjustment: name kept
+R1 function 0x00034f8a cm550_exponentialMovingAverage: name kept
+R1 function 0x00034e9a cm550_signedFirstOrderFilter: name kept
+R1 function 0x00035088 cm550_tableLookup2D: name kept
+R1 function 0x0001e02a cm550_subtractAndClampValue: name kept
+R1 CM550 global 0x00803b9e lsg_base_reference_speed_calibration word -> low_speed_governor_base_reference_speed_cal word
+R1 CM550 global 0x00803fca lsg_operator_adjust_minimum_speed word -> low_speed_governor_minimum_idle_speed_trim_cal word
+R1 CM550 global 0x00803fcc lsg_operator_adjust_maximum_speed word -> low_speed_governor_maximum_idle_speed_trim_cal word
+R1 CM550 global 0x00805f0a rpm_added_to_lsg_reference_300_300 i16 -> low_speed_governor_saved_operator_idle_adjustment i16
+R1 CM550 global 0x00807aae time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900 word -> low_speed_governor_alpha_timeout word
+R1 CM550 global 0x00807bf2 offset_to_low_idle_reference_speed_used_in_lsg_to_no_adjust_t_0_4500 word -> low_speed_governor_exit_reference_offset word
+R1 CM550 global 0x0080817c difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000 word -> low_speed_governor_reference_speed_delta word
+R1 CM550 global 0x00808236 added_to_4d_fueling_at_lsg_adjusted_reference_speed_to_det_max_5_5 i16 -> low_speed_governor_fueling_clamp_maximum_offset i16
+R1 CM550 global 0x00808238 lsg_fueling_clamp_min_0_100 word -> low_speed_governor_fueling_clamp_minimum word
+R1 CM550 global 0x0080823a added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_823a i16 -> low_speed_governor_integrator_preset_maximum_offset i16
+R1 CM550 global 0x00808242 lsg_filtered_speed_error_upper_limit i16 -> low_speed_governor_filtered_error_maximum i16
+R1 CM550 global 0x00808244 lsg_filtered_speed_error_lower_limit i16 -> low_speed_governor_filtered_error_minimum i16
+R1 CM550 global 0x00808246 added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_8246 i16 -> low_speed_governor_integrator_clamp_maximum_offset i16
+R1 CM550 global 0x0080824c offset_to_lsg_reference_speed_over_which_lsg_integrator_m_1000_1000 i16 -> low_speed_governor_reset_speed_offset i16
+R1 CM550 global 0x0080824e engine_fueling_below_which_the_lsg_integrator_may_be_reset_0_72_46 word -> low_speed_governor_reset_fueling word
+R1 CM550 global 0x00808250 blank_spot_after_removal_of_lsg_db_int_gain_0_0_100_0 word -> low_speed_governor_removed_deadband_integral_gain word
+R1 CM550 global 0x00808252 blank_spot_after_removal_of_lsg_db_prop_gain_0_0_100_0 word -> low_speed_governor_removed_deadband_proportional_gain word
+R1 CM550 global 0x00808256 the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 word -> low_speed_governor_adjusted_reference_speed_maximum word
+R1 CM550 global 0x0080825c lsg_derivative_filter_coefficient_1_to_1 undefined -> low_speed_governor_derivative_filter_coefficient i16
+R1 CM550 global 0x0080825e flag_to_enable_disable_the_lsg_derivative_gain_adjustment_scheme_0_1 word -> low_speed_governor_derivative_gain_adjustment_enable word
+R1 CM550 global 0x00808260 flag_to_enable_disable_the_lsg_proportional_gain_adjustment_sche_0_1 word -> low_speed_governor_proportional_gain_adjustment_enable word
+R1 CM550 global 0x00808262 flag_to_enable_disable_the_lsg_integral_gain_adjustment_scheme_0_1 word -> low_speed_governor_integral_gain_adjustment_enable word
+R1 CM550 global 0x00808266 lsg_derivative_filter_clamp i16 -> low_speed_governor_derivative_term_maximum i16
+R1 CM550 global 0x00808268 lsg_proportional_gain_2_calibration_2_to_2 i16 -> low_speed_governor_proportional_gain_2 i16
+R1 CM550 global 0x0080826a lsg_derivative_gain_2_calibration_0_043_to_0_043 i16 -> low_speed_governor_derivative_gain_2 i16
+R1 CM550 global 0x00808334 lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_8334 undefined -> j1939_low_speed_governor_gain_set cm550_low_speed_governor_gain_set_t
+R1 DROPPED global CM550 0x00808336 (a field of a struct instance (j1939_low_speed_governor_gain_set.integral_gain): the row goes)
+R1 DROPPED global CM550 0x00808338 (a field of a struct instance (j1939_low_speed_governor_gain_set.derivative_gain): the row goes)
+R1 CM550 global 0x00808340 lsg_idle_ramp_rate_0_1000 word -> low_speed_governor_cold_idle_ramp_rate word
+R1 CM550 global 0x00808342 datalink_commanded_lsg_breakpoint_speed word -> low_speed_governor_minimum_idle_speed word
+R1 CM550 global 0x0080a90e lsg_exit_timer_active_flag undefined -> alpha_low_speed_governor_timer_active_flag word
+R1 CM550 global 0x0080a910 trace_the_time_since_fueling_state_has_left_lsg_state_0_900 word -> alpha_low_speed_governor_timer word
+R1 CM550 global 0x0080dac4 lsg_proportional_gain_active i16 -> low_speed_governor_proportional_gain i16
+R1 TYPE CM550 0x0080daca: word -> LOW_SPEED_GOVERNOR_GAIN_STATE (same width, more specific)
+R1 CM550 global 0x0080daca identifies_the_current_lsg_pid_gain_set_0_7 word -> low_speed_governor_user_gain_state LOW_SPEED_GOVERNOR_GAIN_STATE
+R1 TYPE CM550 0x0080dacc: word -> LOW_SPEED_GOVERNOR_GAIN_STATE (same width, more specific)
+R1 CM550 global 0x0080dacc indicator_of_the_lsg_gain_set_currently_being_used_0_9 word -> low_speed_governor_final_gain_state LOW_SPEED_GOVERNOR_GAIN_STATE
+R1 CM550 global 0x0080dad0 lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 undefined -> low_speed_governor_override_gain_set cm550_low_speed_governor_gain_set_t
+R1 DROPPED global CM550 0x0080dad2 (a field of a struct instance (low_speed_governor_override_gain_set.integral_gain): the row goes)
+R1 DROPPED global CM550 0x0080dad4 (a field of a struct instance (low_speed_governor_override_gain_set.derivative_gain): the row goes)
+R1 CM550 global 0x0080dada lsg_gain_set_pointer undefined -> low_speed_governor_gain_set_pointer cm550_low_speed_governor_gain_set_t *
+R1 CM550 global 0x0080dade lsg_fuel_output_clamped word -> low_speed_governor_fueling_working word
+R1 CM550 global 0x0080dae0 lsg_filtered_speed_error i16 -> low_speed_governor_filtered_speed_error i16
+R1 CM550 global 0x0080dae4 lsg_derivative_filter_output i16 -> low_speed_governor_derivative_term i16
+R1 CM550 global 0x0080dae8 lsg_fueling_clamp_max_0_100 word -> low_speed_governor_fueling_clamp_maximum word
+R1 CM550 global 0x0080daea lsg_maximum_integrator_fuel_output_0_100 i16 -> low_speed_governor_integrator_clamp_maximum i16
+R1 CM550 global 0x0080daec lsg_integrator_preset_max_0_100 i16 -> low_speed_governor_integrator_preset_maximum i16
+R1 CM550 global 0x0080daee lsg_reference_speed_adjusted_with_throttle_position_300_2000 word -> low_speed_governor_adjusted_reference_speed word
+R1 CM550 global 0x0080daf0 lsg_droop_gain_1_at_integrator_feedback_2_to_2 i16 -> low_speed_governor_integrator_feedback_droop_gain i16
+R1 CM550 global 0x0080daf2 lsg_droop_gain_2_at_lsg_fueling_output_2_to_2 i16 -> low_speed_governor_fueling_output_droop_gain i16
+R1 CM550 global 0x0080daf6 lsg_active_flag word -> low_speed_governor_running_flag word
+R1 CM550 global 0x0080daf8 lsg_adjusted_proportional_gain_0_4348 i16 -> low_speed_governor_adjusted_proportional_gain i16
+R1 CM550 global 0x0080dafa lsg_adjusted_derivative_gain_0_0159 i16 -> low_speed_governor_adjusted_derivative_gain i16
+R1 CM550 global 0x0080dafc lsg_adjusted_integral_gain_0_0_238 i16 -> low_speed_governor_adjusted_integral_gain i16
+R1 CM550 global 0x0080dafe lsg_pid_speed_derivative_2_fueling_contribution_200_to_200 i16 -> low_speed_governor_derivative_2_term i16
+R1 CM550 global 0x0080db00 lsg_pid_speed_proportional_2_fueling_contribution_200_to_200 i16 -> low_speed_governor_proportional_2_term i16
+R1 CM550 global 0x0080db02 lsg_breakpoint_speed word -> low_speed_governor_reference_speed word
+R1 CM550 global 0x0080db06 operator_adjusted_lsg_breakpoint_speed_300_1000 word -> low_speed_governor_desired_reference_speed word
+R1 TYPE FORCED CM550 0x00808314: word -> cm550_low_speed_governor_gain_set_t (R1 judge: the default gain set is a cm550_low_speed_governor_gain_set_t (the 3-word layout the RAM dump proves))
+R1 CM550 global 0x00808314 low_speed_governor_default_proportional_gain word -> low_speed_governor_default_gain_set cm550_low_speed_governor_gain_set_t
+R1 CM550 global 0x00808230 (no row)  -> low_speed_governor_aggressive_gain_set cm550_low_speed_governor_gain_set_t
+R1 CM550 global 0x00808326 low_speed_governor_proportional_gain_when_in_high_gears_0_0_4348 undefined -> low_speed_governor_high_gear_gain_set cm550_low_speed_governor_gain_set_t
+R1 DROPPED global CM550 0x00808328 (a field of a struct instance (low_speed_governor_high_gear_gain_set.integral_gain): the row goes)
+R1 DROPPED global CM550 0x0080832a (a field of a struct instance (low_speed_governor_high_gear_gain_set.derivative_gain): the row goes)
+R1 CM550 global 0x0080832c low_speed_governor_proportional_gain_used_when_in_middle_ge_0_0_4348 undefined -> low_speed_governor_middle_gear_gain_set cm550_low_speed_governor_gain_set_t
+R1 DROPPED global CM550 0x0080832e (a field of a struct instance (low_speed_governor_middle_gear_gain_set.integral_gain): the row goes)
+R1 DROPPED global CM550 0x00808330 (a field of a struct instance (low_speed_governor_middle_gear_gain_set.derivative_gain): the row goes)
+R1 CM550 global 0x0080dad6 (no row)  -> low_speed_governor_requested_gain_set_pointer cm550_low_speed_governor_gain_set_t *
+R1 CM550 global 0x0080dac6 (no row)  -> low_speed_governor_integral_gain i16
+R1 CM550 global 0x0080dac8 (no row)  -> low_speed_governor_derivative_gain i16
+R1 CM550 global 0x0080dace indicator_of_current_active_override_gain_state_5_9 word -> low_speed_governor_override_gain_state word
+R1 CM550 global 0x0080dae2 (no row)  -> low_speed_governor_proportional_term i16
+R1 CM550 global 0x0080dae6 (no row)  -> low_speed_governor_integral_term i16
+R1 CM550 global 0x00808240 (no row)  -> low_speed_governor_error_filter_gain i16
+R1 CM550 global 0x00808248 (no row)  -> low_speed_governor_integrator_clamp_minimum i16
+R1 CM550 global 0x0080824a (no row)  -> low_speed_governor_integrator_reset_value i16
+R1 CM550 global 0x00807a54 (no row)  -> low_speed_governor_reference_offset word
+R1 CM550 global 0x00807bf4 (no row)  -> low_speed_governor_exit_fuel_hysteresis word
+R1 CM550 global 0x00808344 (no row)  -> low_speed_governor_maximum_idle_speed word
+R1 CM550 global 0x0080825a (no row)  -> low_speed_governor_throttle_deadband_gain word
+R1 CM550 global 0x00808264 (no row)  -> low_speed_governor_droop_offset_speed i16
+R1 CM550 global 0x0080dac2 allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 word -> low_speed_governor_aggressive_gain_inhibit_flag word
+R1 CM550 global 0x0080821e (no row)  -> low_speed_governor_gain_logic_transition_time word
+R1 CM550 global 0x00808220 delta_rpm_threshold_for_aggressive_gains_activation_deactivat_0_3000 i16 -> low_speed_governor_engine_speed_delta_threshold i16
+R1 CM550 global 0x00808222 maximum_absolute_error_that_should_occur_in_lslgtztm_to_switc_0_3000 word -> low_speed_governor_maximum_idle_speed_error word
+R1 CM550 global 0x00808224 (no row)  -> low_speed_governor_aggressive_gain_high_vehicle_speed word
+R1 CM550 global 0x00808226 (no row)  -> low_speed_governor_aggressive_gain_low_vehicle_speed word
+R1 CM550 global 0x00808228 (no row)  -> low_speed_governor_aggressive_gain_speed_offset_1 i16
+R1 CM550 global 0x0080822a (no row)  -> low_speed_governor_aggressive_gain_speed_offset_2 i16
+R1 CM550 global 0x0080822c offset_above_lsrf_to_change_lschst_to_after_first_ce_from_dur_0_3000 i16 -> low_speed_governor_aggressive_gain_speed_offset_3 i16
+R1 CM550 global 0x0080822e (no row)  -> low_speed_governor_aggressive_gain_speed_hysteresis i16
+R1 CM550 global 0x00801a76 (no row)  -> low_speed_governor_aggressive_gains_used_flag word
+R1 CM550 global 0x00801a78 high_load_idle_cooldown_timer word -> low_speed_governor_aggressive_gain_previous_engine_speed word
+R1 CM550 global 0x00801a7a high_speed_idle_cooldown_timer word -> low_speed_governor_idle_error_settled_count word
+R1 CM550 global 0x00801a7c high_temp_idle_cooldown_timer undefined -> low_speed_governor_stopped_vehicle_settled_count word
+R1 CM550 global 0x0080831a breakpoint_between_mid_gear_and_default_gains_based_on_over_0_2_255 i16 -> low_speed_governor_gear_breakpoint_1 i16
+R1 CM550 global 0x0080831c breakpoint_between_mid_gear_and_high_gear_gains_based_on_ov_0_2_255 i16 -> low_speed_governor_gear_breakpoint_2 i16
+R1 CM550 global 0x0080831e gear_gains_not_used_if_lsfter_this_value_0_3000 i16 -> low_speed_governor_gear_gain_speed_error_maximum i16
+R1 CM550 global 0x00808320 gear_gains_not_used_if_lsfter_this_value_1000_0 i16 -> low_speed_governor_gear_gain_speed_error_minimum i16
+R1 CM550 global 0x00808322 time_gear_gain_conditions_must_exist_before_using_gear_gains_0_65535 word -> low_speed_governor_gear_gain_transition_time word
+R1 CM550 global 0x00808324 (no row)  -> low_speed_governor_gear_hysteresis i16
+R1 CM550 global 0x00801a7e engine_mode_previous_state_1a7e undefined -> low_speed_governor_gear_gain_transition_timer word
+R1 CM550 global 0x0080a9f8 (no row)  -> rear_axle_ratio word
+R1 CM550 global 0x00803d40 (no row)  -> rear_axle_ratio_low_cal word
+R1 CM550 global 0x00808332 idle_increment_decrement_step_value_0_100 i16 -> low_speed_governor_idle_adjustment_step i16
+R1 CM550 global 0x00801a80 rpm_averaging_accumulator_2 byte -> low_speed_governor_idle_increment_switch_previous byte
+R1 CM550 global 0x00801a81 (no row)  -> low_speed_governor_idle_decrement_switch_previous byte
+R1 CM550 global 0x0080833a cold_idle_coolant_temperature_50_to_293 word -> low_speed_governor_cold_idle_coolant_temperature word
+R1 CM550 global 0x0080833c cold_idle_speed_300_1000 word -> low_speed_governor_cold_idle_speed word
+R1 CM550 global 0x0080833e cold_idle_time_0_65535 word -> low_speed_governor_cold_idle_time word
+R1 TYPE CM848 0x0040ae7c: word -> LOW_SPEED_GOVERNOR_GAIN_STATE (same width, more specific)
+R1 CM848 global 0x0040ae7c low_speed_governor_user_gain_state word -> low_speed_governor_user_gain_state LOW_SPEED_GOVERNOR_GAIN_STATE
+R1 TYPE CM848 0x0040ae7e: word -> LOW_SPEED_GOVERNOR_GAIN_STATE (same width, more specific)
+R1 CM848 global 0x0040ae7e low_speed_governor_final_gain_state word -> low_speed_governor_final_gain_state LOW_SPEED_GOVERNOR_GAIN_STATE
+R1 SKIP global CM848 0x0040ae80 low_speed_governor_override_gain_state -> low_speed_governor_override_gain_state (REFUTED)
+R1 CM550 enum LOW_SPEED_GOVERNOR_GAIN_STATE created (size 2) with 0: LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT
+R1 CM848 enum LOW_SPEED_GOVERNOR_GAIN_STATE created (size 2) with 0: LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT
+R1 CM550 enum LOW_SPEED_GOVERNOR_GAIN_STATE 1: new member LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE
+R1 CM848 enum LOW_SPEED_GOVERNOR_GAIN_STATE 1: new member LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE
+R1 CM550 enum LOW_SPEED_GOVERNOR_GAIN_STATE 2: new member LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR
+R1 CM848 enum LOW_SPEED_GOVERNOR_GAIN_STATE 2: new member LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR
+R1 CM550 enum LOW_SPEED_GOVERNOR_GAIN_STATE 3: new member LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR
+R1 CM848 enum LOW_SPEED_GOVERNOR_GAIN_STATE 3: new member LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR
+R1 CM550 enum LOW_SPEED_GOVERNOR_GAIN_STATE 4: new member LOW_SPEED_GOVERNOR_GAIN_STATE_J1939
+R1 CM848 enum LOW_SPEED_GOVERNOR_GAIN_STATE 4: new member LOW_SPEED_GOVERNOR_GAIN_STATE_J1939
+R1 NOTE verdict with no proposal element: ('cm848_function', '', '0x00028b38')
+R1 NOTE verdict with no proposal element: ('cm848_function', '', '0x000289d0')
+R1 NOTE verdict with no proposal element: ('prototype', '', '0x000265e6')
+R1 NOTE verdict with no proposal element: ('prototype', '', '0x0002609c')
+R1 NOTE verdict with no proposal element: ('prototype', '', '0x00026272')
+R2 CM550 global 0x00800182 hsg_reference_speed_for_droop word -> j1939_torque_curve_derate_engine_speed word
+R2 CM550 global 0x00800716 hsg_integrator_fuel_output undefined -> high_speed_governor_integrator i32
+R2 CM550 global 0x00808040 hsg_maximum_filtered_engine_speed_error_0_1000 i16 -> high_speed_governor_filtered_error_maximum i16
+R2 CM550 global 0x00808042 hsg_minimum_filtered_engine_speed_error_1000_0 i16 -> high_speed_governor_filtered_error_minimum i16
+R2 CM550 global 0x00808044 hsg_maximum_integrator_fuel_output_0_100 i16 -> high_speed_governor_integrator_maximum i16
+R2 CM550 global 0x00808046 hsg_minimum_integrator_fuel_output_0_69_44 i16 -> high_speed_governor_integrator_minimum i16
+R2 CM550 global 0x00808048 hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8048 i16 -> high_speed_governor_integrator_reset_value i16
+R2 CM550 global 0x0080804a engine_speed_below_which_the_hsg_integrator_is_reset_1000_1000 i16 -> high_speed_governor_integrator_reset_speed_offset i16
+R2 CM550 global 0x0080804c engine_fueling_below_which_the_hsg_integrator_may_be_reset_0_100 word -> high_speed_governor_integrator_reset_fuel_demand_threshold word
+R2 CM550 global 0x0080804e hsg_integrator_preset_minimum_0_100 i16 -> high_speed_governor_integrator_preset_minimum i16
+R2 CM550 global 0x00808050 hsg_integrator_preset_maximum_0_100 i16 -> high_speed_governor_integrator_preset_maximum i16
+R2 CM550 global 0x00808052 hsg_fueling_clamp_max_0_100 word -> high_speed_governor_fueling_maximum word
+R2 CM550 global 0x00808054 hsg_fueling_clamp_min_0_100 word -> high_speed_governor_fueling_minimum word
+R2 CM550 global 0x00808058 flag_to_enable_disable_the_hsg_derivative_gain_adjustment_scheme_0_1 word -> high_speed_governor_derivative_gain_adjustment_enable word
+R2 CM550 global 0x0080805a flag_to_enable_disable_the_hsg_proportional_gain_adjustment_sche_0_1 word -> high_speed_governor_proportional_gain_adjustment_enable word
+R2 CM550 global 0x0080805c flag_to_enable_disable_the_hsg_integral_gain_adjustment_scheme_0_1 word -> high_speed_governor_integral_gain_adjustment_enable word
+R2 CM550 global 0x0080805e hsg_pid_derivative_fueling_contribution_upper_limit_260_260 i16 -> high_speed_governor_derivative_term_maximum i16
+R2 CM550 global 0x00808060 hsg_pid_derivative_fueling_contribution_lower_limit_260_260 i16 -> high_speed_governor_derivative_term_minimum i16
+R2 CM550 global 0x00808062 hsg_pid_proportional_fueling_contribution_upper_limit_160_160 i16 -> high_speed_governor_proportional_term_maximum i16
+R2 CM550 global 0x00808064 hsg_pid_proportional_fueling_contribution_lower_limit_160_160 i16 -> high_speed_governor_proportional_term_minimum i16
+R2 CM550 global 0x00808066 hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066 i16 -> high_speed_governor_integrator_preset_offset_limit i16
+R2 CM550 global 0x00808110 filter_coefficient_1_from_hsg_lead_lag_dynamic_compensator_0_1 word -> high_speed_governor_compensator_filter_coefficient_1 word
+R2 CM550 global 0x00808112 filter_coefficient_2_from_hsg_lead_lag_dynamic_compensator_0_1 word -> high_speed_governor_compensator_filter_coefficient_2 word
+R2 CM550 global 0x00808114 filter_coefficient_used_by_hsg_lead_lag_compensator_for_no_filteri_0_1 word -> high_speed_governor_compensator_transition_coefficient word
+R2 CM550 global 0x00808116 maximim_gear_ratio_value_for_permitting_hsg_lead_lag_comp_0_1_15_999 word -> high_speed_governor_compensator_maximum_gear_ratio word
+R2 CM550 global 0x00808118 hsg_acceleration_rate_threshold_for_transient_conditions_0_2540 word -> high_speed_governor_transient_acceleration_threshold word
+R2 CM550 global 0x0080811a hsg_acceleration_reference_time_for_transient_conditions_0_10 word -> high_speed_governor_transient_gain_set_time_limit word
+R2 CM550 global 0x0080811c hsg_speed_threshold_for_high_reference_speed_region_1400_5000 word -> high_speed_governor_high_reference_speed_threshold word
+R2 CM550 global 0x00808120 hsg_engine_speed_error_filter_time_constant_for_high_ref_speed_c_0_1 word -> high_speed_governor_high_reference_speed_error_filter_coefficient word
+R2 CM550 global 0x00808126 hsg_speed_threshold_for_low_reference_speed_region_1400_5000 word -> high_speed_governor_low_reference_speed_threshold word
+R2 CM550 global 0x0080812a hsg_engine_speed_error_filter_time_constant_for_low_ref_speed_co_0_1 word -> high_speed_governor_low_reference_speed_error_filter_coefficient word
+R2 CM550 global 0x00808132 hsg_engine_speed_error_filter_time_constant_for_transient_condit_0_1 word -> high_speed_governor_transient_error_filter_coefficient word
+R2 CM550 global 0x00808138 incremental_step_in_hsg_reference_used_when_reference_is_incre_0_300 word -> engine_speed_limit_ramp_up_step word
+R2 CM550 global 0x0080813a blank_spot_in_hsg_calibration_0_0_1_0_813a word -> high_speed_governor_spare_word_0 word
+R2 CM550 global 0x0080813c blank_spot_in_hsg_calibration_0_0_1_0_813c word -> high_speed_governor_spare_word_1 word
+R2 CM550 global 0x0080813e maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100 word -> engine_speed_limit_droop_fuel_clamp_maximum word
+R2 CM550 global 0x00808140 minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100 word -> engine_speed_limit_droop_fuel_clamp_minimum word
+R2 CM550 global 0x00808506 amount_added_to_hsg_governed_speed_to_equal_hsg_breakpoint_speed_0_50 word -> engine_speed_limit_reference_offset_above_governed_speed word
+R2 CM550 global 0x0080a932 asg_reset_state_x1_2000_2000 i16 -> all_speed_governor_reset_state_speed_error_previous i16
+R2 CM550 global 0x0080a934 asg_reset_state_x2_0_100 i16 -> all_speed_governor_reset_state_integral i16
+R2 CM550 global 0x0080a936 asg_reset_state_x3_0_4500 word -> all_speed_governor_reset_state_engine_speed_previous word
+R2 CM550 global 0x0080a938 asg_reset_state_x4_100_100 i16 -> all_speed_governor_reset_state_pid_clamp_value i16
+R2 CM550 global 0x0080a93a asg_reset_state_x5_0_100 i16 -> all_speed_governor_reset_state_pid_integral_clamped i16
+R2 CM550 global 0x0080a93e asg_application_specific_reference_override_mode_true_false word -> all_speed_governor_application_override_mode word
+R2 CM550 global 0x0080a940 asg_application_specific_reference_speed_0_4500 word -> all_speed_governor_application_reference_speed word
+R2 TYPE FORCED CM550 0x0080a942: i16 -> word (R2 judge: typed word (confirmed))
+R2 CM550 global 0x0080a942 asg_application_specific_droop_gain_1_0_2 i16 -> all_speed_governor_application_droop_gain_1 word
+R2 CM550 global 0x0080a944 asg_application_specific_droop_gain_2_0_2 word -> all_speed_governor_application_droop_gain_2 word
+R2 CM550 global 0x0080a948 asg_application_specific_fueling_high_limit_0_100 word -> all_speed_governor_application_fuel_demand_tracking_limit word
+R2 CM550 global 0x0080a94a asg_application_specific_fueling_lower_limit_0_50 word -> all_speed_governor_application_fuel_demand_tracking_floor word
+R2 CM550 global 0x0080a94c asg_application_specific_reset_true_false word -> all_speed_governor_application_reset_flag word
+R2 CM550 global 0x0080a94e asg_application_specific_state_x1_reset_value_2000_2000 i16 -> all_speed_governor_application_reset_state_speed_error_previous i16
+R2 CM550 global 0x0080a950 asg_application_specific_state_x2_reset_value_0_100 i16 -> all_speed_governor_application_reset_state_integral i16
+R2 CM550 global 0x0080a952 asg_application_specific_state_x3_reset_value_0_4500 word -> all_speed_governor_application_reset_state_engine_speed_previous word
+R2 CM550 global 0x0080a954 asg_application_specific_state_x4_reset_value_100_100 i16 -> all_speed_governor_application_reset_state_pid_clamp_value i16
+R2 CM550 global 0x0080a956 asg_application_specific_state_x5_reset_value_0_100 i16 -> all_speed_governor_application_reset_state_pid_integral_clamped i16
+R2 CM550 global 0x0080a96c asg_derivative_deadband_output i16 -> all_speed_governor_derivative_term i16
+R2 CM550 global 0x0080a96e asg_error_difference_2000_2000 i16 -> all_speed_governor_error_difference i16
+R2 CM550 global 0x0080a970 asg_feedback_difference_term_1000_1000 i16 -> all_speed_governor_feedback_difference i16
+R2 CM550 global 0x0080a972 asg_filtered_reference_speed_0_4500 word -> governor_reference_speed_filtered word
+R2 CM550 global 0x0080a978 asg_state_x1_2000_2000 i16 -> all_speed_governor_state_speed_error i16
+R2 CM550 global 0x0080a97a asg_state_x2_100_100 i16 -> all_speed_governor_state_integral i16
+R2 CM550 global 0x0080a97c asg_state_x4_100_100 i16 -> all_speed_governor_state_pid_clamp_value i16
+R2 CM550 global 0x0080a97e asg_state_x5_100_100 i16 -> all_speed_governor_state_pid_integral_clamped i16
+R2 CM550 global 0x0080a980 asg_state_x6_100_100 i16 -> all_speed_governor_state_fuel_demand_correction i16
+R2 CM550 global 0x0080a990 asg_reference_speed_working word -> speed_request_unfiltered word
+R2 CM550 global 0x0080a992 qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 word -> all_speed_governor_droop_gain_1 word
+R2 CM550 global 0x0080a994 asg_droop_gain_2_0_2 word -> all_speed_governor_droop_gain_2 word
+R2 CM550 global 0x0080a996 asg_throttle_droop_gain_1_0_1 undefined -> all_speed_governor_throttle_droop_gain_1 word
+R2 CM550 global 0x0080a998 asg_throttle_droop_gain_2_0_5_1 word -> all_speed_governor_throttle_droop_gain_2 word
+R2 CM550 global 0x0080a99a asg_selected_droop_slope_0_30 word -> all_speed_governor_droop word
+R2 CM550 global 0x0080a99c asg_fueling_high_limit_0_100 i16 -> governor_fuel_demand_tracking_limit i16
+R2 CM550 global 0x0080a99e asg_fueling_lower_limit_0_50 i16 -> governor_fuel_demand_tracking_floor i16
+R2 CM550 global 0x0080a9a0 asg_external_reset_flag_true_false word -> all_speed_governor_external_reset_flag word
+R2 CM550 global 0x0080a9a2 asg_throttle_source_selector word -> all_speed_governor_tuning_set_select word
+R2 CM550 global 0x0080a9a4 asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 word -> all_speed_governor_minimum_reference_speed word
+R2 CM550 global 0x0080a9a6 asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 word -> all_speed_governor_maximum_reference_speed word
+R2 CM550 global 0x0080bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte -> switch_25_to_32_override_values byte
+R2 CM550 global 0x0080d60e filter_coefficient_3_from_hsg_lead_lag_dynamic_compensator_0_1 word -> high_speed_governor_compensator_filter_coefficient_3 word
+R2 CM550 global 0x0080d612 application_specified_hsg_engine_speed_error_filter_time_constan_0_1 word -> high_speed_governor_error_filter_coefficient_working word
+R2 CM550 global 0x0080d614 defines_hsg_application_specific_gain_set_that_has_been_chosen_0_15 word -> high_speed_governor_working_gain_set_code word
+R2 CM550 global 0x0080d61a defines_hsg_gain_set_that_has_been_chosen_0_31 word -> high_speed_governor_gain_set_code word
+R2 CM550 global 0x0080d622 hsg_speed_dependant_engine_speed_error_filter_time_constant_0_1 word -> high_speed_governor_error_filter_coefficient_alternate word
+R2 CM550 global 0x0080d626 hsg_filtered_engine_speed_error i16 -> high_speed_governor_filtered_error i16
+R2 CM550 global 0x0080d628 hsg_pid_proportional_fueling_contribution i16 -> high_speed_governor_proportional_term i16
+R2 CM550 global 0x0080d62c hsg_pid_fuel_output_previous word -> high_speed_governor_integral_term word
+R2 CM550 global 0x0080d62e hsg_proportional_gain_base word -> high_speed_governor_proportional_gain word
+R2 CM550 global 0x0080d630 hsg_integral_gain_base word -> high_speed_governor_integral_gain word
+R2 CM550 global 0x0080d632 hsg_derivative_gain_base word -> high_speed_governor_derivative_gain word
+R2 CM550 global 0x0080d63e hsg_adjusted_proportional_gain_0_7_5000 word -> high_speed_governor_proportional_gain_adjusted word
+R2 CM550 global 0x0080d640 hsg_adjusted_derivative_gain_0_5_120 word -> high_speed_governor_derivative_gain_adjusted word
+R2 CM550 global 0x0080d642 hsg_adjusted_integral_gain_0_6_0000 word -> high_speed_governor_integral_gain_adjusted word
+R2 CM550 global 0x0080d644 hsg_reference_speed_winning_source_indicator word -> engine_speed_limit_limiting_source_number word
+R2 CM550 global 0x0080d646 hsg_reference_speed_after_droop word -> engine_speed_limit_applied word
+R2 CM550 global 0x0080d64e hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 word -> engine_speed_limit_reference word
+R2 CM550 global 0x0080d650 point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 word -> engine_speed_limit_droop_no_load_speed word
+R2 TYPE FORCED CM550 0x0080d652: word -> i16 (R2 judge: i16 (signed tst.w + ble))
+R2 CM550 global 0x0080d652 slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 word -> engine_speed_limit_droop_slope i16
+R2 CM550 global 0x0080d656 hsg_droop_active_flag word -> engine_speed_limit_droop_active_flag word
+R2 CM550 global 0x0080d658 reference_speed_before_droop_sent_hsg_ref_hsg_gain_sched_1400_3000 word -> engine_speed_limit_arbitrated word
+R2 CM550 global 0x0080d65a hsg_isochronous_speed_currently_in_use_1500_3000 word -> engine_speed_limit_droop_cap word
+R2 CM550 global 0x0080db1e no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 word -> engine_speed_limit_droop_no_load_fuel_quantity word
+R2 CM550 global 0x00808036 (no row)  -> high_speed_governor_proportional_gain_base word
+R2 CM550 global 0x00808038 (no row)  -> high_speed_governor_derivative_gain_base word
+R2 CM550 global 0x0080803a (no row)  -> high_speed_governor_integral_gain_base word
+R2 CM550 global 0x0080803c (no row)  -> high_speed_governor_error_filter_coefficient_base word
+R2 CM550 global 0x0080803e (no row)  -> high_speed_governor_error_filter_gain i16
+R2 CM550 global 0x0080d624 (no row)  -> high_speed_governor_fueling word
+R2 CM550 global 0x0080d62a (no row)  -> high_speed_governor_derivative_term i16
+R2 CM550 global 0x0080d610 (no row)  -> high_speed_governor_derivative_gain_working word
+R2 CM550 global 0x0080d616 (no row)  -> high_speed_governor_integral_gain_working word
+R2 CM550 global 0x0080d618 (no row)  -> high_speed_governor_proportional_gain_working word
+R2 CM550 global 0x0080d61c (no row)  -> high_speed_governor_proportional_gain_alternate word
+R2 CM550 global 0x0080d61e (no row)  -> high_speed_governor_integral_gain_alternate word
+R2 CM550 global 0x0080d620 (no row)  -> high_speed_governor_derivative_gain_alternate word
+R2 CM550 global 0x0080d64a (no row)  -> engine_speed_limit_after_droop word
+R2 CM550 global 0x00808142 (no row)  -> engine_speed_limit_minimum word
+R2 CM550 global 0x0080d60a (no row)  -> high_speed_governor_compensated_engine_speed word
+R2 CM550 global 0x0080a974 (no row)  -> all_speed_governor_reset_flag word
+R2 CM550 global 0x0080071c (no row)  -> high_speed_governor_filtered_error_previous i16
+R2 CM550 global 0x0080071a (no row)  -> high_speed_governor_proportional_gain_adjusted_previous word
+R2 CM550 global 0x0080074a (no row)  -> high_speed_governor_transient_gain_set_timer word
+R2 CM550 global 0x00800748 (no row)  -> high_speed_governor_transient_gain_set_pass_counter word
+R2 CM550 global 0x00803f46 (no row)  -> engine_speed_limit_droop_no_load_speed_default_cal word
+R2 CM550 global 0x00803f42 (no row)  -> engine_speed_limit_source_2_mode_cal word
+R2 CM550 global 0x0080d666 (no row)  -> engine_speed_limit_reference_pointer word *
+R2 CM848 global 0x003fa8a4 torque_limit_working_reference word -> j1939_torque_curve_derate_engine_speed word
+R3 CM550 global 0x0080003c (no row)  -> acceleration_noise_control_engine_speed_limit_inhibit_timer word
+R3 CM550 global 0x0080003e (no row)  -> acceleration_noise_control_fuel_limit_inhibit_timer word
+R3 CM550 global 0x00800042 anc_fuel_limit_active_timer undefined -> acceleration_noise_control_fuel_limit_hold_timer word
+R3 CM550 global 0x00800046 anc_speed_limit_hold_timer undefined -> acceleration_noise_control_engine_speed_limit_hold_timer word
+R3 CM550 global 0x00800168 ac_control_accel_threshold_ptr byte -> auxiliary_driver_cold_start_aid_1_high_recovery_count byte
+R3 CM550 global 0x00800170 anc_speed_limit_table_1_size byte -> auxiliary_driver_relay_4_high_recovery_count byte
+R3 CM550 global 0x00800172 anc_speed_limit_table_1_ptr byte -> auxiliary_driver_relay_7_high_recovery_count byte
+R3 CM550 global 0x008001a0 anc_altitude_table_2_ptr dword -> backup_engine_position_sensor_sync_pulse_period_threshold dword
+R3 CM550 global 0x008001a4 anc_altitude_table_3_size undefined -> main_engine_position_sensor_sync_pulse_period_threshold dword
+R3 CM550 global 0x008001ac anc_altitude_table_3_ptr undefined -> sync_pulse_check_previous_period_pointer dword *
+R3 CM550 global 0x00800544 pto_set_switch_debounce_counter word -> power_take_off_set_switch_hold_counter word
+R3 CM550 global 0x00800546 pto_resume_switch_debounce_counter word -> power_take_off_resume_switch_hold_counter word
+R3 CM550 global 0x00803d42 pto_switch_polarity_select word -> cruise_set_accelerate_switch_select_cal word
+R3 CM550 global 0x00803d44 (no row)  -> cruise_discrete_switch_inputs_used_cal word
+R3 CM550 global 0x00807a00 accel_threshold_to_disable_a_c_1200_1200 i16 -> air_conditioning_vehicle_acceleration_cutout_threshold i16
+R3 CM550 global 0x00807a02 alg_executions_to_suspend_ac_after_shutoff_from_accel_0_3600 word -> air_conditioning_vehicle_acceleration_cutout_duration word
+R3 CM550 global 0x00807a1c first_order_filter_coeff_for_limited_veh_accel_0_1 word -> vehicle_acceleration_filter_coefficient word
+R3 CM550 global 0x00807a1e limit_on_max_unfiltered_veh_accel_1200_1200 i16 -> vehicle_acceleration_unfiltered_clamp_maximum i16
+R3 CM550 global 0x00807a20 limit_on_min_unfiltered_veh_accel_1200_1200 i16 -> vehicle_acceleration_unfiltered_clamp_minimum i16
+R3 CM550 global 0x00807a22 minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20 word -> acceleration_noise_control_fuel_limit_minimum_active_time word
+R3 CM550 global 0x00807a24 fuel_increment_added_to_anc_fueling_to_ramp_out_the_fueling_de_0_100 word -> acceleration_noise_control_fuel_limit_ramp_out_increment word
+R3 CM550 global 0x00807a26 engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 i16 -> acceleration_noise_control_fuel_limit_maximum_first_stage_acceleration i16
+R3 CM550 global 0x00807a28 filtered_engine_acceleration_above_which_anc_may_limit_fu_2560_2540 i16 -> acceleration_noise_control_fuel_limit_minimum_second_stage_acceleration i16
+R3 CM550 global 0x00807a2a engine_speed_above_which_anc_may_limit_fueling_1000_3000 word -> acceleration_noise_control_fuel_limit_minimum_engine_speed word
+R3 CM550 global 0x00807a2c calibratible_engine_speed_constant_used_to_set_anc_engine_1000_3000 word -> acceleration_noise_control_engine_speed_limit_engaged_value word
+R3 CM550 global 0x00807a2e minimum_amount_of_time_which_the_anc_speed_limit_will_be_active_0_20 word -> acceleration_noise_control_engine_speed_limit_minimum_active_time word
+R3 CM550 global 0x00807a30 engine_speed_increment_added_to_anc_speed_to_ramp_out_the_eng_0_3000 word -> acceleration_noise_control_engine_speed_limit_ramp_out_increment word
+R3 CM550 global 0x00807a32 filtered_engine_acceleration_above_which_anc_may_limit_en_2560_2540 i16 -> acceleration_noise_control_engine_speed_limit_minimum_second_stage_acceleration i16
+R3 CM550 global 0x00807a34 engine_speed_above_which_anc_may_limit_engine_speed_1000_3000 word -> acceleration_noise_control_engine_speed_limit_maximum_engine_speed word
+R3 CM550 global 0x00807a36 engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 i16 -> acceleration_noise_control_engine_speed_limit_maximum_first_stage_acceleration i16
+R3 CM550 global 0x00807a3a minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20 word -> acceleration_noise_control_timing_limit_minimum_active_time word
+R3 CM550 global 0x00807a3c timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720 word -> acceleration_noise_control_timing_limit_ramp_out_increment word
+R3 CM550 global 0x00807a3e filtered_engine_acceleration_above_which_anc_may_limit_ti_2560_2540 i16 -> acceleration_noise_control_timing_limit_minimum_second_stage_acceleration i16
+R3 CM550 global 0x00807a40 unfiltered_acceleration_limit_used_to_determine_anc_timi_2560_2540 i16 -> acceleration_noise_control_timing_limit_unfiltered_acceleration_limit i16
+R3 CM550 global 0x00807a46 upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 i16 -> engine_acceleration_first_stage_clamp_maximum i16
+R3 CM550 global 0x00807a48 lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 i16 -> engine_acceleration_first_stage_clamp_minimum i16
+R3 CM550 global 0x00807a4a duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20 i16 -> acceleration_noise_control_engine_speed_limit_inhibit_duration i16
+R3 CM550 global 0x00807a4c duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20 undefined -> acceleration_noise_control_fuel_limit_inhibit_duration i16
+R3 CM550 global 0x00807a4e duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20 i16 -> acceleration_noise_control_timing_limit_inhibit_duration i16
+R3 CM550 global 0x00807a50 engine_acceleration_below_which_anc_may_limit_timing_2560_2540 i16 -> acceleration_noise_control_timing_limit_maximum_first_stage_acceleration i16
+R3 CM550 global 0x00807a5a afc_fueling_derate_value_when_afc_override_is_enabled_0_100 word -> air_fuel_control_fueling_override_value word
+R3 CM550 global 0x00807aa6 time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900 word -> air_fuel_control_alpha_timeout word
+R3 CM550 global 0x00807c78 reference_speed_used_when_calculating_cc_and_rsg_upper_droops_on_0_255 word -> cruise_droop_reference_speed word
+R3 CM550 global 0x00807c7a high_limit_for_cruise_rsg_error_delta_0_255 word -> cruise_droop_speed_error_delta_maximum word
+R3 CM550 global 0x00807c7c low_limit_for_cruise_rsg_error_delta_255_0 i16 -> cruise_droop_speed_error_delta_minimum i16
+R3 CM550 global 0x00807f6a threshold_for_engine_deceleration_rate_to_activate_decel_timer_0_100 word -> engine_deceleration_rate_timer_threshold word
+R3 CM550 global 0x0080802e time_delay_forced_for_rsg_override_for_mismatch_of_veh_and_en_0_100 word -> drivetrain_ratio_out_of_gear_speed_mismatch_delay word
+R3 CM550 global 0x00808984 max_engine_speed_for_pto_engagement_600_2500 i16 -> power_take_off_maximum_engage_engine_speed i16
+R3 CM550 global 0x00808986 min_engine_speed_for_pto_engagement_500_2500 word -> power_take_off_minimum_engage_engine_speed word
+R3 CM550 global 0x0080898c amount_of_time_before_remote_pto_switch_is_considered_stationary_0_10 word -> power_take_off_remote_switch_timeout word
+R3 CM550 global 0x0080a280 rapid_vehicle_accel_flag_on_off word -> air_conditioning_rapid_vehicle_acceleration_flag word
+R3 CM550 global 0x0080a290 anc_speed_limit_ramp_value word -> acceleration_noise_control_engine_speed_limit word
+R3 CM550 global 0x0080a29e timing_advance_limit_as_just_before_modification_by_anc_timing_0_120 word -> acceleration_noise_control_timing_advance_before_limit word
+R3 CM550 global 0x0080a2a0 anc_speed_limit_disable_due_to_bare_engine_accel_active_inactive word -> acceleration_noise_control_engine_speed_limit_inhibit_flag word
+R3 CM550 global 0x0080a2a2 anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive word -> acceleration_noise_control_fuel_limit_inhibit_flag word
+R3 CM550 global 0x0080a2a4 anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive word -> acceleration_noise_control_timing_limit_inhibit_flag word
+R3 CM550 global 0x0080a2a6 application_specific_anc_override_flag_1_engage_anc_0_1 word -> acceleration_noise_control_application_override_flag word
+R3 CM550 global 0x0080a2a8 application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 word -> acceleration_noise_control_application_enable_flag word
+R3 CM550 global 0x0080a906 semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true word -> alpha_air_fuel_control_state_detected_flag word
+R3 CM550 global 0x0080a912 afc_exit_timer_active_flag undefined -> alpha_air_fuel_control_timer_active_flag word
+R3 CM550 global 0x0080a914 afc_exit_countdown_timer word -> alpha_air_fuel_control_timer word
+R3 CM550 global 0x0080aa3e slope_of_the_bottom_droop_line_calculated_in_cc_rsg_droop_0_0_35 word -> cruise_bottom_droop_gain word
+R3 CM550 global 0x0080aa52 slope_of_the_top_droop_line_computed_in_cc_rsg_droop_algorith_0_0_35 word -> cruise_top_droop_gain word
+R3 CM550 global 0x0080aa58 slope_of_the_bottom_droop_line_computed_in_the_cc_rsg_droop_a_0_0_35 word -> road_speed_governor_bottom_droop_gain word
+R3 CM550 global 0x0080aa5e slope_of_the_top_droop_line_computed_in_the_cc_rsg_droop_algo_0_0_35 word -> road_speed_governor_top_droop_gain word
+R3 CM550 global 0x0080aa60 offset_of_the_cc_rsg_top_droop_0_100 word -> cruise_top_droop_offset word
+R3 CM550 global 0x0080bcdf user_supplied_value_for_the_pto_set_switch_on_off byte -> power_take_off_switch_override_values byte
+R3 CM550 global 0x0080d3a4 timer_used_to_disable_rsg_when_veh_and_eng_speeds_disagree_0_100 word -> drivetrain_ratio_decoupled_hold_counter word
+R3 CM550 global 0x0080d3a6 timer_used_to_disable_rsg_when_gear_ratio_changes_0_100 word -> drivetrain_ratio_change_settle_counter word
+R3 CM550 global 0x0080dc30 pto_fuel_demand_snapshot word -> power_take_off_or_user_fueling word
+R3 CM550 global 0x0080dc82 maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961 word -> road_speed_governor_reference_speed word
+R3 TYPE FORCED CM550 0x0080de68: word -> i16 (R3 judge: i16)
+R3 CM550 global 0x0080de68 timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120 word -> air_fuel_control_timing_increment i16
+R3 CM550 global 0x0080053c (no row)  -> power_take_off_on_switch_previous_state byte
+R3 CM550 global 0x00803af2 (no row)  -> vehicle_acceleration_filter_state ema_filter_state_t
+R4 CM550 global 0x00807839 current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16 byte -> cylinder_counter_reset_value_at_reference_pulse byte
+R4 CM550 global 0x0080783a dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 i32 -> angle_pulse_output_start_angle_after_top_dead_center i32
+R4 CM550 global 0x0080783e dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 undefined -> angle_pulse_output_high_duration_angle i32
+R4 CM550 global 0x00807d90 dzg_threshold_level_2 word -> coolant_level_abuse_input_signal_type word
+R4 CM550 global 0x00807e9a main_consec_error_thresh_threshold_count_at_which_ess_is_lost_0_255 byte -> primary_consecutive_error_threshold byte
+R4 CM550 global 0x00807e9b backup_consec_error_thresh_threshold_count_at_which_eps_is_los_0_255 byte -> backup_consecutive_error_threshold byte
+R4 CM550 global 0x00807ea6 eps_backup_ratio_threshold_for_detection_of_missing_ext_0_1_9921875 word -> backup_engine_position_sensor_missing_or_extra_tooth_ratio_threshold word
+R4 CM550 global 0x00807ec0 period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 byte -> primary_speed_sensor_period_measurements_per_cam_revolution byte
+R4 CM550 global 0x00807ec1 period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 byte -> backup_speed_sensor_period_measurements_per_cam_revolution byte
+R4 CM550 global 0x00807ec2 period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 byte -> primary_speed_sensor_period_measurements_per_average byte
+R4 CM550 global 0x00807ec3 period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 byte -> backup_speed_sensor_period_measurements_per_average byte
+R4 CM550 global 0x00807ec4 crank_deg_per_period_meas_crank_degrees_between_primary_speed_0_720 word -> primary_speed_sensor_crank_degrees_per_period_measurement word
+R4 CM550 global 0x00807ec6 crank_deg_per_period_meas_backup_crank_degrees_between_backup_0_720 word -> backup_speed_sensor_crank_degrees_per_period_measurement word
+R4 CM550 global 0x00807eda eps_error_detection_performed_when_rpm_this_value_0_4500 word -> engine_position_sensor_error_detection_minimum_engine_speed word
+R4 CM550 global 0x00807ee0 max_eps_main_lost_duration_0_20 word -> main_engine_position_sensor_lost_duration_limit word
+R4 CM550 global 0x00807ee2 max_eps_backup_lost_duration_0_20 word -> backup_engine_position_sensor_lost_duration_limit word
+R4 CM550 global 0x00807ee4 max_eps_external_lost_duration_0_20 word -> external_engine_position_sensor_lost_duration_limit word
+R4 CM550 global 0x00807f4e pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 byte -> missing_tooth_wheel_tooth_count byte
+R4 CM550 global 0x00807f4f pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875 byte -> missing_tooth_detection_ratio byte
+R4 CM550 global 0x00807f51 ess_pulse_count_reset_reset_val_at_missed_tooth_for_period_mea_0_255 byte -> engine_speed_sensor_pulse_count_reset_value_at_missing_tooth byte
+R4 CM550 global 0x00807f52 eps_missing_teeth_width_of_missing_tooth_gap_in_teeth_1_2 word -> missing_tooth_gap_width_in_teeth word
+R4 CM550 global 0x00807f58 eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 i16 -> engine_position_sensor_positive_out_of_phase_threshold i16
+R4 CM550 global 0x00807f5a eps_negative_out_of_phase_threshold_flag_thres_for_dif_32768_32767 i16 -> engine_position_sensor_negative_out_of_phase_threshold i16
+R4 CM550 global 0x00807f5c eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535 word -> engine_position_sensor_out_of_phase_count_limit word
+R4 CM550 global 0x00807f94 eps_count_at_wide_ci_expected_eps_tooth_count_at_wide_ci_fallin_0_24 word -> cylinder_identification_wide_pulse_expected_tooth_number word
+R4 CM550 global 0x00807f96 eps_count_at_narrow_ci_expected_eps_tooth_count_at_narrow_erp_f_0_24 word -> cylinder_identification_narrow_pulse_expected_tooth_number word
+R4 CM550 global 0x00807f98 wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24 word -> cylinder_identification_wide_pulse_expected_tooth_count word
+R4 CM550 global 0x00807f9a narrow_ci_count_expected_eps_teeth_during_narrow_ci_pulse_0_24 word -> cylinder_identification_narrow_pulse_expected_tooth_count word
+R4 CM550 global 0x00807faa eps_sync_count_threshold_to_determine_cam_phase_0_7 byte -> cam_phase_sync_count_threshold byte
+R4 CM550 global 0x00807fab expected_number_of_ess_teeth_between_eps_addtnl_0_255 byte -> expected_crank_teeth_between_additional_cam_pulses byte
+R4 CM550 global 0x0080a9f4 unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 word -> main_engine_speed_sensor_interrupt_rollover_counter word
+R4 CM550 global 0x0080a9f6 unsigned_roll_over_counter_of_ess_backup_isr_occurances_0_65535 word -> backup_engine_speed_sensor_interrupt_rollover_counter word
+R4 CM550 global 0x0080ccea eps_pulse_number_eps_tooth_counter_0_24 word -> main_engine_position_sensor_tooth_counter word
+R4 CM550 global 0x0080ccec eps_pulse_number_backup_eps_backup_tooth_counter_0_24 word -> backup_engine_position_sensor_tooth_counter word
+R4 CM550 global 0x0080d042 accumulated_backup_eps_period_between_vss_interrupts_0_65535  -> backup_speed_period_sum_between_vss_pulses dword
+R4 CM550 global 0x0080d048 number_of_backup_eps_interrupts_between_vss_interrupts_0_65535 word -> backup_speed_pulse_count_between_vss_pulses word
+R4 CM550 global 0x0080d04e eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 undefined -> backup_engine_position_sensor_period dword
+R4 CM550 global 0x0080d058 dzg_pressure_threshold_high word -> crank_sync_lost_duration word
+R4 CM550 global 0x0080d05a eps_main_lost_duration_0_20 word -> main_engine_position_sensor_lost_duration word
+R4 CM550 global 0x0080d05e eps_external_lost_duration_0_20 word -> external_engine_position_sensor_lost_duration word
+R4 CM550 global 0x0080d064 eps_raw_period_backup_raw_time_between_teeth_not_norm_d_to_1_200000 dword -> backup_engine_position_sensor_raw_period dword
+R4 CM550 global 0x0080d078 eps_control_mode_param_1 undefined -> pulse_period_table_last_entry_pointer dword *
+R4 CM550 global 0x0080d07c eps_control_mode_param_3 undefined -> pulse_period_table_backup_last_entry_pointer dword *
+R4 CM550 global 0x0080d080 eps_override_output_state undefined -> pulse_period_table_average_oldest_entry_pointer dword *
+R4 CM550 global 0x0080d084 eps_control_mode_init_value_2 undefined -> pulse_period_table_backup_average_oldest_entry_pointer dword *
+R4 CM550 global 0x0080d0be eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 word -> crank_initial_rpm_adjustment word
+R4 CM550 global 0x0080d292 tooth_count_at_which_error_was_found_by_pmm_0_255 byte -> crank_sync_error_tooth_count byte
+R4 CM550 global 0x0080d293 pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff byte -> crank_sync_error_type byte
+R4 CM550 global 0x0080d296 eps_main_in_phase_if_flase_eps_main_lags_backup_true_false byte -> main_engine_position_sensor_in_phase_flag byte
+R4 CM550 global 0x0080d297 eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false byte -> backup_engine_position_sensor_in_phase_flag byte
+R4 CM550 global 0x0080d298 eps_main_backup_time_delta i16 -> engine_position_sensor_phase_difference i16
+R4 CM550 global 0x0080d29a eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 word -> engine_position_sensor_positive_out_of_phase_count word
+R4 CM550 global 0x0080d29c eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 word -> engine_position_sensor_negative_out_of_phase_count word
+R4 CM550 global 0x0080d2be ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24 byte -> cylinder_identification_pulse_tooth_count byte
+R4 CM550 global 0x0080d2bf crank_tooth_count_error_incremented_when_eps_tooth_count_wro_0_65535 byte -> crank_tooth_count_error_counter byte
+R4 CM550 global 0x0080d2c8 flag_indicates_ess_sensor_is_not_being_used_0_1 byte -> crank_sensor_not_used_flag byte
+R4 CM550 global 0x0080d2c9 flag_indicating_eps_sensor_not_used_0_1 byte -> cam_sensor_not_used_flag byte
+R4 CM550 global 0x0080d2ca enables_input_of_eps_period_data_to_pptb_0_1 byte -> pulse_period_table_backup_input_enable_flag byte
+R4 CM550 global 0x0080d2cb count_of_eps_pulses_since_ess_missing_tooth_0_255 byte -> cam_pulse_count_since_missing_tooth byte
+R4 CM550 global 0x0080d2cc eps_pulse_count_since_addtnl_eps_pulse_0_255 byte -> cam_pulse_count_since_additional_cam_pulse byte
+R4 CM550 global 0x0080deda eps_period_between_vss_interrupts_0_4294967295 dword -> drivetrain_ratio_engine_period_average dword
+R4 CM550 global 0x0080d074 (no row)  -> pulse_period_sum_backup dword
+R4 CM550 global 0x0080d05c (no row)  -> backup_engine_position_sensor_lost_duration word
+R4 CM550 global 0x0080cd06 (no row)  -> main_engine_speed word
+R4 CM550 global 0x0080cd04 (no row)  -> backup_engine_speed word
+R4 CM550 global 0x0080cd16 (no row)  -> external_engine_speed word
+R4 CM550 global 0x0080ccf6 engine_rpm_primary word -> filtered_engine_speed word
+R4 CM550 global 0x0080ccf4 current_engine_rpm_filtered word -> engine_speed word
+R4 CM550 global 0x0080d03e accumulated_main_engine_position_sensor_period dword -> main_speed_period_sum_between_vss_pulses dword
+R4 CM550 global 0x0080d046 main_engine_position_sensor_interrupt_count word -> main_speed_pulse_count_between_vss_pulses word
+R4 CM550 global 0x0080d0bc fueling_val_to_be_added_to_crank_initial_fuel_val_0_100 word -> crank_initial_fuel_adjustment word
+R4 CM550 global 0x008086f2 j1939_timeout_clear_value undefined -> programmable_power_fueling_curve_table word[210]
+R4 CM550 global 0x0080cd1e pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 undefined -> pulse_period_table dword[100]
+R4 CM550 global 0x0080ceae pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 undefined -> pulse_period_table_backup dword[100]
+R4 CM550 global 0x0080847a intercept_of_rpm_vs_phase_lag_line_defining_time_offset_for_syn_0_16 word -> engine_position_pulse_0_phase_lag_intercept word
+R4 CM550 global 0x0080847c slope_of_rpm_vs_phase_lag_line_defining_time_offset_for_s_0_0_031136 word -> engine_position_pulse_0_phase_lag_slope word

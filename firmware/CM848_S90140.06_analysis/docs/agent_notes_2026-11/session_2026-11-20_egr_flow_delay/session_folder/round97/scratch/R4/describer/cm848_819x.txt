@@ -1,0 +1,153 @@
+=== CM848 block 8190
+=== CM848 block 8191
+=== CM848 block 8192
+8192 +0000 Cylinder_Fueling [MM3S] -> 0x40b766 total_injection_quantity word; Cylinder Fueling - after cyl. balance and cutout
+8192 +0002 Cylinder_Fueling_Offset_1 [MM3S] -> 0x40b768 cylinder_fueling_offset byte; Cylinder fueling offset from cylinder balancing
+8192 +0004 Cylinder_Fueling_Offset_2 [MM3S] -> 0x40b76a (no name) (no row); Cylinder fueling offset from cylinder balancing
+8192 +0006 Cylinder_Fueling_Offset_3 [MM3S] -> 0x40b76c (no name) (no row); Amount of pilot fuel actually implemented at injection
+8192 +0008 Cylinder_Fueling_Offset_4 [MM3S] -> 0x40b76e (no name) (no row); Amount of pilot fuel actually implemented at injection
+8192 +000A Cylinder_Fueling_Offset_5 [MM3S] -> 0x40b770 (no name) (no row); Amount of pilot fuel actually implemented at injection
+8192 +000C Cylinder_Fueling_Offset_6 [MM3S] -> 0x40b772 (no name) (no row); Amount of pilot fuel actually implemented at injection
+8192 +000E Cylinder_Fueling_Offset_7 [MM3S] -> 0x40b774 (no name) (no row); Cylinder fueling offset from cylinder balancing
+8192 +0010 Cylinder_Fueling_Offset_8 [MM3S] -> 0x40b776 (no name) (no row); Cylinder fueling offset from cylinder balancing
+8192 +0012 Cylinder_Cutoff [HEX] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder Cutoff - bit-mapped to each cylinder, bit0=cyl1 ...
+8192 +0014 Injected_Pilot_Fuel [MM3S] -> 0x40b77a pilot_injection_quantity word; Amount of pilot fuel actually implemented at injection
+8192 +0016 FSS_Timing [CRANK_DEG_BTDC] -> 0x40b77c main_injection_timing_for_cylinder_event i16; Main timing command implemented at injection
+8192 +0018 FSS_Pilot_SOI [CRANK_DEG_BTDC] -> 0x40b77e pilot_injection_timing_for_cylinder_event i16; pilot timing increment actually implemented at injection
+8192 +001A Bank_Cutoff [UNITLESS] -> 0x40b780 cylinder_cutout_mask word; Bank Cutoff - bit-mapped to each cylinder
+8192 +001C Decay_Cutoff [UNITLESS] -> 0x40b782 (no name) (no row); Decay Cutoff - bit-mapped to each cylinder
+8192 +001E Injected_Aux_Fuel [MM3S] -> 0x40b784 auxiliary_injection_quantity word; Amount of fuel actually implemented at auxillary injection
+8192 +0020 FSS_Aux_SOI [CRANK_DEG_BTDC] -> 0x40b786 auxiliary_injection_timing_for_cylinder_event i16; Aux timing command implemented at injection
+8192 +0022 Total_Fuel_Delivered [GAL] -> 0x40b788 injected_fuel_running_total dword; [TIITFU] Integrated fuel delivered by the fuel system since engine turn-on in gal or lbs
+8192 +0026 Speed_Limp_Derate [%] -> 0x40b78c injection_quantity_scale_factor word; Fueling derate percentage for fuel injection when running on backup EPS
+8192 +0012 Cylinder_Cutoff_1 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 1 Cutoff - bit 0
+8192 +0012 Cylinder_Cutoff_2 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 2 Cutoff - bit 1
+8192 +0012 Cylinder_Cutoff_3 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 3 Cutoff - bit 2
+8192 +0012 Cylinder_Cutoff_4 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 4 Cutoff - bit 3
+8192 +0012 Cylinder_Cutoff_5 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 5 Cutoff - bit 4
+8192 +0012 Cylinder_Cutoff_6 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 6 Cutoff - bit 5
+8192 +0012 Cylinder_Cutoff_7 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 7 Cutoff - bit 6
+8192 +0012 Cylinder_Cutoff_8 [UNITLESS] -> 0x40b778 cylinder_cutout_test_mask word; Cylinder 8 Cutoff - bit 7
+=== CM848 block 8193
+=== CM848 block 8194
+8194 +0000 Backup_Consec_Error_Thresh [UNITLESS] -> 0x408f56 backup_consecutive_error_threshold byte; [ESTDCU02] Backup_Consec_Error_Thresh:threshold count at which eps is lost
+8194 +0001 Bank_With_Added_Tooth [UNITLESS] -> 0x408f57 crank_signal_window_with_added_tooth byte; which crank signal window has the cam +1 pulse
+8194 +0002 Cam_Count_With_Added_Tooth [UNITLESS] -> 0x408f58 cam_pulse_count_with_added_tooth word; Number of cam pulses including +1 in start_sync window
+8194 +0004 Cam_Crank_Mismatch_Threshold [UNITLESS] -> 0x408f5a cam_crank_mismatch_count_limit word; value of cam-crank mismatch persistence counter which sets error
+8194 +0006 Cam_Sync_Max_Count [CNTS] -> 0x408f5c cam_sync_error_count_limit word; [CSCMMXCU] limit on cam sync error count
+8194 +0008 Crank_Out_Of_Phase_Threshold [UNITLESS] -> 0x408f5e crank_out_of_phase_threshold word; Number of out-of-phase cam pulse detections before switching crank bank
+8194 +000A Crank_Sync_Determination_Count [UNITLESS] -> 0x408f60 crank_tooth_position_target word; Number of speed interrupts before cam pulse count is checked
+8194 +000C Crank_Sync_Fail_Count [CNTS] -> 0x408f62 crank_sync_error_count_speed_limp_home_threshold word; [CSCKFXCU] Threshold at which crank sensor no longer used
+8194 +000E Crank_Sync_Max_Count [CNTS] -> 0x408f64 crank_sync_error_count_limit word; [CSCKMXCU] limit on crank sync error count
+8194 +0010 Crank_Sync_Tooth [UNITLESS] -> 0x408f66 crank_sync_tooth byte; Crank tooth number on which speed measurement is synced
+8194 +0011 Crank_Teeth_Per_Cam_Measure [UNITLESS] -> 0x408f67 crank_teeth_per_cam_measurement byte; crank teeth between cam targets
+8194 +0012 Engine_Speed_Constant_1 [UNITLESS] -> 0x408f68 primary_period_rpm_conversion_factor dword; [ESCUCF01] Engine_Speed_Constant_1: Conversion factor from tcnts to rpm - primary
+8194 +0016 Engine_Speed_Constant_1_Backup [UNITLESS] -> 0x408f6c backup_period_rpm_conversion_factor dword; [ESCUCF02] Engine_Speed_Constant_1_Backup: Conversion factor from tcnts to rpm - secondary
+8194 +001A EPS_Failure_Detect_RPM [RPM] -> 0x408f70 engine_position_sensor_error_detection_minimum_engine_speed word; [ESFXSNTD] EPS error detection performed when rpm > this value
+8194 +001C Filtered_Engine_Speed_Constant [UNITLESS] -> 0x408f72 engine_speed_filter_coefficient word; [ESESFTTC] Time constant for the filter used on the 2^n pulse average
+8194 +001E Firing_Acceleration_Threshold [RPM/SEC] -> 0x408f74 cylinder_firing_acceleration_threshold dword; Acceleration level which indicates cylinder combustion
+8194 +0022 Initial_Engine_Speed [UNITLESS] -> 0x408f78 tooth_period_buffer_initial_engine_speed word; Speed for which tooth period buffers are initialized
+8194 +0024 Initialization_Pulse_Period_Backup [CNTS] -> 0x408f7a (no name) (no row); [ESIITB02] Initialization_Pulse_Period_Backup: Initial value for pulse period table backup
+8194 +0028 Low_Speed_Filtering_Threshold [UNITLESS] -> 0x408f7e low_speed_filtering_threshold word; Speed below which special filtering is applied to speed signals
+8194 +002A Main_Consec_Error_Thres [CNTS] -> 0x408f80 primary_consecutive_error_threshold word; [ESTDCU01] Main_Consec_Error_Thresh:Threshold count at which ESS is lost.
+8194 +002C Maximum_Pulse_Period_Timeout [MSEC] -> 0x408f82 primary_pulse_period_timeout word; [ESMXTM01] Maximum_Pulse_Period_Timeout: max reset value for Main_Lost_Counter
+8194 +002E Maximum_Pulse_Period_Timeout_Backup [MSEC] -> 0x408f84 backup_pulse_period_timeout word; [ESMXTM02] Maximum_Pulse_Period_Timeout_Backup:max reset value for backup
+8194 +0030 Min_Fuel_For_Accel [MM3S] -> 0x408f86 cylinder_firing_detection_minimum_fueling word; Minimum fueling command to detect cylinder firing
+8194 +0032 Min_Good_Pulses_For_Crank_Recovery [UNITLESS] -> 0x408f88 crank_recovery_minimum_good_cam_pulse_count word; Min number of good cam pulses to resync crank
+8194 +0034 Number_Of_Cam_Pulses [UNITLESS] -> 0x408f8a cam_wheel_pulse_count word; Number of targets on the cam wheel
+8194 +0036 Period_Meas_Per_Backup [UNITLESS] -> 0x408f8c backup_period_capture_count byte; Number of cam measurements used in speed calculation
+8194 +0037 Periods_Per_Sum [UNITLESS] -> 0x408f8d crank_periods_per_speed_interrupt byte; Number of crank periods per interrupt
+8194 +0038 Plausible_Cam_Positions [UNITLESS] -> 0x408f8e crank_tooth_pattern_size word; Number of elements in the Cam_2_Crank_Position_Array
+8194 +003A PMA_Low_Speed_Special_Window [UNITLESS] -> 0x408f90 cam_signal_low_speed_special_window_fraction byte; Tooth fraction defining special cam tooth at low speed
+8194 +003B PMA_Special_Count [UNITLESS] -> 0x408f91 cam_signal_tooth_count byte; Number of teeth on cam wheel
+8194 +003C PMA_Special_Window [UNITLESS] -> 0x408f92 cam_signal_special_window_fraction byte; Fraction of tooth defining special pulse
+8194 +003D PMM_Early_Window [UNITLESS] -> 0x408f93 crank_signal_early_window_fraction byte; Tooth fraction where tooth is too early to be plausible
+8194 +003E PMM_Good_Window [UNITLESS] -> 0x408f94 crank_signal_good_window_fraction byte; Tooth Fraction where tooth is plausible
+8194 +003F PMM_Late_Window [UNITLESS] -> 0x408f95 crank_signal_late_window_fraction byte; Tooth fraction which defines a late (not plausible) tooth
+8194 +0040 PMM_Low_Speed_Early_Window [UNITLESS] -> 0x408f96 crank_signal_low_speed_early_window_fraction byte; Low Speed Tooth fraction where tooth is too early to be plausible
+8194 +0041 PMM_Low_Speed_Good_Window [UNITLESS] -> 0x408f97 crank_signal_low_speed_good_window_fraction byte; Low speed Tooth Fraction where tooth is plausible
+8194 +0042 PMM_Low_Speed_Late_Window [UNITLESS] -> 0x408f98 crank_signal_low_speed_late_window_fraction byte; Low Speed Tooth fraction which defines a late (not plausible) tooth
+8194 +0043 PMM_Special_Count [UNITLESS] -> 0x408f99 crank_signal_tooth_count byte; Expected cam tooth number at additional pulse
+8194 +0044 Prelim_Sync_Detection_Threshold [UNITLESS] -> 0x408f9a crank_preliminary_sync_firing_detection_threshold word; Number of firing detections needed to verify crank sync
+8194 +0046 Prelim_Sync_Evaluation_Count [UNITLESS] -> 0x408f9c crank_preliminary_sync_evaluation_count word; Number of crank revs in Prelim_Sync before checking accel detection
+8194 +0048 Start_Sync_Max_Count [UNITLESS] -> 0x408f9e crank_sync_attempt_limit word; Max number of crank revs to stay in Start_Sync before forcing Prelim sync
+8194 +004A Sums_Per_Cylinder [UNITLESS] -> 0x408fa0 engine_speed_interrupts_per_cylinder word; Number of speed interrupts per cylinder.
+8194 +004C Engine_Cylinders [UNITLESS] -> 0x408fa2 cylinder_event_count_max byte; [EST2CY] Number of engine cylinders
+8194 +004D Lost_Resync_With_Cam_Threshold [UNITLESS] -> 0x408fa3 crank_lost_resync_cam_tooth_threshold byte; Cam tooth threshold at which +1 tooth resync in LOST crank state is allowed
+8194 +004E Prelim_Resync_With_Cam_Threshold [UNITLESS] -> 0x408fa4 crank_preliminary_resync_cam_tooth_threshold byte; Cam tooth threshold at which +1 tooth resync to PRELIM crank bank is allowed
+8194 +004F Speed_Latency_Sync_Threshold [UNITLESS] -> 0x408fa5 crank_preliminary_sync_tooth_shift_upper_threshold byte; Crank Speed ISR tooth shift limit for PRELIM sync determination += 1.
+8194 +0050 Speed_Negative_Shift_Threshold [UNITLESS] -> 0x408fa6 crank_preliminary_sync_tooth_shift_lower_threshold word; Crank Speed ISR tooth shift lower limit for PRELIM sync determination.
+8194 +0052 Speed_Limp_Home_Count [CNTS] -> 0x408fa8 speed_limp_home_debounce_count_maximum word; Debounce count for Speed_Limp_Home_Error to be set
+8194 +0054 Speed_Limp_Home_RPM [RPM] -> 0x408faa speed_limp_home_error_rpm_threshold word; RPM must be greater than this for Speed_Limp_Home_Error to be set
+8194 +0056 PMA_Edge_Type_N [UNITLESS] -> 0x408fac cam_signal_capture_edge_type byte; Capture edge for cam signal : 0 = rising, 2 = falling
+8194 +0057 PMM_Edge_Type_N [UNITLESS] -> 0x408fad crank_signal_capture_edge_type byte; Capture edge for crank signal : 0 = rising, 2 = falling
+8194 +0056 PMA_Edge_Type [UNITLESS] -> 0x408fac cam_signal_capture_edge_type byte; Capture edge for cam signal : 0 = rising, 2 = falling
+8194 +0057 PMM_Edge_Type [UNITLESS] -> 0x408fad crank_signal_capture_edge_type byte; Capture edge for crank signal : 0 = rising, 2 = falling
+=== CM848 block 8195
+8195 +0000 Cam_Based_Next_Cyl_X_Axis [UNITLESS] -> 0x408fe0 next_cylinder_by_cam_tooth_axis word[11]; Cam tooth number input axis for Cam_Base_Next_Cyl_Y_Axis
+=== CM848 block 8196
+8196 +0000 Cam_Based_Next_Cyl_Y_Axis [UNITLESS] -> 0x408ff6 next_cylinder_by_cam_tooth_values word[11]; Next cylinder to fuel on given current cam location.
+=== CM848 block 8197
+8197 +0000 Crank_Based_Next_Cyl_X_Axis [UNITLESS] -> 0x40900c next_cylinder_by_crank_tooth_axis word[18]; Crank tooth number input axis for Crank_Based_Next_Cyl_Y_Axis
+=== CM848 block 8198
+8198 +0000 Crank_Based_Next_Cyl_Y_Axis [UNITLESS] -> 0x409030 next_cylinder_by_crank_tooth_values word[18]; Next cylinder to fuel on given current crank location.
+=== CM848 block 8199
+8199 +0000 PMA_Good_Window_X_Axis [RPM] -> 0x408fae cam_tooth_good_window_fraction_axis word[6]; Speed axis for PMA Good window table
+=== CM848 block 819A
+819A +0000 PMA_Good_Window_Y_Axis [UNITLESS] -> 0x408fba cam_tooth_good_window_fraction_values word[6]; Tooth fraction defining expected normal cam tooth location
+=== CM848 block 819B
+819B +004E Pulse_Period_Table_Backup [CNTS] -> 0x40b7dc pulse_period_table_backup dword[4]; [ESPSTB02] Pulse_Period_Table_Backup: Table containing main speed pulse periods
+819B +0000 Average_Engine_Speed [RPM] -> 0x40b78e average_engine_speed word; [ESAVES] Average_Engine_Speed: Engine speed based on the 2^n pulse average
+819B +0002 Average_Pulse_Period [CNTS] -> 0x40b790 average_pulse_period dword; [ESPLTMAV] Average_Pulse_Period: time period over 1 cyl of primary speed pulses
+819B +0006 Average_Pulse_Period_Backup [CNTS] -> 0x40b794 average_pulse_period_backup dword; [ESPLAVBU] Average_Pulse_Period_Backup: time period over 1 cyl of secondary speed pulses
+819B +000A Backup_Lost_Counter [CNTS] -> 0x40b798 backup_pulse_period_countdown word; [ESTMCU02] Backup_Lost_Counter: Timeout counter for secondary speed input
+819B +000C Backup_RPM [RPM] -> 0x40b79a backup_engine_speed word; [ESES02] Backup_RPM: Engine speed calculated from secondary speed sensor
+819B +000E Cam_2_Crank_Tooth_Number [UNITLESS] -> 0x40b79c cam_to_crank_tooth_number word; Crank tooth number when cam pulse occurred
+819B +0010 Cam_Crank_Mismatch_Count [UNITLESS] -> 0x40b79e cam_crank_mismatch_count word; persistence counter for cam-crank mismatch error
+819B +0012 Cam_Crank_Plausibility_1 [UNITLESS] -> 0x40b7a0 cam_crank_plausibility_count_1 word; Number of cam pulses with expected crank tooth number per crank rev
+819B +0014 Cam_Crank_Plausibility_2 [UNITLESS] -> 0x40b7a2 cam_crank_plausibility_count_2 word; Number of cam pulses with expected crank tooth number per crank rev
+819B +0016 Crank_Accumulated_Period [UNITLESS] -> 0x40b7a4 crank_accumulated_period dword; Period measured between speed interrupts
+819B +001A Crank_Speed_Count [UNITLESS] -> 0x40b7a8 crank_speed_count word; number of speed interrupts before extra cam pulse should occur
+819B +001C Cylinder_Acceleration [RPM/SEC] -> 0x40b7aa cylinder_acceleration i16; Acceleration measured over one cylinder
+819B +001E Engine_Speed [RPM] -> 0x40b7ac engine_speed_state engine_speed_state_t; [ESCMES] Engine_Speed: Engine speed based from period of one cam rev.
+819B +0020 EPS_VSS_Accumulator [CNTS] -> 0x40b7ae engine_speed_state.main_speed_period_sum_between_vss_pulses (no row); [ESACGR] Accumulated main EPS period between VSS interrupts
+819B +0024 EPS_VSS_Accumulator_Backup [CNTS] -> 0x40b7b2 engine_speed_state.backup_speed_period_sum_between_vss_pulses (no row); [ESACBKGR] Accumulated backup EPS period between VSS interrupts
+819B +0028 EPS_VSS_Counter [CNTS] -> 0x40b7b6 engine_speed_state.main_speed_pulse_count_between_vss_pulses (no row); [ESCTGR] Number of main EPS interrupts between VSS interrupts
+819B +002A EPS_VSS_Counter_Backup [CNTS] -> 0x40b7b8 engine_speed_state.backup_speed_pulse_count_between_vss_pulses (no row); [ESCTBKGR] Number of backup EPS interrupts between VSS interrupts
+819B +002C Filtered_Engine_Speed [RPM] -> 0x40b7ba engine_speed_state.filtered_engine_speed (no row); [ENGRPM] Filtered_Engine_Speed: Variable 2^n pulse averaged and filtered engine speed
+819B +002E Firing_Detection_Count [UNITLESS] -> 0x40b7bc firing_detection_count word; counts number of fueling events which caused accel
+819B +0030 Low_Speed_Filtering [UNITLESS] -> 0x40b7be crank_low_speed_filtering_flag word; Flag indicating low speed operation
+819B +0032 Main_Lost_Counter [CNTS] -> 0x40b7c0 crank_period_countdown word; [ESTMCU01] Main_Lost_Counter: Timeout counter for primary speed sensor
+819B +0034 Main_RPM [RPM] -> 0x40b7c2 main_engine_speed word; [ESES01] Main_RPM: Engine speed calculated from primary speed sensor
+819B +003E Next_Table_Position_Backup [HEX] -> 0x40b7cc backup_period_capture_index dword; [ESNXPS02] Next_Table_Position_Backup: pointer to next spot in backup Pulse_period tabl
+819B +0042 PMA_Good_Window [UNITLESS] -> 0x40b7d0 cam_tooth_good_window_fraction word; Tooth fraction defining expected normal tooth location
+819B +0044 Prelim_Sync_Count [UNITLESS] -> 0x40b7d2 crank_preliminary_sync_count word; Counts crank revs until verification decision is made
+819B +0046 RPM_Cylinder_Width [UNITLESS] -> 0x40b7d4 crank_teeth_per_cylinder word; number of crank teeth per cylinder
+819B +004A Speed_Sensor_Select [UNITLESS] -> 0x40b7d8 engine_speed_from_backup_sensor_flag word; [ESSNSE] Speed_Sensor_Select: Specifies source for speed calculations
+819B +004C Start_Sync_Count [UNITLESS] -> 0x40b7da start_sync_count word; number of crank revs spent in Start_Sync mode
+819B +005E Cylinder_Number [UNITLESS] -> 0x40b7ec cylinder_event_index word; cylinder counter indicating next cyl to be fueled
+819B +0060 First_Speed_ISR_Time [MSEC] -> 0x40b7ee first_speed_interrupt_time_ticks dword; Global ECM start time information of POR time to 1st Speed ISR Time
+819B +0064 Crank_Resync_Time [MSEC] -> 0x40b7f2 crank_resync_time_ticks dword; First speed isr time to Last Crank Re-Sync Time
+819B +0068 Crank_Resync_Count [UNITLESS] -> 0x40b7f6 crank_resync_count word; Global number of times crank has had to Re-Sync
+819B +006A First_Cylinder_Fire_Time [MSEC] -> 0x40b7f8 first_cylinder_fire_time_ticks dword; First speed isr time to 1st Fire Acceleration Time
+819B +006E Crank_Prelim_Time [MSEC] -> 0x40b7fc crank_preliminary_sync_time_ticks dword; First speed isr time to Crank State = Prelim Time
+819B +0072 Cam_Have_Sync_Time [MSEC] -> 0x40b800 cam_have_sync_time_ticks dword; First speed isr time to Cam State = HAVE Time
+819B +0076 Crank_Have_Sync_Time [MSEC] -> 0x40b804 crank_have_sync_time_ticks dword; First speed isr time to Crank State = HAVE Time
+819B +007A HPCR_Fuelpr_Start_Undershoot [MPa] -> 0x40b808 fuel_pressure_start_undershoot i16; Global ECM start time information of HPCR_Fuel_Pressure Undershoot.
+819B +0048 Speed_Limp_Home [UNITLESS] -> 0x40b7d6 engine_speed_limp_home_active_flag word; indicates whether crank or cam signal is used for fueling
+=== CM848 block 819C
+819C +0000 Cam_Sync_Error_Count [UNITLESS] -> 0x40b80a cam_crank_sync_state cam_crank_sync_state_t; [CSERCU] TOTAL NUMBER OF SYNC LOSSES
+819C +0004 Crank_Sync_Error_Count [CNTS] -> 0x40b80e cam_crank_sync_state.crank_sync_error_count (no row); [CSCKERCU] Incremented 6/cam when crank not synched
+819C +0002 Cam_Sync_State [UNITLESS] -> 0x40b80c cam_crank_sync_state.cam_sync_state (no row); [CMSYSS] Cam_Sync_State: 0=No Sync,1=Have Sync,2=Lost Sync on Cam,3=Start Sync.
+819C +0006 Crank_Sync_State [UNITLESS] -> 0x40b810 cam_crank_sync_state.crank_sync_state (no row); [CRSYSS] Crank_Sync_State: 0=No Sync,1=Have Sync,2=Lost Sync on Crank,3=Start Sync.
+=== CM848 block 819D
+819D +0000 Cam_2_Crank_Position_Array [UNITLESS] -> 0x408fc6 crank_tooth_pattern_table byte; Expected crank tooth numbers at each cam pulse
+=== CM848 block 819E
+=== CM848 block 819F
+819F +0000 EOI_Pressure_Scale_Factor [UNITLESS] -> 0x409098 injection_end_limit_pressure_scale_factor i16; change in injector closing time versus injection pressure
+819F +0002 EOI_Limp_Home_Adjustment [CRANK_DEG] -> 0x40909a injection_end_limit_speed_limp_home_adjustment i16; addition to eoi limit when running off backup speed sensor
+819F +0004 EOI_Valve_Delay_Bias [uSEC] -> 0x40909c injection_end_limit_valve_delay_bias word; delay in injector closing
+819F +0006 EOI_Limit_Cals_Padding0 [UNITLESS] -> 0x40909e (no name) (no row); Padding byte from old Algorithm enable calibration
+819F +0007 EOI_Limit_Cals_Padding1 [UNITLESS] -> 0x40909f (no name) (no row); Padding byte
+=== CM848 block 81A0
+81A0 +0000 EOI_Limit_X_Axis [RPM] -> 0x05f12e injection_end_limit_base_axis word[8]; RPM axis for EOI limit

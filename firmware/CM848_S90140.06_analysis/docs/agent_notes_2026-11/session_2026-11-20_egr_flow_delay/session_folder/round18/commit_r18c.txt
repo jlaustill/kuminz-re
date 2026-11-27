@@ -1,0 +1,20 @@
+cm848: round 18 stage C - the timing selection enums, the flags word 4 bitfield, five lookup caches (types)
+
+- MAIN_INJECTION_TIMING_SELECTION (e2m 8085 +0 labels NOADJUST / HPCRTMNG / USEROVRD / HPCRINCR:
+  NO_ADJUSTMENT / CALCULATED / USER_OVERRIDE / CALCULATED_PLUS_USER_INCREMENT) and
+  INJECTION_TIMING_COMBINATION_MODE (8085 +2 Main_Cold_Advance_Select: SUM / MAXIMUM / MINIMUM). Both are
+  compared whole, and all members render.
+- algorithm_enable_flags_4_t on algorithm_enable_flags_4_cal: bit 0 user_commanded_fueling_enable, bit 8
+  user_commanded_timing_enable (e2m 106B +A). Masked reads only, so there are no pieces.
+- 2-D lookup caches as word[2] named after their tables (the round 10 rule):
+  - the 4D timing maps' caches at 0x3fa878 / 0x3fa87c were dual_axis_table_dims_t instances whose
+    'row_count / col_count' were the cached offsets; the struct type and its two label rows are gone;
+  - the altitude derate's three caches (0x3fb9ca / 0x3fb9ce, were 'dims' words, and 0x3fb9d2).
+- New rows: coolant_overheat_derate_final_fueling_state_previous (FUELING_STATE: the compare with 46 now
+  reads FUELING_STATE_COOLANT_OVERHEAT_DERATE) and the derate timing table's cache.
+
+The diff (83 lines) has only these effects plus two known local declaration order flips. Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass; the thunk
+counts are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

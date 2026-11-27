@@ -1,0 +1,12 @@
+cm848: round 63 follow-up closing - the follow-up recorded in task 046, the PR body and the archive
+
+- task 046, the round 63 section, gains a follow-up bullet (1d2f74d4) and two leads:
+  - CM550's J1939_DIAGNOSTIC_SERVICE members are unreviewed;
+  - the three unnamed length tables (0x53a322 / 0x5761e / the boot kernel's at RAM 0x3f97cd + service).
+- The PR body gains a follow-up line.
+- session_folder/round63/ gains:
+  - the follow-up's scripts (sweep_live_text.py / fix_r63d.py / fix_r63e_closing.py);
+  - its map and messages, including round 63's first closing message, which the first archive pass missed.
+- The large-files tarball gains the follow-up's CM848 and CM550 verify logs and the CM550 base build log.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,25 @@
+cm848: round 26 stage A - the cruise vacuum throttle actuator from e2m 8C2E / 8C2F (labels)
+
+The peer session passed on corrections from a read-only cruise review of 69d6f68, at the user's request. Each one was
+checked in the code here.
+- cm848_controlCruiseVacuumServo's words are the Chrysler e2m vacuum throttle blocks, aligned by relative offset:
+  - 8C2E: 17 ROM calibrations, 0x408daa-0x408dc9;
+  - 8C2F: 10 working words, 0x40b64e-0x40b665.
+  Every code use matches its record. The clamps clamp; the override enables pick the override values; the
+  integrator resets to Int_Reset out of cruise; the threshold / time pair counts into the disabled latch.
+  - The fuel_demand_* / governor_cycle_* / cruise_servo_* words are vacuum_throttle_*: the P / I / D gains and terms,
+    the integral clamps and reset, the duty cycle with its clamps and override, the target position (the equivalent
+    throttle in cruise), the position error, the vacuum / vent PWM, the PWM period and counter, the deadband, and
+    the disabled latch with its threshold, time, counter and cruise disable mode.
+  - fuel_timing_output_upper_limit_cal is the integral maximum. The wrong _cal on the ROM words goes.
+- governor_override_active_prev_flag -> cruise_control_engaged_previous_flag. Its only writer is the end of
+  cm848_calculateCruiseControlFueling.
+- governor_cruise_engage_check -> cm848_checkCruiseSwitchLearnCondition. It returns 1 for a fresh ON / OFF request
+  with the switch ADC in its window, and its caller then sets cruise_control_switches_learned_flag; its local
+  engage_allowed becomes learn_condition_met. The rename gate bans 'press', the e2m's abbreviation for pressure.
+- firmware/CLAUDE.md: two identifier refreshes in the cruise servo bullet.
+
+Proof: reverse_names.py EQUIVALENT (32 names, all rendered). Headers regenerated (0 g++ errors), lookup_tables.py
+0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

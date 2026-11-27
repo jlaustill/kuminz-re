@@ -1,0 +1,48 @@
+=== cm848_protectionFuelDemandCheck (lines 33355-33407, 47 non-blank)
+33355: // Function: cm848_protectionFuelDemandCheck @ 0x00031320
+33356: //
+33358: void cm848_protectionFuelDemandCheck(void)
+33360: {
+33361:   word wVar1;
+33362:   word wVar2;
+33363:   word wVar3;
+33364:   word wVar4;
+33365:   byte bVar5;
+33367:   wVar1 = lookupTableInterpolation
+33368:                     (&DAT_003fb14a,transmission_output_speed_in_use,
+33369:                      protection_threshold_l4_axis_b_cal,protection_threshold_l4_output_b_cal,0);
+33370:   wVar2 = lookupTableInterpolation
+33371:                     (&DAT_003fb14e,transmission_output_speed_in_use,protection_threshold_l6_axis_cal
+33372:                      ,protection_threshold_l6_output_cal,0);
+33373:   wVar3 = lookupTableInterpolation
+33374:                     (&DAT_003fb14c,transmission_output_speed_in_use,
+33375:                      protection_threshold_l3_axis_b_cal,protection_threshold_l3_output_b_cal,0);
+33376:   wVar4 = lookupTableInterpolation
+33377:                     (&DAT_003fb150,transmission_output_speed_in_use,protection_threshold_l5_axis_cal
+33378:                      ,protection_threshold_l5_output_cal,0);
+33379:   if ((exhaust_brake_transmission_features_inhibit == 0) &&
+33380:      ((switch_input_state_bits[1] & 0x10) != 0)) {
+33381:     if (fuel_demand_control_t_0040a57a.calculated < wVar2) {
+33382:       if (wVar4 <= fuel_demand_control_t_0040a57a.calculated) {
+33383:         return;
+33384:       }
+33385:       bVar5 = 4;
+33386:     }
+33387:     else {
+33388:       bVar5 = 2;
+33389:     }
+33390:   }
+33391:   else if (fuel_demand_control_t_0040a57a.calculated < wVar1) {
+33392:     if (wVar3 <= fuel_demand_control_t_0040a57a.calculated) {
+33393:       return;
+33394:     }
+33395:     bVar5 = 4;
+33396:   }
+33397:   else {
+33398:     bVar5 = 2;
+33399:   }
+33400:   protection_condition_flags_t_0040b0e8.condition_eval =
+33401:        protection_condition_flags_t_0040b0e8.condition_eval | bVar5;
+33402:   return;
+33403: }
+33407: //

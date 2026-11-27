@@ -1,0 +1,29 @@
+cm848: round 96 stage D - seven unnamed EMA filter states, their coefficients and the EGR orifice temperature stages
+
+Seven ema_filter_state_t records had no name and rendered as Ghidra's default labels (ema_filter_state_t_003fa19c ...),
+their coefficient words as WORD_<address>. Each is named for what it filters (the repository's <x>_filter_state /
+<x>_filter_coefficient), from its one user and, for five coefficients, from the e2m record the ECU's parameter ID
+table resolves at the address:
+- wastegate_battery_voltage_filter_state / _coefficient (cm848_calculateWastegateDutyRequest; e2m 16A1 +1C
+  C_TGC_Battery_Voltage_Filter_Constant);
+- compressor_outlet_temperature_filter_state / _coefficient (cm848_estimateCompressorOutletTemperature; 1760 +0
+  C_TPE_COT_Filter_Constant);
+- turbocharger_speed_estimate_engine_speed_filter_state / _coefficient (cm848_estimateTurbochargerSpeed; 18CC +4
+  C_TSE_RPM_Filter_Constant);
+- exhaust_metal_temperature_filter_state / _coefficient (cm848_estimateExhaustTemperature; 17A2 +8
+  C_TPE_Exhaust_Metal_Fil_Cnst: it turns the exhaust temperature into the exhaust metal temperature);
+- fault_derate_engine_speed_limit_filter_state / _coefficient (cm848_calculateFaultDerateEngineSpeedLimit; 10B5 +2
+  RPM_Limit_Filter_Time_Constant, EPRPFTTC);
+- cm848_filterEgrOrificeTemperature's two cascaded stages: egr_orifice_temperature_first_stage_filter_state (its
+  coefficient is the time constant looked up each pass) -> egr_orifice_temperature_first_stage_filtered, then
+  egr_orifice_temperature_second_stage_filter_state -> egr_orifice_temperature_compensated, which
+  cm848_selectEgrOrificeTemperature copies to egr_orifice_temperature (were DAT_003fbcfc / DAT_003fbcf6).
+None is EEPROM-backed (ROM, its RAM copy 0x3feed0-0x40a048, or working RAM): no _cal.
+
+Proof: CM848 built twice, deterministic, in a copy of the firmware folder (base = HEAD 7b3c9fd3). The
+function set is unchanged (1969); every token change is in the map (14 default labels -> names) except one cast,
+(undefined2)dVar2 -> (word)dVar2, from the new word row's type; statement counts are equal; no old label is left in
+the code and every new name renders. Headers regenerated (g++ 0 errors); the _cal audit, the five Python suites and
+the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

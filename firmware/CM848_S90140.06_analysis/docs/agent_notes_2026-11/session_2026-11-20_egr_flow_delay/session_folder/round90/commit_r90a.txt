@@ -1,0 +1,33 @@
+cm550 + scripts: round 90 stage A - the ECU's parameter ID table; e2m_block_addresses.py resolves CM550
+
+- CM550's parameter ID table is typed: parameter_id_table (ROM 0x35224, parameter_id_table_entry_t[1806]). It
+  rendered DAT_00035224 / DAT_00035228. cm550_diagnosticMemoryAddressResolver (0x10e16) is
+  cm550_lookupParameterIdAddress, the counterpart of CM848's cm848_lookupParameterIdAddress (a hash over 6-byte
+  [id][address] records): it indexes the table by id range (id for 0x0000-0x002E, id - 0xFD1 for 0x1000-0x1478, id +
+  0x84A8 mod 0x10000 for 0x8000-0x8265 = 47 + 1145 + 614 = 1806, the whole run of address pairs at 0x35224-0x38a94)
+  and reads address_ram_refresh_disabled in development mode (ram_refresh_enable RAM_REFRESH_DISABLED) and
+  address_ram_refresh_enabled otherwise. The two are equal in every entry.
+- firmware/scripts/e2m_block_addresses.py --firmware cm550 decodes that table from the ROM, maps EEPROM entries to
+  CM550's EEPROM RAM mirror (0x803B0A + offset, round 73), and resolves e2m records (default
+  e2m-analysis/originals/v64t6_s.e2m, round 89's layout match). --write-table writes the decoded table with the current
+  global at each address (a row, or <row>.<field> / <row>[i] inside a typed row) and the e2m records with storage there
+  (types N / S / B / T / X / Y / Z, not block 0's system records).
+- output/parameter_id_lookup_table.csv is rewritten by it. Its 723 (id, address) pairs were already exactly the ROM's
+  non-zero entries. Its firmware_variable column was stale: 47 rows named an older global (calibration_write_protect_state
+  for not_safe_to_program_flag, ADSATHFT for sampled_throttle_sensor_state.filtered_value, ...), 101 empty rows had a
+  global, and 36 named an address that no global covers now (e2m description names such as
+  ecm_ram_avaliable_length_none; their mnemonics stay in the e2m_parameter column). e2m_parameter now lists every
+  Calterm record at the address; the old values followed no single rule (the best e2m file reproduces 68 of 91).
+- test_e2m_block_addresses.py: the CM550 index ranges, a synthetic table, the two-address check, the mirror, the real
+  ROM (723 entries, 7 spot checks) and a check that the committed table CSV is what --write-table writes now.
+- Two stale build messages: CM550 analyze.sh's hwregs stage said "Run '$0 export'", and scripts/common.sh's
+  deletions stage said to run 'import' then 'export' (inside build the next stages do that).
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed / added; 1 changed (cm550_lookupParameterIdAddress: the two table
+  reads render as parameter_id_table[param_id].address_ram_refresh_disabled / _enabled); no new build warning.
+- CM848: verify DETERMINISTIC and byte-identical (common.sh's message only).
+- test_e2m_block_addresses / test_e2m_name_audit / test_rename_waves / test_lookup_tables / test_disasm_tools pass;
+  headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

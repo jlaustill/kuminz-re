@@ -1,0 +1,24 @@
+cm848: round 8 stage G - the exhaust brake inhibit names in their e2m word order; switch 12 proved (label-only)
+
+A second review of stage F found these points:
+- **Word order.** RE_E_Brake_Inhibit_LU means the exhaust brake is inhibited (so the converter can lock). Stage F's
+  exhaust_brake_lockup_inhibit_* read as a lockup inhibited by the exhaust brake. The same function also sets a real
+  lockup inhibit (condition_eval bit 6). The new names: cm848_updateExhaustBrakeInhibitForLockup and
+  exhaust_brake_inhibit_timer / _timeout / _previous.
+- **The flag byte** takes its record name: transmission_exhaust_brake_flags (8C19 +16 RE_Trans_EBrake 'Contains engine
+  brake flags'). Its bit 2 is RE_Ebrake_Inhibit_Timeout_Flag ('E-Brake inhibit timeout flag'), which the code sets
+  exactly when the inhibit timer runs out.
+- **Switch 12** is proved the exhaust brake switch by code: cm848_driveEngineRetarderOutput sets
+  engine_retarder_switch_percent_2 to 100 while it is on. firmware/CLAUDE.md lists it with the identified switches.
+- **8C19 at 0x40b0e8** is checked by code use at +0..+3, +9, +A, +C and +16.
+- **converter_clutch_closed_throttle_lockup_enable** (0x408388): its comment gives the polarity. 1, this calibration,
+  skips the block that unlocks the converter on the brake (switch 11) or switch 2.
+- **The csv-module audit:** csv_tail_check2.py, plus a read of the 16 scripts that wrote these files, found no other
+  damage than the three quoted rows, the 0x40b0fe tail and the lost stage C edit.
+- **Docs:** task 046, firmware/CLAUDE.md, work/todo.md 046 (round 8 now names 8C18 and the exhaust brake aid), the
+  README, the PR body (stage F's hash, stage G). Task 025's resolved line points at the final name.
+- **Checks:**
+  - reverse_names.py EQUIVALENT (0 functions differ);
+  - ./analyze.sh verify: the two builds are byte-identical (verify_round8_stage_g.log in the tarball).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

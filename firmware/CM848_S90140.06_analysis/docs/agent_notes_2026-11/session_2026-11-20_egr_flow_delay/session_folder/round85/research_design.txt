@@ -1,0 +1,307 @@
+FIX DESIGN: CM550 2-BYTE STACK ARGUMENTS (read-only; no repository file changed, no build run)
+
+## 0. Summary
+
+**Decision.** `ApplyFunctionDefinitions` gives every typed CM550 parameter custom storage (`FunctionUpdateType.CUSTOM_STORAGE`). It computes each offset from the declared types with the compiler's rule:
+- start at +4;
+- each 1- or 2-byte type takes one 2-byte slot, right-justified, so a byte sits at slot+1;
+- a 4-byte type takes the next 4 bytes, with no alignment padding.
+
+**Gate.** A new CM550-only data file, `output/stack_parameter_layout.csv`, turns this on. `common.sh` `cmd_export` passes the file as `args[1]` only when it exists. CM848 has no such file, so it keeps today's code path.
+
+**Rejected alternatives.**
+- An `align="2"` prototype extension cannot place a long at +6 or +10, because of the typeAlign rule. Eleven callees need that (`exponentialMovingAverage`, `cm550_coreTableInterpolation`, `cm550_diagnosticMemoryAddressResolver`, ...). It would also print `__name` in every signature and in `firmware_functions.hpp`, and it needs an install stage.
+- A per-row storage column would repeat the ABI by hand on every row.
+
+**Atomic commit.** The code, the switch file and the wave-0 rows (section 3) must land in one commit. Either half alone regresses:
+- the switch alone moves four names onto the wrong argument and keeps `in_stack_00000004` in nine byte rows;
+- the rows alone cannot place their new types.
+
+**Ghidra 12.2 source facts I checked myself** (zips extracted to `/home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/fix-design/src`):
+- **Storage is kept exactly.** `ParameterImpl(name, dt, stackOffset, program)` builds `Varnode(stack:offset, dtLength)` with no justification (`VariableImpl.computeStorage`). `FunctionVariables.updateFunction` keeps a custom storage when the resolved length equals the storage size (`getResolvedVariable`).
+- **The return storage stays the same.** `FunctionDB.updateFunction` calls `setCustomVariableStorage(true)` first, and that freezes the current dynamic return storage. `setReturnType` runs before it in the script (line 242), so D0 is computed first. An `undefined` return gets no dynamic storage (`PrototypeModel.getStorageLocations` note), so the frozen and the dynamic encodings are the same.
+- **The custom flag is output-neutral.** In the decompiler C++ it is read only by `ActionPrototypeWarnings`, and only when the model is unknown (grep over all `.cc` files).
+- **The callee keeps the locked parameter.** `FuncProto::unjustifiedInputParam` returns false for a read that is properly contained in a locked parameter, so nothing is widened. A read outside every locked parameter is not widened either, and renders as `in_stack_` (detectable).
+- **Each call site loads at the parameter's own offset.** `ActionFuncLink::funcLinkInput` does `opStackLoad` at each locked stack parameter's own offset.
+- **Callee shells carry the stored storage.** `LocalSymbolMap.grabFromFunction` sends `var.getVariableStorage()` with typelock set when the signature source is not DEFAULT, for callee shells too.
+- **Hazard.** `HighFunctionDBUtil.updateDBVariable` on a parameter of a custom-storage function re-sizes it with `resizeStorage`. So never retype a CM550 parameter through `local_variables.csv`.
+
+## 1. Code change (diff-style sketch)
+
+**`firmware/scripts/ScriptUtils.java`** (pure, testable):
+```java
++    // ── Stack parameter layout ───────────────────────────────────────────────
++    /** A firmware's stack parameter layout (stack_parameter_layout.csv). */
++    public static final class StackParameterLayout {
++        public final String language; public final int firstOffset; public final int slotSize;
++        public StackParameterLayout(String l, int f, int s) { language = l; firstOffset = f; slotSize = s; }
++    }
++    /** setting,value[,comment] rows; header and '#' lines skipped; needs language, first_stack_offset,
++     *  slot_size (2 or 4); an unknown setting is an error, so a typo cannot pass silently. */
++    public static StackParameterLayout parseStackParameterLayout(List<String> lines) {
++        String language = null; Integer first = null, slot = null; boolean header = true;
++        for (String raw : lines) {
++            String line = raw.trim();
++            if (header) { header = false; continue; }
++            if (line.isEmpty() || line.startsWith("#")) continue;
++            String[] p = parseCSVLine(line);
++            if (p.length < 2) throw new IllegalArgumentException("bad row: " + line);
++            switch (p[0].trim()) {
++                case "language": language = p[1].trim(); break;
++                case "first_stack_offset": first = Integer.parseInt(p[1].trim()); break;
++                case "slot_size": slot = Integer.parseInt(p[1].trim()); break;
++                default: throw new IllegalArgumentException("unknown setting '" + p[0].trim() + "'");
++            }
++        }
++        if (language == null || first == null || slot == null)
++            throw new IllegalArgumentException("needs language, first_stack_offset and slot_size");
++        if (slot != 2 && slot != 4) throw new IllegalArgumentException("slot_size must be 2 or 4");
++        if (first < 0 || first % 2 != 0) throw new IllegalArgumentException("first_stack_offset must be even");
++        return new StackParameterLayout(language, first, slot);
++    }
++    /** Offsets in parameter order: the first at firstOffset, each taking ceil(len/slot) slots and
++     *  right-justified in them (big-endian: a byte in a 2-byte slot is at slot+1). No padding for the
++     *  type's alignment (CM550 puts a long at +6 after a word). slotSize 4 reproduces 68000.cspec
++     *  __stdcall (align 4, right-justified; its size map caps alignment at 4) for 1/2/4/8-byte types. */
++    public static int[] packStackParameters(int[] lengths, int firstOffset, int slotSize) {
++        int[] offsets = new int[lengths.length]; int next = firstOffset;
++        for (int i = 0; i < lengths.length; i++) {
++            if (lengths[i] <= 0) throw new IllegalArgumentException("parameter " + i + " has no fixed length");
++            int space = (lengths[i] + slotSize - 1) / slotSize * slotSize;
++            offsets[i] = next + space - lengths[i];
++            next += space;
++        }
++        return offsets;
++    }
+```
+
+**`firmware/scripts/ApplyFunctionDefinitions.java`** (the CM848 branch stays textually the existing call):
+```java
++import java.nio.file.Files;
++import java.nio.file.Paths;
+ ...
++    /** args[1] (stack_parameter_layout.csv) or null. Null (CM848): dynamic storage as before.
++     *  Set (CM550): every typed parameter gets custom stack storage at its compiler's offset. */
++    private ScriptUtils.StackParameterLayout stackLayout;
+ run():
+         println("Input file: " + csvPath);
++        if (args.length > 1) {
++            try { stackLayout = ScriptUtils.parseStackParameterLayout(Files.readAllLines(Paths.get(args[1]))); }
++            catch (Exception e) { println("ERROR: stack parameter layout " + args[1] + ": " + e.getMessage() + " - nothing applied"); return; }
++            String lang = currentProgram.getLanguageID().getIdAsString();
++            if (!lang.equals(stackLayout.language)) { println("ERROR: " + args[1] + " is for " + stackLayout.language + ", the program is " + lang + " - nothing applied"); return; }
++            println("Stack parameter layout: first parameter at sp+" + stackLayout.firstOffset + ", " + stackLayout.slotSize + "-byte slots, custom storage");
++        }
+ applyDefinitions(), right after `decision` is computed and BEFORE the returnDef block:
++                    if (stackLayout != null) {
++                        String problem = decision == ScriptUtils.ParamReconciliation.PRESERVE_DETECTED
++                            ? "a return-only row but Ghidra recovered " + detectedCount + " param(s) in the convention's 4-byte slots"
++                            : missingStackParameterRow(positional, maxIndex);
++                        if (problem != null) {   // skip the WHOLE function, return row included: a locked return
++                            println("  Error: " + firstName + ": " + problem +   // with no params would strip call args
++                                    " - the stack parameter layout needs a typed row per parameter; prototype not applied");
++                            result.failed += entry.getValue().size();
++                            continue;
++                        }
++                    }
+ applyCsvParams(): unchanged list building, then
+-        function.updateFunction("__stdcall", null, paramList,
+-                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true, SourceType.USER_DEFINED);
++        if (stackLayout == null) {
++            function.updateFunction("__stdcall", null, paramList,
++                    Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true, SourceType.USER_DEFINED);
++        } else {
++            List<Parameter> placed = placeOnStack(paramList);
++            function.updateFunction("__stdcall", null, placed,
++                    Function.FunctionUpdateType.CUSTOM_STORAGE, true, SourceType.USER_DEFINED);
++            Parameter[] got = function.getParameters();          // read-back: storage kept as given?
++            for (int i = 0; i < placed.size(); i++) {
++                Parameter want = placed.get(i);
++                if (i >= got.length || !got[i].isStackVariable() || got[i].getStackOffset() != want.getStackOffset()
++                        || got[i].getLength() != want.getLength())
++                    println("  Error: " + firstName + " parameter " + i + " committed as " +
++                            (i < got.length ? got[i].getVariableStorage() : "missing") + ", intended " + want.getVariableStorage());
++            }
++            println("  Placed " + firstName + ": " + describe(placed));   // optional, deterministic
++        }
++    /** Null when rows 0..maxIndex all exist with a known type, else what is missing. */
++    private String missingStackParameterRow(List<ParamDef> positional, int maxIndex) {
++        DataType[] t = new DataType[maxIndex + 1];
++        for (ParamDef p : positional) t[p.paramIndex] = getDataType(p.type);
++        for (int i = 0; i <= maxIndex; i++) if (t[i] == null) return "parameter " + i + " has no row or an unknown type";
++        return null;
++    }
++    private List<Parameter> placeOnStack(List<Parameter> params) throws Exception {
++        int[] len = new int[params.size()];
++        for (int i = 0; i < len.length; i++) len[i] = params.get(i).getLength();  // checked clone: pointers 4
++        int[] off = ScriptUtils.packStackParameters(len, stackLayout.firstOffset, stackLayout.slotSize);
++        List<Parameter> out = new ArrayList<>();
++        for (int i = 0; i < len.length; i++) {
++            Parameter p = params.get(i);
++            Parameter q = new ParameterImpl(p.getName(), p.getDataType(), off[i], currentProgram); // same source semantics as today
++            q.setComment(p.getComment()); out.add(q);
++        }
++        return out;
++    }
+```
+The skip on a gap or an unknown type is needed: today's `continue` keeps an `Undefined4` placeholder and commits, which under packing would move every later offset. The WARN_MISMATCH count message will fire for many CM550 functions (the decompiler's align-4 count differs). That is expected noise; it can be silenced under the gate.
+
+**`firmware/scripts/common.sh` `cmd_export`:**
+```bash
+-        run_script ApplyFunctionDefinitions.java "$OUTPUT_DIR/function_definitions.csv"
++        # CM550's compiler packs stack arguments in 2-byte slots (68000.cspec: 4); its layout is in
++        # stack_parameter_layout.csv and the script then places each typed parameter (custom storage).
++        if [ -f "$OUTPUT_DIR/stack_parameter_layout.csv" ]; then
++            run_script ApplyFunctionDefinitions.java "$OUTPUT_DIR/function_definitions.csv" "$OUTPUT_DIR/stack_parameter_layout.csv"
++        else
++            run_script ApplyFunctionDefinitions.java "$OUTPUT_DIR/function_definitions.csv"
++        fi
+```
+`cmd_funcdefs` is dead code (the dispatch table has no `funcdefs` entry), so updating it too is optional.
+
+**Tests: `firmware/script_tests/ScriptUtilsTest.java`.** Each line is lengths → expected offsets (slot 2 unless noted):
+- {2} → {4} (busyWaitDelayLoop)
+- {1} → {5}
+- {2,4} → {4,6} (exponentialMovingAverage)
+- {4,2} → {4,8}
+- {4,4,2,2} → {4,8,12,14} (0x18968)
+- {4,2,4,4} → {4,8,10,14} (0x103ba)
+- {1,1,1,2} → {5,7,9,10} (0x22ad8)
+- {8,2} → {4,12}
+- slot 4: {2,2,4,1} → {6,10,12,19} (the cspec layout)
+- a 0 length throws
+- the parser rejects an unknown setting, a missing setting and slot 3
+
+**Docs:**
+- `firmware/CLAUDE.md`, the prototype bullet: CM550 rows are placed by `stack_parameter_layout.csv`. Declare each parameter with the width the callee LOADS (`move.w` → ushort, `move.b` at the odd byte → byte, `movea.l` → pointer). Every index 0..N needs a row. Never retype CM550 parameters through `local_variables.csv`.
+- The `editing-firmware-csvs` skill, its funcdefs section: the same rule.
+- The CM550 `function_definitions.csv` header comment.
+- Comments in rows must stay comma-free: the parser keeps only field 6.
+
+## 2. Data file: `CM550_J90350.00_analysis/output/stack_parameter_layout.csv` (new)
+
+```
+setting,value,comment
+# How the CM550 compiler passes stack arguments (PR #53 round 85 survey: 747 call sites / 1411 argument reads / no exception)
+language,68000:BE:32:CPU32,The Ghidra language this layout belongs to - the script refuses any other program
+first_stack_offset,4,The first argument's offset from sp at function entry - jsr / bsr push a 4-byte return address (cspec stackshift 4)
+slot_size,2,Every 1- or 2-byte argument takes one 2-byte slot (move.w / clr.w / word store - a byte is the slot's low byte at the odd address) and a 4-byte argument the next 4 bytes with no padding (a long can start at +6) - 68000.cspec __stdcall uses 4-byte slots
+```
+`function_definitions.csv` keeps its format; no new column.
+
+## 3. Rows to add first
+
+The proposed rows are in `/home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/fix-design/proposed_rows.csv`: 29 functions, no index gaps, 6 fields per row. Names marked "name to review" are proposals.
+
+The classification is from `classify_row_functions.py`. Of the 58 functions that have parameter rows today:
+- **A (26):** only 4-byte rows that match the ROM. Their storage does not change.
+- **B (5):** the switch alone fixes them, with the current rows: 0x3792 huffmanDecompress (start_node 10→8), 0x16c3c parameterCircularBufferWrite (byte_count 14→12), 0x18f86 (12), 0x1bfa2 circularBufferPush (byte 11→9), 0x34bf8 (4).
+- **C (27):** wave 0. They need corrections in the same commit.
+  - **Re-indexed so each name stays on today's bytes** (packing would otherwise move it silently):
+    - 0xfaa6: new word +4 `breakpoint_fueling`, then `torque_index` byte +7.
+    - 0x1cb76: new word +4, then `rpm_index` +6.
+    - 0x18968: new word +12, then `sensor_value` +14.
+    - 0x32b38: new byte +5, then `response_code` +6, whose address goes to byteSwap16.
+  - **byte → ushort** (the callee loads the whole word at +4): 0xb6e8, 0x142a8, 0x144bc, 0x14720, 0x1e056, 0x1e086, 0x1ec3c, 0x1edae, 0x20890.
+  - **Wrong shapes:**
+    - 0x34e9a / 0x34f00 / 0x34f8a → word +4, then pointer +6.
+    - 0x10e16 → add pointer +6.
+    - 0x142d4 → two words.
+    - 0x2f4be → `can_std_rx_desc_t*` (a long at +4).
+    - 0x32244 → delete its phantom row.
+  - **Retypes that only packing can express:** 0x3460e range_length, 0x1c016 buffer_size, 0x1c5e8 byte_count, 0x1e5f0 message_object (→ ushort), 0x1645e divisor (→ ushort), 0x1651e max_result (→ ushort), 0x16628 (division_operand_t + ushort).
+- **Wave 1** (new rows): 0x3870 `cm550_busyWaitDelayLoop` (return void, 0 `pass_count` ushort), 0x26a64 `cm550_memcpy` (byte* / byte* / ushort, 24 sites), 0x34bba `mc68k_delayTimeBaseTicksWithWatchdogService` (`tick_count` ushort, 19 sites).
+- **After that:** the 61 survey functions that have no rows, ranked by call sites with types from the callee loads, in `/home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/fix-design/candidate_rows.txt`. Names are TBD. Next in line: 0x0ed34, 0x31ace, 0x202d8, 0x201d6 / 0x2024a / 0x20348, 0x239d2, 0x1e79a.
+
+## 4. Expected render before → after
+
+All of these are predicted from the source and the ROM, not observed.
+
+**cm550_busyWaitDelayLoop @ 0x3870 (wave-1 rows)**
+- Before:
+  - `void cm550_busyWaitDelayLoop(undefined4 param_1)`, with the loop `uVar2 < param_1._0_2_`.
+  - In mc68k_portPinTestSequence2: `uVar6 = 1; cm550_busyWaitDelayLoop(); ... cm550_busyWaitDelayLoop(uVar6); ... (uVar5); ... (uVar6);`.
+  - In mc68k_waitForChipSelect2InputBit0High: `cm550_busyWaitDelayLoop();`.
+- After:
+  - `void cm550_busyWaitDelayLoop(word pass_count)`, with the loop `uVar2 < pass_count`.
+  - In mc68k_portPinTestSequence2: four `cm550_busyWaitDelayLoop(1);`, and uVar5 / uVar6 disappear.
+  - At 0x3990 in mc68k_waitForChipSelect2InputBit0High: `cm550_busyWaitDelayLoop(2);`.
+
+**exponentialMovingAverage @ 0x34e9a (wave-0 reshape; the long-at-+6 case that align=2 cannot express)**
+- Before:
+  - `undefined8 exponentialMovingAverage(word current_avg,word new_sample,word smoothing_factor)`. The body uses `in_stack_00000004` and reads the pointer as `_current_avg`, a 4-byte view at +6.
+  - Callers in cm550_outputControlTimingGenerator: `smoothing_factor = 0x66; new_sample = _DAT_0080a292; ... exponentialMovingAverage(0x80,(word)((uint)unaff_A2 >> 0x10),(word)((uint)unaff_A3 >> 0x10))` and `exponentialMovingAverage(0x80,new_sample,smoothing_factor)`. The 0x80 is the high half of the RAM pointer.
+- After:
+  - `undefined8 exponentialMovingAverage(word new_sample,dword *filter_state)`, with `uVar1 = *(ushort *)*filter_state; ... (new_sample + 0x8000) ...; filter_state[1] = iVar2;` and no in_stack token.
+  - 0xb248 pushes a5 = #0x800066 and the word at 0x80a292: `exponentialMovingAverage(_DAT_0080a292,(dword *)&timing_table_4_ptr)`.
+  - 0xb28c does `pea 0x80006e` and `move.w (a2)` with a2 = 0x80a294: `exponentialMovingAverage(engine_acceleration_after_first_stage_low_pass_filtering_2560_2540, <pointer to 0x80006e>)`.
+  - The `undefined8` / CONCAT44 return stays: it is a separate return-row issue.
+- Lead: 0x800066 and 0x80006e are EMA filter records (a coefficient pointer, then an accumulator; the caller resets (4,a5)). They are misnamed `timing_table_4_ptr` and related names, which makes them a struct lead.
+
+**cm550_parameterCircularBufferWrite @ 0x16c3c (no row change; the switch alone moves byte_count from Stack[0xe]:2 to Stack[0xc]:2)**
+- Before:
+  - `uint ...(dword dest_address,byte *source_ptr,word byte_count)`. `ushort in_stack_0000000c` does all the work (`0x500 < (uint)in_stack_0000000c + ...`, `for (; in_stack_0000000c != 0; ...)`), and byte_count is unused.
+  - The caller cm550_eepromCalibrationWriteSecondary has `byte_count = (ushort)(byte)(cVar5 << 4 | 8); cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,byte_count);`. That `byte_count` is the SR saved by `move sr,-(sp)` at 0x11176.
+- After:
+  - The body uses `byte_count`, with no token.
+  - The caller renders `cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,2);` (from `move.w #2` at 0x11180), and the SR-derived local disappears.
+
+**Short predictions:**
+- `cm550_diagnosticMessageQueueWrite(word response_type)`. Its 7 clr.w callers render `(0)`; 0x11a0e renders `((byte)timer_ticks)` today.
+- 0x14fae: `CONCAT22(10,in_stack_00000000)` → `10` (tests the 0x1c016 retype).
+- 0xfbe4: `max_result.limit = in_stack_00000000` disappears.
+- After its wave-1 row, 0x1e79a at 0x26f76 renders `(0xe,0xf)`, which tests the argument order.
+
+## 5. Test plan
+
+- **T0 unit tests.** `cd firmware/script_tests && ./run_tests.sh`. All pass, including the new packing and parser tests.
+- **T1 CM848 unchanged.** Build CM848 before and after the code change, both locally (not against the committed `.cpp`). Expect a diff of only `// Generated:`, and no "Stack parameter layout" line in the CM848 log. Any other diff means the gate leaks.
+- **T2 optional control.** Run one CM550 build with the code change, the CURRENT rows and `slot_size,4`. Expect a byte-identical `.cpp` versus a base build. A diff means the custom-storage plumbing itself is not neutral (return freezing, deleted locals, the flag), so T3 would be confounded. The only allowed exceptions are functions the gate refuses, each of which is logged; I found no current row that hits a refusal.
+- **T3 the real build** (slot 2, wave 0 + wave 1):
+  - a. **Build log.** No new `Error:` lines. No read-back mismatch line; a mismatch means Ghidra altered the storage, as opposed to the decompiler ignoring it. No VariableSizeException.
+  - b. **Control set.** These 20 A functions call nothing in wave 0, wave 1 or B (from `caller_hazards.py`), so their bodies must be byte-identical: 0x3640, 0x104e8, 0x10520, 0x1bfde, 0x1c484, 0x1e02a, 0x206a8, 0x21982, 0x22956, 0x22b50, 0x22d8e, 0x22de2, 0x22e5e, 0x2eea2, 0x2fbd8, 0x2fcdc, 0x34de0, 0x35064 (37 sites), 0x35076, 0x35088. Excluded because they call changed callees, so they will change: 0x18c1c, 0x2148a, 0x217de, 0x21826, 0x2238e, 0x2ef4a.
+  - c. **Tokens.** No function with rows shows `in_stack_0000000N` (N ≥ 4) or `<param>._N_M_` on a parameter. Expected residue that is not a failure:
+    - 0x1b4c2 (interrupt epilogue);
+    - the `_0_3_` pair 0x11da6 / 0x2cf52 (in-place addq.b);
+    - the split bodies 0x1a95a→0x1a95e and 0x144bc→0x1452e;
+    - every callee without rows.
+  - d. **Call-site constants.** At every call to a row function whose pushes are immediates (from `all_sites.json`), the rendered argument equals the pushed value. Spot checks:
+    - busyWaitDelayLoop renders (1)×4 and (2);
+    - the 7 diagnosticMessageQueueWrite clr.w sites render (0);
+    - parameterCircularBufferWrite in cm550_eepromCalibrationWriteSecondary renders (…,2);
+    - 0x14fae renders `10`.
+  - e. **Re-index check.** `torque_index` is the byte tested `== 0`; `rpm_index` is the +6 word stored to fuel_table_*_throttle_input; `sensor_value` is the +14 word compared with 0 / 2 / 3; `response_code` is the word passed to byteSwap16.
+  - f. **Local rows.** The callers of changed callees that have local rows are 0x15f8e (wVar3 / wVar4; register temps, which renumber), 0x3836 (local_c0a), 0x217de and 0x21826 (local_c / local_8 via memcpy). The `local_*` names are offset-based, so they should hold. Check the localvars log for "not found". For 0x15f8e, build once without its 2 rows to read the new auto-names, then re-point the rows.
+  - g. **Function list.** The same `// Function:` count. The "Cannot assign parameter locations" and "Unknown calling convention" counts stay 0.
+- **T4 determinism.** `./analyze.sh verify` on CM550.
+- **T5 headers.** Regenerate `firmware_*.hpp` (the `generate_headers.py` functions, not `main()`), then run `g++ -fsyntax-only`.
+
+**What would show the fix is wrong:**
+- T1 or T2 differs.
+- A token remains exactly at a row's storage. That means the decompiler does not honor a locked unjustified stack parameter, and the premise fails. A token elsewhere only means the row is incomplete.
+- A call constant differs from the push, or a stale `uVarN` remains. That means a wrong offset, or a deferred pop that breaks the load.
+- A re-indexed name lands on the other argument.
+- A quiet control function changes.
+
+## 6. Not settled
+
+1. Nothing was built (forbidden). Every "after" render, and the T2 / T3b neutrality, is derived from source.
+2. Call sites with deferred or merged pops and slot reuse (0x388a: four pushes, one `508f`; 0x385c / 0x3352c `move.w Dn,(sp)`) are derived from funcLinkInput, not observed.
+3. A locked Stack[6]:4 (a long at 2 mod 4): I found no code path that rejects it, but it is not observed.
+4. byte at +5 or ushort at +4 for the six low-byte-only callees and the new rows. I recommend the load width (byte); both are valid under the ABI.
+5. The names of the new parameters are proposals. The re-index keeps today's names, which may be wrong-domain: `rpm_index` feeds fuel_table_primary_throttle_input, `calc_mode` is an additive offset, and `table_descriptor` at 0x34f8a is an EMA record.
+6. `undefined8` returns (the D0:D1 join) on the EMA and interpolation helpers are a separate return-row issue.
+7. The 10 functions with no `.cpp` body (ExportAnalysis drops them) cannot be checked in the `.cpp`. 0x34f00 and 0x16628 have no caller in the dump.
+8. **Snapshot.** The working tree had another session's uncommitted round-85 edits (function_definitions.csv: 0x1c484 rows and a return, 0x1e5f0 / 0x34bf8 renames; local_variables.csv incl. a new 0x3836 row; function_renames.csv; deleted_functions.csv; a rebuilt `.cpp`). My classification, the "before" renders and the line numbers come from that tree. Re-run `classify_row_functions.py` and `caller_hazards.py` on the final CSVs before applying.
+
+## Files (scratch, read-only work)
+
+In `/home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/fix-design/`:
+- `proposed_rows.csv`: the wave 0 and wave 1 rows.
+- `candidate_rows.txt`: the ranked candidates for the remaining 61 functions.
+- `scripts/classify_row_functions.py`: the A / B / C classes and the moved-name check.
+- `scripts/caller_hazards.py`: the control and local-row intersections.
+- `scripts/candidate_rows.py`, `scripts/rows_vs_rom.py`, `scripts/join_rows.py`.
+- `src/`: the extracted Ghidra 12.2 Java sources.
+
+Inputs used: the survey (`/home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/stack-args-survey/` results.json, all_sites.json, classes.json) and, under `/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/`, `scripts/ApplyFunctionDefinitions.java`, `scripts/common.sh` and `CM550_J90350.00_analysis/output/function_definitions.csv`.

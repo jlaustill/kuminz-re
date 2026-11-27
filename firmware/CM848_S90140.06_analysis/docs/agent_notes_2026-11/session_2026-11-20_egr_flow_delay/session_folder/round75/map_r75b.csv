@@ -1,0 +1,5 @@
+address,name,old_label,kind,dims
+0x01000002,eeprom_security_master_password_cal,eeprom_security_key,global,1
+0x01000030,eeprom_key_on_hour_meter_cal,eeprom_config_block,global,1
+0x01000034,eeprom_security_key_copy_cal,eeprom_version_marker,global,1
+0x0100008e,eeprom_calibration_download_security_key_cal,eeprom_serial_number,global,1

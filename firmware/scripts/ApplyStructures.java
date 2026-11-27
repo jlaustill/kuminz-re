@@ -29,6 +29,9 @@ public class ApplyStructures extends GhidraScript {
     private Listing listing;
     private Map<String, DataType> createdStructures = new HashMap<>();
     private Set<String> unionTypes = new HashSet<>();
+    // Function type rows ("function:<return>(<type> <name>;...)"), by name; sorted, so the build order is fixed
+    private Map<String, ScriptUtils.FunctionTypeSpec> functionTypes = new java.util.TreeMap<>();
+    private Map<String, String> functionTypeComments = new HashMap<>();
     private Category structCategory;
 
     // Map CSV type names to Ghidra data types
@@ -38,6 +41,10 @@ public class ApplyStructures extends GhidraScript {
         TYPE_MAP.put("word", "word");
         TYPE_MAP.put("dword", "dword");
         TYPE_MAP.put("short", "short");
+        // The signed word as global_variables.csv (i16) and function_definitions.csv (sword) write it; before
+        // these aliases a struct field typed i16 fell back to byte and became byte[2] (PR #53 round 21).
+        TYPE_MAP.put("i16", "short");
+        TYPE_MAP.put("sword", "short");
         TYPE_MAP.put("ushort", "ushort");
         TYPE_MAP.put("uint16_t", "ushort");
         TYPE_MAP.put("uint32_t", "uint");
@@ -148,6 +155,21 @@ public class ApplyStructures extends GhidraScript {
                     continue;
                 }
 
+                // A function type row: "function:<return>(<type> <name>;...)" in the type column defines a
+                // function type named like the row (no field, no instance). A field or a prototype parameter
+                // then holds "<name>*", so the decompiler knows the arguments of the indirect call.
+                if (typeName.startsWith("function:")) {
+                    ScriptUtils.FunctionTypeSpec spec = ScriptUtils.parseFunctionType(typeName);
+                    if (spec == null || !fieldName.isEmpty() || !addressStr.isEmpty()) {
+                        println("  WARN: bad function type row '" + typeName + "' for " + structName +
+                                " (it takes no field name and no address) - skipping");
+                    } else {
+                        functionTypes.put(structName, spec);
+                        functionTypeComments.put(structName, comment);
+                    }
+                    continue;
+                }
+
                 // Parse size
                 int size = 0;
                 try {
@@ -201,8 +223,8 @@ public class ApplyStructures extends GhidraScript {
 
         try {
             // Pass 1: create empty shells for every struct type so that forward
-            // references (e.g. etc1_governor_state_t has a field typed etc1_config_entry_t*
-            // but etc1_config_entry_t hasn't been processed yet) resolve correctly in Pass 2.
+            // references (e.g. j1939_powertrain_control_state_t has a field typed tsc1_source_configuration_t*
+            // but tsc1_source_configuration_t hasn't been processed yet) resolve correctly in Pass 2.
             for (Map.Entry<String, List<FieldDef>> entry : structDefs.entrySet()) {
                 String structName = entry.getKey();
                 List<FieldDef> fields = entry.getValue();
@@ -226,6 +248,29 @@ public class ApplyStructures extends GhidraScript {
                 }
                 DataType addedShell = dtm.addDataType(shell, DataTypeConflictHandler.DEFAULT_HANDLER);
                 createdStructures.put(structName, addedShell);
+            }
+
+            // Pass 1b: function types. Every struct shell exists now, so a parameter typed "<struct>*"
+            // resolves; the definition goes into the same map, so a field typed "<name>*" finds it.
+            for (Map.Entry<String, ScriptUtils.FunctionTypeSpec> entry : functionTypes.entrySet()) {
+                String name = entry.getKey();
+                ScriptUtils.FunctionTypeSpec spec = entry.getValue();
+                DataType existing = dtm.getDataType(structCategory.getCategoryPath(), name);
+                if (existing != null) dtm.remove(existing);
+                FunctionDefinitionDataType definition =
+                        new FunctionDefinitionDataType(structCategory.getCategoryPath(), name, dtm);
+                definition.setReturnType(functionTypeMember(spec.returnType));
+                ParameterDefinition[] parameters = new ParameterDefinition[spec.parameters.size()];
+                for (int i = 0; i < parameters.length; i++) {
+                    String[] parameter = spec.parameters.get(i);
+                    parameters[i] = new ParameterDefinitionImpl(parameter[1], functionTypeMember(parameter[0]), null);
+                }
+                definition.setArguments(parameters);
+                String comment = functionTypeComments.get(name);
+                if (comment != null && !comment.isEmpty()) definition.setComment(comment);
+                createdStructures.put(name, dtm.addDataType(definition, DataTypeConflictHandler.DEFAULT_HANDLER));
+                println("  Function type " + name + ": " + spec.parameters.size() + " parameter(s)");
+                created++;
             }
 
             // Pass 2: mutate each DTM-managed shell in place.
@@ -326,6 +371,12 @@ public class ApplyStructures extends GhidraScript {
         return created;
     }
 
+    // The data type of a function type's return value or parameter (void is not a field type, so
+    // getDataType does not know it).
+    private DataType functionTypeMember(String typeName) {
+        return typeName.equals("void") ? VoidDataType.dataType : getDataType(typeName, 0);
+    }
+
     private int calculateStructureSizeFromFields(List<FieldDef> fields) {
         int size = 0;
         for (FieldDef field : fields) {
@@ -386,13 +437,16 @@ public class ApplyStructures extends GhidraScript {
                     // the byte default, so only enum-typed fields change.
                     dt = findEnum(typeName);
                     if (dt == null) {
+                        // Say so: an unknown name used to become byte (an array of them) without a word.
+                        println("  WARN: unknown field type '" + typeName + "' - using byte");
                         dt = ByteDataType.dataType;
                     }
                 }
         }
 
-        // Create array if size is larger than base type
-        if (dt != null && size > dt.getLength()) {
+        // Create array if size is larger than base type. A function type has no length (only a pointer
+        // holds one), so it is never wrapped: as the base of "<name>*" it used to become byte[0].
+        if (dt != null && dt.getLength() > 0 && size > dt.getLength()) {
             int count = ScriptUtils.calculateArrayCount(size, dt.getLength());
             if (count > 1) {
                 dt = new ArrayDataType(dt, count, dt.getLength());

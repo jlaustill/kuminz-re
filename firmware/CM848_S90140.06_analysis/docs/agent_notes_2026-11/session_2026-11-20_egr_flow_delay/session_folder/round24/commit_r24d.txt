@@ -1,0 +1,33 @@
+cm848: round 24 stage D - the J1587 fault counts, the boot SCI / reflash / J1939 transport sessions, two more instances (labels)
+
+Six more struct instances that were named with their Ghidra labels, each with its type spelled out. Two field sets are
+named from the code:
+- fault_list_state_t_003fe11a -> j1587_fault_count_data_cal (j1587_fault_count_data_t; e2m 1097 +C0
+  J1587_Fault_Count_Data, EEPROM).
+  - write_index / read_index -> active_fault_count / previously_active_fault_count: they move with
+    active_dtc_list_cal.count / previously_active_dtc_list_cal.count, so they are not ring indexes.
+  - emission_count / total_emission_faults keep their names. Their comment now says what they count: the faults whose
+    definition flag 0x2000 is clear, which is every slot here. "emission" is unproven.
+- fault_pending_counter_array -> active_dtc_cummins_fault_codes_cal: the active list's Cummins codes ([0] = count),
+  the twin of previously_active_dtc_cummins_fault_codes_cal.
+- diag_session_state_t_003fecbe -> boot_sci_session_state (boot_sci_session_state_t).
+- data_transfer_state_t_003fec82 -> reflash_transfer_state (reflash_transfer_state_t).
+  - These two have no _cal, though they sit in the EEPROM mirror's range: only boot ROM / kernel code uses them, no
+    e2m record names them for the application, and the neighbours boot_sci_security_state etc. have none.
+- j1939_tp_queue_t_00302905 -> boot_j1939_transport_transmit_session (j1939_transport_transmit_session_t). Fields
+  from the RTS / CTS / TP.DT code:
+  - session_pgn -> transported_pgn, total_bytes -> message_size;
+  - queue_status2 -> total_packet_count, range_start -> next_packet_number, queue_ptr -> granted_packet_count;
+  - data_buf_ptr -> message_data_pointer, state_ptr -> session_status_pointer, tx_buf_ptr -> transmit_frame_pointer;
+  - can_header -> frame_can_id, packet_size -> frame_data_length, retry_timer -> timeout_timer;
+  - _pad5 -> frame_queue_status: mpc555_canTransmitQueuePush writes its status there (0 queued / 1 no data /
+    4 queue full), so it is no padding, and its underscore warning is gone.
+  - The asm widths at the odd addresses match the layout.
+- qsmcm_recram_t_00305140 -> qsmcm_recram.
+- sys_init_flags_t_00302736 -> system_initialization_flags (system_initialization_flags_t;
+  initialization_sentinel / initialization_counter).
+
+Proof: reverse_names.py EQUIVALENT. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four
+test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

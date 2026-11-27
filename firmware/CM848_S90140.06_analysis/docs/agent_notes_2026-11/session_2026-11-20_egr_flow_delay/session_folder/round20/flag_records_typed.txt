@@ -1,0 +1,76 @@
+== word 0 (+2, 0x3fd59c)
+  0x0002 AFC_Low_Boost_Derate_Enable [0000=DISABLE:0002=ENABLE] enables feature AFC Low Boost fuel limit
+  0x0010 Shadow_RAM_Auto_Load [10=ENABLE:00=DISABLE] [JCSBR1AO] Bit 4 of 0-15. if true load shadow ram during initialization else dont
+  0x0020 Prog_Shift_Enable [00=DISABLE:20=ENABLE] [PSAGEN] Bit 5 of 0-15. Customer trim flag to enable/disable Prog. Shift feature.
+  0x0040 Engine_Brake_Override [00=DISABLE:40=ENABLE] [EBODEN] Bit 6 of 0-15. Calibration value which enables FSO valve to close on brake act
+  0x0080 VSS_Tamper_Enable [00=DISABLE:80=ENABLE] [VSBKEN] Bit 7 Word 0. Enables VSS Anti-Tampering detection
+  0x0100 Collector_Enable [000=DISABLE:100=ENABLE] Bit 8 of 0-15. EEPROM indicator set by tools to enable data collector operation
+  0x0200 Double_Pulse_Enable [000=DISABLE:200=ENABLE] [DPAGEN] Bit 9 of 0-15. Enable/disable the double pulsing feature, 0 for disable, 1 for
+  0x0400 Alpha_LSG_Enable [000=DISABLE:400=ENABLE] [APLSEN] Bit A Word 0. Enables alpha lsg sub-algo for Alpha_Base determination
+  0x0800 Alpha_AFC_Enable [000=DISABLE:800=ENABLE] [APAFEN] Bit B Word 0. Enables alpha afc subalgorithm for Alpha_Base calculation
+  0x1000 Alpha_Fuel_Rate_Enable [0000=DISABLE:1000=ENABLE] [APFLRTEN] Bit C Word 0. Enables alpha fuel rate sub-algo for Alpha_Base determination
+  0x2000 Alpha_On_Governor_Enable [0000=DISABLE:2000=ENABLE] [APONGVEN] Bit D Word 0. Enables alpha on governor sub-algo for Alpha_Base determination
+  0x4000 Alpha_Engine_Protection_Override_Enable [0000=DISABLE:4000=ENABLE] [APEGPNEN] Bit E Word 0. Enables logic to use engine protection alpha
+  0x8000 Alpha_Turbo_Protection_Enable [0000=DISABLE:8000=ENABLE] [AATBPEN] Bit F Word 0. Enable bit for the Alpha Ambient Air Pressure Turbo Protection.
+== word 8 (+12, 0x3fd5ac)
+  0x0001 Fuel_Temperature_Fueling_Limiting_Enable [01=ENABLE:00=DISABLE] [EPFTFLEN] Bit 0 of 0-15 Enables fuel limiting due to fuel temperature errors
+  0x0002 Fuel_Temperature_RPM_Limiting_Enable [02=ENABLE:00=DISABLE] [EPFTRPEN] Bit 1 of 0-15 Enables RPM limiting due to fuel temperature errors
+  0x0004 Fuel_Temperature_Shutdown_Enable [04=ENABLE:00=DISABLE] [EPFTSOEN] Bit 2 of 0-15 Enables shutdown on fuel temperature errors
+  0x0008 Fuel_Temperature_Restart_Enable [08=ENABLE:00=DISABLE] [EPFTRYEN] Bit 3 of 0-15 Prevents restart at powerup when shutdn cnt > max shutdn cnt due
+  0x0010 C_Out_Temperature_Fueling_Limiting_Enable [00=DISABLE:10=ENABLE] Bit 4 of 0-15 Enables fuel limiting due to C_Out_Temperature errors
+  0x0020 C_Out_Temperature_RPM_Limiting_Enable [00=DISABLE:20=ENABLE] Bit 5 of 0-15 Enables RPM limiting due to C_Out_Temperature errors
+  0x0040 C_Out_Temperature_Shutdown_Enable [00=DISABLE:40=ENABLE] Bit 6 of 0-15 Enables shutdown on C_Out_Temperature errors
+  0x0080 C_Out_Temperature_Restart_Enable [00=DISABLE:80=ENABLE] Bit 7 of 0-15 Prevents restart at powerup when shutdn cnt > max shutdn cnt due
+  0x0100 T_In_Temperature_Fueling_Limiting_Enable [000=DISABLE:100=ENABLE] Bit 8 of 0-15 Enables fuel limiting due to Turbine Inlet temperature errors
+  0x0200 T_In_Temperature_RPM_Limiting_Enable [000=DISABLE:200=ENABLE] Bit 9 of 0-15 Enables RPM limiting due to Turbine Inlet temperature errors
+  0x0400 T_In_Temperature_Shutdown_Enable [000=DISABLE:400=ENABLE] Bit 10 of 0-15 Enables shutdown on Turbine Inlet temperature errors
+  0x0800 T_In_Temperature_Restart_Enable [000=DISABLE:800=ENABLE] Bit 11 of 0-15 Prevents restart at powerup when shutdn cnt > max shutdn cnt due
+== word 12 (+1A, 0x3fd5b4)
+  0x0001 Idle_Speed_Save_Enable [00=DISABLE:01=ENABLE] [LSISSVEN] Bit 0 of 0 - 15 enables save of last idle speed at shutdown
+  0x0002 Overspeed_FSO_Override [00=DISABLE:02=ENABLE] [EPOSFSO] If T, FSO closes when ovrspd detected by main micro. Bit 1 of 0 - 15 of Word C
+  0x0004 Water_In_Fuel_Enable [00=DISABLE:04=ENABLE] [WFAGEN] Bit 2, Enable flag used for Water_In_Fuel algorithm.
+  0x0008 AFC_Override_Enable [00=DISABLE:08=ENABLE] [AFENMAN] Bit 3 of 0-15 in word C
+  0x0010 ESP_Enable [00=DISABLE:10=ENABLE] [SPAGEN] 0 - disbale, 1 - enable ESP algorithm, Bit 4 of 0 - 15.
+  0x0020 Reverse_ESP_Enable [00=DISABLE:20=ENABLE] [SPRVEN] 0 - disbale, 1 - enable ESP launch application algorithm, Bit 5 of 0 - 15.
+  0x0040 LSG_Droop_Enable [00=DISABLE:40=ENABLE] [LSDPEN] LSG Droop Enable bit 6 of 0 - 15 in word C
+  0x0080 Accelerator_Interlock_Enable [00=DISABLE:80=ENABLE] [ANEN] Bit 7 of 0-15 in word C, Accelerator Interlock Enable Bit
+  0x0100 VSS_Moving_Enable [000=DISABLE:100=ENABLE] [VSMVEN] Bit 8, Word C. Enables VSS sensor lost while moving detection
+  0x0200 VSS_Stopped_Enable [000=DISABLE:200=ENABLE] [VSSTEN] Bit 9, Word C. Enables VSS sensor lost while stopped detection
+  0x0400 OBD_Fault_Handler_Enable [000=DISABLE:400=ENABLE] [DGOBFUHN] Indicates whether OBDII Fault Handler is enabled
+  0x0800 PTO_Brake_Override_Enable [000=DISABLE:800=ENABLE] [PTBRODEN] When enabled, it allows the brake to cancel Cab PTO. Word C bit B
+  0x1000 PTO_Clutch_Override_Enable [0000=DISABLE:1000=ENABLE] [PTCHODEN] When enabled, it allows the clutch to cancel Cab PTO. Word C bit C
+  0x2000 OCM_Enable [0000=DISABLE:2000=ENABLE] [OCEA] Enables Oil Change Monitor Feature, bit 13 of 0-15 of Word C
+== word 18 (+26, 0x3fd5c0)
+  0x0001 HSG_Gain_Scheduling_Enable [00=DISABLE:01=ENABLE] [HSGNSDEN] Bit 0 of 0-15 of word 12h enables HSG gain scheduling
+  0x0004 DR_Enable [00=DISABLE:04=ENABLE] [DREN] Word 12h, bit 2 of 0 to 15 Driver Reward Enable
+  0x0008 DC_Mon_Enable [0000=DISABLE:0008=ENABLE] [DCMNEN] Duty Cycle Monitor Enable Bit 3 of 0-15
+  0x0040 AC_Smart_Enable [00=DISABLE:40=ENABLE] [ACEN] Word 12h, bit 6 of 0 to 15 - Smart Air Compressor Enable
+  0x0080 Executive_Timing_Enable [00=DISABLE:80=ENABLE] [SSECTMEA] Enable for the executive timing data gatherer.
+  0x0100 HSG_Gear_Ratio_Gain_Enable [000=DISABLE:100=ENABLE] [HSGRGSEN] GEAR RATIO based Gain set selection (Enabled/Disabled) Bit 8 of 0 - 15
+  0x0200 Programmable_Power_Enable [000=DISABLE:200=ENABLE] [PPEN] Programmable Power, bit 9 of 0 to 15, word 12h/18d
+  0x0800 Cruise_Control_AR_Enable [000=DISABLE:800=ENABLE] [AREN] BIT 11 OF 0-15. CRUISE CONTROL AUTO RESUME ENABLE/DISABLE PARAMETER
+  0x1000 Remote_Throttle_Enable [0000=DISABLE:1000=ENABLE] [CTRMTHEN] Remote Throttle Enable Bit 12 of 0-15
+  0x2000 Remote_Throttle_Transition_Verification_Enable [0000=DISABLE:2000=ENABLE] [CTRTTZEN] Enables remthrot/throt perc calc before trans., Bit 13/15 Word C
+  0x4000 EB_Service_Brake_Activate_Enable [0000=DISABLE:4000=ENABLE] [EBBREN] Word 13h, bit 0 of 0-F - Service Brake must be "tapped" to engage the EB.
+  0x8000 EB_Rate_Limit_Enable [0000=DISABLE:8000=ENABLE] [EBRTLMEA] Bit 15 of 0-15 - Rate limit between current & desired EB Levels.
+== word 26 (+36, 0x3fd5d0)
+  0x0001 Coolant_Level_Data_Noderate_Enable [00=DISABLE:01=ENABLE] [EPCVDXEN] Bit 0 of 0-15. EPF Coolant Level enable for history only data.
+  0x0002 Coolant_Temperature_Data_Noderate_Enable [00=DISABLE:02=ENABLE] [EPCQDXEN] Bit 1 of 0-15. EPF coolant temperature enable for history only data.
+  0x0004 IMT_Data_Noderate_Enable [00=DISABLE:04=ENABLE] [EPIMDXEN] Bit 2 of 0-15. EPF IMT enable for history only data.
+  0x0008 Oil_Pressure_Data_Noderate_Enable [00=DISABLE:08=ENABLE] [EPO2DXEN] Bit 3 of 0-15. EPF oil pressure enable for history only data.
+  0x0010 Fuel_Temperature_Data_Noderate_Enable [10=ENABLE:00=DISABLE] Bit 4 of 0-15. EPF Fuel Temperature enable for history only data.
+  0x0020 C_Out_Temperature_Data_Noderate_Enable [00=DISABLE:20=ENABLE] Bit 5 of 0-15. EPF C_Out_Temperature enable for history only data.
+  0x0040 T_In_Temperature_Data_Noderate_Enable [00=DISABLE:40=ENABLE] Bit 6 of 0-15. EPF Turbine Inlet Temperature enable for history only data.
+== word 41 (+54, 0x3fd5ee)
+  0x0002 Brake_Switch_Diag_Enable [0000=DISABLE:0002=ENABLE] Brake switch diagnostics enable/disable
+  0x0004 Fuel_Lvl_Rationality_Enable [0004=ENABLE:0000=DISABLE] Fuel Level Rationality Diagnostics Enable/Disable
+  0x0010 Tstat_System_Monitor_Enable [0000=DISABLE:0010=ENABLE] Enable condition for the Tstat system monitor
+  0x0020 EVR_PID_Enable [0000=DISABLE:0020=ENABLE] If enabled, enables PID control of EVR system
+  0x0040 CTIR_Monitor_Enable [0000=DISABLE:0040=ENABLE] Coolant temperature in-range monitor enable
+  0x0100 Fuel_Temp_Monitor_Enable [0000=DISABLE:0100=ENABLE] Fuel temperature in-range monitor enable
+  0x0200 IAH_Monitor_Enable [0200=ENABLE:0000=DISABLE] whether or not and how the intake air heater monitor is enabled
+  0x0400 Turbo_Monitor_Enable [0400=ENABLE:0000=DISABLE] Turbocharger Monitor enable
+  0x0800 Torque_Normalization_Enable [0000=DISABLE:0800=ENABLE] Changes all Jcomm torque references normalized to MT_Max_Torque_Map.
+  0x1000 Throttle_100_Cold_Increment_Enable [1000=ENABLE:0000=DISABLE] Enable for cold increment fuel to torque curve
+  0x2000 AFC_Cold_Increment_Enable [2000=ENABLE:0000=DISABLE] Enable for AFC cold increment fuel
+  0x8000 Misfire_Monitor_Enable [0000=DISABLE:8000=ENABLE] Misfire monitor algorithm enable

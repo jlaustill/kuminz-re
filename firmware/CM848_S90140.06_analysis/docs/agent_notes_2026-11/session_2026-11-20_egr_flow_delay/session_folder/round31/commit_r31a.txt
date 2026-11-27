@@ -1,0 +1,29 @@
+cm848: round 31 stage A - the J1939 EC1 (PGN 65251) payload as a struct (types)
+
+j1939_pgn65251_payload_t is the 28-byte EC1 payload in the original J1939-71 layout (data length 0x1c), in J1939
+byte order: buildPgn65251EngineConfiguration1Payload stores the low byte of each speed first. The SPN names are from
+the automotive j1939_spns table.
+- Two instances: the payload (0x3fa7f8) and the send-on-change previous copy (0x3fa814). Before, the two were a
+  dword, a word and 30 flat or offset-alias rows.
+- Fields:
+  - the point 1-6 engine speeds (SPN 188 / 528-532) and their percent torques (SPN 539-543, +125 offset);
+  - the endspeed governor gain (SPN 545, 0xffff = not available);
+  - the reference engine torque (SPN 544);
+  - the maximum momentary override speed / time limit (SPN 533 / 534);
+  - the requested speed / torque control range limits (SPN 535-538).
+- Field widths follow the code's accesses:
+  - words where it reads a halfword (+0 / +6 / +9 / +12 / +17 / +19 / +21; +9 is an unaligned halfword);
+  - byte pairs where the send-on-change test joins two bytes (points 2 and 6);
+  - bytes for the percent torques and the limits.
+- cm848_sendPgn65251EngineConfiguration1OnChange now copies and compares by field. It rendered as DAT_003fa816 /
+  _2_1_ / ram0x003fa801 / CONCAT11((undefined1)j1939_pgn65251_payload, DAT_003fa7fc). The pieces left are the
+  compiler's four dword copies (+8 / +16 / +20 / +24) and two bytes read through them.
+- initializePgn65251EngineConfiguration1Buffer writes endspeed_governor_gain = 0xffff and
+  requested_torque_control_range_lower_limit = 0x7d (were ram0x003fa809 / control_range_limits._2_1_).
+- The old per-field rows are dotted documentation rows, and the offset alias rows go.
+
+Proof (prove_tokens.py, no tokens): only these two functions differ. Each field access in them was checked against
+the old byte offset and width. Pieces 1413 -> 1412, underscore names 31 -> 23. Headers regenerated (0 g++ errors),
+lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

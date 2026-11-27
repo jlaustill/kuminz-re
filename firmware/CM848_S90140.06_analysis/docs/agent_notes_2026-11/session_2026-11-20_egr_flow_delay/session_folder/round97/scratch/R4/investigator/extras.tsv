@@ -1,0 +1,13 @@
+0x0080d074	pulse_period_sum_backup	dword
+0x0080d05c	backup_engine_position_sensor_lost_duration	word
+0x0080cd06	main_engine_speed	word
+0x0080cd04	backup_engine_speed	word
+0x0080cd16	external_engine_speed	word
+0x0080ccf6	filtered_engine_speed	word
+0x0080d03e	main_speed_period_sum_between_vss_pulses	dword
+0x0080d046	main_speed_pulse_count_between_vss_pulses	word
+0x0080d0bc	crank_initial_fuel_adjustment	word
+0x0080ccf4	engine_speed	word
+0x008086f2	programmable_power_fueling_curve_table	word[210]
+0x0080cd1e	pulse_period_table	dword[100]
+0x0080ceae	pulse_period_table_backup	dword[100]

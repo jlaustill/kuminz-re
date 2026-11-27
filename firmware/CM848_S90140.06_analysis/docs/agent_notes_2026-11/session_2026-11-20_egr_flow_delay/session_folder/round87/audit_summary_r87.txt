@@ -1,0 +1,174 @@
+===== twins
+CM550 function        0x00027af0  cm550_restartOnKeyOnDuringPowerDown          -> restartOnKeyOnDuringPowerDown [high] | accept restartOnKeyOnDuringPowerDown type=function
+CM848 function        0x00539938  cm848_restartOnKeyOnDuringPowerDown          -> restartOnKeyOnDuringPowerDown [high] | accept restartOnKeyOnDuringPowerDown type=function
+CM550 function        0x00027f9c  mc68k_runPowerDownSequence                   -> runPowerDownSequence [medium] | reject mc68k_runPowerDownSequence type=function
+CM848 function        0x00539d18  cm848_runPowerDownSequence                   -> runPowerDownSequence [medium] | reject cm848_runPowerDownSequence type=function
+CM550 function        0x000117ec  cm550_copyCalibrationFromRomToRam            -> copyCalibrationFromRomToRam [high] | accept copyCalibrationFromRomToRam type=function
+CM848 function        0x0004bd00  cm848_copyRomToRamBuffer                     -> copyCalibrationFromRomToRam [high] | accept copyCalibrationFromRomToRam type=function
+CM550 function        0x0002e9ac  cm550_clearWorkingMemory                     -> clearWorkingRam [high] | accept clearWorkingRam type=function
+CM848 function        0x00538974  cm848_clearWorkingRam                        -> clearWorkingRam [high] | accept clearWorkingRam type=function
+CM550 function        0x0000b688  cm550_FUN_0000b688                           -> getJ1939DiagnosticResponseEchoLength [high] | accept getJ1939DiagnosticResponseEchoLength type=function
+CM848 function        0x000204a8  cm848_getJ1939DiagnosticResponseEchoLength   -> getJ1939DiagnosticResponseEchoLength [high] | accept getJ1939DiagnosticResponseEchoLength type=function
+CM550 function        0x0001b876  main_loop                                    -> executiveFrameInterruptHandler [high] | accept executiveFrameInterruptHandler type=function
+CM848 function        0x0000c0a0  main_loop                                    -> executiveFrameInterruptHandler [high] | accept executiveFrameInterruptHandler type=function
+   rejected lead: Pair 3, mc68k_applicationMain (CM550 0x284e8) / cm848_applicationMain (CM848 0x544c4): counterpart, not a twin; keep both names. The test used for pairs 1 and 2 fails in both directions. The skeletons
+   rejected lead: The twin named in CM550 function_definitions.csv:324 for cm550_diagnosticMultiPacketResponseBuilder ('CM848's twin cm848_sendDiagServiceResponse') is wrong. cm848_sendDiagServiceResponse (0x74a0) is t
+   rejected lead: cm848_copyROMCalibrationToRAM (0x509b74) as the twin of cm550_copyCalibrationFromRomToRam: wrong. It copies 4 passes of j1939_default_engine_name / j1939_default_retarder_name and the two default sour
+   rejected lead: The restart entries cm550_FUN_00028978 (0x28978) and cm848_restartApplicationWithoutReset (0x54d30) as twins. I compared both decompilations and the bytes (CM550 0x28978-0x28a02, CM848 0x54d30-0x54e0c
+   rejected lead: vp44_FUN_00027c20 (CM550 0x27c20) against cm848_saveEepromForPowerDown (CM848 0x539a78), compared from the decompilations only, not the bytes. They are counterparts, not twins. They have the same slot
+   rejected lead: Current names checked while comparing pairs 1-3 that do not describe the code. vp44_initVP44StatusMonitoring (0x15dd0) only points the discrete-input override pointer and calls mc68k_sampleAndDebounce
+===== can5
+CM550 function        0x0000c80e  cm550_modeBasedDataDispatcher                -> vp44_dispatchReceivedPumpMessage [high] | accept vp44_dispatchReceivedPumpMessage
+CM550 function        0x0001e1be  cm550_modeBasedDataDispatcherWrapper         -> vp44_handleCanCs5ReceiveInterrupt [high] | accept vp44_handleCanCs5ReceiveInterrupt
+CM550 function        0x0001e1ac  cm550_emptyStubWrapper1                      -> vp44_handleCanCs5TransmitInterrupt [medium] | accept vp44_handleCanCs5TransmitInterrupt
+CM550 function        0x0000c80c  cm550_emptyStubFunction1                     -> cm550_ignoreCanTransmitInterrupt [medium] | amend ignoreCanTransmitInterrupt
+   rejected lead: 'modeBased' (current names of 0xc80e / 0x1e1be): there is no mode. The selector is the 82527 message object number (interrupt code - 2, low byte of the word argument), and the three cases are exactly 
+   rejected lead: 'emptyStubWrapper1' (0x1e1ac): not a generic stub wrapper. It is the CS5 interrupt handler's TXIE-set (transmit) branch, the counterpart of 0x1e1be (the bytes are identical except the jsr target).
+   rejected lead: mc68k_ for 0xc80e: rejected. None of the four bodies reads or writes an MC68336 or chip select register. 0xc80e only adds 0x10 / 0x30 / 0x50 to the RAM pointer at 0x8000f0 (= 0xFFC800 in the RAM dump)
+   rejected lead: vp44_ for the stub 0xc80c: rejected. The CS4 (J1939) transmit branch also calls it (jsr at ROM 0x1e07a in 0x1e056), so it is generic: cm550_.
+   rejected lead: vp44CanMessageDispatcher (0x22e5e), vp44CanFrameBuilder (0x22a58) and vp44MessageTransmitter (0x22ad8) as proof that CS5 is the VP44 link: rejected. They are J1939 transport: the switch on first data 
+   rejected lead: Reading the e2m images unshifted: the extended RAM file read at the e2m address 801A+0x48 (file 0xFF8) is 00 00 00 00 00 0c 00 00 00 18 ..., which is not a message object. The images are 0x80 lower (f
+   rejected lead: A CM848 twin: none. The shape scan (compares 1 / 3 / 5 plus call arguments + 0x10 / + 0x30 / + 0x50) finds 0 CM848 functions and finds the CM550 dispatcher as the control. CM848 uses the on-chip TouCA
+   rejected lead: Renaming mc68k_canCs5InterruptHandler (0x1e1d0): not needed. It reads and writes the CS5 82527 registers (0xFFC85F / 0xFFC801 / 0xFFC800 / 0xFFC802), so mc68k_ is right and the name says what it is. O
+===== speed
+CM550 function        0x0001025c  cm550_retarderModeThresholdCalculator        -> cm550_detectEngineSpeedSensorSyncPulse [high] | accept cm550_detectEngineSpeedSensorSyncPulse
+CM550 function        0x0001a95a  cm550_throttleTimeAccumulatorProcessor       -> cm550_processPrimarySpeedPulsePeriodWithSyncPuls [high] | accept cm550_processPrimarySpeedPulsePeriodWithSyncPuls
+CM550 function        0x0002e2f4  mc68k_waterInFuelDiagnosticHandler           -> mc68k_stepPwm3AndPwm4OutputStartUpTest [high] | accept mc68k_stepPwm3AndPwm4OutputStartUpTest
+CM550 function        0x00015df0  mc68k_FUN_00015df0                           -> mc68k_initializeDiscreteOutputDrivers [high] | accept mc68k_initializeDiscreteOutputDrivers
+   rejected lead: The lead that 0x15df0's address is stored as a pointer at ROM 0x2870a is wrong. 0x2870a is the operand of the jsr at 0x28708 (4e b9 00 01 5d f0) in mc68k_applicationMain's start-up call list (frozen .
+   rejected lead: Calling 0x1a95a a 'sync gap' processor is wrong. The sync event is an early (short) pulse, not a gap. 0x1025c returns 1 when the period is below the previous period x CSXT_1PC / 256 (75 % in the dump;
+   rejected lead: 0x1a95e vp44FaultThresholdTablesInit is not a function, so it needs no name. It is the movem.l (48 e7 00 3c) right after 0x1a95a's link.w a6,#0 (4e 56 00 00). The only epilogue (0x1ab60 4c ee 3c 00 ff
+   rejected lead: The e2m DRPW0nER masks do not give J90350's PWM numbering. The 74* / 84t0 / Isbp700 e2m files put PWM1-5 at status word 7 bits 0x40-0x400, but J90350's code uses 0x10 / 0x20 / 0x40 / 0x80 / 0x100. PWM
+   rejected lead: The old names' domains do not fit. 'retarder mode threshold', 'throttle time accumulator', 'water in fuel diagnostic' and 'VP44 fault threshold tables' all fail: none of the bodies reads retarder, thr
+   rejected lead: A CM848 twin for 0x1025c / 0x1a95a does not exist. mpc555_handleCamSignalInterrupt (0x457d0) and hpcr_processEngineSyncPulses (0x44fa8) run a 5-state cam / crank sync from the TPU-A PMA / PMM status. 
+   rejected lead: The meaning of chip select 2 port 2 bit 7 (0xFFD006 bit 7) cannot be taken from the e2m. The versions disagree on block E +29 bit 7: DRFMCHDR (fan clutch driver) in one file, DRSXEN01 (solenoid 1 driv
+   rejected lead: The extended-RAM dump values were not used as evidence: CMSYSS = 0x70, ring pointers 0, 0x80dc60 = 0, 0x80aa16 / 0x80aa18 = 0. They do not agree with the main RAM dump, where 0x808F04 = 0x00019E90 sho
+===== restart
+CM550 function        0x0001192a  cm550_FUN_0001192a                           -> restartThroughBootRom [high] | accept restartThroughBootRom
+CM848 function        0x000216fc  cm848_restartThroughBootRom                  -> restartThroughBootRom [high] | accept restartThroughBootRom
+CM550 function        0x00028978  cm550_FUN_00028978                           -> cm550_restartApplicationWithoutReset [high] | accept cm550_restartApplicationWithoutReset
+CM550 global          0x0080dc70  calibration_bank_active                      -> parameter_block_uploaded type=word [high] | accept parameter_block_uploaded type=word
+CM550 global          0x00803fd6  calibration_bank1_write_sequence             -> parameter_block_1_save_start_count_cal type=word [high] | accept parameter_block_1_save_start_count_cal type=word
+CM550 global          0x00803fde  calibration_bank2_write_sequence             -> parameter_block_2_save_start_count_cal type=word [high] | accept parameter_block_2_save_start_count_cal type=word
+CM550 global          0x00803fe8  eeprom_calibration_write_success             -> flash_write_failure_flag_cal type=word [high] | accept flash_write_failure_flag_cal type=word
+CM550 global          0x00803472  lift_pump_table_lookup_arg_3472              -> j1939_dm8_test_value type=word [high] | accept j1939_dm8_test_value type=word
+CM550 global          0x00803fd8  DAT_00803fd8                                 -> parameter_block_1_save_complete_count_cal type=word [high] | accept parameter_block_1_save_complete_count_cal type=word
+CM550 global          0x00803fe0  DAT_00803fe0                                 -> parameter_block_2_save_complete_count_cal type=word [high] | accept parameter_block_2_save_complete_count_cal type=word
+CM550 global          0x0080dc6e  calibration_bank_copy_valid                  -> power_down_refresh_enable type=word [high] | accept power_down_refresh_enable type=word
+CM550 global          0x00803b12  DAT_00803b12                                 -> parameter_block_1_checksum_cal type=word [high] | accept parameter_block_1_checksum_cal type=word
+CM550 global          0x00803b14  DAT_00803b14                                 -> parameter_block_2_checksum_cal type=word [high] | accept parameter_block_2_checksum_cal type=word
+CM550 global          0x00803470  DAT_00803470                                 -> j1939_dm8_test_identifier type=byte [high] | accept j1939_dm8_test_identifier type=byte
+CM550 global          0x0080d0ca  DAT_0080d0ca                                 -> power_down_start_flag type=word [high] | accept power_down_start_flag type=word
+CM550 global          0x0080d0c8  smoke_limiter_output_value                   -> engine_state type=word [high] | accept engine_state type=word
+CM550 function        0x00011908  cm550_eepromWriteWrapper                     -> handleJ1939RestartService [high] | accept handleJ1939RestartService
+CM848 function        0x000218dc  cm848_handleJ1939RestartService              -> handleJ1939RestartService [high] | accept handleJ1939RestartService
+CM550 function        0x0001191a  cm550_triggerDiagnosticSystemReset           -> cm550_restartThroughBootRomAfterJ1708Request [high] | accept cm550_restartThroughBootRomAfterJ1708Request
+   rejected lead: READ THIS FIRST - the CM550 extended RAM dump base: README.md / docs/memory_map.md say J90350.00.extended_ram.bin starts at 0x8091C2. Read that way it gives wrong values from at least 0x8092e2 up. Of 
+   rejected lead: 0x1192a as only a counterpart of cm848_restartThroughBootRom: checked, it is a twin. The step order, the 7 / 0xff results, the 4-byte hour meter saves with ram_refresh_enable waits, the 0 = J1939 resp
+   rejected lead: 0x28978 as a twin of CM848 0x54d30 cm848_restartApplicationWithoutReset: rejected, it is a counterpart. Only the skeleton matches (re-init / SP / clear power_down_start_flag / enable interrupts / loop
+   rejected lead: Placing CM550's block 1069 by CM848's e2m offsets (+0 at 0x803fd6): wrong by 2 bytes. CM550's own parameter ID table puts 1069 at EEPROM 0x4ca (0x803fd4) and 106A at 0x4e0 (0x803fea), so CM550's 1069 
+   rejected lead: eeprom_calibration_write_success (0x803fe8) read as a success flag: the polarity is backwards. It is set to 1 when the flash parameter block save fails (ROM 0x27d48 / 0x27e1e after 3 attempts returnin
+   rejected lead: calibration_bank_copy_valid (0x80dc6e) read as 'the RAM copy is valid': it is e2m 10C7 +2 Powerdown_Refresh_Enable, the gate of the RAM refresh of the parameter block tail word, as CM848's power_down_
+   rejected lead: calibration_bank1 / 2_write_sequence read as one sequence word per bank: each bank has two words, a save START count (0x803fd6 / 0x803fde) and a save COMPLETE count (0x803fd8 / 0x803fe0, no rows today
+   rejected lead: lift_pump_table_lookup_arg_3472 (VP44 lift pump vocabulary): nothing about a lift pump or a table lookup. It is the DM8 test value written by the DM7 answer path
+   rejected lead: smoke_limiter_output_value (0x80d0c8): not a smoke limiter. It is the engine state (block 1068 +0, values 1-8 with CM848's ENGINE_STATE transitions)
+   rejected lead: vp44_reset_count (0x803fec), checked in passing: it is e2m 106A +2 Powerup_Count (CM848 completed_power_down_count_cal, 0x3fdc92). The selector adds 1 to it when 0x803fe2 = 0x803fe4, and cm550_restart
+   rejected lead: The DM8 rows at 0x803006-0x80301b (j1939_message_buffer_pgn65232, dm8_pgn65232_*, diagnostic_byte_response_word at 0x803016): no absolute access in the dumped ROM. The DM8 message the code uses is 0x8
+   rejected lead: 0x803b15 ecu_serial_number: no access of its own in the dumped ROM. It is the low byte of the block 2 checksum word (EEPROM 0xB). Not removed here; build and diff first
+   rejected lead: Wrong current names in the restart routine's module, checked in passing and not proposed (other passes may own them): cm550_activateHighRpmShutdownFlag (0x118fc) is J1939 service 6 / J1708 command 66,
+===== ema
+CM550 struct_type                 (none - new CM550 type)                      -> ema_filter_state_t [high] | accept ema_filter_state_t type=coefficient:word*:4; accumulator:dword:4
+CM550 struct_type                 (none - new CM550 type)                      -> second_order_filter_state_t [high] | accept second_order_filter_state_t type=coefficient_1:word*:4; coefficient_3:word*:4; output:dword:4; output_previous:dword:4
+CM550 struct_type                 sensor_debounce_state_t                      -> sensor_debounce_state_t [medium] | amend sensor_debounce_state_t type=filter:ema_filter_state_t:8; filtered_value:word:2; lookup_result:word:2; debounce_counter:short:2; fault_ac
+CM550 struct_instance 0x00800066  timing_table_4_ptr                           -> engine_acceleration_first_stage_filter_state type=ema_filter_state_t [high] | accept engine_acceleration_first_stage_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080006e  (no row at +0; renders DAT_0080006e)         -> engine_acceleration_second_stage_filter_state type=ema_filter_state_t [high] | accept engine_acceleration_second_stage_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x00800670  (no row; renders DAT_00800670)               -> engine_deceleration_rate_filter_state type=ema_filter_state_t [high] | accept engine_deceleration_rate_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080d636  (no row; renders DAT_0080d636)               -> high_speed_governor_error_filter type=ema_filter_state_t [high] | accept high_speed_governor_error_filter type=ema_filter_state_t
+CM550 struct_instance 0x00801a5a  retarder_mode3_threshold_table               -> low_speed_governor_error_filter type=ema_filter_state_t [high] | accept low_speed_governor_error_filter type=ema_filter_state_t
+CM550 struct_instance 0x00801c00  (no row; renders DAT_00801c00)               -> power_take_off_speed_error_filter type=ema_filter_state_t [high] | accept power_take_off_speed_error_filter type=ema_filter_state_t
+CM550 struct_instance 0x0080a91a  (no row; renders DAT_0080a91a)               -> alpha_fuel_rate_filter_state type=ema_filter_state_t [high] | accept alpha_fuel_rate_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a984  asg_droop_compensated_error_2000_2000        -> all_speed_governor_reference_filter_state type=ema_filter_state_t [high] | accept all_speed_governor_reference_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x008005aa  (no row; renders DAT_008005aa)               -> engine_speed_filter_state type=ema_filter_state_t [high] | accept engine_speed_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x00800612  (no row; renders DAT_00800612)               -> engine_protection_speed_limit_filter_state type=ema_filter_state_t [high] | accept engine_protection_speed_limit_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x00801a32  (no row at +0; renders DAT_00801a32)         -> pedal_fault_mode_engine_speed_filter_state type=ema_filter_state_t [high] | accept pedal_fault_mode_engine_speed_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x00801a62  retarder_mode3_output_ptr                    -> low_speed_governor_throttle_reference_offset_fil type=ema_filter_state_t [medium] | accept low_speed_governor_throttle_reference_offset_fil type=ema_filter_state_t
+CM550 struct_instance 0x00801c46  (no row; renders DAT_00801c46)               -> power_take_off_reference_filter_state type=ema_filter_state_t [high] | accept power_take_off_reference_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a2aa  (no row; A/D channel record 0)               -> intake_manifold_temperature_sensor_filter_state type=ema_filter_state_t [high] | accept intake_manifold_temperature_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a2c0  (no row; A/D channel record 1)               -> fuel_temperature_sensor_filter_state type=ema_filter_state_t [high] | accept fuel_temperature_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a2d6  (no row; A/D channel record 2)               -> coolant_level_sensor_filter_state type=ema_filter_state_t [high] | accept coolant_level_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a2ec  (no row; A/D channel record 3)               -> fuel_pressure_sensor_filter_state type=ema_filter_state_t [medium] | accept fuel_pressure_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a302  (no row; A/D channel record 4)               -> oil_pressure_sensor_filter_state type=ema_filter_state_t [high] | accept oil_pressure_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a318  (no row; A/D channel record 5)               -> boost_pressure_sensor_filter_state type=ema_filter_state_t [high] | accept boost_pressure_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a32e  (no row; A/D channel record 6)               -> coolant_temperature_sensor_filter_state type=ema_filter_state_t [high] | accept coolant_temperature_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a344  (no row; A/D channel record 7)               -> ambient_air_temperature_sensor_filter_state type=ema_filter_state_t [high] | accept ambient_air_temperature_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a35a  (no row; A/D channel record 8)               -> power_steering_temperature_sensor_filter_state type=ema_filter_state_t [low] | accept power_steering_temperature_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a370  (no row; A/D channel record 9)               -> exhaust_pressure_sensor_filter_state type=ema_filter_state_t [medium] | accept exhaust_pressure_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a386  (no row; A/D channel record 10)              -> sampled_throttle_sensor_filter_state type=ema_filter_state_t [high] | accept sampled_throttle_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a39c  (no row; A/D channel record 11)              -> remote_throttle_sensor_filter_state type=ema_filter_state_t [high] | accept remote_throttle_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a3b2  (no row; A/D channel record 12)              -> ambient_air_pressure_sensor_filter_state type=ema_filter_state_t [high] | accept ambient_air_pressure_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a3c8  (no row; A/D channel record 13)              -> battery_voltage_sensor_filter_state type=ema_filter_state_t [high] | accept battery_voltage_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a3de  (no row; A/D channel record 14)              -> engine_speed_sensor_supply_voltage_filter_state type=ema_filter_state_t [high] | accept engine_speed_sensor_supply_voltage_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a3f4  (no row; A/D channel record 15)              -> throttle_position_sensor_supply_voltage_filter_s type=ema_filter_state_t [high] | accept throttle_position_sensor_supply_voltage_filter_s type=ema_filter_state_t
+CM550 struct_instance 0x0080a40a  (no row; A/D channel record 16)              -> vehicle_connector_sensor_supply_voltage_filter_s type=ema_filter_state_t [high] | accept vehicle_connector_sensor_supply_voltage_filter_s type=ema_filter_state_t
+CM550 struct_instance 0x0080a420  (no row; A/D channel record 17)              -> engine_connector_sensor_supply_voltage_filter_st type=ema_filter_state_t [high] | accept engine_connector_sensor_supply_voltage_filter_st type=ema_filter_state_t
+CM550 struct_instance 0x0080a436  (no row; A/D channel record 18)              -> frequency_throttle_input_supply_voltage_filter_s type=ema_filter_state_t [low] | accept frequency_throttle_input_supply_voltage_filter_s type=ema_filter_state_t
+CM550 struct_instance 0x0080a44c  (no row; A/D channel record 19)              -> cruise_control_switch_mux_filter_state type=ema_filter_state_t [high] | amend cruise_control_switch_multiplexer_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a462  (no row; A/D channel record 20)              -> water_in_fuel_sensor_filter_state type=ema_filter_state_t [high] | accept water_in_fuel_sensor_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a478  (no row; A/D channel record 21)              -> egr_current_feedback_filter_state type=ema_filter_state_t [low] | accept egr_current_feedback_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a48e  (no row; A/D channel record 22)              -> programming_pulse_supply_voltage_filter_state type=ema_filter_state_t [high] | accept programming_pulse_supply_voltage_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a4a4  (no row; A/D channel record 23)              -> high_side_gate_bias_supply_voltage_filter_state type=ema_filter_state_t [low] | accept high_side_gate_bias_supply_voltage_filter_state type=ema_filter_state_t
+CM550 struct_instance 0x0080a4ba  (no row; A/D channel record 24)              -> op_amp_and_comparator_supply_voltage_filter_stat type=ema_filter_state_t [low] | amend operational_amplifier_and_comparator_supply_volt type=ema_filter_state_t
+CM550 global          0x00807a42  engine_acceleration_first_stage_digital_filt -> engine_acceleration_first_stage_digital_filter_a type=word [high] | accept engine_acceleration_first_stage_digital_filter_a type=word
+CM550 global          0x00807a44  engine_acceleration_second_stage_digital_fil -> engine_acceleration_second_stage_digital_filter_ type=word [high] | accept engine_acceleration_second_stage_digital_filter_ type=word
+CM550 global          0x00807f66  filter_constant_in_filtered_engine_decel_rat -> filter_constant_in_filtered_engine_decel_rate_ca type=word [high] | accept filter_constant_in_filtered_engine_decel_rate_ca type=word
+CM550 global          0x0080d634  hsg_gain_scheduling_output_hsg_engine_speed_ -> hsg_gain_scheduling_output_hsg_engine_speed_erro type=word [high] | accept hsg_gain_scheduling_output_hsg_engine_speed_erro type=word
+CM550 global          0x0080823e  (no row)                                     -> low_speed_governor_error_filter_coefficient type=word [medium] | accept low_speed_governor_error_filter_coefficient type=word
+CM550 global          0x0080889a  (no row)                                     -> power_take_off_speed_error_filter_coefficient type=word [medium] | accept power_take_off_speed_error_filter_coefficient type=word
+CM550 global          0x00807ab0  time_constant_of_lb_hr_filter_used_in_the_al -> time_constant_of_lb_hr_filter_used_in_the_alpha_ type=word [high] | accept time_constant_of_lb_hr_filter_used_in_the_alpha_ type=word
+CM550 global          0x0080a946  asg_application_specific_reference_filter_co -> asg_application_specific_reference_filter_coeffi type=word [high] | accept asg_application_specific_reference_filter_coeffi type=word
+CM550 global          0x00807b8c  ASJCFTCS                                     -> ASJCFTCS type=word [high] | accept ASJCFTCS type=word
+CM550 global          0x00807bda  ASFTCF                                       -> ASFTCF type=word [high] | accept ASFTCF type=word
+CM550 global          0x00807ea8  time_constant_for_the_filter_used_on_the_2_n -> time_constant_for_the_filter_used_on_the_2_n_pul type=word [high] | accept time_constant_for_the_filter_used_on_the_2_n_pul type=word
+CM550 global          0x00807f3a  maximum_rpm_limit_filter_time_constant_0_1_0 -> maximum_rpm_limit_filter_time_constant_0_1_0 type=word [high] | accept maximum_rpm_limit_filter_time_constant_0_1_0 type=word
+CM550 global          0x0080820e  (no row)                                     -> pedal_fault_mode_engine_speed_filter_coefficient type=word [medium] | accept pedal_fault_mode_engine_speed_filter_coefficient type=word
+CM550 global          0x00808258  digital_filter_time_constant_used_in_throttl -> digital_filter_time_constant_used_in_throttle_de type=word [high] | accept digital_filter_time_constant_used_in_throttle_de type=word
+CM550 global          0x008088ac  reference_speed_change_const_0_1             -> reference_speed_change_const_0_1 type=word [high] | accept reference_speed_change_const_0_1 type=word
+CM550 global          0x00806ae2  a_d_digital_filter_constant_for_intake_manif -> a_d_digital_filter_constant_for_intake_manifold_ type=word [high] | accept a_d_digital_filter_constant_for_intake_manifold_ type=word
+CM550 global          0x00806afa  a_d_digital_filter_constant_for_fuel_tempera -> a_d_digital_filter_constant_for_fuel_temperature type=word [high] | accept a_d_digital_filter_constant_for_fuel_temperature type=word
+CM550 global          0x00806b12  coolant_level_a_d_digital_filter_constant_0_ -> coolant_level_a_d_digital_filter_constant_0_1 type=word [high] | accept coolant_level_a_d_digital_filter_constant_0_1 type=word
+CM550 global          0x00806b2a  adsyfpcs_param                               -> adsyfpcs_param type=word [high] | accept adsyfpcs_param type=word
+CM550 global          0x00806b42  a_d_digital_filter_constant_for_oil_pressure -> a_d_digital_filter_constant_for_oil_pressure_0_1 type=word [high] | accept a_d_digital_filter_constant_for_oil_pressure_0_1 type=word
+CM550 global          0x00806b5a  a_d_digital_filter_constant_for_boost_pressu -> a_d_digital_filter_constant_for_boost_pressure_0 type=word [high] | accept a_d_digital_filter_constant_for_boost_pressure_0 type=word
+CM550 global          0x00806b72  a_d_digital_filter_constant_for_coolant_temp -> a_d_digital_filter_constant_for_coolant_temperat type=word [high] | accept a_d_digital_filter_constant_for_coolant_temperat type=word
+CM550 global          0x00806b8a  a_d_digital_filter_constant_for_ambient_air_ -> a_d_digital_filter_constant_for_ambient_air_temp type=word [high] | accept a_d_digital_filter_constant_for_ambient_air_temp type=word
+CM550 global          0x00806ba2  adpotpcs_param                               -> adpotpcs_param type=word [high] | accept adpotpcs_param type=word
+CM550 global          0x00806bba  adsyepcs_param                               -> adsyepcs_param type=word [high] | accept adsyepcs_param type=word
+CM550 global          0x00806bd2  a_d_digital_filter_constant_for_throttle_0_1 -> a_d_digital_filter_constant_for_throttle_0_1 type=word [high] | accept a_d_digital_filter_constant_for_throttle_0_1 type=word
+CM550 global          0x00806bea  a_d_digital_filter_constant_for_remote_throt -> a_d_digital_filter_constant_for_remote_throttle_ type=word [high] | accept a_d_digital_filter_constant_for_remote_throttle_ type=word
+CM550 global          0x00806c02  a_d_digital_filter_constant_for_ambient_air_ -> a_d_digital_filter_constant_for_ambient_air_pres type=word [high] | accept a_d_digital_filter_constant_for_ambient_air_pres type=word
+CM550 global          0x00806c1a  a_d_digital_filter_constant_for_battery_volt -> a_d_digital_filter_constant_for_battery_voltage_ type=word [high] | accept a_d_digital_filter_constant_for_battery_voltage_ type=word
+CM550 global          0x00806c32  adessvcs_param                               -> adessvcs_param type=word [high] | accept adessvcs_param type=word
+CM550 global          0x00806c4a  ADBSPRXA                                     -> throttle_position_sensor_supply_voltage_filter_c type=word [high] | accept throttle_position_sensor_supply_voltage_filter_c type=word
+CM550 global          0x00806c62  advhsvcs_param                               -> advhsvcs_param type=word [high] | accept advhsvcs_param type=word
+CM550 global          0x00806c7a  engine_sensor_supply_voltage_a_d_digital_fil -> engine_sensor_supply_voltage_a_d_digital_filter_ type=word [high] | accept engine_sensor_supply_voltage_a_d_digital_filter_ type=word
+CM550 global          0x00806c92  adftsvcs_param                               -> adftsvcs_param type=word [high] | accept adftsvcs_param type=word
+CM550 global          0x00806caa  a_d_digital_filter_constant_for_cc_switch_mu -> a_d_digital_filter_constant_for_cc_switch_mux_0_ type=word [high] | accept a_d_digital_filter_constant_for_cc_switch_mux_0_ type=word
+CM550 global          0x00806cc2  water_in_fuel_a_d_digital_filter_constant_0_ -> water_in_fuel_a_d_digital_filter_constant_0_1 type=word [high] | accept water_in_fuel_a_d_digital_filter_constant_0_1 type=word
+CM550 global          0x00806cda  adegcfcs_param                               -> adegcfcs_param type=word [high] | accept adegcfcs_param type=word
+CM550 global          0x00806cf2  adpssvcs_param                               -> adpssvcs_param type=word [high] | accept adpssvcs_param type=word
+CM550 global          0x00806d0a  ADHBSVCS                                     -> ADHBSVCS type=word [high] | accept ADHBSVCS type=word
+CM550 global          0x00806d22  adocsvcs_param                               -> adocsvcs_param type=word [high] | accept adocsvcs_param type=word
+CM550 function        0x00034e9a  exponentialMovingAverage                     -> cm550_signedFirstOrderFilter [medium] | amend cm550_signedFirstOrderFilter type=return word; 0 new_sample ushort; 1 filter_state ema_filter_state_t *
+CM550 function        0x00034f8a  cm550_coreTableInterpolation                 -> cm550_exponentialMovingAverage [medium] | accept cm550_exponentialMovingAverage type=return word; 0 new_sample ushort; 1 filter_state ema_filter_state_t *
+CM550 function        0x00034f00  cm550_unsignedLinearInterpolation            -> cm550_secondOrderFilter [medium] | amend cm550_secondOrderFilter type=return word; 0 input ushort; 1 filter second_order_filter_state_t *
+CM550 function        0x00034fe0  (no function; would be FUN_00034fe0)         -> cm550_secondOrderFilterUnsigned [low] | accept cm550_secondOrderFilterUnsigned type=return word; 0 input ushort; 1 filter second_order_filter_state_t *
+   rejected lead: interpolation records: none of the three callees interpolates. 0x34f00 and 0x34f8a walk no table or axis; their records hold coefficient pointers and Q16.16 filter state. The CM550 interpolators are l
+   rejected lead: 0x34e9a as the twin of CM848 exponentialMovingAverage: 0x34e9a is the signed (offset binary) filter and CM848 exponentialMovingAverage the unsigned one; the shared twin calculateAlphaFuelRateResult ca
+   rejected lead: 0x800060 timing_table_3_ptr as a filter record: it is +8 (y_axis_ptr) of the table_interp_args_t at 0x800058 (cm550_dmaDescriptorSetup2 0xb63e: index 2, x axis 0x600c6, y axis 0x600da; cm550_FUN_0000b
+   rejected lead: fuel_parameter_pointer_* as filter records: fuel_parameter_pointer_3 (0x800074) is +6 of the 0x80006e EMA record (no user). fuel_parameter_pointer_2 (0x80007c) and fuel_parameter_pointer_1 (0x800084) 
+   rejected lead: the zero pointers read at 0x80a91a / 0x80d636 / 0x80a2aa at the nominal extended RAM offset (address - 0x8091C2): that offset is wrong. Every anchor from 0x809eea up (init-code constants at 0x809eea, 
+   rejected lead: 0x806c4a-0x806c5c ADBSPRXA / _entry_1-4 / ADBSPRYA / _entry_1-4 as the boost pressure linearization axes: these bytes are A/D channel 15 config (43909 / 0 / 1 / 1 / 1 / 5 / 942 / 767 / channel address
+   rejected lead: asg_droop_compensated_error_2000_2000 (0x80a984) as an error value: the code stores pointers there (cpp 2604-2605 / 2635-2636 / 2688 / 2952) and dereferences it (cpp 2389).
+   rejected lead: can_transmission_active_count (0x801a36) as a counter: it is the accumulator of the 0x801a32 record (move.l d0 = current_engine_rpm_filtered << 16 at 0x258ce, clr.l at 0x258d6 are its only users).
+   rejected lead: sensor_fault_config_t.reserved_00 / debounce_max (existing unused template): +0 is the A/D digital filter constant that each channel EMA record points at, and +23 is the sample period in 20 ms passes 
+   rejected lead: Calterm caldoc_001/002 as the J90350.00 channel map: they are a 64c6.e2m CM550 calibration (CAPS + VP44). Its addresses agree with 20 of the 25 records; addresses 3 / 26 / 36 / 38 / 39 carry other fun

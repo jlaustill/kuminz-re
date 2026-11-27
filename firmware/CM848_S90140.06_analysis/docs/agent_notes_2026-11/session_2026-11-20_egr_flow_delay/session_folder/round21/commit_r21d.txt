@@ -1,0 +1,19 @@
+firmware: ApplyStructures.java - map i16 / sword to short, warn on an unknown field type (round 21 stage D)
+
+Round 21 stage A wrote five signed struct fields as i16, the name global_variables.csv uses. ApplyStructures.java's
+getDataType falls back to byte for an unknown name, so each 2-byte field became byte[2]. The decompiler then rendered
+array decays and odd computed-offset bases, and stage B had to fix the fields by hand (they are short now). This
+change closes that gap in two ways:
+- i16 (global_variables.csv) and sword (function_definitions.csv) now map to short, as short already does;
+- an unknown field type prints "WARN: unknown field type '<name>' - using byte" to the build log, where
+  ApplyStructures' lines already land (INFO ApplyStructures.java> ...), instead of saying nothing.
+struct_type_fallbacks.py (session folder) lists such fields offline. Today it finds none in CM848, and in CM550 one
+flexible array member whose non-numeric size is skipped before the type lookup.
+
+Verification (the shared-script rule: build both firmwares with and without the change):
+- CM550: a base build with the old script reproduces the committed .cpp (timestamp only), and the build with the new
+  script is identical to that base, line for line.
+- CM848: the build with the new script is identical to round 21 stage C's .cpp, line for line.
+- Neither log has an unknown-type warning.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

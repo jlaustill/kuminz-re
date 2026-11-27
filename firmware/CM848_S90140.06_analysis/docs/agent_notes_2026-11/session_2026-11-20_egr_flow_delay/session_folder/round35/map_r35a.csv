@@ -1,0 +1,3 @@
+address,name,old_label,kind
+0x00302903,boot_j1939_transport_transmit_active,qadc_a_queue_status_1,global
+0x00302904,boot_j1939_transport_transmit_destination_address,qadc_a_active_channel_id,global

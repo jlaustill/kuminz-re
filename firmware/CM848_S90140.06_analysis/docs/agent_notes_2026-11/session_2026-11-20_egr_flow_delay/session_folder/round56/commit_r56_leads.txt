@@ -1,0 +1,13 @@
+cm848: round 56 - two task 046 leads say only what the round measured
+
+- The LOGICAL_OUTPUT enum lead claimed twelve proven outputs, counting round 11's output 54. This round checked only
+  its own 11, so the lead now says that.
+- The parameter-naming lead said only a shared-script change could name parameters without the cast cost. The
+  local_variables.csv route, which already renames cm848_validateWriteAuth's param_1, was read but not built. The
+  lead now calls it untried.
+- The round 56 checks the closing had skipped, now run: all 23 row-backed global renames keep their (was ...) note
+  (check_history_r44b.py), and each of the 11 value-byte DAT_ labels is left only in its own instance row's note
+  (none in the .cpp).
+- The session folder's closing script and the new map / message files are archived too.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

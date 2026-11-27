@@ -1,0 +1,38 @@
+cm550: round 77 stage A - the malformed J1708 state structs removed; the J1708 driver's globals typed; the CTM4 bus timer functions named
+
+From round 76's lead: CM550 has 18 structs whose field rows each carry their own address. ApplyStructures builds one
+type from all of a name's rows and puts an instance at every listed address. CM848 has none. This stage fixes the
+worst two; the other 16 are leads.
+- j1708_tx_state_t / j1708_rx_state_t (10 rows) are gone. They modeled 0x80DC94-0x80DCA1 / 0x80DCA2-0x80DCAF as 14-byte
+  types. The receive type's instance at its last field's address, 0x80DCAF, covered the separate globals at
+  0x80DCB0-0x80DCBC, so 61 accesses rendered as pieces of it (j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ was
+  j1708_receive_mode_flag).
+- The globals are typed by their decoded m68k accesses:
+  - the six buffer pointers at 0x80DC94 / 98 / 9C / A2 / A6 / AA are dwords (move.l). This drops their '_' prefixes;
+  - 0x80DCA0 / AE / B0 / B1 / B3 / BA / BB / BC are bytes and 0x80DCB6 is a dword.
+- Named from their uses:
+  - 0x80DCB3 j1708_message_checksum (was a coordinate row): the SCI interrupt handler adds each byte and sends ~sum + 1;
+  - 0x80DCBA j1708_bus_timer_armed_flag (was j1708_tpu_channel_active): set when the CTM4 MCSM11 timer is armed and
+    cleared when a byte arrives or the timer expires.
+- Two functions named for what they drive (neither drives a TPU channel), keeping CM550's mc68k_ prefix for code that
+  accesses MC68336 registers:
+  - 0x1e266 mc68k_tpuTimerChannelEnable -> mc68k_armJ1708BusTimer: it arms MCSM11 (CNT = 0xfc8a, the interrupt level
+    in SIC). Its callers push nothing before the jsr, so its prototype is void. The never-read channel_mask parameter
+    row had made the SCI interrupt handler render 'channel_mask = (word)in_D0'.
+  - 0x300d4 mc68k_tpuChannelStateMachine -> mc68k_j1708BusTimerInterruptHandler: the MCSM11 interrupt handler (no
+    caller). It closes the received message and starts a pending transmission.
+- j1708_pending_abort_count keeps its name; its comment records what the code does with it.
+
+Proof:
+- CM550 verify is DETERMINISTIC. No j1708_*_state_t render and no channel_mask is left.
+- Of 775 functions, 8 differ after the round's renames (prove_r77a_cm550.py). statements_r77a_cm550.py compares them
+  statement by statement, so line wrapping cannot hide anything there. Every change is explained:
+  - the pointer low bytes (0x80DC97 / 9B / 9F / A5 / A9 / AD) now render as parts of their typed dword:
+    CONCAT31(p._0_3_, (char)q + 1), p._3_1_ and (char)p. These are the same addresses;
+  - the SCI interrupt handler's bogus channel_mask / local_24 locals are gone;
+  - the transmit state switch's labels lose their (BADTYPE) casts;
+  - local declarations change type, and one MEMORY_REGION_TYPE temporary renumbers.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_lookup_tables and
+  test_rename_waves pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

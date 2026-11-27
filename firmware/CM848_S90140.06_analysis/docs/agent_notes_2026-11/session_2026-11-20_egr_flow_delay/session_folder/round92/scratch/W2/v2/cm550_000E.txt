@@ -1,0 +1,504 @@
+000E +0006 CRACELSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; CRUISE ACCEL SWITCH (BIT 1 OF 0 TO 7, BYTE 6)~0/1
+000E +0006 CRCOASSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; CRUISE COAST SWITCH (BIT 3 OF 0 TO 7, BYTE 6)~0/1
+000E +0006 CRONSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; CRUISE ON SWITCH (BIT 4 OF 0 TO 7, BYTE 6)~0/1
+000E +0006 CRRESUSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; CRUISE RESUME SWITCH (BIT 0 OF 0 TO 7, BYTE 6)~0/1
+000E +0006 CRSERUSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; CRUISE SET/RESUME SWITCH (BIT 5 OF 0 TO 7, BYTE 6)~0/1
+000E +0006 CRSETSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; CRUISE SET SWITCH (BIT 2 OF 0 TO 7, BYTE 6)~0/1
+000E +000E DGLPFBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR DIAGNOSTIC LAMP FEEDBACK USER VALUE~ON/OFF
+000E +0006 DSACSWSS [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; SWITCH STATUS - CRUISE ACCEL. SWITCH BIT 1~ON / OFF
+000E +0006 DSCRCTSW [HEX] -> 0x80bcd4 switch_status_cruise_coast_switch_bit_3_on_off undefined; SWITCH STATUS - CRUISE COAST SWITCH BIT 3~ON / OFF
+000E +001F DSRWNTSW [HEX] -> 0x80bced binary_value_of_not_idle_switch_off_on undefined; BINARY VALUE OF NOT IDLE SWITCH.~OFF/ON
+000E +002B E9SW04EN [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BIT 4 OF MASTER_STATUS_BYTE_A.~0/1
+000E +000E EPLPFBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR ENGINE PROTECTION LAMP FEEDBACK~ON/OFF
+000E +002B ISDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 4. AUXILLIARY OUTPUT FOR RELAY TO TURN OFF ELECTRIC~ON/OFF
+000E +0028 LCFDLPEA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 1 WHICH ENABLES THE FLUIDS LAMP DRIVER.~ENABLE/DISABLE
+000E +000E LCL1FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP1 FEEDBACK~ON/OFF
+000E +000E LCL2FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP2 FEEDBACK~ON/OFF
+000E +000E LCL3FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP3 FEEDBACK~ON/OFF
+000E +000E LCL4FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP4 FEEDBACK~ON/OFF
+000E +000E LCL5FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP5 FEEDBACK~ON/OFF
+000E +000E LCL6FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP6 FEEDBACK~ON/OFF
+000E +000E LCL7FBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE LAMP7 FEEDBACK~ON/OFF
+000E +0028 LCLP01EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 1 DRIVER. (BIT 0)~ON / OFF
+000E +0034 LCLP01FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 1 DRIVER OUTPUT~ON / OFF
+000E +0028 LCLP02EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 2 DRIVER. (BIT 1)~ON / OFF
+000E +0034 LCLP02FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 2 DRIVER OUTPUT~ON / OFF
+000E +0028 LCLP03EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 3 DRIVER. (BIT 2)~ENABLE / DISABLE
+000E +0034 LCLP03FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 3 DRIVER OUTPUT~ON / OFF
+000E +0028 LCLP04EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 4 DRIVER. (BIT 3)~ENABLE / DISABLE
+000E +0034 LCLP04FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 4 DRIVER OUTPUT~ON / OFF
+000E +0028 LCLP05EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 5 DRIVER. (BIT 4)~ENABLE / DISABLE
+000E +0034 LCLP05FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 5 DRIVER OUTPUT~ON / OFF
+000E +0028 LCLP06EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 6 DRIVER. (BIT 5)~ENABLE / DISABLE
+000E +0034 LCLP06FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 6 DRIVER OUTPUT~ON / OFF
+000E +0028 LCLP07EA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; COMMAND TO ENABLE THE LAMP 7 DRIVER. (BIT 6)~ENABLE / DISABLE
+000E +0034 LCLP07FB [HEX] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE LAMP 7 DRIVER OUTPUT~ON / OFF
+000E +0028 LCSPLPEA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 1 WHICH ENABLES THE STOP LAMP DRIVER.~ENABLE/DISABLE
+000E +0028 LCWNLPEA [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 6 WHICH ENABLES THE WARNING LAMP DRIVER.~ENABLE/DISABLE
+000E +000E LCWTFBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE WAIT TO START LAMP FEEDBACK~ON/OFF
+000E +0028 MLLP [HEX] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 LAMP SIGNIFYING FAULTS RELATING TO OBDII~ON / OFF
+000E +0007 PTACELSW [HEX] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO ACCEL SWITCH (BIT 1 OF 0 TO 7, BYTE 7)~0/1
+000E +0007 PTCOASSW [HEX] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO COAST SWITCH (BIT 3 OF 0 TO 7, BYTE 7)~0/1
+000E +0007 PTSERUSW [HEX] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO SET/RESUME SWITCH (BIT 5 OF 0 TO 7, BYTE 7)~0/1
+000E +000E STEGLPFU [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE STOP ENGINE LAMP FEEDBACK~ON/OFF
+000E +0000 SWITCHES [HEX] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; VALUE USED FOR MONITORING SWITCH DATA.~0 - 1.2089*10^24
+000E +0003 TCSW [HEX] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; SWITCH FROM DRIVETRAIN  - BIT 1 OF 0-7~TRUE,FALSE
+000E +000E WFLPFBUV [HEX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIEN SPECIFIED VALUE FOR WATER IN FUEL LAMP FEEDBACK~ON/OFF
+000E +000F ACCLFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY7 FEEDBACK~ON/OFF
+000E +000F ACCLFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY7 FEEDBACK~ON/OFF
+000E +000F CSA1FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY2 FEEDBACK~ON/OFF
+000E +000F CSA1FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY2 FEEDBACK~ON/OFF
+000E +000F CSA2FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY3 FEEDBACK~ON/OFF
+000E +000F CSA2FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY3 FEEDBACK~ON/OFF
+000E +0034 DGLPFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE DIAGNOSTIC LAMP OUTPUT~ON / OFF
+000E +0034 DGLPFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE DIAGNOSTIC LAMP OUTPUT~ON / OFF
+000E +0029 DRCD01DR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DRCD01DR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DRCD02DR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DRCD02DR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DREA01 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 1 DRIVER. BIT 0 OF BYT~ON / OFF
+000E +0029 DREA01 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 1 DRIVER. BIT 0 OF BYT~ON / OFF
+000E +0029 DREA02 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 2 DRIVER. BIT 1 OF BYT~ON / OFF
+000E +0029 DREA02 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 2 DRIVER. BIT 1 OF BYT~ON / OFF
+000E +0029 DREA03 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 3 DRIVER. BIT 2 OF BYT~ON / OFF
+000E +0029 DREA03 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 3 DRIVER. BIT 2 OF BYT~ON / OFF
+000E +0029 DREA04 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 4 DRIVER. BIT 6 OF BYT~ON / OFF
+000E +0029 DREA04 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 4 DRIVER. BIT 6 OF BYT~ON / OFF
+000E +0029 DREA05 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 5 DRIVER. BIT 4 OF BYT~ON / OFF
+000E +0029 DREA05 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 5 DRIVER. BIT 4 OF BYT~ON / OFF
+000E +0029 DREA06 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 6 DRIVER. BIT 5 OF BYT~ON / OFF
+000E +0029 DREA06 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 6 DRIVER. BIT 5 OF BYT~ON / OFF
+000E +0029 DREA07 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 7 DRIVER. BIT 3 OF BYT~ON / OFF
+000E +0029 DREA07 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMAND CONTROLLING OPERATION OF RELAY 7 DRIVER. BIT 3 OF BYT~ON / OFF
+000E +0029 DREBDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DREBDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DRFMCHDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DRFMCHDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +002D DRFSEA [NONE] -> 0x80bcfb fuel_system_output_driver_control undefined; CONTROLS FUEL SHUT OFF DRIVER. 'ENABLE' = FSO ON. BIT 5~ENABLE/DISABLE
+000E +002D DRFSEA [NONE] -> 0x80bcfb fuel_system_output_driver_control undefined; CONTROLS FUEL SHUT OFF DRIVER. 'ENABLE' = FSO ON. BIT 5~ENABLE/DISABLE
+000E +0034 DRFSFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0034 DRFSFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000E DRFSFBUV [NONE] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE FSO FEEDBACK~ON/OFF
+000E +000E DRFSFBUV [NONE] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE FSO FEEDBACK~ON/OFF
+000E +0029 DRPUDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0029 DRPUDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; COMMANDED DRIVER. 'TRUE' = ON~0/1
+000E +0035 DRR1FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR1FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR1FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY1 FEEDBACK~ON/OFF
+000E +000F DRR1FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY1 FEEDBACK~ON/OFF
+000E +0035 DRR2FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR2FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR2FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY2 FEEDBACK~ON/OFF
+000E +000F DRR2FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY2 FEEDBACK~ON/OFF
+000E +0035 DRR3FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR3FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR3FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY3 FEEDBACK~ON/OFF
+000E +000F DRR3FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY3 FEEDBACK~ON/OFF
+000E +0035 DRR4FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR4FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR4FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY4 FEEDBACK~ON/OFF
+000E +000F DRR4FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY4 FEEDBACK~ON/OFF
+000E +0035 DRR5FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR5FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR5FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY5 FEEDBACK~ON/OFF
+000E +000F DRR5FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY5 FEEDBACK~ON/OFF
+000E +0035 DRR6FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR6FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR6FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY6 FEEDBACK~ON/OFF
+000E +000F DRR6FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY6 FEEDBACK~ON/OFF
+000E +0035 DRR7FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRR7FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRR7FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY7 FEEDBACK~ON/OFF
+000E +000F DRR7FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY7 FEEDBACK~ON/OFF
+000E +0035 DRS1FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +0035 DRS1FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; VALUE USED IN DRIVER DIAGNOSTIC ERROR DETECTION.~OFF/ON
+000E +000F DRS1FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE SOL1 FEEDBACK~ON/OFF
+000E +000F DRS1FBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE SOL1 FEEDBACK~ON/OFF
+000E +0029 DRSXEN01 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; CONTROLS SOLENOID 1 DRIVER. 'ENABLE' = DRIVER ON, BIT 7~ENABLE/DISABLE
+000E +0029 DRSXEN01 [HX] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; CONTROLS SOLENOID 1 DRIVER. 'ENABLE' = DRIVER ON, BIT 7~ENABLE/DISABLE
+000E +0000 DS01SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 1~ON / OFF
+000E +0000 DS01SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 1~ON / OFF
+000E +000A DS01SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 1 USER SUPPLIED VALUE FOR SWITCH 1~ON/OFF
+000E +000A DS01SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 1 USER SUPPLIED VALUE FOR SWITCH 1~ON/OFF
+000E +0000 DS02SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; STATUS OF SWITCH 2 - DEBOUNCED VALUE~ON / OFF
+000E +0000 DS02SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; STATUS OF SWITCH 2 - DEBOUNCED VALUE~ON / OFF
+000E +000A DS02SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 2 USER SUPPLIED VALUE FOR SWITCH 2~ON/OFF
+000E +000A DS02SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 2 USER SUPPLIED VALUE FOR SWITCH 2~ON/OFF
+000E +0000 DS03SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 3~ON / OFF
+000E +0000 DS03SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 3~ON / OFF
+000E +000A DS03SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 3 USER SUPPLIED VALUE FOR SWITCH 3~ON/OFF
+000E +000A DS03SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 3 USER SUPPLIED VALUE FOR SWITCH 3~ON/OFF
+000E +0003 DS04SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 4  INPUT~ON / OFF
+000E +0003 DS04SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 4  INPUT~ON / OFF
+000E +000D DS04SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 1 USER SUPPLIED VALUE FOR SWITCH 4~ON/OFF
+000E +000D DS04SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 1 USER SUPPLIED VALUE FOR SWITCH 4~ON/OFF
+000E +0000 DS05SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 5~ON / OFF
+000E +0000 DS05SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 5~ON / OFF
+000E +000A DS05SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 4 USER SUPPLIED VALUE FOR SWITCH 5~ON/OFF
+000E +000A DS05SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 4 USER SUPPLIED VALUE FOR SWITCH 5~ON/OFF
+000E +0000 DS06SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 6~ON / OFF
+000E +0000 DS06SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 6~ON / OFF
+000E +000A DS06SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 5 USER SUPPLIED VALUE FOR SWITCH 6~ON/OFF
+000E +000A DS06SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 5 USER SUPPLIED VALUE FOR SWITCH 6~ON/OFF
+000E +0000 DS07SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED VALUE FOR SWITCH 7 INPUT~ON / OFF
+000E +0000 DS07SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED VALUE FOR SWITCH 7 INPUT~ON / OFF
+000E +000A DS07SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 6 USER SUPPLIED VALUE FOR SWITCH 7~ON/OFF
+000E +000A DS07SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 6 USER SUPPLIED VALUE FOR SWITCH 7~ON/OFF
+000E +0000 DS08SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 8~ON / OFF
+000E +0000 DS08SWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 8~ON / OFF
+000E +000A DS08SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 7 USER SUPPLIED VALUE FOR SWITCH 8~ON/OFF
+000E +000A DS08SWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYT 0 BIT 7 USER SUPPLIED VALUE FOR SWITCH 8~ON/OFF
+000E +0001 DS09SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 9~ON / OFF
+000E +0001 DS09SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 9~ON / OFF
+000E +000B DS09SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 0 USER SUPPLIED VALUE FOR SWITCH 9~ON/OFF
+000E +000B DS09SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 0 USER SUPPLIED VALUE FOR SWITCH 9~ON/OFF
+000E +0001 DS10SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED VALUE FOR SWITCH 10 INPUT~ON / OFF
+000E +0001 DS10SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED VALUE FOR SWITCH 10 INPUT~ON / OFF
+000E +000B DS10SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 1 USER SUPPLIED VALUE FOR SWITCH 10~ON/OFF
+000E +000B DS10SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 1 USER SUPPLIED VALUE FOR SWITCH 10~ON/OFF
+000E +0001 DS11SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 11~ON / OFF
+000E +0001 DS11SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 11~ON / OFF
+000E +000B DS11SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 2 USER SUPPLIED VALUE FOR SWITCH 11~ON/OFF
+000E +000B DS11SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 2 USER SUPPLIED VALUE FOR SWITCH 11~ON/OFF
+000E +0001 DS12SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 12~ON / OFF
+000E +0001 DS12SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 12~ON / OFF
+000E +000B DS12SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 3 USER SUPPLIED VALUE FOR SWITCH 12~ON/OFF
+000E +000B DS12SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 3 USER SUPPLIED VALUE FOR SWITCH 12~ON/OFF
+000E +0001 DS13SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 13~ON / OFF
+000E +0001 DS13SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 13~ON / OFF
+000E +000B DS13SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 4 USER SUPPLIED VALUE FOR SWITCH 13~ON/OFF
+000E +000B DS13SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 4 USER SUPPLIED VALUE FOR SWITCH 13~ON/OFF
+000E +0001 DS14SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 14~ON / OFF
+000E +0001 DS14SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 14~ON / OFF
+000E +000B DS14SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 5 USER SUPPLIED VALUE FOR SWITCH 14~ON/OFF
+000E +000B DS14SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 5 USER SUPPLIED VALUE FOR SWITCH 14~ON/OFF
+000E +0001 DS15SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 15~ON / OFF
+000E +0001 DS15SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 15~ON / OFF
+000E +000B DS15SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 6 USER SUPPLIED VALUE FOR SWITCH 15~ON/OFF
+000E +000B DS15SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 6 USER SUPPLIED VALUE FOR SWITCH 15~ON/OFF
+000E +0001 DS16SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 16~ON / OFF
+000E +0001 DS16SWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 16~ON / OFF
+000E +000B DS16SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 7 USER SUPPLIED VALUE FOR SWITCH 16~ON/OFF
+000E +000B DS16SWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYT 1 BIT 7 USER SUPPLIED VALUE FOR SWITCH 16~ON/OFF
+000E +0002 DS17SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 17 INPUT~ON / OFF
+000E +0002 DS17SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 17 INPUT~ON / OFF
+000E +000C DS17SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 0 USER SUPPLIED VALUE FOR SWITCH 17~ON/OFF
+000E +000C DS17SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 0 USER SUPPLIED VALUE FOR SWITCH 17~ON/OFF
+000E +0002 DS18SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 18 INPUT~ON / OFF
+000E +0002 DS18SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 18 INPUT~ON / OFF
+000E +000C DS18SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 1 USER SUPPLIED VALUE FOR SWITCH 18~ON/OFF
+000E +000C DS18SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 1 USER SUPPLIED VALUE FOR SWITCH 18~ON/OFF
+000E +0002 DS19SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 19 INPUT~ON / OFF
+000E +0002 DS19SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 19 INPUT~ON / OFF
+000E +000C DS19SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 2 USER SUPPLIED VALUE FOR SWITCH 19~ON/OFF
+000E +000C DS19SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 2 USER SUPPLIED VALUE FOR SWITCH 19~ON/OFF
+000E +0002 DS20SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 20~ON / OFF
+000E +0002 DS20SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 20~ON / OFF
+000E +000C DS20SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 3 USER SUPPLIED VALUE FOR SWITCH 20~ON/OFF
+000E +000C DS20SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 3 USER SUPPLIED VALUE FOR SWITCH 20~ON/OFF
+000E +0002 DS21SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 21~ON / OFF
+000E +0002 DS21SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 21~ON / OFF
+000E +000C DS21SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 4 USER SUPPLIED VALUE FOR SWITCH 21~ON/OFF
+000E +000C DS21SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 4 USER SUPPLIED VALUE FOR SWITCH 21~ON/OFF
+000E +0002 DS22SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 22~ON / OFF
+000E +0002 DS22SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 22~ON / OFF
+000E +000C DS22SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 5 USER SUPPLIED VALUE FOR SWITCH 22~ON/OFF
+000E +000C DS22SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 5 USER SUPPLIED VALUE FOR SWITCH 22~ON/OFF
+000E +0003 DS23SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 23~ON / OFF
+000E +0003 DS23SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 23~ON / OFF
+000E +000D DS23SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 4 USER SUPPLIED VALUE FOR SWITCH 23~ON/OFF
+000E +000D DS23SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 4 USER SUPPLIED VALUE FOR SWITCH 23~ON/OFF
+000E +0002 DS24SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 24 INPUT~ON / OFF
+000E +0002 DS24SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 24 INPUT~ON / OFF
+000E +000C DS24SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 7 USER SUPPLIED VALUE FOR SWITCH 24~ON/OFF
+000E +000C DS24SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 7 USER SUPPLIED VALUE FOR SWITCH 24~ON/OFF
+000E +0003 DS25SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 25~ON / OFF
+000E +0003 DS25SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 25~ON / OFF
+000E +000D DS25SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 0 USER SUPPLIED VALUE FOR SWITCH 25~ON/OFF
+000E +000D DS25SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 0 USER SUPPLIED VALUE FOR SWITCH 25~ON/OFF
+000E +0002 DS26SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 26~ON / OFF
+000E +0002 DS26SWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 26~ON / OFF
+000E +000C DS26SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 6 USER SUPPLIED VALUE FOR SWITCH 26~ON/OFF
+000E +000C DS26SWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYT 2 BIT 6 USER SUPPLIED VALUE FOR SWITCH 26~ON/OFF
+000E +0003 DS27SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 27~ON / OFF
+000E +0003 DS27SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 27~ON / OFF
+000E +000D DS27SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 2 USER SUPPLIED VALUE FOR SWITCH 27~ON/OFF
+000E +000D DS27SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 2 USER SUPPLIED VALUE FOR SWITCH 27~ON/OFF
+000E +0003 DS28SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 28  INPUT~ON / OFF
+000E +0003 DS28SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 28  INPUT~ON / OFF
+000E +000D DS28SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 3 USER SUPPLIED VALUE FOR SWITCH 28~ON/OFF
+000E +000D DS28SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 3 USER SUPPLIED VALUE FOR SWITCH 28~ON/OFF
+000E +0003 DS29SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 29~ON / OFF
+000E +0003 DS29SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 29~ON / OFF
+000E +000D DS29SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 5 USER SUPPLIED VALUE FOR SWITCH 29~ON/OFF
+000E +000D DS29SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 5 USER SUPPLIED VALUE FOR SWITCH 29~ON/OFF
+000E +0003 DS30SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 30  INPUT~ON / OFF
+000E +0003 DS30SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED VALUE FOR SWITCH 30  INPUT~ON / OFF
+000E +000D DS30SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 6 USER SUPPLIED VALUE FOR SWITCH 30~ON/OFF
+000E +000D DS30SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 6 USER SUPPLIED VALUE FOR SWITCH 30~ON/OFF
+000E +0003 DS31SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 31~ON / OFF
+000E +0003 DS31SWSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; DEBOUNCED SWITCH VALUE FOR SWITCH 31~ON / OFF
+000E +000D DS31SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 7 USER SUPPLIED VALUE FOR SWITCH 31~ON/OFF
+000E +000D DS31SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYT 3 BIT 7 USER SUPPLIED VALUE FOR SWITCH 31~ON/OFF
+000E +0035 DSACFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 3 OF BYTE 5 DEBOUNCE, FEEDBACK FOR AC_CLUTCH DRIVER~ON / OFF
+000E +0035 DSACFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 3 OF BYTE 5 DEBOUNCE, FEEDBACK FOR AC_CLUTCH DRIVER~ON / OFF
+000E +0001 DSACILSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BYTE 1,BIT 1 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +0001 DSACILSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BYTE 1,BIT 1 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +0003 DSAKCYSW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BYTE 3,BIT 5 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +0003 DSAKCYSW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BYTE 3,BIT 5 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +000D DSAKCYUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYTE 3,BIT 5 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +000D DSAKCYUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYTE 3,BIT 5 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +0003 DSAKHISW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BYTE 3,BIT 3 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +0003 DSAKHISW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BYTE 3,BIT 3 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +000D DSAKHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYTE 3,BIT 3 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +000D DSAKHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; BYTE 3,BIT 3 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +0003 DSAKONSW [0] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 6 OF 0-7, STATUS OF SWITCH 30~ON / OFF
+000E +0003 DSAKONSW [0] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 6 OF 0-7, STATUS OF SWITCH 30~ON / OFF
+000E +000D DSAKONUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR AC_ON_OFF_SWITCH~ON / OFF
+000E +000D DSAKONUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR AC_ON_OFF_SWITCH~ON / OFF
+000E +0009 DSAKPRSW [NONE] -> 0x80bcd7 (no name) (no row); BIT 0 OF BYTE 9, SOFTWARE VALUE OF AIR CONDITIONER PRESSURE S~ON / OFF
+000E +0009 DSAKPRSW [NONE] -> 0x80bcd7 (no name) (no row); BIT 0 OF BYTE 9, SOFTWARE VALUE OF AIR CONDITIONER PRESSURE S~ON / OFF
+000E +0002 DSAKTKSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BYTE 2,BIT 1 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +0002 DSAKTKSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BYTE 2,BIT 1 OF BITS 0-7, STATUS OF THE DEBOUNCED SWITCH~ON / OFF
+000E +000C DSAKTKUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYTE 2,BIT 1 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +000C DSAKTKUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYTE 2,BIT 1 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +0007 DSAUSHSW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; SWITCH STATUS FOR AUXILIARY SHUTDOWN~ON/OFF
+000E +0007 DSAUSHSW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; SWITCH STATUS FOR AUXILIARY SHUTDOWN~ON/OFF
+000E +0011 DSAUSHUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE AUXILIARY SHUTDOWN SWITCH~ON/OFF
+000E +0011 DSAUSHUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE AUXILIARY SHUTDOWN SWITCH~ON/OFF
+000E +0001 DSBRSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 3 OF BYTE 1, DEBOUNCED VALUE OF SERVICE BRAKE SWITCH INPU~ON / OFF
+000E +0001 DSBRSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 3 OF BYTE 1, DEBOUNCED VALUE OF SERVICE BRAKE SWITCH INPU~ON / OFF
+000E +000B DSBRSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE BRAKE SWITCH~ON/OFF
+000E +000B DSBRSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE BRAKE SWITCH~ON/OFF
+000E +0035 DSCD01FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 1 OF BYTE 5 DEBOUNCE, FEEDBACK FOR COLD_START_AID_RELAY_1~ON / OFF
+000E +0035 DSCD01FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 1 OF BYTE 5 DEBOUNCE, FEEDBACK FOR COLD_START_AID_RELAY_1~ON / OFF
+000E +0035 DSCD02FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 2 OF BYTE 5 DEBOUNCE, FEEDBACK FOR COLD_START_AID_RELAY_2~ON / OFF
+000E +0035 DSCD02FB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 2 OF BYTE 5 DEBOUNCE, FEEDBACK FOR COLD_START_AID_RELAY_2~ON / OFF
+000E +0001 DSCHSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 2 OF BYTE 1, DEBOUNCED VALUE OF CLUTCH SWITCH INPUT~ON / OFF
+000E +0001 DSCHSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 2 OF BYTE 1, DEBOUNCED VALUE OF CLUTCH SWITCH INPUT~ON / OFF
+000E +000B DSCHSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE CLUTCH SWITCH~ON/OFF
+000E +000B DSCHSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE CLUTCH SWITCH~ON/OFF
+000E +0003 DSCLHISW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 0 OF 0-7, STATUS OF THE SWITCH (COOLANT LEVEL HIGH)~ON / OFF
+000E +0003 DSCLHISW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 0 OF 0-7, STATUS OF THE SWITCH (COOLANT LEVEL HIGH)~ON / OFF
+000E +000D DSCLHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR THE RADIATOR COOLANT LEVEL HIGH FLAG ~ON / OFF
+000E +000D DSCLHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR THE RADIATOR COOLANT LEVEL HIGH FLAG ~ON / OFF
+000E +0002 DSCLLOSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 5 OF 0-7, STATUS OF THE SWITCH (COOLANT LEVEL LOW)~ON / OFF
+000E +0002 DSCLLOSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 5 OF 0-7, STATUS OF THE SWITCH (COOLANT LEVEL LOW)~ON / OFF
+000E +000C DSCLLOUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR THE RADIATOR COOLANT LEVEL LOW FLAG~ON / OFF
+000E +000C DSCLLOUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR THE RADIATOR COOLANT LEVEL LOW FLAG~ON / OFF
+000E +000A DSCRONUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE CC/PTO ON/OFF SWITCH~ON / OFF
+000E +000A DSCRONUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE CC/PTO ON/OFF SWITCH~ON / OFF
+000E +000A DSCRRUUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE CRUISE CONTROL RESUME SWITCH INPU~ON / OFF
+000E +000A DSCRRUUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE CRUISE CONTROL RESUME SWITCH INPU~ON / OFF
+000E +000A DSCRSEUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR CRUISE CONTROL SWITCH SET ACTIVATION~ON/OFF
+000E +000A DSCRSEUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR CRUISE CONTROL SWITCH SET ACTIVATION~ON/OFF
+000E +0000 DSCRSWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 3 OF BYTE 0, STATUS OF CRUISE ON SWITCH INPUT~ON / OFF
+000E +0000 DSCRSWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 3 OF BYTE 0, STATUS OF CRUISE ON SWITCH INPUT~ON / OFF
+000E +0029 DSDRAC [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; BIT 3 OF BYTE 1 OUTPUT_PORT, COMMAND OF AC_CLUTCH_DRIVER~ON / OFF
+000E +0029 DSDRAC [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; BIT 3 OF BYTE 1 OUTPUT_PORT, COMMAND OF AC_CLUTCH_DRIVER~ON / OFF
+000E +0028 DSDRFS [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 7 OF BYTE 0 OUTPUT_PORT, COMMAND OF FUEL_SHUT_OFF~ON / OFF
+000E +0028 DSDRFS [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 7 OF BYTE 0 OUTPUT_PORT, COMMAND OF FUEL_SHUT_OFF~ON / OFF
+000E +0001 DSDTSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 6 OF BYTE 1, DEBOUNCED VALUE OF IDLE DECREMENT SWITCH INP~ON / OFF
+000E +0001 DSDTSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 6 OF BYTE 1, DEBOUNCED VALUE OF IDLE DECREMENT SWITCH INP~ON / OFF
+000E +000B DSDTSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE IDLE ADJUST DECREMENT SWITCH~ON/OFF
+000E +000B DSDTSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE IDLE ADJUST DECREMENT SWITCH~ON/OFF
+000E +0035 DSEBFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 0 OF BYTE 5 DEBOUNCE, FEEDBACK FOR ENGINE_BRAKE DRIVER~ON / OFF
+000E +0035 DSEBFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 0 OF BYTE 5 DEBOUNCE, FEEDBACK FOR ENGINE_BRAKE DRIVER~ON / OFF
+000E +0001 DSEBS1 [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED VALUE OF ENGINE BRAKE SELECT 1 SWITCH INPUT~ON / OFF
+000E +0001 DSEBS1 [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; DEBOUNCED VALUE OF ENGINE BRAKE SELECT 1 SWITCH INPUT~ON / OFF
+000E +000B DSEBUC01 [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER OVERRIDE ENABLE FLAG ENGINE BRAKE SELECT 1~ON / OFF
+000E +000B DSEBUC01 [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER OVERRIDE ENABLE FLAG ENGINE BRAKE SELECT 1~ON / OFF
+000E +0028 DSFLPUEN [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 7 OF BYTE 0 OUTPUT_PORT, OUTPUT CONTROL OF VP44_PUMP_ENAB~ON / OFF
+000E +0028 DSFLPUEN [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 7 OF BYTE 0 OUTPUT_PORT, OUTPUT CONTROL OF VP44_PUMP_ENAB~ON / OFF
+000E +0035 DSFMCHFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 7 OF BYTE 5 DEBOUNCE, FEEDBACK FOR FAN_CLUTCH_FEEDBACK DR~ON / OFF
+000E +0035 DSFMCHFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 7 OF BYTE 5 DEBOUNCE, FEEDBACK FOR FAN_CLUTCH_FEEDBACK DR~ON / OFF
+000E +0000 DSFMCHSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 4 OF 0-7, STATUS OF THE SWITCH~ON / OFF
+000E +0000 DSFMCHSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 4 OF 0-7, STATUS OF THE SWITCH~ON / OFF
+000E +0000 DSFMSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; STATUS OF THE MANUAL FAN INPUT SWITCH - DEBOUNCED VALUE~ON / OFF
+000E +0000 DSFMSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; STATUS OF THE MANUAL FAN INPUT SWITCH - DEBOUNCED VALUE~ON / OFF
+000E +0003 DSHICLLV [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 0 BYT 3.STATUS OF RADIATOR COOLANT LEVEL HIGH - DEBOUNCED~ON / OFF
+000E +0003 DSHICLLV [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 0 BYT 3.STATUS OF RADIATOR COOLANT LEVEL HIGH - DEBOUNCED~ON / OFF
+000E +0001 DSICSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 5 OF BYTE 1, DEBOUNCED VALUE OF IDLE INCREMENT SWITCH INP~ON / OFF
+000E +0001 DSICSWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 5 OF BYTE 1, DEBOUNCED VALUE OF IDLE INCREMENT SWITCH INP~ON / OFF
+000E +000B DSICSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE IDLE ADJUST INCREMENT SWITCH~ON/OFF
+000E +000B DSICSWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE IDLE ADJUST INCREMENT SWITCH~ON/OFF
+000E +0002 DSILSSSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH~ON / OFF
+000E +0002 DSILSSSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH~ON / OFF
+000E +000C DSILSSUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR USER_DATALOGGER_SWITCH~ON / OFF
+000E +000C DSILSSUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR USER_DATALOGGER_SWITCH~ON / OFF
+000E +0001 DSIVNTSW [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 0 OF BYTE 1, DEBOUNCED VALUE OF IDLE VALIDATION 2 SWITCH ~ON / OFF
+000E +0001 DSIVNTSW [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 0 OF BYTE 1, DEBOUNCED VALUE OF IDLE VALIDATION 2 SWITCH ~ON / OFF
+000E +0000 DSIVSWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 7 OF BYTE 0, DEBOUNCED VALUE OF IDLE VALIDATION 1 SWITCH ~ON / OFF
+000E +0000 DSIVSWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 7 OF BYTE 0, DEBOUNCED VALUE OF IDLE VALIDATION 1 SWITCH ~ON / OFF
+000E +000A DSIVSWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE RAW IDLE SWITCH INPUT~ON/OFF
+000E +000A DSIVSWUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE RAW IDLE SWITCH INPUT~ON/OFF
+000E +0000 DSKYSWSS [HX] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 0 OF BYTE 0, STATUS OF THE VEHICLE KEY SWITCH - DEBOUNCED~ON / OFF
+000E +0000 DSKYSWSS [HX] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 0 OF BYTE 0, STATUS OF THE VEHICLE KEY SWITCH - DEBOUNCED~ON / OFF
+000E +0002 DSLOCLLV [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 5 BYT 2. STATUS OF RADIATOR COOLANT LEVEL LOW - DEBOUNCED~ON / OFF
+000E +0002 DSLOCLLV [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 5 BYT 2. STATUS OF RADIATOR COOLANT LEVEL LOW - DEBOUNCED~ON / OFF
+000E +0028 DSLP1 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 0 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP1 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 0 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP2 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 1 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP2 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 1 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP3 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 2 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP3 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 2 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP4 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 6 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP4 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 6 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP5 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP5 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP6 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 5 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP6 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 5 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP7 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +0028 DSLP7 [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 OF BYTE 0 OUTPUT_PORT, COMMAND CONTROLLING OPERATION OF~ON / OFF
+000E +000A DSMNFNUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE MANUAL FAN INPUT SWITCH~ON/OFF
+000E +000A DSMNFNUC [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR THE MANUAL FAN INPUT SWITCH~ON/OFF
+000E +000B DSNTIVUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE RAW NOT IDLE SWITCH INPUT~ON/OFF
+000E +000B DSNTIVUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE RAW NOT IDLE SWITCH INPUT~ON/OFF
+000E +000C DSPRBRUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER  VALUE OF THE PARKING BRAKE SWITCH - DEBOUNCED VALUE.~ON/OFF
+000E +000C DSPRBRUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER  VALUE OF THE PARKING BRAKE SWITCH - DEBOUNCED VALUE.~ON/OFF
+000E +0007 DSPTONSW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO ON SWITCH (BIT 4 OF 0 TO 7, BYTE 7)~ON/OFF
+000E +0007 DSPTONSW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO ON SWITCH (BIT 4 OF 0 TO 7, BYTE 7)~ON/OFF
+000E +0011 DSPTONUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE PTO ENABLE SWITCH~ON/OFF
+000E +0011 DSPTONUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE PTO ENABLE SWITCH~ON/OFF
+000E +0007 DSPTRUSW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO RESUME SWITCH (BIT 0 OF 0 TO 7, BYTE 7)~ON/OFF
+000E +0007 DSPTRUSW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO RESUME SWITCH (BIT 0 OF 0 TO 7, BYTE 7)~ON/OFF
+000E +0011 DSPTRUUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE PTO RESUME SWITCH~ON/OFF
+000E +0011 DSPTRUUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE PTO RESUME SWITCH~ON/OFF
+000E +0007 DSPTSESW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO SET SWITCH (BIT 2 OF 0 TO 7, BYTE 7)~ON/OFF
+000E +0007 DSPTSESW [NONE] -> 0x80bcd5 power_take_off_switch_state_bits byte; PTO SET SWITCH (BIT 2 OF 0 TO 7, BYTE 7)~ON/OFF
+000E +0011 DSPTSEUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE PTO SET SWITCH~ON/OFF
+000E +0011 DSPTSEUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off undefined; USER SUPPLIED VALUE FOR THE PTO SET SWITCH~ON/OFF
+000E +0035 DSPUFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 4 OF BYTE 5 DEBOUNCE, FEEDBACK FOR PRIME_PUMP DRIVER~ON / OFF
+000E +0035 DSPUFB [NONE] -> 0x80bd03 auxiliary_driver_feedback_bits byte; BIT 4 OF BYTE 5 DEBOUNCE, FEEDBACK FOR PRIME_PUMP DRIVER~ON / OFF
+000E +0002 DSRARASW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR REAR_AXLE_RATIO_SWITCH~ON/OFF
+000E +0002 DSRARASW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; DEBOUNCED VALUE FOR REAR_AXLE_RATIO_SWITCH~ON/OFF
+000E +000C DSRARAUV [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYTE 2,BIT 2 OF 0-7,USER SUPPLIED VALUE FOR THE REAR AXLE RATIO~ON/OFF
+000E +000C DSRARAUV [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; BYTE 2,BIT 2 OF 0-7,USER SUPPLIED VALUE FOR THE REAR AXLE RATIO~ON/OFF
+000E +000C DSRMTHUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR THE REMOTE THROTTLE SWITCH~ON/OFF
+000E +000C DSRMTHUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR THE REMOTE THROTTLE SWITCH~ON/OFF
+000E +0000 DSRUSWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 1 OF BYTE 0, STATUS OF CRUISE RESUME/ACCEL SWITCH INPUT~ON / OFF
+000E +0000 DSRUSWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 1 OF BYTE 0, STATUS OF CRUISE RESUME/ACCEL SWITCH INPUT~ON / OFF
+000E +0002 DSRXSWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 4 OF BYTE 2, DEBOUNCED VALUE OF REMOTE PTO SWITCH INPUT~ON / OFF
+000E +0002 DSRXSWSS [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 4 OF BYTE 2, DEBOUNCED VALUE OF REMOTE PTO SWITCH INPUT~ON / OFF
+000E +000C DSRXSWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR THE REMOTE PTO SWITCH~ON/OFF
+000E +000C DSRXSWUC [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR THE REMOTE PTO SWITCH~ON/OFF
+000E +0000 DSSESWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 2 OF BYTE 0, STATUS OF CRUISE SET/COAST SWITCH INPUT~ON / OFF
+000E +0000 DSSESWSS [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 2 OF BYTE 0, STATUS OF CRUISE SET/COAST SWITCH INPUT~ON / OFF
+000E +0001 DSTESWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 7 OF BYTE 1, DEBOUNCED VALUE OF THE DIAGNOSTIC/TEST SWITC~ON / OFF
+000E +0001 DSTESWSS [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 7 OF BYTE 1, DEBOUNCED VALUE OF THE DIAGNOSTIC/TEST SWITC~ON / OFF
+000E +000B DSTESWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE DIAGNOSTIC TEST AND FAULT FLASH OUT~ON/OFF
+000E +000B DSTESWUC [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; USER SUPPLIED VALUE FOR THE DIAGNOSTIC TEST AND FAULT FLASH OUT~ON/OFF
+000E +0003 DSTHILSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; STATE OF THE THROTTLE INTERLOCK SWITCH~ON / OFF
+000E +0003 DSTHILSS [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; STATE OF THE THROTTLE INTERLOCK SWITCH~ON / OFF
+000E +000D DSTHILUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR THE ACCELERATOR INTERLOCK SWITCH~ON/OFF
+000E +000D DSTHILUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR THE ACCELERATOR INTERLOCK SWITCH~ON/OFF
+000E +0008 DSTQDQSW [NONE] -> 0x80bcd6 switch_status_for_torque_derate_feature_on_off undefined; SWITCH STATUS FOR TORQUE DERATE FEATURE~ON/OFF
+000E +0008 DSTQDQSW [NONE] -> 0x80bcd6 switch_status_for_torque_derate_feature_on_off undefined; SWITCH STATUS FOR TORQUE DERATE FEATURE~ON/OFF
+000E +0012 DSTQSWUC [HX] -> 0x80bce0 user_supplied_value_for_the_torque_derate_switch_on_off undefined; USER SUPPLIED VALUE FOR THE TORQUE DERATE SWITCH~ON/OFF
+000E +0012 DSTQSWUC [HX] -> 0x80bce0 user_supplied_value_for_the_torque_derate_switch_on_off undefined; USER SUPPLIED VALUE FOR THE TORQUE DERATE SWITCH~ON/OFF
+000E +000B DSUSAISW [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYTE 1,BIT 1 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +000B DSUSAISW [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYTE 1,BIT 1 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+000E +000D DSUSCLHI [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR COOLANT LEVEL HIGH SWITCH INPUT~ON/OFF
+000E +000D DSUSCLHI [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SUPPLIED VALUE FOR COOLANT LEVEL HIGH SWITCH INPUT~ON/OFF
+000E +000C DSUSCLLO [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR COOLANT LEVEL LOW SWITCH INPUT~ON/OFF
+000E +000C DSUSCLLO [NONE] -> 0x80bcda user_supplied_value_for_coolant_level_low_switch_input_on_off undefined; USER SUPPLIED VALUE FOR COOLANT LEVEL LOW SWITCH INPUT~ON/OFF
+000E +000B DSUSEBSW [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYTE 1,BIT 4 OF 0-7,USER OVERRIDE ENABLE FLAG FOR ENGINE_BRAKE_~ON/OFF
+000E +000B DSUSEBSW [NONE] -> 0x80bcd9 switch_9_to_16_override_values byte; BYTE 1,BIT 4 OF 0-7,USER OVERRIDE ENABLE FLAG FOR ENGINE_BRAKE_~ON/OFF
+000E +000A DSUSFNCH [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYTE 0,BIT 4 OF 0-7,USER SUPPLIED VALUE FOR FAN CLUTCH INPUT~ON/OFF
+000E +000A DSUSFNCH [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYTE 0,BIT 4 OF 0-7,USER SUPPLIED VALUE FOR FAN CLUTCH INPUT~ON/OFF
+000E +000A DSUSHGSW [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYTE 0,BIT 6 OF 0-7,USER SUPPLIED VALUE FOR HSG DROOP INPUT~ON/OFF
+000E +000A DSUSHGSW [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; BYTE 0,BIT 6 OF 0-7,USER SUPPLIED VALUE FOR HSG DROOP INPUT~ON/OFF
+000E +000A DSUSPTSI [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR PTP SWITCHED INPUT INPUT~ON/OFF
+000E +000A DSUSPTSI [NONE] -> 0x80bcd8 user_supplied_value_for_ptp_switched_input_input_on_off undefined; USER SUPPLIED VALUE FOR PTP SWITCHED INPUT INPUT~ON/OFF
+000E +000D DSUSSTCN [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SELECTED VALUE FOR STCG ASG DROOP INPUT~ON/OFF
+000E +000D DSUSSTCN [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off undefined; USER SELECTED VALUE FOR STCG ASG DROOP INPUT~ON/OFF
+000E +0029 EBDR1 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 1~ON/OFF
+000E +0029 EBDR1 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 1~ON/OFF
+000E +0029 EBDR2 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 2~ON/OFF
+000E +0029 EBDR2 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 2~ON/OFF
+000E +0029 EBDR3 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 3~ON/OFF
+000E +0029 EBDR3 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 3~ON/OFF
+000E +0029 EBDR4 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 4~ON/OFF
+000E +0029 EBDR4 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 4~ON/OFF
+000E +0029 EBDR5 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 5~ON/OFF
+000E +0029 EBDR5 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 5~ON/OFF
+000E +0029 EBDR6 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 6~ON/OFF
+000E +0029 EBDR6 [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; OUTPUT CONTROL OF THE ENGINE BRAKE SOLENOID DRIVER 6~ON/OFF
+000E +000F EGBKFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY1 FEEDBACK~ON/OFF
+000E +000F EGBKFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY1 FEEDBACK~ON/OFF
+000E +0001 EGBKSW [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 4 OF BYTE 1, THE DEBOUNCED VALUE OF THE ENGINE BRAKE SWITCH~ON/OFF
+000E +0001 EGBKSW [NONE] -> 0x80bccf debounced_switch_value_for_switch_16_on_off undefined; BIT 4 OF BYTE 1, THE DEBOUNCED VALUE OF THE ENGINE BRAKE SWITCH~ON/OFF
+000E +0034 EPLPFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE ENGINE PROTECTION LAMP OUTPUT~ON / OFF
+000E +0034 EPLPFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE ENGINE PROTECTION LAMP OUTPUT~ON / OFF
+000E +000F FNCHFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE FAN CLUTCH FEEDBACK~ON/OFF
+000E +000F FNCHFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE FAN CLUTCH FEEDBACK~ON/OFF
+000E +0000 HSDRSLSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 6 OF BYTE 0, DEBOUNCED VALUE FOR THE HSG DROOOP SELECT SWIT~ON/OFF
+000E +0000 HSDRSLSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 6 OF BYTE 0, DEBOUNCED VALUE FOR THE HSG DROOOP SELECT SWIT~ON/OFF
+000E +0028 LCDGLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 6 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCDGLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 6 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCEGPNLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCEGPNLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 4 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +000E LCFLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE FLUIDS LAMP FEEDBACK~ON/OFF
+000E +000E LCFLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE FLUIDS LAMP FEEDBACK~ON/OFF
+000E +000E LCMLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE MALFUNCTION LAMP FEEDBACK.~ON/OFF
+000E +000E LCMLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE MALFUNCTION LAMP FEEDBACK.~ON/OFF
+000E +000E LCSLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE STOP LAMP FEEDBACK~ON/OFF
+000E +000E LCSLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE STOP LAMP FEEDBACK~ON/OFF
+000E +0028 LCSPEGLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 1 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCSPEGLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 1 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCWFLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 2 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCWFLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 2 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +000E LCWLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE WARNING LAMP FEEDBACK~ON/OFF
+000E +000E LCWLFBUV [HX] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE WARNING LAMP FEEDBACK~ON/OFF
+000E +0028 LCWTSRLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 0 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LCWTSRLP [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 0 OF 0-7, COMMANDED LAMP DRIVER~ENABLE / DISABLE
+000E +0028 LPSACM [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 5 OF 0-7, SOLENOID_A DRIVER COMMAND~ON/OFF
+000E +0028 LPSACM [NONE] -> 0x80bcf6 bit_6_which_enables_the_warning_lamp_driver_enable_disable undefined; BIT 5 OF 0-7, SOLENOID_A DRIVER COMMAND~ON/OFF
+000E +0034 LPSAFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE SOLENOID_A OUTPUT~ON/OFF
+000E +0034 LPSAFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE SOLENOID_A OUTPUT~ON/OFF
+000E +000E LPSAFBUV [NONE] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR SOLENOID_A FEEDBACK~ON/OFF
+000E +000E LPSAFBUV [NONE] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR SOLENOID_A FEEDBACK~ON/OFF
+000E +000F PPFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY5 FEEDBACK~ON/OFF
+000E +000F PPFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE RLY5 FEEDBACK~ON/OFF
+000E +0000 PTSWINSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 5 OF BYTE 0, DEBOUNCED VALUE OF THE PTP SWITCHED INPUT SWIT~ON/OFF
+000E +0000 PTSWINSW [NONE] -> 0x80bcce value_used_for_monitoring_switch_data_0_1_2089_10_24 undefined; BIT 5 OF BYTE 0, DEBOUNCED VALUE OF THE PTP SWITCHED INPUT SWIT~ON/OFF
+000E +0002 RMTHSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 3 OF BYTE 2, DEBOUNCED VALUE OF REMOTE THROTTLE SWITCH INPU~ON/OFF
+000E +0002 RMTHSW [NONE] -> 0x80bcd0 debounced_value_for_rear_axle_ratio_switch_on_off undefined; BIT 3 OF BYTE 2, DEBOUNCED VALUE OF REMOTE THROTTLE SWITCH INPU~ON/OFF
+000E +0029 RYSBDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; SOLENOID_B_DRIVER COMMAND~ON/OFF
+000E +0029 RYSBDR [NONE] -> 0x80bcf7 commanded_driver_true_on_0_1 undefined; SOLENOID_B_DRIVER COMMAND~ON/OFF
+000E +0005 RYSBFB [NONE] -> 0x80bcd3 (no name) (no row); FEEDBACK STATUS OF SOLENOID_B~ON/OFF
+000E +0005 RYSBFB [NONE] -> 0x80bcd3 (no name) (no row); FEEDBACK STATUS OF SOLENOID_B~ON/OFF
+000E +000F RYSBFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE SOLENOID_B FEEDBACK~ON/OFF
+000E +000F RYSBFBUV [NONE] -> 0x80bcdd client_specified_value_for_the_solenoid_b_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE SOLENOID_B FEEDBACK~ON/OFF
+000E +002B SLDR [NONE] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; OFF = STARTER DISABLED, ON = STARTER ENABLED~0-1
+000E +002B SLDR [NONE] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; OFF = STARTER DISABLED, ON = STARTER ENABLED~0-1
+000E +0003 SLTHCNSW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 1 OF BYTE 3, DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH~ON/OFF
+000E +0003 SLTHCNSW [NONE] -> 0x80bcd1 state_of_the_throttle_interlock_switch_on_off undefined; BIT 1 OF BYTE 3, DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH~ON/OFF
+000E +002A SSBBPGEA [NONE] -> 0x80bcf8 port_e_output_image byte; ENABLE FLAG TO ALLOW BOOT BLOCK PROGRAMMING.~ENABLE/DISABLE
+000E +002A SSBBPGEA [NONE] -> 0x80bcf8 port_e_output_image byte; ENABLE FLAG TO ALLOW BOOT BLOCK PROGRAMMING.~ENABLE/DISABLE
+000E +002A SSVTEA [NONE] -> 0x80bcf8 port_e_output_image byte; BIT WHICH ALLOWS THE PROCESSOR TO ENABLE FLASH PROGRAMM~ENABLE/DISABLE
+000E +002A SSVTEA [NONE] -> 0x80bcf8 port_e_output_image byte; BIT WHICH ALLOWS THE PROCESSOR TO ENABLE FLASH PROGRAMM~ENABLE/DISABLE
+000E +0034 STEGLPFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE STOP ENGINE LAMP OUTPUT~ON / OFF
+000E +0034 STEGLPFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE STOP ENGINE LAMP OUTPUT~ON / OFF
+000E +002B T2HGSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 6, TOP2 SPICER TRANSMISSION HIGH GEAR DRIVER SOLENOID~0-1
+000E +002B T2HGSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 6, TOP2 SPICER TRANSMISSION HIGH GEAR DRIVER SOLENOID~0-1
+000E +002B T2LGSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 5, TOP2 SPICER TRANSMISSION LOW GEAR DRIVER SOLENOID~0-1
+000E +002B T2LGSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 5, TOP2 SPICER TRANSMISSION LOW GEAR DRIVER SOLENOID~0-1
+000E +002B T2LOSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 5, TRANSMISSION SPLITTER CONTROL. REMOVES CONTROL FROM~0-1
+000E +002B T2LOSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 5, TRANSMISSION SPLITTER CONTROL. REMOVES CONTROL FROM~0-1
+000E +002B T2NUSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 7, TOP2 SPICER TRANSMISSION NEUTRAL DRIVER COMMANDED S~0-1
+000E +002B T2NUSXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 7, TOP2 SPICER TRANSMISSION NEUTRAL DRIVER COMMANDED S~0-1
+000E +002B T2SISXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 6, 0=(1 GEAR DOWN OR BELOW)/1=(TOP GEAR)~0-1
+000E +002B T2SISXDR [HEX] -> 0x80bcf9 bit_4_of_master_status_byte_a_0_1 undefined; BYTE 3, BIT 6, 0=(1 GEAR DOWN OR BELOW)/1=(TOP GEAR)~0-1
+000E +002C TUWGDRV1 [NONE] -> 0x80bcfa (no name) (no row); CONTROLS SOLENOID 1. (TURN SOLENOID_1 ON/OFF)~ON/OFF
+000E +002C TUWGDRV1 [NONE] -> 0x80bcfa (no name) (no row); CONTROLS SOLENOID 1. (TURN SOLENOID_1 ON/OFF)~ON/OFF
+000E +002C TUWGDRV2 [NONE] -> 0x80bcfa (no name) (no row); CONTROLS SOLENOID 2. (TURN SOLENOID_2 ON/OFF)~ON/OFF
+000E +002C TUWGDRV2 [NONE] -> 0x80bcfa (no name) (no row); CONTROLS SOLENOID 2. (TURN SOLENOID_2 ON/OFF)~ON/OFF
+000E +000E VPENFBUV [NONE] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE VP44 PUMP ENABLE~ON/OFF
+000E +000E VPENFBUV [NONE] -> 0x80bcdc clien_specified_value_for_water_in_fuel_lamp_feedback_on_off undefined; CLIENT SPECIFIED VALUE FOR THE VP44 PUMP ENABLE~ON/OFF
+000E +0034 VPENFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; VALUE USED IN DRIVER DIIAGNOSTIC DETECTION~ON / OFF
+000E +0034 VPENFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; VALUE USED IN DRIVER DIIAGNOSTIC DETECTION~ON / OFF
+000E +0034 WASTLPFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE WAIT TO START LAMP OUTPUT~ON / OFF
+000E +0034 WASTLPFB [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE WAIT TO START LAMP OUTPUT~ON / OFF
+000E +0034 WFLPFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE WATER IN FUEL LAMP OUTPUT~ON / OFF
+000E +0034 WFLPFDBK [NONE] -> 0x80bd02 status_of_the_water_in_fuel_lamp_output_on_off undefined; STATUS OF THE WATER IN FUEL LAMP OUTPUT~ON / OFF

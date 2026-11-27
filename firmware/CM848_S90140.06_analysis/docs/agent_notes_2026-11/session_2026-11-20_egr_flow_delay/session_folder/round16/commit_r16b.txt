@@ -1,0 +1,22 @@
+cm848: round 16 stage B - the cruise governor gain sets and second order filters as structs (types)
+
+- cruise_governor_gain_set_t (8 bytes, signed proportional / integral / derivative / integral acceleration
+  gains): the three e2m 1186 gain sets cruise_governor_gain_set_1 / _2 / _3 (0x408e02 / 0x408e18 /
+  0x408e26); cruise_governor_gain_set_pointer is typed cruise_governor_gain_set_t *, so the loads read
+  cruise_governor_gain_set_pointer->proportional_gain (were *(sword *)(pointer + 6) ...) and the stores
+  &cruise_governor_gain_set_1 (were (undefined *)&cruise_zone_1_proportional_gain).
+- second_order_filter_state_t (16 bytes: coefficient_1 / coefficient_3 pointers, output /
+  output_previous): cruise_pid_driveline_filter (0x3fd012) and cruise_pid_derivative_filter (0x3fd022),
+  replacing four type-only pointer rows; full prototypes for cm848_secondOrderFilter and
+  cm848_secondOrderFilterUnsigned, whose bodies now read filter->coefficient_1 / filter->output.
+- cruise_governor_fueling_maximum_pointer (was cruise_speed_upper_limit_ptr) typed word *: the
+  _-prefixed render and one 'Globals starting with _' warning are gone (25 -> 24).
+- 11 new rows for the governor's DAT_ words: the top droop gains for the high rear axle ratio, the
+  previous gain set number, the gear ratio gain lookup cache, the preset fueling filtered value /
+  snapshot / learned flag, the sump activation value and the e2m 1189 +30 / +32 sump thresholds (lha).
+
+The diff (97 lines) has only these effects plus the known local declaration order flip in one
+function. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites
+pass, the ROM-to-RAM thunk counts are unchanged (19 thunks, 13 call overrides).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

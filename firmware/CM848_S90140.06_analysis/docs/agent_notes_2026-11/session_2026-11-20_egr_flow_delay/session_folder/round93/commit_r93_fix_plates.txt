@@ -1,0 +1,18 @@
+cm848: round 93 - restore seven plate comments that round 91 overwrote
+
+Round 91 renamed seven CM848 J1939 receive functions to the names they share with their CM550 twins
+(receivePgn57344CabMessage1, receivePgn61441ElectronicBrakeController1Message,
+receivePgn61443ElectronicEngineController2Message, receivePgn65252ShutdownMessage,
+receivePgn65264PowerTakeoffInformationMessage, receivePgn65265CruiseControlVehicleSpeedMessage,
+registerJ1939ReceiveHandler). The proposal's plate text for those rows was the instruction "APPEND to the current
+comment: | (...)", and the round 91 apply wrote that instruction in place of each comment, so the seven functions
+lost their description (which signals each handler unpacks, the table the registrar fills).
+
+Each comment is restored from the commit before round 91 (900ff89c~1), with the function names round 91 renamed
+refreshed inside it (never the name after "was") and the twin note appended once.
+
+Proof: CM848 verify DETERMINISTIC; 0 functions removed / added / changed (comments only: 66 changed lines, all plate
+comment text); no new build warning; headers 0 g++ errors; test_rename_waves passes. The round 93 apply script asserts
+its plate comments and appends to an existing comment for a twin instead of taking the text from a proposal.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

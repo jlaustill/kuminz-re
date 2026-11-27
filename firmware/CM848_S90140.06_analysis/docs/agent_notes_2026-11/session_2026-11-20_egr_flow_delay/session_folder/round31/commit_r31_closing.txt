@@ -1,0 +1,11 @@
+cm848: round 31 closing - task 046, the session archive, verify
+
+- task 046, the round 31 section: the EC1 payload struct. The note on the local Mongo j1939 entry: its 65251 holds
+  the PGN 65252 Shutdown parameters, and the automotive j1939_spns table has the EC1 SPNs.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round31/: the apply scripts and the commit messages;
+  - the large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,11 @@
+functions 1968; differing after canonicalization: 3; pieces of new names: 0
+== mpc555_areBootModeStrapPinsHigh 
+   old ...ordwVar1;wordport_output_zero;word*qadc_b_port;word*qadc_a_port;word*qadc_b_direction;wordqadc_b_pqb0_sample;wordqadc_b_pqa4_sample;wordqadc_a_pqa2_sample;worddirection_register_value;qadc_b_direction
+   new ...ordwVar1;wordport_output_zero;word*qadc_b_port;word*qadc_a_port;word*qadc_b_direction;worddirection_register_value;wordqadc_b_pqb0_sample;wordqadc_b_pqa4_sample;wordqadc_a_pqa2_sample;qadc_b_direction
+== cm848_finishDownloadBlock 
+   old ...//undefined4cm848_finishDownloadBlock(word*param_1){wordwVar1;dworddVar2;dworddVar3;uintuVar4;undefined4uVar5;wV
+   new ...//bytecm848_finishDownloadBlock(word*trailing_crc){wordwVar1;dworddVar2;dworddVar3;uintuVar4;bytebVar5;wVar1=ecu
+== cm848_updateDownloadCrc 
+   old ...ed;if((dVar3==0)&&(channel!=BOOT_REQUEST_CHANNEL_SERIAL)){bVar5=cm848_finishDownloadBlock(data);}else{bVar5=0xff;}returnbVar5;}//
+   new ...ed;if((dVar3==0)&&(channel!=BOOT_REQUEST_CHANNEL_SERIAL)){bVar5=cm848_finishDownloadBlock((word*)data);}else{bVar5=0xff;}returnbVar5;}//
+struct instances 1; piece or underscore renders: 0 

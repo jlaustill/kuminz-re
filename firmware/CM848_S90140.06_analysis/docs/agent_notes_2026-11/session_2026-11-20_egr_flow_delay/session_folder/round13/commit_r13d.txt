@@ -1,0 +1,21 @@
+cm848: round 13 stage D - SCI 0x25 tests 5-10 cut out firing-order slots (comments, after a review)
+
+A review asked whether tests 5-10 are injectors 1-6. DRB 25-05 FUEL_INJ1 anchors only index 0, and cylinder 1 is
+slot 1 in firing order as well.
+- **Indexing:** the injection dispatch tests bit (cylinder_event_index & 0x3f) of
+  cylinder_cutout_test_mask | cylinder_cutout_mask.
+- **The bank masks:** the fault cutout ORs in 0x55 / 0xaa for one injector group. The banks are cylinders 1-2-3 /
+  4-5-6 (e2m 8C74 Cylinder_Bank_Contribution_1 'avg. of physical cyls. 1,2,3'), and alternate events form a bank
+  only in firing order 1-5-3-6-2-4.
+- **So:** bit n is firing-order slot n + 1 (cylinders 1 / 5 / 3 / 6 / 2 / 4). The mask row's 'bit n = cylinder
+  n + 1' and its '1000 count timer' (nothing counts the marker down) are corrected, along with the request byte
+  comments, the callback plate and task 046.
+- **Also checked, no change:**
+  - The step 6 verdict bits (test_results_1 bits 2-3, final_test_results_1 bit 3) have no ECM writer. The only
+    path is the SCI by-id EEPROM setting lookup (ids 0x77 / 0x7c), so the plant tool sets them.
+  - Each of the seven test timeout words is used only by the callback, the expiry function and the initializer.
+  - The stale-name sweep (464 hits) finds only historical worklists, annotated task notes and a legacy '+1' row.
+- **Task 046 leads:** the ASG leftovers, the request byte buffer, and the cm848_setLogicalOutputRequest() render.
+- **Check:** reverse_names.py EQUIVALENT (the plate is the only change).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

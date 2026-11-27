@@ -1,0 +1,352 @@
+=== cm848_runJ1939PowertrainControlTimeouts
+void cm848_runJ1939PowertrainControlTimeouts(void)
+{
+  bool bVar1;
+  bool bVar2;
+  bool bVar3;
+  bool bVar4;
+  bool bVar5;
+  bool bVar6;
+  bool bVar7;
+  word wVar8;
+  undefined4 uVar9;
+  int iVar10;
+  wVar8 = j1939_powertrain_control_state.high_idle_override_recovery_flag;
+  bVar7 = false;
+  bVar6 = false;
+  bVar5 = false;
+  if ((high_idle_override_active_flag_previous !=
+       j1939_powertrain_control_state.high_idle_override_active_flag) &&
+     (j1939_powertrain_control_state.high_idle_override_active_flag == 1)) {
+    bVar5 = true;
+  }
+  if (j1939_powertrain_control_state.high_idle_override_timeout_timer != 0) {
+    j1939_powertrain_control_state.high_idle_override_timeout_timer =
+         j1939_powertrain_control_state.high_idle_override_timeout_timer - 1;
+    bVar5 = true;
+  }
+  bVar1 = j1939_powertrain_control_state.high_idle_override_timeout_timer == 1;
+  if (bVar1) {
+    j1939_powertrain_control_state.high_idle_override_active_flag = 0;
+    j1939_powertrain_control_state.high_idle_override_recovery_flag = 0;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits & 3;
+    j1939_powertrain_control_state.high_idle_override_timeout_timer = 0;
+    j1939_powertrain_control_state.high_idle_override_time_limit_timer = 0;
+  }
+  if (j1939_powertrain_control_state.high_idle_override_time_limit_timer != 0) {
+    j1939_powertrain_control_state.high_idle_override_time_limit_timer =
+         j1939_powertrain_control_state.high_idle_override_time_limit_timer - 1;
+  }
+  if (j1939_powertrain_control_state.high_idle_override_time_limit_timer == 1) {
+    j1939_powertrain_control_state.high_idle_override_active_flag = 0;
+    j1939_powertrain_control_state.high_idle_override_recovery_flag = 1;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits | 4;
+    j1939_powertrain_control_state.high_idle_override_timeout_timer =
+         j1939_time_limited_node_recovery_time + 1;
+  }
+  if (((j1939_powertrain_control_state.etc1_progressive_shift_disable_timer != 0) &&
+      (j1939_powertrain_control_state.etc1_progressive_shift_disable_timer =
+            j1939_powertrain_control_state.etc1_progressive_shift_disable_timer - 1,
+      etc1_progressive_shift_disable_previous !=
+      j1939_powertrain_control_state.etc1_spn607_progressive_shift_disable)) &&
+     (j1939_powertrain_control_state.etc1_spn607_progressive_shift_disable == 1)) {
+    bVar5 = true;
+  }
+  bVar2 = j1939_powertrain_control_state.etc1_progressive_shift_disable_timer == 1;
+  if (bVar2) {
+    j1939_powertrain_control_state.etc1_spn607_progressive_shift_disable = 0;
+    j1939_powertrain_control_state.etc1_progressive_shift_disable_timer = 0;
+  }
+  if (((j1939_powertrain_control_state.etc1_out_of_gear_timer != 0) &&
+      (j1939_powertrain_control_state.etc1_out_of_gear_timer =
+            j1939_powertrain_control_state.etc1_out_of_gear_timer - 1,
+      etc1_out_of_gear_flag_previous != j1939_powertrain_control_state.etc1_out_of_gear_flag)) &&
+     (j1939_powertrain_control_state.etc1_out_of_gear_flag == 1)) {
+    bVar5 = true;
+  }
+  bVar3 = j1939_powertrain_control_state.etc1_out_of_gear_timer == 1;
+  if (bVar3) {
+    j1939_powertrain_control_state.etc1_out_of_gear_flag = 0;
+    j1939_powertrain_control_state.etc1_out_of_gear_timer = 0;
+  }
+  if (((j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer != 0) &&
+      (j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer =
+            j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer - 1,
+      engine_retarder_override_control_mode_previous != engine_retarder_override_control_mode)) &&
+     (engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF)) {
+    bVar5 = true;
+  }
+  bVar4 = j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer == 1;
+  if (bVar4) {
+    j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer = 0;
+  }
+  bVar4 = bVar4 || (bVar3 || (bVar2 || bVar1 && wVar8 == 0));
+  if (j1939_powertrain_control_state.etc1_message_timeout != 0) {
+    j1939_powertrain_control_state.etc1_message_timeout =
+         j1939_powertrain_control_state.etc1_message_timeout - 1;
+  }
+  if (j1939_powertrain_control_state.etc1_message_timeout == 1) {
+    j1939_powertrain_control_state.etc1_message_timeout = 0;
+    j1939_powertrain_control_state.etc1_spn574_shift_in_process = 0;
+  }
+  if (etc2_selected_gear_timeout != 0) {
+    etc2_selected_gear_timeout = etc2_selected_gear_timeout - 1;
+  }
+  if (etc2_selected_gear_timeout == 1) {
+    etc2_selected_gear_timeout = 0;
+    j1939_powertrain_control_state.etc2_transmission_selected_gear =
+         TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE;
+  }
+  if (j1939_powertrain_control_state.etc1_torque_converter_lockup_timer != 0) {
+    j1939_powertrain_control_state.etc1_torque_converter_lockup_timer =
+         j1939_powertrain_control_state.etc1_torque_converter_lockup_timer - 1;
+  }
+  if (j1939_powertrain_control_state.etc1_torque_converter_lockup_timer == 1) {
+    j1939_powertrain_control_state.etc1_spn573_torque_converter_lockup_disengaged_flag = 0;
+    j1939_powertrain_control_state.etc1_torque_converter_lockup_timer = 0;
+  }
+  if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) ||
+     (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) {
+    if (j1939_powertrain_control_state.etc1_out_of_gear_data_timer != 0) {
+      j1939_powertrain_control_state.etc1_out_of_gear_data_timer =
+           j1939_powertrain_control_state.etc1_out_of_gear_data_timer - 1;
+    }
+    if ((j1939_powertrain_control_state.etc1_out_of_gear_data_timer == 1) ||
+       (j1939_powertrain_control_state.etc1_message_timeout == 0)) {
+      j1939_powertrain_control_state.etc1_out_of_gear_data_timer = 0;
+      j1939_powertrain_control_state.etc1_out_of_gear_data_valid_flag = 0;
+    }
+    if ((etc2_gear_ratio_timeout != 0) &&
+       (etc2_gear_ratio_timeout = etc2_gear_ratio_timeout - 1, etc2_gear_ratio_timeout == 1)) {
+      etc2_gear_ratio_valid_flag = 0;
+      bVar4 = true;
+    }
+  }
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) {
+    if (((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)) ||
+       (engine_state == ENGINE_STATE_OVERSPEED)) {
+      j1939_powertrain_control_state.etc1_output_shaft_speed_run_state_count =
+           j1939_powertrain_control_state.etc1_output_shaft_speed_run_state_count + 1;
+    }
+    else {
+      j1939_powertrain_control_state.etc1_output_shaft_speed_run_state_count = 0;
+    }
+    if (switch_input_state_bits.key_switch == 0) {
+      j1939_powertrain_control_state.etc1_output_shaft_speed_fault_hold_off_flag = 1;
+    }
+    else if ((engine_state == ENGINE_STATE_STOPPED) ||
+            (j1939_pgn61442_output_shaft_speed_fault_run_state_delay <=
+             j1939_powertrain_control_state.etc1_output_shaft_speed_run_state_count)) {
+      j1939_powertrain_control_state.etc1_output_shaft_speed_fault_hold_off_flag = 0;
+    }
+    else {
+      j1939_powertrain_control_state.etc1_output_shaft_speed_fault_hold_off_flag = 1;
+    }
+    if (j1939_powertrain_control_state.etc1_output_shaft_speed_timer != 0) {
+      j1939_powertrain_control_state.etc1_output_shaft_speed_timer =
+           j1939_powertrain_control_state.etc1_output_shaft_speed_timer - 1;
+    }
+    if (((j1939_powertrain_control_state.etc1_output_shaft_speed_timer == 0) &&
+        (j1939_powertrain_control_state.etc1_output_shaft_speed_fault_hold_off_flag == 0)) &&
+       (fault_detected_cal.vss_signal_lost_error == 0)) {
+      output_shaft_speed_current = 0;
+      fault_detected_cal._2_2_ = fault_detected_cal._2_2_ | 0x2000;
+    }
+  }
+  if (((tsc1_override_control_mode_previous ==
+        j1939_powertrain_control_state.tsc1_override_control_mode) &&
+      ((int)(short)tsc1_controlling_data_link_previous ==
+       (int)(short)j1939_powertrain_control_state.tsc1_controlling_data_link)) &&
+     (tsc1_controlling_source_address_previous ==
+      j1939_powertrain_control_state.tsc1_controlling_source_address)) {
+    if (j1939_powertrain_control_state.tsc1_request_timeout_count != 0) {
+      j1939_powertrain_control_state.tsc1_request_timeout_count =
+           j1939_powertrain_control_state.tsc1_request_timeout_count - 1;
+    }
+    if (j1939_powertrain_control_state.tsc1_request_time_limit_timer != 0) {
+      j1939_powertrain_control_state.tsc1_request_time_limit_timer =
+           j1939_powertrain_control_state.tsc1_request_time_limit_timer - 1;
+    }
+    j1939_powertrain_control_state.tsc1_request_timed_out_flag =
+         (word)(j1939_powertrain_control_state.tsc1_request_timeout_count < 2);
+    if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) {
+      j1939_powertrain_control_state.high_idle_override_active_flag = 0;
+      if (j1939_powertrain_control_state.tsc1_request_timeout_count < 2) {
+        cm848_runTsc1LostManagement();
+      }
+    }
+    else {
+      if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_CONTROL) {
+        if (j1939_powertrain_control_state.tsc1_request_timeout_count != 1) {
+          uVar9 = 1;
+LAB_00027800:
+          if (j1939_powertrain_control_state.tsc1_request_time_limit_timer == 1) {
+            cm848_addEngineTsc1IgnoredRequestEntry
+                      ((int)(short)j1939_powertrain_control_state.tsc1_controlling_data_link,
+                       j1939_powertrain_control_state.tsc1_controlling_source_address,uVar9);
+            j1939_powertrain_control_state.j1939_blocked_message_bits =
+                 j1939_powertrain_control_state.j1939_blocked_message_bits | 1;
+            cm848_runTsc1LostManagement();
+          }
+          goto LAB_00027848;
+        }
+      }
+      else if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_TORQUE_CONTROL) {
+        j1939_powertrain_control_state.high_idle_override_active_flag = 0;
+        if (j1939_powertrain_control_state.tsc1_request_timeout_count != 1) {
+          uVar9 = 2;
+          goto LAB_00027800;
+        }
+      }
+      else if ((j1939_powertrain_control_state.tsc1_override_control_mode != TSC1_SPEED_TORQUE_LIMIT
+               ) || (j1939_powertrain_control_state.high_idle_override_active_flag = 0,
+                    1 < j1939_powertrain_control_state.tsc1_request_timeout_count))
+      goto LAB_00027848;
+      j1939_powertrain_control_state.high_idle_override_active_flag = 0;
+      cm848_runTsc1LostManagement();
+      bVar4 = true;
+    }
+  }
+  else if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) {
+    j1939_powertrain_control_state.tsc1_request_time_limit_timer = 0;
+  }
+  else {
+    if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_CONTROL) {
+      iVar10 = 6;
+    }
+    else {
+      if (j1939_powertrain_control_state.tsc1_override_control_mode != TSC1_TORQUE_CONTROL) {
+        if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) {
+          j1939_powertrain_control_state.tsc1_request_time_limit_timer = 0;
+          bVar5 = true;
+        }
+        goto LAB_00027848;
+      }
+      iVar10 = 10;
+    }
+    j1939_powertrain_control_state.tsc1_request_time_limit_timer =
+         *(short *)((int)&(j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
+                          data_link + iVar10) + 1;
+    bVar5 = true;
+  }
+LAB_00027848:
+  if (bVar4) {
+    if (j1939_powertrain_control_state.tsc1_controlling_data_link == CONTROL_NETWORK_J1939) {
+      bVar7 = true;
+    }
+    else {
+      bVar6 = true;
+    }
+  }
+  else if (bVar5) {
+    if (j1939_powertrain_control_state.tsc1_controlling_data_link == CONTROL_NETWORK_J1939) {
+      j1939_link_fault_clear_request_flag = 1;
+    }
+    else {
+      j1708_link_fault_clear_request_flag = 1;
+    }
+  }
+  tsc1_override_control_mode_previous = j1939_powertrain_control_state.tsc1_override_control_mode;
+  tsc1_controlling_data_link_previous = j1939_powertrain_control_state.tsc1_controlling_data_link;
+  tsc1_controlling_source_address_previous =
+       j1939_powertrain_control_state.tsc1_controlling_source_address;
+  high_idle_override_active_flag_previous =
+       j1939_powertrain_control_state.high_idle_override_active_flag;
+  etc1_progressive_shift_disable_previous =
+       j1939_powertrain_control_state.etc1_spn607_progressive_shift_disable;
+  etc1_out_of_gear_flag_previous = j1939_powertrain_control_state.etc1_out_of_gear_flag;
+  if ((engine_retarder_override_control_mode_previous == engine_retarder_override_control_mode) &&
+     (engine_retarder_controlling_source_address_previous ==
+      engine_retarder_controlling_source_address)) {
+    if (j1939_powertrain_control_state.retarder_tsc1_request_timeout_count != 0) {
+      j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
+           j1939_powertrain_control_state.retarder_tsc1_request_timeout_count - 1;
+    }
+    if (j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer != 0) {
+      j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer =
+           j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer - 1;
+    }
+    if (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) {
+      if (j1939_powertrain_control_state.retarder_tsc1_request_timeout_count == 1) {
+LAB_000279e8:
+        cm848_resetEngineRetarderTsc1Request();
+        bVar7 = true;
+      }
+      else if (j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer == 1) {
+        cm848_addRetarderTsc1IgnoredRequestEntry
+                  (engine_retarder_controlling_source_address & 0xff,2);
+        j1939_powertrain_control_state.j1939_blocked_message_bits =
+             j1939_powertrain_control_state.j1939_blocked_message_bits | 2;
+        cm848_resetEngineRetarderTsc1Request();
+      }
+    }
+    else if ((engine_retarder_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) &&
+            (j1939_powertrain_control_state.retarder_tsc1_request_timeout_count == 1))
+    goto LAB_000279e8;
+  }
+  else {
+    if (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) {
+      j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer =
+           (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
+           retarder_torque_control_time_limit + 1;
+    }
+    else {
+      j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer = 0;
+      if (engine_retarder_override_control_mode != TSC1_SPEED_TORQUE_LIMIT) goto LAB_000279f0;
+    }
+    j1939_link_fault_clear_request_flag = 1;
+  }
+LAB_000279f0:
+  engine_retarder_override_control_mode_previous = engine_retarder_override_control_mode;
+  engine_retarder_controlling_source_address_previous =
+       (byte)engine_retarder_controlling_source_address;
+  if (bVar6) {
+    if ((int)(uint)j1708_link_fault_timeout_count_cal <
+        (int)(j1939_link_fault_timeout_count_limit - 1)) {
+      j1708_link_fault_timeout_count_cal = j1708_link_fault_timeout_count_cal + 1;
+    }
+    else {
+      fault_detected_cal._12_2_ = fault_detected_cal._12_2_ | 0x4000;
+      j1708_link_fault_timeout_count_cal = 0;
+    }
+  }
+  else {
+    if (j1708_link_fault_clear_request_flag != 1) goto LAB_00027ae8;
+    if (fault_detected_cal.fault_110 != 0) {
+      if (fault_registered_cal.fault_110 != 0) {
+        fault_detected_cal._12_2_ = fault_detected_cal._12_2_ & 0xbfff;
+        fault_registered_cal._12_2_ = fault_registered_cal._12_2_ & 0xbfff;
+        j1708_link_fault_clear_request_flag = 0;
+        j1708_link_fault_timeout_count_cal = 0;
+      }
+      goto LAB_00027ae8;
+    }
+  }
+  j1708_link_fault_clear_request_flag = 0;
+LAB_00027ae8:
+  if (bVar7) {
+    if (j1939_link_fault_timeout_count_cal < j1939_link_fault_timeout_count_limit) {
+      j1939_link_fault_timeout_count_cal = j1939_link_fault_timeout_count_cal + 1;
+    }
+    else {
+      fault_detected_cal._14_2_ = fault_detected_cal._14_2_ | 1;
+      j1939_link_fault_timeout_count_cal = 0;
+    }
+  }
+  else {
+    if (j1939_link_fault_clear_request_flag != 1) {
+      return;
+    }
+    if (fault_detected_cal.j1939_link_not_fast_enough_error != 0) {
+      if (fault_registered_cal.j1939_link_not_fast_enough_error == 0) {
+        return;
+      }
+      fault_detected_cal._14_2_ = fault_detected_cal._14_2_ & 0xfffe;
+      fault_registered_cal._14_2_ = fault_registered_cal._14_2_ & 0xfffe;
+    }
+  }
+  j1939_link_fault_clear_request_flag = 0;
+  return;
+}

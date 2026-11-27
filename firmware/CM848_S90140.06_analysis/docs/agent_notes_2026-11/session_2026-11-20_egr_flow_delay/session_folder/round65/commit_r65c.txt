@@ -1,0 +1,25 @@
+cm848: round 65 follow-up - one name corrected, two stale plates, the channel map doc, the proof text
+
+From the round's closing review:
+- cm848_updateCylinderCutoutAndInjectionQuantities -> cm848_updateCylinderCutoutAndInjectionDemand. Stage A had
+  dropped "Timing" on the strength of its plate, but the function also writes the pilot / main / auxiliary timings
+  for the cylinder event and main_injection_timing_for_air_handling. Its plate now says so.
+- cm848_armTpuChannel10AtEndOfInjectionLimit holds after reading the whole body: both branches arm channel 10 at
+  the cylinder angle + table offset + the end-limit angle, and the enable flag only picks the top nibble of
+  TPUA_CH10_PARAM0.
+- The TPU-A channel 10 and channel 6 handler plates cited schedule_crankValid / schedule_crankInvalid. Those were
+  short old names that no refresh matched. They now name cm848_scheduleInjectionAnglesInSpeedLimpHome /
+  cm848_scheduleInjectionAnglesOnPrimarySpeedInput; the rename history and the channel 10 handler's branches agree
+  (0x12 -> state 4 + speed limp home / else state 1 + primary).
+- docs/tpu_mios_channel_map.md: the crank-sync dispatcher and the three channel 6 loaders on their current names.
+  The live-text sweep for the round's 39 old labels found no other live doc; the rest are snapshots, worklists and
+  dated logs.
+- task 046 / the PR body / the proof note: stage A's registrar differs by its renamed count and the
+  PTR_<handler>_003fd416 auto-label, which embeds the renamed TP.CM dispatcher's name, not by "newly named
+  globals". Commit 5e0d02e6 says otherwise. The 17 receive registrations, listed with comments stripped, keep their
+  keys and handlers.
+
+Proof: verify is byte-identical; thunks 18 / 14. The rename is label-only (prove_r65.sh with it mapped). Headers
+regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219, history notes intact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

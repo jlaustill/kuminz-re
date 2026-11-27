@@ -1,0 +1,137 @@
+=== asrf1 d0d8-d240
+00d0d8: 4cee3c3cffdc             movem.l (-0x24,a6),d2/d3/d4/d5/a2/a3/a4/a5
+00d0de: 4e5e                     unlk a6
+00d0e0: 4e75                     rts
+00d0e2: 207c0080a98e             movea.l #0x80a98e,a0
+00d0e8: 4a790080a93e             tst.w (0x80a93e).l
+00d0ee: 67000098                 beq.w 0xd188
+00d0f2: 4a50                     tst.w (a0)
+00d0f4: 66000092                 bne.w 0xd188
+00d0f8: 30bc001e                 move.w #0x1e,(a0)
+00d0fc: 33f90080a9400080a990     move.w (0x80a940).l,(0x80a990).l
+00d106: 33f90080a9420080a992     move.w (0x80a942).l,(0x80a992).l
+00d110: 33f90080a9440080a994     move.w (0x80a944).l,(0x80a994).l
+00d11a: 23fc0080a95a0080a9a8     move.l #0x80a95a,(0x80a9a8).l
+00d124: 23fc0080a9460080a984     move.l #0x80a946,(0x80a984).l
+00d12e: 33f90080a94e0080a932     move.w (0x80a94e).l,(0x80a932).l
+00d138: 33f90080a9500080a934     move.w (0x80a950).l,(0x80a934).l
+00d142: 33f90080a9520080a936     move.w (0x80a952).l,(0x80a936).l
+00d14c: 33f90080a9540080a938     move.w (0x80a954).l,(0x80a938).l
+00d156: 33f90080a9560080a93a     move.w (0x80a956).l,(0x80a93a).l
+00d160: 33f90080a9580080a93c     move.w (0x80a958).l,(0x80a93c).l
+00d16a: 33f90080a94c0080a9a0     move.w (0x80a94c).l,(0x80a9a0).l
+00d174: 33f90080a9480080a99c     move.w (0x80a948).l,(0x80a99c).l
+00d17e: 33f90080a94a0080a99e     move.w (0x80a94a).l,(0x80a99e).l
+00d188: 4e75                     rts
+00d18a: 207c0080ded4             movea.l #0x80ded4,a0
+00d190: 4a50                     tst.w (a0)
+00d192: 660e                     bne.s 0xd1a2
+00d194: 0c79001e0080a98e         cmpi.w #0x1e,(0x80a98e).l
+00d19c: 6604                     bne.s 0xd1a2
+00d19e: 30bc001e                 move.w #0x1e,(a0)
+00d1a2: 4e75                     rts
+00d1a4: 227c0080ded4             movea.l #0x80ded4,a1
+00d1aa: 4a51                     tst.w (a1)
+00d1ac: 6668                     bne.s 0xd216
+00d1ae: 0c7900020080a98e         cmpi.w #0x2,(0x80a98e).l
+00d1b6: 665e                     bne.s 0xd216
+00d1b8: 32bc0002                 move.w #0x2,(a1)
+00d1bc: 7000                     moveq #0,d0
+00d1be: 30390080da66             move.w (0x80da66).l,d0
+00d1c4: 2200                     move.l d0,d1
+00d1c6: e788                     lsl.l #3,d0
+00d1c8: d081                     add.l d1,d0
+00d1ca: d080                     add.l d0,d0
+00d1cc: 207c00807b92             movea.l #0x807b92,a0
+00d1d2: d1c0                     adda.l d0,a0
+00d1d4: 23c80080a9a8             move.l a0,(0x80a9a8).l
+00d1da: 0c6f00020004             cmpi.w #0x2,(0x4,a7)
+00d1e0: 6734                     beq.s 0xd216
+00d1e2: 42790080a9a0             clr.w (0x80a9a0).l
+00d1e8: 33fc04000080a992         move.w #0x400,(0x80a992).l
+00d1f0: 33fc04000080a994         move.w #0x400,(0x80a994).l
+00d1f8: 33f900807b900080a99e     move.w (0x807b90).l,(0x80a99e).l
+00d202: 33f900807b8e0080a99c     move.w (0x807b8e).l,(0x80a99c).l
+00d20c: 23fc00807b8c0080a984     move.l #0x807b8c,(0x80a984).l
+00d216: 4e75                     rts
+00d218: 207c0080a98e             movea.l #0x80a98e,a0
+00d21e: 4a50                     tst.w (a0)
+00d220: 6618                     bne.s 0xd23a
+00d222: 0c7900010080da50         cmpi.w #0x1,(0x80da50).l
+00d22a: 660e                     bne.s 0xd23a
+00d22c: 30bc0002                 move.w #0x2,(a0)
+00d230: 33f90080da5e0080a990     move.w (0x80da5e).l,(0x80a990).l
+00d23a: 4e75                     rts
+00d23c: 48e70030                 movem.l a3/a2,-(a7)
+=== asrf2 d380-d3a0
+00d380: 4c010000                 mulu.l d1,d0
+00d384: 4c7c000000000190         divu.l #0x190,d0
+00d38c: d053                     add.w (a3),d0
+00d38e: 33c00080a98c             move.w d0,(0x80a98c).l
+00d394: 42790080a98e             clr.w (0x80a98e).l
+00d39a: 4eb90000d0e2             jsr (0xd0e2).l
+=== asrf3 d57c-d5e8
+00d57c: a984                     .word 0xa984
+00d57e: 4cdf0c04                 movem.l (a7)+,d2/a2/a3
+00d582: 4e75                     rts
+00d584: 207c0080a98e             movea.l #0x80a98e,a0
+00d58a: 4a50                     tst.w (a0)
+00d58c: 660e                     bne.s 0xd59c
+00d58e: 33f90080a98c0080a990     move.w (0x80a98c).l,(0x80a990).l
+00d598: 30bc0007                 move.w #0x7,(a0)
+00d59c: 4e75                     rts
+00d59e: 227c00800144             movea.l #0x800144,a1
+00d5a4: 207c00800136             movea.l #0x800136,a0
+00d5aa: 33fc000200800136         move.w #0x2,(0x800136).l
+00d5b2: 217c000604620002         move.l #0x60462,(0x2,a0)
+00d5ba: 217c000604720008         move.l #0x60472,(0x8,a0)
+00d5c2: 33fc000200800144         move.w #0x2,(0x800144).l
+00d5ca: 237c000604820002         move.l #0x60482,(0x2,a1)
+00d5d2: 237c000604920008         move.l #0x60492,(0x8,a1)
+00d5da: 33f900803bf00080a982     move.w (0x803bf0).l,(0x80a982).l
+00d5e4: 4e75                     rts
+00d5e6: 42790080a9c4             clr.w (0x80a9c4).l
+=== asrf4 f716-f796
+00f716: 2f02                     move.l d2,-(a7)
+00f718: 207c00800180             movea.l #0x800180,a0
+00f71e: 34390080a98c             move.w (0x80a98c).l,d2
+00f724: 94790080ccf6             sub.w (0x80ccf6).l,d2
+00f72a: 0c7900070080a98e         cmpi.w #0x7,(0x80a98e).l
+00f732: 6606                     bne.s 0xf73a
+00f734: 30b90080a99a             move.w (0x80a99a).l,(a0)
+00f73a: 4a50                     tst.w (a0)
+00f73c: 6612                     bne.s 0xf750
+00f73e: 4a42                     tst.w d2
+00f740: 6e06                     bgt.s 0xf748
+00f742: 4240                     clr.w d0
+00f744: 241f                     move.l (a7)+,d2
+00f746: 4e75                     rts
+00f748: 303c1700                 move.w #0x1700,d0
+00f74c: 241f                     move.l (a7)+,d2
+00f74e: 4e75                     rts
+00f750: 3002                     move.w d2,d0
+00f752: 48c0                     ext.l d0
+00f754: 4c3c000000002655         mulu.l #0x2655,d0
+00f75c: 2400                     move.l d0,d2
+00f75e: 7200                     moveq #0,d1
+00f760: 3210                     move.w (a0),d1
+00f762: e789                     lsl.l #3,d1
+00f764: 2002                     move.l d2,d0
+00f766: 4c410800                 divs.l d1,d0
+00f76a: 2400                     move.l d0,d2
+00f76c: 7000                     moveq #0,d0
+00f76e: 3039008091de             move.w (0x8091de).l,d0
+00f774: d480                     add.l d0,d2
+00f776: 4a82                     tst.l d2
+00f778: 6e06                     bgt.s 0xf780
+00f77a: 4240                     clr.w d0
+00f77c: 241f                     move.l (a7)+,d2
+00f77e: 4e75                     rts
+00f780: 0c8200001700             cmpi.l #0x1700,d2
+00f786: 6d08                     blt.s 0xf790
+00f788: 303c1700                 move.w #0x1700,d0
+00f78c: 241f                     move.l (a7)+,d2
+00f78e: 4e75                     rts
+00f790: 3002                     move.w d2,d0
+00f792: 241f                     move.l (a7)+,d2
+00f794: 4e75                     rts

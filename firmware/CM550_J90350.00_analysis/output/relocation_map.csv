@@ -654,7 +654,7 @@ source_address,source_name,target_address,confidence,status
 0x027314,diagnosticResponseHandler2,0x02ef1c,78,similar
 0x027342,diagnosticServiceByteHandler,0x022de6,66,similar
 0x0273d4,fuelArbitratorMessageHandler,0x02efd0,86,matched
-0x027528,torqueControlModeHandler,0x02f128,81,matched
+0x027528,processEngineTsc1Request,0x02f128,81,matched
 0x0278be,diagnosticServiceDispatcherByPgn,0x02efd0,73,similar
 0x0279ee,retarderModeThresholdCalculator,0x01025c,69,similar
 0x027aca,retarderPercentageScaler,N/A,0,not_found

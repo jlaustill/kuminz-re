@@ -1,0 +1,6 @@
+address,name,old_label,kind,dims
+0x00409eda,fuel_pressure_sensor_plausibility_maximum_throttle,fuel_pressure_sensor_plausibility_maximum_governor_output,global,1
+0x0040898a,engine_oil_pressure_filter_coefficient,WORD_0040898a,global,1
+0x0040898e,low_oil_switch_chime_enable,DAT_0040898e,global,1
+0x00408992,engine_oil_pressure_default,DAT_00408992,global,1
+0x003fceb4,engine_oil_pressure_filter_state,ema_filter_state_t_003fceb4,global,1

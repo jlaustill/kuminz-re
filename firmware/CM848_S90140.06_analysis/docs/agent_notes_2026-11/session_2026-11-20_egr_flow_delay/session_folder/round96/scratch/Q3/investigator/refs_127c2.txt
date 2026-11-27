@@ -1,0 +1,138 @@
+0x800220 row=('manifold_temp_table_3_x_ptr', 'word') n=5 | 
+0x800222 row=('cylinder_balance_stop_compensation_lookup', 'table_lookup_2d_arguments_t') n=1 | 
+0x800228 row=None n=1 | 
+0x800230 row=None n=1 | 
+0x800238 row=('cylinder_balance_component_3_adjustment_lookup', 'table_lookup_2d_arguments_t') n=1 | 
+0x80023e row=None n=1 | 
+0x800246 row=None n=1 | 
+0x80024e row=('cylinder_balance_threshold_lookup', 'table_lookup_1d_arguments_t') n=1 | 
+0x800254 row=None n=1 | 
+0x80025c row=('cylinder_balance_real_2_dynamics_compensation_lookup', 'table_lookup_1d_arguments_t') n=1 | 
+0x800262 row=None n=1 | 
+0x80026a row=('cylinder_balance_imaginary_2_dynamics_compensation_lookup', 'table_lookup_1d_arguments_t') n=1 | 
+0x800270 row=None n=1 | 
+0x8002ac row=('load_trending_table_2_ptr', 'dword') n=6 | 
+0x8002b0 row=('fuel_timing_blend_offset_input_1', 'undefined') n=4 | 
+0x8002b4 row=None n=4 | 
+0x8002b8 row=('load_trending_table_4_ptr', 'dword') n=2 | 
+0x8002bc row=('fuel_timing_blend_rpm_input_2', 'undefined') n=4 | 
+0x8002c0 row=('load_trending_table_5_ptr', 'dword') n=2 | 
+0x8002c6 row=('load_trending_table_6_ptr', 'word') n=2 | 
+0x8002c8 row=None n=3 | 
+0x8002ca row=('peak_torque_engine_mode_input', 'word') n=4 | 
+0x8002cc row=('engine_operating_mode_previous', 'word') n=4 | 
+0x8002ce row=('engine_mode_previous_0', 'word') n=4 | 
+0x8002d0 row=('engine_mode_previous_1', 'undefined') n=4 | 
+0x8002d2 row=('engine_mode_previous_state_2d2', 'word') n=3 | 
+0x8002d4 row=('engine_mode_previous_2', 'undefined') n=1 | 
+0x8002e0 row=('system_timer_array', 'undefined') n=3 | 
+0x8002e2 row=('protection_threshold_status_shifted', 'undefined') n=2 | 
+0x800300 row=('protection_state2_table_ptr_1', 'undefined') n=3 | 
+0x800302 row=None n=2 | 
+0x800320 row=('rpm_speed_bin_index', 'i16') n=18 | 
+0x80033e row=('oil_pressure_mode_init_flag', 'word') n=3 | 
+0x804158 row=('cyl_balance_trim_array_cal', 'undefined') n=5 | 8241 +0000 CBDDFTO1 [MSEC] -> 0x804158 cyl_balance_trim_array_cal undefined; CYL 1 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5
+0x80728e row=None n=1 | 823C +0002 CBDDST [RPM] -> 0x80728e (no name) (no row); CYLINDER BALANCING DELTA SPEED THRESHOLD~0-1000
+0x807290 row=None n=1 | 823C +0004 CBDUSL [RPM] -> 0x807290 (no name) (no row); CYLINDER BALANCING UPPER SPEED LIMIT~0-3000
+0x807292 row=None n=1 | 823C +0006 CBDLSL [RPM] -> 0x807292 (no name) (no row); CYLINDER BALANCING LOWER SPEED LIMIT~0-3000
+0x807296 row=None n=2 | 823C +000A CBDMG2 [N] -> 0x807296 (no name) (no row); CYLINDER BALANCING MAGNITUDE GAIN_2~0-100
+0x807298 row=None n=1 | 823C +000C CBDMG3 [N] -> 0x807298 (no name) (no row); CYLINDER BALANCING MAGNITUDE GAIN_3~0-100
+0x80729a row=None n=2 | 823C +000E CBDEFCN [N] -> 0x80729a (no name) (no row); CYLINDER BALANCING ERROR FILTER CONSTANT~0-1
+0x8072a0 row=None n=1 | 823C +0014 CBDFTMX [MG/S] -> 0x8072a0 (no name) (no row); CYLINDER BALANCING FUELING TRIM MAXIMUM~0-5
+0x8072a2 row=None n=1 | 823C +0016 CBDFTMN [MG/S] -> 0x8072a2 (no name) (no row); CYLINDER BALANCING FUELING TRIM MINIMUM~-5-0
+0x8072a6 row=None n=1 | 
+0x8072aa row=None n=1 | 
+0x8072ae row=None n=1 | 
+0x8072be row=None n=1 | 823C +0032 CBDMFT [MM3S] -> 0x8072be (no name) (no row); CYLINDER BALANCING MOTORING FUEL THRESHOLD~0-100
+0x8072c0 row=None n=1 | 823C +0034 CBDEN [NONE] -> 0x8072c0 (no name) (no row); CYLINDER BALANCING ENABLE~0-1
+0x8072c2 row=None n=1 | 823C +0036 CBDR1C1R [N] -> 0x8072c2 (no name) (no row); CYLINDER BALANCING REFERENCE_1 CYLINDER_1 REAL~-1-1
+0x8072c4 row=None n=1 | 823C +0038 CBDR1C1I [N] -> 0x8072c4 (no name) (no row); CYLINDER BALANCING REFERENCE_1 CYLINDER_1 IMAG~-1-1
+0x8072c6 row=None n=1 | 823C +003A CBDR1C5R [N] -> 0x8072c6 (no name) (no row); CYLINDER BALANCING REFERENCE_1 CYLINDER_5 REAL~-1-1
+0x8072c8 row=None n=1 | 823C +003C CBDR1C5I [N] -> 0x8072c8 (no name) (no row); CYLINDER BALANCING REFERENCE_1 CYLINDER_5 IMAG~-1-1
+0x8072ca row=None n=1 | 823C +003E CBDR1C3R [N] -> 0x8072ca (no name) (no row); CYLINDER BALANCING REFERENCE_1 CYLINDER_3 REAL~-1-1
+0x8072cc row=None n=1 | 823C +0040 CBDR1C3I [N] -> 0x8072cc (no name) (no row); CYLINDER BALANCING REFERENCE_1 CYLINDER_3 IMAG~-1-1
+0x8072ce row=None n=1 | 823C +0042 CBDR2C1R [N] -> 0x8072ce (no name) (no row); CYLINDER BALANCING REFERENCE_2 CYLINDER_1 REAL~-1-1
+0x8072d0 row=None n=1 | 823C +0044 CBDR2C1I [N] -> 0x8072d0 (no name) (no row); CYLINDER BALANCING REFERENCE_2 CYLINDER_1 IMAG~-1-1
+0x8072d2 row=None n=1 | 823C +0046 CBDR2C5R [N] -> 0x8072d2 (no name) (no row); CYLINDER BALANCING REFERENCE_2 CYLINDER_5 REAL~-1-1
+0x8072d4 row=None n=1 | 823C +0048 CBDR2C5I [N] -> 0x8072d4 (no name) (no row); CYLINDER BALANCING REFERENCE_2 CYLINDER_5 IMAG~-1-1
+0x8072d6 row=None n=1 | 823C +004A CBDR2C3R [N] -> 0x8072d6 (no name) (no row); CYLINDER BALANCING REFERENCE_2 CYLINDER_3 REAL~-1-1
+0x8072d8 row=None n=1 | 823C +004C CBDR2C3I [N] -> 0x8072d8 (no name) (no row); CYLINDER BALANCING REFERENCE_2 CYLINDER_3 IMAG~-1-1
+0x8072da row=None n=2 | 823C +004E CBDR3 [N] -> 0x8072da (no name) (no row); CYLINDER BALANCING REFERENCE_3~0-1
+0x8072de row=None n=3 | 823C +0052 CBDCEN [N] -> 0x8072de (no name) (no row); CYLINDER BALANCING COMPENSATION ENABLE~0-1
+0x8072e0 row=None n=1 | 823C +0054 CBDDCR [NONE] -> 0x8072e0 (no name) (no row); CYLINDER BALANCING DYNAMICS COMPENSATION RESET~0-1
+0x8072e4 row=None n=1 | 823C +0058 CBDTG1S [MG/S] -> 0x8072e4 (no name) (no row); CYLINDER BALANCING TRIM GAIN_1 SMALL~0-1
+0x8072e6 row=None n=1 | 823C +005A CBDTG2S [MG/S] -> 0x8072e6 (no name) (no row); CYLINDER BALANCING TRIM GAIN_2 SMALL~0-1
+0x8072e8 row=None n=1 | 823C +005C CBDTG3S [MG/S] -> 0x8072e8 (no name) (no row); CYLINDER BALANCING TRIM GAIN_3 SMALL~0-1
+0x8072ea row=None n=1 | 823C +005E CBDCLTP [DEGF] -> 0x8072ea (no name) (no row); CYL BALANCE DISABLED BELOW THIS COOLANT TEMP~-50 TO 255
+0x8072ec row=None n=1 | 823C +0060 CBDIMTP [DEGF] -> 0x8072ec (no name) (no row); CYL BALANCE DISABLED BELOW THIS INTAKE AIR TEMP~-50 TO 255
+0x8072ee row=None n=1 | 823C +0062 CBDDSTM [SEC] -> 0x8072ee (no name) (no row); TIME DELAY BEFORE CBD RESUMES AFTER CYL CUTOUT~0 TO 60
+0x8072f0 row=None n=3 | 823C +0064 CBDLMMD [NONE] -> 0x8072f0 (no name) (no row); LIMIT MODE;0=NONE;1=RESET TO LAST;2=RESET TO 0~0 TO 2
+0x8072f2 row=None n=1 | 823C +0066 CBDVSTD [MPH] -> 0x8072f2 (no name) (no row); CBD UPDATES DISABLED ABOVE THIS ROAD SPEED~0 TO 120
+0x8072f6 row=None n=1 | 
+0x80782c row=('added_to_final_fuel_command_for_cylinder_1_300_to_300', 'i16') n=1 | 8018 +0000 FLFLAJC1 [MG/S] -> 0x80782c added_to_final_fuel_command_for_cylinder_1_300_to_300 i16; ADDED TO FINAL FUEL COMMAND FOR CYLINDER #1~-300 TO 
+0x80782e row=('added_to_final_fuel_command_for_cylinder_2_300_to_300', 'i16') n=1 | 8018 +0002 FLFLAJC2 [MG/S] -> 0x80782e added_to_final_fuel_command_for_cylinder_2_300_to_300 i16; ADDED TO FINAL FUEL COMMAND FOR CYLINDER #2~-300 TO 
+0x807830 row=('added_to_final_fuel_command_for_cylinder_3_300_to_300', 'i16') n=1 | 8018 +0004 FLFLAJC3 [MG/S] -> 0x807830 added_to_final_fuel_command_for_cylinder_3_300_to_300 i16; ADDED TO FINAL FUEL COMMAND FOR CYLINDER #3~-300 TO 
+0x807832 row=('added_to_final_fuel_command_for_cylinder_4_300_to_300', 'i16') n=1 | 8018 +0006 FLFLAJC4 [MG/S] -> 0x807832 added_to_final_fuel_command_for_cylinder_4_300_to_300 i16; ADDED TO FINAL FUEL COMMAND FOR CYLINDER #4~-300 TO 
+0x807834 row=('added_to_final_fuel_command_for_cylinder_5_300_to_300', 'i16') n=1 | 8018 +0008 FLFLAJC5 [MG/S] -> 0x807834 added_to_final_fuel_command_for_cylinder_5_300_to_300 i16; ADDED TO FINAL FUEL COMMAND FOR CYLINDER #5~-300 TO 
+0x807836 row=('added_to_final_fuel_command_for_cylinder_6_300_to_300', 'i16') n=1 | 8018 +000A FLFLAJC6 [MG/S] -> 0x807836 added_to_final_fuel_command_for_cylinder_6_300_to_300 i16; ADDED TO FINAL FUEL COMMAND FOR CYLINDER #6~-300 TO 
+0x8091e8 row=None n=3 | 823D +0000 CBDFFL [MM3S] -> 0x8091e8 (no name) (no row); CYLINDER BALANCING FILTERED FUELING~0-1000
+0x8091ea row=('intake_manifold_temp_raw', 'undefined') n=1 | 823D +0002 CBDSB1 [N] -> 0x8091ea intake_manifold_temp_raw undefined; CYLINDER BALANCING SPEED BUFFER_1~0-0.00001
+0x8091ee row=('cylinder_balance_speed_buffer_2', 'dword') n=1 | 823D +0006 CBDSB2 [N] -> 0x8091ee cylinder_balance_speed_buffer_2 dword; CYLINDER BALANCING SPEED BUFFER_2~0-0.00001
+0x809206 row=None n=5 | 823D +001E CBDFRC1 [TICS] -> 0x809206 (no name) (no row); CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x809208 row=None n=2 | 
+0x80920a row=None n=5 | 823D +0022 CBDFIC1 [TICS] -> 0x80920a (no name) (no row); CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x80920c row=None n=2 | 
+0x80920e row=None n=3 | 823D +0026 CBDFRC2 [TICS] -> 0x80920e (no name) (no row); CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x809212 row=None n=2 | 823D +002A CBDFIC2 [TICS] -> 0x809212 (no name) (no row); CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x809216 row=None n=1 | 823D +002E CBDFRC3 [TICS] -> 0x809216 (no name) (no row); CYLINDER BALANCING FFT REAL COMP_1~-10000-10000
+0x809218 row=None n=1 | 
+0x80922e row=None n=3 | 823D +0046 CBDSCF [N] -> 0x80922e (no name) (no row); CYLINDER BALANCING STOP COMPENSATION FLAG~0-1
+0x809230 row=None n=4 | 823D +0048 CBDFT [TICS] -> 0x809230 (no name) (no row); CYLINDER BALANCING FFT THRESHOLD~0-10000
+0x809232 row=None n=2 | 823D +004A CBDFM1 [TICS] -> 0x809232 (no name) (no row); CYLINDER BALANCING FILTERED ERROR_3~0-15000
+0x809234 row=None n=2 | 823D +004C CBDFM2 [TICS] -> 0x809234 (no name) (no row); CYLINDER BALANCING FILTERED ERROR_3~0-15000
+0x809236 row=None n=2 | 823D +004E CBDFM3 [TICS] -> 0x809236 (no name) (no row); CYLINDER BALANCING FILTERED ERROR_3~0-15000
+0x809246 row=('cyl_balance_correction_array', 'undefined') n=9 | 823D +005E CBDDFO1 [MG/S] -> 0x809246 cyl_balance_correction_array undefined; CYLINDER BALANCING FUELING TRIM_1~-5-5
+0x809248 row=None n=1 | 823D +0060 CBDDFO2 [MG/S] -> 0x809248 (no name) (no row); CYLINDER BALANCING FUELING TRIM_2~-5-5
+0x80924a row=None n=1 | 823D +0062 CBDDFO3 [MG/S] -> 0x80924a (no name) (no row); CYLINDER BALANCING FUELING TRIM_3~-5-5
+0x80924c row=None n=1 | 823D +0064 CBDDFO4 [MG/S] -> 0x80924c (no name) (no row); CYLINDER BALANCING FUELING TRIM_4~-5-5
+0x80924e row=None n=1 | 823D +0066 CBDDFO5 [MG/S] -> 0x80924e (no name) (no row); CYLINDER BALANCING FUELING TRIM_5~-5-5
+0x809250 row=None n=1 | 823D +0068 CBDDFO6 [MG/S] -> 0x809250 (no name) (no row); CYLINDER BALANCING FUELING TRIM_6~-5-5
+0x809252 row=('cylinder_balance_trim_adjustment_1', 'word') n=3 | 823D +006A CBDTA1 [MG/S] -> 0x809252 cylinder_balance_trim_adjustment_1 word; CYLINDER BALANCING TRIM ADJUSTMENT_1~-0.1-0.1
+0x80925e row=None n=3 | 823D +0076 CBDTLE [N] -> 0x80925e (no name) (no row); CYLINDER BALANCING TRIM LIMITS EXCEEDED~0-1
+0x809260 row=None n=2 | 823D +0078 CBDTI1 [N] -> 0x809260 (no name) (no row); CYLINDER BALANCING TRIM INDEX_1~0-5
+0x809262 row=None n=2 | 823D +007A CBDTI2 [N] -> 0x809262 (no name) (no row); CYLINDER BALANCING TRIM INDEX_2~0-5
+0x809264 row=None n=4 | 823D +007C CBDTI3 [N] -> 0x809264 (no name) (no row); CYLINDER BALANCING TRIM INDEX_3~0-5
+0x80926e row=('throttle_position_raw', 'word') n=3 | 823D +0086 CBDTINC1 [N] -> 0x80926e throttle_position_raw word; CYLINDER BALANCING TRIM INCREMENT_1~0-1
+0x809270 row=None n=3 | 823D +0088 CBDTINC2 [N] -> 0x809270 (no name) (no row); CYLINDER BALANCING TRIM INCREMENT_2~0-1
+0x809272 row=None n=3 | 823D +008A CBDTINC3 [N] -> 0x809272 (no name) (no row); CYLINDER BALANCING TRIM INCREMENT_3~0-1
+0x809276 row=None n=9 | 823D +008E CBDARC2 [N] -> 0x809276 (no name) (no row); CYLINDER BALANCING ADJUSTED REAL COMP_2~-10000-10000
+0x809278 row=None n=9 | 823D +0090 CBDAIC2 [N] -> 0x809278 (no name) (no row); CYLINDER BALANCING ADJUSTED IMAG COMP_2~-10000-10000
+0x80927a row=None n=5 | 823D +0092 CBDARC3 [N] -> 0x80927a (no name) (no row); CYLINDER BALANCING ADJUSTED REAL COMP_2~-10000-10000
+0x809284 row=('cylinder_balance_acceleration_buffer_1', 'i32') n=6 | 823D +009C CBDAXB1 [NONE] -> 0x809284 cylinder_balance_acceleration_buffer_1 i32; CYLINDER BALANCING ACCELARATION BUFFER_1~-10000-10000
+0x809288 row=None n=5 | 823D +00A0 CBDAXB2 [NONE] -> 0x809288 (no name) (no row); CYLINDER BALANCING ACCELARATION BUFFER_2~-10000-10000
+0x80928c row=None n=3 | 823D +00A4 CBDAXB3 [NONE] -> 0x80928c (no name) (no row); CYLINDER BALANCING ACCELARATION BUFFER_3~-10000-10000
+0x809290 row=None n=5 | 823D +00A8 CBDAXB4 [NONE] -> 0x809290 (no name) (no row); CYLINDER BALANCING ACCELARATION BUFFER_4~-10000-10000
+0x809294 row=None n=5 | 823D +00AC CBDAXB5 [NONE] -> 0x809294 (no name) (no row); CYLINDER BALANCING ACCELARATION BUFFER_5~-10000-10000
+0x809298 row=None n=3 | 823D +00B0 CBDAXB6 [NONE] -> 0x809298 (no name) (no row); CYLINDER BALANCING ACCELARATION BUFFER_6~-10000-10000
+0x8092e0 row=None n=2 | 823D +00F8 CBDC3ADJ [N] -> 0x8092e0 (no name) (no row); CYLINDER BALANCING COMP_3 ADJUSTMENT~-10000-10000
+0x8092e2 row=('cyl_balance_gain_percent', 'undefined') n=8 | 823D +00FA CBDATG [NONE] -> 0x8092e2 cyl_balance_gain_percent undefined; CYLINDER BALANCING ACTIVE TRIM GAIN~0-1
+0x8092e4 row=None n=2 | 823D +00FC CBDSBRF [NONE] -> 0x8092e4 (no name) (no row); CYLINDER BALANCING SPEED BUFFER READY FLAG~0-1
+0x809e9e row=('cylinder_balance_real_2_dynamics_compensation_values', 'word[16]') n=3 | 823E +0000 CBDDCT [NONE] -> 0x809e9e cylinder_balance_real_2_dynamics_compensation_values word[16]; CYLINDER BALANCING DYNAMICS COMPENSATION TABLE~-10
+0x809ea0 row=None n=2 | 
+0x809ebe row=('cylinder_balance_imaginary_2_dynamics_compensation_values', 'word[16]') n=3 | 823F +0000 CBDI2DCT [NONE] -> 0x809ebe cylinder_balance_imaginary_2_dynamics_compensation_values word[16]; CYLINDER BALANCING IMAG_2 DYNAMICS COMPENSA
+0x809ec0 row=None n=2 | 
+0x80a1ac row=None n=2 | 
+0x80a1ae row=None n=1 | 
+0x80a1b0 row=None n=1 | 
+0x80a1b2 row=None n=1 | 
+0x80a1b4 row=None n=1 | 
+0x80a1b6 row=None n=1 | 
+0x80a21a row=('flag_to_enable_or_disable_fueling_for_cyl_1_0_to_ff', 'byte') n=1 | 801A +00A8 FLC1ENFG [HEX] -> 0x80a21a flag_to_enable_or_disable_fueling_for_cyl_1_0_to_ff byte; FLAG TO ENABLE OR DISABLE FUELING FOR CYL 1~0 TO FF
+0x80a2b2 row=None n=1 | 1004 +0008 ADIMTPFT [DEGF] -> 0x80a2b2 (no name) (no row); FILTERED AND LINEARIZED INTAKE MANIFOLD TEMPERATURE~-50 TO 293
+0x80a336 row=None n=1 | 1004 +008C ADCLTPFT [DEGF] -> 0x80a336 (no name) (no row); FILTERED AND LINEARIZED COOLANT TEMPERATURE~-50 TO 293
+0x80a9d0 row=('sampled_road_speed_after_it_has_been_filtered_0_255_9961', 'word') n=1 | 117D +000C VSFTAVVS [MPH] -> 0x80a9d0 sampled_road_speed_after_it_has_been_filtered_0_255_9961 word; SAMPLED ROAD SPEED AFTER IT HAS BEEN FILTERED~0 -
+0x80ccf4 row=('current_engine_rpm_filtered', 'word') n=10 | 100C +0002 ESCMES [RPM] -> 0x80ccf4 current_engine_rpm_filtered word; ENGINE_SPEED: ENGINE SPEED BASED FROM PERIOD OF ONE CAM REV~0, 56-8000
+0x80d0c8 row=('engine_state', 'ENGINE_STATE') n=2 | 1068 +0000 FSEGST [NONE] -> 0x80d0c8 engine_state ENGINE_STATE; CURRENT STATE OF THE ENGINE~1 - 8
+0x80d0cc row=('cam_sync_state', 'byte') n=1 | 11A8 +0000 CMSYSS [NHL] -> 0x80d0cc cam_sync_state byte; CAM_SYNC_STATE: 0=NO SYNC,1=HAVE SYNC,2=LOST SYNC ON CAM.~0 - 2
+0x80d0cd row=('cam_sync_status', 'byte') n=1 | 11A8 +0001 CRSYSS [NHL] -> 0x80d0cd cam_sync_status byte; CRANK_SYNC_STATE: 0=NO SYNC,1=HAVE SYNC,2=LOST SYNC ON CRANK.~0 - 2
+0x80d32e row=('final_fueling', 'word') n=1 | 1051 +0000 FSFNFL [MM3S] -> 0x80d32e final_fueling word; FINAL FUELING VALUE~0 - 100

@@ -1,0 +1,25 @@
+cm848: round 11 stage C - switch_input_state_t from e2m 1612 (byte 2 as bitfields, bytes 0 / 1 / 3 as byte fields)
+
+switch_input_state_bits (0x40c050) was an arrays.csv byte[4] row; it is now a struct in the wave 11 rule's shape.
+- **Byte 2 (switches 16-23) is a bitfield unit:** egr_valve_driver_feedback, variable_geometry_turbocharger_driver_
+  feedback, remote_power_take_off_switch, park_neutral_switch (11 tests), overdrive_off_switch,
+  transmission_relay_feedback and overdrive_solenoid_feedback, all from their e2m 1612 records. It has no direct
+  setter.
+- **Bytes 0 / 1 / 3 are byte fields** (switches_0_to_7 / _8_to_15 / _24_to_31), and each comment carries its 1612 bit
+  map. Five functions update their bits with | / &: switch 2 in cm848_deriveSecondBrakeSwitchSignal, switch 13 in
+  cm848_updateAirConditioningSwitchFromPci, and switch 31 in cm848_detectThreeAcceleratorPedalPresses /
+  cm848_updateSwitch31FromAcceleratorPedal / cm848_checkSwitch31OnTimeFault.
+- **The pilot** typed all 32 switches as bitfields (numbers in round11/pilot_r11c_numbers.txt):
+  - 216 named reads;
+  - 10 ._N_1_ piece lines in 3 of the 5 setters (2 folded into unwired_switch = 1 / 0);
+  - the scanner printed (&switch_input_state_bits.field_0x0)[i].
+  It failed the no-pieces gate and the firmware/CLAUDE.md rule, so it is left to the user: the flip is the pilot's
+  rows in apply_r11c_switch_struct.py.
+- **Gate (passed):** the ._N_1_ count stays 183, no field_0x appears, and the scanner indexes from the named byte 0
+  field ((&switch_input_state_bits.switches_0_to_7)[i]).
+- **Proof:** switch_normalize2.py maps the fields back to the byte[4] form, then cast_normalized_diff.py runs. Nine
+  functions changed and one still differs: a local takes &switch_input_state_bits where the array form had the
+  decayed address, which is the same address.
+- **Wording fix:** stage A's 'three functions' is corrected to five setter functions (three switches).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

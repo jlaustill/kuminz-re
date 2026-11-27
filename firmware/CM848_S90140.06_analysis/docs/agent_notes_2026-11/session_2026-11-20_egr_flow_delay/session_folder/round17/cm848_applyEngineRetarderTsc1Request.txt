@@ -1,0 +1,36 @@
+=== cm848_applyEngineRetarderTsc1Request (lines 44686-44726, 35 non-blank)
+// Function: cm848_applyEngineRetarderTsc1Request @ 0x00041a40
+//
+/* Applies the TSC1 retarder request recorded by cm848_processEngineRetarderTsc1Request: override
+   control mode 2 (torque control) sets engine_retarder_tsc1_request_percent and
+   engine_retarder_tsc1_request_source_code 1, mode 3 (torque limit) lowers
+   engine_retarder_limit_percent to engine_retarder_torque_limit_percent with limit source code 4,
+   and mode 0 (or no request) clears it; the requesting device index goes to
+   engine_retarder_request_source_index. engine_retarder_internal_override_control_mode, never set
+   in this build, can force the same three cases (was cm848_processGovernorErrorState). */
+void cm848_applyEngineRetarderTsc1Request(void)
+{
+  engine_retarder_tsc1_request_source_code = 6;
+  if ((engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF) ||
+     (engine_retarder_internal_override_control_mode == 1)) {
+    engine_retarder_tsc1_request_percent = 0;
+    engine_retarder_tsc1_request_source_code = 6;
+    engine_retarder_request_source_index = 0;
+  }
+  else if ((engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) ||
+          (engine_retarder_internal_override_control_mode == 2)) {
+    engine_retarder_tsc1_request_percent = engine_retarder_torque_request_percent;
+    engine_retarder_tsc1_request_source_code = 1;
+    engine_retarder_request_source_index = engine_retarder_control_device_indicator;
+  }
+  else if (((engine_retarder_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) ||
+           (engine_retarder_internal_override_control_mode == 3)) &&
+          (engine_retarder_torque_limit_percent < engine_retarder_limit_percent)) {
+    engine_retarder_tsc1_request_source_code = 6;
+    engine_retarder_request_source_index = engine_retarder_control_device_indicator;
+    engine_retarder_limit_percent = engine_retarder_torque_limit_percent;
+    engine_retarder_limit_source_code = 4;
+  }
+  return;
+}
+//

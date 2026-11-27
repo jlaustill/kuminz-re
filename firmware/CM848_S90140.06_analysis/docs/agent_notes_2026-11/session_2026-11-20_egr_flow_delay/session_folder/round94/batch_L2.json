@@ -1,0 +1,592 @@
+{
+ "batch": "L2",
+ "proposal": {
+  "batch": "L2",
+  "summary": "CM550's J1939 start-up (mc68k_initializeJ1939Datalink) builds the transmit descriptors and then schedules 19 periodic broadcasts with 0x1fe84. 0x1fe84 is the twin of CM848's scheduler 0x538c8c. Each 10-byte queue entry holds the PGN key, the interval and next send in 10 ms ticks, and the builder's address, and cm550_runJ1939PeriodicTransmitQueues calls the builder when its tick comes. CM848 does not send PGN 65252 SHUTDN. In CM550, 0x33dfa builds its descriptor, and 0x33d38 fills payload bytes 1-4 (idle shutdown state, idle shutdown enable, A/C pressure switch, wait to start lamp) and sends it, both every 1000 ms and as the responder to a PGN 59904 request. The rows tsc1_message_* (0x801d44 / 0x801d48) are ETC1 bytes 1 and 5 kept by the ETC1 receive handler 0x2efd0; the real TSC1 bytes are at 0x801d4c-0x801d58. DGFUIDEN (0x806abc, 19 words) is a per-fault processing enable bitmap that every reader ANDs with the same bit of the system error status words at 0x806000. The four 2D lookup functions are the start-up initializer and the periodic lookup for two values: the maximum torque at the current engine speed (MTMPRPFL) and the injection timing misfire limit (BSTAMNLM).",
+  "functions": [
+   {
+    "address": "0x0001fe84",
+    "current_name": "FUN_0001fe84",
+    "proposed_name": "scheduleJ1939PeriodicMessage",
+    "role": "Adds one periodic J1939 broadcast (PGN key, interval, first-send offset, builder address) to transmit queue 0 (20 entries) or queue 1 (10 entries) and returns 1 when the queue is full.",
+    "discriminator": "It is the only writer of the periodic queues (entries 0x80096e / 0x800a36, counts 0x800a9a / 0x800a9b): it converts the interval and the offset from ms to 10 ms ticks and adds the queue's current tick to the offset. cm550_runJ1939PeriodicTransmitQueues only reads the entries and calls the builders.",
+    "relation": "twin",
+    "cm848_address": "0x00538c8c",
+    "cm848_current_name": "cm848_scheduleJ1939PeriodicMessage",
+    "plate_comment": "Adds a periodic J1939 broadcast to transmit queue 0 (the engine node: 20 entries of 10 bytes at 0x80096e) or queue 1 (the retarder node: 10 entries at 0x800a36): the PGN key, the interval in ms kept as 10 ms ticks, the first send as the queue's current tick plus the offset in ticks, and the builder's address. Returns 1 when the queue is full, else 0. mc68k_initializeJ1939Datalink schedules the 19 broadcasts with it (the first is PGN 65265 every 100 ms from 70 ms) and cm550_runJ1939PeriodicTransmitQueues calls each builder when its tick comes. The twin of CM848 0x538c8c: one shared name (no row before; PR #53 round 94)",
+    "evidence": "CM550 0x1fe84-0x1ff36: a3 = 0x800a9a, a1 = 0x800a9b; move.l (0x10,a7) is the queue. Queue 0: cmpi.b #0x14,(a3) (full: moveq #1 / rts), entry = count++ x 10 + 0x80096e, d2 = (0x800a9c). Queue 1: cmpi.b #0xa,(a1), entry = count++ x 10 + 0x800a36, d2 = (0x800a9e). Then 0x1ff04 move.w (0x14,a7),(a2) PGN; 0x1ff0a (0x18,a7) / 10 + d2 -> (4,a2) next tick; 0x1ff1c (0x16,a7) / 10 -> (2,a2) interval; 0x1ff2a move.l (0x1a,a7),(6,a2) builder; clr.b d0. CM848 0x538c8c: cmpwi r3,0; lbz count / cmpwi 20 (queue 1: 10) / li r3,1; mulli x 10 + 0x3fd2e2 (0x3fd3aa); stb count + 1; lhz tick; sth r4,0(r3) PGN; divw r6 / 10 + tick -> sth 4; divw r5 / 10 -> sth 2; stw r7,6; li r3,0. These are the same steps in the same order with the same constants (20 / 10 caps, 10-byte entries, divide by 10). The only difference: CM550 tests queue == 1 explicitly (another number falls through to the stores) where CM848 takes queue 1 for any non-zero value, and every caller passes 0 or 1. The same call graph position: mc68k_initializeJ1939Datalink has movea.l #0x1fe84,a4 at 0x28b8a and 19 jsr (a4) calls at 0x28c6e-0x28e14 after the transmit buffer initializers; CM848 cm848_j1939_system_init makes 19 calls in the same place. 15 argument sets (queue, PGN, interval, offset) are identical and in the same order, e.g. (0, 65265, 100, 70) and (0, 61444, 20, 0) with builder 0x32c76 = sendPgn61444ElectronicEngineController1Message (a shared twin name). CM550 differs on 61443 (50 ms vs 20) and 65247 (250 ms vs 50) and has 65266 / 65252 where CM848 has 65241 / 65504. abs_refs finds no other reference and pc_relative_calls.py finds no bsr. The CM848 row 0x538c8c changes to the same name. The FUN_0001fe84(0,100) call sites need a function_definitions row: queue uint (move.l 0x10) / pgn ushort / interval_milliseconds ushort / first_send_offset_milliseconds ushort / builder dword (move.l 0x1a); return byte.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033d38",
+    "current_name": "FUN_00033d38",
+    "proposed_name": "cm550_buildPgn65252ShutdownMessage",
+    "role": "Fills bytes 1-4 of the PGN 65252 Shutdown (SHUTDN) payload from the idle shutdown state, the idle shutdown enable bit, the A/C pressure switch and the wait to start lamp command, then sends j1939_pgn65252_tx_message.",
+    "discriminator": "It is the only writer of payload bytes 1-4 (0x8035f6-0x8035f9) and the only sender of j1939_pgn65252_tx_message. 0x33dfa only builds the descriptor and fills bytes 5-8.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Builds and sends the ECM's SHUTDN broadcast (PGN 65252: every 1000 ms from 110 ms on queue 0, and the PGN 59904 request responder for 65252). Byte 1 comes from idle_shutdown_state: RESET 0x00 / COUNT 0x40 (SPN 590 timer active) / WARNING 0x44 (plus the SPN 594 driver alert) / DELAY unchanged / OVERRIDE 0x10 (SPN 592) / SHUTDOWN 0x01 (SPN 593). Byte 2 is 0x7f or 0x3f from algorithm_enable_flags_3_cal.idle_shutdown_enable (SPN 591 timer function), byte 3 is 0xfd or 0xfc from bit 0 of 0x80bcd7 (e2m 000E +9 DSAKPRSW; SPN 985 A/C high pressure fan switch), and byte 4 is 0xfd or 0xfc from bit 0 of the lamp driver command byte 0x80bcf6 (LCWTSRLP; SPN 1081 wait to start lamp). It sends j1939_pgn65252_tx_message with cm550_sendCanMessage; CM848 receives PGN 65252 but does not send it (no row before; PR #53 round 94)",
+    "evidence": "0x33d38-0x33df8: a0 = a1 = 0x8035f6 (the payload; 0x33dfa sets it as the data_pointer). move.w (0x80d674) idle_shutdown_state / ext.l / cmp 5 / bhi; the jump table at 0x33d5a = 000c 0010 0016 0026 001c 0022 goes to 0x33d66 clr.b / 0x33d6a 0x40 / 0x33d70 0x44 / 0x33d80 (state 3: no store) / 0x33d76 0x10 / 0x33d7c 0x01. 0x33d80: move.w (0x803c9a) & 2 -> (1,a1) 0x7f else 0x3f. 0x33d9a: move.b (0x80bcd7) & 1 -> (2,a1) 0xfd else 0xfc. 0x33dc2: move.b (0x80bcf6) & 1 -> (3,a1) 0xfd else 0xfc. Then pea 0x8035e8 (j1939_pgn65252_tx_message) / jsr 0x104e8 cm550_sendCanMessage. It is reached through pointers only: pea 0x33d38 at 0x28d2e in mc68k_initializeJ1939Datalink (scheduleJ1939PeriodicMessage(0, 0xfee4 = 65252, 1000, 110)), and pea 0x33d38 / move.w #0xfee4 / jsr (a2 = 0x2f47e) at 0x2f586 in 0x2f538, the PGN request responder registrations (its CM848 counterpart cm848_initJ1939ProtocolHandlers registers 65261 / 65263 / 65264 / 65269 / 65270 / 65271 / 65504, not 65252). abs_refs finds no other reference. CM848 has no 0xfee4 transmitter, only registerJ1939ReceiveHandler(0xfee4, receivePgn65252ShutdownMessage), so this is standalone. SHUTDN layout: byte 1 SPNs 593 / 594 / 592 / 590, byte 2 SPN 591, byte 3 SPN 985 / 875 / 605, byte 4 SPN 1081 (the j1939 MongoDB order; CM848's receive handler reads byte 3 bits 1-2 as the A/C high pressure fan switch). The IDLE_SHUTDOWN_STATE member comments already give these byte 1 values. 0x80bcf6 bit 0 = e2m 000E +28 LCWTSRLP / LCLP01EA / DSLP1. The CM848 builders that send and answer requests are named cm848_buildPgn<N><Name>Message (e.g. cm848_buildPgn65269AmbientConditionsMessage).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00033dfa",
+    "current_name": "vp44_engineHoursPGN_65252_Builder",
+    "proposed_name": "cm550_initializePgn65252ShutdownBuffer",
+    "role": "At start-up, builds the PGN 65252 transmit descriptor j1939_pgn65252_tx_message (CAN ID 0xfee400 with the JCISSHPZ priority and the engine source address, 8 bytes at 0x8035f6, status 0x8035fe) and sets payload bytes 5-8 to 0xff.",
+    "discriminator": "It writes only the descriptor and payload bytes 5-8 and is called once. It does not send (cm550_buildPgn65252ShutdownMessage sends), and nothing in it reads engine hours or touches the VP44.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Builds the transmit descriptor of SHUTDN (header 0xfee400: PGN 65252 Shutdown): the priority from the word 0x803f78 (e2m 1254 +2A JCISSHPZ) & 7 in the top byte and j1939_engine_node_source_address in the low byte, data length 8, data pointer 0x8035f6 and status pointer j1939_pgn65252_transmit_status, then payload bytes 5-8 = 0xff (not available). mc68k_initializeJ1939Datalink calls it once, and cm550_buildPgn65252ShutdownMessage later fills bytes 1-4 and sends the message. Nothing in it concerns engine hours or the VP44 (was vp44_engineHoursPGN_65252_Builder; PR #53 round 94)",
+    "evidence": "0x33dfa-0x33e56: a1 = 0x8035f6, a0 = 0x8035e8; move.l #0xfee400,(0x8035e8); move.w (0x803f78) & 7 / lsl.l #2 / andi.b #0xe3,(a0) / or.b d0,(a0); move.w #8,(4,a0); move.l a1,(6,a0); move.l #0x8035fe,(0xa,a0); move.b (0x80da01),(3,a0); move.b #0xff,(4..7,a1) = 0x8035fa-0x8035fd; rts (no send). Its one caller is jsr 0x33dfa at 0x28c30 in mc68k_initializeJ1939Datalink, the 15th of the 21 buffer initializers. The e2m tool gives 1254 +002A JCISSHPZ 'DEFAULT NETWORK PRIORITY FOR IDLE SHUTDOWN MESSAGE' -> 0x803f78. It has the same shape as the CM848 descriptor builders cm848_initializePgn<N><Name>Buffer (e.g. 0x26efc for PGN 65279). CM848 has no PGN 65252 transmitter, so this is standalone; it does not touch the pump, so the prefix is cm550_.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000269f2",
+    "current_name": "cm550_FUN_000269f2",
+    "proposed_name": "cm550_calculateMaximumTorqueAtCurrentEngineSpeed",
+    "role": "Every 20 ms, looks up the maximum torque map at engine_rpm_primary and alpha_blend_factor and stores the result, at least 1, as the maximum torque at the current engine speed (MTMPRPFL).",
+    "discriminator": "It is the only function that writes maximum_torque_map_lookup's inputs (x_input = engine speed, y_input = alpha) and calls cm550_tableLookup2D with that record. Its output 0x80db1a is the divisor in cm550_FUN_0001c0d4's torque-to-fueling scaling. 0x26a2e only fills the record pointers and seeds 0x80db1a.",
+    "relation": "counterpart",
+    "cm848_address": "0x00029c98",
+    "cm848_current_name": "cm848_calculateFuelDemandFilter",
+    "plate_comment": "Looks up the maximum torque map (e2m 1460 MTTQMPZA over 140E MTTQMPXA engine speed and 1447 MTTQMPYA alpha) through maximum_torque_map_lookup with engine_rpm_primary and alpha_blend_factor. It stores the result, at least 1, as the maximum torque at the current engine speed 0x80db1a (e2m 1461 +0 MTMPRPFL, ft-lb). Called last in cm550_runEvery4FramesTaskSetPhase0 (every 20 ms); cm550_FUN_0001c0d4 divides the torque derate limit by it. CM848's counterpart is 0x29c98 (cm848_calculateFuelDemandFilter: three lookups of the same map blended by chi) (was cm550_FUN_000269f2; PR #53 round 94)",
+    "evidence": "0x269f2-0x26a2c: a2 = 0x80db1a, a3 = 0x801a94 (maximum_torque_map_lookup); move.w (0x80ccf6 engine_rpm_primary),(6,a3) x_input; move.w (0x80a8f8 alpha_blend_factor),(0xe,a3) y_input; jsr 0x35088 cm550_tableLookup2D; move.w d0,(a2); cmpi.w #1 / bcc / move.w #1,(a2). It is the last call of cm550_runEvery4FramesTaskSetPhase0 (0x1b518). e2m tool: 1461 +0000 MTMPRPFL 'MAX TORQUE AT CURRENT RPM IN FOOT-POUNDS' -> 0x80db1a; 104A +0000 ALPHA -> 0x80a8f8; 100C +0004 ENGRPM -> 0x80ccf6. The other reader of 0x80db1a is cm550_FUN_0001c0d4 (0x1c0da; the divisor of cm550_scaleByRatioSigned). CM848 0x29c98 (called by cm848_periodicTaskSet_sensorProcessing) makes three cm848_dualAxisTableInterpolation calls of the same MTTQMPZA map (alpha 0 row, chi lower, chi upper) at the filtered engine speed and blends them with cm848_interpolateAlphaChiValue into fuel_demand_filter_dimension (0x40aee6; 0 -> 1). The role is the same but the code differs, so this is a counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026a2e",
+    "current_name": "cm550_FUN_00026a2e",
+    "proposed_name": "cm550_initializeMaximumTorqueAtCurrentEngineSpeed",
+    "role": "At start-up, seeds the maximum torque at the current engine speed (0x80db1a) with 1 and points maximum_torque_map_lookup at the MTTQMPXA / MTTQMPYA axes (axis offsets 2) and the MTTQMPZA grid.",
+    "discriminator": "It writes the record's three pointers and two axis offsets, no input and no lookup, and is called once from mc68k_applicationMain. 0x269f2 writes the inputs and looks the map up.",
+    "relation": "counterpart",
+    "cm848_address": "0x00029de0",
+    "cm848_current_name": "cm848_initFuelDemandFilterDimensions",
+    "plate_comment": "Start-up (mc68k_applicationMain): seeds the maximum torque at the current engine speed 0x80db1a (MTMPRPFL) with 1 and points maximum_torque_map_lookup at its tables: x axis 0x808346 (MTTQMPXA) and y axis 0x808372 (MTTQMPYA), each with axis offset 2, and the grid 0x80837c (MTTQMPZA). cm550_calculateMaximumTorqueAtCurrentEngineSpeed then looks it up every 20 ms. CM848's counterpart is 0x29de0 (cm848_initFuelDemandFilterDimensions: the result 1 and three lookup caches 2) (was cm550_FUN_00026a2e; PR #53 round 94)",
+    "evidence": "0x26a2e-0x26a62: a0 = 0x801a94; move.w #1,(0x80db1a); move.l #0x808346,(2,a0); move.w #2,(0x801a94); move.l #0x808372,(0xa,a0); move.w #2,(8,a0); move.l #0x80837c,(0x10,a0); rts. Called once from mc68k_applicationMain, right after the 0x8970 progress marker store. The record's rows (maximum_torque_map_lookup, maximum_torque_map_x_axis / _y_axis / _grid) were typed in round 94 stage C. CM848 0x29de0 (called from cm848_applicationMain) sets fuel_demand_filter_dimension = 1 and the three maximum_torque_map_*_cached_axis_offsets = 2. CM848 has no record pointers, so this is a counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026a7e",
+    "current_name": "cm550_fuelDemandTablePointersInit",
+    "proposed_name": "cm550_initializeInjectionTimingMisfireLimit",
+    "role": "At start-up, points injection_timing_misfire_limit_lookup at the misfire limit table's engine speed and boost axes (axis offsets 2) and grid, and clears the timing before the misfire limit (BSTABELM) and the misfire timing limit (BSTAMNLM).",
+    "discriminator": "It is the only writer of the misfire lookup record's pointers and offsets, and it clears both 818E words. It runs once at start-up; 0x26ab8 computes the limit and cm550_applyMisfireTimingLimit applies it. Nothing in it concerns a fuel demand.",
+    "relation": "counterpart",
+    "cm848_address": "0x00029e24",
+    "cm848_current_name": "cm848_initProtectionFilterAccumulators",
+    "plate_comment": "Start-up (mc68k_applicationMain): points injection_timing_misfire_limit_lookup at the misfire limit table: y axis 0x807944 (8190 BSTAESYA engine speed) and x axis 0x80793a (818F BSTABSXA boost pressure), each with axis offset 2, and the grid 0x80794e (8191 BSTATBZA). It then clears injection_timing_before_misfire_limit (818E +2 BSTABELM) and the misfire timing limit 0x80a26e (818E +0 BSTAMNLM). CM848's counterpart is 0x29e24 (cm848_initProtectionFilterAccumulators: the cache offsets 2 and the same two clears in the same order) (was cm550_fuelDemandTablePointersInit; PR #53 round 94)",
+    "evidence": "0x26a7e-0x26ab6: a0 = 0x801aaa; move.w #2,(8,a0); move.l #0x807944,(0xa,a0); move.w #2,(0x801aaa); move.l #0x80793a,(2,a0); move.l #0x80794e,(0x10,a0); clr.w (0x80a270); clr.w (0x80a26e). Called once from mc68k_applicationMain, after the 0x8918 marker. e2m tool: 818E +0002 BSTABELM -> 0x80a270, 818E +0000 BSTAMNLM -> 0x80a26e. CM848 0x29e24 (cm848_applicationMain) sets injection_timing_main_misfire_limit_cached_axis_offsets[1] = 2 and [0] = 2, then clears 0x40aeea (e2m 8A3D +2 SOI_Before_MST, misnamed injection_timing_pid_init_flag) and 0x40aee8 (8A3D +0 Misfire_Timing_Limit). The order is the same (y then x, the before-limit value then the limit), but CM550 also stores the three table pointers, so this is a counterpart, not a twin.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026ab8",
+    "current_name": "cm550_rpmLoadParameterLookup",
+    "proposed_name": "cm550_calculateInjectionTimingMisfireLimit",
+    "role": "While misfire_timing_limit_enable is set, looks up the misfire timing limit table at boost pressure and engine_rpm_primary and stores the result as the misfire timing limit (BSTAMNLM).",
+    "discriminator": "It is the only periodic writer of 0x80a26e. cm550_applyMisfireTimingLimit reads the same enable bit, but it only compares fuel_timing_advance_value with 0x80a26e and raises the timing.",
+    "relation": "counterpart",
+    "cm848_address": "0x00029e50",
+    "cm848_current_name": "cm848_calculateInjectionTimingMainMisfireLimit",
+    "plate_comment": "While algorithm_enable_flags_32_cal.misfire_timing_limit_enable (e2m BSTALMEN) is set, looks up the misfire timing limit table (8191 BSTATBZA, the minimum advance for misfire) through injection_timing_misfire_limit_lookup with boost pressure 0x80a320 (1004 +76 BSTPRS) and engine_rpm_primary. The result goes to the misfire timing limit 0x80a26e (818E +0 BSTAMNLM), and cm550_applyMisfireTimingLimit raises the timing to it. Called in cm550_runEvery4FramesTaskSetPhase2 (every 20 ms). CM848's counterpart is cm848_calculateInjectionTimingMainMisfireLimit (0x29e50) (was cm550_rpmLoadParameterLookup; PR #53 round 94)",
+    "evidence": "0x26ab8-0x26aee: a2 = 0x801aaa; move.w (0x803cd4) & 1 (algorithm_enable_flags_32_cal.misfire_timing_limit_enable) / beq skip; move.w (0x80a320),(6,a2) x = boost pressure (e2m 1004 +0076 BSTPRS; boost_pressure_sensor_state.filtered_value in the decompile); move.w (0x80ccf6),(0xe,a2) y = engine_rpm_primary; jsr 0x35088 cm550_tableLookup2D; move.w d0,(0x80a26e). It is the 6th call of cm550_runEvery4FramesTaskSetPhase2 (0x1b5ce). cm550_applyMisfireTimingLimit (0x26af0) reads 0x80a26e at 0x26b02. CM848 0x29e50 (cm848_periodicTaskSet_auxiliaryControl) has the same enable role (algorithm_enable_flags_40_cal.misfire_timing_limit_enable) and the same axes (boost pressure x filtered engine speed), and it writes the 8A40 table result into 8A3D +0 Misfire_Timing_Limit. But it makes a direct cm848_dualAxisTableInterpolation call with cm848_calculateBoostPressure() as x, so this is a counterpart. The code computes no load and reads no parameter, so the old name is wrong.",
+    "confidence": "high"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00801d44",
+    "current_name": "tsc1_message_byte_0",
+    "proposed_name": "j1939_received_etc1_status_byte_1",
+    "proposed_type": "byte",
+    "comment": "ETC1 (PGN 61442) byte 1 as received: bits 1-2 driveline engaged (SPN 560) and bits 5-6 shift in process (SPN 574). The ETC1 receive handler 0x2efd0 (registered for 0xf002 at 0x2f114) stores data[0] here for an 8-byte frame from j1939_transmission_source_address (any source when that is 0xff). When both fields are 0 it sets the driveline disengaged (out of gear) flag and timer. CM848's j1939_powertrain_messages_received.etc1_status_byte_1. It is not a TSC1 byte (was tsc1_message_byte_0; PR #53 round 94)",
+    "evidence": "0x2efde movea.l #0x801d44,a1; 0x2f010 move.b (a0),(a1) with a0 = the frame's data pointer (+6); reads move.b (a1) at 0x2f0ca (& 0x30) and 0x2f0d4 (& 3). abs_refs finds only the movea at 0x2efde. 0x2f114: pea 0x2efd0 / move.w #0xf002 / jsr 0x21272 registerJ1939ReceiveHandler. CM848 cm848_j1939ProcessPgn61442Etc1 stores *rx_msg->data_pointer to etc1_status_byte_1 and runs the same & 0x30 == 0 and & 3 == 0 test for its out of gear flag.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d48",
+    "current_name": "tsc1_message_control_byte",
+    "proposed_name": "j1939_received_etc1_status_byte_5",
+    "proposed_type": "byte",
+    "comment": "ETC1 (PGN 61442) byte 5 as received. Bits 1-2 are the engine momentary overspeed enable (SPN 606): 1 starts the high idle override when tsc1_override_control_mode is 1 and the controlling device is the transmission, and a value other than 1 or 3 clears it. Bits 3-4 are the progressive shift disable (SPN 607): 1 sets progressive_shift_disable_flag and its timer. The ETC1 receive handler 0x2efd0 stores data[4] here. CM848's j1939_powertrain_messages_received.etc1_status_byte_5 (was tsc1_message_control_byte; PR #53 round 94)",
+    "evidence": "0x2f012-0x2f022: move.b (4,data),d0; movea.l #0x801d48,a0 (a2 = a0); move.b d0,(a0). Reads move.b (a2) at 0x2f02c (& 3 == 1), 0x2f062 (& 3 != 3), 0x2f08a (& 0xc == 4) and 0x2f0b0 (& 0xc != 0xc). abs_refs finds only the movea at 0x2f01a. CM848: etc1_status_byte_5 = rx_msg->data_pointer[4] with the same & 3 == 1 and & 0xc == 4 tests.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d4c",
+    "current_name": "torque_control_message_byte_0",
+    "proposed_name": "j1939_received_tsc1_control_byte",
+    "proposed_type": "byte",
+    "comment": "TSC1 (PGN 0) byte 1 as received by processEngineTsc1Request: bits 1-2 override control mode (SPN 695), bits 3-4 requested speed control conditions (SPN 696) and bits 5-6 override control mode priority (SPN 897). CM848's j1939_powertrain_messages_received.tsc1_control_byte (was torque_control_message_byte_0; PR #53 round 94)",
+    "evidence": "processEngineTsc1Request (the verified twin of CM848's): 0x2f130 movea.l #0x801d4c,a3; 0x2f150 move.b (data),(0x801d4c); 0x2f156 & 3 -> d3 (mode); 0x2f160 & 0x30 -> d4 (priority); 0x2f292 / 0x2f33e reads (byte_indicating_engine_commands..., & 0xc >> 2 = the speed control condition). Byte accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d4d",
+    "current_name": "",
+    "proposed_name": "j1939_received_tsc1_requested_speed",
+    "proposed_type": "byte[2]",
+    "comment": "TSC1 bytes 2-3, the requested speed / speed limit (SPN 898, 0.125 rpm), kept big-endian: [0] = data[2] (the high byte) and [1] = data[1] (the low byte). processEngineTsc1Request rebuilds the word as [0] << 8 | [1] for modes 1 and 3. Byte accesses only (odd address). CM848's j1939_powertrain_messages_received.tsc1_requested_speed (PR #53 round 94)",
+    "evidence": "0x2f16e move.b (1,data),(2,a3) -> 0x801d4e; 0x2f178 move.b (2,data),(1,a3) -> 0x801d4d (a3 = 0x801d4c). 0x2f232-0x2f238 and 0x2f316-0x2f31c: move.b (1,a3) / lsl.w #8 / move.b (2,a3) -> the word that is compared with or stored to 0x801d56. Decompile: CONCAT11(DAT_00801d4d,DAT_00801d4e). No absolute reference to 0x801d4d or 0x801d4e and no row today.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d4f",
+    "current_name": "torque_control_percent_byte",
+    "proposed_name": "j1939_received_tsc1_requested_torque",
+    "proposed_type": "byte",
+    "comment": "TSC1 byte 4, the requested torque / torque limit (SPN 518, percent + 125) as received. processEngineTsc1Request turns it into the datalink torque demand fueling (mode 2) or the torque limit fueling (mode 3). CM848's j1939_powertrain_messages_received.tsc1_requested_torque (was torque_control_percent_byte; PR #53 round 94)",
+    "evidence": "processEngineTsc1Request 0x2f17e: move.b (3,data),(3,a3) -> 0x801d4f; read at 0x2f218 and 0x2f226 (cmp.b against 0x801d58) and as d2 = (3,a3) for the stores at 0x2f388 and 0x2f42c; decompile: (ushort)torque_control_percent_byte * 0x100 - 32000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d54",
+    "current_name": "",
+    "proposed_name": "tsc1_accepted_priority",
+    "proposed_type": "byte",
+    "comment": "The priority bits (TSC1 byte 1 & 0x30, SPN 897) of the accepted engine request. While a J1939 request from another source is active, a new request with a higher priority value is rejected. At the same priority, only a mode 3 request can take over an active mode 3 request, and only with a lower torque or speed. CM848's j1939_powertrain_messages_received.tsc1_accepted_priority (PR #53 round 94)",
+    "evidence": "processEngineTsc1Request: 0x2f1f2 cmp.b (0x801d54),d4 / bhi reject; 0x2f1fc cmp.b (0x801d54),d4 / bne; 0x2f29e move.b d4,(0x801d54) after acceptance (decompile: DAT_00801d54 = bVar2 with bVar2 = byte 1 & 0x30). Byte accesses only; no row today.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d56",
+    "current_name": "",
+    "proposed_name": "tsc1_accepted_requested_speed",
+    "proposed_type": "word",
+    "comment": "The requested speed (0.125 rpm) of the accepted speed control request (mode 1) or speed / torque limit request (mode 3). A mode 3 takeover at the same priority with an equal torque needs a lower speed. CM848's j1939_powertrain_messages_received.tsc1_accepted_requested_speed (PR #53 round 94)",
+    "evidence": "0x2f22c move.w (0x801d56).l,d0 is compared with the new request's speed (bls rejects it); 0x2f320 (mode 1) and 0x2f41c (mode 3) store d0 = (1,a3) << 8 | (2,a3) with move.w d0,(0x801d56). Word accesses only; no row today (decompile _DAT_00801d56).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d58",
+    "current_name": "",
+    "proposed_name": "tsc1_accepted_requested_torque",
+    "proposed_type": "byte",
+    "comment": "The requested torque (percent + 125) of the accepted torque control request (mode 2) or limit request (mode 3). A mode 3 takeover at the same priority needs a lower torque. CM848's j1939_powertrain_messages_received.tsc1_accepted_requested_torque (PR #53 round 94)",
+    "evidence": "0x2f212 and 0x2f220: move.b (0x801d58),d0 / cmp.b (3,a3),d0 (bcs rejects, bne takes over). 0x2f388 and 0x2f42c: move.b d2,(0x801d58) with d2 = (3,a3), the mode 2 and mode 3 paths. Byte accesses only; no row today.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00806abc",
+    "current_name": "fault_confirm_status_word_0",
+    "proposed_name": "fault_processing_enable_flags",
+    "proposed_type": "word[19]",
+    "comment": "e2m F +0x570 DGFUIDEN 'BIT MAPPED PARAMETER USED TO DISABLE/ENABLE THE PROCESSING OF A (fault)' (HEX; 38 bytes = 19 words): bit (n & 15) of word n >> 4 enables the processing of system error status bit n (n = 0-303). Every reader ANDs a bit with the same bit of the system error status word at 0x806000 + 2 x (n >> 4) (e2m SSERSS00-31). The reads are indexed in the A/D channel checks (0xb8b8 / 0xb9a8) and the fault scan (0x14900 / 0x14b78), and direct for words 0 / 1 / 2 / 4 / 5 / 6 / 7. Nothing in the dumped ROM writes it. It is outside the EEPROM image (no _cal) and is not in the dumped ROM. The rows inside are removed (were 0x806abe fault_confirm_status_word_1 / 0x806ac0 fault_latch_status_word_2 / 0x806ac2 fault_latch_status_word_3 / 0x806ac4 fault_confirm_status_word_4 / 0x806aca fault_first_occurrence_word_7) (was fault_confirm_status_word_0; PR #53 round 94)",
+    "evidence": "e2m: DGFUIDEN,HEX,F,570,4D,B,37,38 resolves to 0x806abc (e2m_block_addresses --firmware cm550). The length is in decimal bytes: DGFUCATB at +0x20 with length 600 ends at +0x278 = DG0000FU, and DGTJMSRI at +0x566 with length 10 ends at +0x570. So the record spans 0x806abc-0x806ae1, and the next row 0x806ae2 belongs to e2m block 1003. scratch dgfuiden_pairs.py: each of the 27 direct word reads follows a read of the same bit of 0x806000 + 2k. For word 1 (the lead's 0x806abe) these are & 0x400 / & 0x200 at 0xe9da / 0xe9fe / 0xfba4 / 0xfbbc, each with 0x806002, plus (a3) = 0x806abe at 0x11f08 / 0x11f28. The indexed reads follow one pattern: 0xb8b8 movea.l #0x806abc,a0 / move.w (0,a0,d0.w*2) with d0 = fault >> 4 and the bit fault & 15, after the same test of 0x806000 (decompile lines 1330-1340: the A/D channel high / low error fault numbers). The fault scan at decompile line 9344 tests word [scan index] the same way. The base-register readers (0xc682 (2,a5), 0x32e56 a3 + 8, 0x2580e, 0x1f0ee, 0xc184, 0x30a5e) only read. RAM dump: fc00 2600 d007 006b 2b3f f800 b7ee 0200 ea00 0299 0040 0000 0000 0000 0000 0000 f800 f7bf 0efb. The bits that the direct readers test are set in words 0 / 1 / 4 / 6 and clear in words 5 / 7 and in word 2 bit 4, so those faults are not processed in this calibration.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080db1a",
+    "current_name": "max_torque_at_current_rpm_in_foot_pounds_0_10000",
+    "proposed_name": "maximum_torque_at_current_engine_speed",
+    "proposed_type": "word",
+    "comment": "e2m 1461 +0 MTMPRPFL 'MAX TORQUE AT CURRENT RPM IN FOOT-POUNDS' (0-10000 ft-lb): the maximum torque map (MTTQMPZA) at engine_rpm_primary and alpha_blend_factor, at least 1. cm550_calculateMaximumTorqueAtCurrentEngineSpeed (0x269f2) writes it every 20 ms and 0x26a2e seeds it with 1. cm550_FUN_0001c0d4 divides the torque derate torque limit by it to get a fueling. CM848's counterpart is fuel_demand_filter_dimension (0x40aee6) (was max_torque_at_current_rpm_in_foot_pounds_0_10000; PR #53 round 94)",
+    "evidence": "0x26a1c move.w d0,(a2 = 0x80db1a) after jsr cm550_tableLookup2D; 0x26a1e cmpi.w #1 / bcc / move.w #1; 0x26a34 move.w #1,(0x80db1a); 0x1c0da movea in cm550_FUN_0001c0d4 (the divisor of cm550_scaleByRatioSigned); also listed in the ROM address table at 0x376a8. e2m tool: 1461 +0000 MTMPRPFL -> 0x80db1a. Word accesses only; already typed word.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a26e",
+    "current_name": "output_of_the_misfire_timing_limit_table_60_to_60",
+    "proposed_name": "injection_timing_misfire_limit",
+    "proposed_type": "word",
+    "comment": "e2m 818E +0 BSTAMNLM 'OUTPUT OF THE MISFIRE TIMING LIMIT TABLE' (DADV, -60 to 60 degrees): the misfire timing limit table (BSTATBZA) at boost pressure and engine_rpm_primary. cm550_calculateInjectionTimingMisfireLimit (0x26ab8) writes it while misfire_timing_limit_enable is set, and 0x26a7e clears it at start-up. cm550_applyMisfireTimingLimit raises fuel_timing_advance_value to it. CM848's injection_timing_main_misfire_limit (e2m 8A3D +0 Misfire_Timing_Limit) (was output_of_the_misfire_timing_limit_table_60_to_60; PR #53 round 94)",
+    "evidence": "0x26ae6 move.w d0,(0x80a26e) after jsr 0x35088; 0x26ab0 clr.w (0x80a26e); 0x26b02 movea in cm550_applyMisfireTimingLimit (the compare with and copy to fuel_timing_advance_value); also in the ROM address table at 0x383d8. e2m tool: 818E +0000 BSTAMNLM -> 0x80a26e. Type kept as word (round 94 sign rule: unsigned compare).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803f78",
+    "current_name": "",
+    "proposed_name": "j1939_pgn65252_priority_cal",
+    "proposed_type": "word",
+    "comment": "e2m 1254 +2A JCISSHPZ 'DEFAULT NETWORK PRIORITY FOR IDLE SHUTDOWN MESSAGE' (0-7), in the EEPROM image. cm550_initializePgn65252ShutdownBuffer (0x33dfa) puts (value & 7) << 2 into the top byte of the PGN 65252 CAN ID. The name follows CM848's j1939_pgn<N>_priority_cal rows; CM848 has the record at 1254 +28 with no reader (PR #53 round 94)",
+    "evidence": "0x33e10 move.w (0x803f78).l,d0; andi.l #7; lsl.l #2; andi.b #0xe3,(a0); or.b d0,(a0) with a0 = j1939_pgn65252_tx_message 0x8035e8. abs_refs finds no other reference. e2m tool: 1254 +002A JCISSHPZ -> 0x803f78. 0x803f78 lies inside the EEPROM image 0x803b0a-0x804f93 (and inside 0x803b0a-0x804155), so it takes _cal. CM848 e2m: 1254 +0028 Jcomm_Idle_Shutdown_Message_Default_Priority [JCISSHPZ] -> 0x3fd862 (no row).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bcd7",
+    "current_name": "",
+    "proposed_name": "air_conditioner_pressure_switch_state",
+    "proposed_type": "byte",
+    "comment": "e2m 000E +9 DSAKPRSW 'BIT 0 OF BYTE 9, SOFTWARE VALUE OF AIR CONDITIONER PRESSURE S(WITCH)' (ON / OFF). mc68k_sampleAndDebounceDiscreteInputs copies bit 1 of the debounced input byte 0x80bcd0 into bit 0. cm550_buildPgn65252ShutdownMessage sends it as PGN 65252 byte 3 bits 1-2 (SPN 985 A/C high pressure fan switch: 0xfd on / 0xfc off). No other bit has a Calterm record (PR #53 round 94)",
+    "evidence": "Decompile lines 10077-10080 in mc68k_sampleAndDebounceDiscreteInputs: DAT_0080bcd7 & 0xfe / | 1 from debounced_value_for_rear_axle_ratio_switch_on_off & 2. 0x33d9a move.b (0x80bcd7).l,d0 / andi.l #1 -> 0xfd / 0xfc to (2,a1) = 0x8035f8. e2m tool: 000E +0009 DSAKPRSW -> 0x80bcd7 (no row today). Byte accesses only. Only bit 0 is defined, so the name rests on that one bit.",
+    "confidence": "medium"
+   }
+  ],
+  "enum_members": [],
+  "skipped": [],
+  "notes": "Notes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L2/investigator/ (notes.md, dgfuiden_pairs.py, pc_relative_calls.py).\n\nJUDGMENT CALLS\n1. 0x1fe84 is a twin even though CM550 tests queue == 1 explicitly where CM848 has a plain else. Every caller passes 0 or 1, and every step, constant and store order matches. Apply it in both firmwares: CM848 0x538c8c cm848_scheduleJ1939PeriodicMessage becomes scheduleJ1939PeriodicMessage, and its plate comment should name the CM550 twin 0x1fe84. CM550 also needs a function_definitions row for 0x1fe84, or the 19 call sites keep rendering as FUN(0,100): 0 queue_number uint (move.l 0x10,a7) / 1 pgn ushort / 2 interval_milliseconds ushort / 3 first_send_offset_milliseconds ushort / 4 builder dword (move.l 0x1a,a7); return byte (moveq #1 full / clr.b 0 added).\n2. DGFUIDEN is typed as one word[19] row at 0x806abc. The five rows inside it are removed: 0x806abe (the lead's row, element 1), 0x806ac0, 0x806ac2, 0x806ac4 and 0x806aca. This follows round 94 stage C, where the comment of the covering row lists the removed rows. The indexed reads (fault >> 4) justify an array.\n3. Extra globals beyond the lead: the real TSC1 bytes 0x801d4c-0x801d58 (processEngineTsc1Request, the verified twin, uses them exactly as CM848's j1939_powertrain_messages_received.tsc1_* fields), MTMPRPFL 0x80db1a, BSTAMNLM 0x80a26e, JCISSHPZ 0x803f78 and DSAKPRSW 0x80bcd7. ETC1 is SAE's acronym for PGN 61442, the same class as TSC1. If the judge wants it spelled out, use j1939_received_pgn61442_byte_1 / _byte_5.\n4. 0x33d38 is the scheduled PGN 65252 broadcast and also the PGN 59904 request responder for 65252 (registered at 0x2f586 through 0x2f47e). CM848 names such functions cm848_buildPgn<N><Name>Message.\n\nLEADS FOR LATER ROUNDS (not this batch)\n- Misnamed CM550 periodic builders, from the schedule list (queue, PGN, interval ms, offset ms): 0x31c84 j1939HandlePgn65265CruiseVehicleSpeed (65265 CCVS1 builder), 0x32e4c j1939HandlePgn61443Eec2 (61443 builder, 50 ms), 0x330c4 vp44_configParamCanBuilder (65247, 250 ms), 0x33164 vp44_FUN_00033164 (65263), 0x3366a cm550_FUN_0003366a (65251), 0x337c4 cm550_FUN_000337c4 (65262), 0x338ea cm550_dutyCycleMonitorAltIsrHandler (61440 ERC1 on queue 1), 0x33b40 cm550_fuelEconomyDataBuilder (65266), 0x33e58 cm550_FUN_00033e58 (65270), 0x33f5a cm550_FUN_00033f5a (65264), 0x3407a vp44CanMessage100ResponseBuilder (65249 on queue 1), 0x342f0 cm550_retarderDataBuilder (65271), 0x31bce cm550_FUN_00031bce (65269). No rows: 0x3229a (65226 DM1), 0x339fe (65213), 0x32bbc (61441), 0x34496 (65279).\n- 0x2efd0 cm550_diagnosticServiceDispatcherByPgn is the ETC1 (PGN 61442) receive handler (counterpart of cm848_j1939ProcessPgn61442Etc1). 0x2f114 cm550_systemControlFunction3 registers it (0xf002). 0x2ef08 cm550_systemControlFunction1 registers PGN 61184 (0xef00 -> 0x2eea2). 0x2efbc cm550_systemControlFunction2 registers PGN 58112 DM7 (0xe300 -> 0x2ef4a; byte at 0x801d3c).\n- 0x2f538 cm550_diagnosticDataDump registers the PGN 59904 request dispatcher 0x2f4be (cm550_FUN_0002f4be) and seven request responders through 0x2f47e (no row; 32 entries of 6 bytes at 0x801d5a, count 0x801e1a). These are the counterparts of cm848_initJ1939ProtocolHandlers / cm848_j1939DispatchPgnHandler / cm848_j1939RegisterPgnHandler (0x23188).\n- 0x33ce2 vp44_ioControlPGN_65244_Builder builds the PGN 65244 (Idle Operation) descriptor, with priority 0x803f76 = e2m 1254 +28 JCISPZ (EEPROM image, j1939_pgn65244_priority_cal).\n- 0x80bcf6 (row bit_6_which_enables_the_warning_lamp_driver_enable_disable) is e2m 000E +28, the lamp / output driver command byte 0 (bit 0 LCWTSRLP wait to start, 1 LCSPEGLP stop engine, 2 LCWFLP water in fuel, 4 LCEGPNLP engine protection, 5 LPSACM solenoid A, 6 LCDGLP diagnostic, 7 DSDRFS fuel shut off).\n- The system error status words 0x806000-0x80603f (SSERSS00-31, rows status_32_word_bit_mapped_system_error_status_word_N_0_1) are indexed by fault >> 4 exactly like DGFUIDEN and are a word[32] candidate; fault_first_occurrence_flags_word_N at 0x806040 is likewise.\n- CM848 misnamed counterparts: 0x29c98 cm848_calculateFuelDemandFilter computes the maximum torque at the current engine speed into 0x40aee6 fuel_demand_filter_dimension (e.g. cm848_calculateMaximumTorqueAtCurrentEngineSpeed / maximum_torque_at_current_engine_speed). 0x29de0 cm848_initFuelDemandFilterDimensions initializes it. 0x29e24 cm848_initProtectionFilterAccumulators initializes the misfire limit. 0x40aeea injection_timing_pid_init_flag is e2m 8A3D +2 SOI_Before_MST (the main timing before the misfire limit)."
+ },
+ "blind": {
+  "batch": "L2",
+  "roles": [
+   {
+    "address": "0x0001fe84",
+    "role": "Adds one periodic J1939 broadcast to a transmit queue. The queue argument selects the queue: 0 = engine node queue (entries at 0x80096e, count byte 0x800a9a, full at 20, tick 0x800a9c), 1 = retarder node queue (entries at 0x800a36, count 0x800a9b, full at 10, tick 0x800a9e). It writes the next 10-byte j1939_periodic_transmit_entry_t in this order: +0 PGN, +4 next_tick = offset ms / 10 + current tick, +2 interval_ticks = interval ms / 10, +6 builder address. It returns 1 when the queue is full, else 0. The only reference is movea.l #0x1fe84,a4 at 0x28b8a (operand at 0x28b8c) in mc68k_initializeJ1939Datalink, which then makes 19 jsr (a4) calls. Each call pushes a long queue, a word PGN, a word interval ms, a word offset ms and a long builder: (0,65265,100,70,0x31c84) (0,61444,20,0,0x32c76) (0,61443,50,10) (0,65247,250,30) (0,65251,5000,110) (1,61440,100,50) (0,65266,100,90) (1,65249,5000,301) (0,65262,1000,430) (0,65252,1000,110,0x33d38) (0,65263,500,130) (0,65264,100,150) (0,65269,1000,170) (0,65270,500,190) (0,65271,1000,210) (0,65226,1000,500) (0,65213,1000,50) (0,61441,100,20) (0,65279,10000,40). The RAM dump holds exactly these 17 + 2 entries. For the new row, the prototype in 2-byte stack slots is: dword queue @+4, word pgn @+8, word interval_milliseconds @+0xa, word first_send_offset_milliseconds @+0xc, pointer builder @+0xe; returns byte.",
+    "discriminator": "It is the only code that appends to the two periodic queues; cm550_runJ1939PeriodicTransmitQueues only walks them. It is a function of its own: cm550_canMessageFilterInit ends with rts at 0x1fe82 and 0x1fe84 opens with movem.l a3/a2/d2.",
+    "suggested_name": "scheduleJ1939PeriodicMessage",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_scheduleJ1939PeriodicMessage @ 0x538c8c - TWIN. Both have queues of 20 and 10 ten-byte entries, divide both times by 10, store in the same order (+0, +4 next tick, +2 interval, +6 builder) and return 1 when full, 0 when added. The caller is in the same position: cm848_j1939_system_init @ 0x539190 schedules the same list with the same values (65265 100/70, 61444 20/0, 65251 5000/110, queue 1 61440 100/50 and 65249 5000/301, ...). One difference: CM550 tests queue == 1 explicitly, and any other value stores through an unset pointer; CM848 sends every non-zero value to queue 1. Shared name: rename the CM848 row to scheduleJ1939PeriodicMessage too."
+   },
+   {
+    "address": "0x00033d38",
+    "role": "Builds and sends PGN 65252 Shutdown (SHUTDN). It fills the payload at 0x8035f6 (the data of j1939_pgn65252_tx_message). Byte 1 comes from idle_shutdown_state (0x80d674) through the jump table at 0x33d5a: 0->0x00, 1->0x40, 2->0x44, 3->unchanged, 4->0x10, 5->0x01, above 5 unchanged. These are the SPN 593/594/592/590 two-bit fields. Byte 2 = 0x7f when algorithm_enable_flags_3_cal.idle_shutdown_enable (0x803c9a & 2) is set, else 0x3f: SPN 591, enabled or disabled in calibration. Byte 3 = 0xfd when 0x80bcd7 bit 0 is set (e2m 000E +9 DSAKPRSW, software value of the air conditioner pressure switch), else 0xfc: SPN 985. Byte 4 = 0xfd when 0x80bcf6 bit 0 is set, else 0xfc: SPN 1081 engine wait to start lamp. 0x80bcf6 bit 0 is the wait to start lamp output (cm550_iahDisableWaitToStartLamp clears it with andi.b #0xfe). It then calls cm550_sendCanMessage(&j1939_pgn65252_tx_message). Two paths reach it: (1) the periodic entry queue 0, PGN 65252, every 1000 ms from 110 ms (pea 0x33d38 at 0x28d2e); (2) the PGN request responder table, through 0x2f538 calling 0x2f47e(0xfee4, 0x33d38) at 0x2f586. 0x2f47e adds a {PGN, handler} entry to 0x801d5a, and 0x2f4be, the PGN 59904 request handler, walks that table.",
+    "discriminator": "It is a function of its own after the rts at 0x33d36 of 0x33ce2; the .cpp renders no body for it. It is the only code that writes payload bytes 1-4 of PGN 65252, and the only reader of 0x80bcd7. 0x33dfa only sets up the descriptor and bytes 5-8.",
+    "suggested_name": "cm550_buildPgn65252ShutdownMessage",
+    "confidence": "high",
+    "cm848_counterpart": "none - CM848 does not transmit PGN 65252. Its only 0xfee4 use is registerJ1939ReceiveHandler(0xfee4, receivePgn65252ShutdownMessage), and it has no idle shutdown state machine."
+   },
+   {
+    "address": "0x00033dfa",
+    "role": "Sets up the PGN 65252 Shutdown transmit buffer once at start-up. It has one call (jsr at 0x28c30 in mc68k_initializeJ1939Datalink, among the transmit buffer initializers). j1939_pgn65252_tx_message (0x8035e8) gets can_id = 0x00fee400, with the priority (word 0x803f78 & 7) << 2 in byte 0 and the engine node source address 0x80da01 in byte 3. 0x803f78 is e2m 1254 +2A JCISSHPZ, 'default network priority for idle shutdown message', and has no row. It also sets data_length 8, data_pointer 0x8035f6 and status_pointer 0x8035fe (j1939_pgn65252_transmit_status), and sets payload bytes 5-8 (0x8035fa-0x8035fd) to 0xff (the engine protection SPNs: not available). It sends nothing. It reads no engine hours (that is PGN 65253) and no VP44 data. The current name is wrong.",
+    "discriminator": "Only the descriptor and the 0xff bytes 5-8, written once; 0x33d38 fills bytes 1-4 and sends. The shape matches initializePgn65251EngineConfiguration1Buffer and the other initializers in that call list.",
+    "suggested_name": "cm550_initializePgn65252ShutdownBuffer",
+    "confidence": "high",
+    "cm848_counterpart": "none - CM848 has no PGN 65252 transmit buffer, and cm848_j1939_system_init has no 65252 initializer."
+   },
+   {
+    "address": "0x0002efd0",
+    "role": "(Extra: it is the function that stores 0x801d44 / 0x801d48.) This is the J1939 PGN 61442 ETC1 receive handler: 0x2f114 (cm550_systemControlFunction3) calls registerJ1939ReceiveHandler(0xf002, 0x2efd0). It accepts only 8-byte frames from _j1939_transmission_source_address (ROM 0x60f82; 0xff = any sender). Byte 1 goes to 0x801d44 and byte 5 to 0x801d48. Byte 5 bits 1-2 = 1 (SPN 606, engine momentary overspeed enable) with tsc1_override_control_mode = 1 and engine_control_device_indicator = 1 sets high_idle_override_active_flag (JCHII1OD) and its timeout timer (JCEGOSTM + 1). A value other than 1 or 3 clears them. While the recovery flag 0x80da98 is set, the timer is reloaded with JCTMRCTM + 1 instead. Byte 5 bits 3-4 = 1 (SPN 607) sets progressive_shift_disable_flag (JCPSDB) and its timer (JCPSTM + 1); a value other than 3 clears them. Byte 1 bits 1-2 = 0 with bits 5-6 = 0 (driveline disengaged, no shift in process) sets driveline_disengaged_flag (JCOG), its timer (JCDRDITM + 1) and out_of_gear_network_type = 1 (J1939); otherwise it clears them.",
+    "discriminator": "It is the only writer of 0x801d44 / 0x801d48, and it is reached only through the PGN 61442 registration. Its current name, cm550_diagnosticServiceDispatcherByPgn, is wrong: it dispatches nothing.",
+    "suggested_name": "cm550_receivePgn61442ElectronicTransmissionController1Message",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_j1939ProcessPgn61442Etc1 @ 0x22870 - counterpart: it has the same three decodes and timers. CM848 also decodes the torque converter lockup, the shift in process and the output shaft speed, reloads an ETC1 message timeout and starts the high idle override time limit."
+   },
+   {
+    "address": "0x00801d44",
+    "role": "ETC1 (PGN 61442) byte 1 as received. Only the ETC1 handler 0x2efd0 stores it (movea.l #0x801d44,a1 at 0x2efde, then move.b (a0),(a1)). Its bits: 1-2 SPN 560 transmission driveline engaged, 3-4 SPN 573 torque converter lockup engaged, 5-6 SPN 574 shift in process. The handler reads bits 1-2 and 5-6 for the out of gear flag. It is not a TSC1 byte: the TSC1 image starts at 0x801d4c, where processEngineTsc1Request stores TSC1 byte 1 (bytes 2-3 at 0x801d4e / 0x801d4d, byte 4 at 0x801d4f). There is no other access in the ROM.",
+    "discriminator": "Byte 1 of the ETC1 image 0x801d44-0x801d4b. Byte 5 sits at +4 (0x801d48), the same offset as in the frame.",
+    "suggested_name": "j1939_received_pgn61442_byte_1",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_powertrain_messages_received.etc1_status_byte_1 (0x3fa984), stored by cm848_j1939ProcessPgn61442Etc1 - the same received byte, a struct field in CM848"
+   },
+   {
+    "address": "0x00801d48",
+    "role": "ETC1 (PGN 61442) byte 5 as received. Only 0x2efd0 stores it (movea.l #0x801d48,a0 at 0x2f01a, then move.b data[4],(a0)). Its bits: 1-2 SPN 606 engine momentary overspeed enable (the high idle override), 3-4 SPN 607 progressive shift disable; the handler decodes both. There is no other access in the ROM. The current name tsc1_message_control_byte is wrong: it is not TSC1.",
+    "discriminator": "Byte 5 of the ETC1 image, at +4 from byte 1 (0x801d44). The TSC1 control byte is 0x801d4c.",
+    "suggested_name": "j1939_received_pgn61442_byte_5",
+    "confidence": "high",
+    "cm848_counterpart": "j1939_powertrain_messages_received.etc1_status_byte_5 (0x3fa988) - the same received byte"
+   },
+   {
+    "address": "0x00806abc",
+    "role": "The whole e2m DGFUIDEN record: F +570, 'bit mapped parameter used to disable/enable the processing of a particular fault'. Block F is RAM 0x80654c (parameter ID table: DG00ELTM / FLT_DATA). The type is B and the length 38 decimal = 19 words, 0x806abc-0x806ae1. It ends exactly where block 1003's first record starts (0x806ae2, intake_manifold_temperature_sensor_config), which proves the length is decimal; it is the last record of block F, and every family e2m gives it 38. It is indexed like the 32 fault status words at 0x806000 (SSERSSnn): fault n is word n >> 4, bit n & 15. Every reader ANDs a status bit with the same bit here. Examples: 0xe9ce tests 0x806002 & 0x400 with 0x806abe & 0x400; 0x1e490 tests 0x80600e & 4 with 0x806aca & 4; 0x16ef6 tests 0x806006 with (0x6,a2). Other readers use it as the gate to set or log a fault: 0x115b2 sets status word 0 bit 12 only while this bit is set, and cm550_processFaultScanGroup (0x14900) logs a fault only when its bit is set. Every access in the dumped ROM is a read: absolute, base + 2/4/6/8/0xc, and the indexed move.w (0,a0,d0.w*2) with d0 = fault number >> 4. The dump contents (fc00 2600 d007 006b 2b3f f800 b7ee 0200 ea00 0299 0040 0000 x5 f800 f7bf 0efb) appear in neither the ROM nor the EEPROM dump. So the record is set from outside the dumped code (a tool write, or code above 0x40000). It is outside the EEPROM mirror, so no _cal.",
+    "discriminator": "A per-fault enable mask that only gates other bits. The confirm / latch / first occurrence words are separate (0x806040 / 0x806080), and no fault code writes this record. The current six rows are 0x806abc fault_confirm_status_word_0, 0x806abe fault_confirm_status_word_1, 0x806ac0 fault_latch_status_word_2, 0x806ac2 fault_latch_status_word_3 and 0x806ac4 fault_confirm_status_word_4 (all undefined), plus 0x806aca fault_first_occurrence_word_7 (word). They are elements 0/1/2/3/4/7. Words 5 (0x806ac6) and 6 (0x806ac8) have readers but no rows, and words 8-18 are read only through the indexed form.",
+    "suggested_name": "fault_processing_enable_flags",
+    "confidence": "high",
+    "cm848_counterpart": "none identified - CM848's e2m has the same Calterm record (Log_Fault_Indicator [DGFUIDEN], 100 bytes) only at a virtual e2m address (e2m_variables 0x01002600), and no CM848 RAM row matches it. Proposed type word[19], one row that absorbs 0x806abe / 0x806ac0 / 0x806ac2 / 0x806ac4 / 0x806aca."
+   },
+   {
+    "address": "0x00806abe",
+    "role": "Word 1 of DGFUIDEN: the processing enable bits of faults 16-31, 0x2600 in the dump. Its readers AND it with status word 1 (0x806002) under the same mask: cm550_monitorBoostPressureSensorInRangeHighReading (0x400 and 0x200; it skips its check when either fault is active and enabled), vp44_fuelLimitExceedanceStatisticsAccumulator, cm550_coldStartFuelControlSlowCycle40Coordinator (through a3) and cm550_rpmHistogramAndProtectionStatisticsAccumulator ((0x2,a5), masks 4 / 8). There are no writes. The name fault_confirm_status_word_1 is wrong: these are not confirm bits.",
+    "discriminator": "Element [1] of the 19-word record at 0x806abc. The preferred fix is to drop this row and type 0x806abc as word[19]. If the rows stay flat, this is the name.",
+    "suggested_name": "fault_processing_enable_flags_word_1",
+    "confidence": "high",
+    "cm848_counterpart": ""
+   },
+   {
+    "address": "0x00806ac0",
+    "role": "Word 2 of DGFUIDEN (faults 32-47; 0xd007 in the dump). It is read with status word 2 (0x806004) under the same mask by cm550_fuelTimingTransitionStateMachine (through a2), cm550_frictionalLoadTorqueInterpolator, cm550_FUN_0001cc72 and cm550_highRpmEngineProtectionStateMachine ((0x4,a2)). It is never written. It is not latch bits (the current name fault_latch_status_word_2 is wrong).",
+    "discriminator": "Element [2] of fault_processing_enable_flags; the row should be absorbed by the word[19] row at 0x806abc.",
+    "suggested_name": "fault_processing_enable_flags_word_2",
+    "confidence": "high",
+    "cm848_counterpart": ""
+   },
+   {
+    "address": "0x00806ac2",
+    "role": "Word 3 of DGFUIDEN (faults 48-63; 0x006b in the dump). No absolute reference. It is read as (0x6,a2) in cm550_highRpmEngineProtectionStateMachine with status word 3 (0x806006) under masks 4/8/0x20/0x40, and as (0x6,a3) in j1939HandlePgn61443Eec2. It is never written. It is not latch bits.",
+    "discriminator": "Element [3] of fault_processing_enable_flags; the row should be absorbed by the word[19] row.",
+    "suggested_name": "fault_processing_enable_flags_word_3",
+    "confidence": "high",
+    "cm848_counterpart": ""
+   },
+   {
+    "address": "0x00806ac4",
+    "role": "Word 4 of DGFUIDEN (faults 64-79; 0x2b3f in the dump). It is read with status word 4 (0x806008) by vp44_rpmDerateCalculationController, vp44_derateThresholdMonitorAndFaultController, cm550_diagnosticMessage45Builder (a4), cm550_FUN_00025806 (a2) and j1939HandlePgn61443Eec2 (a4 = 0x806abc + 8, masks 0x20/8/2 ...). It is never written. It is not confirm bits.",
+    "discriminator": "Element [4] of fault_processing_enable_flags; the row should be absorbed by the word[19] row.",
+    "suggested_name": "fault_processing_enable_flags_word_4",
+    "confidence": "high",
+    "cm848_counterpart": ""
+   },
+   {
+    "address": "0x00806aca",
+    "role": "Word 7 of DGFUIDEN (faults 112-127; 0x0200 in the dump). It is read with status word 7 (0x80600e) under the same mask by mc68k_j1708SciInterruptHandler (0x1e49e, mask 4), cm550_runJ1939PowertrainControlTimeouts (0x2372c, mask 8) and cm550_engineModeTimingAdjuster (0x264aa, mask 2). It is never written. It is not first occurrence bits: those are the words at 0x806040, e.g. fault_first_occurrence_flags_word_7 = 0x80604e. Words 5 (0x806ac6: mc68k_canCs4TransmitNextFrame / cm550_runJ1939PowertrainControlTimeouts with 0x80600a) and 6 (0x806ac8: vp44_derateThresholdMonitorAndFaultController) are read the same way but have no rows.",
+    "discriminator": "Element [7] of fault_processing_enable_flags; the row should be absorbed by the word[19] row.",
+    "suggested_name": "fault_processing_enable_flags_word_7",
+    "confidence": "high",
+    "cm848_counterpart": ""
+   },
+   {
+    "address": "0x000269f2",
+    "role": "Calculates the maximum torque at the current engine speed. It sets maximum_torque_map_lookup.x_input = engine_rpm_primary (ENGRPM) and y_input = alpha_blend_factor (ALPHA: 0 urban, 1 open road), then calls cm550_tableLookup2D(&maximum_torque_map_lookup) (MTTQMPZA over MTTQMPXA / MTTQMPYA). The result goes to max_torque_at_current_rpm_in_foot_pounds_0_10000 (0x80db1a, e2m 1461 MTMPRPFL 'max torque at current rpm in foot-pounds'), floored at 1 (cmpi.w #1 / bcc). It has no enable gate. It is the last call of cm550_runEvery4FramesTaskSetPhase0 (jsr at 0x1b56a, every 20 ms). cm550_FUN_0001c0d4 divides by the result to turn the torque derate limit into a fuel quantity, which is why the floor exists.",
+    "discriminator": "It is the only reader of maximum_torque_map_lookup and the only periodic writer of 0x80db1a. Its inputs are engine speed and alpha with no gate. The misfire lookup 0x26ab8 uses boost and engine speed and has a gate.",
+    "suggested_name": "cm550_calculateMaximumTorqueAtCurrentEngineSpeed",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateFuelDemandFilter @ 0x29c98 (misnamed) - counterpart: the same MT_Max_Torque_Map at filtered_engine_speed into fuel_demand_filter_dimension (the MTMPRPFL value), floored at 1, from cm848_periodicTaskSet_sensorProcessing. But CM848 does three lookups (the alpha 0 row and the chi lower / upper rows) and blends them with cm848_interpolateAlphaChiValue. CM550 does one lookup with alpha as the y input."
+   },
+   {
+    "address": "0x00026a2e",
+    "role": "Start-up set-up of the maximum torque calculation. It sets max_torque_at_current_rpm_in_foot_pounds_0_10000 = 1. It fills maximum_torque_map_lookup (0x801a94): x_axis_pointer = maximum_torque_map_x_axis (0x808346, MTTQMPXA), x_axis_offset = 2, y_axis_pointer = maximum_torque_map_y_axis (0x808372, MTTQMPYA), y_axis_offset = 2, z_values_pointer = maximum_torque_map_grid (0x80837c, MTTQMPZA). mc68k_applicationMain calls it once (jsr at 0x2896a).",
+    "discriminator": "It fills the maximum torque record and sets the torque result to 1. Its sibling 0x26a7e fills the misfire record and clears the two misfire values.",
+    "suggested_name": "cm550_initializeMaximumTorqueAtCurrentEngineSpeed",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initFuelDemandFilterDimensions @ 0x29de0 - counterpart: fuel_demand_filter_dimension = 1 and the three maximum torque cache pairs = 2, from cm848_applicationMain. CM848 has cache words where CM550 has axis pointers."
+   },
+   {
+    "address": "0x00026a7e",
+    "role": "Start-up set-up of the misfire timing limit (current name cm550_fuelDemandTablePointersInit). It fills injection_timing_misfire_limit_lookup (0x801aaa): y_axis_offset 2, y_axis_pointer injection_timing_misfire_limit_y_axis (0x807944, BSTAESYA), x_axis_offset 2, x_axis_pointer injection_timing_misfire_limit_x_axis (0x80793a, BSTABSXA), z_values_pointer injection_timing_misfire_limit_grid (0x80794e, BSTATBZA). It clears injection_timing_before_misfire_limit (0x80a270, BSTABELM) and the misfire timing limit 0x80a26e (BSTAMNLM). mc68k_applicationMain calls it once (jsr at 0x28912). It has nothing to do with fuel demand.",
+    "discriminator": "It fills the misfire record and clears BSTABELM / BSTAMNLM. 0x26a2e fills the maximum torque record instead.",
+    "suggested_name": "cm550_initializeInjectionTimingMisfireLimit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initProtectionFilterAccumulators @ 0x29e24 (misnamed) - counterpart: it sets the misfire cache offsets to 2 and injection_timing_main_misfire_limit to 0, from cm848_applicationMain. But it also clears injection_timing_pid_init_flag and has no axis pointers."
+   },
+   {
+    "address": "0x00026ab8",
+    "role": "Calculates the misfire timing limit (current name cm550_rpmLoadParameterLookup). It runs only while algorithm_enable_flags_32_cal.misfire_timing_limit_enable is set (0x803cd4 bit 0, BSTALMEN). It sets x_input = boost_pressure_sensor_state.filtered_value (0x80a320, BSTPRS) and y_input = engine_rpm_primary, then calls cm550_tableLookup2D(&injection_timing_misfire_limit_lookup). The result goes to 0x80a26e (output_of_the_misfire_timing_limit_table_60_to_60, e2m 818E +0 BSTAMNLM) and is returned. When the bit is clear it returns 0 and keeps the stored value. It is the 6th call of cm550_runEvery4FramesTaskSetPhase2 (jsr at 0x1b5ec). cm550_applyMisfireTimingLimit then raises fuel_timing_advance_value to this limit. It uses no rpm-load parameter.",
+    "discriminator": "It is the only periodic writer of BSTAMNLM (0x26a7e only clears it). It is gated by the misfire enable bit, and its inputs are boost and engine speed. 0x269f2 has no gate and uses engine speed and alpha.",
+    "suggested_name": "cm550_calculateInjectionTimingMisfireLimit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateInjectionTimingMainMisfireLimit @ 0x29e50 - counterpart, close to a twin: the same enable bit (algorithm_enable_flags_40_cal.misfire_timing_limit_enable) and the same misfire table, by boost and engine speed, into injection_timing_main_misfire_limit, from cm848_periodicTaskSet_auxiliaryControl. But CM848 gets its boost from cm848_calculateBoostPressure (intake manifold minus barometric pressure), uses the argument / cache lookup and returns nothing."
+   }
+  ],
+  "notes": "Notes (one entry per finding, with evidence) are in /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L2/describer/notes.md. The scratch scripts are refs_in_context.py and dgfuiden_uses.py in the same folder. Every lead is confirmed except 0x33dfa, whose name is wrong: it sets up the PGN 65252 descriptor and does not build engine hours. 0x1fe84 is a twin of CM848's scheduler, not just a counterpart. Out-of-batch asides for the parent: (1) 0x33ce2 vp44_ioControlPGN_65244_Builder sets up the PGN 65244 Idle Operation descriptor (priority from 0x803f76 JCISPZ) and registers 0x33c6c as the PGN 65244 request responder. 'io' means idle operation and it has no VP44 content. The row 0x8035e2 protection_state_enable_flags is that message's idle hours payload dword. (2) 0x2f47e adds a {PGN, handler} entry to the PGN request responder table 0x801d5a (32 entries, count 0x801e1a). 0x2f4be is the PGN 59904 request handler that walks the table. 0x2f538 cm550_diagnosticDataDump registers 0x2f4be and the responders for 65252/65261/65263/65264/65269/65270/65271, so its name is wrong. 0x2f114 cm550_systemControlFunction3 registers the ETC1 handler. (3) 0x803f78 (JCISSHPZ, the idle shutdown message priority) and 0x803f76 (JCISPZ) are inside the EEPROM mirror and have no rows, so they need _cal names. (4) The PGN 65252 payload 0x8035f6-0x8035fd has no row (byte[8]). (5) The TSC1 image starts at 0x801d4c: byte 1 there, the requested speed word at 0x801d4d (byte-swapped), the torque at 0x801d4f. 0x801d44-0x801d4b is the ETC1 image. (6) 0x26a64 cm550_memcpy sits between 0x26a2e and 0x26a7e. All work was read-only and no repository file was touched."
+ },
+ "verdict": {
+  "batch": "L2",
+  "overall": "I re-derived every element from the CM550 asm (m68k.py), from CM848 objdump on cm848_flash2_live.bin, and from the frozen CSVs and .cpp. All 7 CM550 functions are CONFIRMED. 0x1fe84 is a true twin of CM848 0x538c8c: same steps and store order (+0 PGN, +4 offset/10 + tick, +2 interval/10, +6 builder), same caps (20 / 10), same 10-byte entries, the same relative RAM layout (queue 0 + 200 = queue 1, + 100 = count0, count1, tick0, tick1), and the same call-graph position (19 calls after the buffer initializers). Both rows take scheduleJ1939PeriodicMessage, so I added a cm848_function verdict carrying the twin note in the repository's comment convention. 0x33d38 and 0x33dfa are standalone: CM848 only receives PGN 65252. The four 2D-lookup functions are counterparts: CM848 does three blended lookups, uses argument and cache lookups instead of records, and computes boost with a function call.\n\nOf the 13 globals, 8 are CONFIRMED and 5 AMENDED:\n- 0x801d44 / 0x801d48: names changed to j1939_received_pgn61442_byte_1 / _byte_5. ETC1 is not on the allowed acronym list (PTO is explicitly refused), the PGN form matches the j1939_pgn61442_* rows, and both agents offered it.\n- 0x801d54 / 0x801d58: comments corrected. At equal priority only an ACTIVE mode 3 request can be taken over: a new mode 1 or 2 request wins at once (bne.s 0x2f242), and a new mode 3 request needs a lower torque, or the same torque and a lower speed. CM848's twin code (processEngineTsc1Request) is identical.\n- 0x806abc: comment now gives the full list of readers.\n- 0x80db1a: comment adds the third writer, cm550_FUN_0001c0d4, which floors it at 1.\n\nThe lead's 0x806abe is element [1] of fault_processing_enable_flags word[19]. Its rows 0x806abe / ac0 / ac2 / ac4 / aca are removed; 0x806ae2 (block 1003) lies outside the record. My write scanner (judge/range_writes.py) found 154 reads and no write, and the record's contents exist only in the RAM dump.\n\nskipped[] is empty, so nothing stays skipped.\n\nLeads for the apply step or later batches:\n(1) Add a function_definitions row for 0x1fe84 (queue dword, pgn word, interval_milliseconds word, first_send_offset_milliseconds word, builder pointer; return byte). It fits stack_parameter_layout's 2-byte slots.\n(2) These comments name the old function names: j1939_pgn65252_tx_message (vp44_engineHoursPGN_65252_Builder), the misfire_timing_limit_enable bitfield (cm550_rpmLoadParameterLookup) and injection_timing_misfire_limit_grid (cm550_fuelDemandTablePointersInit). Update them in the same apply.\n(3) CM550 rows 0x8037b6 can_priority_table_start and 0x8037b8-0x8037ee j1939_priority_pgn<N> (including j1939_priority_pgn65252 at 0x8037e0) have no code reference and no e2m record, and the dump holds pointers and zeros there. They are wrong. The real per-PGN priorities are e2m block 1254 at 0x803f4e (0x803f76 JCISPZ, 0x803f78 JCISSHPZ).\n(4) The describer's extra, 0x2efd0 cm550_diagnosticServiceDispatcherByPgn, is verified as the ETC1 receive handler (registered for 0xf002 at 0x2f114; CM848 counterpart cm848_j1939ProcessPgn61442Etc1). The investigator did not propose it, so it gets no verdict here.\n(5) Optional: 0x801d44-0x801d58 could later become one CM550 struct like CM848's j1939_powertrain_messages_received_t, but the layout differs (TSC1 starts at +8, not +0x14).\n(6) The worktree's CM848 .cpp was mid-rebuild (735 functions), so disasm_func.py snaps flash2 addresses to the wrong function until that build finishes.\n\nNotes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L2/judge/ (notes.md, range_writes.py, dgfuiden_uses_judge.txt, tsc1.asm, init_j1939_cm550.asm).",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0001fe84",
+    "verdict": "CONFIRMED",
+    "final_name": "scheduleJ1939PeriodicMessage",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00538c8c",
+    "own_role": "Appends one periodic J1939 broadcast to transmit queue 0 (cap 20, entries 0x80096e) or queue 1 (cap 10, entries 0x800a36): stores the PGN word, next tick = offset/10 + the queue's tick (0x800a9c / 0x800a9e), interval/10 and the builder address in a 10-byte entry; returns 1 when the queue is full, else 0.",
+    "reason": "Asm 0x1fe84-0x1ff36 matches both agents. CM848 0x538c8c (objdump) runs the same steps in the same order (+0, +4, +2, +6), with the same caps 20 / 10, 10-byte entries, divide by 10, return 1 / 0, and the same relative RAM layout (count0, count1, tick0, tick1 adjacent after both queues). The only difference is switch(0 / 1) against if / else for an invalid queue number, and every caller passes 0 or 1. Call-graph position is the same: 19 calls after the buffer initializers in mc68k_initializeJ1939Datalink and cm848_j1939_system_init, with 15 identical (queue, PGN, interval, offset) tuples. The only reference is movea.l #0x1fe84,a4 at 0x28b8a (no bsr). The name is free in both firmwares. It needs a new function_definitions row for its 5 stack arguments."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00538c8c",
+    "verdict": "CONFIRMED",
+    "final_name": "scheduleJ1939PeriodicMessage",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00538c8c",
+    "final_comment": "Adds a periodic J1939 broadcast to transmit queue 0 (20 entries at 0x3fd2e2) or 1 (10 entries at 0x3fd3aa): the PGN / the period (ms - kept in 10 ms ticks) / the first send (the queue's current tick + the offset ms in ticks) / the builder. Returns 1 when the queue is full. cm848_j1939_system_init schedules each broadcast (PGN 65265 every 100 ms from 70 ms ...) (was diag_record_queue_add_entry; PR #53 round 65) | the twin of CM550 0x1fe84: one shared name (was cm848_scheduleJ1939PeriodicMessage; PR #53 round 94)",
+    "own_role": "Same as CM550 0x1fe84: appends a periodic broadcast entry (PGN, interval ticks, first-send tick, builder) to queue 0 or 1, returns 1 when full.",
+    "reason": "The CM848 half of the twin rename. The comment keeps the current text and appends the twin note in the convention of receivePgn65252ShutdownMessage / initializeEngineState."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033d38",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildPgn65252ShutdownMessage",
+    "final_relation": "standalone",
+    "own_role": "Fills PGN 65252 payload bytes 1-4 at 0x8035f6 and sends j1939_pgn65252_tx_message (cm550_sendCanMessage). Byte 1 comes from idle_shutdown_state through the jump table at 0x33d5a: 0x00 / 0x40 / 0x44 / unchanged / 0x10 / 0x01. Byte 2 is 0x7f / 0x3f from idle_shutdown_enable (0x803c9a & 2), byte 3 is 0xfd / 0xfc from 0x80bcd7 bit 0, byte 4 is 0xfd / 0xfc from 0x80bcf6 bit 0.",
+    "reason": "The asm matches both agents, and I decoded the jump table by hand. It has two references, both pea: 0x28d2e (schedule queue 0, 0xfee4, 1000 ms, 110 ms) and 0x2f586 (0x2f47e(0xfee4, 0x33d38), the PGN 59904 responder table at 0x801d5a walked by 0x2f4be). The SPN order (593/594/592/590, 591, 985, 1081) was checked in the j1939 database, and the IDLE_SHUTDOWN_STATE members match. CM848 only registers receivePgn65252ShutdownMessage and has no transmitter, so this is standalone. The name is free and follows cm848_buildPgn<N><Name>Message ('builds and sends')."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00033dfa",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializePgn65252ShutdownBuffer",
+    "final_relation": "standalone",
+    "own_role": "Start-up set-up of the PGN 65252 transmit descriptor j1939_pgn65252_tx_message: can_id 0xfee400 with (0x803f78 & 7) << 2 priority bits and the engine source address 0x80da01, data length 8, data pointer 0x8035f6, status pointer 0x8035fe; payload bytes 5-8 = 0xff. It does not send.",
+    "reason": "Asm 0x33dfa-0x33e56 confirmed, with a single caller (jsr at 0x28c30 among the 21 buffer initializers). It reads no engine hours (that is PGN 65253) and touches nothing on the VP44, so the old name and prefix are wrong. CM848 has no PGN 65252 transmit buffer. The name is free and matches initializePgn65251EngineConfiguration1Buffer / cm848_initializePgn<N><Name>Buffer."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000269f2",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateMaximumTorqueAtCurrentEngineSpeed",
+    "final_relation": "counterpart",
+    "own_role": "Every 20 ms (last call of cm550_runEvery4FramesTaskSetPhase0): sets maximum_torque_map_lookup x_input (+6) = engine_rpm_primary and y_input (+0xe) = alpha_blend_factor, calls cm550_tableLookup2D and stores the result, floored at 1, in 0x80db1a (MTMPRPFL).",
+    "reason": "The asm and the record layout (table_lookup_2d_arguments_t +6 / +0xe) match the MTTQMPXA rpm and MTTQMPYA alpha axes. It is the only reader of the record and has no gate. CM848 0x29c98 makes three lookups (alpha 0, chi lower, chi upper) blended by cm848_interpolateAlphaChiValue into fuel_demand_filter_dimension (0 becomes 1): the same role with different code, so this is a counterpart and CM848 keeps its name. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026a2e",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeMaximumTorqueAtCurrentEngineSpeed",
+    "final_relation": "counterpart",
+    "own_role": "Start-up (one jsr at 0x2896a in mc68k_applicationMain): sets 0x80db1a = 1 and fills maximum_torque_map_lookup with x axis 0x808346, y axis 0x808372, axis offsets 2 and grid 0x80837c. No input and no lookup.",
+    "reason": "Asm 0x26a2e-0x26a62 confirmed. It writes only the result seed and the record set-up, which separates it from 0x269f2 (inputs and lookup). CM848 0x29de0 sets dimension = 1 and three cache pairs = 2 and has no pointers, so this is a counterpart. The name is free and pairs with the calculate function."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026a7e",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeInjectionTimingMisfireLimit",
+    "final_relation": "counterpart",
+    "own_role": "Start-up (one jsr at 0x28912 in mc68k_applicationMain): fills injection_timing_misfire_limit_lookup (y offset 2, y axis 0x807944 BSTAESYA, x offset 2, x axis 0x80793a BSTABSXA, grid 0x80794e BSTATBZA), then clears 0x80a270 (BSTABELM) and 0x80a26e (BSTAMNLM).",
+    "reason": "Asm 0x26a7e-0x26ab6 confirmed. Nothing in it concerns fuel demand, so the old name is wrong. CM848 0x29e24 sets two cache offsets and makes the same two clears in the same order (SOI_Before_MST, then Misfire_Timing_Limit) but stores no pointers, so this is a counterpart. The name is free."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026ab8",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateInjectionTimingMisfireLimit",
+    "final_relation": "counterpart",
+    "own_role": "Every 20 ms (6th call of cm550_runEvery4FramesTaskSetPhase2), while algorithm_enable_flags_32_cal.misfire_timing_limit_enable (0x803cd4 bit 0): x_input = boost_pressure_sensor_state.filtered_value (0x80a320), y_input = engine_rpm_primary, cm550_tableLookup2D(injection_timing_misfire_limit_lookup) to 0x80a26e (BSTAMNLM).",
+    "reason": "Asm 0x26ab8-0x26aee confirmed. It is the only periodic writer of 0x80a26e, and cm550_applyMisfireTimingLimit only reads it. No load or parameter lookup is involved, so the old name is wrong. CM848 0x29e50 has the same gate and axes but computes boost with cm848_calculateBoostPressure() and uses the argument lookup, so this is a counterpart. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d44",
+    "verdict": "AMENDED",
+    "final_name": "j1939_received_pgn61442_byte_1",
+    "final_type": "byte",
+    "own_role": "ETC1 (PGN 61442) byte 1 as received: 0x2efd0 stores data[0] for an 8-byte frame from the transmission source address and tests & 0x30 and & 3 for the driveline disengaged flag.",
+    "reason": "The role is confirmed: move.b (a0),(a1) at 0x2f010, reads at 0x2f0ca / 0x2f0d4, only that function (range scan), byte accesses only, and the handler is registered for 0xf002 at 0x2f114. It is not TSC1. Name amended: ETC1 is not on the workflow's allowed acronym list (PTO is explicitly refused), the PGN form follows the j1939_pgn61442_* rows, and both agents offered this exact name. The investigator's comment is kept."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d48",
+    "verdict": "AMENDED",
+    "final_name": "j1939_received_pgn61442_byte_5",
+    "final_type": "byte",
+    "own_role": "ETC1 byte 5 as received: data[4]. Bits 1-2 (SPN 606) drive the high idle override, bits 3-4 (SPN 607) the progressive shift disable.",
+    "reason": "Confirmed: the store is at 0x2f022 and the reads are at 0x2f02c / 0x2f062 / 0x2f08a / 0x2f0b0, with byte accesses only. The comment's conditions (control mode 1, engine_control_device_indicator 1 = TRANS) match the asm. Name amended to the PGN form for the same reason as 0x801d44. The investigator's comment is kept."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d4c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_received_tsc1_control_byte",
+    "final_type": "byte",
+    "own_role": "TSC1 byte 1 as received by processEngineTsc1Request: & 3 mode, & 0x30 priority, & 0xc speed control condition.",
+    "reason": "Store at 0x2f150, reads at 0x2f156 / 0x2f160 / 0x2f292 / 0x2f33e, byte accesses only. TSC1 is an allowed acronym, the name is free, and it mirrors CM848's tsc1_control_byte."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d4d",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_received_tsc1_requested_speed",
+    "final_type": "byte[2]",
+    "own_role": "TSC1 requested speed kept big-endian at an odd address: [0] = data[2] (high), [1] = data[1] (low), read back as [0] << 8 | [1].",
+    "reason": "Writes at 0x2f178 / 0x2f16e and reads at 0x2f232 / 0x2f238 / 0x2f316 / 0x2f31c / 0x2f412 / 0x2f418 all go through (1,a3) / (2,a3) with a3 = 0x801d4c. The odd address rules out a CPU32 word, so byte[2] is right. It has no row today and overlaps nothing."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d4f",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_received_tsc1_requested_torque",
+    "final_type": "byte",
+    "own_role": "TSC1 byte 4 (requested torque, percent + 125) as received. It is compared with the accepted torque and turned into datalink_torque_demand_fueling (mode 2) or datalink_torque_limit_fueling (mode 3).",
+    "reason": "Write at 0x2f182 (3,a3), reads at 0x2f218 / 0x2f226 / 0x2f384 / 0x2f428, byte accesses only. The mode 2 and mode 3 fueling targets 0x80da64 and 0x80da62 were checked."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d54",
+    "verdict": "AMENDED",
+    "final_name": "tsc1_accepted_priority",
+    "final_type": "byte",
+    "final_comment": "The priority bits (TSC1 byte 1 & 0x30, SPN 897) of the accepted engine request; processEngineTsc1Request stores them when it accepts a request. While a J1939 request from another source is active, that source's new request is rejected when its mode is 0 or its priority value is higher (a lower priority), and takes over when its value is lower. At the same priority only an active mode 3 (speed / torque limit) request can be taken over: a new mode 1 or 2 request takes over at once, and a new mode 3 request only with a lower torque, or the same torque and a lower speed. CM848's j1939_powertrain_messages_received.tsc1_accepted_priority (PR #53 round 94)",
+    "own_role": "The priority bits of the accepted TSC1 request, compared with each new request from another J1939 source.",
+    "reason": "Name and type confirmed: cmp.b at 0x2f1f2 / 0x2f1fc, store move.b d4 at 0x2f29e. The comment is corrected. At equal priority the asm requires an active mode 3 (cmpi.w #3,(a5)); then a new mode other than 3 branches straight to acceptance (cmpi.w #3,d3 / bne.s 0x2f242), and only a new mode 3 request is compared on torque and then speed. The investigator wrote that only a mode 3 request can take over, which is wrong. CM848's processEngineTsc1Request has the same logic."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d56",
+    "verdict": "CONFIRMED",
+    "final_name": "tsc1_accepted_requested_speed",
+    "final_type": "word",
+    "own_role": "The requested speed of the accepted mode 1 or mode 3 request; a same-priority mode 3 takeover with equal torque needs a lower speed.",
+    "reason": "move.w read at 0x2f22c (bls rejects) and move.w stores at 0x2f320 (mode 1) / 0x2f41c (mode 3): word accesses only, at an even address. No row today. The comment is accurate."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d58",
+    "verdict": "AMENDED",
+    "final_name": "tsc1_accepted_requested_torque",
+    "final_type": "byte",
+    "final_comment": "The requested torque (percent + 125) of the accepted torque control request (mode 2) or speed / torque limit request (mode 3). At the same priority a new mode 3 request takes over an active mode 3 request only with a lower torque, or the same torque and a lower speed (tsc1_accepted_requested_speed). CM848's j1939_powertrain_messages_received.tsc1_accepted_requested_torque (PR #53 round 94)",
+    "own_role": "The requested torque of the accepted mode 2 or mode 3 request, used in the same-priority mode 3 takeover test.",
+    "reason": "Name and type confirmed: move.b reads at 0x2f212 / 0x2f220 (bcs rejects, bne takes over), stores at 0x2f388 (mode 2) / 0x2f42c (mode 3). The comment is corrected because 'needs a lower torque' leaves out the equal-torque case decided by the speed (0x2f22c-0x2f23e)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00806abc",
+    "verdict": "AMENDED",
+    "final_name": "fault_processing_enable_flags",
+    "final_type": "word[19]",
+    "final_comment": "e2m F +0x570 DGFUIDEN 'BIT MAPPED PARAMETER USED TO DISABLE/ENABLE THE PROCESSING OF A (fault)' (HEX; 38 bytes = 19 words): bit (n & 15) of word n >> 4 enables the processing of system error status bit n (n = 0-303). Every reader ANDs a bit with the same bit of the system error status word at 0x806000 + 2 x (n >> 4) (e2m SSERSS00-31). The reads are indexed by n >> 4 in the A/D channel code (mc68k_processAnalogSensorChannels, cm550_initializeAnalogSensorChannels), the VP44 derate code (vp44_rpmDerateCalculationController, vp44_derateThresholdMonitorAndFaultController) and the fault scan (cm550_processFaultScanGroup), and direct or through a base register for words 0-7 (word 3 only through a base register). Nothing in the dumped ROM writes it, and its contents are in neither the ROM nor the EEPROM dump. It is outside the EEPROM image (no _cal). The rows inside are removed (were 0x806abe fault_confirm_status_word_1 / 0x806ac0 fault_latch_status_word_2 / 0x806ac2 fault_latch_status_word_3 / 0x806ac4 fault_confirm_status_word_4 / 0x806aca fault_first_occurrence_word_7) (was fault_confirm_status_word_0; PR #53 round 94)",
+    "own_role": "The per-fault processing enable bitmap: each reader qualifies a system error status bit with the same bit here (it gates fault latching, logging in the fault scan, and derates).",
+    "reason": "Name and type confirmed. The e2m length is decimal: DGTJMSRI +0x566 (10 bytes) ends at +0x570, and +0x570 + 38 = 0x806ae2, the start of block 1003. Every 32-bit operand in the range is an instruction operand (no pointer tables). My scan found 154 reads and 0 writes, and all 27 direct reads pair with the same status bit. The RAM dump matches. Only the five misnamed element rows are swallowed, so the lead's 0x806abe becomes element [1]. The comment is amended only to list all indexed readers (the investigator named 2 of the 5 functions) and that word 3 is read only through a base register."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080db1a",
+    "verdict": "AMENDED",
+    "final_name": "maximum_torque_at_current_engine_speed",
+    "final_type": "word",
+    "final_comment": "e2m 1461 +0 MTMPRPFL 'MAX TORQUE AT CURRENT RPM IN FOOT-POUNDS' (0-10000 ft-lb): the maximum torque map (MTTQMPZA) at engine_rpm_primary and alpha_blend_factor, at least 1. cm550_calculateMaximumTorqueAtCurrentEngineSpeed (0x269f2) writes it every 20 ms and cm550_initializeMaximumTorqueAtCurrentEngineSpeed (0x26a2e) seeds it with 1. cm550_FUN_0001c0d4 floors it at 1 again and divides by it to turn the torque derate torque limit into a fueling. CM848's counterpart is fuel_demand_filter_dimension (0x40aee6) (was max_torque_at_current_rpm_in_foot_pounds_0_10000; PR #53 round 94)",
+    "own_role": "The maximum torque at the current engine speed (MTMPRPFL): the divisor that converts a torque limit into fueling.",
+    "reason": "Name and type confirmed (word accesses only). The comment is amended because the scan shows a third writer: cm550_FUN_0001c0d4 floors it (cmpi.w #1,(a2) / move.w #1,(a2) at 0x1c0f0-0x1c0f6) before dividing. CM848's fuel_demand_filter_dimension is used the same way, which supports the counterpart; CM848's e2m block 1461 is not in its dumped table."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a26e",
+    "verdict": "CONFIRMED",
+    "final_name": "injection_timing_misfire_limit",
+    "final_type": "word",
+    "own_role": "The misfire timing limit (BSTAMNLM): written by 0x26ab8, cleared by 0x26a7e, and read by cm550_applyMisfireTimingLimit, which raises fuel_timing_advance_value to it.",
+    "reason": "Accesses are clr.w at 0x26ab0, move.w store at 0x26ae6, and reads at 0x26b24 / 0x26b2a (bls is an unsigned compare, so word stays); the other occurrence is the ROM address table at 0x383d8. The e2m gives 818E +0 BSTAMNLM. The name is free and consistent with injection_timing_before_misfire_limit and CM848's injection_timing_main_misfire_limit."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803f78",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_pgn65252_priority_cal",
+    "final_type": "word",
+    "own_role": "The PGN 65252 default network priority (JCISSHPZ, 0-7), put into the CAN ID by 0x33dfa.",
+    "reason": "The one reference is move.w at 0x33e10. The e2m gives 1254 +2A, length 2, and the address lies inside the EEPROM image, so _cal applies. The name is free and follows CM848's j1939_pgn<N>_priority_cal rows. CM848's 0x3fd862 has no reader (no 0xd862 displacement in ROM or flash2). Note: CM550's old row j1939_priority_pgn65252 at 0x8037e0 is unrelated and wrong (no code, no e2m; see overall)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080bcd7",
+    "verdict": "CONFIRMED",
+    "final_name": "air_conditioner_pressure_switch_state",
+    "final_type": "byte",
+    "own_role": "Software value of the air conditioner pressure switch input (DSAKPRSW, bit 0): copied from debounced input byte 0x80bcd0 bit 1 and sent as PGN 65252 byte 3 (SPN 985).",
+    "reason": "The writer uses ori.b #1 / andi.b #0xfe on (9,a4) in mc68k_sampleAndDebounceDiscreteInputs, and the only reader is move.b at 0x33d9a: byte accesses. The e2m gives 000E +9 DSAKPRSW 'SOFTWARE VALUE OF AIR CONDITIONER PRESSURE SWITCH INP(UT)', the only record at this address. The name is free and spelled out."
+   }
+  ]
+ }
+}

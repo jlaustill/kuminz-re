@@ -1,0 +1,278 @@
+== 8B23 at 0x408814 (CHR_CC_11.45.01.07.e2m; 2 layout(s) in 16 releases: 8x CHR_CC_11.45.01.07.e2m / 8x CHR_CC_11.15.08.06.e2m)
+   +00 0x408814 FS_Control_Speed_Int_Gain [N2] dump 20: Integral gain for speed control feed-forward loop
+        row: cooling_fan_integral_gain i16 | Cooling fan speed PID integral gain (signed - lha) - 20 in the RAM dump
+   +02 0x408816 FS_Control_Speed_Int_Preset [N2] dump 0: Speed control integral term preset at power-up
+        row: cooling_fan_integral_term_initial word | Initial cooling_fan_integral_term (and accumulator x 20480) set by cm848_initCoolingFanControl (was governor_f
+   +04 0x408818 FS_Control_Speed_Max_Int [N2] dump 2560: Maximum clamp on speed control integrator
+        row: cooling_fan_integral_term_maximum word | Upper clamp of cooling_fan_integral_term (was governor_fuel_demand_i_term_max)
+   +06 0x40881a FS_Control_Speed_Min_Int [N2] dump 64256: Minimum clamp on speed control integrator
+        row: cooling_fan_integral_term_minimum word | Lower clamp of cooling_fan_integral_term (was governor_fuel_demand_i_term_min)
+   +08 0x40881c FS_Control_Speed_Prop_Gain [N2] dump 41: Speed control loop proportional gain
+        row: cooling_fan_proportional_gain word | Cooling fan speed PID proportional gain (/ 32) - 41 in the RAM dump
+   +0A 0x40881e Fan_Clutch_1_PWM_Duty_Cycle_Invert [N1] dump 0: 1 = inverts fan speed demand duty cycle =(100% - duty_cycle)
+        row: cooling_fan_duty_invert_flag byte | Non-zero: the cooling fan duty is sent as 25600 - duty (cm848_applyCoolingFanDuty) - 0 in the RAM dump
+   +0B 0x40881f FS_Control_Speed_Duty_Cycle_Override [N1] dump 0: If this = 1,set DC before inv to FS_Control_Speed_Duty_Cycle_User_Valu
+        row: cooling_fan_fixed_duty_enable byte | Non-zero: the duty request is always cooling_fan_fixed_duty (source code 1) - 0 in the RAM dump (byte 0x40881f
+   +0C 0x408820 Fan_Clutch_1_PWM_Duty_Cycle_Max [N2] dump 25344: Max fan clutch duty cycle allowed after inversion
+        row: cooling_fan_duty_maximum word | Upper clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 10 when it applies); cm848_selec
+   +0E 0x408822 Fan_Clutch_1_PWM_Duty_Cycle_Min [N2] dump 0: Min fan clutch duty cycle allowed after inversion
+        row: cooling_fan_duty_minimum word | Lower clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 0 when it applies); cm848_select
+   +10 0x408824 FS_Control_AC_High_Pressure [N2] dump 32000: If AC_Pressure > this, FS_Demand_AC = FS_Control_AC_Max_Speed
+        row: cooling_fan_air_conditioning_pressure_high_threshold word | A/C pressure at or above which the A/C high-pressure fan speed applies (hysteresis with the low threshold) (wa
+   +12 0x408826 FS_Control_AC_Max_Speed [N2] dump 9600: If AC_Pressure > FS_Control_AC_High_Pressure, FS_Demand_AC = this
+        row: cooling_fan_air_conditioning_high_pressure_speed word | Fan speed request while the A/C is on and its pressure is high - 9600 (1200 rpm) in the RAM dump
+   +14 0x408828 FS_Control_AC_Min_Speed [N2] dump 2800: If AC_Pressure < FS_Control_AC_Ramp_Pressure, FS_Demand_AC = this
+        row: cooling_fan_air_conditioning_off_speed word | A/C request with the A/C off (switch_input_state_bits[1] bit 0x20 clear) (was egr_fuel_demand_speed_floor_disa
+   +16 0x40882a FS_Control_AC_Ramp_Pressure [N2] dump 29440: If AC_Pressure > this, FS_Demand_AC = AC ramp logic
+        row: cooling_fan_air_conditioning_pressure_low_threshold word | A/C pressure below which the high-pressure flag clears; between the thresholds the optional pressure ramp appl
+   +18 0x40882c FS_Control_AC_Ramp_Slope [N2] dump 0: If FS_Demand_AC = ramp logic, ramp at this rate (rpm/psi)
+        row: cooling_fan_air_conditioning_pressure_gain word | A/C pressure ramp slope (/ 256) - 0 in the RAM dump
+   +1A 0x40882e FS_Control_AC_Start_Slope [N2] dump 2800: When transition to ac ramp logic, FS_Demand_AC = this.
+        row: cooling_fan_air_conditioning_base_speed word | A/C-on fan speed request (low vehicle speed and warm enough) and the pressure ramp's start (was egr_fuel_deman
+   +1C 0x408830 FS_Control_Coolant_High_Temp_1 [N2] dump 16320: If FS_Demand_Coolant_State = MAX and clnt temp < this, go to clnt pi c
+        row: cooling_fan_coolant_full_speed_exit_temperature i16 | State 3 drops back to the PI below this coolant temperature (with no coolant sensor fault) - 16320 in the RAM 
+   +1E 0x408832 FS_Control_Coolant_High_Temp_2 [N2] dump 16320: If clnt temp > this, then FS_Demand_Coolant_State = MAX
+        row: cooling_fan_coolant_full_speed_temperature i16 | Coolant temperature at or above which the coolant request goes to full speed (state 3) - 16320 in the RAM dump
+   +20 0x408834 FS_Control_Coolant_Int_Gain [N2] dump 71: Integral gain for fan speed demand coolant temp loop
+        row: cooling_fan_coolant_integral_gain word | Coolant PI integral gain - 71 in the RAM dump
+   +22 0x408836 FS_Control_Coolant_Max_Speed [N2] dump 22400: If clnt temp > FS_Control_Coolant_High_Temp_2, FS_Demand_Coolant = thi
+        row: cooling_fan_coolant_speed_maximum word | Coolant request at full speed (state 3)
+   +24 0x408838 FS_Control_Coolant_Min_Speed [N2] dump 2800: If clnt temp < FS_Control_Coolant_Ramp_Temp, FS_Demand_Coolant = this
+        row: cooling_fan_coolant_speed_minimum word | Coolant request below the ramp start temperature
+   +26 0x40883a FS_Control_Coolant_PI_Setpoint [N2] dump 16320: If coolant temp > this, go from ramp to PI control for fan speed demad
+        row: cooling_fan_coolant_temperature_setpoint word | Coolant temperature the fan PI regulates to; reaching it moves the request to state 2 (was egr_governor_pi_tem
+   +28 0x40883c FS_Control_Coolant_Prop_Gain [N2] dump 2222: Proportional gain for fan speed demand coolant temp loop
+        row: cooling_fan_coolant_proportional_gain word | Coolant PI proportional gain (/ 128) - 2222 in the RAM dump
+   +2A 0x40883e FS_Control_Coolant_Ramp_Slope [N2] dump 1840: If FS_Demand_Coolant_State = ramp logic, ramp at this rate (rpm/deg_f)
+        row: cooling_fan_coolant_ramp_gain word | State 1 ramp slope (/ 128 per degree) - 1840 in the RAM dump
+   +2C 0x408840 FS_Control_Coolant_Ramp_Temp [N2] dump 13440: If clnt temp > this, FS_Demand_Coolant = coolant ramp logic
+        row: cooling_fan_coolant_ramp_start_temperature word | Coolant temperature where the fan's coolant request starts ramping (state 0 -> 1) (was egr_warmup_start_coolan
+   +2E 0x408842 FS_Control_Fan_Pulley_Ratio [N2] dump 256: Fan Pulley Ratio
+        row: cooling_fan_drive_ratio word | Fan drive ratio x 256 - 256 (1.0) in the RAM dump
+   +30 0x408844 FS_Control_Idle_RPM_Offset [N2] dump 8400: if RPM < this, fan control at idle
+        row: cooling_fan_idle_engine_rpm_limit word | Idle condition: engine rpm (0.125) below this - 8400 (1050 rpm) in the RAM dump
+   +32 0x408846 FS_Control_Idle_Throttle [N2] dump 4: if throttle <= this, fan control at idle
+        row: cooling_fan_idle_accelerator_maximum word | Idle condition: accelerator position (commanded_throttle_state_t.commanded_throttle - 400 = 100 %) at most thi
+   +34 0x408848 FS_Control_Idle_VSS [N2] dump 1280: if VSS <= this, fan control at idle
+        row: cooling_fan_idle_vehicle_speed_maximum word | Idle condition: vehicle speed at most this - 1280 in the RAM dump
+   +36 0x40884a FS_Control_IMT_High_Temp [N2] dump 1856: If IMT > this, then FS_Demand_IMT = FS_Control_IMT_Max_Speed
+        row: cooling_fan_intake_ramp_end i16 | Intake value at or above which the request is full speed - 1856 in the RAM dump
+   +38 0x40884c FS_Control_IMT_Max_Speed [N2] dump 19200: If IMT > FS_Control_IMT_High_Temp, FS_Demand_IMT = this
+        row: cooling_fan_intake_full_speed word | Intake request above the ramp - 19200 (2400 rpm) in the RAM dump
+   +3A 0x40884e FS_Control_IMT_Min_Speed [N2] dump 2800: If IMT < FS_Control_IMT_Ramp_Temp, FS_Demand_IMT = this
+        row: cooling_fan_intake_minimum_speed word | Intake request below the ramp
+   +3C 0x408850 FS_Control_IMT_Ramp_Slope [N2] dump 3840: If FS_Demand_IMT = ramp logic, ramp at this rate (rpm/deg_f)
+        row: cooling_fan_intake_ramp_gain word | Intake request ramp slope (/ 128) - 3840 in the RAM dump
+   +3E 0x408852 FS_Control_IMT_Ramp_Temp [N2] dump 1536: If IMT > this, FS_Demand_IMT = IMT ramp logic
+        row: cooling_fan_intake_ramp_start i16 | Intake value where the request ramp starts - 1536 in the RAM dump
+   +40 0x408854 FS_Control_IMT_Start_Slope [N2] dump 9600: When transition to IMT ramp logic, FS_Demand_IMT = this
+        row: cooling_fan_intake_base_speed word | Intake request at the ramp start (was egr_load_speed_floor_base)
+   +42 0x408856 FS_Control_Speed_FB_Filter_Coeff [N2] dump 6554: Filter constant for speed control feedback loop
+        row: cooling_fan_speed_feedback_filter_coefficient word | Coefficient of cooling_fan_speed_feedback_filter - 6554 (0.1) in the RAM dump
+   +44 0x408858 FS_Control_Speed_FB_Lead_Gain [N2] dump 128: Lead gain for speed control feedback loop
+        row: cooling_fan_speed_prediction_gain word | Gain on the fan speed change since radiator_fan_speed_snapshot (/ 64) in the PID feedback - 128 in the RAM dum
+   +46 0x40885a FS_Control_Speed_FF_Filter_Coeff [N2] dump 13107: Filter constant for speed control feed-forward loop
+        row: cooling_fan_proportional_derivative_filter_coefficient word | Coefficient of cooling_fan_proportional_derivative_filter - 13107 (0.2)
+   +48 0x40885c FS_Control_Speed_FF_Lead_Gain [N2] dump 1088: Lead gain for speed control feed-forward loop
+        row: cooling_fan_derivative_gain word | Cooling fan speed PID derivative gain (/ 64) - 1088 in the RAM dump
+   +4A 0x40885e FS_Control_Engine_Speed_Slip [N2] dump 24800: If engrpm>this & FS_Demand>FS_Control_Slip,FS_Demand=slip logic
+        row: cooling_fan_high_engine_rpm_enter word | Engine rpm (0.125) above which
+   +4C 0x408860 FS_Control_Max_Speed [N2] dump 22400: Max fan control speed demand
+        row: cooling_fan_speed_ceiling word | Fan speed target cap (source 8) (was egr_governor_speed_ceiling)
+   +4E 0x408862 FS_Control_Min_Speed [N2] dump 2800: Min fan control speed demand
+        row: cooling_fan_base_speed word | Lowest fan speed target (source 0) and the target while the thermostat monitor holds the fan (source 10) (was 
+   +50 0x408864 FS_Control_Slip [N2] dump 13600: If FS_Demand>this & rpm>FS_Control_Engine_Speed_Slip, FS_Demand=slip l
+        row: cooling_fan_high_engine_rpm_target_threshold word | Fan target above which high engine rpm starts the ramp - 13600 (1700 rpm) in the RAM dump
+   +52 0x408866 FS_Control_Slip_High [N2] dump 18400: If in slip logic & FS_Demand>this FS_Demand=FS_Control_Slip_Max
+        row: cooling_fan_high_engine_rpm_ramp_up_threshold word | During high engine rpm: a target above this ramps up
+   +54 0x408868 FS_Control_Slip_Max [N2] dump 22400: If in slip logic & FS_Demand>FS_Demand_Slip_High, FS_Demand=this
+        row: cooling_fan_high_engine_rpm_ramp_up_target word | Speed the high-engine-rpm ramp-up climbs to (was egr_governor_speed_ramp_target)
+   +56 0x40886a FS_Control_Slip_Min [N2] dump 13600: If in slip logic & FS_Demand<FS_Demand_Slip_High, FS_Demand=this
+        row: cooling_fan_high_engine_rpm_ramp_down_floor word | Speed the high-engine-rpm ramp-down stops at (source 6) (was egr_governor_decel_speed_floor)
+   +58 0x40886c FS_Control_Speed_Duty_Cycle_0_Current [N2] dump 0: Fan clutch duty cycle before inversion that will produce 0 current
+        row: cooling_fan_low_engine_rpm_duty word | Duty request below cooling_fan_low_engine_rpm - 0 in the RAM dump
+   +5A 0x40886e FS_Control_Speed_Duty_Cycle_User_Value [N2] dump 0: If FS_Control_Speed_Duty_Cycle_Override=1,set DC before inv to this
+        row: cooling_fan_fixed_duty word | Duty request while cooling_fan_fixed_duty_enable is set - 0 in the RAM dump
+   +5C 0x408870 FS_Control_TOT_High_Temp [N2] dump 15872: If Trans Oil Temp > this, then FS_Demand_TOT = FS_Control_TOT_Max_Spee
+        row: cooling_fan_transmission_ramp_end_temperature i16 | At or above this the transmission request is full speed - 15872 in the RAM dump
+   +5E 0x408872 FS_Control_TOT_Max_Speed [N2] dump 25600: If Trans Oil Temp > FS_Control_TOT_High_Temp, FS_Demand_TOT = this
+        row: cooling_fan_transmission_full_speed word | Transmission request above the ramp - 25600 (3200 rpm) in the RAM dump
+   +60 0x408874 FS_Control_TOT_Min_Speed [N2] dump 2800: If Trans Oil Temp < FS_Control_TOT_Ramp_Temp, FS_Demand_TOT = this
+        row: cooling_fan_transmission_low_speed word | Transmission request below the ramp start or with transmission_type_cal 0 - 2800 (350 rpm) in the RAM dump
+   +62 0x408876 FS_Control_TOT_Ramp_Slope [N2] dump 0: If FS_Demand_TOT = ramp logic, ramp at this rate (rpm/deg_f)
+        row: cooling_fan_transmission_ramp_gain word | Transmission request ramp slope (/ 128) - 0 in the RAM dump
+   +64 0x408878 FS_Control_TOT_Ramp_Temp [N2] dump 15360: If Trans Oil Temp > this, FS_Demand_TOT = TOT ramp logic
+        row: cooling_fan_transmission_ramp_start_temperature i16 | Transmission temperature where the fan's transmission ramp starts - 15360 in the RAM dump
+   +66 0x40887a FS_Control_TOT_Start_Slope [N2] dump 9600: When transition to Trans Oil Temp ramp logic, FS_Demand_TOT = this
+        row: cooling_fan_transmission_ramp_base_speed word | Transmission request at the ramp start - 9600 in the RAM dump
+   +68 0x40887c FS_Control_Demand_User_Value [N2] dump 0: If FS_Control_Demand_Override=1,FS_Demand=this
+        row: cooling_fan_speed_target_override word | Fan speed target used while the override is enabled
+   +6A 0x40887e FS_Control_Demand_Override [N1] dump 0: If this=1,FS_Demand=FS_Control_Demand_User_Value
+        row: cooling_fan_speed_target_override_enable byte | Non-zero: cooling_fan_speed_target = cooling_fan_speed_target_override - 0 in the RAM dump
+   +6B 0x40887f FS_Control_AC_Batt_Temp [N2] dump 3840: If batt temp>this,FS_Demand_AC=FS_Demand_AC_Start_Slope if ac pres,VSS
+        row: cooling_fan_air_conditioning_temperature_threshold word | The A/C base fan speed needs the selected temperature (sensor slot 69 battery or 20 ambient) at or above this 
+   +6D 0x408881 FS_Control_AC_Ramp_Enable [N1] dump 0: If this=1, allows AC fan speed demad to go to ramp control.
+        row: cooling_fan_air_conditioning_pressure_ramp_enable byte | Non-zero: between the A/C pressure thresholds the request ramps with the pressure (was egr_fuel_demand_stroke_
+   +6E 0x408882 FS_Control_AC_VSS1 [N2] dump 11520: If VSS >this, FS_Demand_AC = FS_Demand_AC_Min_Speed if AC_Pressure is 
+        row: cooling_fan_air_conditioning_vehicle_speed_off_at word | At or above this vehicle speed the A/C request drops to cooling_fan_air_conditioning_off_speed - 11520 in the 
+   +70 0x408884 FS_Control_AC_VSS2 [N2] dump 8960: If VSS <this, FS_Demand_AC det. by batt temp if AC_Pressure is low.
+        row: cooling_fan_air_conditioning_vehicle_speed_on_below word | Below this vehicle speed the A/C base fan speed applies - 8960 in the RAM dump
+   +72 0x408886 Fan_Clutch_1_PWM_Frequency [N2] dump 20: Fan Clutch 1 pwm driver frequency
+        row: cooling_fan_pwm_frequency_hz word | Cooling fan PWM frequency: the set-period argument is 1000000 / this - 20 in the RAM dump
+   +74 0x408888 Fan_Clutch_1_PWM_Duty_Cycle_Idle [N2] dump 3840: Fan Clutch duty cycle commanded if engine is at idle
+        row: cooling_fan_idle_limited_duty word | Code 6 duty request - 3840 (15 %) in the RAM dump
+   +76 0x40888a FS_Control_RPM_Stopped [N2] dump 3200: If engrpm<this, Fan clutch duty cycle = FS_Control_Speed_Duty_Cycle_0_
+        row: cooling_fan_low_engine_rpm word | Below this engine rpm (0.125) the request is cooling_fan_low_engine_rpm_duty (code 2) - 3200 (400 rpm)
+   +78 0x40888c FS_Control_Kickon_RPM [N2] dump 2400: If engrpm>this & FS_Demand>cal & Fan_Speed<cal,fan DC=100% to start fa
+        row: cooling_fan_engagement_engine_rpm word | Code 3 (engage boost): engine rpm above this - 2400 (300 rpm) in the RAM dump
+   +7A 0x40888e FS_Control_Kickon_Demand [N2] dump 2800: If FS_Demand>this & engrpm>cal & Fan_Speed<cal,fan DC=100% to start fa
+        row: cooling_fan_engagement_target_minimum word | Code 3: cooling_fan_speed_target above this - 2800 (350 rpm fan) in the RAM dump
+   +7C 0x408890 FS_Control_Kickon_Fan_Speed [N2] dump 6400: If Fan_Speed<this & engrpm>cal & FS_Demand>cal,fan DC=100% to start fa
+        row: cooling_fan_engagement_fan_speed_maximum word | Code 3: radiator_fan_speed below this - 6400 (800 rpm) in the RAM dump
+   +7E 0x408892 FS_Control_Min_Idle_Demand [N2] dump 2800: If FS_Demand_Idle_Status=1 & FS_Demand>this & FS_Demand_Slip<cal,fan D
+        row: cooling_fan_idle_target_threshold word | Code 6: at idle with cooling_fan_speed_target above this - 2800 in the RAM dump
+   +80 0x408894 FS_Control_Slip_Idle [N2] dump 800: If FS_Demand_Idle_Status=1 & FS_Demand>cal & FS_Demand_Slip<this,fan D
+        row: cooling_fan_idle_headroom_threshold word | Code 6: and cooling_fan_engine_driven_headroom below this - 800 in the RAM dump
+   +82 0x408896 FS_Control_IMT_Selection_N [N2] dump 2: Determines what temp is used IMT control;0=IMT, 1=IMT-Batt temp
+        row: cooling_fan_intake_reference_select word | 0: use the intake temperature as is / 1: minus sensor slot 69 (battery temperature) / 2: minus slot 20 (ambien
+   +84 0x408898 FS_Control_AC_Temp_Selection [N2] dump 1: Determines what temp is used AC control;0=Amb temp, 1=Batt temp
+        row: cooling_fan_air_conditioning_temperature_source word | 0: sensor slot 20 (ambient) / non-zero: slot 69 (battery temperature) for the A/C fan check - 1 in the RAM dum
+   +86 0x40889a Fan_Clutch_1_PWM_Tool_Value [N2] dump 25344: Value entered by diagnostic tool
+        row: cooling_fan_actuator_test_duty word | Duty request (cooling_fan_duty_source_code 9) while cooling_fan_actuator_test_active_flag is set and the engin
+   +88 0x40889c Fan_Clutch_1_PWM_Tool_State_Flag [N2] dump 1: 0=Allow Fan driver override for tool in STOP state only;1=all states
+        row: cooling_fan_actuator_test_while_running_enable word | 1: cooling_fan_actuator_test_duty applies while the engine runs too (else only in ENGINE_STATE_STOPPED) - 1 in
+   +8A 0x40889e FS_Control_Max_At_RPM_Enable [N2] dump 1: Enables fan speed demand limiting to max at RPM
+        row: cooling_fan_engine_driven_limit_enable word | Non-zero: cap the target at cooling_fan_engine_driven_speed_limit - 1 in the RAM dump
+   +8C 0x4088a0 FS_Control_IMT_Enable_Temp [N2] dump 3840: If ambient temp < this, then FS_Demand_IMT = min
+        row: cooling_fan_intake_reference_cold_threshold word | If the selected reference (battery / ambient) is below this
+   +8E 0x4088a2 FS_Control_IMT_Safety [N2] dump 7040: If IMT >= this when ambient < enable temp, then FS_Demand_IMT = Max
+        row: cooling_fan_intake_cold_reference_full_speed_temperature i16 | With a cold reference: intake temperature at or above which the intake request is full speed - 7040 in the RAM
+   +90 0x4088a4 Fan_Clutch_1_PWM_Duty_Cycle_Delay [N2] dump 40: fan_clutch_1_pwm_duty_cycle_delay < this PWM = 0%, when coming off idl
+        row: cooling_fan_hold_passes word | Length of the cooling fan hold after cooling_fan_engine_idle_flag clears - 40 passes in the RAM dump
+   +92 0x4088a6 Fan_Clutch_1_PWM_Duty_Cycle_Off_Idle [N2] dump 0: kickon fan clutch duty cycle
+        row: cooling_fan_hold_duty word | Cooling fan duty during that hold (source code 11) - 0 in the RAM dump
+   +94 0x4088a8 Fan_Clutch_1_PWM_Kickon_Duty_Cycle [N2] dump 25344: kickon fan clutch duty cycle
+        row: cooling_fan_engagement_duty word | Code 3 duty request - 25344 (99 %) in the RAM dump
+   +96 0x4088aa FS_Control_Coolant_Start_Slope [N2] dump 6800: start slope at coolant ramp logic, If FS_Demand_Coolant => this,
+        row: cooling_fan_coolant_ramp_base_speed word | State 1 ramp start speed - 6800 (850 rpm) in the RAM dump
+   +98 0x4088ac FS_Control_Coolant_Temperature_Filter_Coeff [N2] dump 58982: Low pass filter constant for FS_Control_Coolant_Temperature
+        row: cooling_fan_coolant_temperature_filter_coefficient word | Coefficient of cooling_fan_coolant_temperature_filter - 58982 (0.9)
+   +9A 0x4088ae FS_Control_Engine_Speed_Slip_Hyst [N2] dump 23200: If engrpm >this, FS_Demand=slip logic, provides hysteresis
+        row: cooling_fan_high_engine_rpm_exit word | Engine rpm below which the high-engine-rpm ramp ends (was egr_governor_overspeed_rpm_threshold)
+   +9C 0x4088b0 FS_Control_IMT_Temperature_Filter_Coeff [N2] dump 58982: Low pass filter constant for FS_Control_IMT_Temperature
+        row: cooling_fan_intake_temperature_filter_coefficient word | Coefficient of cooling_fan_intake_temperature_filter - 58982 (0.9)
+   +9E 0x4088b2 FS_Control_Slip_FSD_Low_Limit [N2] dump 8000: If FS_Demand <this & rpm>FS_Cont...Hyst, ramp down to low slip logic
+        row: cooling_fan_ramp_at_target_release_speed word | With the ramp-up at its target and the engine above the exit rpm: a target below this releases the ramp - 8000
+   +A0 0x4088b4 FS_Control_Slip_Neg_Slew_Rate [N2] dump 16: slew rate used to ramp down FS_Demand from HIGH_SLIP to control
+        row: cooling_fan_ramp_down_step word | Ramp-down step per pass (was egr_governor_speed_decel_step)
+   +A2 0x4088b6 FS_Control_Slip_Pos_Slew_Rate [N2] dump 16: slew rate used to ramp up FS_Demand from LOW_SLIP to HIGH_SLI
+        row: cooling_fan_ramp_up_step word | Ramp-up step per pass (was egr_governor_speed_accel_ramp_step)
+   +A4 0x4088b8 FS_Control_Slip_Time [N2] dump 1200: if fs_control_slip_time > this, exit slip timer logic
+        row: cooling_fan_ramp_at_target_passes word | Passes the target is held at the ramp-up target (source 0xd) - 1200 in the RAM dump
+   +A6 0x4088ba Fan_Driver_Inhibit_Off_Time [N2] dump 800: Fan duty cycle off cycle time when open or short circuit
+        row: cooling_fan_retest_off_passes word | Cooling fan retest: passes at 0 % duty before the 100 % phase - 800 in the RAM dump (was cold_start_emission_f
+   +A8 0x4088bc Fan_Driver_Inhibit_Timer_Offset [N2] dump 6: Fan duty cycle off cycle time when open or short circuit
+        row: cooling_fan_retest_fault_confirm_passes word | Cooling fan retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twic
+   +AA 0x4088be FS_Control_IMT_Engine_Speed_Enable_Pos_Slew [N2] dump 9600: If engrpm > this & fan speed demand < max at rpm, set pos slew rate
+        row: cooling_fan_intake_high_engine_rpm word | Engine rpm (0.125) for the faster rise - 9600 (1200 rpm) in the RAM dump
+   +AC 0x4088c0 FS_Control_IMT_Neg_Slew_Rate [N2] dump 16: FS_Demand_IMT(n-1) > FS_Demand_IMT + this, slew rate down by this
+        row: cooling_fan_intake_speed_fall_step word | Intake request fall per pass (was egr_load_speed_floor_decel_step)
+   +AE 0x4088c2 FS_Control_IMT_Pos_Slew_Rate_1 [N2] dump 10: FS_Demand_IMT < FS_Control_IMT_Start_Slope, use this cal
+        row: cooling_fan_intake_speed_rise_step_high_engine_rpm word | Rise per pass when the new request is below the engine-driven limit and the engine is above cooling_fan_intake
+   +B0 0x4088c4 FS_Control_IMT_Pos_Slew_Rate_2 [N2] dump 0: FS_Demand_IMT > FS_Control_IMT_Start_Slope, use this cal
+        row: cooling_fan_intake_speed_rise_step word | Intake request rise per pass - 0 in the RAM dump
+   +B2 0x4088c6 FS_Control_IMT_Inhibit_Time_Delay [N2] dump 200: FS_Demand_IMT set to min speed for this long, coming off idle
+        row: cooling_fan_intake_request_hold_passes word | Reload of the intake hold count - 200 in the RAM dump
+== 8A5F at 0x4087a0 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x4087a0 EVR_Avg_Voltage_Filter_Constant [N2] dump 64881: filter constant used to calculate EVR_Avg_Voltage_Error
+        row: charging_voltage_error_slow_average_coefficient word | Weight of the new error sample (coefficient / 65536) in the charging_voltage_error_slow_average update
+   +02 0x4087a2 EVR_Disable_Speed [N2] dump 2880: Engine speed to deactive EVR (EVR_Mode transitions to INACTIVE MODE)
+        row: alternator_field_regulator_stop_engine_speed_threshold word | States 1
+   +04 0x4087a4 EVR_Duty_Cycle_Override_Switch [N2] dump 0: Override enable of the duty cycle for EVR_Duty_Cycle
+        row: alternator_field_target_override_enable word | Non-zero: cm848_applyAlternatorFieldDuty replaces the field target with alternator_field_target_override - 0 i
+   +06 0x4087a6 EVR_Duty_Cycle_Override_Value [N2] dump 25600: Override value of the duty cycle for EVR_Duty_Cycle
+        row: alternator_field_target_override word | Field target used while alternator_field_target_override_enable is set - 25600 in the RAM dump (was protection
+   +08 0x4087a8 EVR_Enable_Speed [N2] dump 3200: Engine speed to active EVR (EVR_Mode transitions to STARTUP MODE)
+        row: alternator_field_regulator_start_engine_speed_threshold word | State 0 handler (ROM 0x38338) moves to state 1 when engine speed (0x40b7ba) >= this (lhz) or engine_state = 3
+   +0A 0x4087aa EVR_Limpin_Duty_Cycle [N2] dump 0: EVR_Duty_Cycle set to this if batt voltage low error is set
+        row: alternator_field_system_voltage_low_target word | Field target while fault 66 (P0562 system voltage low - fault_detected_cal.faults_64_to_79 bit 2) is set - 0 i
+   +0C 0x4087ac EVR_Min_Delta_Error [N2] dump 192: Delta system voltage error value to trigger transient mode in EVR cont
+        row: alternator_field_load_response_fast_error_threshold i16 | State 2 handler (ROM 0x383f0) enters state 3 (load response) when charging_voltage_error_fast_component exceed
+   +0E 0x4087ae EVR_Min_Volt_Error [N2] dump 1: System voltage error value to return to steady state mode in EVR contr
+        row: alternator_field_regulation_error_threshold i16 | State 1 and state 3 handlers go to / stay in regulation (state 2) when charging_voltage_error <= this and stay
+   +10 0x4087b0 EVR_Trans_Delay_Time [N2] dump 11: If EVR duty cyc=100% and time in trans mode>this cal, transition to ss
+        row: alternator_field_load_response_full_duty_passes_limit word | State 3 handler (ROM 0x3844c) returns to state 2 when the duty is 25600 and alternator_field_load_response_ela
+   +12 0x4087b2 EVR_Voltage_Offset [N2] dump 4: Offset for voltage drop in harness in EVR control; added to voltage se
+        row: charging_voltage_target_offset word | 1/16 V offset (4 = 0.25 V) added to the battery temperature table (0 / 30 / 60 / 80 / 110 / 158 / 200 F -> 14.
+   +14 0x4087b4 EVR_Driver_Frequency [N2] dump 100: Frequency of the EVR Driver PWM output
+        row: alternator_field_pwm_frequency_hz word | Alternator field PWM frequency: the set-period argument is 1000000 / this (0 = period 0xffffffff) - 100 in the
+   +16 0x4087b6 EVR_Diagnostic_Delay_Time [N2] dump 65535: Amount of time steady-state conditions must be met in Charg Syst Diag
+        row: alternator_field_cut_test_condition_passes word | cm848_testAlternatorOutputByCuttingField (read in full): consecutive passes the enabling conditions (regulator
+   +18 0x4087b8 EVR_Diagnostic_Fail_Count_Max [N2] dump 65535: Max # of occ that the Char Sys Diag is allowed to fail before declarin
+        row: alternator_field_cut_test_failed_test_limit word | cm848_testAlternatorOutputByCuttingField (read in full): failed tests at which fault 368 (P2502) is set. Dump 
+   +1A 0x4087ba EVR_Diagnostic_RPM [N2] dump 64000: Engine speed must be greater than this cal for Chrg Syst Diagnostics t
+        row: alternator_field_cut_test_engine_speed_threshold word | cm848_testAlternatorOutputByCuttingField (read in full): engine speed (0.125 rpm per count) the test needs to 
+   +1C 0x4087bc EVR_Diagnostic_Test_Off_Time [N2] dump 0: Amount of time to set EVR duty cycle to 0% in Chrg Syst Diagnostics
+        row: alternator_field_cut_test_hold_passes word | cm848_testAlternatorOutputByCuttingField (read in full): passes the field cut is held without the voltage drop
+   +1E 0x4087be EVR_Diagnostic_Test_Time [N2] dump 65535: Amount of time between EVR duty cycle=0% tests in Chrg Syst Diagnostic
+        row: alternator_field_cut_test_cut_start_passes word | cm848_testAlternatorOutputByCuttingField (read in full): sequence pass at which the battery voltage is snapsho
+   +20 0x4087c0 EVR_Diagnostic_Voltage_Drop [N2] dump 0: Amount that battery voltage must drop with EVR duty cycle=0% in Chrg S
+        row: alternator_field_cut_test_voltage_drop_threshold word | cm848_testAlternatorOutputByCuttingField (read in full): voltage drop (1/16 V) after the cut that counts as th
+   +22 0x4087c2 EVR_Diagnostic_Voltage_Error [N2] dump 640: EVR_Avg_Voltage_Error must be > cal to enable Charging System Diagnost
+        row: alternator_field_cut_test_error_threshold word | cm848_testAlternatorOutputByCuttingField (read in full): charging_voltage_error_slow_average must exceed it (s
+   +24 0x4087c4 EVR_High_Voltage [N2] dump 65520: if EVR volatge error < this cal for time period,set Charging_System_Hi
+        row: charging_system_voltage_high_error_threshold word | Signed 1/16 V threshold (-16 in the dump) that charging_voltage_error_slow_average must stay below for the vol
+   +26 0x4087c6 EVR_High_Voltage_Counts_Max [N2] dump 6: number of counts that set Chraging_System_High_Error if conditions exi
+        row: charging_system_voltage_high_fault_count_limit word | Timer count (6 in the dump) at which the monitor sets the voltage-high fault (P2504); used only in the high / 
+   +28 0x4087c8 EVR_High_Voltage_Time [N2] dump 150: Amount of time that high voltage exits to set Charging_System_High_Err
+        row: charging_system_voltage_high_confirm_passes word | Passes the voltage-high condition must hold (150 in the dump) before the fault timer starts counting; used onl
+   +2A 0x4087ca EVR_Low_Clear_Voltage [N2] dump 192: If Battery_Voltage > this cal for time period, clear Charging_System_L
+        row: charging_system_voltage_low_clear_threshold word | Battery voltage (1/16 V
+   +2C 0x4087cc EVR_Low_Voltage [N2] dump 184: If Battery_Voltage < this cal for time period, set Charging_System_Low
+        row: charging_system_voltage_low_threshold word | Battery voltage (1/16 V
+   +2E 0x4087ce EVR_Low_Voltage_Clear_Time [N2] dump 50: If Battery_Voltage above cal for this time,clear Charging_System_Low_E
+        row: charging_system_voltage_low_clear_passes word | Passes above the clear threshold (50 in the dump) that clear fault mask 4 (P2503); used only in the high / low
+   +30 0x4087d0 EVR_Low_Voltage_Time [N2] dump 80: If Battery_Voltage low for this time period, set Charging_System_Low_E
+        row: charging_system_voltage_low_confirm_passes word | Passes of the voltage-low condition (80 in the dump) that set fault mask 4 (P2503); used only in the high / lo
+   +32 0x4087d2 EVR_Avg_Duty_Cycle_Filter_Constant [N2] dump 6554: filter constant used to calculate EVR_Avg_Duty_Cycle
+        row: alternator_field_duty_slow_average_coefficient word | Weight of the new duty sample in the slow average (6554 / 65536 = 0.1 in the dump). Address 0x4087d2 is outsid
+   +34 0x4087d4 EVR_Driver_Type [N2] dump 1: 0=low side drive, duty cycle inverted; 1=high-side driver
+        row: alternator_field_duty_not_inverted_flag word | 0: cm848_applyAlternatorFieldDuty sends 25600 - target; non-zero: the target itself - 1 in the RAM dump (was p
+   +36 0x4087d6 EVR_Der_Gain1 [N2] dump 0: EVR Der Gain1;used if EVR_Voltage_Error < EVR_PID_Voltage_Threshold
+        row: alternator_field_duty_pid_derivative_rate_small_error word | Read only by cm848_calculateAlternatorFieldDutyByPid
+   +38 0x4087d8 EVR_Der_Gain2 [N2] dump 0: EVR Der Gain2;used if EVR_Voltage_Error > EVR_PID_Voltage_Threshold
+        row: alternator_field_duty_pid_derivative_rate_large_error word | Read only by cm848_calculateAlternatorFieldDutyByPid
+   +3A 0x4087da EVR_Driver_Duty_Cycle_Max [N2] dump 25600: Max value allowed for EVR_Driver_Duty_Cycle
+        row: alternator_field_duty_full_on word | Field duty sent when the duty is above alternator_field_duty_full_on_threshold - 25600 in the RAM dump (was pr
+   +3C 0x4087dc EVR_Driver_Duty_Cycle_Min [N2] dump 0: Min value allowed for EVR_Driver_Duty_Cycle
+        row: alternator_field_duty_full_off word | Field duty sent when the duty is below alternator_field_duty_full_off_threshold - 0 in the RAM dump (was prote
+   +3E 0x4087de EVR_Int_Gain1 [N4] dump 65: EVR Int Gain1;used if EVR_Voltage_Error < EVR_PID_Voltage_Threshold
+        row: alternator_field_duty_pid_integral_rate_small_error dword | Read only by cm848_calculateAlternatorFieldDutyByPid
+   +42 0x4087e2 EVR_Int_Gain2 [N4] dump 5: EVR Int Gain2;used if EVR_Voltage_Error > EVR_PID_Voltage_Threshold
+        row: alternator_field_duty_pid_integral_rate_large_error dword | Read only by cm848_calculateAlternatorFieldDutyByPid
+   +46 0x4087e6 EVR_PID_Voltage_Threshold [N2] dump 4: If abs (EVR_Voltage_Error>this cal), switch to PID gain set 2
+        row: alternator_field_duty_pid_gain_set_error_threshold word | Read once in cm848_calculateAlternatorFieldDutyByPid: error below it selects the a gain set
+   +48 0x4087e8 EVR_Prop_Gain1 [N2] dump 35: EVR Prop Gain1;used if EVR_Voltage_Error < EVR_PID_Voltage_Threshold
+        row: alternator_field_duty_pid_proportional_gain_small_error word | Read only by cm848_calculateAlternatorFieldDutyByPid
+   +4A 0x4087ea EVR_Prop_Gain2 [N2] dump 80: EVR Prop Gain2;used if EVR_Voltage_Error > EVR_PID_Voltage_Threshold
+        row: alternator_field_duty_pid_proportional_gain_large_error word | Read only by cm848_calculateAlternatorFieldDutyByPid
+   +4C 0x4087ec EVR_Driver_Duty_Cycle_Diag_Max [N2] dump 24320: If duty cycle > this cal, set duty cycle to max
+        row: alternator_field_duty_full_on_threshold word | Above this the field duty snaps to alternator_field_duty_full_on - 24320 = 95 % in the RAM dump (was protectio
+   +4E 0x4087ee EVR_Driver_Duty_Cycle_Diag_Min [N2] dump 1280: If duty cycle < this cal, set duty cycle to min
+        row: alternator_field_duty_full_off_threshold word | Below this the field duty snaps to alternator_field_duty_full_off - 1280 = 5 % in the RAM dump (was protection
+   +50 0x4087f0 EVR_Driver_Tool_Value [N2] dump 25600: EVR driver tool override value
+        row: alternator_field_actuator_test_duty word | Field duty while alternator_field_actuator_test_active_flag is set and the engine is stopped (or always with a
+   +52 0x4087f2 EVR_Setpoint_Override_N [N2] dump 0: EVR setpoint override
+        row: charging_voltage_target_fixed_select word | Only user is cm848_calculateChargingVoltageTarget: 0 selects the battery temperature table plus charging_volta
+   +54 0x4087f4 EVR_Setpoint_User_Value [N2] dump 224: EVR setpoint override value
+        row: charging_voltage_target_fixed_value word | Only user is cm848_calculateChargingVoltageTarget: it becomes charging_voltage_target when charging_voltage_ta
+   +56 0x4087f6 EVR_Driver_EOL_Value [N2] dump 0: EVR driver EOL override value
+        row: alternator_field_end_of_line_test_duty word | Field duty while end_of_line_alternator_test_field_cut_flag is 1 (the end-of-line alternator test) - 0 in the 
+   +58 0x4087f8 EVR_Driver_Tool_State_Flag [N2] dump 1: 0=Allow EVR driver override for tool in STOP state only;1=all states
+        row: alternator_field_actuator_test_while_running_enable word | 1: alternator_field_actuator_test_duty applies while the engine runs too (else only in ENGINE_STATE_STOPPED) -
+   +5A 0x4087fa EVR_Err_Duty_Cycle [N2] dump 0: EVR duty cycle when Alternator_Error is TRUE
+        row: alternator_field_duty_while_charging_system_fault_368_set word | Read only in regulator state 0 of cm848_calculateAlternatorFieldDutyByRegulatorState
+   +5C 0x4087fc EVR_Driver_Inhibit_Off_Time [N2] dump 4000: EVR duty cycle off cycle time when open or short circuit
+        row: alternator_field_retest_off_passes word | Alternator field retest: passes at 0 % duty before the 100 % phase - 4000 in the RAM dump (was cruise_voltage_
+   +5E 0x4087fe EVR_Driver_Inhibit_Timer_Offset [N2] dump 50: EVR duty cycle off cycle time when open or short circuit
+        row: alternator_field_retest_fault_confirm_passes word | Alternator field retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts

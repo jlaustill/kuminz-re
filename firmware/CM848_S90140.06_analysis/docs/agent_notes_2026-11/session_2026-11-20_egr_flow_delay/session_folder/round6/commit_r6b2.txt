@@ -1,0 +1,30 @@
+cm848: round 6 stage B2 - the TSC1 / Jcomm types: enums, short fields, typed pointers, the ETC2 receive words
+
+Each type is quoted from its source in apply_r6b2_types.py, and each changed function was read diff by diff.
+- **TSC1_OVERRIDE_MODE** already existed with the SPN 695 members but was 1 byte and unused. It is now a word, on the
+  engine and retarder override control modes (e2m 10E8 +4 / 10E6 +0 Jcomm_*_Control_Mode: 0 disable / 1 speed /
+  2 torque / 3 limit), their previous copies and the J1939 monitor's copy. It renders in about 20 functions, e.g.
+  tsc1_override_control_mode == TSC1_SPEED_TORQUE_LIMIT.
+- **J1939_CONTROL_DEVICE (new):** e2m Jcomm_*_Control_Device_Indicator 0 none / 1 transmission / 2 ABS / 3 ASR /
+  4 unknown. It goes on both device indicators and on the return of cm848_lookupJ1939ControlDevice (the high idle
+  override condition now reads engine_control_device_indicator == J1939_CONTROL_DEVICE_TRANSMISSION).
+- **CONTROL_NETWORK (new):** e2m Jcomm_*_Network_Type 0 = J1922 / 1 = J1939. It goes on the controlling data link,
+  the out of gear network type, the source table's data_link and the monitor's copy.
+- **short** on the e2m S fields tsc1_requested_percent_torque_times_256 and engine_net_output_torque (lha): their
+  (short) casts are gone, and the torque x 256 shows as -32000.
+- **The source configuration pointers** are typed tsc1_source_configuration_t*, so the retarder reads
+  ->retarder_torque_control_request_timeout instead of *(short *)(ptr + 0xe). The table is
+  tsc1_source_configuration_t[10].
+- **The ETC2 receive bytes:** the stores (sth @ 0x22cf0 / 0x22d2c, stb / lhz @ 0x22cb4-0x22cc4) put a word at +0xa
+  (the previous gear ratio; the CSV had a byte auxiliary_state, hence the _10_2_ piece) and the received SPN 526
+  ratio at +0xd. Now etc2_actual_gear_ratio_previous and etc2_spn526_actual_gear_ratio.
+- **The rest:**
+  - 0x5c39a = j1939_high_idle_override_speed (e2m 10E7 +18; lhz);
+  - tsc1_accepted_control_byte typed word (sth);
+  - the TSC1 handler's sender local sender_source_address and the lookup's control_device (two stale local rows
+    fixed);
+  - the J1939 monitor's three etc1-named copies of the engine control state are named.
+- **Tried and reverted:** J1939_Block_Message as a bitfield. The masked read-modify-writes rendered as the raw piece
+  _32_2_, so it stays a word with the bits in its comment.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

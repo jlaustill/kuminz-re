@@ -1,0 +1,901 @@
+
+/home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S2-skeptic/dl.elf:	file format elf32-m68k
+
+Disassembly of section .text:
+
+000138b6 <.text>:
+   138b6: 48 e7 30 3c  	movem.l	%d2-%d5/%a4-%a5, -(%sp)
+   138ba: 26 7c 00 80 03 6a    	move.l	#8389482, %a3
+   138c0: 28 7c 00 80 ba ca    	move.l	#8436426, %a4
+   138c6: 2a 7c 00 80 ba c8    	move.l	#8436424, %a5
+   138cc: 52 79        	<unknown>
+   138ce: 00 80        	<unknown>
+   138d0: 05 1e        	btst	%d2, (%a6)+
+   138d2: 70 00        	<unknown>
+   138d4: 30 39 00 80 05 1e    	move.w	$80051e, %d0
+   138da: 72 00        	<unknown>
+   138dc: 12 39 00 80 03 53    	move.b	$800353, %d1
+   138e2: b0 81        	cmp.l	%d1, %d0
+   138e4: 6d 0e        	blt	$e
+   138e6: 13 fc 00 01 00 80 03 54      	move.b	#1, $800354
+   138ee: 42 79        	<unknown>
+   138f0: 00 80        	<unknown>
+   138f2: 05 1e        	btst	%d2, (%a6)+
+   138f4: 30 39 00 80 3c b8    	move.w	$803cb8, %d0
+   138fa: 02 40        	<unknown>
+   138fc: 00 20        	<unknown>
+   138fe: 67 00 01 46  	beq	$146
+   13902: 4a 39        	<unknown>
+   13904: 00 80        	<unknown>
+   13906: 03 52        	bchg	%d1, (%a2)
+   13908: 66 2a        	bne	$2a
+   1390a: 4a 79        	<unknown>
+   1390c: 00 80        	<unknown>
+   1390e: ba c4        	<unknown>
+   13910: 66 22        	bne	$22
+   13912: 4e b9 00 01 3d 42    	jsr	$13d42
+   13918: 13 c0 00 80 03 53    	move.b	%d0, $800353
+   1391e: 0c 79 00 01 00 80 3d c6      	cmpi.w	#1, $803dc6
+   13926: 66 0c        	bne	$c
+   13928: 4e b9 00 01 3d be    	jsr	$13dbe
+   1392e: 4e b9 00 01 3e 64    	jsr	$13e64
+   13934: 0c 79 00 01 00 80 d0 c8      	cmpi.w	#1, $80d0c8
+   1393c: 67 00 00 f8  	beq	$f8
+   13940: 4a 79        	<unknown>
+   13942: 00 80        	<unknown>
+   13944: ba c4        	<unknown>
+   13946: 66 00 00 de  	bne	$de
+   1394a: 0c 79 00 01 00 80 3d c6      	cmpi.w	#1, $803dc6
+   13952: 66 00 00 a2  	bne	$a2
+   13956: 4a 39        	<unknown>
+   13958: 00 80        	<unknown>
+   1395a: 03 54        	bchg	%d1, (%a4)
+   1395c: 67 00 00 f8  	beq	$f8
+   13960: 42 02        	<unknown>
+   13962: 24 4b        	move.l	%a3, %a2
+   13964: 76 00        	<unknown>
+   13966: 20 7c 00 80 3d 65    	move.l	#8404325, %a0
+   1396c: 4a 30        	<unknown>
+   1396e: 30 00        	move.w	%d0, %d0
+   13970: 67 06        	beq	$6
+   13972: 14 bc 00 01  	move.b	#1, (%a2)
+   13976: 60 0e        	bra	$e
+   13978: 10 02        	move.b	%d2, %d0
+   1397a: 3f 00        	move.w	%d0, -(%sp)
+   1397c: 4e b9 00 01 3e d8    	jsr	$13ed8
+   13982: 54 8f        	<unknown>
+   13984: 14 80        	move.b	%d0, (%a2)
+   13986: 70 10        	<unknown>
+   13988: d6 80        	add.l	%d0, %d3
+   1398a: 52 8a        	<unknown>
+   1398c: 52 02        	<unknown>
+   1398e: 0c 02 00 02  	cmpi.b	#2, %d2
+   13992: 63 d2        	bls	$d2
+   13994: 4a 39        	<unknown>
+   13996: 00 80        	<unknown>
+   13998: 3d 95        	<unknown>
+   1399a: 67 06        	beq	$6
+   1399c: 42 2b        	<unknown>
+   1399e: 00 03        	<unknown>
+   139a0: 60 10        	bra	$10
+   139a2: 3f 3c 00 03  	move.w	#3, -(%sp)
+   139a6: 4e b9 00 01 3e d8    	jsr	$13ed8
+   139ac: 54 8f        	<unknown>
+   139ae: 17 40 00 03  	move.b	%d0, (3,%a3)
+   139b2: 4a 39        	<unknown>
+   139b4: 00 80        	<unknown>
+   139b6: 03 6a 67 28  	bchg	%d1, (26408,%a2)
+   139ba: 4a 2b        	<unknown>
+   139bc: 00 01        	<unknown>
+   139be: 67 22        	beq	$22
+   139c0: 4a 2b        	<unknown>
+   139c2: 00 02        	<unknown>
+   139c4: 67 1c        	beq	$1c
+   139c6: 38 bc 00 01  	move.w	#1, (%a4)
+   139ca: 33 fc 00 01 00 80 ba c6      	move.w	#1, $80bac6
+   139d2: 4a 2b        	<unknown>
+   139d4: 00 03        	<unknown>
+   139d6: 67 7e        	beq	$7e
+   139d8: 3a bc 00 01  	move.w	#1, (%a5)
+   139dc: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   139e0: 4e 75        	rts
+   139e2: 4a 2b        	<unknown>
+   139e4: 00 03        	<unknown>
+   139e6: 67 6e        	beq	$6e
+   139e8: 38 bc 00 01  	move.w	#1, (%a4)
+   139ec: 3a bc 00 01  	move.w	#1, (%a5)
+   139f0: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   139f4: 4e 75        	rts
+   139f6: 08 39        	<unknown>
+   139f8: 00 06        	<unknown>
+   139fa: 00 80        	<unknown>
+   139fc: bc d0        	<unknown>
+   139fe: 67 1a        	beq	$1a
+   13a00: 4a 39        	<unknown>
+   13a02: 00 80        	<unknown>
+   13a04: 05 20        	btst	%d2, -(%a0)
+   13a06: 66 4e        	bne	$4e
+   13a08: 38 bc 00 01  	move.w	#1, (%a4)
+   13a0c: 13 fc 00 01 00 80 05 20      	move.b	#1, $800520
+   13a14: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   13a18: 4e 75        	rts
+   13a1a: 42 39        	<unknown>
+   13a1c: 00 80        	<unknown>
+   13a1e: 05 20        	btst	%d2, -(%a0)
+   13a20: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   13a24: 4e 75        	rts
+   13a26: 42 54        	<unknown>
+   13a28: 42 79        	<unknown>
+   13a2a: 00 80        	<unknown>
+   13a2c: ba c6        	<unknown>
+   13a2e: 42 55        	<unknown>
+   13a30: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   13a34: 4e 75        	rts
+   13a36: 42 54        	<unknown>
+   13a38: 42 79        	<unknown>
+   13a3a: 00 80        	<unknown>
+   13a3c: ba c6        	<unknown>
+   13a3e: 42 55        	<unknown>
+   13a40: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   13a44: 4e 75        	rts
+   13a46: 42 54        	<unknown>
+   13a48: 42 79        	<unknown>
+   13a4a: 00 80        	<unknown>
+   13a4c: ba c6        	<unknown>
+   13a4e: 42 55        	<unknown>
+   13a50: 42 39        	<unknown>
+   13a52: 00 80        	<unknown>
+   13a54: 03 52        	bchg	%d1, (%a2)
+   13a56: 4c df 3c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a5
+   13a5a: 4e 75        	rts
+   13a5c: 4e 56 ff f8  	link.w	%a6, #65528
+   13a60: 48 e7 38 3c  	movem.l	%d2-%d5/%a3-%a5, -(%sp)
+   13a64: 28 7c 00 80 ba c4    	move.l	#8436420, %a4
+   13a6a: 2a 7c 00 80 05 04    	move.l	#8389892, %a5
+   13a70: 30 39 00 80 3c b8    	move.w	$803cb8, %d0
+   13a76: 02 80        	<unknown>
+   13a78: 00 00        	<unknown>
+   13a7a: 00 20        	<unknown>
+   13a7c: 66 12        	bne	$12
+   13a7e: 0c 79 00 01 00 80 ba ca      	cmpi.w	#1, $80baca
+   13a86: 67 08        	beq	$8
+   13a88: 0c 54 00 01  	cmpi.w	#1, (%a4)
+   13a8c: 66 00 02 08  	bne	$208
+   13a90: 4a 39        	<unknown>
+   13a92: 00 80        	<unknown>
+   13a94: 03 52        	bchg	%d1, (%a2)
+   13a96: 66 52        	bne	$52
+   13a98: 4a 54        	<unknown>
+   13a9a: 66 4e        	bne	$4e
+   13a9c: 13 fc 00 01 00 80 03 52      	move.b	#1, $800352
+   13aa4: 4e b9 00 01 3e 12    	jsr	$13e12
+   13aaa: 42 02        	<unknown>
+   13aac: 42 39        	<unknown>
+   13aae: 00 80        	<unknown>
+   13ab0: 05 21        	btst	%d2, -(%a1)
+   13ab2: 42 03        	<unknown>
+   13ab4: 78 00        	<unknown>
+   13ab6: 60 1c        	bra	$1c
+   13ab8: 20 7c 00 80 3d a4    	move.l	#8404388, %a0
+   13abe: 30 30        	<unknown>
+   13ac0: 40 00        	negx.b	%d0
+   13ac2: d4 00        	add.b	%d0, %d2
+   13ac4: 0c 02 00 0a  	cmpi.b	#10, %d2
+   13ac8: 62 06        	bhi	$6
+   13aca: 52 39        	<unknown>
+   13acc: 00 80        	<unknown>
+   13ace: 05 21        	btst	%d2, -(%a1)
+   13ad0: 5c 84        	<unknown>
+   13ad2: 52 03        	<unknown>
+   13ad4: 70 00        	<unknown>
+   13ad6: 10 03        	move.b	%d3, %d0
+   13ad8: 72 00        	<unknown>
+   13ada: 32 39 00 80 3d c8    	move.w	$803dc8, %d1
+   13ae0: b0 81        	cmp.l	%d1, %d0
+   13ae2: 6d d4        	blt	$d4
+   13ae4: 2a bc 00 80 03 74    	move.l	#8389492, (%a5)
+   13aea: 4a 39        	<unknown>
+   13aec: 00 80        	<unknown>
+   13aee: 03 54        	bchg	%d1, (%a4)
+   13af0: 67 00 01 cc  	beq	$1cc
+   13af4: 42 39        	<unknown>
+   13af6: 00 80        	<unknown>
+   13af8: 03 54        	bchg	%d1, (%a4)
+   13afa: 4a 79        	<unknown>
+   13afc: 00 80        	<unknown>
+   13afe: ba ca        	<unknown>
+   13b00: 67 3a        	beq	$3a
+   13b02: 38 bc 00 01  	move.w	#1, (%a4)
+   13b06: 20 39 00 80 05 04    	move.l	$800504, %d0
+   13b0c: 04 80        	<unknown>
+   13b0e: 00 80        	<unknown>
+   13b10: 03 74        	<unknown>
+   13b12: 33 c0 00 80 05 22    	move.w	%d0, $800522
+   13b18: 23 f9 00 80 bd a4 00 80 05 24	move.l	$80bda4, $800524
+   13b22: 13 f9 00 80 ba c7 00 80 05 28	move.b	$80bac7, $800528
+   13b2c: 13 f9 00 80 ba c9 00 80 05 29	move.b	$80bac9, $800529
+   13b36: 42 39        	<unknown>
+   13b38: 00 80        	<unknown>
+   13b3a: 05 1c        	btst	%d2, (%a4)+
+   13b3c: 42 03        	<unknown>
+   13b3e: 60 00 00 9c  	bra	$9c
+   13b42: 42 02        	<unknown>
+   13b44: 70 00        	<unknown>
+   13b46: 10 03        	move.b	%d3, %d0
+   13b48: e5 48        	lsl.w	#2, %d0
+   13b4a: 20 7c 00 80 05 08    	move.l	#8389896, %a0
+   13b50: d0 c0        	<unknown>
+   13b52: 24 48        	move.l	%a0, %a2
+   13b54: 26 7c 00 80 05 04    	move.l	#8389892, %a3
+   13b5a: 78 00        	<unknown>
+   13b5c: 18 03        	move.b	%d3, %d4
+   13b5e: 20 04        	move.l	%d4, %d0
+   13b60: d8 84        	add.l	%d4, %d4
+   13b62: d8 80        	add.l	%d0, %d4
+   13b64: d8 84        	add.l	%d4, %d4
+   13b66: 60 44        	bra	$44
+   13b68: 70 00        	<unknown>
+   13b6a: 10 02        	move.b	%d2, %d0
+   13b6c: d0 92        	add.l	(%a2), %d0
+   13b6e: 20 40        	move.l	%d0, %a0
+   13b70: 10 10        	move.b	(%a0), %d0
+   13b72: 20 55        	move.l	(%a5), %a0
+   13b74: 10 80        	move.b	%d0, (%a0)
+   13b76: 52 95        	<unknown>
+   13b78: b7 d5        	<unknown>
+   13b7a: 66 06        	bne	$6
+   13b7c: 2a bc 00 80 03 74    	move.l	#8389492, (%a5)
+   13b82: 0c 54 00 01  	cmpi.w	#1, (%a4)
+   13b86: 66 22        	bne	$22
+   13b88: 52 39        	<unknown>
+   13b8a: 00 80        	<unknown>
+   13b8c: 05 1c        	btst	%d2, (%a4)+
+   13b8e: 0c 39 00 c8 00 80 05 1c      	cmpi.b	#200, $80051c
+   13b96: 66 12        	bne	$12
+   13b98: 20 7c 00 80 3d a4    	move.l	#8404388, %a0
+   13b9e: 34 30        	<unknown>
+   13ba0: 40 00        	negx.b	%d0
+   13ba2: 13 fc 00 01 00 80 05 2a      	move.b	#1, $80052a
+   13baa: 52 02        	<unknown>
+   13bac: 20 7c 00 80 3d a4    	move.l	#8404388, %a0
+   13bb2: 30 30        	<unknown>
+   13bb4: 40 00        	negx.b	%d0
+   13bb6: 02 80        	<unknown>
+   13bb8: 00 00        	<unknown>
+   13bba: ff ff        	<unknown>
+   13bbc: 72 00        	<unknown>
+   13bbe: 12 02        	move.b	%d2, %d1
+   13bc0: b0 81        	cmp.l	%d1, %d0
+   13bc2: 6e a4        	bgt	$a4
+   13bc4: 0c 54 00 01  	cmpi.w	#1, (%a4)
+   13bc8: 66 10        	bne	$10
+   13bca: 0c 39 00 c8 00 80 05 1c      	cmpi.b	#200, $80051c
+   13bd2: 66 06        	bne	$6
+   13bd4: 16 39 00 80 05 21    	move.b	$800521, %d3
+   13bda: 52 03        	<unknown>
+   13bdc: b6 39        	<unknown>
+   13bde: 00 80        	<unknown>
+   13be0: 05 21        	btst	%d2, -(%a1)
+   13be2: 65 00 ff 5e  	bcs	$ff5e
+   13be6: 42 39        	<unknown>
+   13be8: 00 80        	<unknown>
+   13bea: 03 72        	<unknown>
+   13bec: 0c 54 00 01  	cmpi.w	#1, (%a4)
+   13bf0: 66 00 00 cc  	bne	$cc
+   13bf4: 4a 39        	<unknown>
+   13bf6: 00 80        	<unknown>
+   13bf8: 05 2a 67 00  	btst	%d2, (26368,%a2)
+   13bfc: 00 c2        	<unknown>
+   13bfe: 26 7c 00 80 03 74    	move.l	#8389492, %a3
+   13c04: 4a 79        	<unknown>
+   13c06: 00 80        	<unknown>
+   13c08: 52 fa        	<unknown>
+   13c0a: 66 3c        	bne	$3c
+   13c0c: 24 7c 00 80 4f ca    	move.l	#8409034, %a2
+   13c12: 2d 4a ff fc  	move.l	%a2, (65532,%a6)
+   13c16: 33 f9 00 80 05 22 00 80 52 ea	move.w	$800522, $8052ea
+   13c20: 23 f9 00 80 05 24 00 80 52 ec	move.l	$800524, $8052ec
+   13c2a: 13 f9 00 80 05 28 00 80 52 f0	move.b	$800528, $8052f0
+   13c34: 13 f9 00 80 05 29 00 80 52 f1	move.b	$800529, $8052f1
+   13c3e: 33 fc 00 01 00 80 52 fa      	move.w	#1, $8052fa
+   13c46: 60 3a        	bra	$3a
+   13c48: 24 7c 00 80 51 5a    	move.l	#8409434, %a2
+   13c4e: 2d 4a ff f8  	move.l	%a2, (65528,%a6)
+   13c52: 33 f9 00 80 05 22 00 80 52 f2	move.w	$800522, $8052f2
+   13c5c: 23 f9 00 80 05 24 00 80 52 f4	move.l	$800524, $8052f4
+   13c66: 13 f9 00 80 05 28 00 80 52 f8	move.b	$800528, $8052f8
+   13c70: 13 f9 00 80 05 29 00 80 52 f9	move.b	$800529, $8052f9
+   13c7a: 33 fc 00 01 00 80 52 fc      	move.w	#1, $8052fc
+   13c82: 2f 0a        	move.l	%a2, -(%sp)
+   13c84: 2f 0b        	move.l	%a3, -(%sp)
+   13c86: 4e b9 00 01 42 92    	jsr	$14292
+   13c8c: 42 54        	<unknown>
+   13c8e: 42 39        	<unknown>
+   13c90: 00 80        	<unknown>
+   13c92: 05 2a 60 28  	btst	%d2, (24616,%a2)
+   13c96: 4a 39        	<unknown>
+   13c98: 00 80        	<unknown>
+   13c9a: 03 72        	<unknown>
+   13c9c: 66 20        	bne	$20
+   13c9e: 42 42        	<unknown>
+   13ca0: 24 7c 00 80 03 74    	move.l	#8389492, %a2
+   13ca6: 42 1a        	<unknown>
+   13ca8: 52 42        	<unknown>
+   13caa: 0c 42 01 90  	cmpi.w	#400, %d2
+   13cae: 65 f6        	bcs	$f6
+   13cb0: 2a bc 00 80 03 74    	move.l	#8389492, (%a5)
+   13cb6: 13 fc 00 01 00 80 03 72      	move.b	#1, $800372
+   13cbe: 4c ee 3c 1c ff dc    	movem.l	(65500,%a6), %d2-%d4/%a2-%a5
+   13cc4: 4e 5e        	unlk	%a6
+   13cc6: 4e 75        	rts
+   13cc8: 48 e7 30 30  	movem.l	%d4-%d5/%a4-%a5, -(%sp)
+   13ccc: 22 7c 00 80 03 74    	move.l	#8389492, %a1
+   13cd2: 42 79        	<unknown>
+   13cd4: 00 80        	<unknown>
+   13cd6: 05 1e        	btst	%d2, (%a6)+
+   13cd8: 42 39        	<unknown>
+   13cda: 00 80        	<unknown>
+   13cdc: 03 54        	bchg	%d1, (%a4)
+   13cde: 42 42        	<unknown>
+   13ce0: 24 7c 00 80 03 66    	move.l	#8389478, %a2
+   13ce6: 26 7c 00 80 03 6e    	move.l	#8389486, %a3
+   13cec: 76 00        	<unknown>
+   13cee: 20 7c 00 80 3d 66    	move.l	#8404326, %a0
+   13cf4: 0c 70        	<unknown>
+   13cf6: 00 01        	<unknown>
+   13cf8: 30 00        	move.w	%d0, %d0
+   13cfa: 66 14        	bne	$14
+   13cfc: 70 00        	<unknown>
+   13cfe: 10 12        	move.b	(%a2), %d0
+   13d00: 32 00        	move.w	%d0, %d1
+   13d02: e5 48        	lsl.w	#2, %d0
+   13d04: d0 41        	add.w	%d1, %d0
+   13d06: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   13d0c: 16 b0        	<unknown>
+   13d0e: 02 00        	<unknown>
+   13d10: 70 10        	<unknown>
+   13d12: d6 80        	add.l	%d0, %d3
+   13d14: 52 8b        	<unknown>
+   13d16: 52 8a        	<unknown>
+   13d18: 52 42        	<unknown>
+   13d1a: 0c 42 00 04  	cmpi.w	#4, %d2
+   13d1e: 65 ce        	bcs	$ce
+   13d20: 42 42        	<unknown>
+   13d22: 24 49        	move.l	%a1, %a2
+   13d24: 42 1a        	<unknown>
+   13d26: 52 42        	<unknown>
+   13d28: 0c 42 01 90  	cmpi.w	#400, %d2
+   13d2c: 65 f6        	bcs	$f6
+   13d2e: 23 c9 00 80 05 04    	move.l	%a1, $800504
+   13d34: 13 fc 00 01 00 80 03 72      	move.b	#1, $800372
+   13d3c: 4c df 0c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a3
+   13d40: 4e 75        	rts
+   13d42: 20 7c 00 80 03 53    	move.l	#8389459, %a0
+   13d48: 0c 79 00 01 00 80 3d c6      	cmpi.w	#1, $803dc6
+   13d50: 66 12        	bne	$12
+   13d52: 0c 79 00 03 00 80 3d c4      	cmpi.w	#3, $803dc4
+   13d5a: 6d 08        	blt	$8
+   13d5c: 33 fc 00 02 00 80 3d c4      	move.w	#2, $803dc4
+   13d64: 30 39 00 80 3d c4    	move.w	$803dc4, %d0
+   13d6a: 48 c0        	ext.l	%d0
+   13d6c: 72 05        	<unknown>
+   13d6e: b0 81        	cmp.l	%d1, %d0
+   13d70: 62 38        	bhi	$38
+   13d72: 30 3b        	<unknown>
+   13d74: 0a 06        	<unknown>
+   13d76: 4e fb        	<unknown>
+   13d78: 00 02        	<unknown>
+   13d7a: 00 0c        	<unknown>
+   13d7c: 00 12 00 18  	or.b	#24, (%a2)
+   13d80: 00 1e        	<unknown>
+   13d82: 00 24        	<unknown>
+   13d84: 00 2a        	<unknown>
+   13d86: 10 bc 00 05  	move.b	#5, (%a0)
+   13d8a: 60 22        	bra	$22
+   13d8c: 10 bc 00 0a  	move.b	#10, (%a0)
+   13d90: 60 1c        	bra	$1c
+   13d92: 10 bc 00 14  	move.b	#20, (%a0)
+   13d96: 60 16        	bra	$16
+   13d98: 10 bc 00 28  	move.b	#40, (%a0)
+   13d9c: 60 10        	bra	$10
+   13d9e: 10 bc 00 50  	move.b	#80, (%a0)
+   13da2: 60 0a        	bra	$a
+   13da4: 10 bc 00 a0  	move.b	#160, (%a0)
+   13da8: 60 04        	bra	$4
+   13daa: 10 bc 00 05  	move.b	#5, (%a0)
+   13dae: 42 39        	<unknown>
+   13db0: 00 80        	<unknown>
+   13db2: 03 54        	bchg	%d1, (%a4)
+   13db4: 42 79        	<unknown>
+   13db6: 00 80        	<unknown>
+   13db8: 05 1e        	btst	%d2, (%a6)+
+   13dba: 10 10        	move.b	(%a0), %d0
+   13dbc: 4e 75        	rts
+   13dbe: 48 e7 30 20  	movem.l	%d5/%a4-%a5, -(%sp)
+   13dc2: 42 03        	<unknown>
+   13dc4: 24 7c 00 80 03 56    	move.l	#8389462, %a2
+   13dca: 74 00        	<unknown>
+   13dcc: 20 7c 00 80 3d 66    	move.l	#8404326, %a0
+   13dd2: 4a 70        	<unknown>
+   13dd4: 20 00        	move.l	%d0, %d0
+   13dd6: 66 26        	bne	$26
+   13dd8: 2f 0a        	move.l	%a2, -(%sp)
+   13dda: 20 7c 00 80 3d 6a    	move.l	#8404330, %a0
+   13de0: 3f 30        	<unknown>
+   13de2: 20 00        	move.l	%d0, %d0
+   13de4: 4e b9 00 01 0e 16    	jsr	$10e16
+   13dea: 5c 8f        	<unknown>
+   13dec: 20 7c 00 80 3d 6c    	move.l	#8404332, %a0
+   13df2: 30 30        	<unknown>
+   13df4: 20 00        	move.l	%d0, %d0
+   13df6: 02 80        	<unknown>
+   13df8: 00 00        	<unknown>
+   13dfa: ff ff        	<unknown>
+   13dfc: d1 92        	add.l	%d0, (%a2)
+   13dfe: 70 10        	<unknown>
+   13e00: d4 80        	add.l	%d0, %d2
+   13e02: 58 8a        	<unknown>
+   13e04: 52 03        	<unknown>
+   13e06: 0c 03 00 04  	cmpi.b	#4, %d3
+   13e0a: 65 c0        	bcs	$c0
+   13e0c: 4c df 04 0c  	movem.l	(%sp)+, %d2-%d3/%a2
+   13e10: 4e 75        	rts
+   13e12: 48 e7 30 20  	movem.l	%d5/%a4-%a5, -(%sp)
+   13e16: 42 03        	<unknown>
+   13e18: 24 7c 00 80 05 08    	move.l	#8389896, %a2
+   13e1e: 74 00        	<unknown>
+   13e20: 60 2c        	bra	$2c
+   13e22: 2f 0a        	move.l	%a2, -(%sp)
+   13e24: 20 7c 00 80 3d a6    	move.l	#8404390, %a0
+   13e2a: 3f 30        	<unknown>
+   13e2c: 20 00        	move.l	%d0, %d0
+   13e2e: 4e b9 00 01 0e 16    	jsr	$10e16
+   13e34: 5c 8f        	<unknown>
+   13e36: 20 7c 00 80 3d a8    	move.l	#8404392, %a0
+   13e3c: 30 30        	<unknown>
+   13e3e: 20 00        	move.l	%d0, %d0
+   13e40: 02 80        	<unknown>
+   13e42: 00 00        	<unknown>
+   13e44: ff ff        	<unknown>
+   13e46: d1 92        	add.l	%d0, (%a2)
+   13e48: 5c 82        	<unknown>
+   13e4a: 58 8a        	<unknown>
+   13e4c: 52 03        	<unknown>
+   13e4e: 70 00        	<unknown>
+   13e50: 10 03        	move.b	%d3, %d0
+   13e52: 72 00        	<unknown>
+   13e54: 32 39 00 80 3d c8    	move.w	$803dc8, %d1
+   13e5a: b0 81        	cmp.l	%d1, %d0
+   13e5c: 6d c4        	blt	$c4
+   13e5e: 4c df 04 0c  	movem.l	(%sp)+, %d2-%d3/%a2
+   13e62: 4e 75        	rts
+   13e64: 48 e7 38 30  	movem.l	%d4-%d5/%a3-%a5, -(%sp)
+   13e68: 42 04        	<unknown>
+   13e6a: 22 7c 00 80 03 6e    	move.l	#8389486, %a1
+   13e70: 76 00        	<unknown>
+   13e72: 20 7c 00 80 3d 66    	move.l	#8404326, %a0
+   13e78: 0c 70        	<unknown>
+   13e7a: 00 01        	<unknown>
+   13e7c: 30 00        	move.w	%d0, %d0
+   13e7e: 66 44        	bne	$44
+   13e80: 42 02        	<unknown>
+   13e82: 70 00        	<unknown>
+   13e84: 10 04        	move.b	%d4, %d0
+   13e86: 20 7c 00 80 03 66    	move.l	#8389478, %a0
+   13e8c: d1 c0        	adda.l	%d0, %a0
+   13e8e: 26 48        	move.l	%a0, %a3
+   13e90: 24 7c 00 80 67 c4    	move.l	#8415172, %a2
+   13e96: 20 7c 00 80 3d 6a    	move.l	#8404330, %a0
+   13e9c: 30 30        	<unknown>
+   13e9e: 30 00        	move.w	%d0, %d0
+   13ea0: b0 52        	cmp.w	(%a2), %d0
+   13ea2: 66 16        	bne	$16
+   13ea4: 16 82        	move.b	%d2, (%a3)
+   13ea6: 70 00        	<unknown>
+   13ea8: 10 13        	move.b	(%a3), %d0
+   13eaa: 32 00        	move.w	%d0, %d1
+   13eac: e5 48        	lsl.w	#2, %d0
+   13eae: d0 41        	add.w	%d1, %d0
+   13eb0: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   13eb6: 12 b0        	<unknown>
+   13eb8: 02 00        	<unknown>
+   13eba: 5c 8a        	<unknown>
+   13ebc: 52 02        	<unknown>
+   13ebe: 0c 02 00 7d  	cmpi.b	#125, %d2
+   13ec2: 65 d2        	bcs	$d2
+   13ec4: 70 10        	<unknown>
+   13ec6: d6 80        	add.l	%d0, %d3
+   13ec8: 52 89        	<unknown>
+   13eca: 52 04        	<unknown>
+   13ecc: 0c 04 00 04  	cmpi.b	#4, %d4
+   13ed0: 65 a0        	bcs	$a0
+   13ed2: 4c df 0c 1c  	movem.l	(%sp)+, %d2-%d4/%a2-%a3
+   13ed6: 4e 75        	rts
+   13ed8: 48 e7 30 30  	movem.l	%d4-%d5/%a4-%a5, -(%sp)
+   13edc: 36 2f 00 14  	move.w	(20,%sp), %d3
+   13ee0: 24 7c 00 80 03 56    	move.l	#8389462, %a2
+   13ee6: 26 7c 00 80 03 6e    	move.l	#8389486, %a3
+   13eec: 22 7c 00 80 03 66    	move.l	#8389478, %a1
+   13ef2: 70 00        	<unknown>
+   13ef4: 10 03        	move.b	%d3, %d0
+   13ef6: e9 88        	lsl.l	#4, %d0
+   13ef8: 24 00        	move.l	%d0, %d2
+   13efa: 20 7c 00 80 3d 66    	move.l	#8404326, %a0
+   13f00: 4a 70        	<unknown>
+   13f02: 00 00        	<unknown>
+   13f04: 20 7c 00 80 3d 68    	move.l	#8404328, %a0
+   13f0a: 66 00 02 90  	bne	$290
+   13f0e: 4a 70        	<unknown>
+   13f10: 20 00        	move.l	%d0, %d0
+   13f12: 20 7c 00 80 3d 72    	move.l	#8404338, %a0
+   13f18: 66 00 01 42  	bne	$142
+   13f1c: 4a 70        	<unknown>
+   13f1e: 20 00        	move.l	%d0, %d0
+   13f20: 66 00 00 a0  	bne	$a0
+   13f24: 70 00        	<unknown>
+   13f26: 10 03        	move.b	%d3, %d0
+   13f28: d0 40        	add.w	%d0, %d0
+   13f2a: 20 7c 00 80 3d 64    	move.l	#8404324, %a0
+   13f30: 10 30        	<unknown>
+   13f32: 06 00        	<unknown>
+   13f34: 02 80        	<unknown>
+   13f36: 00 00        	<unknown>
+   13f38: 00 ff        	<unknown>
+   13f3a: 72 01        	<unknown>
+   13f3c: b0 01        	cmp.b	%d1, %d0
+   13f3e: 67 0e        	beq	$e
+   13f40: 72 02        	<unknown>
+   13f42: b0 01        	cmp.b	%d1, %d0
+   13f44: 67 38        	beq	$38
+   13f46: 72 04        	<unknown>
+   13f48: b0 01        	cmp.b	%d1, %d0
+   13f4a: 67 54        	beq	$54
+   13f4c: 60 52        	bra	$52
+   13f4e: 70 00        	<unknown>
+   13f50: 10 03        	move.b	%d3, %d0
+   13f52: 20 72        	<unknown>
+   13f54: 0c 00        	<unknown>
+   13f56: 10 10        	move.b	(%a0), %d0
+   13f58: 02 80        	<unknown>
+   13f5a: 00 00        	<unknown>
+   13f5c: 00 ff        	<unknown>
+   13f5e: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   13f64: 22 30        	<unknown>
+   13f66: 20 00        	move.l	%d0, %d0
+   13f68: 02 81        	<unknown>
+   13f6a: 00 00        	<unknown>
+   13f6c: 00 ff        	<unknown>
+   13f6e: b0 81        	cmp.l	%d1, %d0
+   13f70: 6c 06        	bge	$6
+   13f72: 74 01        	<unknown>
+   13f74: 60 00 03 14  	bra	$314
+   13f78: 42 02        	<unknown>
+   13f7a: 60 00 03 0e  	bra	$30e
+   13f7e: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   13f84: 20 30        	<unknown>
+   13f86: 20 00        	move.l	%d0, %d0
+   13f88: 72 00        	<unknown>
+   13f8a: 12 03        	move.b	%d3, %d1
+   13f8c: 20 72        	<unknown>
+   13f8e: 1c 00        	move.b	%d0, %d6
+   13f90: b0 50        	cmp.w	(%a0), %d0
+   13f92: 63 06        	bls	$6
+   13f94: 74 01        	<unknown>
+   13f96: 60 00 02 f2  	bra	$2f2
+   13f9a: 42 02        	<unknown>
+   13f9c: 60 00 02 ec  	bra	$2ec
+   13fa0: 70 00        	<unknown>
+   13fa2: 10 03        	move.b	%d3, %d0
+   13fa4: 20 72        	<unknown>
+   13fa6: 0c 00        	<unknown>
+   13fa8: 20 10        	move.l	(%a0), %d0
+   13faa: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   13fb0: b0 b0        	<unknown>
+   13fb2: 20 00        	move.l	%d0, %d0
+   13fb4: 64 06        	bcc	$6
+   13fb6: 74 01        	<unknown>
+   13fb8: 60 00 02 d0  	bra	$2d0
+   13fbc: 42 02        	<unknown>
+   13fbe: 60 00 02 ca  	bra	$2ca
+   13fc2: 70 00        	<unknown>
+   13fc4: 10 03        	move.b	%d3, %d0
+   13fc6: d0 40        	add.w	%d0, %d0
+   13fc8: 20 7c 00 80 3d 64    	move.l	#8404324, %a0
+   13fce: 10 30        	<unknown>
+   13fd0: 06 00        	<unknown>
+   13fd2: 02 80        	<unknown>
+   13fd4: 00 00        	<unknown>
+   13fd6: 00 ff        	<unknown>
+   13fd8: 72 01        	<unknown>
+   13fda: b0 01        	cmp.b	%d1, %d0
+   13fdc: 67 0e        	beq	$e
+   13fde: 72 02        	<unknown>
+   13fe0: b0 01        	cmp.b	%d1, %d0
+   13fe2: 67 34        	beq	$34
+   13fe4: 72 04        	<unknown>
+   13fe6: b0 01        	cmp.b	%d1, %d0
+   13fe8: 67 50        	beq	$50
+   13fea: 60 4e        	bra	$4e
+   13fec: 70 00        	<unknown>
+   13fee: 10 03        	move.b	%d3, %d0
+   13ff0: 20 72        	<unknown>
+   13ff2: 0c 00        	<unknown>
+   13ff4: 10 10        	move.b	(%a0), %d0
+   13ff6: 49 c0        	<unknown>
+   13ff8: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   13ffe: 22 30        	<unknown>
+   14000: 20 00        	move.l	%d0, %d0
+   14002: 02 81        	<unknown>
+   14004: 00 00        	<unknown>
+   14006: 00 ff        	<unknown>
+   14008: b0 81        	cmp.l	%d1, %d0
+   1400a: 6c 06        	bge	$6
+   1400c: 74 01        	<unknown>
+   1400e: 60 00 02 7a  	bra	$27a
+   14012: 42 02        	<unknown>
+   14014: 60 00 02 74  	bra	$274
+   14018: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   1401e: 20 30        	<unknown>
+   14020: 20 00        	move.l	%d0, %d0
+   14022: 72 00        	<unknown>
+   14024: 12 03        	move.b	%d3, %d1
+   14026: 20 72        	<unknown>
+   14028: 1c 00        	move.b	%d0, %d6
+   1402a: b0 50        	cmp.w	(%a0), %d0
+   1402c: 6f 06        	ble	$6
+   1402e: 74 01        	<unknown>
+   14030: 60 00 02 58  	bra	$258
+   14034: 42 02        	<unknown>
+   14036: 60 00 02 52  	bra	$252
+   1403a: 70 00        	<unknown>
+   1403c: 10 03        	move.b	%d3, %d0
+   1403e: 20 72        	<unknown>
+   14040: 0c 00        	<unknown>
+   14042: 20 10        	move.l	(%a0), %d0
+   14044: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   1404a: b0 b0        	<unknown>
+   1404c: 20 00        	move.l	%d0, %d0
+   1404e: 6c 06        	bge	$6
+   14050: 74 01        	<unknown>
+   14052: 60 00 02 36  	bra	$236
+   14056: 42 02        	<unknown>
+   14058: 60 00 02 30  	bra	$230
+   1405c: 4a 70        	<unknown>
+   1405e: 20 00        	move.l	%d0, %d0
+   14060: 66 00 00 a0  	bne	$a0
+   14064: 70 00        	<unknown>
+   14066: 10 03        	move.b	%d3, %d0
+   14068: d0 40        	add.w	%d0, %d0
+   1406a: 20 7c 00 80 3d 64    	move.l	#8404324, %a0
+   14070: 10 30        	<unknown>
+   14072: 06 00        	<unknown>
+   14074: 02 80        	<unknown>
+   14076: 00 00        	<unknown>
+   14078: 00 ff        	<unknown>
+   1407a: 72 01        	<unknown>
+   1407c: b0 01        	cmp.b	%d1, %d0
+   1407e: 67 0e        	beq	$e
+   14080: 72 02        	<unknown>
+   14082: b0 01        	cmp.b	%d1, %d0
+   14084: 67 38        	beq	$38
+   14086: 72 04        	<unknown>
+   14088: b0 01        	cmp.b	%d1, %d0
+   1408a: 67 54        	beq	$54
+   1408c: 60 52        	bra	$52
+   1408e: 70 00        	<unknown>
+   14090: 10 03        	move.b	%d3, %d0
+   14092: 20 72        	<unknown>
+   14094: 0c 00        	<unknown>
+   14096: 10 10        	move.b	(%a0), %d0
+   14098: 02 80        	<unknown>
+   1409a: 00 00        	<unknown>
+   1409c: 00 ff        	<unknown>
+   1409e: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   140a4: 22 30        	<unknown>
+   140a6: 20 00        	move.l	%d0, %d0
+   140a8: 02 81        	<unknown>
+   140aa: 00 00        	<unknown>
+   140ac: 00 ff        	<unknown>
+   140ae: b0 81        	cmp.l	%d1, %d0
+   140b0: 6f 06        	ble	$6
+   140b2: 74 01        	<unknown>
+   140b4: 60 00 01 d4  	bra	$1d4
+   140b8: 42 02        	<unknown>
+   140ba: 60 00 01 ce  	bra	$1ce
+   140be: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   140c4: 20 30        	<unknown>
+   140c6: 20 00        	move.l	%d0, %d0
+   140c8: 72 00        	<unknown>
+   140ca: 12 03        	move.b	%d3, %d1
+   140cc: 20 72        	<unknown>
+   140ce: 1c 00        	move.b	%d0, %d6
+   140d0: b0 50        	cmp.w	(%a0), %d0
+   140d2: 64 06        	bcc	$6
+   140d4: 74 01        	<unknown>
+   140d6: 60 00 01 b2  	bra	$1b2
+   140da: 42 02        	<unknown>
+   140dc: 60 00 01 ac  	bra	$1ac
+   140e0: 70 00        	<unknown>
+   140e2: 10 03        	move.b	%d3, %d0
+   140e4: 20 72        	<unknown>
+   140e6: 0c 00        	<unknown>
+   140e8: 20 10        	move.l	(%a0), %d0
+   140ea: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   140f0: b0 b0        	<unknown>
+   140f2: 20 00        	move.l	%d0, %d0
+   140f4: 63 06        	bls	$6
+   140f6: 74 01        	<unknown>
+   140f8: 60 00 01 90  	bra	$190
+   140fc: 42 02        	<unknown>
+   140fe: 60 00 01 8a  	bra	$18a
+   14102: 70 00        	<unknown>
+   14104: 10 03        	move.b	%d3, %d0
+   14106: d0 40        	add.w	%d0, %d0
+   14108: 20 7c 00 80 3d 64    	move.l	#8404324, %a0
+   1410e: 10 30        	<unknown>
+   14110: 06 00        	<unknown>
+   14112: 02 80        	<unknown>
+   14114: 00 00        	<unknown>
+   14116: 00 ff        	<unknown>
+   14118: 72 01        	<unknown>
+   1411a: b0 01        	cmp.b	%d1, %d0
+   1411c: 67 0e        	beq	$e
+   1411e: 72 02        	<unknown>
+   14120: b0 01        	cmp.b	%d1, %d0
+   14122: 67 34        	beq	$34
+   14124: 72 04        	<unknown>
+   14126: b0 01        	cmp.b	%d1, %d0
+   14128: 67 50        	beq	$50
+   1412a: 60 4e        	bra	$4e
+   1412c: 70 00        	<unknown>
+   1412e: 10 03        	move.b	%d3, %d0
+   14130: 20 72        	<unknown>
+   14132: 0c 00        	<unknown>
+   14134: 10 10        	move.b	(%a0), %d0
+   14136: 49 c0        	<unknown>
+   14138: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   1413e: 22 30        	<unknown>
+   14140: 20 00        	move.l	%d0, %d0
+   14142: 02 81        	<unknown>
+   14144: 00 00        	<unknown>
+   14146: 00 ff        	<unknown>
+   14148: b0 81        	cmp.l	%d1, %d0
+   1414a: 6f 06        	ble	$6
+   1414c: 74 01        	<unknown>
+   1414e: 60 00 01 3a  	bra	$13a
+   14152: 42 02        	<unknown>
+   14154: 60 00 01 34  	bra	$134
+   14158: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   1415e: 20 30        	<unknown>
+   14160: 20 00        	move.l	%d0, %d0
+   14162: 72 00        	<unknown>
+   14164: 12 03        	move.b	%d3, %d1
+   14166: 20 72        	<unknown>
+   14168: 1c 00        	move.b	%d0, %d6
+   1416a: b0 50        	cmp.w	(%a0), %d0
+   1416c: 6c 06        	bge	$6
+   1416e: 74 01        	<unknown>
+   14170: 60 00 01 18  	bra	$118
+   14174: 42 02        	<unknown>
+   14176: 60 00 01 12  	bra	$112
+   1417a: 70 00        	<unknown>
+   1417c: 10 03        	move.b	%d3, %d0
+   1417e: 20 72        	<unknown>
+   14180: 0c 00        	<unknown>
+   14182: 20 10        	move.l	(%a0), %d0
+   14184: 20 7c 00 80 3d 6e    	move.l	#8404334, %a0
+   1418a: b0 b0        	<unknown>
+   1418c: 20 00        	move.l	%d0, %d0
+   1418e: 6f 06        	ble	$6
+   14190: 74 01        	<unknown>
+   14192: 60 00 00 f6  	bra	$f6
+   14196: 42 02        	<unknown>
+   14198: 60 00 00 f0  	bra	$f0
+   1419c: 4a 70        	<unknown>
+   1419e: 20 00        	move.l	%d0, %d0
+   141a0: 66 62        	bne	$62
+   141a2: 70 00        	<unknown>
+   141a4: 10 03        	move.b	%d3, %d0
+   141a6: 10 31 08 00  	move.b	(0,%a1,%d0), %d0
+   141aa: 02 80        	<unknown>
+   141ac: 00 00        	<unknown>
+   141ae: 00 ff        	<unknown>
+   141b0: 32 00        	move.w	%d0, %d1
+   141b2: e5 48        	lsl.w	#2, %d0
+   141b4: d0 41        	add.w	%d1, %d0
+   141b6: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   141bc: 4a 30        	<unknown>
+   141be: 02 00        	<unknown>
+   141c0: 67 22        	beq	$22
+   141c2: 70 00        	<unknown>
+   141c4: 10 03        	move.b	%d3, %d0
+   141c6: 10 31 08 00  	move.b	(0,%a1,%d0), %d0
+   141ca: 02 80        	<unknown>
+   141cc: 00 00        	<unknown>
+   141ce: 00 ff        	<unknown>
+   141d0: 32 00        	move.w	%d0, %d1
+   141d2: e5 48        	lsl.w	#2, %d0
+   141d4: d0 41        	add.w	%d1, %d0
+   141d6: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   141dc: 0c 30        	<unknown>
+   141de: 00 02        	<unknown>
+   141e0: 02 00        	<unknown>
+   141e2: 66 1c        	bne	$1c
+   141e4: 70 00        	<unknown>
+   141e6: 10 03        	move.b	%d3, %d0
+   141e8: 0c 33 00 01 08 00    	cmpi.b	#1, (0,%a3,%d0)
+   141ee: 67 0c        	beq	$c
+   141f0: 70 00        	<unknown>
+   141f2: 10 03        	move.b	%d3, %d0
+   141f4: 0c 33 00 03 08 00    	cmpi.b	#3, (0,%a3,%d0)
+   141fa: 66 04        	bne	$4
+   141fc: 74 01        	<unknown>
+   141fe: 60 64        	bra	$64
+   14200: 42 02        	<unknown>
+   14202: 60 60        	bra	$60
+   14204: 70 00        	<unknown>
+   14206: 10 03        	move.b	%d3, %d0
+   14208: 10 31 08 00  	move.b	(0,%a1,%d0), %d0
+   1420c: 02 80        	<unknown>
+   1420e: 00 00        	<unknown>
+   14210: 00 ff        	<unknown>
+   14212: 32 00        	move.w	%d0, %d1
+   14214: e5 48        	lsl.w	#2, %d0
+   14216: d0 41        	add.w	%d1, %d0
+   14218: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   1421e: 0c 30        	<unknown>
+   14220: 00 01        	<unknown>
+   14222: 02 00        	<unknown>
+   14224: 67 22        	beq	$22
+   14226: 70 00        	<unknown>
+   14228: 10 03        	move.b	%d3, %d0
+   1422a: 10 31 08 00  	move.b	(0,%a1,%d0), %d0
+   1422e: 02 80        	<unknown>
+   14230: 00 00        	<unknown>
+   14232: 00 ff        	<unknown>
+   14234: 32 00        	move.w	%d0, %d1
+   14236: e5 48        	lsl.w	#2, %d0
+   14238: d0 41        	add.w	%d1, %d0
+   1423a: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   14240: 0c 30        	<unknown>
+   14242: 00 03        	<unknown>
+   14244: 02 00        	<unknown>
+   14246: 66 1a        	bne	$1a
+   14248: 70 00        	<unknown>
+   1424a: 10 03        	move.b	%d3, %d0
+   1424c: 4a 33        	<unknown>
+   1424e: 08 00        	<unknown>
+   14250: 67 0c        	beq	$c
+   14252: 70 00        	<unknown>
+   14254: 10 03        	move.b	%d3, %d0
+   14256: 0c 33 00 02 08 00    	cmpi.b	#2, (0,%a3,%d0)
+   1425c: 66 04        	bne	$4
+   1425e: 74 01        	<unknown>
+   14260: 60 02        	bra	$2
+   14262: 42 02        	<unknown>
+   14264: 70 00        	<unknown>
+   14266: 10 03        	move.b	%d3, %d0
+   14268: 10 31 08 00  	move.b	(0,%a1,%d0), %d0
+   1426c: 02 80        	<unknown>
+   1426e: 00 00        	<unknown>
+   14270: 00 ff        	<unknown>
+   14272: 32 00        	move.w	%d0, %d1
+   14274: e5 48        	lsl.w	#2, %d0
+   14276: d0 41        	add.w	%d1, %d0
+   14278: 20 7c 00 80 5a 24    	move.l	#8411684, %a0
+   1427e: 10 30        	<unknown>
+   14280: 02 00        	<unknown>
+   14282: 72 00        	<unknown>
+   14284: 12 03        	move.b	%d3, %d1
+   14286: 17 80 18 00  	move.b	%d0, (0,%a3,%d1)
+   1428a: 10 02        	move.b	%d2, %d0
+   1428c: 4c df 0c 0c  	movem.l	(%sp)+, %d2-%d3/%a2-%a3
+   14290: 4e 75        	rts
+   14292: 22 6f 00 08  	move.l	(8,%sp), %a1
+   14296: 20 6f 00 04  	move.l	(4,%sp), %a0
+   1429a: 42 40        	<unknown>
+   1429c: 12 d8        	move.b	(%a0)+, (%a1)+
+   1429e: 52 40        	<unknown>
+   142a0: 0c 40 01 90  	cmpi.w	#400, %d0
+   142a4: 65 f6        	bcs	$f6
+   142a6: 4e 75        	rts

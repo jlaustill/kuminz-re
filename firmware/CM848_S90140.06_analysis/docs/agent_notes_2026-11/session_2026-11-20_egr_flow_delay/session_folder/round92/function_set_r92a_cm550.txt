@@ -1,0 +1,641 @@
+removed 0: 
+added 0: 
+changed 90
+  0x0000ac3c cm550_FUN_0000ac3c: 5 lines
+      -  uVar3 = CONCAT22((short)((uint)in_D0 >> 0x10),_feature_enable_flags_word) & 0xffff0008;
+      -  if (((_feature_enable_flags_word & 8) != 0) && (engine_state != ENGINE_STATE_STOPPED)) {
+      +  uVar3 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_18_cal) & 0xffff0008;
+      +  if ((algorithm_enable_flags_18_cal.duty_cycle_monitor_enable != 0) &&
+      +     (engine_state != ENGINE_STATE_STOPPED)) {
+  0x0000b2aa cm550_rpm_system_state_controller: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_3 & 0x1000) != 0) {
+      +  if (algorithm_enable_flags_3_cal.acceleration_noise_control_fuel_limit_enable != 0) {
+  0x0000b3d0 cm550_FUN_0000b3d0: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_3 & 0x2000) != 0) {
+      +  if (algorithm_enable_flags_3_cal.acceleration_noise_control_timing_limit_enable != 0) {
+  0x0000b4f2 cm550_engineStateFuelLimitInterpolator: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_3 & 0x4000) != 0) {
+      +  if (algorithm_enable_flags_3_cal.acceleration_noise_control_engine_speed_limit_enable != 0) {
+  0x0000b7bc mc68k_processAnalogSensorChannels: 16 lines
+      -  ushort uVar5;
+      -  ushort uVar6;
+      +  word wVar5;
+      +  cm550_algorithm_enable_flags_5_t cVar6;
+      -  uVar6 = _calibration_feature_enable_flags_word_5;
+      -  uVar5 = _DAT_00803cc0;
+      +  cVar6 = algorithm_enable_flags_5_cal;
+      +  wVar5 = algorithm_enable_flags_22_cal;
+      -      if ((uVar3 & uVar6) == 0) {
+      -        if ((uVar3 & uVar5) == 0) {
+      +      if ((uVar3 & (ushort)cVar6) == 0) {
+      +        if ((uVar3 & wVar5) == 0) {
+      -      uVar6 = _DAT_00803ca0;
+      -      uVar5 = _DAT_00803cc2;
+      +      cVar6 = (cm550_algorithm_enable_flags_5_t)algorithm_enable_flags_6_cal;
+      +      wVar5 = algorithm_enable_flags_23_cal;
+  0x0000c180 cm550_fuelTimingTransitionStateMachine: 21 lines
+      -  if ((_calibration_feature_enable_flags_word_9 & 8) == 0) {
+      +  if (algorithm_enable_flags_12_cal.air_fuel_control_override_enable == 0) {
+      -  uVar1 = _timing_governor_feature_enable_flags & 0x4000;
+      -  if (((((_timing_governor_feature_enable_flags & 0x4000) == 0) ||
+      -       (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+      -        (uVar1 = (uint)(_fault_latch_status_word_2 & 2), (_fault_latch_status_word_2 & 2) != 0))))
+      -      || (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+      -          (uVar1 = _fault_latch_status_word_2 & 0xffff0001, (_fault_latch_status_word_2 & 1) != 0)))
+      -      ) || (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x10) != 0 &&
+      -            (uVar1 = _fault_latch_status_word_2 & 0xffff0010,
+      -            (_fault_latch_status_word_2 & 0x10) != 0)))) {
+      +  uVar1 = (ushort)algorithm_enable_flags_32_cal & 0x4000;
+      +  if ((((algorithm_enable_flags_32_cal.air_fuel_control_coolant_temperature_adjustment_enable == 0)
+      +       || (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+      +           (uVar1 = (uint)(_fault_latch_status_word_2 & 2), (_fault_latch_status_word_2 & 2) != 0)))
+      +       ) || (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+      +             (uVar1 = _fault_latch_status_word_2 & 0xffff0001, (_fault_latch_status_word_2 & 1) != 0
+      +             )))) ||
+      +     (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x10) != 0 &&
+      +      (uVar1 = _fault_latch_status_word_2 & 0xffff0010, (_fault_latch_status_word_2 & 0x10) != 0))))
+      +  {
+  0x0000c326 calculateAlpha: 8 lines
+      -    if ((_calibration_feature_enable_flags_word_1 & 1) == 0) {
+      -      if (((_calibration_feature_enable_flags_word_0 & 0x4000) == 0) ||
+      +    if (algorithm_enable_flags_1_cal.alpha_user_override_enable == 0) {
+      +      if (((algorithm_enable_flags_0_cal & 0x4000) == 0) ||
+      -  if ((_calibration_feature_enable_flags_word_9 & 0x10) == 0) {
+      +  if (algorithm_enable_flags_12_cal.electronic_smart_power_enable == 0) {
+      -  return _calibration_feature_enable_flags_word_9 & 0x10;
+      +  return (ushort)algorithm_enable_flags_12_cal & 0x10;
+  0x0000c582 calculateAlphaBase: 12 lines
+      -  if ((_calibration_feature_enable_flags_word_0 & 0x400) != 0) {
+      +  if ((algorithm_enable_flags_0_cal & 0x400) != 0) {
+      -  if ((_calibration_feature_enable_flags_word_0 & 0x800) != 0) {
+      +  if ((algorithm_enable_flags_0_cal & 0x800) != 0) {
+      -  if ((_calibration_feature_enable_flags_word_0 & 0x1000) != 0) {
+      +  if ((algorithm_enable_flags_0_cal & 0x1000) != 0) {
+      -  if ((_calibration_feature_enable_flags_word_0 & 0x2000) != 0) {
+      +  if ((algorithm_enable_flags_0_cal & 0x2000) != 0) {
+      -  uVar1 = _calibration_feature_enable_flags_word_0 & 0xffff8000;
+      -  if ((_calibration_feature_enable_flags_word_0 & 0x8000) != 0) {
+      +  uVar1 = algorithm_enable_flags_0_cal & 0xffff8000;
+      +  if ((algorithm_enable_flags_0_cal & 0x8000) != 0) {
+  0x0000c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 4 lines
+      -  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) ||
+      +  if ((algorithm_enable_flags_1_cal.altitude_derate_enable == 0) ||
+      -    return _calibration_feature_enable_flags_word_1 & 0x20;
+      +    return (ushort)algorithm_enable_flags_1_cal & 0x20;
+  0x0000c8a0 cm550_dzgTimingAndPressureControlStateMachine: 2 lines
+      -  if (_DAT_008000fe == 7) {
+      +  if (user_fueling_state_previous_pass == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) {
+  0x0000c962 cm550_runAllSpeedGovernor: 6 lines
+      -    if (user_fueling_state == _DAT_008000fe) {
+      +    if (user_fueling_state == user_fueling_state_previous_pass) {
+      -            (user_fueling_state == _DAT_008000fe)) {
+      +            (user_fueling_state == user_fueling_state_previous_pass)) {
+      -  _DAT_008000fe = user_fueling_state;
+      +  user_fueling_state_previous_pass = user_fueling_state;
+  0x0000d2be cm550_acceleratorThrottleFaultDetector: 3 lines
+      -    if (((_DAT_00803cca & 8) == 0) && ((state_of_the_throttle_interlock_switch_on_off & 2) != 0)) {
+      +    if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) &&
+      +       ((state_of_the_throttle_interlock_switch_on_off & 2) != 0)) {
+  0x0000d4ae cm550_FUN_0000d4ae: 4 lines
+      -    uVar1 = _DAT_00803cca & 8;
+      -    if (((_DAT_00803cca & 8) == 0) ||
+      +    uVar1 = (ushort)algorithm_enable_flags_27_cal & 8;
+      +    if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) ||
+  0x0000e998 cm550_FUN_0000e998: 4 lines
+      -  uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),_DAT_00803cca) & 0xffff0010;
+      -  if ((_DAT_00803cca & 0x10) != 0) {
+      +  uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_27_cal) & 0xffff0010;
+      +  if (algorithm_enable_flags_27_cal.boost_pressure_in_range_diagnostic_enable != 0) {
+  0x0000eba4 cm550_diagnosticMessageTransmissionManager: 6 lines
+      -  if (((_diagnostic_subsystem_enable_flags & 4) != 0) &&
+      +  if ((algorithm_enable_flags_11_cal.j1922_communication_enable != 0) &&
+      -  uVar4 = CONCAT22(uVar3,_diagnostic_subsystem_enable_flags) & 0xffff0002;
+      -  if ((_diagnostic_subsystem_enable_flags & 2) != 0) {
+      +  uVar4 = CONCAT22(uVar3,algorithm_enable_flags_11_cal) & 0xffff0002;
+      +  if (algorithm_enable_flags_11_cal.j1587_communication_enable != 0) {
+  0x0000ed64 insiteCommandByteDispatcher: 5 lines
+      -          if ((_calibration_feature_enable_flags_word_3 & 2) != 0) {
+      +          if (algorithm_enable_flags_3_cal.idle_shutdown_enable != 0) {
+      -          if ((_DAT_0080d672 != 0) && ((_calibration_feature_enable_flags_word_3 & 4) != 0)) {
+      +          if ((_DAT_0080d672 != 0) &&
+      +             (algorithm_enable_flags_3_cal.idle_shutdown_override_enable != 0)) {
+  0x0000fa06 vp44State2TransitionHandler: 5 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_9 & 0x40;
+      -  if (((_calibration_feature_enable_flags_word_9 & 0x40) == 0) || (_DAT_0080daf4 == 0)) {
+      +  uVar1 = (ushort)algorithm_enable_flags_12_cal & 0x40;
+      +  if ((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable == 0) || (_DAT_0080daf4 == 0))
+      +  {
+  0x0000ff48 cm550_FUN_0000ff48: 4 lines
+      -  if ((_feature_enable_flags_word & 0x200) == 0) {
+      +  if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
+      -  return _feature_enable_flags_word & 0x200;
+      +  return (ushort)algorithm_enable_flags_18_cal & 0x200;
+  0x00010568 vp44_rpmDerateCalculationController: 5 lines
+      -  if ((_calibration_feature_enable_flags_word_5 & 0x400) == 0) {
+      +  if (algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) {
+      -      if (((_calibration_feature_enable_flags_word_1 & 4) == 0) && (_DAT_0080aa96 == 0)) {
+      +      if ((algorithm_enable_flags_1_cal.test_cell_throttle_switch_override_enable == 0) &&
+      +         (_DAT_0080aa96 == 0)) {
+  0x00010822 vp44_derateThresholdMonitorAndFaultController: 9 lines
+      -  uVar4 = _calibration_feature_enable_flags_word_5 & 0x400;
+      -  if ((((_calibration_feature_enable_flags_word_5 & 0x400) == 0) &&
+      -      (uVar4 = _calibration_feature_enable_flags_word_1 & 4,
+      -      (_calibration_feature_enable_flags_word_1 & 4) == 0)) && (_DAT_0080aa96 == 0)) {
+      +  uVar4 = (ushort)algorithm_enable_flags_5_cal & 0x400;
+      +  if (((algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) &&
+      +      (uVar4 = (ushort)algorithm_enable_flags_1_cal & 4,
+      +      algorithm_enable_flags_1_cal.test_cell_throttle_switch_override_enable == 0)) &&
+      +     (_DAT_0080aa96 == 0)) {
+  0x00011e5e cm550_coldStartFuelControlSlowCycle40Coordinator: 4 lines
+      -  uVar4 = _calibration_feature_enable_flags_word_3 & 0x800;
+      -  if (((((_calibration_feature_enable_flags_word_3 & 0x800) == 0) ||
+      +  uVar4 = (ushort)algorithm_enable_flags_3_cal & 0x800;
+      +  if ((((algorithm_enable_flags_3_cal.cylinder_pressure_maintenance_enable == 0) ||
+  0x00013616 vp44_communication_state_machine: 5 lines
+      -  uVar4 = CONCAT22((short)((uint)in_D0 >> 0x10),_calibration_feature_enable_flags_word_0) &
+      -          0xffff0100;
+      -  if ((_calibration_feature_enable_flags_word_0 & 0x100) != 0) {
+      +  uVar4 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_0_cal) & 0xffff0100;
+      +  if ((algorithm_enable_flags_0_cal & 0x100) != 0) {
+  0x000138b6 cm550_updateDataloggerTriggers: 4 lines
+      -  uVar1 = (uint)(_feature_enable_flags_word & 0x20);
+      -  if ((_feature_enable_flags_word & 0x20) == 0) {
+      +  uVar1 = (uint)((ushort)algorithm_enable_flags_18_cal & 0x20);
+      +  if (algorithm_enable_flags_18_cal.datalogger_enable == 0) {
+  0x00013a5c cm550_recordDataloggerSamples: 6 lines
+      -  pbVar7 = (byte *)(_feature_enable_flags_word & 0x20);
+      -  if ((((_feature_enable_flags_word & 0x20) == 0) && (datalogger_trigger_detected_flag != 1)) &&
+      -     (datalogger_event_logging_active_flag != 1)) {
+      +  pbVar7 = (byte *)((ushort)algorithm_enable_flags_18_cal & 0x20);
+      +  if (((algorithm_enable_flags_18_cal.datalogger_enable == 0) &&
+      +      (datalogger_trigger_detected_flag != 1)) && (datalogger_event_logging_active_flag != 1)) {
+  0x00014fca mc68k_sampleAndDebounceDiscreteInputs: 28 lines
+      -  if ((_timing_governor_feature_enable_flags & 0x400) != 0) {
+      +  if (algorithm_enable_flags_32_cal.clutch_switch_inversion_cancel_enable != 0) {
+      -  if ((_timing_governor_feature_enable_flags & 0x800) != 0) {
+      +  if (algorithm_enable_flags_32_cal.brake_switch_inversion_cancel_enable != 0) {
+      -  if ((_DAT_00803cd6 & 1) != 0) {
+      +  if (algorithm_enable_flags_33_cal.cruise_resume_switch_inversion_cancel_enable != 0) {
+      -  if ((_DAT_00803cd6 & 2) != 0) {
+      +  if (algorithm_enable_flags_33_cal.cruise_set_switch_inversion_cancel_enable != 0) {
+      -  if ((_DAT_00803cd6 & 4) != 0) {
+      +  if (algorithm_enable_flags_33_cal.cruise_on_switch_inversion_cancel_enable != 0) {
+      -    if ((_switch_input_override_enable_flags & 0x1000) == 0) {
+      +    if (algorithm_enable_flags_16_cal.power_take_off_on_switch_override_enable == 0) {
+      -    if ((_switch_input_override_enable_flags & 0x400) == 0) {
+      +    if (algorithm_enable_flags_16_cal.power_take_off_set_switch_override_enable == 0) {
+      -    if ((_switch_input_override_enable_flags & 0x100) == 0) {
+      +    if (algorithm_enable_flags_16_cal.power_take_off_resume_switch_override_enable == 0) {
+      -       ((_DAT_00803ccc & 0x10) != 0)) {
+      +       (algorithm_enable_flags_28_cal.integrated_idle_management_enable != 0)) {
+      -    if ((_switch_input_override_enable_flags & 0x10) == 0) {
+      +    if (algorithm_enable_flags_16_cal.cruise_control_on_switch_override_enable == 0) {
+      -    if ((_switch_input_override_enable_flags & 4) == 0) {
+      +    if (algorithm_enable_flags_16_cal.cruise_control_set_switch_override_enable == 0) {
+      -    if ((_switch_input_override_enable_flags & 1) == 0) {
+      +    if (algorithm_enable_flags_16_cal.cruise_control_resume_switch_override_enable == 0) {
+  0x00015f8e mc68k_dispatchJ1708ReceivedMessages: 6 lines
+      -      if ((_diagnostic_subsystem_enable_flags & 1) != 0) {
+      +      if (algorithm_enable_flags_11_cal.proprietary_communication_enable != 0) {
+      -         ((_diagnostic_subsystem_enable_flags & 4) != 0)) {
+      +         (algorithm_enable_flags_11_cal.j1922_communication_enable != 0)) {
+      -    else if ((_diagnostic_subsystem_enable_flags & 2) != 0) {
+      +    else if (algorithm_enable_flags_11_cal.j1587_communication_enable != 0) {
+  0x00016dd4 cm550_highRpmEngineProtectionStateMachine: 8 lines
+      -  if (((_feature_enable_flags_word & 2) == 0) ||
+      +  if ((algorithm_enable_flags_18_cal.engine_warmup_protection_enable == 0) ||
+      -    return _feature_enable_flags_word & 2;
+      +    return (ushort)algorithm_enable_flags_18_cal & 2;
+      -  uVar2 = (uint)(_feature_enable_flags_word & 2);
+      -  if ((_feature_enable_flags_word & 2) != 0) {
+      +  uVar2 = (uint)((ushort)algorithm_enable_flags_18_cal & 2);
+      +  if (algorithm_enable_flags_18_cal.engine_warmup_protection_enable != 0) {
+  0x0001709e cm550_fuelTemperatureLimitingSecondary: 4 lines
+      -  if ((_feature_enable_flags_word & 2) == 0) {
+      +  if (algorithm_enable_flags_18_cal.engine_warmup_protection_enable == 0) {
+      -  return _feature_enable_flags_word & 2;
+      +  return (ushort)algorithm_enable_flags_18_cal & 2;
+  0x000184c6 cm550_FUN_000184c6: 3 lines
+      -    if (((_calibration_feature_enable_flags_word_9 & 0x40) == 0) || (_DAT_0080daf4 == 0)) {
+      +    if ((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable == 0) || (_DAT_0080daf4 == 0)
+      +       ) {
+  0x00018620 cm550_engineProtectionMultiStateSlowCycle40Coordinator: 5 lines
+      -  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),_calibration_feature_enable_flags_word_2) &
+      -          0xffff0010;
+      -  if ((_calibration_feature_enable_flags_word_2 & 0x10) == 0) {
+      +  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_2_cal) & 0xffff0010;
+      +  if (algorithm_enable_flags_2_cal.engine_protection_enable == 0) {
+  0x00018ac4 cm550_diagnosticProtectionEvaluator: 18 lines
+      -  uVar4 = _calibration_feature_enable_flags_word_2 & 0x10;
+      -  if ((((((_calibration_feature_enable_flags_word_2 & 0x10) != 0) &&
+      -        (uVar4 = _calibration_feature_enable_flags_word_2 & 1,
+      -        (_calibration_feature_enable_flags_word_2 & 1) != 0)) &&
+      -       (uVar4 = _calibration_feature_enable_flags_word_2 & 0x20,
+      -       (_calibration_feature_enable_flags_word_2 & 0x20) != 0)) &&
+      +  uVar4 = (ushort)algorithm_enable_flags_2_cal & 0x10;
+      +  if (((((algorithm_enable_flags_2_cal.engine_protection_enable != 0) &&
+      +        (uVar4 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable,
+      +        algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0)) &&
+      +       (uVar4 = (ushort)algorithm_enable_flags_2_cal & 0x20,
+      +       algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
+      -    if ((((uint)*(ushort *)
+      -                 (&algorithm_enable_flags_0_cal + (short)((int)(uVar1 + 2) >> 4) * 2) &
+      +    if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 2) >> 4)] &
+      -       ((uint)*(ushort *)
+      -               (&algorithm_enable_flags_0_cal + (short)((int)(uVar1 + 3) >> 4) * 2) &
+      +       ((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 3) >> 4)] &
+  0x00018cb6 cm550_protectionState1DiagnosticValidator: 14 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_2 & 1;
+      -  if ((((_calibration_feature_enable_flags_word_2 & 1) != 0) &&
+      -      (uVar1 = _calibration_feature_enable_flags_word_2 & 0x20,
+      -      (_calibration_feature_enable_flags_word_2 & 0x20) != 0)) &&
+      +  uVar1 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable;
+      +  if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0) &&
+      +      (uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x20,
+      +      algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
+      -          (((uint)*(ushort *)
+      -                   (&algorithm_enable_flags_0_cal + (short)((int)(uVar2 + 2) >> 4) * 2) &
+      +          (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 2) >> 4)] &
+      -         (((uint)*(ushort *)
+      -                  (&algorithm_enable_flags_0_cal + (short)((int)(uVar2 + 3) >> 4) * 2) &
+      +         (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 3) >> 4)] &
+  0x00018e0c cm550_calculateFaultDerateEngineSpeedLimit: 13 lines
+      -      if ((((uint)*(ushort *)
+      -                   (&algorithm_enable_flags_0_cal + (short)((int)uVar4 >> 4) * 2) &
+      -           1 << (uVar4 & 0xf)) == 0) &&
+      -         (((uint)*(ushort *)(&algorithm_enable_flags_0_cal + sVar1 * 2) &
+      -          1 << (uVar3 & 0xf)) == 0)) {
+      +      if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar4 >> 4)] & 1 << (uVar4 & 0xf)) ==
+      +           0) && (((uint)(&algorithm_enable_flags_0_cal)[sVar1] & 1 << (uVar3 & 0xf)) == 0)) {
+      -           (((uint)*(ushort *)(&algorithm_enable_flags_0_cal + sVar1 * 2) &
+      -            1 << (uVar3 & 0xf)) == 0)) {
+      +           (((uint)(&algorithm_enable_flags_0_cal)[sVar1] & 1 << (uVar3 & 0xf)) == 0)) {
+      -         (((uint)*(ushort *)(&algorithm_enable_flags_0_cal + sVar1 * 2) &
+      -          1 << (uVar3 & 0xf)) == 0)) {
+      +         (((uint)(&algorithm_enable_flags_0_cal)[sVar1] & 1 << (uVar3 & 0xf)) == 0)) {
+  0x00018fcc processDiagnosticLimitStatus: 9 lines
+      -  uVar2 = _calibration_feature_enable_flags_word_2 & 1;
+      -  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) ||
+      +  uVar2 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable;
+      +  if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable == 0) ||
+      -      if (((uint)*(ushort *)
+      -                  (&algorithm_enable_flags_0_cal + (short)((int)uVar5 >> 4) * 2) &
+      -          1 << (uVar5 & 0xf)) == 0) {
+      +      if (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar5 >> 4)] & 1 << (uVar5 & 0xf)) ==
+      +          0) {
+  0x00019702 cm550_FUN_00019702: 15 lines
+      -      if ((((uint)*(ushort *)
+      -                   (&algorithm_enable_flags_0_cal + (short)((int)uVar5 >> 4) * 2) &
+      -           1 << (uVar5 & 0xf)) == 0) &&
+      -         (((uint)*(ushort *)(&algorithm_enable_flags_0_cal + sVar2 * 2) &
+      -          1 << (uVar4 & 0xf)) == 0)) {
+      +      if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar5 >> 4)] & 1 << (uVar5 & 0xf)) ==
+      +           0) && (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar4 & 0xf)) == 0)) {
+      -           (((uint)*(ushort *)(&algorithm_enable_flags_0_cal + sVar2 * 2) &
+      -            1 << (uVar4 & 0xf)) == 0)) {
+      +           (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar4 & 0xf)) == 0)) {
+      -         (((uint)*(ushort *)(&algorithm_enable_flags_0_cal + sVar2 * 2) &
+      -          1 << (uVar4 & 0xf)) == 0)) {
+      +         (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar4 & 0xf)) == 0)) {
+      -  if ((_DAT_00803ca2 & 0x1000) != 0) {
+      +  if (algorithm_enable_flags_7_cal.oil_pressure_fueling_limiting_enable != 0) {
+  0x0001abb2 cm550_updateElectronicSmartPowerTau: 7 lines
+      -  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),_calibration_feature_enable_flags_word_9) &
+      -          0xffff0010;
+      -  if ((_calibration_feature_enable_flags_word_9 & 0x10) != 0) {
+      +  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_12_cal) & 0xffff0010;
+      +  if (algorithm_enable_flags_12_cal.electronic_smart_power_enable != 0) {
+      -        if ((((_calibration_feature_enable_flags_word_9 & 0x20) != 0) &&
+      +        if (((algorithm_enable_flags_12_cal.reverse_electronic_smart_power_enable != 0) &&
+  0x0001c152 fuelTimingOilPressureModeController: 9 lines
+      -  if ((_calibration_feature_enable_flags_word_1 & 0x10) == 0) {
+      +  if (algorithm_enable_flags_1_cal.torque_derate_override_enable == 0) {
+      -    else if ((_calibration_feature_enable_flags_word_1 & 2) == 0) {
+      +    else if (algorithm_enable_flags_1_cal.user_override_fueling_enable == 0) {
+      -  if ((_DAT_0080d33c != 0xb) && (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)) {
+      +  if ((final_fueling_state_prev != FUELING_STATE_LOW_SPEED_GOVERNOR) &&
+      +     (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)) {
+      -  _DAT_0080d33c = final_fueling_state;
+      +  final_fueling_state_prev = final_fueling_state;
+  0x0001c65e cm550_fuelDemandTableBlendCalculator: 6 lines
+      -  if ((_DAT_00803c9c & 0x100) == 0) {
+      +  if (algorithm_enable_flags_4_cal.user_commanded_timing_enable == 0) {
+      -  uVar1 = CONCAT22(uVar3,_calibration_feature_enable_flags_word_2) & 0xffff4000;
+      -  if ((_calibration_feature_enable_flags_word_2 & 0x4000) != 0) {
+      +  uVar1 = CONCAT22(uVar3,algorithm_enable_flags_2_cal) & 0xffff4000;
+      +  if (algorithm_enable_flags_2_cal.user_commanded_timing_increment_enable != 0) {
+  0x0001c8a0 cm550_FUN_0001c8a0: 2 lines
+      -  if ((_feature_enable_flags_word & 0x200) == 0) {
+      +  if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
+  0x0001ca54 cm550_fuelDemandLimitSelector11: 11 lines
+      -       (uVar1 = _calibration_feature_enable_flags_word_0 & 0x40,
+      -       (_calibration_feature_enable_flags_word_0 & 0x40) != 0)))) ||
+      -     (((engine_state != ENGINE_STATE_OVERSPEED ||
+      -       (uVar1 = _calibration_feature_enable_flags_word_9 & 2,
+      -       (_calibration_feature_enable_flags_word_9 & 2) != 0)) &&
+      -      (engine_state == ENGINE_STATE_OVERSPEED)))) {
+      +       (uVar1 = algorithm_enable_flags_0_cal & 0x40, (algorithm_enable_flags_0_cal & 0x40) != 0))))
+      +     || (((engine_state != ENGINE_STATE_OVERSPEED ||
+      +          (uVar1 = (ushort)algorithm_enable_flags_12_cal & 2,
+      +          algorithm_enable_flags_12_cal.overspeed_fuel_shutoff_enable != 0)) &&
+      +         (engine_state == ENGINE_STATE_OVERSPEED)))) {
+  0x0001ca5c vp44_canPinVp44StatusController: 11 lines
+      -       (uVar1 = _calibration_feature_enable_flags_word_0 & 0x40,
+      -       (_calibration_feature_enable_flags_word_0 & 0x40) != 0)))) ||
+      -     (((engine_state != ENGINE_STATE_OVERSPEED ||
+      -       (uVar1 = _calibration_feature_enable_flags_word_9 & 2,
+      -       (_calibration_feature_enable_flags_word_9 & 2) != 0)) &&
+      -      (engine_state == ENGINE_STATE_OVERSPEED)))) {
+      +       (uVar1 = algorithm_enable_flags_0_cal & 0x40, (algorithm_enable_flags_0_cal & 0x40) != 0))))
+      +     || (((engine_state != ENGINE_STATE_OVERSPEED ||
+      +          (uVar1 = (ushort)algorithm_enable_flags_12_cal & 2,
+      +          algorithm_enable_flags_12_cal.overspeed_fuel_shutoff_enable != 0)) &&
+      +         (engine_state == ENGINE_STATE_OVERSPEED)))) {
+  0x0001cad6 vp44_FUN_0001cad6: 10 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_2 & 0x10;
+      -  if (((_calibration_feature_enable_flags_word_2 & 0x10) != 0) &&
+      -     ((uVar1 = _DAT_00803ca4 & 0x1000, (_DAT_00803ca4 & 0x1000) != 0 ||
+      -      (uVar1 = _DAT_00803ca4 & 0x2000, (_DAT_00803ca4 & 0x2000) != 0)))) {
+      +  uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x10;
+      +  if ((algorithm_enable_flags_2_cal.engine_protection_enable != 0) &&
+      +     ((uVar1 = (ushort)algorithm_enable_flags_8_cal & 0x1000,
+      +      algorithm_enable_flags_8_cal.fuel_temperature_fueling_limiting_enable != 0 ||
+      +      (uVar1 = (ushort)algorithm_enable_flags_8_cal & 0x2000,
+      +      algorithm_enable_flags_8_cal.fuel_temperature_rpm_limiting_enable != 0)))) {
+  0x0001cc72 cm550_FUN_0001cc72: 6 lines
+      -  if ((_feature_enable_flags_word & 0x200) == 0) {
+      -    if (((((_timing_governor_feature_enable_flags & 0x8000) == 0) ||
+      +  if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
+      +    if ((((algorithm_enable_flags_32_cal.full_fueling_coolant_temperature_adjustment_enable == 0) ||
+      -  if ((_calibration_feature_enable_flags_word_9 & 0x10) == 0) {
+      +  if (algorithm_enable_flags_12_cal.electronic_smart_power_enable == 0) {
+  0x0001d392 selectHighSpeedGovernorGainSet: 6 lines
+      -  uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),_feature_enable_flags_word) & 0xffff0001;
+      -  if ((_feature_enable_flags_word & 1) != 0) {
+      +  uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_18_cal) & 0xffff0001;
+      +  if (algorithm_enable_flags_18_cal.high_speed_governor_gain_scheduling_enable != 0) {
+      -    if ((_DAT_0080d33c == 0xc) ||
+      +    if ((final_fueling_state_prev == FUELING_STATE_HIGH_SPEED_GOVERNOR) ||
+  0x0001d9b4 vp44SensorStatusMonitor: 16 lines
+      -  uVar2 = _calibration_feature_enable_flags_word_3 & 2;
+      -  if (((_calibration_feature_enable_flags_word_3 & 2) != 0) &&
+      -     (uVar2 = _DAT_00803ccc & 0x10, (_DAT_00803ccc & 0x10) == 0)) {
+      +  uVar2 = (ushort)algorithm_enable_flags_3_cal & 2;
+      +  if ((algorithm_enable_flags_3_cal.idle_shutdown_enable != 0) &&
+      +     (uVar2 = (ushort)algorithm_enable_flags_28_cal & 0x10,
+      +     algorithm_enable_flags_28_cal.integrated_idle_management_enable == 0)) {
+      -          uVar2 = _DAT_00803cca & 0x400;
+      -          if (((_DAT_00803cca & 0x400) == 0) || (_vp44_sensor_secondary_fault != 1)) {
+      +          uVar2 = (ushort)algorithm_enable_flags_27_cal & 0x400;
+      +          if ((algorithm_enable_flags_27_cal.idle_shutdown_temperature_enable == 0) ||
+      +             (_vp44_sensor_secondary_fault != 1)) {
+      -        uVar2 = _calibration_feature_enable_flags_word_3 & 4;
+      -        if (((_calibration_feature_enable_flags_word_3 & 4) == 0) ||
+      +        uVar2 = (ushort)algorithm_enable_flags_3_cal & 4;
+      +        if ((algorithm_enable_flags_3_cal.idle_shutdown_override_enable == 0) ||
+  0x0001de58 cm550_FUN_0001de58: 6 lines
+      -  if (((_feature_enable_flags_word & 0x200) == 0) ||
+      +  if ((algorithm_enable_flags_18_cal.programmable_power_enable == 0) ||
+      -      if ((_feature_enable_flags_word & 0x200) == 0) {
+      +      if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
+      -      if ((_feature_enable_flags_word & 0x200) == 0) {
+      +      if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
+  0x0001fd6c cm550_j1939TimeoutDataClearHandler: 4 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_2 & 0x100;
+      -  if (((_calibration_feature_enable_flags_word_2 & 0x100) != 0) &&
+      +  uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x100;
+      +  if ((algorithm_enable_flags_2_cal.j1922_monitor_clear_enable != 0) &&
+  0x0001fdc0 cm550_j1939MessageTypeCounter: 5 lines
+      -  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),_calibration_feature_enable_flags_word_2) &
+      -          0xffff0080;
+      -  if ((_calibration_feature_enable_flags_word_2 & 0x80) != 0) {
+      +  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_2_cal) & 0xffff0080;
+      +  if (algorithm_enable_flags_2_cal.j1922_monitor_enable != 0) {
+  0x0001ff38 cm550_engineRunTimeHistogramAccumulator: 4 lines
+      -  uVar2 = CONCAT22(uVar1,_diagnostic_subsystem_enable_flags) & 0xffff0008;
+      -  if ((_diagnostic_subsystem_enable_flags & 8) != 0) {
+      +  uVar2 = CONCAT22(uVar1,algorithm_enable_flags_11_cal) & 0xffff0008;
+      +  if (algorithm_enable_flags_11_cal.j1939_communication_enable != 0) {
+  0x00020380 cm550_FUN_00020380: 4 lines
+      -  uVar1 = CONCAT22(extraout_D0u,_DAT_00803cd6) & 0xffff0010;
+      -  if (((_DAT_00803cd6 & 0x10) != 0) &&
+      +  uVar1 = CONCAT22(extraout_D0u,algorithm_enable_flags_33_cal) & 0xffff0010;
+      +  if ((algorithm_enable_flags_33_cal.engine_retarder_switch_level_override != 0) &&
+  0x0002041c cm550_FUN_0002041c: 4 lines
+      -  uVar1 = CONCAT22(extraout_D0u,_DAT_00803cc6) & 0xffff8000;
+      -  if (((_DAT_00803cc6 & 0x8000) != 0) &&
+      +  uVar1 = CONCAT22(extraout_D0u,algorithm_enable_flags_25_cal) & 0xffff8000;
+      +  if ((algorithm_enable_flags_25_cal.manual_fan_level_override != 0) &&
+  0x000204b0 cm550_outputControlState1Handler: 4 lines
+      -  uVar1 = CONCAT22(extraout_D0u,_switch_override_configuration) & 0xffff0080;
+      -  if (((_switch_override_configuration & 0x80) != 0) &&
+      +  uVar1 = CONCAT22(extraout_D0u,algorithm_enable_flags_13_cal) & 0xffff0080;
+      +  if ((algorithm_enable_flags_13_cal.idle_switch_override_enable != 0) &&
+  0x000205c4 cm550_FUN_000205c4: 2 lines
+      -  if ((_DAT_00803cc6 & 8) != 0) {
+      +  if (algorithm_enable_flags_25_cal.j1939_multiplex_limp_home_on_analog_throttle_enable != 0) {
+  0x000206a8 cm550_FUN_000206a8: 4 lines
+      -  if ((((uint)*(ushort *)
+      -               (&algorithm_enable_flags_0_cal +
+      -               (short)((int)((input_state & 0xffff) + 0xd0) >> 4) * 2) &
+      +  if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)((input_state & 0xffff) + 0xd0) >> 4)] &
+  0x00020784 cm550_FUN_00020784: 7 lines
+      -  uVar1 = _feature_enable_flags_word & 0x1000;
+      -  if ((((_feature_enable_flags_word & 0x1000) != 0) &&
+      -      (uVar1 = _DAT_00803cb0 & 8, (_DAT_00803cb0 & 8) != 0)) &&
+      +  uVar1 = (ushort)algorithm_enable_flags_18_cal & 0x1000;
+      +  if (((algorithm_enable_flags_18_cal.remote_throttle_enable != 0) &&
+      +      (uVar1 = (ushort)algorithm_enable_flags_14_cal & 8,
+      +      algorithm_enable_flags_14_cal.remote_throttle_switch_override_enable != 0)) &&
+  0x00020890 cm550_FUN_00020890: 8 lines
+      -  if ((((uint)*(ushort *)(&algorithm_enable_flags_0_cal + (short)((int)uVar2 >> 4) * 2) &
+      -       1 << uVar2 % 0x10) != 0) &&
+      -     (uVar5 = (uint)*(byte *)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch
+      -                             + 0x80bd4a), uVar5 <= _j1939_source_address_of_commanding_device)) {
+      +  if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar2 >> 4)] & 1 << uVar2 % 0x10) != 0)
+      +     && (uVar5 = (uint)*(byte *)(j1939_input_signal_descriptor_table[(short)input_index].
+      +                                 logical_switch + 0x80bd4a),
+      +        uVar5 <= _j1939_source_address_of_commanding_device)) {
+  0x00020c98 cm550_FUN_00020c98: 13 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_5 & 0x400;
+      -  if ((((_calibration_feature_enable_flags_word_5 & 0x400) != 0) &&
+      -      (uVar1 = _switch_override_configuration & 0x80, (_switch_override_configuration & 0x80) != 0))
+      -     && (uVar1 = (uint)_priority_of_client_overriding_final_sampled_throttle_0_ff,
+      -        _priority_of_client_overriding_final_sampled_throttle_0_ff <=
+      -        _j1939_source_address_of_commanding_device)) {
+      +  uVar1 = (ushort)algorithm_enable_flags_5_cal & 0x400;
+      +  if (((algorithm_enable_flags_5_cal.sampled_throttle_override_enable != 0) &&
+      +      (uVar1 = (ushort)algorithm_enable_flags_13_cal & 0x80,
+      +      algorithm_enable_flags_13_cal.idle_switch_override_enable != 0)) &&
+      +     (uVar1 = (uint)_priority_of_client_overriding_final_sampled_throttle_0_ff,
+      +     _priority_of_client_overriding_final_sampled_throttle_0_ff <=
+      +     _j1939_source_address_of_commanding_device)) {
+  0x00020e14 cm550_FUN_00020e14: 11 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_5 & 0x400;
+      -  if (((((_calibration_feature_enable_flags_word_5 & 0x400) != 0) &&
+      -       (uVar1 = _switch_override_configuration & 0x80, (_switch_override_configuration & 0x80) != 0)
+      -       ) && (uVar1 = (uint)_j1939_source_address_of_commanding_device,
+      -            priority_of_client_which_is_currently_overriding_switch_8_0_ff <= uVar1)) &&
+      +  uVar1 = (ushort)algorithm_enable_flags_5_cal & 0x400;
+      +  if ((((algorithm_enable_flags_5_cal.sampled_throttle_override_enable != 0) &&
+      +       (uVar1 = (ushort)algorithm_enable_flags_13_cal & 0x80,
+      +       algorithm_enable_flags_13_cal.idle_switch_override_enable != 0)) &&
+      +      (uVar1 = (uint)_j1939_source_address_of_commanding_device,
+      +      priority_of_client_which_is_currently_overriding_switch_8_0_ff <= uVar1)) &&
+  0x00020fac cm550_FUN_00020fac: 4 lines
+      -  uVar1 = CONCAT22(extraout_D0u,_DAT_00803cbc) & 0xffff0200;
+      -  if (((_DAT_00803cbc & 0x200) != 0) &&
+      +  uVar1 = CONCAT22(extraout_D0u,algorithm_enable_flags_20_cal) & 0xffff0200;
+      +  if (((algorithm_enable_flags_20_cal & 0x200) != 0) &&
+  0x000212b2 mc68k_FUN_000212b2: 4 lines
+      -  uVar5 = CONCAT22((short)((uint)in_D0 >> 0x10),_diagnostic_subsystem_enable_flags) & 0xffff0008;
+      -  if ((_diagnostic_subsystem_enable_flags & 8) != 0) {
+      +  uVar5 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_11_cal) & 0xffff0008;
+      +  if (algorithm_enable_flags_11_cal.j1939_communication_enable != 0) {
+  0x0002142c cm550_FUN_0002142c: 7 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_2 & 0x1000;
+      -  if (((((_calibration_feature_enable_flags_word_2 & 0x1000) != 0) && (_retarder_control_mode == 2))
+      -      && (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 == 1)) &&
+      +  uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x1000;
+      +  if ((((algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable != 0) &&
+      +       (_retarder_control_mode == 2)) &&
+      +      (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 == 1)) &&
+  0x00022070 cm550_memoryRegisterController: 4 lines
+      -  uVar1 = _calibration_feature_enable_flags_word_2 & 0xffff0800;
+      -  if ((_calibration_feature_enable_flags_word_2 & 0x800) != 0) {
+      +  uVar1 = (ushort)algorithm_enable_flags_2_cal & 0xffff0800;
+      +  if (algorithm_enable_flags_2_cal.j1939_monitor_enable != 0) {
+  0x00025806 cm550_FUN_00025806: 2 lines
+      -    if ((_calibration_feature_enable_flags_word_5 & 0x400) == 0) {
+      +    if (algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) {
+  0x00025a34 vp44_FUN_00025a34: 2 lines
+      -  if ((_timing_governor_feature_enable_flags & 0x200) != 0) {
+      +  if (algorithm_enable_flags_32_cal.low_speed_governor_no_load_fuel_enable != 0) {
+  0x00025b1c cm550_runLowSpeedGovernor: 2 lines
+      -      if ((_timing_governor_feature_enable_flags & 0x200) != 0) {
+      +      if (algorithm_enable_flags_32_cal.low_speed_governor_no_load_fuel_enable != 0) {
+  0x0002609c cm550_epsAccelerationMonitor: 5 lines
+      -      uVar2 = CONCAT22((short)(uVar2 >> 0x10),_calibration_feature_enable_flags_word_1) & 0xffff1000
+      -      ;
+      -      if ((_calibration_feature_enable_flags_word_1 & 0x1000) != 0) {
+      +      uVar2 = CONCAT22((short)(uVar2 >> 0x10),algorithm_enable_flags_1_cal) & 0xffff1000;
+      +      if (algorithm_enable_flags_1_cal.low_speed_governor_aggressive_gain_set_enable != 0) {
+  0x00026340 cm550_epsDiagnosticModeHandler: 10 lines
+      -               ((_calibration_feature_enable_flags_word_1 & 0x4000) != 0)) &&
+      -              ((int)sStack_6 <
+      -               (int)_breakpoint_between_mid_gear_and_default_gains_based_on_over_0_2_255 -
+      -               (int)_DAT_00808324)) {
+      -        if (((_calibration_feature_enable_flags_word_1 & 0x2000) == 0) ||
+      +               (algorithm_enable_flags_1_cal.low_speed_governor_middle_gear_gain_set_enable != 0))
+      +              && ((int)sStack_6 <
+      +                  (int)_breakpoint_between_mid_gear_and_default_gains_based_on_over_0_2_255 -
+      +                  (int)_DAT_00808324)) {
+      +        if ((algorithm_enable_flags_1_cal.low_speed_governor_high_gear_gain_set_enable == 0) ||
+  0x00026474 cm550_engineModeTimingAdjuster: 4 lines
+      -  if (((_calibration_feature_enable_flags_word_3 & 8) == 0) ||
+      +  if ((algorithm_enable_flags_3_cal.idle_speed_adjust_enable == 0) ||
+      -  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+      +  if (algorithm_enable_flags_12_cal.idle_speed_save_enable == 0) {
+  0x00026484 vp44_rpm_derate_monitor: 4 lines
+      -  if (((_calibration_feature_enable_flags_word_3 & 8) == 0) ||
+      +  if ((algorithm_enable_flags_3_cal.idle_speed_adjust_enable == 0) ||
+      -  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+      +  if (algorithm_enable_flags_12_cal.idle_speed_save_enable == 0) {
+  0x0002658c cm550_fuelDemandLimitSource2Selector: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+      +  if (algorithm_enable_flags_12_cal.idle_speed_save_enable == 0) {
+  0x0002659a vp44_initVP44StatusFlags: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+      +  if (algorithm_enable_flags_12_cal.idle_speed_save_enable == 0) {
+  0x000265e6 cm550_epsRpmTargetModeChecker: 2 lines
+      -     (in_D0 = 0, (_calibration_feature_enable_flags_word_1 & 0x8000) == 0)) {
+      +     (in_D0 = 0, algorithm_enable_flags_1_cal.low_speed_governor_tsc1_gain_set_enable == 0)) {
+  0x00026616 cm550_FUN_00026616: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_9 & 0x4000) == 0) {
+      +  if (algorithm_enable_flags_12_cal.low_speed_governor_cold_idle_override_enable == 0) {
+  0x00026ab8 cm550_rpmLoadParameterLookup: 2 lines
+      -  if ((_timing_governor_feature_enable_flags & 1) != 0) {
+      +  if (algorithm_enable_flags_32_cal.misfire_timing_limit_enable != 0) {
+  0x00026af0 cm550_FUN_00026af0: 4 lines
+      -  uVar1 = _timing_governor_feature_enable_flags & 1;
+      -  if (((_timing_governor_feature_enable_flags & 1) != 0) &&
+      +  uVar1 = algorithm_enable_flags_32_cal.misfire_timing_limit_enable;
+      +  if ((algorithm_enable_flags_32_cal.misfire_timing_limit_enable != 0) &&
+  0x00026b00 vp44OperatingConditionChecker: 4 lines
+      -  uVar1 = _timing_governor_feature_enable_flags & 1;
+      -  if (((_timing_governor_feature_enable_flags & 1) != 0) &&
+      +  uVar1 = algorithm_enable_flags_32_cal.misfire_timing_limit_enable;
+      +  if ((algorithm_enable_flags_32_cal.misfire_timing_limit_enable != 0) &&
+  0x0002dcb0 cm550_oil_pressure_shutdown_controller: 8 lines
+      -    in_D0 = _calibration_feature_enable_flags_word_3 & 0x10;
+      -    if ((_calibration_feature_enable_flags_word_3 & 0x10) != 0) {
+      +    in_D0 = (ushort)algorithm_enable_flags_3_cal & 0x10;
+      +    if (algorithm_enable_flags_3_cal.power_take_off_enable != 0) {
+      -          uVar1 = _calibration_feature_enable_flags_word_2 & 0x2000;
+      -          if ((_calibration_feature_enable_flags_word_2 & 0x2000) != 0) {
+      +          uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x2000;
+      +          if (algorithm_enable_flags_2_cal.power_take_off_throttle_override_enable != 0) {
+  0x0002ec50 cm550_FUN_0002ec50: 4 lines
+      -  if ((_feature_enable_flags_word & 0x1000) == 0) {
+      +  if (algorithm_enable_flags_18_cal.remote_throttle_enable == 0) {
+      -  else if ((_feature_enable_flags_word & 0x2000) == 0) {
+      +  else if (algorithm_enable_flags_18_cal.remote_throttle_transition_verification_enable == 0) {
+  0x0002f7e6 cm550_retarderControlModeHandler: 4 lines
+      -      uVar5 = _calibration_feature_enable_flags_word_2 & 0x1000;
+      -      if (((_calibration_feature_enable_flags_word_2 & 0x1000) != 0) ||
+      +      uVar5 = (ushort)algorithm_enable_flags_2_cal & 0x1000;
+      +      if ((algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable != 0) ||
+  0x000306ca cm550_FUN_000306ca: 5 lines
+      -  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),_calibration_feature_enable_flags_word_3) &
+      -          0xffff0200;
+      -  if ((_calibration_feature_enable_flags_word_3 & 0x200) != 0) {
+      +  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_3_cal) & 0xffff0200;
+      +  if (algorithm_enable_flags_3_cal.trip_information_enable != 0) {
+  0x00030a5e cm550_FUN_00030a5e: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_3 & 0x200) != 0) {
+      +  if (algorithm_enable_flags_3_cal.trip_information_enable != 0) {
+  0x00030a64 cm550_protectionFlagAccumulator: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_3 & 0x200) != 0) {
+      +  if (algorithm_enable_flags_3_cal.trip_information_enable != 0) {
+  0x00030b62 vp44InjectionSystemStateController: 4 lines
+      -    uVar1 = _calibration_feature_enable_flags_word_1 & 8;
+      -    if (uVar1 == 0) {
+      +    uVar1 = (ushort)algorithm_enable_flags_1_cal & 8;
+      +    if (algorithm_enable_flags_1_cal.user_override_timing_enable == 0) {
+  0x00031496 cm550_FUN_00031496: 6 lines
+      -  uVar1 = _feature_enable_flags_word & 0x10;
+      -  if (((uVar1 != 0) && (engine_state != ENGINE_STATE_STOPPED)) &&
+      -     (_trending_data_capture_active == 1)) {
+      +  uVar1 = (ushort)algorithm_enable_flags_18_cal & 0x10;
+      +  if (((algorithm_enable_flags_18_cal.trending_enable != 0) &&
+      +      (engine_state != ENGINE_STATE_STOPPED)) && (_trending_data_capture_active == 1)) {
+  0x000315be cm550_FUN_000315be: 3 lines
+      -  if (((_DAT_00801ea0 == 300) && (_DAT_00801ea0 = 0, (_feature_enable_flags_word & 0x10) != 0)) &&
+      +  if (((_DAT_00801ea0 == 300) &&
+      +      (_DAT_00801ea0 = 0, algorithm_enable_flags_18_cal.trending_enable != 0)) &&
+  0x00031a68 cm550_FUN_00031a68: 4 lines
+      -  if (((_feature_enable_flags_word & 0x10) != 0) && (_DAT_008049ea != 0)) {
+      +  if ((algorithm_enable_flags_18_cal.trending_enable != 0) && (_DAT_008049ea != 0)) {
+      -  return _feature_enable_flags_word & 0x10;
+      +  return (ushort)algorithm_enable_flags_18_cal & 0x10;
+  0x00032e4c j1939HandlePgn61443Eec2: 8 lines
+      -  if ((_switch_override_configuration & 0x80) == 0) {
+      +  if (algorithm_enable_flags_13_cal.idle_switch_override_enable == 0) {
+      -    if ((_calibration_feature_enable_flags_word_5 & 0x400) == 0) {
+      +    if (algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) {
+      -  if (((_feature_enable_flags_word & 0x1000) == 0) ||
+      -     ((_calibration_feature_enable_flags_word_5 & 0x800) != 0)) {
+      +  if ((algorithm_enable_flags_18_cal.remote_throttle_enable == 0) ||
+      +     (algorithm_enable_flags_5_cal.remote_throttle_override_enable != 0)) {
+  0x000338ea cm550_dutyCycleMonitorAltIsrHandler: 2 lines
+      -  if ((_calibration_feature_enable_flags_word_2 & 0x1000) == 0) {
+      +  if (algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable == 0) {
+  0x00034564 cm550_setDiagnosticSourceFromEngineFlags: 3 lines
+      -  if ((user_fueling_state == FUELING_STATE_NOT_SELECTED) && ((_DAT_00803c9c & 1) != 0)) {
+      +  if ((user_fueling_state == FUELING_STATE_NOT_SELECTED) &&
+      +     (algorithm_enable_flags_4_cal.user_commanded_fueling_enable != 0)) {
+  0x00034c36 vp44FaultRegisterBit2Monitor: 4 lines
+      -  if ((_calibration_feature_enable_flags_word_9 & 4) == 0) {
+      +  if (algorithm_enable_flags_12_cal.water_in_fuel_enable == 0) {
+      -      return _calibration_feature_enable_flags_word_9 & 4;
+      +      return (ushort)algorithm_enable_flags_12_cal & 4;

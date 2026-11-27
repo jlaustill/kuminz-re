@@ -1,0 +1,40 @@
+02ef4a: 48e70038                 movem.l a4/a3/a2,-(a7)
+02ef4e: 246f0010                 movea.l (0x10,a7),a2
+02ef52: 267c00801d3c             movea.l #0x801d3c,a3
+02ef58: 287c00060fa8             movea.l #0x60fa8,a4
+02ef5e: 206a0006                 movea.l (0x6,a2),a0
+02ef62: 1690                     move.b (a0),(a3)
+02ef64: 661e                     bne.s 0x2ef84
+02ef66: 3014                     move.w (a4),d0
+02ef68: 02400100                 andi.w #0x100,d0
+02ef6c: 6716                     beq.s 0x2ef84
+02ef6e: 3f3c0100                 move.w #0x100,-(a7)
+02ef72: 1013                     move.b (a3),d0
+02ef74: 3f00                     move.w d0,-(a7)
+02ef76: 4eb900032b38             jsr (0x32b38).l
+02ef7c: 588f                     addq.l #4,a7
+02ef7e: 4cdf1c00                 movem.l (a7)+,a2/a3/a4
+02ef82: 4e75                     rts
+02ef84: 0c130001                 cmpi.b #0x1,(a3)
+02ef88: 661e                     bne.s 0x2efa8
+02ef8a: 3014                     move.w (a4),d0
+02ef8c: 02400200                 andi.w #0x200,d0
+02ef90: 6716                     beq.s 0x2efa8
+02ef92: 3f3c0200                 move.w #0x200,-(a7)
+02ef96: 1013                     move.b (a3),d0
+02ef98: 3f00                     move.w d0,-(a7)
+02ef9a: 4eb900032b38             jsr (0x32b38).l
+02efa0: 588f                     addq.l #4,a7
+02efa2: 4cdf1c00                 movem.l (a7)+,a2/a3/a4
+02efa6: 4e75                     rts
+02efa8: 3f3c0001                 move.w #0x1,-(a7)
+02efac: 2f0a                     move.l a2,-(a7)
+02efae: 4eb900031b22             jsr (0x31b22).l
+02efb4: 5c8f                     addq.l #6,a7
+02efb6: 4cdf1c00                 movem.l (a7)+,a2/a3/a4
+02efba: 4e75                     rts
+02efbc: 48790002ef4a             pea (0x2ef4a).l
+02efc2: 3f3ce300                 move.w #0xe300,-(a7)
+02efc6: 4eb900021272             jsr (0x21272).l
+02efcc: 5c8f                     addq.l #6,a7
+02efce: 4e75                     rts

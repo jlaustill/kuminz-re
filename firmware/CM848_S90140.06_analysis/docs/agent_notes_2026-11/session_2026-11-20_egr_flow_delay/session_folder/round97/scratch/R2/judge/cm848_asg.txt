@@ -1,0 +1,575 @@
+=== cm848_runOperatingModeSpeedGovernor
+void cm848_runOperatingModeSpeedGovernor(void)
+{
+  ulonglong uVar1;
+  ushort uVar2;
+  word wVar3;
+  dword dVar4;
+  uint uVar5;
+  int iVar6;
+  word wVar7;
+  int iVar8;
+  int iVar9;
+  word wVar10;
+  ushort uVar11;
+  short sVar12;
+  int iVar13;
+  word *pwVar14;
+  int iVar15;
+  uint uVar16;
+  uint uVar17;
+  word wStack_2e;
+  if ((((engine_operating_mode != FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
+       (engine_operating_mode != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
+      (engine_operating_mode != FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION)) &&
+     (engine_operating_mode != FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL)) {
+    engine_operating_mode_previous_pass = engine_operating_mode;
+    return;
+  }
+  cm848_calculateAllSpeedGovernorNoLoadFuel();
+  if (engine_operating_mode_previous_pass == engine_operating_mode) {
+    iVar15 = (int)all_speed_governor_state_speed_error;
+  }
+  else {
+    iVar15 = (uint)all_speed_governor_droop_gain_2 *
+             ((int)all_speed_governor_gain_set_pointer->integral_gain_1 +
+             (int)all_speed_governor_gain_set_pointer->integral_gain_2);
+    uVar17 = (uint)governor_rpm_actual;
+    if (iVar15 != 0) {
+      iVar15 = (int)((0x400 - (uint)all_speed_governor_droop_gain_1) *
+                     ((uint)final_fueling - (uint)all_speed_governor_no_load_fuel) * 0x80) / iVar15;
+      if (iVar15 < 0x30d4) {
+        if (iVar15 < -0x30d3) {
+          iVar15 = -32000;
+        }
+        else {
+          iVar15 = (iVar15 << 8) / 100;
+        }
+      }
+      else {
+        iVar15 = 32000;
+      }
+      uVar17 = iVar15 + (uint)governor_rpm_actual;
+      if ((int)uVar17 < 0x10000) {
+        if ((int)uVar17 < 0) {
+          uVar17 = 0;
+        }
+      }
+      else {
+        uVar17 = 0xffff;
+      }
+    }
+    governor_reference_speed_filtered = (word)uVar17;
+    fuel_trim_speed_filter_state.accumulator = uVar17 << 0x10;
+    iVar15 = (uVar17 & 0xffff) - (uint)governor_rpm_actual;
+    if (iVar15 < 32000) {
+      if (iVar15 < -31999) {
+        iVar15 = -32000;
+      }
+      else {
+        wStack_2e = (word)iVar15;
+        iVar15 = (int)(short)wStack_2e;
+      }
+    }
+    else {
+      iVar15 = 32000;
+    }
+  }
+  if (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) {
+    cm848_calculateGovernorReferenceSpeedBlend();
+    if (((((switch_input_state_bits.brake_switch == 0) &&
+          (switch_input_state_bits.not_brake_switch == 0)) ||
+         (all_speed_governor_reference_slew_brake_inhibit_flag == 0)) &&
+        ((all_speed_governor_reference_slew_vehicle_speed_threshold <= vehicle_speed_copy &&
+         ((drivetrain_ratio_unsettled_flag == 0 || (transmission_type_cal != 0)))))) &&
+       ((transmission_park_or_neutral_flag == 0 ||
+        ((transmission_type_cal == 0 && (governor_reference_speed_filtered != 0)))))) {
+      all_speed_governor_reference_negative_slew_active_flag = 1;
+    }
+    else {
+      all_speed_governor_reference_negative_slew_active_flag = 0;
+    }
+    if (all_speed_governor_reference_negative_slew_active_flag != 0) {
+      if (all_speed_governor_reference_slew_rate_threshold < governor_reference_speed_filtered) {
+        if (all_speed_governor_reference_negative_slew_rate_above_threshold == 0) {
+          wVar10 = all_speed_governor_reference_slew_rate_threshold -
+                   all_speed_governor_reference_negative_slew_rate_below_threshold;
+          goto LAB_0000ecec;
+        }
+        governor_reference_speed_filtered =
+             governor_reference_speed_filtered -
+             all_speed_governor_reference_negative_slew_rate_above_threshold;
+        wVar10 = all_speed_governor_reference_slew_rate_threshold;
+        if (governor_reference_speed_filtered < all_speed_governor_reference_slew_rate_threshold)
+        goto LAB_0000ecec;
+      }
+      else {
+        if (all_speed_governor_reference_negative_slew_rate_below_threshold == 0) {
+          wVar10 = 0;
+        }
+        else {
+          wVar10 = governor_reference_speed_filtered -
+                   all_speed_governor_reference_negative_slew_rate_below_threshold;
+        }
+LAB_0000ecec:
+        governor_reference_speed_filtered = wVar10;
+      }
+      uVar17 = (uint)engine_speed_state.filtered_engine_speed +
+               (uint)all_speed_governor_reference_slew_maximum_delta +
+               ((uint)all_speed_governor_reference_slew_maximum_gain *
+                (uint)intake_manifold_pressure_sensor_filtered >> 7);
+      if ((uVar17 & 0xffff) < (uint)governor_reference_speed_filtered) {
+        governor_reference_speed_filtered = (word)uVar17;
+      }
+      if (all_speed_governor_reference_non_linear_filter_output <= governor_reference_speed_filtered
+         ) goto LAB_0000ed58;
+    }
+    governor_reference_speed_filtered = all_speed_governor_reference_non_linear_filter_output;
+  }
+  else {
+    dVar4 = cm848_exponentialMovingAverage
+                      ((uint)speed_request_unfiltered,&fuel_trim_speed_filter_state);
+    governor_reference_speed_filtered = (word)dVar4;
+    governor_reference_filter_weight = *fuel_trim_speed_filter_state.coefficient >> 2;
+  }
+LAB_0000ed58:
+  iVar13 = (uint)governor_reference_speed_filtered - (uint)governor_rpm_actual;
+  if (iVar13 < 32000) {
+    if (iVar13 < -31999) {
+      all_speed_governor_state_speed_error = -32000;
+    }
+    else {
+      wStack_2e = (word)iVar13;
+      all_speed_governor_state_speed_error = wStack_2e;
+    }
+  }
+  else {
+    all_speed_governor_state_speed_error = 32000;
+  }
+  if (all_speed_governor_external_reset_flag == 1) {
+    iVar15 = (int)all_speed_governor_reset_state_speed_error_previous;
+    fuel_trim_pid_ema_snapshot = all_speed_governor_reset_state_engine_speed_previous;
+    iVar13 = (int)all_speed_governor_reset_state_pid_clamp_value;
+    uVar11 = all_speed_governor_reset_state_pid_integral_clamped;
+    all_speed_governor_state_fuel_demand_correction =
+         all_speed_governor_reset_state_fuel_demand_correction;
+    uVar2 = all_speed_governor_reset_state_integral;
+LAB_0000efb0:
+    governor_pid_integral_state = (uint)uVar2 << 0x10;
+    all_speed_governor_reset_flag = 1;
+    governor_fuel_demand_prev_ref = all_speed_governor_no_load_fuel;
+  }
+  else {
+    if (((governor_fuel_demand_tracking != final_fueling) ||
+        (engine_operating_mode != engine_operating_mode_previous_pass)) &&
+       ((all_speed_governor_deadband_compensation_flag != 1 ||
+        (((((final_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR &&
+            (final_fueling_state != FUELING_STATE_HIGH_SPEED_GOVERNOR)) &&
+           (final_fueling_state != FUELING_STATE_AIR_FUEL_CONTROL_DERATE)) &&
+          ((final_fueling_state != FUELING_STATE_MAXIMUM_THROTTLE &&
+           (final_fueling_state != FUELING_STATE_TSC1_SPEED_CONTROL)))) &&
+         (final_fueling_state != FUELING_STATE_UNIDENTIFIED_49)))))) {
+      iVar9 = (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1;
+      iVar13 = (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2;
+      if (iVar9 == iVar13) {
+        uVar11 = 0;
+      }
+      else {
+        uVar17 = (uint)final_fueling;
+        uVar5 = (uint)all_speed_governor_delta;
+        uVar16 = (uint)all_speed_governor_no_load_fuel;
+        if (uVar16 + uVar5 < uVar17) {
+          iVar8 = (uVar17 - uVar16) - uVar5;
+          iVar6 = 0x100 - all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3;
+          iVar13 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar8 * (longlong)iVar6) >> 0x20),
+                                  iVar8 * iVar6) / (longlong)(iVar9 - iVar13));
+          if (0x1700 < iVar13) {
+            iVar13 = 0x1700;
+          }
+          uVar11 = (ushort)iVar13;
+        }
+        else {
+          iVar8 = (uVar16 - uVar17) + uVar5;
+          iVar6 = 0x100 - all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3;
+          iVar13 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar8 * (longlong)iVar6) >> 0x20),
+                                  iVar8 * iVar6) / (longlong)(iVar9 - iVar13));
+          if (0x1700 < iVar13) {
+            iVar13 = 0x1700;
+          }
+          uVar11 = -(short)iVar13;
+        }
+      }
+      fuel_trim_pid_ema_snapshot = governor_rpm_actual;
+      iVar13 = 0;
+      all_speed_governor_state_fuel_demand_correction =
+           (final_fueling - all_speed_governor_no_load_fuel) - all_speed_governor_delta;
+      uVar2 = uVar11;
+      goto LAB_0000efb0;
+    }
+    iVar13 = (int)all_speed_governor_state_pid_clamp_value;
+    all_speed_governor_reset_flag = 0;
+    uVar11 = all_speed_governor_state_pid_integral_clamped;
+  }
+  if ((commanded_throttle_state.commanded_throttle == 0) &&
+     (all_speed_governor_deadband_compensation_flag == 1)) {
+    if (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) {
+      iVar9 = (((uint)final_fueling - (uint)all_speed_governor_fueling) +
+              (uint)all_speed_governor_delta) - (uint)all_speed_governor_delta_offset;
+      if (iVar9 < 0) {
+LAB_0000f0b0:
+        all_speed_governor_delta = 0;
+      }
+      else if (iVar9 < 0x10000) {
+        wStack_2e = (word)iVar9;
+        all_speed_governor_delta = wStack_2e;
+      }
+      else {
+        all_speed_governor_delta = 0xffff;
+      }
+    }
+    else if (low_speed_governor_reference.reference_speed <=
+             engine_speed_state.filtered_engine_speed) {
+      if (all_speed_governor_delta <= all_speed_governor_deadband_delta_decrement_rate)
+      goto LAB_0000f0b0;
+      all_speed_governor_delta =
+           all_speed_governor_delta - all_speed_governor_deadband_delta_decrement_rate;
+    }
+    if (all_speed_governor_delta_upper_limit < all_speed_governor_delta) {
+      all_speed_governor_delta = all_speed_governor_delta_upper_limit;
+    }
+  }
+  iVar9 = (uint)governor_rpm_actual - (uint)fuel_trim_pid_ema_snapshot;
+  if (iVar9 < 8000) {
+    if (iVar9 < -7999) {
+      all_speed_governor_feedback_difference = 0xe0c0;
+    }
+    else {
+      wStack_2e = (word)iVar9;
+      all_speed_governor_feedback_difference = wStack_2e;
+    }
+  }
+  else {
+    all_speed_governor_feedback_difference = 8000;
+  }
+  iVar9 = all_speed_governor_state_speed_error - iVar15;
+  if (iVar9 < 32000) {
+    if (iVar9 < -31999) {
+      iVar9 = -32000;
+    }
+  }
+  else {
+    iVar9 = 32000;
+  }
+  all_speed_governor_error_difference = (word)iVar9;
+  dVar4 = all_speed_governor_integral_adjustment +
+          (((int)(short)all_speed_governor_error_difference *
+            ((int)all_speed_governor_gain_set_pointer->proportional_gain_1 +
+            (int)all_speed_governor_gain_set_pointer->integral_gain_1) +
+           iVar15 * ((int)all_speed_governor_gain_set_pointer->integral_gain_1 +
+                    (int)all_speed_governor_gain_set_pointer->integral_gain_2)) -
+          (int)(short)all_speed_governor_feedback_difference *
+          (int)all_speed_governor_gain_set_pointer->proportional_gain_2) +
+          all_speed_governor_proportional_adjustment >> 9;
+  all_speed_governor_pid_accumulator = 0xe6000;
+  if (((int)dVar4 < 0xe6000) && (all_speed_governor_pid_accumulator = dVar4, (int)dVar4 < -0xe5fff))
+  {
+    all_speed_governor_pid_accumulator = 0xfff1a000;
+  }
+  iVar15 = (int)(all_speed_governor_derivative_adjustment +
+                ((int)(CONCAT44((int)((ulonglong)
+                                      ((longlong)(int)(short)all_speed_governor_error_difference *
+                                      (longlong)
+                                      (int)all_speed_governor_gain_set_pointer->derivative_gain_1)
+                                     >> 0x20),
+                                (int)(short)all_speed_governor_error_difference *
+                                (int)all_speed_governor_gain_set_pointer->derivative_gain_1) / 4) -
+                (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)(int)(short)all_speed_governor_feedback_difference *
+                                     (longlong)
+                                     (int)all_speed_governor_gain_set_pointer->derivative_gain_2) >>
+                                    0x20),
+                               (int)(short)all_speed_governor_feedback_difference *
+                               (int)all_speed_governor_gain_set_pointer->derivative_gain_2) / 4)))
+           >> 0xb;
+  wStack_2e = (word)iVar15;
+  if (iVar15 < 0x7fff) {
+    if (iVar15 < -0x7fff) {
+      wStack_2e = -0x8000;
+    }
+  }
+  else {
+    wStack_2e = 0x7fff;
+  }
+  if ((int)(short)wStack_2e < (int)all_speed_governor_derivative_deadband_limit) {
+    if (-(int)all_speed_governor_derivative_deadband_limit < (int)(short)wStack_2e) {
+      wVar10 = 0;
+      goto LAB_0000f2f8;
+    }
+    all_speed_governor_derivative_term = wStack_2e + all_speed_governor_derivative_deadband_limit;
+    if ((int)(short)all_speed_governor_derivative_term <= -(int)all_speed_governor_derivative_limit)
+    {
+      all_speed_governor_derivative_term = -all_speed_governor_derivative_limit;
+    }
+  }
+  else {
+    all_speed_governor_derivative_term = wStack_2e - all_speed_governor_derivative_deadband_limit;
+    wVar10 = all_speed_governor_derivative_limit;
+    if (all_speed_governor_derivative_limit <= (short)all_speed_governor_derivative_term) {
+LAB_0000f2f8:
+      all_speed_governor_derivative_term = wVar10;
+    }
+  }
+  wStack_2e = (short)((int)((int)(short)all_speed_governor_derivative_term *
+                           (uint)all_speed_governor_droop_gain_2) >> 10) +
+              (short)(iVar13 * all_speed_governor_derivative_filter_coefficient >> 10);
+  if ((short)wStack_2e < 0x1700) {
+    all_speed_governor_state_pid_clamp_value = wStack_2e;
+    if ((short)wStack_2e < -0x16ff) {
+      all_speed_governor_state_pid_clamp_value = -0x1700;
+    }
+  }
+  else {
+    all_speed_governor_state_pid_clamp_value = 0x1700;
+  }
+  iVar15 = ((int)(all_speed_governor_pid_accumulator * all_speed_governor_droop_gain_2) >> 1) +
+           ((int)(((int)governor_pid_integral_state >> 9) * (uint)all_speed_governor_droop_gain_1)
+           >> 3) + (all_speed_governor_droop_gain_1 - 0x400) * iVar13 * 0x10;
+  if (iVar15 < -0x5c00000) {
+    governor_pid_integral_state = 0xe9000000;
+  }
+  else if (iVar15 < 0x5c00000) {
+    governor_pid_integral_state = iVar15 * 4;
+  }
+  else {
+    governor_pid_integral_state = 0x17000000;
+  }
+  all_speed_governor_state_integral = governor_pid_integral_state._0_2_;
+  all_speed_governor_state_pid_integral_clamped =
+       governor_pid_integral_state._0_2_ + all_speed_governor_state_pid_clamp_value;
+  if (all_speed_governor_state_pid_integral_clamped < -0x16ff) {
+    all_speed_governor_state_pid_integral_clamped = -0x1700;
+  }
+  else if (0x1700 < all_speed_governor_state_pid_integral_clamped) {
+    all_speed_governor_state_pid_integral_clamped = 0x1700;
+  }
+  iVar13 = ((int)all_speed_governor_state_pid_integral_clamped *
+            (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1 -
+           (int)(short)uVar11 *
+           (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2) +
+           (int)all_speed_governor_state_fuel_demand_correction *
+           (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3;
+  iVar15 = iVar13 >> 8;
+  if (iVar15 < -0x16ff) {
+    all_speed_governor_state_fuel_demand_correction = -0x1700;
+  }
+  else if (iVar15 < 0x1700) {
+    wStack_2e = (word)((uint)iVar13 >> 8);
+    all_speed_governor_state_fuel_demand_correction = wStack_2e;
+  }
+  else {
+    all_speed_governor_state_fuel_demand_correction = 0x1700;
+  }
+  uVar17 = (int)((uint)all_speed_governor_no_load_fuel *
+                 (0x4000 - (uint)governor_reference_filter_weight) +
+                (uint)governor_fuel_demand_prev_ref * (uint)governor_reference_filter_weight) >> 0xe
+  ;
+  governor_fuel_demand_prev_ref = (word)uVar17;
+  if (0x1700 < (uVar17 & 0xffff)) {
+    governor_fuel_demand_prev_ref = 0x1700;
+  }
+  governor_fuel_demand_tracking =
+       all_speed_governor_state_fuel_demand_correction + governor_fuel_demand_prev_ref;
+  if (all_speed_governor_deadband_compensation_flag == 1) {
+    governor_fuel_demand_tracking = governor_fuel_demand_tracking + all_speed_governor_delta;
+    if (((final_fueling_state == FUELING_STATE_AIR_FUEL_CONTROL_DERATE) ||
+        (final_fueling_state == FUELING_STATE_MAXIMUM_THROTTLE)) ||
+       (wVar10 = all_speed_governor_delta, final_fueling_state == FUELING_STATE_UNIDENTIFIED_49)) {
+      wVar10 = (all_speed_governor_delta - all_speed_governor_fueling) + final_fueling;
+    }
+    iVar15 = (int)(short)wVar10;
+    if ((uint)low_speed_governor_reference.reference_speed <=
+        (uint)engine_speed_state.filtered_engine_speed) {
+      uVar17 = (uint)engine_speed_state.filtered_engine_speed -
+               (uint)low_speed_governor_reference.reference_speed;
+      uVar1 = CONCAT44(((int)uVar17 >> 0x1f) * 0xa6 + (int)((ulonglong)uVar17 * 0xa6 >> 0x20),
+                       uVar17 * 0xa6) / 8;
+      iVar13 = (int)uVar1;
+      iVar13 = (uint)all_speed_governor_delta_upper_limit -
+               (int)(CONCAT44((iVar13 >> 0x1f) * 0x3a + (int)((uVar1 & 0xffffffff) * 0x3a >> 0x20),
+                              iVar13 * 0x3a) / (longlong)(ulonglong)all_speed_governor_delta_droop);
+      if (iVar13 < -0x8000) {
+        iVar13 = -0x8000;
+      }
+      else if (iVar13 < 0x8000) {
+        wStack_2e = (word)iVar13;
+        iVar13 = (int)(short)wStack_2e;
+      }
+      else {
+        iVar13 = 0x7fff;
+      }
+      if (iVar13 < iVar15) {
+        iVar15 = (int)(short)iVar13;
+      }
+    }
+    if ((switch_input_state_bits.brake_switch != 0) ||
+       (switch_input_state_bits.not_brake_switch != 0)) {
+      if ((int)(uint)all_speed_governor_deadband_delta_decrement_rate < iVar15) {
+        iVar15 = (int)(short)((short)iVar15 - all_speed_governor_deadband_delta_decrement_rate);
+      }
+      else {
+        iVar15 = 0;
+      }
+    }
+    if (iVar15 < 0) {
+      iVar15 = 0;
+    }
+    if (iVar15 < (int)(uint)all_speed_governor_delta) goto LAB_0000f6bc;
+  }
+  else {
+    iVar15 = 0;
+LAB_0000f6bc:
+    all_speed_governor_delta = (word)iVar15;
+  }
+  pwVar14 = (word *)&governor_fuel_demand_tracking_limit;
+  if ((int)(short)governor_fuel_demand_tracking < (int)governor_fuel_demand_tracking_limit) {
+    uVar17 = (uint)governor_fuel_demand_tracking_floor;
+    if ((int)uVar17 < (int)(short)governor_fuel_demand_tracking) {
+      pwVar14 = &governor_fuel_demand_tracking;
+      goto LAB_0000f700;
+    }
+  }
+  else {
+LAB_0000f700:
+    uVar17 = (uint)*pwVar14;
+  }
+  all_speed_governor_fueling = (word)uVar17;
+  if ((cruise_control_engaged_flag == 1) &&
+     (algorithm_enable_flags_43_cal.vacuum_throttle_cruise_enable != 0)) {
+    if ((uint)vacuum_throttle_all_speed_governor_fueling_reduction < (uVar17 & 0xffff)) {
+      all_speed_governor_fueling =
+           all_speed_governor_fueling - vacuum_throttle_all_speed_governor_fueling_reduction;
+    }
+    else {
+      all_speed_governor_fueling = 0;
+    }
+  }
+  wVar10 = fuel_demand_decaying_peak_decrease_step_below_pressure_error_threshold;
+  wVar7 = fuel_demand_decaying_peak_ceiling_offset_below_pressure_error_threshold;
+  if (fuel_pressure_error_threshold <
+      (short)(fuel_pressure_setpoint - fuel_pressure_feedback_filtered)) {
+    wVar10 = fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold;
+    wVar7 = fuel_demand_decaying_peak_ceiling_offset_above_pressure_error_threshold;
+  }
+  wVar7 = no_load_fuel_quantity - wVar7;
+  if ((short)wVar7 < 0) {
+    wVar7 = 0;
+  }
+  wVar3 = all_speed_governor_fueling;
+  if ((((short)all_speed_governor_fueling <= (short)wVar7) &&
+      (wVar3 = all_speed_governor_fueling,
+      (short)all_speed_governor_fueling <= (short)fuel_demand_decaying_peak)) &&
+     (wVar3 = all_speed_governor_fueling, wVar10 != 0)) {
+    if ((short)wVar7 < (short)fuel_demand_decaying_peak) {
+      fuel_demand_decaying_peak = wVar7;
+    }
+    fuel_demand_decaying_peak = fuel_demand_decaying_peak - wVar10;
+    if ((short)fuel_demand_decaying_peak < (short)all_speed_governor_fueling) {
+      fuel_demand_decaying_peak = all_speed_governor_fueling;
+    }
+    wVar3 = fuel_demand_decaying_peak;
+    if ((short)fuel_demand_decaying_peak < 0) {
+      wVar3 = 0;
+    }
+  }
+  fuel_demand_decaying_peak = wVar3;
+  if (engine_speed_state.filtered_engine_speed < engine_rpm_prev_snapshot) {
+    engine_rpm_delta = engine_rpm_prev_snapshot - engine_speed_state.filtered_engine_speed;
+  }
+  else {
+    engine_rpm_delta = 0;
+  }
+  if (intake_manifold_pressure_sensor_filtered < rpm_drop_fuel_minimum_manifold_pressure) {
+    sVar12 = 0;
+    rpm_deceleration_limit_integral_term = 0;
+  }
+  else if (rpm_deceleration_limit_high_zone_engine_speed < engine_speed_state.filtered_engine_speed)
+  {
+    sVar12 = engine_rpm_delta - rpm_deceleration_limit_target_rate_high_zone;
+  }
+  else {
+    sVar12 = engine_rpm_delta - rpm_deceleration_limit_target_rate;
+  }
+  uVar17 = (uint)rpm_deceleration_limit_integral_gain * (int)sVar12;
+  rpm_deceleration_limit_integral_term =
+       rpm_deceleration_limit_integral_term +
+       (short)(uVar17 >> 8) + (ushort)((int)uVar17 < 0 && (uVar17 & 0xff) != 0);
+  if (rpm_deceleration_limit_integral_term < 0) {
+    wVar10 = 0;
+LAB_0000f928:
+    rpm_deceleration_limit_integral_term = wVar10;
+  }
+  else {
+    wVar10 = rpm_deceleration_limit_fuel_maximum;
+    if ((short)rpm_deceleration_limit_fuel_maximum < rpm_deceleration_limit_integral_term)
+    goto LAB_0000f928;
+  }
+  uVar17 = (uint)rpm_deceleration_limit_proportional_gain * (int)sVar12;
+  rpm_deceleration_limit_proportional_term =
+       (short)(uVar17 >> 8) + (ushort)((int)uVar17 < 0 && (uVar17 & 0xff) != 0);
+  rpm_deceleration_limit_fuel =
+       rpm_deceleration_limit_proportional_term + rpm_deceleration_limit_integral_term;
+  if (rpm_deceleration_limit_fuel < 0) {
+    wVar10 = 0;
+LAB_0000f988:
+    rpm_deceleration_limit_fuel = wVar10;
+  }
+  else {
+    wVar10 = rpm_deceleration_limit_fuel_maximum;
+    if ((short)rpm_deceleration_limit_fuel_maximum < rpm_deceleration_limit_fuel) goto LAB_0000f988;
+  }
+  if ((fuel_demand_ramp_drivetrain_ratio_threshold < drivetrain_ratio) ||
+     ((fuel_demand_ramp_rate == 0 && (fuel_demand_ramp_step == 0)))) {
+LAB_0000fa44:
+    fuel_demand_ramp_state = 0x1700;
+  }
+  else {
+    if (all_speed_governor_fueling < fuel_demand_ramp_state) {
+      fuel_demand_ramp_state = all_speed_governor_fueling;
+      pwVar14 = &fuel_demand_decaying_peak;
+      if ((int)(short)fuel_demand_decaying_peak <= (int)(uint)all_speed_governor_fueling)
+      goto LAB_0000fa58;
+    }
+    else {
+      if (fuel_demand_ramp_upper_threshold <= fuel_demand_ramp_state) {
+        if (fuel_demand_ramp_step != 0) {
+          fuel_demand_ramp_state = fuel_demand_ramp_state + fuel_demand_ramp_step;
+          goto LAB_0000fa58;
+        }
+        goto LAB_0000fa44;
+      }
+      if (fuel_demand_ramp_rate != 0) {
+        fuel_demand_ramp_state = fuel_demand_ramp_state + fuel_demand_ramp_rate;
+        goto LAB_0000fa58;
+      }
+      pwVar14 = &fuel_demand_ramp_upper_threshold;
+    }
+    fuel_demand_ramp_state = *pwVar14;
+  }
+LAB_0000fa58:
+  pwVar14 = (word *)&rpm_deceleration_limit_fuel;
+  if ((int)rpm_deceleration_limit_fuel <= (int)(short)fuel_demand_decaying_peak) {
+    if ((int)(short)fuel_demand_decaying_peak <= (int)(uint)fuel_demand_ramp_state) {
+      fuel_trim_pid_ema_snapshot = governor_rpm_actual;
+      engine_operating_mode_previous_pass = engine_operating_mode;
+      engine_rpm_prev_snapshot = engine_speed_state.filtered_engine_speed;
+      engine_operating_mode_fuel_demand = fuel_demand_decaying_peak;
+      return;
+    }
+    pwVar14 = &fuel_demand_ramp_state;
+  }
+  engine_operating_mode_fuel_demand = *pwVar14;
+  engine_rpm_prev_snapshot = engine_speed_state.filtered_engine_speed;
+  fuel_trim_pid_ema_snapshot = governor_rpm_actual;
+  engine_operating_mode_previous_pass = engine_operating_mode;
+  return;
+}

@@ -1,0 +1,16 @@
+cm848: round 43 fix - stage C and the review's checks recorded, duplicated task 046 text removed
+
+- **task 046, round 43:**
+  - stage C: the e2m 8B47 / 8B48 records, the dump values in degrees and microseconds, and SOI for
+    main_injection_timing_copy;
+  - the i16 evidence: a signed record and lha loads;
+  - stage A resolves round 39's i16 clamp lead;
+  - the remaining checks: thunks 18 / 14 after the dotted junk rows, all four test scripts, and no CM550 use of the
+    stage A names.
+- **Duplicated text removed:** the round 39 and round 41 fix scripts had left copies in task 046.
+  - Their edit guard (new in t and old not in t) let a second run re-apply an edit whose new text contains the old.
+  - dedupe_task046.py removed the copies: two lead lines, a proof sentence and a nine-line checks block.
+  - The round 43 closing script had the same guard, and its duplicates were removed before b8b83e8.
+- PR body (stage C), README, memory, and the round 43 session folder.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

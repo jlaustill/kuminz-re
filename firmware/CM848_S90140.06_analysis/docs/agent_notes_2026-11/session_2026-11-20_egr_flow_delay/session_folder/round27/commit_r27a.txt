@@ -1,0 +1,41 @@
+cm848: round 27 stage A - the sensor channel families, the inverted wrapper names fixed (labels)
+
+The sensor channel layer, named from each channel's e2m records and fault bits (the ECU's parameter ID table,
+e2m 1966 / 1963 outputs, e2m 1036 fault bit names).
+- The four base functions run the same 13-parameter algorithm. Type A loads signed (lookup flags 2, lha,
+  cm848_signedFirstOrderFilter) and Type B unsigned (flags 0, lhz, exponentialMovingAverage), from a machine code
+  diff of the two periodic bodies. Type B also skips the threshold faults of channel 47 until the cruise switches
+  are learned, of channel 71 until its learned flag is set, and of channel 10 while oil_pressure_switch_only_cal is
+  set. The old names had the periodic / boot roles inverted:
+  - sensorChannelConfigInit -> cm848_processSignedSensorChannel (periodic);
+  - updateSensorChannelWithConfig -> cm848_initializeSignedSensorChannel (boot);
+  - sensorChannelTypeB_configInit -> cm848_processUnsignedSensorChannel;
+  - sensorChannelTypeB_update -> cm848_initializeUnsignedSensorChannel.
+- The 63 wrappers are named by when they run. cm848_process<Channel>Channel calls a periodic base from a periodic
+  task, and cm848_initialize<Channel>Channel calls a boot base from cm848_applicationMain. They were
+  cm848_sensorChannelN_init / _process (ordinals, suffixes inverted), sensorChannelTypeB_*_axisN,
+  cm848_*SensorLookupTableN and cm848_update... / cm848_read....
+- 91 blocks: config / channel state / lookup cache / filter / outputs / tables. They were type-only labels, ordinal
+  names (sensor_channel1_ram, sensor_channel0_filter_state, sensor_channel26_linearization_axis ...) or wrong
+  families. Channels newly identified from e2m:
+  - 29: engine_speed_sensor_supply_voltage (8A1E-8A21 Engine_Speed_Sensor_SV, P0338 / P0337; e2m spells the
+    throttle one both ways, Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV);
+  - 77: boost_pressure_absolute (17DB-17DE);
+  - 88: exhaust_throttle_position (1813-1816);
+  - 75: egr_valve_position (17CF-17D2, EGR_Position_Before_Autozero);
+  - 54 / 55: injector_driver_booster_capacitor_1 / 2_voltage (81CA-81D1; their tables were injector_group_a / b_*).
+  - Also boost_pressure_linearization_axis / _values (a 1-D table) and boost_pressure_sensor_fault_status (was
+    map_sensor_fault_status).
+- Finding: channel 88's wrapper passes the fuel temperature outputs 0x40bdd0 / 0x40bdd2 / 0x40be3a (its stack
+  stores at 0x500128-0x500148), so channels 7 and 88 write the same three words. Channel 88 is disabled here
+  (enable word 5 = 0x047f), and its disabled path still writes them: its default 0x2400 and status 0x100, each
+  main-loop cycle in phase 25. The dump holds channel 7's values (0x1200, status 2).
+- lookup_tables.py follows the four names. Its plan has the same 921 tables (addresses / sizes / roles identical).
+- Docs: firmware/CLAUDE.md gets identifier refreshes plus three corrections from this work: the wrapper naming,
+  Type A / B signedness, and the booster capacitor sentence. Also refreshed: stale notes in the CSVs' '#' lines,
+  tuning_parameters.md, service_0x4a_protocol.md, ecu_pinout.md, extract_flash2.py and todo.md.
+
+Proof: reverse_names.py EQUIVALENT (163 names, all rendered; 5 derived PTR_<target> labels mapped). Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

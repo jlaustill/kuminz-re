@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x00509be0,cm848_j1939DiagnosticServiceAcknowledgeNoOperation,j1939_diagService15And16Handler,function,1
+0x00509d34,cm848_registerJ1939BroadcastAndNoOperationServices,cm848_registerJ1939ParameterAndBroadcastServices,function,1

@@ -1,0 +1,13 @@
+cm848: round 62 closing - task 046, the session archive, the PR body
+
+- task 046, round 62:
+  - the J1939 registration functions, the DM7 test identifier, the J1939 input fault start delay and four Bank 2
+    helpers;
+  - why the EF00_SERVICE_ID pilot was not run;
+  - the proof;
+  - leads: rename the EF00_SERVICE_ID members, DAT_003fba10, 59 unprefixed functions (round 61's 69 was 68).
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 219.
+- PR body, README, todo, memory, and the round 62 session folder (the service ID check, the stage script and map, the
+  proof scripts, the closing scripts, the verify log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

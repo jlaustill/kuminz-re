@@ -1,0 +1,84 @@
+{
+ "-1|": {
+  "row_comment": "Algorithm enable flags table length (e2m 106B +0 AENBLFLG 'LENGTH OF ALGORITHM_ENABLE_FLAGS'; a B record of 72 bytes; EEPROM 0x188): the first word of the 72-byte table EEPROM 0x188-0x1cf (this word + flag words 0-34 at 0x803c94-0x803cd9; the e2m describes words 0-33). 0x0046 (70) in the EEPROM and RAM dumps = the byte count of the 35 flag words after it. No reader in the dumped ROM (no absolute reference to 0x803c92); the ROM region list entry at 0x80ea holds (0x01000188 / 0x48) with no identified consumer. CM848 twin algorithm_enable_flags_table_length_cal (0x3fd59a) holds the same 0x0046 although its table is 90 bytes"
+ },
+ "2|": {
+  "differences": "Only bit 3 differs (CM550 ISRPEN S mask 0x8; CM848 reserved_bit_3). CM848 reads bit 6 (cm848_updateEngineRetarderAllowedState) and has no reader for bits 7 and 8; CM550 reads bits 7 (0x1fdc6) and 8 (0x1fd6c) and has no reader for bits 3, 6 and 15."
+ },
+ "2|7": {
+  "comment": "JC22MRSW 'J1922 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x80); andi.w 0x80 at 0x1fdc6: cm550_j1939MessageTypeCounter counts the control sessions of modes 1 / 2 / 3 with key-on hour stamps; clear"
+ },
+ "2|11": {
+  "comment": "JC39MREA 'J1939 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x800); andi.w 0x800 at 0x22080: cm550_memoryRegisterController records the J1939 speed control session history; set"
+ },
+ "6|": {
+  "row_comment": "Algorithm enable flags word 6 (EEPROM 0x196; e2m 106B +E): 0x1 to 0x100 the A/D override enables of channels 16-24 (mc68k_processAnalogSensorChannels loads the word at 0xbccc and tests bit n - 16 for channel n: vehicle connector / engine connector / frequency throttle input supply voltages / cruise control switch multiplexer / water in fuel / EGR current feedback / programming pulse / high side gate bias / operational amplifier and comparator supply voltages - Calterm ADVHSVOD to ADOCSVOD); 0x200 ISIMEN idle shutdown intake manifold temperature override (e2m: 1 - IMT OVERRIDE SHUTDOWN PROCESS; 0 - AMBIENT TEMP = DO..., cut in every e2m; what 0 selects is not proved); 0x400 FCAKAGEN fan air conditioning pressure / 0x800 FCAKVSEN fan air conditioning vehicle speed interaction / 0x1000 FC02EN fan clutch 2 / 0x2000 FCEBAGEN fan engine retarder / 0x4000 FCEN fan manual input / 0x8000 CREBEN cruise engine retarder (these six as CM848 names them; no reader in the dumped ROM). A plain word: its one reader is that whole-word load (no fixed-mask test). 0x0000 in the dumps"
+ },
+ "15|": {
+  "row_comment": "Algorithm enable flags word 15 (EEPROM 0x1a8; e2m 106B +20 LAMP_CON / AUX_DRVR): the client feedback override enables of the 16 discrete driver outputs - bit n overrides output n's read-back. Low byte = lamp port read-back 0xFFD005 (outputs 0-7), high byte = driver port read-back 0xFFD007 (outputs 8-15). mc68k_sampleAndDebounceDiscreteInputs (0x80bcd2 / 0x80bcd3) and mc68k_ioDriverStrobeHandler (0x80bd02 / auxiliary_driver_feedback_bits) apply discrete_input_override_mask_ptr[5] (bits 0-7) and [4] (bits 8-15) as read-back & ~mask | value & mask with the values 0x80bcdc / 0x80bcdd; cm550_FUN_000206a8 tests bits 0 and 1 by index (table bits 240 / 241). 0x1 wait to start lamp, 0x2 stop engine lamp, 0x4 water in fuel lamp, 0x8 no masked record (lamp 4 or lamp 7 - the e2m numbers it both ways), 0x10 engine protection lamp, 0x20 solenoid A, 0x40 warning lamp, 0x80 fuel shutoff (FSO / VP44 pump enable), 0x100 engine brake relay (RLY1), 0x200 / 0x400 cold start aid relays 1 / 2 (RLY2 / RLY3), 0x800 relay 7 (A/C clutch), 0x1000 relay 5 (prime pump), 0x2000 relay 6 (ether start), 0x4000 relay 4, 0x8000 fan clutch (SOL1). Plain word: nothing reads it by its own address so a bitfield would render nowhere. Dump 0x0000. (no row before; PR #53 round 92)"
+ },
+ "16|": {
+  "row_comment": "Algorithm enable flags word 16 (EEPROM 0x1aa; e2m 106B +22 DIG_SIG): user override enables of the decoded cruise switch byte 0x80bcd4 (bits 0-7 = logical inputs 48-55) and power take-off switch byte power_take_off_switch_state_bits 0x80bcd5 (bits 8-15 = logical inputs 56-63). Set (bits 0 / 2 / 4 / 8 / 10 / 12, the six the sampler tests): mc68k_sampleAndDebounceDiscreteInputs ORs that bit of the override values 0x80bcde / 0x80bcdf into the status byte (or.b; it never clears the bit there) instead of copying the debounced switch input; cm550_FUN_00020890 tests the same bits (table bit 208 + input) before it stores a J1939 multiplexed switch there. The code puts the power take-off resume override at bit 8 although the 106B record DSPTRUUO says 0x2000. Dump 0x0000. (was switch_input_override_enable_flags; PR #53 round 92)"
+ },
+ "16|0": {
+  "comment": "Set: the decoded cruise resume bit 0x80bcd4 bit 0 (e2m 000E +6 CRRESUSW) is ORed in from the override value 0x80bcde bit 0 (set only, not cleared) instead of switch input 0x80bcce bit 1. mc68k_sampleAndDebounceDiscreteInputs andi.w #0x0001 at 0x15648. Logical input 48; no 106B record. Unlike word 13's DSCRRUUO (raw switch) this overrides the debounced status byte. Clear"
+ },
+ "16|2": {
+  "comment": "Set: the decoded cruise set bit 0x80bcd4 bit 2 (CRSETSW) is ORed in from 0x80bcde bit 2 (set only, not cleared) instead of switch input 0x80bcce bit 2. andi.w #0x0004 at 0x1561a. Logical input 50; no 106B record. Clear"
+ },
+ "16|4": {
+  "comment": "Set: the decoded cruise on bit 0x80bcd4 bit 4 (CRONSW) is ORed in from 0x80bcde bit 4 (set only, not cleared) instead of switch input 0x80bcce bit 3. andi.w #0x0010 at 0x155ec. Logical input 52; no 106B record. Clear"
+ },
+ "16|8": {
+  "comment": "Set: the power take-off resume bit (power_take_off_switch_state_bits 0x80bcd5 bit 0; DSPTRUSW) is ORed in from 0x80bcdf bit 0 (DSPTRUUC 0x01) (set only, not cleared) instead of switch input 0x80bcce bit 1. andi.w #0x0100 at 0x153fc; J1939 entry 11 (logical input 56 = table bit 264); 12A8 +38 DSPZPTRU. The 106B record DSPTRUUO claims mask 0x2000 but the code uses this bit. Clear"
+ },
+ "16|10": {
+  "comment": "Set: 0x80bcd5 bit 2 (DSPTSESW) is ORed in from 0x80bcdf bit 2 (DSPTSEUC 0x04) (set only, not cleared) instead of switch input 0x80bcce bit 2. e2m DSPTSEUO 0x400 'PTO SET SWITCH'; andi.w #0x0400 at 0x153c8; J1939 entry 12 (logical input 58); 12A8 +3A DSPZPTSE. Clear"
+ },
+ "16|12": {
+  "comment": "Set: 0x80bcd5 bit 4 (DSPTONSW) is ORed in from 0x80bcdf bit 4 (DSPTONUC 0x10) (set only, not cleared) instead of switch input 0x80bcce bit 3. e2m DSPTONUO 0x1000 'PTO ENABLE SWITCH'; andi.w #0x1000 at 0x15394; J1939 entry 10 (logical input 60); 12A8 +3C DSPZPTON. Clear"
+ },
+ "16|6": {
+  "comment": "e2m DSAUSHUO 0x40 'USER OVERRIDE ENABLE FLAG FOR THE AUXILIARY SHUTDOWN SW'. Code: table bit 262 (logical input 54) tested by cm550_FUN_00020890 for J1939 descriptor entry 2 (j1939_received_engine_auxiliary_shutdown_switch) and by cm550_FUN_000206a8(0x36 ...) three times. Caveats: entry 16 (engine derate switch) also points at 54; the e2m value / status / priority records (DSAUSHUC E +11 0x40; DSAUSHSW E +7 0x40; 12A8 +3E DSPZAUSH) sit at logical input 62 = bit 14. Clear In the dumped ROM the override value bit 54 (0x80bcde bit 6) has no reader, and cm550_FUN_000206a8(0x36, 1 / 4 / 2) also stores output image bits 1 / 4 / 2 (the stop / engine protection / water in fuel lamp commands) into it after the J1939 entries. The status bit 54 (0x80bcd4 bit 6) is no auxiliary shutdown status: mc68k_sampleAndDebounceDiscreteInputs sets it on the power take-off on switch's rising edge at zero road speed while word 28 bit 4 (e2m ISTAEN) is set and clears it on set / resume, and j1939HandlePgn65265CruiseVehicleSpeed sends it as the CCVS1 parking brake switch (byte 1 0xF7 instead of 0xF3)."
+ },
+ "26|": {
+  "row_comment": "Algorithm enable flags word 26 (EEPROM 0x1be; e2m 106B +36): engine protection history-only (no derate) enables - bit n = protection channel n: 0 coolant level / 1 coolant temperature / 2 intake manifold temperature / 3 oil pressure / 4 water in fuel / 5 boost pressure / 6 engine sync fuel pressure / 7 fuel temperature / 8 ambient air pressure (configs 0x807032 + 36n). No direct reader: cm550_calculateFaultDerateEngineSpeedLimit and cm550_FUN_00019702 index the block from algorithm_enable_flags_0_cal at bit 416 + n; a set bit keeps the channel severity for history but leaves it out of the derate. Bits 9-15 unused. e2m EPO3DXEN calls bit 4 oil temperature but this build has no oil temperature channel; v64t6_s also files MXLPANEA (mask 8) here though the code reads it in word 25. Bench 0x0000. Plain word like CM848 algorithm_enable_flags_26_cal (plain word: the bit list above is documentation, no field is typed)."
+ },
+ "27|0": {
+  "comment": "no record in v64t6_s and no test in the dumped ROM; guess RTEN 'ENABLES/DISABLE REAL TIME CLOCK FUNCTION' (an S record with mask 1 at +38 in 11 other e2m files; an N record with no bit in 10 more); CM848 reserved_bit_0 too; clear in the bench EEPROM (0x2010)"
+ },
+ "32|9": {
+  "comment": "e2m LSNLFLEN (mask 0x200) '(BIT X OF WORD Y) LSG USE OF LSG_NO_LOAD_FUEL_ENA[BLE]'; read by vp44_FUN_00025a34 (0x25ab0: subtracts frictional_no_load_fueling from the low speed governor integrator preset) and cm550_runLowSpeedGovernor (0x25f72: adds it to the low speed governor PID output before the clamp); SET in the bench EEPROM"
+ },
+ "32|13": {
+  "comment": "e2m VPGVWDEN (mask 0x2000) 'FLAG (B13 W 020H) VP44 GOVERNOR WATCHDOG FEATURE' (VP44 = the Bosch VP44 injection pump; the sibling file 64t4 carries the same record under the mnemonic ADO2DBEN); no test in the dumped ROM; SET in the bench EEPROM"
+ },
+ "32|15": {
+  "comment": "e2m 5DCLAJEN (mask 0x8000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE[LING]'; read by cm550_FUN_0001cc72 (andi.l #0x8000 at 0x1cc9e): adds the coolant temperature x engine speed table to all three full fueling values it computes: fueling_value_at_100_throttle_0_100, full_fueling_value_at_hsg_bef_droop_speed_0_100 and fueling_provided_if_engine_were_using_low_hp_curve_0_100 (the block runs only while word 18 bit 9 is clear) unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM"
+ },
+ "3|8": {
+  "comment": "GRGDPNEN 'GEAR DOWN PROTECTION ENABLE' (bit 8 of 0-15; another e2m: Gear_Down_Protection_Enable S mask 0x100); no reader in the dumped ROM; CM848 reads this bit below top gear (no road speed governor droops there) and its field takes the same name in this change; clear"
+ },
+ "7|": {
+  "row_comment": "Algorithm enable flags word 7 (EEPROM 0x198; e2m 106B +10): the engine protection enables of channels 0-3 - coolant level 0x1-0x8 / coolant temperature 0x10-0x80 / intake manifold temperature 0x100-0x800 / oil pressure 0x1000-0x8000, four bits per channel: fueling limiting / rpm limiting / shutdown / restart (Calterm EPCV / EPCQ / EPIM / EPO2 + FLEN / RPEN / SOEN / RYEN; channel n = config record 0x807032 + 36 x n). The protection loops read them as table bit 0x70 + 4 x channel + k from word 0 (0x803c94): k 0 the fault derate fuel limit loop cm550_FUN_00019702, k 1 cm550_calculateFaultDerateEngineSpeedLimit, k 2 the shutdown loop processDiagnosticLimitStatus, k 2 and k 3 the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator. One direct reader: cm550_FUN_00019702 tests 0x1000 at 0x1983e for the oil pressure start-up fueling derate (e2m 10B4 +2 EPFLSRTM - CM848 label Fueling_Startup_Derate_Time). No store in the dumped ROM. 0xffff in the EEPROM and RAM dumps (all four channels fully enabled). CM848 twin algorithm_enable_flags_7_cal (0x3fd5aa) has the same 16 e2m records but stays a plain word (nothing reads it there). (no row before; PR #53 round 92)"
+ },
+ "7|14": {
+  "comment": "EPO2SOEN 'BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE (ERRORS)'; table bit 126 = 0x70 + 4 x 3 + 2 (channel 3): read by the shutdown loop processDiagnosticLimitStatus and by the restart check cm550_protectionState1DiagnosticValidator (cm550_diagnosticProtectionEvaluator skips channel 3); set in the dumps"
+ },
+ "11|4": {
+  "comment": "no record in v64t6_s and no reader in the dumped ROM; guess JCRWDXEN 'J1587 TRANSPORT PROTOCOL ENABLE' (S mask 0x10 in 13 other ISB e2m files); CM848 reserved_bit_4 too; clear in the dumps"
+ },
+ "12|9": {
+  "name": "vehicle_speed_sensor_lost_while_stopped_detection_enable",
+  "comment": "VSSTEN 'BIT 9 WORD C. ENABLES VSS SENSOR LOST WHILE STOPPE(D DETECTION)'; no reader in the dumped ROM; the same record as CM848 vehicle_speed_sensor_zero_under_load_enable (CM848 named that field after its own detector - nothing proves that detector for J90350.00); set"
+ },
+ "12|10": {
+  "comment": "no record in v64t6_s and no reader in the dumped ROM; guess DGOBFUHN 'INDICATES WHETHER OBDII FAULT HANDLER IS ENABLED' (S mask 0x400 here in 28 other e2m files - the 23 CHR files and 5 ISB files - and an N record with no bit in 4 more ISB files; CM848 obd_fault_handler_enable); clear in the dumps"
+ },
+ "12|14": {
+  "comment": "LSCIIHEN 'ENABLE FOR OVERRIDING THE COLD IDLE ADJUST IN THE LSG' (9 other e2m files go on '- BIT 14'); andi.w #0x4000 at 0x26646 (cm550_FUN_00026616): the cold idle speed adder raises the idle reference unless this bit is set and the cold idle override flag 0x80db08 (e2m 1049 +6 LSCIOD 'TRUE INHIBITS COLD IDLE ADJUSTMEN(T)') is non-zero; CM848 reserved_bit_14 (no record there); clear"
+ },
+ "12|": {
+  "differences": "Bits 0 / 2-9 / 11-13 have CM848's positions and meanings (the same Calterm records), so CM848's field names are reused for bits 0 / 2-8 / 11-13; bit 9 is the same record but keeps the e2m wording because the CM848 name describes the CM848 detector. Bit 1 (EPOSFSO) has the same record in CM848's own e2m (Overspeed_FSO_Override 0x2): CM848's reserved_bit_1 takes the same name in this change. Bit 10 is obd_fault_handler_enable in CM848 (DGOBFUHN 0x400); J90350.00 has no record and no reader, so it is reserved here. Bits 14 (LSCIIHEN) and 15 (EDEN) are CM550's: CM848 keeps reserved_bit_14 / reserved_bit_15 with no record in its own e2m and no reader. Three bits differ in meaning (10 / 14 / 15) and bit 9 in name only, so the type is cm550_."
+ }
+}

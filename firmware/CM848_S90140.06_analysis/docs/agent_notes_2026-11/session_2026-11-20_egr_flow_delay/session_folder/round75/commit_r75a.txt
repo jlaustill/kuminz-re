@@ -1,0 +1,54 @@
+cm550: round 75 stage A - the InSite parameter schedule typed; the J1708 datalink's SCI and its first MC68336 register names
+
+From round 74's leads (the pointer types for the address-holding dwords).
+
+The InSite parameter schedule (vp44_insiteParameterTableIterator and its initializer):
+- insite_parameter_schedule_entry_t {parameter_id, period, first_due_offset} is a new 3-byte template. The initializer
+  sets each record's next due tick to period + first_due_offset for up to 30 records (parameter_id 0 ends the list).
+  On each pass the iterator compares the next due tick with the schedule tick, adds the period when they are equal,
+  and reads the parameter.
+- insite_parameter_table_pointer is typed insite_parameter_schedule_entry_t * (was dword), so its accesses read
+  ->period / ->parameter_id / + 1.
+- insite_parameter_schedule_pointer is a byte * (was dword) into the new insite_parameter_next_due_ticks byte[30]
+  (0x80de00, up to the table pointer).
+- 0x80ddfe is insite_parameter_schedule_tick. cm550_diagnosticMessageTransmissionManager adds 1 after each pass.
+- The table (ROM 0x612ee) lies past the 256 KB ROM dump, where CM550 has no memory block. Its row
+  insite_parameter_schedule_table is label-only: the typed row failed in the first build ("1 failed (in code)").
+- Three address-holding dwords become byte * and drop their (dword)& casts: the scratch pad buffer and directory
+  pointers and j1708_transmit_buffer_2_32_ddc6.
+
+The J1708 datalink's SCI:
+- CM550 had no row in the MC68336 register space (0x00FFxxxx), so every peripheral register rendered as Ram00fffXXX.
+  QSM_SCCR0 / QSM_SCCR1 / QSM_SCSR / QSM_SCDR (0xFFFC08-0xFFFC0E) are named from the J1708 code:
+  - the transmit start writes the first J1708 byte to SCDR;
+  - the initializer writes SCCR0 = 0x34 and SCCR1 = 0x102c (ILT + RIE + TE + RE).
+- 0x16d4e mc68k_tpuTransmissionTrigger -> mc68k_startJ1708Transmission. With a message pending and SCSR's RAF bit
+  (0x20) clear, which means an idle bus, it writes the first byte, arms the timer at 0xFFF458 / 0xFFF45A and sets
+  SCCR1 RIE to read back its own bytes (the J1708 collision check). It drives no TPU channel.
+- 0x29130 mc68k_FUN_00029130 -> mc68k_initializeJ1708Datalink. It initializes the secure write scratch pad, the
+  diagnostic buffer pointers, the J1708 receive state, the multipacket flags, the broadcast enable word, the InSite
+  parameter schedule and then the SCI.
+- 0x1e288 mc68k_epsPositionSensorIsrHandler -> mc68k_j1708SciInterruptHandler. On SCSR RDRF (0x40) it reads the
+  byte from SCDR into the J1708 receive buffer and adds it to the checksum. While transmitting it sends the next byte
+  and, at the end, the two's complement of the checksum (~sum + 1). No EPS position sensor is involved.
+- All three keep the mc68k_ prefix, CM550's prefix for functions that access MC68336 registers (16143a5c).
+- firmware/scripts/ApplyHardwareRegisters.java: ImportAnalysis labels every global_variables.csv row before this
+  stage creates the register block. So the stage found each register already named, skipped it, and left it without
+  data, which the decompiler does not render by name. A row's own name no longer counts as "already named", so the
+  stage types it. CM848 does not run this script (it uses ApplyMPC555Registers).
+
+Proof:
+- CM550: of 775 functions, 7 differ from the round's first build after the round's renames, and all 7 are explained:
+  - vp44_insiteParameterTableIterator and mc68k_initializeJ1708Datalink read the schedule through the struct pointer
+    and the byte *; the address stores drop their (dword)& casts;
+  - diagnosticCommandDispatcher, mc68k_startJ1708Transmission, mc68k_j1708SciInterruptHandler and
+    mc68k_tpuChannelStateMachine read the word-typed SCI registers through word temporaries, and the later
+    temporaries renumber;
+  - cm550_diagnosticServiceSecurityValidator only reorders a local declaration.
+- The SCI interrupt handler rename alone is label-only (0 functions differ). The four registers render at all 31
+  references (no Ram00fffc0X is left).
+- CM550 verify is DETERMINISTIC after each step. The headers regenerate with 0 g++ errors. The _cal audit reports
+  HARD 0 and MISSING 31.
+- CM848 builds with the script change and its .cpp is unchanged apart from the Generated line.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,60 @@
+===== 49
+  0x00ee74: cmpwi r29,49
+  0x00f548: cmpwi r30,49
+  0x04fac0: cmplwi r0,49
+  0x051428: cmplwi r0,49
+===== 50
+  0x00051c: cmpwi r25,50
+  0x000878: cmpwi r25,50
+  0x001610: li r9,50   prev: ['sth r11,-9162(r12)', 'lis r10,0x40']  next: ['sth r9,-9160(r10)', 'lis r12,0x40', 'sth r30,-4990(r12)']
+  0x00e040: li r11,50   prev: ['stw r29,0(r30)', 'addi r12,r29,25']  next: ['op31', 'sth r12,0(r31)', 'op18']
+  0x01d0dc: cmpwi r31,50
+  0x01d9ac: cmpwi r8,50
+  0x01da14: cmpwi r31,50
+  0x01da24: cmpwi r7,50
+  0x01da48: cmpwi r31,50
+  0x01da68: cmpwi r11,50
+  0x023660: li r31,50   prev: ['op11', 'op16']  next: ['op18', 'op40', 'lis r3,0x40']
+  0x02c644: cmpwi r10,50
+  0x042024: cmpwi r11,50
+  0x04209c: cmpwi r12,50
+  0x06e36c: li r6,50   prev: ['op0', 'op2']  next: ['addi r30,r0,600', 'op0', 'op0']
+  0x50b7a8: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5466(r12)', 'lis r10,0x41', 'op32']
+  0x50b7e0: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5464(r12)', 'lis r10,0x41', 'op32']
+  0x50b818: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5462(r12)', 'lis r10,0x41', 'op32']
+  0x50b850: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5460(r12)', 'lis r10,0x41', 'op32']
+  0x50b888: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5458(r12)', 'lis r10,0x41', 'op32']
+  0x50ba04: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5446(r12)', 'lis r10,0x41', 'op32']
+  0x50ba3c: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5444(r12)', 'lis r10,0x41', 'op32']
+  0x50ba74: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5442(r12)', 'lis r10,0x41', 'op32']
+  0x50baac: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5440(r12)', 'lis r10,0x41', 'op32']
+  0x50baf8: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5438(r12)', 'lis r10,0x41', 'op32']
+  0x50bb30: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5436(r12)', 'lis r10,0x41', 'op32']
+  0x50bb68: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5434(r12)', 'lis r10,0x41', 'op32']
+  0x50bba0: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5432(r12)', 'lis r10,0x41', 'op32']
+  0x50bbd8: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5430(r12)', 'lis r10,0x41', 'op32']
+  0x50bc10: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5428(r12)', 'lis r10,0x41', 'op32']
+  0x50bc48: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5426(r12)', 'lis r10,0x41', 'op32']
+  0x50bc80: li r11,50   prev: ['op16', 'lis r12,0x40']  next: ['sth r11,-5424(r12)', 'lis r10,0x41', 'op32']
+  0x51def8: li r9,50   prev: ['addi r11,r11,-4708', 'op21']  next: ['op31', 'lis r12,0x40', 'op34']
+  0x51df24: li r11,50   prev: ['op16', 'op21']  next: ['op31', 'op31', 'op31']
+  0x522230: li r7,50   prev: ['op31', 'stw r0,12(r1)']  next: ['addi r10,r0,0', 'lis r3,0x41', 'addi r3,r3,-18974']
+  0x52a48c: cmpwi r26,50
+  0x539318: li r5,50   prev: ['lis r4,0x0', 'op24']  next: ['addi r6,r0,30', 'op18', 'lis r7,0x2']
+  0x53935c: li r6,50   prev: ['op24', 'addi r5,r0,100']  next: ['op18', 'lis r7,0x2', 'addi r7,r7,26192']
+  0x5394bc: li r6,50   prev: ['op24', 'addi r5,r0,1000']  next: ['op18', 'lis r7,0x2', 'addi r7,r7,22140']
+===== 47
+  0x00d2c4: li r9,47   prev: ['addi r10,r10,-16838', 'stw r10,24(r1)']  next: ['stw r9,8(r1)', 'addi r12,r0,48', 'stw r12,12(r1)']
+  0x00d350: li r9,47   prev: ['addi r10,r10,-16838', 'stw r10,24(r1)']  next: ['stw r9,8(r1)', 'addi r12,r0,48', 'stw r12,12(r1)']
+  0x0268e0: li r9,47   prev: ['op20', 'stb r0,0(r30)']  next: ['sth r9,4(r30)', 'lis r29,0x40', 'addi r29,r29,-20864']
+  0x0357fc: li r10,47   prev: ['addi r9,r9,-19980', 'addi r8,r0,0']  next: ['op18', 'op32', 'op31']
+  0x035888: li r10,47   prev: ['addi r9,r9,-19980', 'addi r8,r0,0']  next: ['op18', 'op32', 'op31']
+  0x04f37c: cmpwi r3,47
+  0x04f88c: cmpwi r3,47
+  0x0511dc: cmpwi r3,47
+  0x054254: li r3,47   prev: ['op31', 'op16']  next: ['op18', 'addi r3,r0,48', 'op18']
+  0x054294: li r3,47   prev: ['op31', 'op16']  next: ['op18', 'addi r3,r0,48', 'op18']
+  0x5015f8: cmpwi r28,47
+  0x528bb0: li r3,47   prev: ['sth r11,-18346(r12)', 'op18']  next: ['op18', 'addi r3,r0,48', 'op18']
+  0x529048: li r3,47   prev: ['op31', 'stw r0,12(r1)']  next: ['op18', 'addi r3,r0,48', 'op18']
+  0x52ba7c: cmpwi r12,47

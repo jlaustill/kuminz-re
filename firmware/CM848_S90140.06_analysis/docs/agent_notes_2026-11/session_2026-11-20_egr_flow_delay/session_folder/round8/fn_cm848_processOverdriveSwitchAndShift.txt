@@ -1,0 +1,109 @@
+=== cm848_processOverdriveSwitchAndShift (lines 71913-72027, 108 non-blank)
+71913: // Function: cm848_processOverdriveSwitchAndShift @ 0x00510520
+71914: //
+71916: /* Overdrive-off switch 21 toggle (overdrive_off_flag) and the 3-4 shift: sets logical output 17
+71917:    (overdrive solenoid) on an upshift request / clears 17 and 18 for a 4-3 (shift schedule or cruise
+71918:    request / above 270 deg F / overdrive off) below 3100 output rpm (was
+71919:    protection_overtemp_monitor) | review-function-readability reviewed 2026-11-13 - Readability
+71920:    Medium Accuracy Confidence High */
+71922: void cm848_processOverdriveSwitchAndShift(void)
+71924: {
+71925:   word wVar1;
+71926:   byte bVar2;
+71928:   if ((algorithm_enable_flags_6_cal & 4) != 0) {
+71929:     if (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x40) == 0) &&
+71930:        (protection_overtemp_entry_debounce_count = protection_overtemp_entry_debounce_count + 1,
+71931:        protection_overtemp_entry_debounce_count_max < protection_overtemp_entry_debounce_count)) {
+71932:       protection_overtemp_entry_debounce_count = protection_overtemp_entry_debounce_count_max;
+71933:       if ((switch_input_state_bits[2] & 0x20) == 0) {
+71934:         protection_condition_flags_t_0040b0e8.overdrive_control_flags =
+71935:              protection_condition_flags_t_0040b0e8.overdrive_control_flags | 4;
+71936:       }
+71937:       else if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 4) != 0) {
+71938:         if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0) {
+71939:           bVar2 = protection_condition_flags_t_0040b0e8.overdrive_control_flags | 0x20;
+71940:         }
+71941:         else {
+71942:           bVar2 = protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0xdf;
+71943:         }
+71944:         overdrive_off_flag = overdrive_off_flag == 0;
+71945:         protection_condition_flags_t_0040b0e8.overdrive_control_flags = bVar2 & 0xfb;
+71946:         if (((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) &&
+71947:            (((transmission_current_gear != 3 ||
+71948:              ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) != 0)) ||
+71949:             (transmission_third_gear_lockup_enable == 0)))) {
+71950:           cm848_clearLogicalOutputRequest(0x12,0);
+71951:         }
+71952:       }
+71953:     }
+71954:     if ((protection_status_flags_t_0040b0f2.output_flags & 4) == 0) {
+71955:       if ((((cruise_resume_active_flag != 0) && (transmission_current_gear == 4)) &&
+71956:           (((int)(uint)vehicle_speed_copy < (int)((uint)cruise_speed_command - (uint)DAT_00407804)
+71957:            && ((transmission_output_speed_in_use < overdrive_downshift_maximum_output_speed &&
+71958:                (cruise_resume_downshift_delay_timer == 0)))))) &&
+71959:          (engine_speed_state.filtered_engine_speed < DAT_00407808)) {
+71960:         protection_condition_flags_t_0040b0e8.condition_eval =
+71961:              protection_condition_flags_t_0040b0e8.condition_eval | 2;
+71962:         protection_condition_flags_t_0040b0e8.overdrive_control_flags =
+71963:              protection_condition_flags_t_0040b0e8.overdrive_control_flags | 1;
+71964:       }
+71965:       if ((((transmission_current_gear == 3) &&
+71966:            ((int)((uint)cruise_speed_command - (uint)DAT_00407806) < (int)(uint)vehicle_speed_copy))
+71967:           || (DAT_0040780a < engine_speed_state.filtered_engine_speed)) ||
+71968:          (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) == 0 ||
+71969:           (transmission_current_gear == 2)))) {
+71970:         protection_condition_flags_t_0040b0e8.overdrive_control_flags =
+71971:              protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0xfe;
+71972:       }
+71973:       wVar1 = DAT_00407802;
+71974:       if ((transmission_current_gear == 4) &&
+71975:          ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0)) {
+71976:         if (cruise_resume_downshift_delay_timer == 0) {
+71977:           wVar1 = 0;
+71978:         }
+71979:         else {
+71980:           wVar1 = cruise_resume_downshift_delay_timer - 1;
+71981:         }
+71982:       }
+71983:       cruise_resume_downshift_delay_timer = wVar1;
+71984:       if (((((protection_condition_flags_t_0040b0e8.condition_eval & 2) == 0) &&
+71985:            ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0)) ||
+71986:           (overdrive_downshift_maximum_output_speed <= transmission_output_speed_in_use)) ||
+71987:          (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0)) {
+71988:         if ((((((protection_condition_flags_t_0040b0e8.condition_eval & 4) != 0) &&
+71989:               ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0)) &&
+71990:              ((transmission_overdrive_upshift_inhibit_timer == 0 &&
+71991:               (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x40) == 0 &&
+71992:                ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x80) == 0)))))) &&
+71993:             (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 1) == 0 &&
+71994:              (((2 < transmission_current_gear && (transmission_selected_gear != 0x7e)) &&
+71995:               (transmission_selected_gear != 0x7f)))))) &&
+71996:            (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0)) {
+71997:           protection_condition_flags_t_0040b0e8.load_condition_flags =
+71998:                protection_condition_flags_t_0040b0e8.load_condition_flags | 0x80;
+71999:           cm848_setLogicalOutputRequest(0x11,0);
+72000:           overdrive_upshift_timer = DAT_004077fa;
+72001:           transmission_overdrive_upshift_inhibit_timer = DAT_004077fc;
+72002:         }
+72003:       }
+72004:       else {
+72005:         cm848_clearLogicalOutputRequest(0x12,0);
+72006:         cm848_clearLogicalOutputRequest(0x11,0);
+72007:         if (engine_retarder_active_flag != 0) {
+72008:           converter_clutch_transition_state = converter_clutch_transition_state | 1;
+72009:         }
+72010:         transmission_lockup_timers.lockup_delay_4_3_timer = DAT_00408370;
+72011:         if ((transmission_overheat_protection_active_flag == 0) &&
+72012:            (transmission_lockup_timers.lockup_delay_4_3_timer = DAT_004077f6,
+72013:            (protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) != 0)) {
+72014:           transmission_lockup_timers.lockup_delay_4_3_timer = DAT_00407800;
+72015:         }
+72016:         transmission_lockup_timers.lockup_off_timer = protection_sensor_fault_cal;
+72017:       }
+72018:     }
+72019:     protection_condition_flags_t_0040b0e8.condition_eval =
+72020:          protection_condition_flags_t_0040b0e8.condition_eval & 0xf9;
+72021:   }
+72022:   return;
+72023: }
+72027: //

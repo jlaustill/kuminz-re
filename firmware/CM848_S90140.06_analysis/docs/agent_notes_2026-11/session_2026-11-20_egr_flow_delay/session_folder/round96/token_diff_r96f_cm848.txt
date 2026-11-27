@@ -1,0 +1,19 @@
+0x00023188: 6 token changes: ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) => 
+0x000231cc: 1 token changes: & => 
+0x00025458: 8 token changes:  => . active_trouble_code_count | DAT_003fad57 => j1939_pgn65230_payload . previously_active_trouble_code_count | DAT_003fad58 => j1939_pgn65230_payload . obd_compliance | undefined1 => byte | DAT_003fad59 => j1939_pgn65230_payload . continuously_monitored_systems_support | undefined1 => byte | j1939_feature_config_tx_word => j1939_pgn65230_payload . non_continuously_monitored_systems_support | j1939_dm1_active_faults_tx_word => j1939_pgn65230_payload . non_continuously_monitored_systems_status
+0x0002553c: 1 token changes:  => . active_trouble_code_count
+0x0002567c: 1 token changes: undefined1 => byte
+0x00038ac8: 2 token changes:  => byte all_transmits_overdue ; | ; byte all_transmits_overdue => 
+---- census of distinct changes
+   3 ( & => 
+   3 ) => 
+   3 undefined1 => byte
+   2  => . active_trouble_code_count
+   1 & => 
+   1 DAT_003fad57 => j1939_pgn65230_payload . previously_active_trouble_code_count
+   1 DAT_003fad58 => j1939_pgn65230_payload . obd_compliance
+   1 DAT_003fad59 => j1939_pgn65230_payload . continuously_monitored_systems_support
+   1 j1939_feature_config_tx_word => j1939_pgn65230_payload . non_continuously_monitored_systems_support
+   1 j1939_dm1_active_faults_tx_word => j1939_pgn65230_payload . non_continuously_monitored_systems_status
+   1  => byte all_transmits_overdue ;
+   1 ; byte all_transmits_overdue => 

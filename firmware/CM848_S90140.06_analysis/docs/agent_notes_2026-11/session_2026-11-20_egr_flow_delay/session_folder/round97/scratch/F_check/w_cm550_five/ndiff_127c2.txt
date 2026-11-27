@@ -1,0 +1,32 @@
+-dword T;
+-int *T;
+-T = (int *)&cylinder_balance_reference_projections[1];
+-do {
++T = cylinder_balance_reference_projections;
++do {
++T = T + 1;
+-T = T + 1;
+-}
+-while (T < 6);
+-cylinder_balance_reference_projections = ((int)cylinder_balance_reference_2_cylinder_1_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_1_real * (int)cylinder
+-_fuel_timing_blend_rpm_input_2 = ((int)cylinder_balance_reference_2_cylinder_5_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_5_real * (int)cylinder_balance
+-_DAT_008002b4 = ((int)cylinder_balance_reference_2_cylinder_3_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_3_real * (int)cylinder_balance_adjusted_real_co
+-cylinder_balance_reference_projections[5] = -cylinder_balance_reference_projections;
+-_fuel_timing_blend_offset_input_1 = -_fuel_timing_blend_rpm_input_2;
+-cylinder_balance_reference_projections[3] = -_DAT_008002b4;
++}
++while (T < 6);
++cylinder_balance_reference_projections[0] = ((int)cylinder_balance_reference_2_cylinder_1_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_1_real * (int)cylin
++cylinder_balance_reference_projections[4] = ((int)cylinder_balance_reference_2_cylinder_5_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_5_real * (int)cylin
++cylinder_balance_reference_projections[2] = ((int)cylinder_balance_reference_2_cylinder_3_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_3_real * (int)cylin
++cylinder_balance_reference_projections[5] = -cylinder_balance_reference_projections[0];
++cylinder_balance_reference_projections[1] = -cylinder_balance_reference_projections[4];
++cylinder_balance_reference_projections[3] = -cylinder_balance_reference_projections[2];
+-T = (dword *)&cylinder_balance_reference_projections[1];
+-do {
+-if ((int)T < (int)*T) {
++T = cylinder_balance_reference_projections[0];
++do {
++T = T + 1;
++if (T < *T) {
+-T = T + 1;

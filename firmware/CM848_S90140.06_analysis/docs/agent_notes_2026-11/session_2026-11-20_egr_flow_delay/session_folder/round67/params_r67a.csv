@@ -1,0 +1,16 @@
+function,old,new
+cm848_sendBootResultToJ1939Requester,param_1,request
+cm848_sendBootResultToJ1939Requester,param_2,channel
+cm848_sendBootResultToJ1939Requester,param_3,result
+mpc555_verifyDownloadedCalibration,param_1,request
+mpc555_verifyDownloadedCalibration,param_2,channel
+cm848_handleBootVerifyDownloadedCalibrationService,param_1,request
+mpc555_beginReflash,param_1,channel
+cm848_handleBootBeginReflashService,param_1,request
+cm848_trackDownloadBlock,param_1,data
+cm848_trackDownloadBlock,param_2,address
+cm848_trackDownloadBlock,param_3,length
+cm848_trackDownloadBlock,param_4,channel
+cm848_updateDownloadCrc,param_1,data
+cm848_updateDownloadCrc,param_2,length
+cm848_updateDownloadCrc,param_3,channel

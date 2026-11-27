@@ -1,0 +1,17 @@
+firmware/CM848_S90140.06_analysis/docs/engine_hours_and_odometer.md:129: ...| `0x0040BDF6` | `sensor_channel102_value` | "scatter write pointer" |
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:864: ...mit as fueling ((j1939_reference_engine_fueling - fuel_demand_norm_zero_cal) x percent / 100 + the zero f
+firmware/CM848_S90140.06_analysis/output/firmware_types.hpp:2137: ...mit as fueling ((j1939_reference_engine_fueling - fuel_demand_norm_zero_cal) x percent / 100 + the zero f
+work/tasks/046-cm848-egr-flow-estimate.md:872: ... PID internals** in `cm848_runLowSpeedGovernor` (`governor_speed_debounce_active_flag`,
+work/tasks/046-cm848-egr-flow-estimate.md:873: ...    `governor_speed_error_prev_snapshot`, `governor_speed_low_clamp`;
+work/tasks/046-cm848-egr-flow-estimate.md:873: ...    `governor_speed_error_prev_snapshot`, `governor_speed_low_clamp`; e2m 1064 / 1065).
+work/tasks/046-cm848-egr-flow-estimate.md:897: ...  - `sensor_channel9_ram` (0x40a0e6) is the state of t
+work/tasks/025-cm848-naming-wave-followups.md:131: ...rLookupTable5 / cm848_initSensorLookupTable5 with sensor_channel_5_state (0x40b156 = the channel 71 st
+work/tasks/025-cm848-naming-wave-followups.md:144: ...5558 / 0x355e4) the A/C pressure channel 71 ones; sensor_channel_5_state (0x40b156 typed byte) is the 
+work/tasks/025-cm848-naming-wave-followups.md:337: ...- 0x3fdfdc engine_rpm_trigger_ready_flag is really field +0 of channel
+work/tasks/025-cm848-naming-wave-followups.md:356: ...ntake manifold minus barometric pressure (boost); protection_iat_scaled = barometric x factor / 100; 
+work/tasks/025-cm848-naming-wave-followups.md:379: ...- Outside the list: fuel_demand_base_offset 0x40aeec = friction fuel (zer
+work/tasks/025-cm848-naming-wave-followups.md:577: ...ttery temperature deg C + 40). Channel RAM names: sensor_channel_6_state 0x40b162 (slot 69) / sensor_c
+work/tasks/042-table-campaign-rename-leads.md:55: ...- `protection_iat_scaled`, `governor_cold_start_iat_co
+work/tasks/042-table-campaign-rename-leads.md:63: ...- `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a
+work/tasks/042-table-campaign-rename-leads.md:708: ...FuelDemandWithTrim, cm848_processActiveFaultList, cm848_processSpeedSensorCompensation, cm848_throttlePositionProces
+work/tasks/045-cm848-fueling-state-enum.md:761: ...l` on ROM cells: `etc1_torque_mode_timeout_cal`, `fuel_demand_norm_zero_cal`, `cruise_speed_default_cal`,
