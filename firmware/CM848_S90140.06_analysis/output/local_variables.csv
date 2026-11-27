@@ -81,7 +81,7 @@ function_address,function_name,old_name,new_name,type,comment,keep_merged
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
 0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling
 # cm848_updateOutputReadBackFaultBits @ 0x0053a110 - read-back verdict of each output channel assignment table entry into output_read_back_fault_bits
-0x00538974,clearWorkingRam,pwVar1,working_ram_pointer,dword *,The next dword to clear (one stw per step) from executive_frame_ticks (0x3fa000) up to working_ram_end_marker (PR #53 round 88)
+0x00538974,clearWorkingRam,pwVar1,working_ram_pointer,dword *,The next dword to clear (one stw per step) from main_loop_pass_ticks (0x3fa000) up to working_ram_end_marker (PR #53 round 88)
 0x00538974,clearWorkingRam,pdVar2,chunk_end,dword *,The end of this pass: 256 bytes on or working_ram_end_marker; the loop runs while working_ram_pointer <= chunk_end - inclusive (PR #53 round 88)
 0x0053a110,cm848_updateOutputReadBackFaultBits,wVar1,read_back_verdict,word,The record's read-feedback result: 0 agree / 1 or 2 fault / 0xffff no verdict (clrlwi + cmplwi 65535 = an unsigned 16-bit compare)
 0x0053a110,cm848_updateOutputReadBackFaultBits,bVar2,check_this_pass,byte,0 on the passes where entry 1 (cooling fan) is skipped by cooling_fan_read_back_check_divider - 1 otherwise
@@ -164,8 +164,8 @@ function_address,function_name,old_name,new_name,type,comment,keep_merged
 0x00010274,mpc555_dispatchExternalInterrupt,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
-0x00010274,mpc555_dispatchExternalInterrupt,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
-0x00010274,mpc555_dispatchExternalInterrupt,uVar7,current_interrupt_mask,ushort,SIMASK read again: ANDed with the nesting mask of the interrupt code and written back (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,wVar6,saved_interrupt_mask,word,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,wVar7,current_interrupt_mask,word,SIMASK read again: ANDed with the nesting mask of the interrupt code and written back (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,bVar8,interrupt_code,byte,The SIVEC interrupt code byte (4 x the source number) (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,bVar9,low_sum_carry,bool,Carry of the low word's add into the high word (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,uVar1,entry_time_base_low,undefined4,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
@@ -173,7 +173,7 @@ function_address,function_name,old_name,new_name,type,comment,keep_merged
 0x0001041c,mpc555_handleDecrementerException,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
-0x0001041c,mpc555_handleDecrementerException,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,wVar6,saved_interrupt_mask,word,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
 0x0003a450,cm848_initializePciMessagePayloads,iVar7,byte_index,int32_t,"Loop counter of each buffer fill",yes
 0x0003a450,cm848_initializePciMessagePayloads,iVar8,vin_characters_copied,int32_t,"Counts the 4 VIN characters copied into each of TX[21]-TX[23]",yes
 0x0003a450,cm848_initializePciMessagePayloads,iVar6,last_vin_index,int32_t,"Index of the VIN character copied last; the next copy reads vehicle_vin_string_cal[last_vin_index + 1]",yes
@@ -194,3 +194,17 @@ function_address,function_name,old_name,new_name,type,comment,keep_merged
 0x0003a450,cm848_initializePciMessagePayloads,r4@0x0003a71c,vin_payload_cursor,byte *,"TX[22] VIN write cursor",yes
 0x0003a450,cm848_initializePciMessagePayloads,r5@0x0003a74c,vin_payload_cursor,byte *,"TX[23] VIN write cursor",yes
 0x0003a450,cm848_initializePciMessagePayloads,r5@0x0003a77c,vin_payload_cursor,byte *,"TX[24] VIN write cursor",yes
+0x00539190,cm848_j1939_system_init,r31@0x005391ec,blocking_table_index,uint,"Index into j1939_source_address_blocking_table (4 entries set to 0xfe)",yes
+0x00539190,cm848_j1939_system_init,r10@0x00539548,last_mailbox_before_j1939,uint,"can_last_message_object_used on entry: the last TouCAN A mailbox claimed before J1939 (mailbox numbers are 1-based)",yes
+0x00539190,cm848_j1939_system_init,r6@0x0053954c,transmit_mailbox_number,int32_t,"J1939 transmit mailbox: the one after last_mailbox_before_j1939",yes
+0x00539190,cm848_j1939_system_init,r10@0x00539568,mailbox_byte_offset,uint,"transmit_mailbox_number x 16: byte offset of mailbox n from 0x3070f0 (one buffer before toucan_a_message_buffers, mailboxes are 1-based)",yes
+0x00539190,cm848_j1939_system_init,r30@0x00539580,receive_mailbox_cursor,byte *,"Next receive mailbox to configure: toucan_a_message_buffers[transmit_mailbox_number] onward (+1 = CODE/LENGTH byte, +2 = ID dword)",yes
+0x00539190,cm848_j1939_system_init,r8@0x00539584,receive_id_template_index,uint,"Running index into j1939_receive_message_object_id_templates across all four mailbox groups",yes
+0x00539190,cm848_j1939_system_init,r31@0x00539588,group_mailbox_index,ushort,"Mailboxes configured so far in the current group",yes
+0x00539190,cm848_j1939_system_init,r31@0x005395e4,group_mailbox_index,ushort,"Same value, later loop",yes
+0x00539190,cm848_j1939_system_init,r31@0x00539630,group_mailbox_index,ushort,"Same value, later loop",yes
+0x00539190,cm848_j1939_system_init,r31@0x0053968c,group_mailbox_index,ushort,"Same value, later loop",yes
+0x00539190,cm848_j1939_system_init,r10@0x005395b0,filter_source_address,uint,"Own source address (engine or engine retarder) ORed into ID bits 9-16 of the destination-specific receive IDs",yes
+0x00539190,cm848_j1939_system_init,r10@0x00539658,filter_source_address,uint,"Same value, later loop",yes
+0x00539190,cm848_j1939_system_init,r30@0x005396e8,interrupt_mask_bit,uint,"IMASK bit of the transmit mailbox (bit transmit_mailbox_number - 1), then shifted left once per receive mailbox",yes
+0x00539190,cm848_j1939_system_init,r31@0x005396f8,receive_mailbox_index,ushort,"Receive mailboxes whose IMASK bit has been set",yes

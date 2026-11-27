@@ -68,9 +68,9 @@ firmware/
     └── output/*.csv              # CSVs + decompilation
 ```
 
-**Script utilities:** `firmware/scripts/ScriptUtils.java` and `CsvCommentIndex.java` contain all pure (non-Ghidra) logic — CSV parsing, address parsing, type classification, comment preservation. New scripts should use these rather than copy-pasting. No Ghidra JARs needed to compile or test them.
+**Script utilities:** `firmware/scripts/ScriptUtils.java`, `CsvCommentIndex.java` and `BitfieldPieceRewriter.java` contain all pure (non-Ghidra) logic — CSV parsing, address parsing, type classification, comment preservation. New scripts should use these rather than copy-pasting. No Ghidra JARs needed to compile or test them.
 
-**Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 118 JUnit 5 tests covering ScriptUtils and CsvCommentIndex. Tests live in `firmware/script_tests/` (NOT inside `firmware/scripts/`) because Ghidra's `GhidraSourceBundle` recurses into subdirectories when compiling the bundle. Any `.java` file with imports not on Ghidra's classpath (e.g. JUnit) inside `firmware/scripts/` will break ALL script compilation with "class not found" errors.
+**Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 124 JUnit 5 tests covering ScriptUtils, CsvCommentIndex and BitfieldPieceRewriter. Tests live in `firmware/script_tests/` (NOT inside `firmware/scripts/`) because Ghidra's `GhidraSourceBundle` recurses into subdirectories when compiling the bundle. Any `.java` file with imports not on Ghidra's classpath (e.g. JUnit) inside `firmware/scripts/` will break ALL script compilation with "class not found" errors.
 
 ---
 
@@ -149,7 +149,7 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
   - **The boot ROM side:** it loads EEPROM 0x56 into `boot_serial_reflash_unlock_request`. `mpc555_initializeDiagnosticSession` then clears it and starts its SCI session at high speed (SCC1R0 0x14) with `boot_sci_security_state` (0x3fecc4) = 1, unlocked, so the seed is 0.
   - **Otherwise** the boot SCI security is locked (0). `cm848_bootSciCheckSecurityKey` answers 0 unlocked / 1 wrong key / 2 retry delay (`boot_sci_key_retry_delay` 1000) / 3 locked out (`boot_sci_failed_key_count` 3 → state 2).
   - **The two dwords saved before the restart** are the hour meters `key_on_hour_meter` → EEPROM 0x30 and `engine_hour_meter` → EEPROM 0x42 (see the runtime counter bullet above).
-- **Power-down bookkeeping (2026-11-14, PR #48, todo 037):** EEPROM 0x7fe-0x810. Each start numbers the power cycle: `power_cycle_sequence_number_cal` = `completed_power_down_count_cal` + `incomplete_power_down_count_cal`. The power-down EEPROM save (`cm848_saveEepromForPowerDown`, was `engine_start_completion_sequence`) copies that number into `completed_power_down_sequence_number_cal`. At the next reset, `cm848_applicationMain (was hpcr_exceptionHandler)` compares the two:
+- **Power-down bookkeeping (2026-11-14, PR #48, todo 037):** EEPROM 0x7fe-0x810. Each start numbers the power cycle: `power_cycle_sequence_number_cal` = `completed_power_down_count_cal` + `incomplete_power_down_count_cal`. The power-down EEPROM save (`cm848_saveEepromForPowerDown`, was `engine_start_completion_sequence`) copies that number into `completed_power_down_sequence_number_cal`. At the next reset, `run_power_cycle (was hpcr_exceptionHandler)` compares the two:
   - **equal:** the completed count +1, and the consecutive count goes to 0;
   - **different:** the incomplete and consecutive counts +1, with fault 82 = P2509; above `consecutive_incomplete_power_down_limit` (3), fault 89 = P2509.
   RAM dump: 333 / 332 / 333 / 0. `cm848_runPowerDownSequence` (was `cm848_initProtectionTimers`) runs after the main run loop ends. It saves the EEPROM, releases logical output 27 (it looks like the ECM's power hold), and sets `power_down_left_ecm_powered_flag_cal` if the ECM is still running afterwards (fault 91 = P0606 at the next start). A key-on during the power-down goes to `restartOnKeyOnDuringPowerDown` (was `engine_protection_timer_sync`) → `cm848_restartApplicationWithoutReset` (was `cm848_engineStartCompletionB`), which resets the stack and re-enters the run loop without a hardware reset. The old names (`qadc_scan_*`, `sensor_diag_*`, the EEPROM copies of `protection_timer_a/b`) were guesses. The real `protection_timer_a` / `_b` are the RAM pair at 0x40b10a / 0x40b10c, and round 8 (PR #53) found that they are not protection timers either: e2m 8C17 names them `transmission_output_speed_fault_debounce_timer` (RE_Bad_OSS_Loops) and `governor_pressure_offset_calibration_interval_timer` (RE_Between_Cal_Timer).
@@ -479,7 +479,7 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 - `power_take_off_governor_switch_state_bits` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
 
 ### Sensor Channel Architecture
-- Sensor channels use paired wrappers, named by when they run (PR #53 round 27): `cm848_process<Channel>Channel` every pass from a periodic task, `cm848_initialize<Channel>Channel` once at boot from `cm848_applicationMain`. The old `cm848_sensorChannelN_init` / `_process` names had the suffixes inverted (PR #39).
+- Sensor channels use paired wrappers, named by when they run (PR #53 round 27): `cm848_process<Channel>Channel` every pass from a periodic task, `cm848_initialize<Channel>Channel` once at boot from `run_power_cycle`. The old `cm848_sensorChannelN_init` / `_process` names had the suffixes inverted (PR #39).
 - **Four channel functions, one prototype (2026-11-16):** Type A `cm848_processSignedSensorChannel` (0x500234, periodic) / `cm848_initializeSignedSensorChannel` (0x500a4c, boot) and Type B `cm848_processUnsignedSensorChannel` (0x5012dc) / `cm848_initializeUnsignedSensorChannel` (0x501b4c) run the same algorithm and take the same 13 parameters. Type A is the signed pair (lookup flags 2, `lha` loads, `cm848_signedFirstOrderFilter`), Type B the unsigned pair (flags 0, `lhz` loads, `cm848_exponentialMovingAverage`). Type B also skips the threshold faults of channel 47 until `cruise_control_switches_learned_flag_cal`, of channel 71 until its learned flag, and of channel 10 while `oil_pressure_switch_only_cal` is set (round 27, from the machine code diff):
   `(sensor_channel_configuration_t *configuration_pointer, sensor_channel_state_t *state_pointer, word *cached_axis_offset, word *x_axis, word *y_data, int flags, ema_filter_state_t *filter_state_pointer, uint channel_index, uint high_fault_bit, uint low_fault_bit, word *value_output_pointer, word *default_value_output_pointer, word *fault_status_output_pointer)`.
   The old Type A prototype was misaligned. Its `adc_index_*` / `output_raw` / `output_filtered` / `param_11-13` were really the filter state, channel, fault bits and outputs, so the 22 Type A call sites passed 16-bit-truncated pointers (`0xbd90`) and the body read the outputs as `in_stack_` slots.
@@ -715,30 +715,47 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       P0500 detectors.
     - `logical_output_request_bits_16_to_23_t`.
     - A bit that nobody proved is `reserved_bit_N`, with the guess kept in its comment.
-    - **Use a bitfield only for a word that the code tests.** If the code updates the byte with `|` / `&` masks, keep
-      it a byte field and put the bit meanings in its comment. Ghidra 12.1 does not fold those read-modify-writes
-      into bitfield stores, so it prints them as `._8_1_` pieces of the struct. Wave 11 reverted two bitfields for
-      this reason: `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and `transmission_control_flags_t.limp_home_flags_4`
-      (then `protection_status_flags_t.status_flags` / `protection_condition_flags_t.fault_state_flags`).
-      The two bitfields had given 18 named tests but 31 pieces.
-      - **One exception, by the user's decision (2026-11-21, PR #53 round 16): `switch_input_state_t` is all
-        bitfields.** Its 180 named bit accesses outweigh the 10 pieces in three single-bit setters
-        (`cm848_checkSwitch31OnTimeFault`, `cm848_updateAirConditioningSwitchFromPci`,
-        `cm848_deriveSecondBrakeSwitchSignal`). Its indexed loops print `(&switch_input_state_bits.field_0x0)[i]`.
-      - **A second exception, by the user's decision (2026-11-22, PR #53 round 27): the fault words.**
-        Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault n = bit n % 16 of word n / 16). Bits
-        are named from e2m 1036 where the code resolves the abbreviation; the others are `fault_<n>`.
-        - **What it gained:** 780 bit-name references (656 in tests, 108 in writes, 16 elsewhere), such as
-          `fault_detected_cal.coolant_temperature_high_error == 0`.
-        - **What it cost:** 943 piece tokens. 856 of them are the set / clear writes that Ghidra 12.1 does not fold
-          (`fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20`); the other 87 are tests and whole-word uses.
+    - **Bitfield read-modify-writes are printed by field name at export (2026-11-27, PR #56).** Ghidra 12.1 does
+      not fold `|` / `&` mask updates into bitfield stores; it prints them as pieces of the struct
+      (`fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20`). `ExportAnalysis` passes every function
+      through `BitfieldPieceRewriter`, which rewrites only the exact shapes, using the struct layout Ghidra holds:
+      - `S._o_n_ = S._o_n_ | K;` → one `S.field = 1;` (or all ones) line per field, when K is exactly whole fields;
+      - `S._o_n_ = S._o_n_ & K;` → one `S.field = 0;` line per field that K clears, under the same condition;
+      - `S._o_n_ = S._o_n_ & K1 | K2;` → the `= 0` lines for the fields K1 clears and K2 does not set, then the
+        `= 1` lines for K2, when both are whole fields (also when Ghidra wraps any of these after the `=`);
+      - `(S._o_n_ & K) == 0` / `!= 0` → `S.field == 0` / `!= 0`, and `(S._o_n_ & K) == (T._o_n_ & K)` →
+        `S.field == T.field`, when K is exactly one field.
+      Anything else stays as Ghidra printed it: a mask that covers part of a field or bits with no field, a merged
+      temporary (`uVar1 = fault_detected_cal._50_2_ & 0xffef | 0x20; ... fault_detected_cal._50_2_ = uVar1;`),
+      a value read (`flag = fault_detected_cal._82_2_ & 0x8000`) and a test against a non-zero constant
+      (`(fault_detected_cal._90_2_ & 0x100) != 1`, which the machine code really does). The build log prints
+      `Bitfield pieces printed by field name: N`. First run: 456 rewrites in CM848 (446 fault words, 10 switch
+      inputs); 463 with the wrapped and `& K1 | K2` forms and the limp-home bytes. Piece counts are in PR #56.
+      - **Check after a change:** an independent CSV-based re-implementation (the PR #56 session's `verify.py`)
+        applied to the pre-rewrite output gave a byte-identical file.
+    - **Bitfield structs:**
+      - **`switch_input_state_t` is all bitfields (PR #53 round 16).** Its indexed loops print
+        `(&switch_input_state_bits.field_0x0)[i]`. Its 10 single-bit setter pieces (`cm848_checkSwitch31OnTimeFault`,
+        `cm848_updateAirConditioningSwitchFromPci`, `cm848_deriveSecondBrakeSwitchSignal`) now print by name.
+      - **The fault words (PR #53 round 27).** Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault
+        n = bit n % 16 of word n / 16). Bits are named from e2m 1036 where the code resolves the abbreviation; the
+        others are `fault_<n>`.
+        - **Pieces:** 948 piece tokens on the three fault instances before the export rewrite, 49 after. The 49 are
+          the shapes listed above that stay as Ghidra printed them.
         - **Word 0 stays the plain word `faults_0_to_15`.** It is the base of the 200 indexed accesses, which print
           `*(undefined2 *)(&fault_detected_cal.field_0x0 + i)` once word 0 holds bitfields.
         - **One type per word does not work:** a nested `fault_bits_A_to_B_t` field prints
           `ZPULL(fault_detected_cal.faults_16_to_31,3,1)` and struct casts.
         - The mask-exact proof (`prove_fault_bitfields.py` in the session folder) rewrites each bit name back to its
           own word and mask and compares every function.
-        The rule still holds for every other struct.
+      - Wave 11 (before the export rewrite) reverted two bitfields for their pieces:
+        `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and
+        `transmission_control_flags_t.limp_home_flags_4` (then `protection_status_flags_t.status_flags` /
+        `protection_condition_flags_t.fault_state_flags`).
+        - **`limp_home_flags_3` / `_4` are bitfields (PR #56):** one field per e2m RE_Limp_Flags3 / 4 bit; all 16 uses
+          print by name (`transmission_control_flags.output_speed_sensor_limp = 1`).
+        - **`wide_open_throttle_flags` stays a byte:** most of its updates go through merged temporaries
+          (`bVar3 = flags & 0xdf; ... flags = bVar3 | 0x40;`), which stay pieces, and bits 0x08 / 0x10 are unproven.
     - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
       went up.
   - **`end_of_line_test_settings_cal`** (0x3fd938 = EEPROM 0x4b6) is the Chrysler in-plant test block. The old names
@@ -1037,8 +1054,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     unlimited only for 0x03, 6 s for the others (task 022).
   - **Enums:** `TSC1_OVERRIDE_MODE` (SPN 695), `J1939_CONTROL_DEVICE` (none / transmission / ABS / ASR / unknown)
     and `CONTROL_NETWORK` (J1922 / J1939).
-  - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A multi-bit mask on a
-    bitfield renders as a raw piece (`_32_2_ & 3`), so masked flag words stay words.
+  - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A mask that covers part of a
+    multi-bit bitfield renders as a raw piece (`_32_2_ & 3`), so masked flag words stay words.
 - **Round 7 (2026-11-21, PR #53):** the J1939 monitor (j1939mon) and the drivetrain ratio module.
   - **`j1939_control_session_t`** is the 24-byte session record (e2m 10FD history table `[5]` at 0x3fead6,
     10FE / 10FF active engine / retarder records at 0x3feb50 / 0x3feb6a, each behind a length word).

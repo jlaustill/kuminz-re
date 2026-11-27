@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 21:28:45 MST 2026
+// Generated: Fri Nov 27 05:54:50 UTC 2026
 
 
 //
@@ -373,8 +373,8 @@ LAB_00003c1a:
 
 /* This is the boot ROM's software-restart entry: a point inside the body of
    mc68k_hardwareInitializationAndStartup that has its own function row, like
-   cm550_restartApplicationWithoutReset (0x28978) inside mc68k_applicationMain. How it is reached:
-   (a) restartThroughBootRom (0x1192a, twin of CM848 0x216fc) masks interrupts, sets SP to 0x811000,
+   cm550_restartApplicationWithoutReset (0x28978) inside run_power_cycle. How it is reached: (a)
+   restartThroughBootRom (0x1192a, twin of CM848 0x216fc) masks interrupts, sets SP to 0x811000,
    loads the long at ROM 0x8 and jumps to it. (b) (was mc68k_FUN_00003abe; PR #53 round 88) */
 
 void mc68k_restartBootRomWithoutReset(void)
@@ -670,12 +670,12 @@ uint cm550_updateDutyCycleMonitorLoadHistogram(void)
 //
 
 /* Start-up initialization of the duty cycle monitor, called from the start-up list of
-   mc68k_applicationMain. It points the two 2D lookup records at the steady state and transient 4D
-   fueling tables with the throttle input 400 (100 percent), sets the short term period to DCMNSHTI
-   x 36000 ticks (and x 60 minutes), and converts the stored short term map totals DCMP01TL /
-   DCMP02TL and the 50 region words of each stored map (DCMNMP01 / DCMNMP02, minutes) into the
-   processing totals and counters (DCPR01TL / DCPR02TL, DCSHPR01 / DCSHPR02, x 600; a total at or
-   over the period becomes the period). (was cm550_FUN_0000af70; PR #53 round 94) */
+   run_power_cycle. It points the two 2D lookup records at the steady state and transient 4D fueling
+   tables with the throttle input 400 (100 percent), sets the short term period to DCMNSHTI x 36000
+   ticks (and x 60 minutes), and converts the stored short term map totals DCMP01TL / DCMP02TL and
+   the 50 region words of each stored map (DCMNMP01 / DCMNMP02, minutes) into the processing totals
+   and counters (DCPR01TL / DCPR02TL, DCSHPR01 / DCSHPR02, x 600; a total at or over the period
+   becomes the period). (was cm550_FUN_0000af70; PR #53 round 94) */
 
 void cm550_initializeDutyCycleMonitor(void)
 
@@ -744,10 +744,10 @@ void cm550_initializeDutyCycleMonitor(void)
 // Function: cm550_storeDutyCycleMonitorShortTermMaps @ 0x0000b130
 //
 
-/* Stores the duty cycle monitor's short term maps: called by mc68k_applicationMain after the
-   background loop ends (power-down), with interrupts masked. Each processing total (DCPR01TL /
-   DCPR02TL) becomes the stored total DCMP01TL / DCMP02TL in minutes ((ticks x 60 + 18000) / 36000,
-   or the period in minutes when the map is full), and the 50 region counters of each processing map
+/* Stores the duty cycle monitor's short term maps: called by run_power_cycle after the background
+   loop ends (power-down), with interrupts masked. Each processing total (DCPR01TL / DCPR02TL)
+   becomes the stored total DCMP01TL / DCMP02TL in minutes ((ticks x 60 + 18000) / 36000, or the
+   period in minutes when the map is full), and the 50 region counters of each processing map
    (DCSHPR01 / DCSHPR02) become the words of the stored maps DCMNMP01 / DCMNMP02 the same way. (was
    cm550_writeHourMeterConversionData; PR #53 round 94) */
 
@@ -835,7 +835,7 @@ void calculateFilteredEngineAcceleration(void)
 //
 
 /* Acceleration noise control (ANC) fuel limit, every 50 ms as call 1 of
-   cm550_runEvery10FramesTaskSetPhase0, while
+   cm550_runEvery10PassesTaskSetPhase0, while
    algorithm_enable_flags_3_cal.acceleration_noise_control_fuel_limit_enable is set. A first stage
    acceleration (e2m 10A4 +8 ESFT01AC) above NZFLACTR sets the inhibit NZFLLMIH and reloads its
    timer from NZFLIHTM. The status acceleration_noise_control_fuel_limit_active_flag (10A4 +C
@@ -938,7 +938,7 @@ void cm550_applyAccelerationNoiseControlFuelLimit(void)
 //
 
 /* Acceleration noise control (ANC) timing limit, every 50 ms from
-   cm550_runEvery10FramesTaskSetPhase1 while
+   cm550_runEvery10PassesTaskSetPhase1 while
    algorithm_enable_flags_3_cal.acceleration_noise_control_timing_limit_enable is set. A first stage
    filtered acceleration (e2m 10A4 +8 ESFT01AC) above the timing threshold sets the inhibit NZTALMIH
    (10A4 +18) for NZTAIHTM passes (timer 0x800040). With ASANENF set, no inhibit, the coolant above
@@ -1042,7 +1042,7 @@ void cm550_applyAccelerationNoiseControlTimingLimit(void)
 //
 
 /* Acceleration noise control (ANC) engine speed limit, every 50 ms as call 1 of
-   cm550_runEvery10FramesTaskSetPhase1, while
+   cm550_runEvery10PassesTaskSetPhase1, while
    algorithm_enable_flags_3_cal.acceleration_noise_control_engine_speed_limit_enable is set. A first
    stage acceleration (ESFT01AC) above NZESACTR sets the inhibit NZESLMIH and reloads its timer from
    NZESIHTM. The status acceleration_noise_control_engine_speed_limit_active_flag (e2m 10A4 +10
@@ -1170,7 +1170,7 @@ void cm550_initializeAccelerationNoiseControlFuelLimit(void)
 // Function: cm550_initializeAccelerationNoiseControlTimingLimit @ 0x0000b63e
 //
 
-/* Start-up step of mc68k_applicationMain (after
+/* Start-up step of run_power_cycle (after
    cm550_initializeAccelerationNoiseControlEngineSpeedLimit): sets up
    acceleration_noise_control_timing_limit_lookup (x axis offset 2, axis
    acceleration_noise_control_timing_limit_axis e2m 10A8, values 10A9) and presets
@@ -1196,9 +1196,8 @@ void cm550_initializeAccelerationNoiseControlTimingLimit(void)
 // Function: cm550_initializeAccelerationNoiseControlEngineSpeedLimit @ 0x0000b666
 //
 
-/* Start-up step of mc68k_applicationMain (before
-   cm550_initializeAccelerationNoiseControlTimingLimit): sets
-   acceleration_noise_control_application_enable_flag (e2m 10A4 +1C ASANENF) to 1 and presets
+/* Start-up step of run_power_cycle (before cm550_initializeAccelerationNoiseControlTimingLimit):
+   sets acceleration_noise_control_application_enable_flag (e2m 10A4 +1C ASANENF) to 1 and presets
    acceleration_noise_control_engine_speed_limit (10A4 +4 NZESLM) to engine_speed_limit_default_cal
    (1262 +0 EPNTDQRP), the value the limit ramps out to. No CM848 counterpart. (was
    cm550_initializeFuelSystemOutputDriver; PR #53 round 98) */
@@ -2201,7 +2200,7 @@ void cm550_phase2_slot_5_handler(void)
    engine_speed_above_which_derating_will_occur_when_ambient_air_0_8000, else no derate. Otherwise
    it is the 2D lookup altitude_derate_fuel_limit_lookup of filtered_engine_speed and
    ambient_air_pressure_sensor_state.filtered_value. It is the only call of
-   cm550_runEvery10FramesTaskSetPhase7. CM848's counterpart blends cool and hot ambient air grids by
+   cm550_runEvery10PassesTaskSetPhase7. CM848's counterpart blends cool and hot ambient air grids by
    temperature and handles air handling faults (was
    cm550_rpmHistogramAndProtectionStatisticsAccumulator). (was
    cm550_rpmHistogramAndProtectionStatisticsAccumulator; PR #53 round 97) */
@@ -2409,7 +2408,7 @@ void cm550_emptyBackupSpeedInterruptStep(void)
 // Function: cm550_initializeSpeedRequestBlendWeightLookup @ 0x0000c880
 //
 
-/* Start-up initializer (one call from mc68k_applicationMain): sets
+/* Start-up initializer (one call from run_power_cycle): sets
    speed_request_blend_weight_by_speed_difference_lookup.x_axis_offset = 2, its x axis pointer to
    speed_request_blend_weight_by_speed_difference_axis (e2m 1326 ASTHPFXA) and its y values pointer
    to speed_request_blend_weight_by_speed_difference_values (1327 ASTHPFYA). The ASG reference speed
@@ -2959,8 +2958,8 @@ void cm550_calculateAllSpeedGovernorNoLoadFuel(void)
 // Function: cm550_initializeAllSpeedGovernorNoLoadFuelLookups @ 0x0000d280
 //
 
-/* Start-up step of mc68k_applicationMain (after cm550_initializeSpeedRequestBlendWeightLookup):
-   sets up all_speed_governor_friction_fuel_lookup (axis 0x807230, values 0x807242) and
+/* Start-up step of run_power_cycle (after cm550_initializeSpeedRequestBlendWeightLookup): sets up
+   all_speed_governor_friction_fuel_lookup (axis 0x807230, values 0x807242) and
    all_speed_governor_coolant_fuel_adjustment_lookup (axis 0x807254, values 0x807268), each with x
    axis offset 2, for cm550_calculateAllSpeedGovernorNoLoadFuel. (was cm550_interpolationTableSetup;
    PR #53 round 98) */
@@ -2986,7 +2985,7 @@ void cm550_initializeAllSpeedGovernorNoLoadFuelLookups(void)
 // Function: cm550_selectAllSpeedGovernorReference @ 0x0000d2be
 //
 
-/* First call of cm550_runEvery4FramesTaskSetPhase1 (20 ms), before selectUserFuelingState: selects
+/* First call of cm550_runEvery4PassesTaskSetPhase1 (20 ms), before selectUserFuelingState: selects
    the all speed governor (ASG) reference. With the trim
    all_speed_governor_tuning_set_default_select_cal (e2m 1387 +8 ASDPFGTN) below 2, final_fueling
    below no_load_fuel_quantity + all_speed_governor_switch_droop_fueling_offset (107D +A ASSDFUOF)
@@ -3053,8 +3052,8 @@ void cm550_selectAllSpeedGovernorReference(void)
 //
 
 /* Start-up initializer of the all speed governor (ASG) reference speed sets (one call from
-   mc68k_applicationMain). 0x80a9ac / 0x80a9b0 point at set 1 (e2m 0008 +20 ASMNRF and +22 ASMXRF,
-   the reference speeds for 0 and 100 percent throttle) and 0x80a9b4 / 0x80a9b8 at set 2 (0008 +2E
+   run_power_cycle). 0x80a9ac / 0x80a9b0 point at set 1 (e2m 0008 +20 ASMNRF and +22 ASMXRF, the
+   reference speeds for 0 and 100 percent throttle) and 0x80a9b4 / 0x80a9b8 at set 2 (0008 +2E
    ASMNRF02 and +30 ASMXRF02). all_speed_governor_tuning_set_select (107A +16 ASDPFG) =
    all_speed_governor_tuning_set_default_select_cal (1387 +8 ASDPFGTN). 0xd2be then copies the
    selected set (0 = set 1, 1 = set 2) into ASMNRP / ASMXRP and interpolates the throttle reference.
@@ -3240,15 +3239,15 @@ void cm550_initializeAllSpeedGovernorDroopLookups(void)
 // Function: cm550_initializeVehicleSpeedAndCruiseState @ 0x0000d5e6
 //
 
-/* Start-up initializer (one call from mc68k_applicationMain at 0x28786) of the e2m block 117D
-   vehicle speed and cruise words. It clears cruise_control_active_flag (CRSS), the cruise control
-   reference speed 0x80a9c6 (CRRF), the filtered road speed (VSFTAVVS), the filtered transmission
-   gear ratio (GRFTGRRA) and the out of gear indicator 0x80a9d4 (GROGSS), and sets
-   engine_speed_limit_source_2 (ZVLMES, the zero vehicle speed engine speed limit going to the high
-   speed governor reference) to maximum_rated_engine_speed. The dumped ROM has no other absolute
-   writer of these words. CM848's counterpart cm848_initializeVehicleSpeedAndCruiseState does the
-   same with engine_speed_limit_default_cal and also clears j1939_anti_theft_status_transmit_state
-   (was cm550_initBoostProtectionSystem). (was cm550_initBoostProtectionSystem; PR #53 round 97) */
+/* Start-up initializer (one call from run_power_cycle at 0x28786) of the e2m block 117D vehicle
+   speed and cruise words. It clears cruise_control_active_flag (CRSS), the cruise control reference
+   speed 0x80a9c6 (CRRF), the filtered road speed (VSFTAVVS), the filtered transmission gear ratio
+   (GRFTGRRA) and the out of gear indicator 0x80a9d4 (GROGSS), and sets engine_speed_limit_source_2
+   (ZVLMES, the zero vehicle speed engine speed limit going to the high speed governor reference) to
+   maximum_rated_engine_speed. The dumped ROM has no other absolute writer of these words. CM848's
+   counterpart cm848_initializeVehicleSpeedAndCruiseState does the same with
+   engine_speed_limit_default_cal and also clears j1939_anti_theft_status_transmit_state (was
+   cm550_initBoostProtectionSystem). (was cm550_initBoostProtectionSystem; PR #53 round 97) */
 
 void cm550_initializeVehicleSpeedAndCruiseState(void)
 
@@ -5720,7 +5719,7 @@ word cm550_detectEngineSpeedSensorSyncPulse(word backup_sensor_flag)
 // Function: cm550_initializeEngineSpeedSensorSyncPulseThresholds @ 0x00010394
 //
 
-/* Start-up step of mc68k_applicationMain (after cm550_initializeEngineSpeedCalculation): presets
+/* Start-up step of run_power_cycle (after cm550_initializeEngineSpeedCalculation): presets
    main_engine_position_sensor_sync_pulse_period_threshold (0x8001a4) and
    backup_engine_position_sensor_sync_pulse_period_threshold (0x8001a0) to sync_pulse_check_period
    (0x8001a8) x sync_pulse_period_threshold_ratio (e2m 11A7 +10 CSXT_1PC) >> 8, the value
@@ -6290,7 +6289,7 @@ LAB_00010cba:
 
 /* Start-up initialization of Throttle_Min: commanded_throttle_state.throttle_minimum =
    accelerator_pedal_highest_valid_minimum (e2m 1048 +6 CTHISATH 'maximum Throttle_Min that any
-   valid pedal can have') + 4. It sets no other field. Called once by mc68k_applicationMain. CM848's
+   valid pedal can have') + 4. It sets no other field. Called once by run_power_cycle. CM848's
    cm848_initializeCommandedThrottleState loads the same value and also clears the confidence
    counter / idle validation / transition / off idle words and the delta filter. (was
    cm550_FUN_00010e06; PR #53 round 96) */
@@ -7802,20 +7801,20 @@ void cm550_fuelSourceMode11CountdownHandler(void)
 /* WARNING: Removing unreachable block (ram,0x00012940) */
 /* WARNING: Removing unreachable block (ram,0x00012efe) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The cylinder balancing calculation, frame 38 of executiveFrameInterruptHandler (once per 200 ms)
-   while CBDEN = 1. With a new buffer (CBDSBRF) it forms the six acceleration samples CBDAXB1-6
-   (speed buffer n - n+1) and a six-point Fourier analysis (CBDFRC1 / CBDFIC1 / CBDFRC2 / CBDFIC2 /
-   CBDFRC3, sin 60 = 866/1000), sets the stop compensation flag CBDSCF from the active trim gain
-   table, the speed change (CBDDST) and the engine state, removes the learned dynamics compensation
-   (CBDDCT / CBDI2DCT by engine speed, learned while motoring between CBDLSL and CBDUSL, reset by
-   CBDDCR) into CBDARC2 / CBDAIC2 and the component 3 adjustment into CBDARC3. It picks the trim
-   patterns CBDTI1-3 from the reference vectors, the magnitudes CBDFM1-3 and the trim increments
-   (normal or small gain against the threshold table CBDFT), and with CBDCEN set, cam and crank in
-   sync, no recent cylinder cutout (CBDDSTM), road speed up to CBDVSTD and coolant / intake
-   temperature above CBDCLTP / CBDIMTP it adds the ROM pattern trims to the saved trims (CBDDFTO,
-   EEPROM), applies the limits CBDFTMN..CBDFTMX with limit mode CBDLMMD, removes the mean and stores
-   them back. Last it writes 0x80a1ac-0x80a1b6 = FLFLAJC1-6 + trim x CBDATG / 100 (trims in firing
-   order 1-5-3-6-2-4) and clears CBDSBRF. (was vp44_FUN_000127c2; PR #53 round 96) */
+/* The cylinder balancing calculation, phase 38 of main_loop (once per 200 ms) while CBDEN = 1. With
+   a new buffer (CBDSBRF) it forms the six acceleration samples CBDAXB1-6 (speed buffer n - n+1) and
+   a six-point Fourier analysis (CBDFRC1 / CBDFIC1 / CBDFRC2 / CBDFIC2 / CBDFRC3, sin 60 =
+   866/1000), sets the stop compensation flag CBDSCF from the active trim gain table, the speed
+   change (CBDDST) and the engine state, removes the learned dynamics compensation (CBDDCT /
+   CBDI2DCT by engine speed, learned while motoring between CBDLSL and CBDUSL, reset by CBDDCR) into
+   CBDARC2 / CBDAIC2 and the component 3 adjustment into CBDARC3. It picks the trim patterns
+   CBDTI1-3 from the reference vectors, the magnitudes CBDFM1-3 and the trim increments (normal or
+   small gain against the threshold table CBDFT), and with CBDCEN set, cam and crank in sync, no
+   recent cylinder cutout (CBDDSTM), road speed up to CBDVSTD and coolant / intake temperature above
+   CBDCLTP / CBDIMTP it adds the ROM pattern trims to the saved trims (CBDDFTO, EEPROM), applies the
+   limits CBDFTMN..CBDFTMX with limit mode CBDLMMD, removes the mean and stores them back. Last it
+   writes 0x80a1ac-0x80a1b6 = FLFLAJC1-6 + trim x CBDATG / 100 (trims in firing order 1-5-3-6-2-4)
+   and clears CBDSBRF. (was vp44_FUN_000127c2; PR #53 round 96) */
 
 void cm550_calculateCylinderBalanceTrims(void)
 
@@ -8351,16 +8350,15 @@ void cm550_calculateCylinderBalanceTrims(void)
 
 
 //
-// Function: cm550_emptyExecutiveFrame5ExtraTask @ 0x000133fc
+// Function: cm550_emptyMainLoopPhase5ExtraTask @ 0x000133fc
 //
 
-/* Empty function (a single rts). Its one call is the extra task of executive frame 5 (jsr at
-   0x1ba2c in executiveFrameInterruptHandler, after the six task sets), so it runs once per 40-frame
-   cycle and does nothing. It sits between the cylinder balancing trim calculation and its
-   initializer; an empty body cannot prove a role or a CM848 counterpart. (was cm550_FUN_000133fc;
-   PR #53 round 96) */
+/* Empty function (a single rts). Its one call is the extra task of main loop phase 5 (jsr at
+   0x1ba2c in main_loop, after the six task sets), so it runs once per 40-phase cycle and does
+   nothing. It sits between the cylinder balancing trim calculation and its initializer; an empty
+   body cannot prove a role or a CM848 counterpart. (was cm550_FUN_000133fc; PR #53 round 96) */
 
-void cm550_emptyExecutiveFrame5ExtraTask(void)
+void cm550_emptyMainLoopPhase5ExtraTask(void)
 
 {
   return;
@@ -8372,8 +8370,8 @@ void cm550_emptyExecutiveFrame5ExtraTask(void)
 // Function: cm550_initializeCylinderBalancing @ 0x000133fe
 //
 
-/* Start-up initializer of cylinder balancing (called once by mc68k_applicationMain): clears
-   0x8002a2, sets the dynamics compensation tables cylinder_balance_real_2 /
+/* Start-up initializer of cylinder balancing (called once by run_power_cycle): clears 0x8002a2,
+   sets the dynamics compensation tables cylinder_balance_real_2 /
    imaginary_2_dynamics_compensation_values and their previous-value copies (16 words each) to 10000
    (= no compensation), points the eight cylinder balancing lookup records (threshold, real 2 /
    imaginary 2 dynamics compensation, stop compensation, component 3 adjustment, speed / delta
@@ -8696,7 +8694,7 @@ void vp44_initializeVp44BufferAddresses(void)
 //
 
 /* The datalogger's trigger task (e2m UD*; run from the scheduler slot
-   cm550_runEvery10FramesTaskSetPhase2 after cm550_clearExpiredJ1922ControlOccurrences). Every pass
+   cm550_runEvery10PassesTaskSetPhase2 after cm550_clearExpiredJ1922ControlOccurrences). Every pass
    it counts the sample period counter (0x80051e) up to the sample period (0x800353) and then raises
    the sample due flag (0x800354). With the datalogger enable bit clear (0x20 of
    algorithm_enable_flags_18_cal, e2m 106B +0x26 UDEN 'BIT 5') it clears the trigger detected / AND
@@ -8820,7 +8818,7 @@ uint cm550_updateDataloggerTriggers(void)
 // Function: cm550_recordDataloggerSamples @ 0x00013a5c
 //
 
-/* The datalogger's sample task (run from the scheduler slot cm550_runEvery10FramesTaskSetPhase3
+/* The datalogger's sample task (run from the scheduler slot cm550_runEvery10PassesTaskSetPhase3
    after vp44_hourMeterEventLogger). While the datalogger is disabled with no trigger detected and
    no event being logged it zeroes the 400-byte ring buffer at 0x800374 once (flag 0x800372).
    Otherwise: at the set-up (0x800352 = 0, no event being logged) it sets 0x800352, resolves the
@@ -8970,7 +8968,7 @@ byte * cm550_recordDataloggerSamples(void)
 // Function: cm550_initializeDatalogger @ 0x00013cc8
 //
 
-/* Start-up set-up of the datalogger (called once by mc68k_applicationMain after
+/* Start-up set-up of the datalogger (called once by run_power_cycle after
    cm550_initializeLoadTrendingSystem). It clears the sample period counter (0x80051e) and the
    sample due flag (0x800354); for each record of datalogger_triggers_cal with fault_code_flag 1 it
    copies the fault count table status (0x805a24 + 10 x the trigger's fault index byte at 0x800366 +
@@ -10808,8 +10806,8 @@ void cm550_initializeDiscreteInputs(void)
 // Function: mc68k_initializeDiscreteOutputDrivers @ 0x00015df0
 //
 
-/* The start-up set-up of the discrete outputs. mc68k_applicationMain calls it once (jsr at
-   0x28708), after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and
+/* The start-up set-up of the discrete outputs. run_power_cycle calls it once (jsr at 0x28708),
+   after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and
    cm550_initializeAnalogSensorChannels. 1. It writes the default output states into the output
    images 0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a +
    n). 2. It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80,
@@ -11756,7 +11754,7 @@ void mc68k_startJ1708Transmission(void)
 
 /* The engine warmup protection state machine (e2m 11EA / 11EB, enable WPEAFG =
    algorithm_enable_flags_18_cal bit 1), one pass per 50 ms from
-   cm550_runEvery10FramesTaskSetPhase0. Off path: with the feature disabled, with
+   cm550_runEvery10PassesTaskSetPhase0. Off path: with the feature disabled, with
    engine_warmup_protection_inhibit_flag (WPIHFG) set, or once the protection has completed while
    engine_state is not STOPPED, it ends the protection (completed 1, limiting 0,
    low_speed_governor_lock_flag 0, WPACFT 0) and sets engine_warmup_protection_fuel_limit (WPTQLM)
@@ -11916,9 +11914,9 @@ ushort cm550_runEngineWarmupProtection(void)
 // Function: cm550_initializeEngineWarmupProtection @ 0x0001709e
 //
 
-/* Start-up initialization of the engine warmup protection, called once from mc68k_applicationMain
-   after cm550_initializeLowSpeedGovernor. It clears engine_warmup_protection_inhibit_flag (e2m 11EA
-   +16 WPIHFG). With WPEAFG (algorithm_enable_flags_18_cal bit 1) set it arms the protection for the
+/* Start-up initialization of the engine warmup protection, called once from run_power_cycle after
+   cm550_initializeLowSpeedGovernor. It clears engine_warmup_protection_inhibit_flag (e2m 11EA +16
+   WPIHFG). With WPEAFG (algorithm_enable_flags_18_cal bit 1) set it arms the protection for the
    first start: engine_warmup_protection_fuel_limiting_flag 1,
    engine_warmup_protection_completed_flag 0, and low_speed_governor_lock_flag 1 when
    engine_warmup_protection_low_speed_governor_lock_enable is set. With the bit clear it sets
@@ -11992,9 +11990,9 @@ void cm550_applyEngineWarmupProtectionFuelLimit(void)
    mc68k_initializeTpuChannel10PrimarySpeedInputMode0 and the functions at 0x19ac2 / 0x19aca; 1:
    0x19caa, mc68k_initializeTpuChannel0MissingToothInput and 0x19e8e; 2: 0x1a350, 0x1a47c and
    0x1a52a; 3: mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled, 0x1a89a and 0x1a8a2. Called
-   by mc68k_applicationMain at start-up and by cm550_calculateEngineSpeed after the primary speed
-   sensor timeout has run out with the word 0x80cd06 set (it clears that word first). No CAN
-   register is involved (was cm550_canControllerConfigInit; PR #53 round 93) */
+   by run_power_cycle at start-up and by cm550_calculateEngineSpeed after the primary speed sensor
+   timeout has run out with the word 0x80cd06 set (it clears that word first). No CAN register is
+   involved (was cm550_canControllerConfigInit; PR #53 round 93) */
 
 void cm550_initializeEnginePositionSignalInputs(void)
 
@@ -12627,7 +12625,7 @@ void cm550_engineModeTransitionStateUpdater(void)
 // Function: calculateCrankInitialValuesOnCrankEntry @ 0x00017d2a
 //
 
-/* Crank entry calculations, run every 20 ms (call 5 of cm550_runEvery4FramesTaskSetPhase2). When
+/* Crank entry calculations, run every 20 ms (call 5 of cm550_runEvery4PassesTaskSetPhase2). When
    crank_entry_previous_engine_state is STOPPED and engine_state is CRANKING, or it is RUNNING and
    engine_state is REENTRY, it calls cm550_calculateCrankInitialFuelByCoolantTemperature,
    cm550_calculateCrankInitialAdvanceByIntakeManifoldTemperature and selectCrankExitSpeed (crank
@@ -12696,14 +12694,14 @@ void cm550_ioOutputFlagMappingSlowCycle40Coordinator(void)
 // Function: rampCrankExitFuelAdjustment @ 0x00017e06
 //
 
-/* Crank exit fuel adjustment ramp, run once per 40-frame cycle (200 ms) in the phase 0xc slot of
-   executiveFrameInterruptHandler. While engine_state is CRANKING or JUMP_START and
-   filtered_engine_speed is above crank_exit_fuel_ramp_rpm (CKFLRMES) it adds
-   crank_exit_fuel_ramp_rate (CKEXFLRT) to crank_exit_fuel_adjustment (CKEXFLAJ) and clamps it to
-   crank_exit_fuel_ramp_maximum (CKFLOFMX). When the engine state becomes RUNNING
-   (crank_exit_fuel_ramp_previous_engine_state not RUNNING) it clears the adjustment. Last it saves
-   engine_state. No frictional load or torque logic. The twin of CM848 0x0001c080: one shared name.
-   (was cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator; PR #53 round 98) */
+/* Crank exit fuel adjustment ramp, run once per 40-phase cycle (200 ms) in the phase 0xc slot of
+   main_loop. While engine_state is CRANKING or JUMP_START and filtered_engine_speed is above
+   crank_exit_fuel_ramp_rpm (CKFLRMES) it adds crank_exit_fuel_ramp_rate (CKEXFLRT) to
+   crank_exit_fuel_adjustment (CKEXFLAJ) and clamps it to crank_exit_fuel_ramp_maximum (CKFLOFMX).
+   When the engine state becomes RUNNING (crank_exit_fuel_ramp_previous_engine_state not RUNNING) it
+   clears the adjustment. Last it saves engine_state. No frictional load or torque logic. The twin
+   of CM848 0x0001c080: one shared name. (was
+   cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator; PR #53 round 98) */
 
 void rampCrankExitFuelAdjustment(void)
 
@@ -12728,14 +12726,14 @@ void rampCrankExitFuelAdjustment(void)
 // Function: updateCrankExitAndJumpStartTimers @ 0x00017e62
 //
 
-/* Crank timers, run once per 40-frame cycle (200 ms) in the phase 0xd slot of
-   executiveFrameInterruptHandler; CKEXTM and CKJSTM count 0.2 s here. In RUNNING it adds 1 to
-   crank_exit_timer; in STOPPED it clears crank_exit_timer and
-   crank_reentry_speed_offset_applied_flag. In CRANKING it adds 1 to crank_jump_start_timer; it
-   clears that timer when the engine state goes from REENTRY to STOPPED or is SHUTDOWN. Last it
-   saves engine_state in crank_timers_previous_engine_state. CM848 runs the same body in its 20 ms
-   task set (its timers count 0.02 s). The twin of CM848 0x0001c114: one shared name. (was
-   cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator; PR #53 round 98) */
+/* Crank timers, run once per 40-phase cycle (200 ms) in the phase 0xd slot of main_loop; CKEXTM and
+   CKJSTM count 0.2 s here. In RUNNING it adds 1 to crank_exit_timer; in STOPPED it clears
+   crank_exit_timer and crank_reentry_speed_offset_applied_flag. In CRANKING it adds 1 to
+   crank_jump_start_timer; it clears that timer when the engine state goes from REENTRY to STOPPED
+   or is SHUTDOWN. Last it saves engine_state in crank_timers_previous_engine_state. CM848 runs the
+   same body in its 20 ms task set (its timers count 0.02 s). The twin of CM848 0x0001c114: one
+   shared name. (was cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator; PR #53 round 98)
+    */
 
 void updateCrankExitAndJumpStartTimers(void)
 
@@ -13012,7 +13010,7 @@ void initializeEngineState(void)
    mc68k_initializeTpuChannel1BackupSpeedInput (the cylinder identification pulse handler), 2 calls
    mc68k_initializeTpuChannel1SpeedMeasurementResetInput, 0 (the dump value) calls
    mc68k_initializeTpuChannel1BackupSpeedPeriodInput; any other value does nothing. Called by
-   mc68k_applicationMain at start-up right after cm550_initializeEnginePositionSignalInputs, and by
+   run_power_cycle at start-up right after cm550_initializeEnginePositionSignalInputs, and by
    cm550_calculateEngineSpeed when the backup lost counter has run out with backup_engine_speed
    still set (it clears that speed first). No CAN register is involved. (was
    cm550_initializeCanRpmModeConfiguration; PR #53 round 98) */
@@ -13209,17 +13207,17 @@ void initializeFaultDerateJ1939TorqueCurvePriority(void)
 // Function: cm550_runEngineProtectionScheduler @ 0x00018620
 //
 
-/* The engine protection task scheduler, run at executive frame 15 of 40 (jsr at 0x1bb9a in
-   executiveFrameInterruptHandler). With algorithm_enable_flags_2_cal.engine_protection_enable
-   (EPEN) clear it sets the outputs to no derate: engine_speed_limit_fault_derate (EPESLM) =
-   maximum_rated_engine_speed, fault_derate_fuel_limit (EPFLLM) = fuel_demand_maximum,
-   fault_derate_active_flag and engine_protection_shutdown_approaching_flag = 0. Otherwise it runs
-   one task per call by engine_protection_task_index (0-4, then 0 again):
-   countEngineProtectionOverLimitDurations, updateEngineProtectionRestartSeverity,
-   cm550_calculateFaultDerateFuelLimit, cm550_calculateFaultDerateEngineSpeedLimit with
-   logEngineProtectionChannelFaults, and cm550_updateEngineProtectionShutdown (the shutdown).
-   CM848's counterpart cm848_runFaultDerateScheduler also sets engine_protection_timer_state, runs
-   the precrank examination every pass and latches the shutdown override in task 1 (was
+/* The engine protection task scheduler, run at main loop phase 15 of 40 (jsr at 0x1bb9a in
+   main_loop). With algorithm_enable_flags_2_cal.engine_protection_enable (EPEN) clear it sets the
+   outputs to no derate: engine_speed_limit_fault_derate (EPESLM) = maximum_rated_engine_speed,
+   fault_derate_fuel_limit (EPFLLM) = fuel_demand_maximum, fault_derate_active_flag and
+   engine_protection_shutdown_approaching_flag = 0. Otherwise it runs one task per call by
+   engine_protection_task_index (0-4, then 0 again): countEngineProtectionOverLimitDurations,
+   updateEngineProtectionRestartSeverity, cm550_calculateFaultDerateFuelLimit,
+   cm550_calculateFaultDerateEngineSpeedLimit with logEngineProtectionChannelFaults, and
+   cm550_updateEngineProtectionShutdown (the shutdown). CM848's counterpart
+   cm848_runFaultDerateScheduler also sets engine_protection_timer_state, runs the precrank
+   examination every pass and latches the shutdown override in task 1 (was
    cm550_engineProtectionMultiStateSlowCycle40Coordinator). (was
    cm550_engineProtectionMultiStateSlowCycle40Coordinator; PR #53 round 97) */
 
@@ -13352,8 +13350,8 @@ word cm550_interpolateEngineProtectionSeverity
 // Function: cm550_initializeEngineProtection @ 0x0001873e
 //
 
-/* Start-up initializer of engine protection (one call from mc68k_applicationMain at 0x28732). It
-   fills the nine records of engine_protection_channel_state_table: the input pointers (EP??SA: the
+/* Start-up initializer of engine protection (one call from run_power_cycle at 0x28732). It fills
+   the nine records of engine_protection_channel_state_table: the input pointers (EP??SA: the
    coolant level switch 0x8091e6 with mask 1, the filtered_value of the coolant temperature / oil
    pressure / water in fuel / boost pressure / fuel pressure / ambient air pressure sensor records,
    engine_protection_intake_manifold_temperature and engine_protection_fuel_temperature), the
@@ -13601,10 +13599,10 @@ void countEngineProtectionOverLimitDurations(void)
 
 /* The engine protection restart examination before cranking (e2m 10B1 +10 EPPKSO 'EPF shutdown
    engine command from restart examine before cranking'), run once at start-up (jsr at 0x28738 in
-   mc68k_applicationMain, right after cm550_initializeEngineProtection). It acts when engine
-   protection, its shutdown and its restart are enabled (EPEN / EPSOEN / EPRYEN), a shutdown channel
-   is recorded (engine_protection_shutdown_active_channel, EPSOAE, not 255 and not 3 = oil
-   pressure), and the consecutive shutdown count (EPSOCU) is at or above
+   run_power_cycle, right after cm550_initializeEngineProtection). It acts when engine protection,
+   its shutdown and its restart are enabled (EPEN / EPSOEN / EPRYEN), a shutdown channel is recorded
+   (engine_protection_shutdown_active_channel, EPSOAE, not 255 and not 3 = oil pressure), and the
+   consecutive shutdown count (EPSOCU) is at or above
    max_number_of_shutdowns_before_restart_is_not_allowed (EPSOMXLM). If that channel's shutdown and
    restart bits (112 + 4n + 2 / + 3) are set and its input is still past the fueling (configuration
    flag 0x1) or engine speed (0x2) threshold, it sets the channel's precrank_error (EP??PKER) and
@@ -16508,14 +16506,13 @@ void mc68k_tpuChannel1SpeedMeasurementResetInterruptHandler(void)
 
 
 //
-// Function: cm550_runEveryFrameTaskSet @ 0x0001b4d0
+// Function: cm550_runEveryPassTaskSet @ 0x0001b4d0
 //
 
-/* Executive frame task set: runs every frame (5 ms), as call 1 of those frames in
-   executiveFrameInterruptHandler. Calls, in order: mc68k_ioDriverStrobeHandler. (was
-   cm550_ioDriverStrobeHandlerWrapper; PR #53 round 93) */
+/* Main loop task set: runs every pass (5 ms), as call 1 of those phases in main_loop. Calls, in
+   order: mc68k_ioDriverStrobeHandler. (was cm550_ioDriverStrobeHandlerWrapper; PR #53 round 93) */
 
-void cm550_runEveryFrameTaskSet(void)
+void cm550_runEveryPassTaskSet(void)
 
 {
   mc68k_ioDriverStrobeHandler();
@@ -16525,17 +16522,17 @@ void cm550_runEveryFrameTaskSet(void)
 
 
 //
-// Function: cm550_runEvery2FramesTaskSetPhase0 @ 0x0001b4d8
+// Function: cm550_runEvery2PassesTaskSetPhase0 @ 0x0001b4d8
 //
 
-/* Executive frame task set: runs every 2 frames (10 ms): frames 0, 2, ... of the 40-frame cycle, as
-   call 2 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   mc68k_dispatchJ1939ReceivedMessages, cm550_runJ1939PowertrainControlTimeouts,
-   trackJ1939ControlSessions, serviceJ1939TransportSessions, cm550_tickJ1939InputSupervision,
+/* Main loop task set: runs every 2 passes (10 ms): phases 0, 2, ... of the 40-phase cycle, as call
+   2 of those phases in main_loop. Calls, in order: mc68k_dispatchJ1939ReceivedMessages,
+   cm550_runJ1939PowertrainControlTimeouts, trackJ1939ControlSessions,
+   serviceJ1939TransportSessions, cm550_tickJ1939InputSupervision,
    cm550_processJ1939SwitchAndRequestInputs, 0x420bc (not dumped). (was
    vp44_evenPhaseSchedulerTaskSet; PR #53 round 93) */
 
-void cm550_runEvery2FramesTaskSetPhase0(void)
+void cm550_runEvery2PassesTaskSetPhase0(void)
 
 {
   mc68k_dispatchJ1939ReceivedMessages();
@@ -16551,15 +16548,15 @@ void cm550_runEvery2FramesTaskSetPhase0(void)
 
 
 //
-// Function: cm550_runEvery2FramesTaskSetPhase1 @ 0x0001b504
+// Function: cm550_runEvery2PassesTaskSetPhase1 @ 0x0001b504
 //
 
-/* Executive frame task set: runs every 2 frames (10 ms): frames 1, 3, ... of the 40-frame cycle, as
-   call 2 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   endRetarderShiftAssistAboveFuelDemandLimit, cm550_runJ1939PeriodicTransmitQueues,
-   cm550_processTsc1IgnoredRequestTimeouts. (was cm550_oddPhaseSchedulerTaskSet; PR #53 round 93) */
+/* Main loop task set: runs every 2 passes (10 ms): phases 1, 3, ... of the 40-phase cycle, as call
+   2 of those phases in main_loop. Calls, in order: endRetarderShiftAssistAboveFuelDemandLimit,
+   cm550_runJ1939PeriodicTransmitQueues, cm550_processTsc1IgnoredRequestTimeouts. (was
+   cm550_oddPhaseSchedulerTaskSet; PR #53 round 93) */
 
-void cm550_runEvery2FramesTaskSetPhase1(void)
+void cm550_runEvery2PassesTaskSetPhase1(void)
 
 {
   endRetarderShiftAssistAboveFuelDemandLimit();
@@ -16571,19 +16568,19 @@ void cm550_runEvery2FramesTaskSetPhase1(void)
 
 
 //
-// Function: cm550_runEvery4FramesTaskSetPhase0 @ 0x0001b518
+// Function: cm550_runEvery4PassesTaskSetPhase0 @ 0x0001b518
 //
 
-/* Executive frame task set: runs every 4 frames (20 ms): frames 0, 4, ... of the 40-frame cycle, as
-   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   vp44_communication_state_machine, 0x47850 (not dumped), 0x473b2 (not dumped), 0x48b28 (not
-   dumped), cm550_faultFlagScannerAndProcessor, cm550_calculateEngineSpeed,
-   calculateFilteredEngineAcceleration, cm550_calculateEnginePositionPhaseLag, 0x49f06 (not dumped),
-   0x4245e (not dumped), cm550_claimRemoteThrottleOverride, vp44_rpmDerateCalculationController,
-   cm550_updateEngineState, cm550_calculateMaximumTorqueAtCurrentEngineSpeed. (was
-   vp44_engine_management_system; PR #53 round 93) */
+/* Main loop task set: runs every 4 passes (20 ms): phases 0, 4, ... of the 40-phase cycle, as call
+   3 of those phases in main_loop. Calls, in order: vp44_communication_state_machine, 0x47850 (not
+   dumped), 0x473b2 (not dumped), 0x48b28 (not dumped), cm550_faultFlagScannerAndProcessor,
+   cm550_calculateEngineSpeed, calculateFilteredEngineAcceleration,
+   cm550_calculateEnginePositionPhaseLag, 0x49f06 (not dumped), 0x4245e (not dumped),
+   cm550_claimRemoteThrottleOverride, vp44_rpmDerateCalculationController, cm550_updateEngineState,
+   cm550_calculateMaximumTorqueAtCurrentEngineSpeed. (was vp44_engine_management_system; PR #53
+   round 93) */
 
-void cm550_runEvery4FramesTaskSetPhase0(void)
+void cm550_runEvery4PassesTaskSetPhase0(void)
 
 {
   vp44_communication_state_machine(0);
@@ -16606,19 +16603,19 @@ void cm550_runEvery4FramesTaskSetPhase0(void)
 
 
 //
-// Function: cm550_runEvery4FramesTaskSetPhase1 @ 0x0001b572
+// Function: cm550_runEvery4PassesTaskSetPhase1 @ 0x0001b572
 //
 
-/* Executive frame task set: runs every 4 frames (20 ms): frames 1, 5, ... of the 40-frame cycle, as
-   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_selectAllSpeedGovernorReference, selectUserFuelingState, cm550_runAllSpeedGovernor,
-   updateFourDimensionalFueling, smoothPowerTakeOffReferenceEngineSpeed,
-   cm550_runPowerTakeOffGovernor, cm550_selectPowerTakeOffOrUserFueling, calculateAlpha, 0x44c76
-   (not dumped), selectEngineSpeedLimit, 0x4da56 (not dumped), selectHighSpeedGovernorGainSet,
+/* Main loop task set: runs every 4 passes (20 ms): phases 1, 5, ... of the 40-phase cycle, as call
+   3 of those phases in main_loop. Calls, in order: cm550_selectAllSpeedGovernorReference,
+   selectUserFuelingState, cm550_runAllSpeedGovernor, updateFourDimensionalFueling,
+   smoothPowerTakeOffReferenceEngineSpeed, cm550_runPowerTakeOffGovernor,
+   cm550_selectPowerTakeOffOrUserFueling, calculateAlpha, 0x44c76 (not dumped),
+   selectEngineSpeedLimit, 0x4da56 (not dumped), selectHighSpeedGovernorGainSet,
    runHighSpeedGovernorPid, 0x42496 (not dumped), cm550_calculateThrottle100Fuelings. (was
    vp44_periodicTaskSet_governorProtection; PR #53 round 93) */
 
-void cm550_runEvery4FramesTaskSetPhase1(void)
+void cm550_runEvery4PassesTaskSetPhase1(void)
 
 {
   cm550_selectAllSpeedGovernorReference();
@@ -16642,19 +16639,19 @@ void cm550_runEvery4FramesTaskSetPhase1(void)
 
 
 //
-// Function: cm550_runEvery4FramesTaskSetPhase2 @ 0x0001b5ce
+// Function: cm550_runEvery4PassesTaskSetPhase2 @ 0x0001b5ce
 //
 
-/* Executive frame task set: runs every 4 frames (20 ms): frames 2, 6, ... of the 40-frame cycle, as
-   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_calculateEngineSpeed, cm550_runLowSpeedGovernor, cm550_selectLowSpeedGovernorGearGainSet,
+/* Main loop task set: runs every 4 passes (20 ms): phases 2, 6, ... of the 40-phase cycle, as call
+   3 of those phases in main_loop. Calls, in order: cm550_calculateEngineSpeed,
+   cm550_runLowSpeedGovernor, cm550_selectLowSpeedGovernorGearGainSet,
    cm550_fuelTimingTransitionStateMachine, calculateCrankInitialValuesOnCrankEntry,
    cm550_calculateInjectionTimingMisfireLimit, cm550_frictionalLoadTorqueTransitionHandler,
    cm550_rpmBasedFuelLimitCalculator, cm550_selectFinalFueling, 0x4094c (not dumped),
    cm550_fuelSourceMode11CountdownHandler. (was cm550_periodicTaskSet_fuelTiming; PR #53 round 93)
     */
 
-void cm550_runEvery4FramesTaskSetPhase2(void)
+void cm550_runEvery4PassesTaskSetPhase2(void)
 
 {
   cm550_calculateEngineSpeed();
@@ -16674,19 +16671,19 @@ void cm550_runEvery4FramesTaskSetPhase2(void)
 
 
 //
-// Function: cm550_runEvery4FramesTaskSetPhase3 @ 0x0001b612
+// Function: cm550_runEvery4PassesTaskSetPhase3 @ 0x0001b612
 //
 
-/* Executive frame task set: runs every 4 frames (20 ms): frames 3, 7, ... of the 40-frame cycle, as
-   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_fuelDemandTableBlendCalculator, cm550_rpmBasedFuelTimingInterpolation,
-   cm550_calculateWetStackTimingAdvance, cm550_diagnosticTimingIncrementController,
-   vp44InjectionSystemStateController, cm550_emptyPlaceholderFunction, 0x40988 (not dumped),
-   cm550_commandFuelShutoffDriver, 0x40ace (not dumped), 0x488e8 (not dumped), 0x48b1a (not dumped),
-   mc68k_sampleAndDebounceDiscreteInputs, mc68k_processAnalogSensorChannels, 0x48c66 (not dumped).
-   (was periodicTaskSet_fuelDemand; PR #53 round 93) */
+/* Main loop task set: runs every 4 passes (20 ms): phases 3, 7, ... of the 40-phase cycle, as call
+   3 of those phases in main_loop. Calls, in order: cm550_fuelDemandTableBlendCalculator,
+   cm550_rpmBasedFuelTimingInterpolation, cm550_calculateWetStackTimingAdvance,
+   cm550_diagnosticTimingIncrementController, vp44InjectionSystemStateController,
+   cm550_emptyPlaceholderFunction, 0x40988 (not dumped), cm550_commandFuelShutoffDriver, 0x40ace
+   (not dumped), 0x488e8 (not dumped), 0x48b1a (not dumped), mc68k_sampleAndDebounceDiscreteInputs,
+   mc68k_processAnalogSensorChannels, 0x48c66 (not dumped). (was periodicTaskSet_fuelDemand; PR #53
+   round 93) */
 
-void cm550_runEvery4FramesTaskSetPhase3(void)
+void cm550_runEvery4PassesTaskSetPhase3(void)
 
 {
   cm550_fuelDemandTableBlendCalculator();
@@ -16709,14 +16706,14 @@ void cm550_runEvery4FramesTaskSetPhase3(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase0 @ 0x0001b668
+// Function: cm550_runEvery8PassesTaskSetPhase0 @ 0x0001b668
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 0, 8, ... of the 40-frame cycle, as
-   call 4 of those frames in executiveFrameInterruptHandler. Empty (a single rts): nothing is
-   scheduled in this slot. (was cm550_FUN_0001b668; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 0, 8, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Empty (a single rts): nothing is scheduled in this slot. (was
+   cm550_FUN_0001b668; PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase0(void)
+void cm550_runEvery8PassesTaskSetPhase0(void)
 
 {
   return;
@@ -16725,14 +16722,14 @@ void cm550_runEvery8FramesTaskSetPhase0(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase1 @ 0x0001b66a
+// Function: cm550_runEvery8PassesTaskSetPhase1 @ 0x0001b66a
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 1, 9, ... of the 40-frame cycle, as
-   call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x45d60 (not dumped),
-   0x44338 (not dumped). (was cm550_FUN_0001b66a; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 1, 9, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Calls, in order: 0x45d60 (not dumped), 0x44338 (not dumped). (was
+   cm550_FUN_0001b66a; PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase1(void)
+void cm550_runEvery8PassesTaskSetPhase1(void)
 
 {
   func_0x00045d60();
@@ -16743,14 +16740,14 @@ void cm550_runEvery8FramesTaskSetPhase1(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase2 @ 0x0001b678
+// Function: cm550_runEvery8PassesTaskSetPhase2 @ 0x0001b678
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 2, 10, ... of the 40-frame cycle,
-   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x449f4 (not
-   dumped), 0x451fa (not dumped). (was cm550_FUN_0001b678; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 2, 10, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Calls, in order: 0x449f4 (not dumped), 0x451fa (not dumped). (was
+   cm550_FUN_0001b678; PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase2(void)
+void cm550_runEvery8PassesTaskSetPhase2(void)
 
 {
   func_0x000449f4();
@@ -16761,14 +16758,14 @@ void cm550_runEvery8FramesTaskSetPhase2(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase3 @ 0x0001b686
+// Function: cm550_runEvery8PassesTaskSetPhase3 @ 0x0001b686
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 3, 11, ... of the 40-frame cycle,
-   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4dafa (not
-   dumped), 0x47496 (not dumped). (was cm550_FUN_0001b686; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 3, 11, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Calls, in order: 0x4dafa (not dumped), 0x47496 (not dumped). (was
+   cm550_FUN_0001b686; PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase3(void)
+void cm550_runEvery8PassesTaskSetPhase3(void)
 
 {
   func_0x0004dafa();
@@ -16779,14 +16776,14 @@ void cm550_runEvery8FramesTaskSetPhase3(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase4 @ 0x0001b694
+// Function: cm550_runEvery8PassesTaskSetPhase4 @ 0x0001b694
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 4, 12, ... of the 40-frame cycle,
-   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x45f88 (not
-   dumped), 0x4444a (not dumped). (was cm550_FUN_0001b694; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 4, 12, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Calls, in order: 0x45f88 (not dumped), 0x4444a (not dumped). (was
+   cm550_FUN_0001b694; PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase4(void)
+void cm550_runEvery8PassesTaskSetPhase4(void)
 
 {
   func_0x00045f88();
@@ -16797,14 +16794,14 @@ void cm550_runEvery8FramesTaskSetPhase4(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase5 @ 0x0001b6a2
+// Function: cm550_runEvery8PassesTaskSetPhase5 @ 0x0001b6a2
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 5, 13, ... of the 40-frame cycle,
-   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x43a74 (not
-   dumped). (was cm550_FUN_0001b6a2; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 5, 13, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Calls, in order: 0x43a74 (not dumped). (was cm550_FUN_0001b6a2;
+   PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase5(void)
+void cm550_runEvery8PassesTaskSetPhase5(void)
 
 {
   func_0x00043a74();
@@ -16814,14 +16811,14 @@ void cm550_runEvery8FramesTaskSetPhase5(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase6 @ 0x0001b6aa
+// Function: cm550_runEvery8PassesTaskSetPhase6 @ 0x0001b6aa
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 6, 14, ... of the 40-frame cycle,
-   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x45270 (not
-   dumped). (was cm550_FUN_0001b6aa; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 6, 14, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Calls, in order: 0x45270 (not dumped). (was cm550_FUN_0001b6aa;
+   PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase6(void)
+void cm550_runEvery8PassesTaskSetPhase6(void)
 
 {
   func_0x00045270();
@@ -16831,14 +16828,14 @@ void cm550_runEvery8FramesTaskSetPhase6(void)
 
 
 //
-// Function: cm550_runEvery8FramesTaskSetPhase7 @ 0x0001b6b2
+// Function: cm550_runEvery8PassesTaskSetPhase7 @ 0x0001b6b2
 //
 
-/* Executive frame task set: runs every 8 frames (40 ms): frames 7, 15, ... of the 40-frame cycle,
-   as call 4 of those frames in executiveFrameInterruptHandler. Empty (a single rts): nothing is
-   scheduled in this slot. (was cm550_FUN_0001b6b2; PR #53 round 93) */
+/* Main loop task set: runs every 8 passes (40 ms): phases 7, 15, ... of the 40-phase cycle, as call
+   4 of those phases in main_loop. Empty (a single rts): nothing is scheduled in this slot. (was
+   cm550_FUN_0001b6b2; PR #53 round 93) */
 
-void cm550_runEvery8FramesTaskSetPhase7(void)
+void cm550_runEvery8PassesTaskSetPhase7(void)
 
 {
   return;
@@ -16847,15 +16844,15 @@ void cm550_runEvery8FramesTaskSetPhase7(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase0 @ 0x0001b6b4
+// Function: cm550_runEvery10PassesTaskSetPhase0 @ 0x0001b6b4
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 0, 10, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 10 passes (50 ms): phases 0, 10, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order:
    cm550_calculateAccelerationNoiseControlFuelLimit, 0x44980 (not dumped),
    cm550_runEngineWarmupProtection. (was cm550_FUN_0001b6b4; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase0(void)
+void cm550_runEvery10PassesTaskSetPhase0(void)
 
 {
   cm550_calculateAccelerationNoiseControlFuelLimit();
@@ -16867,15 +16864,15 @@ void cm550_runEvery10FramesTaskSetPhase0(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase1 @ 0x0001b6c8
+// Function: cm550_runEvery10PassesTaskSetPhase1 @ 0x0001b6c8
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 1, 11, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 10 passes (50 ms): phases 1, 11, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order:
    cm550_calculateAccelerationNoiseControlEngineSpeedLimit,
    cm550_calculateAccelerationNoiseControlTimingLimit. (was cm550_FUN_0001b6c8; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase1(void)
+void cm550_runEvery10PassesTaskSetPhase1(void)
 
 {
   cm550_calculateAccelerationNoiseControlEngineSpeedLimit();
@@ -16886,15 +16883,14 @@ void cm550_runEvery10FramesTaskSetPhase1(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase2 @ 0x0001b6d6
+// Function: cm550_runEvery10PassesTaskSetPhase2 @ 0x0001b6d6
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 2, 12, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_clearExpiredJ1922ControlOccurrences, cm550_updateDataloggerTriggers. (was
-   cm550_FUN_0001b6d6; PR #53 round 93) */
+/* Main loop task set: runs every 10 passes (50 ms): phases 2, 12, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: cm550_clearExpiredJ1922ControlOccurrences,
+   cm550_updateDataloggerTriggers. (was cm550_FUN_0001b6d6; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase2(void)
+void cm550_runEvery10PassesTaskSetPhase2(void)
 
 {
   cm550_clearExpiredJ1922ControlOccurrences();
@@ -16905,15 +16901,14 @@ void cm550_runEvery10FramesTaskSetPhase2(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase3 @ 0x0001b6e4
+// Function: cm550_runEvery10PassesTaskSetPhase3 @ 0x0001b6e4
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 3, 13, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   vp44_hourMeterEventLogger, cm550_recordDataloggerSamples. (was cm550_FUN_0001b6e4; PR #53 round
-   93) */
+/* Main loop task set: runs every 10 passes (50 ms): phases 3, 13, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: vp44_hourMeterEventLogger,
+   cm550_recordDataloggerSamples. (was cm550_FUN_0001b6e4; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase3(void)
+void cm550_runEvery10PassesTaskSetPhase3(void)
 
 {
   vp44_hourMeterEventLogger();
@@ -16924,15 +16919,15 @@ void cm550_runEvery10FramesTaskSetPhase3(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase4 @ 0x0001b6f2
+// Function: cm550_runEvery10PassesTaskSetPhase4 @ 0x0001b6f2
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 4, 14, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   mc68k_monitorPwmOutputReadBackFaults, 0x42218 (not dumped), 0x42276 (not dumped), 0x4204c (not
-   dumped). (was cm550_FUN_0001b6f2; PR #53 round 93) */
+/* Main loop task set: runs every 10 passes (50 ms): phases 4, 14, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: mc68k_monitorPwmOutputReadBackFaults,
+   0x42218 (not dumped), 0x42276 (not dumped), 0x4204c (not dumped). (was cm550_FUN_0001b6f2; PR #53
+   round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase4(void)
+void cm550_runEvery10PassesTaskSetPhase4(void)
 
 {
   mc68k_monitorPwmOutputReadBackFaults();
@@ -16945,14 +16940,14 @@ void cm550_runEvery10FramesTaskSetPhase4(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase5 @ 0x0001b70c
+// Function: cm550_runEvery10PassesTaskSetPhase5 @ 0x0001b70c
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 5, 15, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_runLampControl. (was cm550_dzgTimingAndPressureSlowCycle10Coordinator; PR #53 round 93) */
+/* Main loop task set: runs every 10 passes (50 ms): phases 5, 15, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: cm550_runLampControl. (was
+   cm550_dzgTimingAndPressureSlowCycle10Coordinator; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase5(void)
+void cm550_runEvery10PassesTaskSetPhase5(void)
 
 {
   cm550_runLampControl();
@@ -16962,15 +16957,15 @@ void cm550_runEvery10FramesTaskSetPhase5(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase6 @ 0x0001b714
+// Function: cm550_runEvery10PassesTaskSetPhase6 @ 0x0001b714
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 6, 16, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 10 passes (50 ms): phases 6, 16, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order:
    cm550_updateLampOutputsAndCheckLampDriverFaults, cm550_processJ1939AcceleratorInputs. (was
    cm550_rpmBasedFuelLimiterCoordinator; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase6(void)
+void cm550_runEvery10PassesTaskSetPhase6(void)
 
 {
   cm550_updateLampOutputsAndCheckLampDriverFaults();
@@ -16981,15 +16976,14 @@ void cm550_runEvery10FramesTaskSetPhase6(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase7 @ 0x0001b722
+// Function: cm550_runEvery10PassesTaskSetPhase7 @ 0x0001b722
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 7, 17, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_calculateAltitudeDerateFuelLimit. (was cm550_shutdownProtectionSlowCycle10Coordinator; PR
-   #53 round 93) */
+/* Main loop task set: runs every 10 passes (50 ms): phases 7, 17, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: cm550_calculateAltitudeDerateFuelLimit.
+   (was cm550_shutdownProtectionSlowCycle10Coordinator; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase7(void)
+void cm550_runEvery10PassesTaskSetPhase7(void)
 
 {
   cm550_calculateAltitudeDerateFuelLimit();
@@ -16999,15 +16993,14 @@ void cm550_runEvery10FramesTaskSetPhase7(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase8 @ 0x0001b72a
+// Function: cm550_runEvery10PassesTaskSetPhase8 @ 0x0001b72a
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 8, 18, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   mc68k_dispatchJ1708ReceivedMessages. (was
+/* Main loop task set: runs every 10 passes (50 ms): phases 8, 18, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: mc68k_dispatchJ1708ReceivedMessages. (was
    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase8(void)
+void cm550_runEvery10PassesTaskSetPhase8(void)
 
 {
   mc68k_dispatchJ1708ReceivedMessages();
@@ -17017,14 +17010,14 @@ void cm550_runEvery10FramesTaskSetPhase8(void)
 
 
 //
-// Function: cm550_runEvery10FramesTaskSetPhase9 @ 0x0001b732
+// Function: cm550_runEvery10PassesTaskSetPhase9 @ 0x0001b732
 //
 
-/* Executive frame task set: runs every 10 frames (50 ms): frames 9, 19, ... of the 40-frame cycle,
-   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_diagnosticMessageTransmissionManager. (was cm550_FUN_0001b732; PR #53 round 93) */
+/* Main loop task set: runs every 10 passes (50 ms): phases 9, 19, ... of the 40-phase cycle, as
+   call 5 of those phases in main_loop. Calls, in order: cm550_diagnosticMessageTransmissionManager.
+   (was cm550_FUN_0001b732; PR #53 round 93) */
 
-void cm550_runEvery10FramesTaskSetPhase9(void)
+void cm550_runEvery10PassesTaskSetPhase9(void)
 
 {
   cm550_diagnosticMessageTransmissionManager();
@@ -17034,15 +17027,15 @@ void cm550_runEvery10FramesTaskSetPhase9(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase0 @ 0x0001b73a
+// Function: cm550_runEvery20PassesTaskSetPhase0 @ 0x0001b73a
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 0, 20, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_updateElectronicSmartPowerTau, 0x40f3c (not dumped), 0x41050 (not dumped), 0x4965a (not
-   dumped). (was cm550_FUN_0001b73a; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 0, 20, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: cm550_updateElectronicSmartPowerTau,
+   0x40f3c (not dumped), 0x41050 (not dumped), 0x4965a (not dumped). (was cm550_FUN_0001b73a; PR #53
+   round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase0(void)
+void cm550_runEvery20PassesTaskSetPhase0(void)
 
 {
   cm550_updateElectronicSmartPowerTau();
@@ -17055,15 +17048,15 @@ void cm550_runEvery20FramesTaskSetPhase0(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase1 @ 0x0001b754
+// Function: cm550_runEvery20PassesTaskSetPhase1 @ 0x0001b754
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 1, 21, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 20 passes (100 ms): phases 1, 21, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order:
    cm550_monitorBoostPressureSensorInRangeHighReading, 0x4115a (not dumped), 0x41256 (not dumped).
    (was cm550_FUN_0001b754; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase1(void)
+void cm550_runEvery20PassesTaskSetPhase1(void)
 
 {
   cm550_monitorBoostPressureSensorInRangeHighReading();
@@ -17075,15 +17068,15 @@ void cm550_runEvery20FramesTaskSetPhase1(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase2 @ 0x0001b768
+// Function: cm550_runEvery20PassesTaskSetPhase2 @ 0x0001b768
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 2, 22, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4cc5a (not
-   dumped), 0x4c64e (not dumped), 0x4172c (not dumped), 0x417f2 (not dumped), 0x4190c (not dumped).
-   (was cm550_FUN_0001b768; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 2, 22, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4cc5a (not dumped), 0x4c64e (not dumped),
+   0x4172c (not dumped), 0x417f2 (not dumped), 0x4190c (not dumped). (was cm550_FUN_0001b768; PR #53
+   round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase2(void)
+void cm550_runEvery20PassesTaskSetPhase2(void)
 
 {
   func_0x0004cc5a();
@@ -17097,15 +17090,15 @@ void cm550_runEvery20FramesTaskSetPhase2(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase3 @ 0x0001b788
+// Function: cm550_runEvery20PassesTaskSetPhase3 @ 0x0001b788
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 3, 23, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x491b4 (not
-   dumped), cm550_updateDutyCycleMonitorLoadHistogram, cm550_calculateEngineLoadPercentages,
+/* Main loop task set: runs every 20 passes (100 ms): phases 3, 23, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x491b4 (not dumped),
+   cm550_updateDutyCycleMonitorLoadHistogram, cm550_calculateEngineLoadPercentages,
    cm550_calculateEngineLoadLowHorsepowerCurvePercent. (was cm550_FUN_0001b788; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase3(void)
+void cm550_runEvery20PassesTaskSetPhase3(void)
 
 {
   func_0x000491b4();
@@ -17118,15 +17111,15 @@ void cm550_runEvery20FramesTaskSetPhase3(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase4 @ 0x0001b7a2
+// Function: cm550_runEvery20PassesTaskSetPhase4 @ 0x0001b7a2
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 4, 24, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 20 passes (100 ms): phases 4, 24, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order:
    cm550_updateLowSpeedGovernorIdleAdjustmentWrapper, cm550_calculateLowSpeedGovernorColdIdleSpeed.
    (was cm550_auxiliarySystemControlWrapper; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase4(void)
+void cm550_runEvery20PassesTaskSetPhase4(void)
 
 {
   cm550_updateLowSpeedGovernorIdleAdjustmentWrapper();
@@ -17137,15 +17130,15 @@ void cm550_runEvery20FramesTaskSetPhase4(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase5 @ 0x0001b7b0
+// Function: cm550_runEvery20PassesTaskSetPhase5 @ 0x0001b7b0
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 5, 25, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_evaluateTrendingTriggers, 0x472ae (not dumped), 0x41aee (not dumped), 0x41b80 (not dumped).
-   (was cm550_FUN_0001b7b0; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 5, 25, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: cm550_evaluateTrendingTriggers, 0x472ae
+   (not dumped), 0x41aee (not dumped), 0x41b80 (not dumped). (was cm550_FUN_0001b7b0; PR #53 round
+   93) */
 
-void cm550_runEvery20FramesTaskSetPhase5(void)
+void cm550_runEvery20PassesTaskSetPhase5(void)
 
 {
   cm550_evaluateTrendingTriggers();
@@ -17158,15 +17151,14 @@ void cm550_runEvery20FramesTaskSetPhase5(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase6 @ 0x0001b7ca
+// Function: cm550_runEvery20PassesTaskSetPhase6 @ 0x0001b7ca
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 6, 26, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_calculateNoLoadFuel. (was vp44DiagnosticFaultMonitoringSlowCycle20Coordinator; PR #53 round
-   93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 6, 26, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: cm550_calculateNoLoadFuel. (was
+   vp44DiagnosticFaultMonitoringSlowCycle20Coordinator; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase6(void)
+void cm550_runEvery20PassesTaskSetPhase6(void)
 
 {
   cm550_calculateNoLoadFuel();
@@ -17176,14 +17168,14 @@ void cm550_runEvery20FramesTaskSetPhase6(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase7 @ 0x0001b7d2
+// Function: cm550_runEvery20PassesTaskSetPhase7 @ 0x0001b7d2
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 7, 27, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4d238 (not
-   dumped), 0x44e48 (not dumped). (was cm550_FUN_0001b7d2; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 7, 27, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4d238 (not dumped), 0x44e48 (not dumped).
+   (was cm550_FUN_0001b7d2; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase7(void)
+void cm550_runEvery20PassesTaskSetPhase7(void)
 
 {
   func_0x0004d238();
@@ -17194,14 +17186,14 @@ void cm550_runEvery20FramesTaskSetPhase7(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase8 @ 0x0001b7e0
+// Function: cm550_runEvery20PassesTaskSetPhase8 @ 0x0001b7e0
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 8, 28, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Empty (a single rts): nothing is
-   scheduled in this slot. (was cm550_FUN_0001b7e0; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 8, 28, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Empty (a single rts): nothing is scheduled in this slot.
+   (was cm550_FUN_0001b7e0; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase8(void)
+void cm550_runEvery20PassesTaskSetPhase8(void)
 
 {
   return;
@@ -17210,14 +17202,14 @@ void cm550_runEvery20FramesTaskSetPhase8(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase9 @ 0x0001b7e2
+// Function: cm550_runEvery20PassesTaskSetPhase9 @ 0x0001b7e2
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 9, 29, ... of the 40-frame cycle,
-   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_calculatePedalFaultModeFuelDemand. (was cm550_FUN_0001b7e2; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 9, 29, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: cm550_calculatePedalFaultModeFuelDemand.
+   (was cm550_FUN_0001b7e2; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase9(void)
+void cm550_runEvery20PassesTaskSetPhase9(void)
 
 {
   cm550_calculatePedalFaultModeFuelDemand();
@@ -17227,14 +17219,14 @@ void cm550_runEvery20FramesTaskSetPhase9(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase10 @ 0x0001b7ea
+// Function: cm550_runEvery20PassesTaskSetPhase10 @ 0x0001b7ea
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 10, 30, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 20 passes (100 ms): phases 10, 30, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order:
    vp44_derateThresholdMonitorAndFaultController. (was cm550_FUN_0001b7ea; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase10(void)
+void cm550_runEvery20PassesTaskSetPhase10(void)
 
 {
   vp44_derateThresholdMonitorAndFaultController();
@@ -17244,15 +17236,15 @@ void cm550_runEvery20FramesTaskSetPhase10(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase11 @ 0x0001b7f2
+// Function: cm550_runEvery20PassesTaskSetPhase11 @ 0x0001b7f2
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 11, 31, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x46aac (not
-   dumped), cm550_runIdleShutdownStateMachine, 0x40b30 (not dumped), 0x422b4 (not dumped). (was
+/* Main loop task set: runs every 20 passes (100 ms): phases 11, 31, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x46aac (not dumped),
+   cm550_runIdleShutdownStateMachine, 0x40b30 (not dumped), 0x422b4 (not dumped). (was
    vp44_FUN_0001b7f2; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase11(void)
+void cm550_runEvery20PassesTaskSetPhase11(void)
 
 {
   func_0x00046aac();
@@ -17265,14 +17257,14 @@ void cm550_runEvery20FramesTaskSetPhase11(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase12 @ 0x0001b80c
+// Function: cm550_runEvery20PassesTaskSetPhase12 @ 0x0001b80c
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 12, 32, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x41528 (not
-   dumped), 0x44954 (not dumped). (was cm550_FUN_0001b80c; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 12, 32, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x41528 (not dumped), 0x44954 (not dumped).
+   (was cm550_FUN_0001b80c; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase12(void)
+void cm550_runEvery20PassesTaskSetPhase12(void)
 
 {
   func_0x00041528();
@@ -17283,14 +17275,14 @@ void cm550_runEvery20FramesTaskSetPhase12(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase13 @ 0x0001b81a
+// Function: cm550_runEvery20PassesTaskSetPhase13 @ 0x0001b81a
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 13, 33, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4579e (not
-   dumped), 0x490b8 (not dumped). (was cm550_FUN_0001b81a; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 13, 33, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4579e (not dumped), 0x490b8 (not dumped).
+   (was cm550_FUN_0001b81a; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase13(void)
+void cm550_runEvery20PassesTaskSetPhase13(void)
 
 {
   func_0x0004579e();
@@ -17301,15 +17293,15 @@ void cm550_runEvery20FramesTaskSetPhase13(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase14 @ 0x0001b828
+// Function: cm550_runEvery20PassesTaskSetPhase14 @ 0x0001b828
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 14, 34, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+/* Main loop task set: runs every 20 passes (100 ms): phases 14, 34, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order:
    cm550_calculateThrottle100J1939TorqueCurveFuelings, 0x45a6c (not dumped). (was
    cm550_FUN_0001b828; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase14(void)
+void cm550_runEvery20PassesTaskSetPhase14(void)
 
 {
   cm550_calculateThrottle100J1939TorqueCurveFuelings();
@@ -17320,14 +17312,14 @@ void cm550_runEvery20FramesTaskSetPhase14(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase15 @ 0x0001b836
+// Function: cm550_runEvery20PassesTaskSetPhase15 @ 0x0001b836
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 15, 35, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x491b4 (not
-   dumped). (was cm550_FUN_0001b836; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 15, 35, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x491b4 (not dumped). (was
+   cm550_FUN_0001b836; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase15(void)
+void cm550_runEvery20PassesTaskSetPhase15(void)
 
 {
   func_0x000491b4();
@@ -17337,14 +17329,14 @@ void cm550_runEvery20FramesTaskSetPhase15(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase16 @ 0x0001b83e
+// Function: cm550_runEvery20PassesTaskSetPhase16 @ 0x0001b83e
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 16, 36, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4dedc (not
-   dumped). (was cm550_FUN_0001b83e; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 16, 36, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4dedc (not dumped). (was
+   cm550_FUN_0001b83e; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase16(void)
+void cm550_runEvery20PassesTaskSetPhase16(void)
 
 {
   func_0x0004dedc();
@@ -17354,14 +17346,14 @@ void cm550_runEvery20FramesTaskSetPhase16(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase17 @ 0x0001b846
+// Function: cm550_runEvery20PassesTaskSetPhase17 @ 0x0001b846
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 17, 37, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4c192 (not
-   dumped), 0x4874a (not dumped), 0x479fa (not dumped). (was cm550_FUN_0001b846; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 17, 37, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4c192 (not dumped), 0x4874a (not dumped),
+   0x479fa (not dumped). (was cm550_FUN_0001b846; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase17(void)
+void cm550_runEvery20PassesTaskSetPhase17(void)
 
 {
   func_0x0004c192();
@@ -17373,14 +17365,14 @@ void cm550_runEvery20FramesTaskSetPhase17(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase18 @ 0x0001b85a
+// Function: cm550_runEvery20PassesTaskSetPhase18 @ 0x0001b85a
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 18, 38, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4dc52 (not
-   dumped). (was vp44DiagnosticControlSlowCycle20Coordinator; PR #53 round 93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 18, 38, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4dc52 (not dumped). (was
+   vp44DiagnosticControlSlowCycle20Coordinator; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase18(void)
+void cm550_runEvery20PassesTaskSetPhase18(void)
 
 {
   func_0x0004dc52();
@@ -17390,15 +17382,14 @@ void cm550_runEvery20FramesTaskSetPhase18(void)
 
 
 //
-// Function: cm550_runEvery20FramesTaskSetPhase19 @ 0x0001b862
+// Function: cm550_runEvery20PassesTaskSetPhase19 @ 0x0001b862
 //
 
-/* Executive frame task set: runs every 20 frames (100 ms): frames 19, 39, ... of the 40-frame
-   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4e672 (not
-   dumped), cm550_updateTripInformation, 0x464f2 (not dumped). (was cm550_FUN_0001b862; PR #53 round
-   93) */
+/* Main loop task set: runs every 20 passes (100 ms): phases 19, 39, ... of the 40-phase cycle, as
+   call 6 of those phases in main_loop. Calls, in order: 0x4e672 (not dumped),
+   cm550_updateTripInformation, 0x464f2 (not dumped). (was cm550_FUN_0001b862; PR #53 round 93) */
 
-void cm550_runEvery20FramesTaskSetPhase19(void)
+void cm550_runEvery20PassesTaskSetPhase19(void)
 
 {
   func_0x0004e672();
@@ -17410,15 +17401,17 @@ void cm550_runEvery20FramesTaskSetPhase19(void)
 
 
 //
-// Function: executiveFrameInterruptHandler @ 0x0001b876
+// Function: main_loop @ 0x0001b876
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The periodic interrupt timer's handler (the twin of CM848 0xc0a0): each interrupt runs one frame
-   of the 40-phase executive and times it with the executive timing gatherer. It is not a loop (was
-   main_loop; PR #53 round 87; the twin of CM848 0xc0a0: one shared name) */
+/* The main loop of the running ECU, one pass per periodic interrupt timer interrupt: each pass runs
+   the task sets of the current one of its 40 phases and times itself with the main loop timing
+   gatherer; the timer makes it repeat, so the body has no loop statement. The twin of CM848 0xc0a0:
+   one shared name (PR #53 round 87; PR #56) Do not rename without consent from the code owner,
+   Joshua Austill. */
 
-undefined8 executiveFrameInterruptHandler(void)
+undefined8 main_loop(void)
 
 {
   word wVar1;
@@ -17426,13 +17419,13 @@ undefined8 executiveFrameInterruptHandler(void)
   undefined4 in_D1;
   byte *pbVar2;
   
-  if (enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0) {
+  if (main_loop_timing_enable == 0) {
     _DAT_0080068a = 0;
   }
   else {
     if (_DAT_0080068a == 0) {
-      _scheduler_timing_record_ptr = executive_frame_timings + _scheduler_phase_index * 0x10;
-      for (pbVar2 = executive_frame_timings;
+      _scheduler_timing_record_ptr = main_loop_phase_timings + _scheduler_phase_index * 0x10;
+      for (pbVar2 = main_loop_phase_timings;
           pbVar2 < &fuel_limit_from_pump_analog_error_algorithm_0_to_300; pbVar2 = pbVar2 + 0x10) {
         pbVar2[0] = 0;
         pbVar2[1] = 0;
@@ -17447,7 +17440,7 @@ undefined8 executiveFrameInterruptHandler(void)
         pbVar2[10] = 0;
         pbVar2[0xb] = 0;
       }
-      number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 = 0;
+      main_loop_pass_overflow_count = 0;
       _DAT_00809ee2 = 0;
       _DAT_0080068a = 1;
     }
@@ -17455,390 +17448,390 @@ undefined8 executiveFrameInterruptHandler(void)
   }
   switch(_scheduler_phase_index) {
   case 0:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase0();
-    cm550_runEvery10FramesTaskSetPhase0();
-    cm550_runEvery20FramesTaskSetPhase0();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase0();
+    cm550_runEvery10PassesTaskSetPhase0();
+    cm550_runEvery20PassesTaskSetPhase0();
     advanceHourMeters();
-    _scheduler_timing_record_ptr = executive_frame_timings;
+    _scheduler_timing_record_ptr = main_loop_phase_timings;
     _scheduler_phase_index = 1;
     break;
   case 1:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase1();
-    cm550_runEvery10FramesTaskSetPhase1();
-    cm550_runEvery20FramesTaskSetPhase1();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase1();
+    cm550_runEvery10PassesTaskSetPhase1();
+    cm550_runEvery20PassesTaskSetPhase1();
     updateEngineSyncStatus();
     _scheduler_phase_index = 2;
     break;
   case 2:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase2();
-    cm550_runEvery10FramesTaskSetPhase2();
-    cm550_runEvery20FramesTaskSetPhase2();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase2();
+    cm550_runEvery10PassesTaskSetPhase2();
+    cm550_runEvery20PassesTaskSetPhase2();
     mc68k_engineRpmHardwareTimerSetup();
     _scheduler_phase_index = 3;
     break;
   case 3:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase3();
-    cm550_runEvery10FramesTaskSetPhase3();
-    cm550_runEvery20FramesTaskSetPhase3();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase3();
+    cm550_runEvery10PassesTaskSetPhase3();
+    cm550_runEvery20PassesTaskSetPhase3();
     cm550_runTrendingIntervalAndStoreSamples();
     _scheduler_phase_index = 4;
     break;
   case 4:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase4();
-    cm550_runEvery10FramesTaskSetPhase4();
-    cm550_runEvery20FramesTaskSetPhase4();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase4();
+    cm550_runEvery10PassesTaskSetPhase4();
+    cm550_runEvery20PassesTaskSetPhase4();
     _scheduler_phase_index = 5;
     break;
   case 5:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase5();
-    cm550_runEvery10FramesTaskSetPhase5();
-    cm550_runEvery20FramesTaskSetPhase5();
-    cm550_emptyExecutiveFrame5ExtraTask();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase5();
+    cm550_runEvery10PassesTaskSetPhase5();
+    cm550_runEvery20PassesTaskSetPhase5();
+    cm550_emptyMainLoopPhase5ExtraTask();
     _scheduler_phase_index = 6;
     break;
   case 6:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase6();
-    cm550_runEvery10FramesTaskSetPhase6();
-    cm550_runEvery20FramesTaskSetPhase6();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase6();
+    cm550_runEvery10PassesTaskSetPhase6();
+    cm550_runEvery20PassesTaskSetPhase6();
     _scheduler_phase_index = 7;
     break;
   case 7:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase7();
-    cm550_runEvery10FramesTaskSetPhase7();
-    cm550_runEvery20FramesTaskSetPhase7();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase7();
+    cm550_runEvery10PassesTaskSetPhase7();
+    cm550_runEvery20PassesTaskSetPhase7();
     vp44_liftPumpFuelDeliveryController();
     _scheduler_phase_index = 8;
     break;
   case 8:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase0();
-    cm550_runEvery10FramesTaskSetPhase8();
-    cm550_runEvery20FramesTaskSetPhase8();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase0();
+    cm550_runEvery10PassesTaskSetPhase8();
+    cm550_runEvery20PassesTaskSetPhase8();
     cm550_coldStartFuelControlSlowCycle40Coordinator();
     vp44FaultRegisterBit2Monitor();
     _scheduler_phase_index = 9;
     break;
   case 9:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase1();
-    cm550_runEvery10FramesTaskSetPhase9();
-    cm550_runEvery20FramesTaskSetPhase9();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase1();
+    cm550_runEvery10PassesTaskSetPhase9();
+    cm550_runEvery20PassesTaskSetPhase9();
     _scheduler_phase_index = 10;
     break;
   case 10:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase2();
-    cm550_runEvery10FramesTaskSetPhase0();
-    cm550_runEvery20FramesTaskSetPhase10();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase2();
+    cm550_runEvery10PassesTaskSetPhase0();
+    cm550_runEvery20PassesTaskSetPhase10();
     hpcr_injectorPulseWidthCalculation();
     _scheduler_phase_index = 0xb;
     break;
   case 0xb:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase3();
-    cm550_runEvery10FramesTaskSetPhase1();
-    cm550_runEvery20FramesTaskSetPhase11();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase3();
+    cm550_runEvery10PassesTaskSetPhase1();
+    cm550_runEvery20PassesTaskSetPhase11();
     cm550_ioOutputFlagMappingSlowCycle40Coordinator();
     _scheduler_phase_index = 0xc;
     break;
   case 0xc:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase4();
-    cm550_runEvery10FramesTaskSetPhase2();
-    cm550_runEvery20FramesTaskSetPhase12();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase4();
+    cm550_runEvery10PassesTaskSetPhase2();
+    cm550_runEvery20PassesTaskSetPhase12();
     rampCrankExitFuelAdjustment();
     _scheduler_phase_index = 0xd;
     break;
   case 0xd:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase5();
-    cm550_runEvery10FramesTaskSetPhase3();
-    cm550_runEvery20FramesTaskSetPhase13();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase5();
+    cm550_runEvery10PassesTaskSetPhase3();
+    cm550_runEvery20PassesTaskSetPhase13();
     updateCrankExitAndJumpStartTimers();
     _scheduler_phase_index = 0xe;
     break;
   case 0xe:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase6();
-    cm550_runEvery10FramesTaskSetPhase4();
-    cm550_runEvery20FramesTaskSetPhase14();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase6();
+    cm550_runEvery10PassesTaskSetPhase4();
+    cm550_runEvery20PassesTaskSetPhase14();
     fuelDemandProportionalCalculationSlowCycle40Coordinator();
     _scheduler_phase_index = 0xf;
     break;
   case 0xf:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase7();
-    cm550_runEvery10FramesTaskSetPhase5();
-    cm550_runEvery20FramesTaskSetPhase15();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase7();
+    cm550_runEvery10PassesTaskSetPhase5();
+    cm550_runEvery20PassesTaskSetPhase15();
     cm550_calculateEngineProtectionOilPressureLimits();
     cm550_selectEngineProtectionFuelTemperature();
     cm550_runEngineProtectionScheduler();
     _scheduler_phase_index = 0x10;
     break;
   case 0x10:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase0();
-    cm550_runEvery10FramesTaskSetPhase6();
-    cm550_runEvery20FramesTaskSetPhase16();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase0();
+    cm550_runEvery10PassesTaskSetPhase6();
+    cm550_runEvery20PassesTaskSetPhase16();
     func_0x000487fe();
     _scheduler_phase_index = 0x11;
     break;
   case 0x11:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase1();
-    cm550_runEvery10FramesTaskSetPhase7();
-    cm550_runEvery20FramesTaskSetPhase17();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase1();
+    cm550_runEvery10PassesTaskSetPhase7();
+    cm550_runEvery20PassesTaskSetPhase17();
     _scheduler_phase_index = 0x12;
     break;
   case 0x12:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase2();
-    cm550_runEvery10FramesTaskSetPhase8();
-    cm550_runEvery20FramesTaskSetPhase18();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase2();
+    cm550_runEvery10PassesTaskSetPhase8();
+    cm550_runEvery20PassesTaskSetPhase18();
     func_0x0004a322();
     _scheduler_phase_index = 0x13;
     break;
   case 0x13:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase3();
-    cm550_runEvery10FramesTaskSetPhase9();
-    cm550_runEvery20FramesTaskSetPhase19();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase3();
+    cm550_runEvery10PassesTaskSetPhase9();
+    cm550_runEvery20PassesTaskSetPhase19();
     _scheduler_phase_index = 0x14;
     break;
   case 0x14:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase4();
-    cm550_runEvery10FramesTaskSetPhase0();
-    cm550_runEvery20FramesTaskSetPhase0();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase4();
+    cm550_runEvery10PassesTaskSetPhase0();
+    cm550_runEvery20PassesTaskSetPhase0();
     _scheduler_phase_index = 0x15;
     break;
   case 0x15:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase5();
-    cm550_runEvery10FramesTaskSetPhase1();
-    cm550_runEvery20FramesTaskSetPhase1();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase5();
+    cm550_runEvery10PassesTaskSetPhase1();
+    cm550_runEvery20PassesTaskSetPhase1();
     _scheduler_phase_index = 0x16;
     break;
   case 0x16:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase6();
-    cm550_runEvery10FramesTaskSetPhase2();
-    cm550_runEvery20FramesTaskSetPhase2();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase6();
+    cm550_runEvery10PassesTaskSetPhase2();
+    cm550_runEvery20PassesTaskSetPhase2();
     _scheduler_phase_index = 0x17;
     break;
   case 0x17:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase7();
-    cm550_runEvery10FramesTaskSetPhase3();
-    cm550_runEvery20FramesTaskSetPhase3();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase7();
+    cm550_runEvery10PassesTaskSetPhase3();
+    cm550_runEvery20PassesTaskSetPhase3();
     _scheduler_phase_index = 0x18;
     break;
   case 0x18:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase0();
-    cm550_runEvery10FramesTaskSetPhase4();
-    cm550_runEvery20FramesTaskSetPhase4();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase0();
+    cm550_runEvery10PassesTaskSetPhase4();
+    cm550_runEvery20PassesTaskSetPhase4();
     _scheduler_phase_index = 0x19;
     break;
   case 0x19:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase1();
-    cm550_runEvery10FramesTaskSetPhase5();
-    cm550_runEvery20FramesTaskSetPhase5();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase1();
+    cm550_runEvery10PassesTaskSetPhase5();
+    cm550_runEvery20PassesTaskSetPhase5();
     _scheduler_phase_index = 0x1a;
     break;
   case 0x1a:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase2();
-    cm550_runEvery10FramesTaskSetPhase6();
-    cm550_runEvery20FramesTaskSetPhase6();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase2();
+    cm550_runEvery10PassesTaskSetPhase6();
+    cm550_runEvery20PassesTaskSetPhase6();
     _scheduler_phase_index = 0x1b;
     break;
   case 0x1b:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase3();
-    cm550_runEvery10FramesTaskSetPhase7();
-    cm550_runEvery20FramesTaskSetPhase7();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase3();
+    cm550_runEvery10PassesTaskSetPhase7();
+    cm550_runEvery20PassesTaskSetPhase7();
     _scheduler_phase_index = 0x1c;
     break;
   case 0x1c:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase4();
-    cm550_runEvery10FramesTaskSetPhase8();
-    cm550_runEvery20FramesTaskSetPhase8();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase4();
+    cm550_runEvery10PassesTaskSetPhase8();
+    cm550_runEvery20PassesTaskSetPhase8();
     _scheduler_phase_index = 0x1d;
     break;
   case 0x1d:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase5();
-    cm550_runEvery10FramesTaskSetPhase9();
-    cm550_runEvery20FramesTaskSetPhase9();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase5();
+    cm550_runEvery10PassesTaskSetPhase9();
+    cm550_runEvery20PassesTaskSetPhase9();
     _scheduler_phase_index = 0x1e;
     break;
   case 0x1e:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase6();
-    cm550_runEvery10FramesTaskSetPhase0();
-    cm550_runEvery20FramesTaskSetPhase10();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase6();
+    cm550_runEvery10PassesTaskSetPhase0();
+    cm550_runEvery20PassesTaskSetPhase10();
     _scheduler_phase_index = 0x1f;
     break;
   case 0x1f:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase7();
-    cm550_runEvery10FramesTaskSetPhase1();
-    cm550_runEvery20FramesTaskSetPhase11();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase7();
+    cm550_runEvery10PassesTaskSetPhase1();
+    cm550_runEvery20PassesTaskSetPhase11();
     cm550_refreshRamCalibration();
     _scheduler_phase_index = 0x20;
     break;
   case 0x20:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase0();
-    cm550_runEvery10FramesTaskSetPhase2();
-    cm550_runEvery20FramesTaskSetPhase12();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase0();
+    cm550_runEvery10PassesTaskSetPhase2();
+    cm550_runEvery20PassesTaskSetPhase12();
     _scheduler_phase_index = 0x21;
     break;
   case 0x21:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase1();
-    cm550_runEvery10FramesTaskSetPhase3();
-    cm550_runEvery20FramesTaskSetPhase13();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase1();
+    cm550_runEvery10PassesTaskSetPhase3();
+    cm550_runEvery20PassesTaskSetPhase13();
     _scheduler_phase_index = 0x22;
     break;
   case 0x22:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase2();
-    cm550_runEvery10FramesTaskSetPhase4();
-    cm550_runEvery20FramesTaskSetPhase14();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase2();
+    cm550_runEvery10PassesTaskSetPhase4();
+    cm550_runEvery20PassesTaskSetPhase14();
     _scheduler_phase_index = 0x23;
     break;
   case 0x23:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase3();
-    cm550_runEvery10FramesTaskSetPhase5();
-    cm550_runEvery20FramesTaskSetPhase15();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase3();
+    cm550_runEvery10PassesTaskSetPhase5();
+    cm550_runEvery20PassesTaskSetPhase15();
     _scheduler_phase_index = 0x24;
     break;
   case 0x24:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase0();
-    cm550_runEvery8FramesTaskSetPhase4();
-    cm550_runEvery10FramesTaskSetPhase6();
-    cm550_runEvery20FramesTaskSetPhase16();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase0();
+    cm550_runEvery8PassesTaskSetPhase4();
+    cm550_runEvery10PassesTaskSetPhase6();
+    cm550_runEvery20PassesTaskSetPhase16();
     _scheduler_phase_index = 0x25;
     break;
   case 0x25:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase1();
-    cm550_runEvery8FramesTaskSetPhase5();
-    cm550_runEvery10FramesTaskSetPhase7();
-    cm550_runEvery20FramesTaskSetPhase17();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase1();
+    cm550_runEvery8PassesTaskSetPhase5();
+    cm550_runEvery10PassesTaskSetPhase7();
+    cm550_runEvery20PassesTaskSetPhase17();
     _scheduler_phase_index = 0x26;
     break;
   case 0x26:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase0();
-    cm550_runEvery4FramesTaskSetPhase2();
-    cm550_runEvery8FramesTaskSetPhase6();
-    cm550_runEvery10FramesTaskSetPhase8();
-    cm550_runEvery20FramesTaskSetPhase18();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase0();
+    cm550_runEvery4PassesTaskSetPhase2();
+    cm550_runEvery8PassesTaskSetPhase6();
+    cm550_runEvery10PassesTaskSetPhase8();
+    cm550_runEvery20PassesTaskSetPhase18();
     cm550_calculateCylinderBalanceTrims();
     _scheduler_phase_index = 0x27;
     break;
   case 0x27:
-    cm550_runEveryFrameTaskSet();
-    cm550_runEvery2FramesTaskSetPhase1();
-    cm550_runEvery4FramesTaskSetPhase3();
-    cm550_runEvery8FramesTaskSetPhase7();
-    cm550_runEvery10FramesTaskSetPhase9();
-    cm550_runEvery20FramesTaskSetPhase19();
+    cm550_runEveryPassTaskSet();
+    cm550_runEvery2PassesTaskSetPhase1();
+    cm550_runEvery4PassesTaskSetPhase3();
+    cm550_runEvery8PassesTaskSetPhase7();
+    cm550_runEvery10PassesTaskSetPhase9();
+    cm550_runEvery20PassesTaskSetPhase19();
     _scheduler_phase_index = 0;
     break;
   default:
     _scheduler_phase_index = 0;
   }
-  if (enable_for_the_executive_timing_data_gatherer_enabled_disabled != 0) {
+  if (main_loop_timing_enable != 0) {
     wVar1 = CTM4_BIUTBR;
     scheduler_phase_elapsed_ticks = wVar1 - _DAT_0080068e;
     if (*(ushort *)(_scheduler_timing_record_ptr + 8) < scheduler_phase_elapsed_ticks) {
@@ -17850,12 +17843,11 @@ undefined8 executiveFrameInterruptHandler(void)
     *(uint *)_scheduler_timing_record_ptr =
          (uint)scheduler_phase_elapsed_ticks + *(int *)_scheduler_timing_record_ptr;
     *(short *)(_scheduler_timing_record_ptr + 4) = *(short *)(_scheduler_timing_record_ptr + 4) + 1;
-    if ((executive_frame_timing_header[2] < scheduler_phase_elapsed_ticks) &&
+    if ((main_loop_timing_header[2] < scheduler_phase_elapsed_ticks) &&
        (*(short *)(_scheduler_timing_record_ptr + 10) =
              *(short *)(_scheduler_timing_record_ptr + 10) + 1,
-       number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 != 0xffff)) {
-      number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 =
-           number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 + 1;
+       main_loop_pass_overflow_count != 0xffff)) {
+      main_loop_pass_overflow_count = main_loop_pass_overflow_count + 1;
     }
     _scheduler_timing_record_ptr = _scheduler_timing_record_ptr + 0x10;
   }
@@ -17877,15 +17869,15 @@ undefined8 executiveFrameInterruptHandler(void)
 void mc68k_scheduler_init(void)
 
 {
-  enable_for_the_executive_timing_data_gatherer_enabled_disabled = 0;
-  executive_frame_timing_header[0] = 5;
-  executive_frame_timing_header[1] = 200;
-  executive_frame_timing_header[2] = 0x9b7;
-  executive_frame_timing_header[3] = 500;
+  main_loop_timing_enable = 0;
+  main_loop_timing_header[0] = 5;
+  main_loop_timing_header[1] = 200;
+  main_loop_timing_header[2] = 0x9b7;
+  main_loop_timing_header[3] = 500;
   number_of_loop_delays_cal_0_65535 = 0;
   _DAT_0080068a = 0;
   SIM_PICR = 0x152;
-  _DAT_00808f24 = executiveFrameInterruptHandler;
+  _DAT_00808f24 = main_loop;
   SIM_PITR = 0x27;
   return;
 }
@@ -18144,13 +18136,13 @@ void cm550_selectFinalFueling(void)
 // Function: cm550_initializeTorqueDerateTorqueLimit @ 0x0001c308
 //
 
-/* Start-up initialization of the torque derate torque limit, called once from
-   mc68k_applicationMain. It sets torque_derate_torque_limit (e2m 1051 +A TQDQTQ) to 0xFFFF (no
-   limit) and torque_derate_torque_limit_state (1051 +C TQDQTQST) to FUELING_STATE_NO_DERATE (40),
-   so the first pass of the fuel limit chains starts unlimited.
-   cm550_convertTorqueDerateTorqueLimitToFuelLimit repeats the same reset after every pass. CM848
-   has no start-up writer of the pair: its per-pass reset is in cm848_arbitrateRequestedFueling (was
-   cm550_FUN_0001c308). (was cm550_FUN_0001c308; PR #53 round 94) */
+/* Start-up initialization of the torque derate torque limit, called once from run_power_cycle. It
+   sets torque_derate_torque_limit (e2m 1051 +A TQDQTQ) to 0xFFFF (no limit) and
+   torque_derate_torque_limit_state (1051 +C TQDQTQST) to FUELING_STATE_NO_DERATE (40), so the first
+   pass of the fuel limit chains starts unlimited. cm550_convertTorqueDerateTorqueLimitToFuelLimit
+   repeats the same reset after every pass. CM848 has no start-up writer of the pair: its per-pass
+   reset is in cm848_arbitrateRequestedFueling (was cm550_FUN_0001c308). (was cm550_FUN_0001c308; PR
+   #53 round 94) */
 
 void cm550_initializeTorqueDerateTorqueLimit(void)
 
@@ -18386,7 +18378,7 @@ void selectFourDimensionalFuelingModeByDefault(void)
 /* User fueling state FOUR_D: while user_fueling_state is FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE
    (8) it stores cm550_calculateFourDimensionalFueling in four_dimensional_fueling (e2m 1053 +0
    5DFL) and copies it to user_fueling (1050 +0 FSDSFL). It does nothing in the other states. Fourth
-   call of cm550_runEvery4FramesTaskSetPhase1 (jsr at 0x1b584), right after
+   call of cm550_runEvery4PassesTaskSetPhase1 (jsr at 0x1b584), right after
    cm550_runAllSpeedGovernor. Twin of CM848 0x1e830 (one shared name). (was
    cm550_diagnostic_parameter_handler; PR #53 round 97) */
 
@@ -18474,7 +18466,7 @@ uint cm550_fuelDemandTableBlendCalculator(void)
 // Function: cm550_initializeFourDimensionalInjectionTimingLookups @ 0x0001c7a8
 //
 
-/* Start-up initializer (mc68k_applicationMain) of the lookups of the 4D timing calculation
+/* Start-up initializer (run_power_cycle) of the lookups of the 4D timing calculation
    cm550_fuelDemandTableBlendCalculator: double_pulsing_fueling_mapping_lookup (e2m 1084 / 1085,
    axis offset 2), four_dimensional_injection_timing_steady_state_lookup (e2m 103D / 103C / 103E)
    and four_dimensional_injection_timing_transient_lookup (1040 / 103F / 1041), each with axis
@@ -18550,7 +18542,7 @@ void cm550_setThrottle100J1939TorqueCurveSpeedPoints(void)
 //
 
 /* Throttle 100 request of the J1939 torque curve (PGN 65251), from
-   cm550_runEvery20FramesTaskSetPhase14. On first use it builds
+   cm550_runEvery20PassesTaskSetPhase14. On first use it builds
    throttle_100_speed_points_request_bit = 1 << throttle_100_priority_bit_index (12BD +C FSMXMNCG).
    While programmable_power_enable is clear it sets that bit in
    j1939_pgn65251_speed_points_request_flags, runs cm550_setThrottle100J1939TorqueCurveSpeedPoints
@@ -18668,8 +18660,8 @@ void fuelDemandProportionalCalculationSlowCycle40Coordinator(void)
    +0 FSAPFSCO) - or engine_retarder_active_flag is set with algorithm_enable_flags_0_cal bit 0x40
    (EBODEN) - or engine_state is OVERSPEED with overspeed_fuel_shutoff_enable (EPOSFSO); sets it
    otherwise. It writes only while fuel_shutoff_driver_override_priority (12A7 +2D DRFSPZ - the same
-   slot is VPENPZ 'VP44 pump enable') is 0. Its one caller is the executive frame task set at
-   0x1b612 (jsr at 0x1b63c). CM848 has no counterpart (was cm550_fuelDemandLimitSelector11) (was
+   slot is VPENPZ 'VP44 pump enable') is 0. Its one caller is the main loop task set at 0x1b612 (jsr
+   at 0x1b63c). CM848 has no counterpart (was cm550_fuelDemandLimitSelector11) (was
    cm550_fuelDemandLimitSelector11; PR #53 round 94) */
 
 ushort cm550_commandFuelShutoffDriver(void)
@@ -18705,7 +18697,7 @@ ushort cm550_commandFuelShutoffDriver(void)
 // Function: cm550_selectEngineProtectionFuelTemperature @ 0x0001cad6
 //
 
-/* Fuel temperature input of engine protection (executive frame 15, once per 200 ms, before
+/* Fuel temperature input of engine protection (main loop phase 15, once per 200 ms, before
    cm550_runEngineProtectionScheduler). While engine_protection_enable and the fuel temperature
    fueling or rpm limiting enable are set it writes engine_protection_fuel_temperature (e2m 81FA +0
    EPFLTP): with engine_protection_fuel_temperature_source (81F9 +2 EPFTFG) 0 the VP44 pump's fuel
@@ -18747,10 +18739,10 @@ uint cm550_selectEngineProtectionFuelTemperature(void)
 // Function: cm550_initializeEngineProtectionFuelTemperature @ 0x0001cb3c
 //
 
-/* Start-up initializer (mc68k_applicationMain): engine_protection_fuel_temperature (e2m 81FA +0
-   EPFLTP) = fuel_temperature_sensor_config.default_value (e2m 1003 +1A ADDFFLTP, the fuel
-   temperature channel's global default), before cm550_selectEngineProtectionFuelTemperature first
-   runs. (was vp44_FUN_0001cb3c; PR #53 round 96) */
+/* Start-up initializer (run_power_cycle): engine_protection_fuel_temperature (e2m 81FA +0 EPFLTP) =
+   fuel_temperature_sensor_config.default_value (e2m 1003 +1A ADDFFLTP, the fuel temperature
+   channel's global default), before cm550_selectEngineProtectionFuelTemperature first runs. (was
+   vp44_FUN_0001cb3c; PR #53 round 96) */
 
 void cm550_initializeEngineProtectionFuelTemperature(void)
 
@@ -18837,7 +18829,7 @@ word cm550_calculateBlendedTableValue(word fuel_table_x_input,word throttle_inpu
 //
 
 /* The 100 percent throttle fuelings (e2m 105A, throttle 400 = 100 percent), once per 20 ms as the
-   last call of cm550_runEvery4FramesTaskSetPhase1. While programmable_power_enable is clear it
+   last call of cm550_runEvery4PassesTaskSetPhase1. While programmable_power_enable is clear it
    stores three values. throttle_100_fueling (+0 FSMXTHFL) =
    cm550_calculateBlendedTableValue(filtered_engine_speed, 400).
    engine_speed_limit_ramped_maximum_fuel_quantity (+4 FSMXBFDP) = the same curve at
@@ -19703,7 +19695,7 @@ uint cm550_runIdleShutdownStateMachine(void)
 //
 
 /* Start-up initialization of the idle shutdown state machine (e2m 10CD), called from the start-up
-   list of mc68k_applicationMain. It clears ISOD, sets the timer ISTM to ISTMLM, the state ISST to 0
+   list of run_power_cycle. It clears ISOD, sets the timer ISTM to ISTMLM, the state ISST to 0
    (RESET), clears ISWRRQ and ISODRQ, sets ISRSFG to 1, clears ISODFG and the engine shutdown
    command SHSS, and switches output 30 off unless a client overrides it. (was vp44_FUN_0001db8a; PR
    #53 round 94) */
@@ -19733,7 +19725,7 @@ void cm550_initializeIdleShutdown(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Start-up initializer (mc68k_applicationMain) of the injector fault speed derate (e2m group 0x21
+/* Start-up initializer (run_power_cycle) of the injector fault speed derate (e2m group 0x21
    'INJECTOR FAULT SPEED DERATE GROUP'): injector_fault_engine_speed_limit (e2m 10C4 +0 ZILMES
    'output engine speed limit going to HSG reference speed algorithm') and the word 0x80def0 =
    engine_speed_limit_default_cal, no derate. The derate itself and every reader of these words lie
@@ -19793,7 +19785,7 @@ void mc68k_main(void)
   SIM_CSOR9 = 0;
   SIM_CSBAR10 = 0;
   SIM_CSOR10 = 0;
-  mc68k_applicationMain();
+  run_power_cycle();
   return;
 }
 
@@ -19856,14 +19848,14 @@ void cm550_initializeDiagnosticBufferPointer(void)
 // Function: initializeFourDimensionalFuelingAndFrictionFuelLookups @ 0x0001ddb4
 //
 
-/* Start-up initializer (mc68k_applicationMain): sets the lookups of
-   four_dimensional_fueling_steady_state (e2m 1056 table, axis offsets 2 / 2),
-   four_dimensional_fueling_transient (1059, 2 / 2), friction_fuel_by_engine_speed (offset 2) and
-   friction_fuel_correction_by_coolant_temperature (offset 2), then fills the J1939 friction
-   fuelings with calculateJ1939FrictionLoadFuelingAtBreakpoints. The same steps as CM848 0x1ea94
-   (one shared name; that old name has nothing to do with fault severity); CM550 also stores the
-   record pointers because its lookups take a record. The twin of CM848 0x0001ea94: one shared name.
-   (was cm550_FUN_0001ddb4; PR #53 round 96) */
+/* Start-up initializer (run_power_cycle): sets the lookups of four_dimensional_fueling_steady_state
+   (e2m 1056 table, axis offsets 2 / 2), four_dimensional_fueling_transient (1059, 2 / 2),
+   friction_fuel_by_engine_speed (offset 2) and friction_fuel_correction_by_coolant_temperature
+   (offset 2), then fills the J1939 friction fuelings with
+   calculateJ1939FrictionLoadFuelingAtBreakpoints. The same steps as CM848 0x1ea94 (one shared name;
+   that old name has nothing to do with fault severity); CM550 also stores the record pointers
+   because its lookups take a record. The twin of CM848 0x0001ea94: one shared name. (was
+   cm550_FUN_0001ddb4; PR #53 round 96) */
 
 void initializeFourDimensionalFuelingAndFrictionFuelLookups(void)
 
@@ -20033,8 +20025,8 @@ void cm550_subtractAndClampValue(word *fuel_value_pointer)
 // Function: cm550_initializeFourDimensionalFuelingInterpolationFactor @ 0x0001e04c
 //
 
-/* Start-up initializer (mc68k_applicationMain): four_dimensional_fueling_interpolation_factor (e2m
-   1053 +2 FLINML, the alpha) = 0x4000, the steady state end of the 4D fueling blend, until
+/* Start-up initializer (run_power_cycle): four_dimensional_fueling_interpolation_factor (e2m 1053
+   +2 FLINML, the alpha) = 0x4000, the steady state end of the 4D fueling blend, until
    calculateAlpha runs. CM848's cm848_initializeFuelDemandTracking sets the same value and also the
    commanded throttle filter. (was cm550_FUN_0001e04c; PR #53 round 96) */
 
@@ -22162,7 +22154,7 @@ byte scheduleJ1939PeriodicMessage
 // Function: cm550_runJ1939PeriodicTransmitQueues @ 0x0001ff38
 //
 
-/* The 10 ms J1939 periodic transmit scheduler, second call of the odd frame task set 0x1b504. With
+/* The 10 ms J1939 periodic transmit scheduler, second call of the odd-pass task set 0x1b504. With
    algorithm_enable_flags_11_cal.j1939_communication_enable set it runs queue 0 (the engine node: up
    to 20 10-byte entries at 0x80096e) while bit 2 of the broadcast enable word 0x80aa12 is set (e2m
    JCEGBCEA) and queue 1 (the retarder node: up to 10 at 0x800a36) while bit 3 is set (JCRDBCEA).
@@ -23498,7 +23490,7 @@ byte registerJ1939ReceiveHandler(word pgn_key,void *handler)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* J1939 receive dispatcher, first call of the even frame task set 0x1b4d8. With
+/* J1939 receive dispatcher, first call of the even-pass task set 0x1b4d8. With
    algorithm_enable_flags_11_cal.j1939_communication_enable set it drains the CAN receive ring
    (18-byte records at 0x80d72e) for at most 250 CTM4 time base counts: the PGN key is record bytes
    1-2 (the PDU specific byte cleared for a PDU1 frame to the engine's address or 0xFF), byte 3 goes
@@ -23593,7 +23585,7 @@ LAB_0002136c:
    retarder in torque control (mode 2) from the transmission (control device 1) and the engine in
    speed control (mode 1) from the transmission, it ends the retarder request once the user fueling
    user_fueling (e2m FSDSFL) reaches the limit 0x8089a8 (JCEBSILM): retarder mode 0, torque limit
-   125, 0x80da8e / 0x80da90 cleared. First call of the odd frame task set 0x1b504. Twin of CM848
+   125, 0x80da8e / 0x80da90 cleared. First call of the odd-pass task set 0x1b504. Twin of CM848
    0x50aec0. (was cm550_FUN_0002142c; PR #53 round 94) */
 
 ushort endRetarderShiftAssistAboveFuelDemandLimit(void)
@@ -24320,8 +24312,8 @@ void receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
 //
 
 /* Counts each nonzero word of j1939_input_signal_timeouts_cal down by 1 - all 25 words (the bound
-   0x804264 is inclusive as in CM848). Runs from the task set cm550_runEvery2FramesTaskSetPhase0
-   (0x1b4d8; every second executive frame) with no gate. The counterpart of
+   0x804264 is inclusive as in CM848). Runs from the task set cm550_runEvery2PassesTaskSetPhase0
+   (0x1b4d8; every second main loop pass) with no gate. The counterpart of
    cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the
    J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit
    flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc;
@@ -24470,16 +24462,16 @@ void startJ1939ControlSession(byte command_record_index)
 //
 
 /* J1939 monitor (algorithm_enable_flags_2_cal.j1939_monitor_enable, e2m JC39MREA), third call of
-   the even frame task set 0x1b4d8. Engine half (control mode 0x80da50, network type 0x80da68,
-   source address 0x80da70 against the copies 0x800b12 / 0x800b16 / 0x800b18): a non-zero mode on
-   network 1 opens a session record (startJ1939ControlSession) when none is open; a new mode from
-   the same source is appended to the record's five mode words (shifted when full); a new source
-   stores the duration, files the record (storeJ1939ControlSessionInHistoryTable) and opens a new
-   one; mode 0 after a network 1 control clears the control status 0x80422a, stores the duration and
-   files the record; a control on another network after network 1 clears the status and files the
-   record without a duration. The retarder half does the same for retarder_control_mode and the
-   source address word 0x80d9e8 (copies 0x800b14 / 0x800b19, status 0x80422c, record 0x804212) with
-   no network test. Twin of CM848 0x50bff4. (was cm550_memoryRegisterController; PR #53 round 94) */
+   the even-pass task set 0x1b4d8. Engine half (control mode 0x80da50, network type 0x80da68, source
+   address 0x80da70 against the copies 0x800b12 / 0x800b16 / 0x800b18): a non-zero mode on network 1
+   opens a session record (startJ1939ControlSession) when none is open; a new mode from the same
+   source is appended to the record's five mode words (shifted when full); a new source stores the
+   duration, files the record (storeJ1939ControlSessionInHistoryTable) and opens a new one; mode 0
+   after a network 1 control clears the control status 0x80422a, stores the duration and files the
+   record; a control on another network after network 1 clears the status and files the record
+   without a duration. The retarder half does the same for retarder_control_mode and the source
+   address word 0x80d9e8 (copies 0x800b14 / 0x800b19, status 0x80422c, record 0x804212) with no
+   network test. Twin of CM848 0x50bff4. (was cm550_memoryRegisterController; PR #53 round 94) */
 
 uint trackJ1939ControlSessions(void)
 
@@ -25729,7 +25721,7 @@ void tickJ1939TransportReceiveTimeout(void)
 // Function: serviceJ1939TransportSessions @ 0x000230ee
 //
 
-/* The J1939 transport's periodic service, the fourth call of the every 2 frames task set (10 ms),
+/* The J1939 transport's periodic service, the fourth call of the every 2 passes task set (10 ms),
    after trackJ1939ControlSessions. It sends the next packet of each active broadcast session (index
    0 and 1), runs the connection mode transmit session while j1939_multiframe_tx_active is 1 and
    ticks the receive timeout while the receive session is active. Twin of CM848 0x50d60c: one shared
@@ -25878,7 +25870,7 @@ void resetEngineRetarderTsc1Request(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Runs the datalink powertrain control timers, second call of the even frame task set 0x1b4d8: the
+/* Runs the datalink powertrain control timers, second call of the even-pass task set 0x1b4d8: the
    high idle override (time limit, timeout, recovery), the progressive shift disable and out of gear
    flags, the retarder zero torque timer, the J1939 vehicle speed timers, and the request timeout
    and time limit of the engine and the retarder control request (J1939 and J1922 alike). A timeout
@@ -26305,7 +26297,7 @@ void cm550_addRetarderTsc1IgnoredRequestEntry(byte source_address)
 //
 
 /* WARNING: Type propagation algorithm not settling */
-/* Counts down the two ignored request lists once per pass, third call of the odd frame task set
+/* Counts down the two ignored request lists once per pass, third call of the odd-pass task set
    0x1b504: each entry's countdown (word +6 of the 8-byte engine entries at 0x801994, word +2 of the
    4-byte retarder entries at 0x8019bc) drops by 1; an entry at 0 is removed - the count byte drops
    and the last entry is copied into its place. CM848's counterpart also clears its blocked message
@@ -27006,7 +26998,7 @@ void cm550_checkLampDriverOutputFaults(void)
 // Function: cm550_updateLampOutputsAndCheckLampDriverFaults @ 0x00024804
 //
 
-/* 50 ms task, first call of cm550_runEvery10FramesTaskSetPhase6. It runs
+/* 50 ms task, first call of cm550_runEvery10PassesTaskSetPhase6. It runs
    cm550_applyLampRequestsToOutputs (lamp_driver_output_bitmask into the lamp output bits while each
    output's override priority is 0). Then it runs 0x23be8 (named cm550_checkLampDriverOutputFaults).
    While the key switch bit is set (bit 0 of 0x80bcce, e2m 000E +0 DSKYSWSS), 0x23be8 compares each
@@ -27052,9 +27044,9 @@ void cm550_iahDisableWaitToStartLamp(void)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Arms the power-up lamp sequence: sets the sequence flag 0x8019d2 and the first-pass flag
    0x8019d3, clears the end flag 0x8019d4, the sequence tick count 0x8019f0 and the fault flash
-   cycle-complete byte and repetition count. Called from the start-up list of mc68k_applicationMain
-   and from cm550_restartApplicationWithoutReset; cm550_runPowerUpLampSequence then runs the
-   sequence. (was cm550_ioControlMaskInit; PR #53 round 94) */
+   cycle-complete byte and repetition count. Called from the start-up list of run_power_cycle and
+   from cm550_restartApplicationWithoutReset; cm550_runPowerUpLampSequence then runs the sequence.
+   (was cm550_ioControlMaskInit; PR #53 round 94) */
 
 void cm550_startPowerUpLampSequence(void)
 
@@ -27876,7 +27868,7 @@ void cm550_flashEngineProtectionLampForOilChangeDueWhileRunning(void)
 // Function: cm550_runLampControl @ 0x000254b6
 //
 
-/* Lamp control task (Calterm group LAMP_CON), every 50 ms from cm550_runEvery10FramesTaskSetPhase5.
+/* Lamp control task (Calterm group LAMP_CON), every 50 ms from cm550_runEvery10PassesTaskSetPhase5.
    While the power-up lamp sequence is active it only runs cm550_runPowerUpLampSequence; afterwards
    cm550_runFaultCodeFlashOut has the stop and warning lamps first, then
    cm550_flashShutdownWarningLamps, and only when both are idle cm550_updateActiveFaultLamps.
@@ -28120,7 +28112,7 @@ void initializePedalFaultModeEngineSpeedFilter(void)
    engine_protection_very_low_oil_pressure_limit_lookup at filtered_engine_speed. They are the
    fueling threshold and the engine speed lower limit of the oil pressure channel (channel 3:
    cm550_initializeEngineProtection points minimum_threshold_pointer and
-   engine_speed_lower_limit_pointer at them). Run at executive frame 15 of 40 (jsr at 0x1bb8e),
+   engine_speed_lower_limit_pointer at them). Run at main loop phase 15 of 40 (jsr at 0x1bb8e),
    right before cm550_selectEngineProtectionFuelTemperature and cm550_runEngineProtectionScheduler.
    CM848 has no such limits (no e2m block 11B0). No engine position sensor and no timing is
    involved. (was cm550_enginePositionSensorTimingCalculationSlowCycle40Coordinator; PR #53 round
@@ -28144,7 +28136,7 @@ void cm550_calculateEngineProtectionOilPressureLimits(void)
 // Function: cm550_initializeEngineProtectionOilPressureLimitLookups @ 0x00025926
 //
 
-/* Start-up initializer (jsr at 0x287ce in mc68k_applicationMain) of the lookup records of
+/* Start-up initializer (jsr at 0x287ce in run_power_cycle) of the lookup records of
    cm550_calculateEngineProtectionOilPressureLimits: engine_protection_low_oil_pressure_limit_lookup
    (y values 0x611de, e2m 10BD EPO2LOTB) and engine_protection_very_low_oil_pressure_limit_lookup (y
    values 0x611ec, 10BE EPO2VLTB), both with the x axis
@@ -28844,7 +28836,7 @@ void cm550_initializeLowSpeedGovernorGainSelection(void)
 //
 
 /* The LSG gear gain logic (e2m 10EA). It runs every 20 ms right after cm550_runLowSpeedGovernor
-   (cm550_runEvery4FramesTaskSetPhase2), in FUELING_STATE_LOW_SPEED_GOVERNOR with
+   (cm550_runEvery4PassesTaskSetPhase2), in FUELING_STATE_LOW_SPEED_GOVERNOR with
    low_speed_governor_aggressive_gain_inhibit_flag set. Outside the speed error window
    (low_speed_governor_gear_gain_speed_error_maximum / minimum) or out of gear (GROGSS 0x80a9d4),
    the user gain state and low_speed_governor_gear_gain_transition_timer go to 0. Inside it the
@@ -29005,13 +28997,13 @@ void cm550_updateLowSpeedGovernorIdleAdjustment(void)
 //
 
 /* Start-up initializer of the low speed governor idle adjustment (called once from
-   mc68k_applicationMain): with idle_speed_save_enable (LSISSVEN) set it restores the working
-   operator idle adjustment 0x801a82 from the saved 1073 +0 LSICBKRF (RPM added to LSG reference) -
-   otherwise it zeroes both. It clears 1049 +6 LSCIOD (cold idle override flag) and writes two
-   EEPROM mirror words: it raises the trim 131E +2 LSMNRFTN to at least 1066 +8 LSMNRF and lowers
-   131E +4 LSMXRFTN to at most 1066 +A LSMXRF. The run-time partner is the idle increment /
-   decrement switch handler 0x26474. No CM848 counterpart (was cm550_fuelDemandLimitSource2Selector)
-   (was cm550_fuelDemandLimitSource2Selector; PR #53 round 94) */
+   run_power_cycle): with idle_speed_save_enable (LSISSVEN) set it restores the working operator
+   idle adjustment 0x801a82 from the saved 1073 +0 LSICBKRF (RPM added to LSG reference) - otherwise
+   it zeroes both. It clears 1049 +6 LSCIOD (cold idle override flag) and writes two EEPROM mirror
+   words: it raises the trim 131E +2 LSMNRFTN to at least 1066 +8 LSMNRF and lowers 131E +4 LSMXRFTN
+   to at most 1066 +A LSMXRF. The run-time partner is the idle increment / decrement switch handler
+   0x26474. No CM848 counterpart (was cm550_fuelDemandLimitSource2Selector) (was
+   cm550_fuelDemandLimitSource2Selector; PR #53 round 94) */
 
 void cm550_initializeLowSpeedGovernorIdleAdjustment(void)
 
@@ -29062,7 +29054,7 @@ word selectLowSpeedGovernorTsc1GainSet(void)
 // Function: cm550_calculateLowSpeedGovernorColdIdleSpeed @ 0x00026616
 //
 
-/* Cold idle speed of the low speed governor, every 100 ms (cm550_runEvery20FramesTaskSetPhase4).
+/* Cold idle speed of the low speed governor, every 100 ms (cm550_runEvery20PassesTaskSetPhase4).
    Cold means the coolant is below LSCICLTP (e2m 1066 +0). With the engine stopped the cold idle
    timer 0x801a84 is cleared and LSCIRF (1067 +2 'COLD IDLE LSG REFERENCE SPEED') = LSCIRFSR (1066
    +2) when cold, else 0. After cranking the timer counts while cold up to LSCITMLM (1066 +4); while
@@ -29127,7 +29119,7 @@ void cm550_calculateLowSpeedGovernorColdIdleSpeed(void)
 //
 
 /* Calls cm550_updateLowSpeedGovernorIdleAdjustment and returns (jsr 0x26474; rts). It is the first
-   call of cm550_runEvery20FramesTaskSetPhase4, the 100 ms task set, before
+   call of cm550_runEvery20PassesTaskSetPhase4, the 100 ms task set, before
    cm550_calculateLowSpeedGovernorColdIdleSpeed (was cm550_timingOffsetCalculatorWrapper). (was
    cm550_timingOffsetCalculatorWrapper; PR #53 round 97) */
 
@@ -29291,13 +29283,13 @@ void cm550_emptySerialEepromDriverInitializationFirstStep(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Start-up of the serial EEPROM driver, called once by mc68k_applicationMain after the QSM
-   interrupt set-up. It stores mc68k_serialEepromQspiInterruptHandler in RAM vector 0x808f20,
-   configures the QSPI (master, 16 bits, queue entries 2 to 15: READ, the address, 12 data words),
-   sets ram_refresh_enable (e2m 10C7 RREN) and the mirror base 0x803b0a, and with the length 0x148a
-   runs the queue by polling (mc68k_runSerialEepromDriverStep after each pass, both watchdogs
-   serviced) until the mirror is loaded. Then it enables the QSPI interrupt and sets the length to
-   0x64c, so the driver keeps refreshing RAM 0x803b0a-0x804155 (the _cal range) from the EEPROM. The
+/* Start-up of the serial EEPROM driver, called once by run_power_cycle after the QSM interrupt
+   set-up. It stores mc68k_serialEepromQspiInterruptHandler in RAM vector 0x808f20, configures the
+   QSPI (master, 16 bits, queue entries 2 to 15: READ, the address, 12 data words), sets
+   ram_refresh_enable (e2m 10C7 RREN) and the mirror base 0x803b0a, and with the length 0x148a runs
+   the queue by polling (mc68k_runSerialEepromDriverStep after each pass, both watchdogs serviced)
+   until the mirror is loaded. Then it enables the QSPI interrupt and sets the length to 0x64c, so
+   the driver keeps refreshing RAM 0x803b0a-0x804155 (the _cal range) from the EEPROM. The
    counterpart of cm848_initializeEepromDriverAndLoadMirror. (was mc68k_FUN_00026854; PR #53 round
    94) */
 
@@ -29388,7 +29380,7 @@ void mc68k_initializeSerialEepromDriverAndLoadMirror(void)
 /* Looks up the maximum torque map (e2m 1460 MTTQMPZA over 140E MTTQMPXA engine speed and 1447
    MTTQMPYA alpha) through maximum_torque_map_lookup with filtered_engine_speed and
    alpha_blend_factor. It stores the result, at least 1, as the maximum torque at the current engine
-   speed 0x80db1a (e2m 1461 +0 MTMPRPFL, ft-lb). Called last in cm550_runEvery4FramesTaskSetPhase0
+   speed 0x80db1a (e2m 1461 +0 MTMPRPFL, ft-lb). Called last in cm550_runEvery4PassesTaskSetPhase0
    (every 20 ms); cm550_convertTorqueDerateTorqueLimitToFuelLimit divides the torque derate limit by
    it. CM848's counterpart is 0x29c98 (cm848_calculateMaximumTorqueAtCurrentEngineSpeed: three
    lookups of the same map blended by chi) (was cm550_FUN_000269f2; PR #53 round 94) */
@@ -29411,7 +29403,7 @@ void cm550_calculateMaximumTorqueAtCurrentEngineSpeed(void)
 // Function: cm550_initializeMaximumTorqueAtCurrentEngineSpeed @ 0x00026a2e
 //
 
-/* Start-up (mc68k_applicationMain): seeds the maximum torque at the current engine speed 0x80db1a
+/* Start-up (run_power_cycle): seeds the maximum torque at the current engine speed 0x80db1a
    (MTMPRPFL) with 1 and points maximum_torque_map_lookup at its tables: x axis 0x808346 (MTTQMPXA)
    and y axis 0x808372 (MTTQMPYA), each with axis offset 2, and the grid 0x80837c (MTTQMPZA).
    cm550_calculateMaximumTorqueAtCurrentEngineSpeed then looks it up every 20 ms. CM848's
@@ -29455,9 +29447,9 @@ void cm550_memcpy(byte *destination,byte *source,word byte_count)
 // Function: cm550_initializeInjectionTimingMisfireLimit @ 0x00026a7e
 //
 
-/* Start-up (mc68k_applicationMain): points injection_timing_misfire_limit_lookup at the misfire
-   limit table: y axis 0x807944 (8190 BSTAESYA engine speed) and x axis 0x80793a (818F BSTABSXA
-   boost pressure), each with axis offset 2, and the grid 0x80794e (8191 BSTATBZA). It then clears
+/* Start-up (run_power_cycle): points injection_timing_misfire_limit_lookup at the misfire limit
+   table: y axis 0x807944 (8190 BSTAESYA engine speed) and x axis 0x80793a (818F BSTABSXA boost
+   pressure), each with axis offset 2, and the grid 0x80794e (8191 BSTATBZA). It then clears
    injection_timing_before_misfire_limit (818E +2 BSTABELM) and the misfire timing limit 0x80a26e
    (818E +0 BSTAMNLM). CM848's counterpart is 0x29e24
    (cm848_initializeInjectionTimingMainMisfireLimit: the cache offsets 2 and the same two clears in
@@ -29487,7 +29479,7 @@ void cm550_initializeInjectionTimingMisfireLimit(void)
    injection_timing_misfire_limit_lookup with boost pressure 0x80a320 (1004 +76 BSTPRS) and
    filtered_engine_speed. The result goes to the misfire timing limit 0x80a26e (818E +0 BSTAMNLM),
    and cm550_applyMisfireTimingLimit raises the timing to it. Called in
-   cm550_runEvery4FramesTaskSetPhase2 (every 20 ms). CM848's counterpart is
+   cm550_runEvery4PassesTaskSetPhase2 (every 20 ms). CM848's counterpart is
    cm848_calculateInjectionTimingMainMisfireLimit (0x29e50) (was cm550_rpmLoadParameterLookup; PR
    #53 round 94) */
 
@@ -29545,7 +29537,7 @@ ushort cm550_applyMisfireTimingLimit(void)
 // Function: cm550_calculateNoLoadFuel @ 0x00026b3a
 //
 
-/* No load fuel, every 100 ms (cm550_runEvery20FramesTaskSetPhase6): no_load_fuel_quantity (e2m 109C
+/* No load fuel, every 100 ms (cm550_runEvery20PassesTaskSetPhase6): no_load_fuel_quantity (e2m 109C
    +0 NLFL 'fuel required to overcome friction') =
    friction_fuel_correction_by_coolant_temperature_lookup at the filtered coolant temperature (109A
    / 109B) + friction_fuel_by_engine_speed_lookup at filtered_engine_speed (1098 / 1099).
@@ -29573,7 +29565,7 @@ void cm550_calculateNoLoadFuel(void)
 // Function: cm550_emptyStartupStepAfterLowSpeedGovernorIdleAdjustment @ 0x00026b82
 //
 
-/* Empty function (a single rts). Its one call is start-up call 46 of mc68k_applicationMain (jsr at
+/* Empty function (a single rts). Its one call is start-up call 46 of run_power_cycle (jsr at
    0x287da), right after cm550_initializeLowSpeedGovernorIdleAdjustment and before the undumped
    0x4cf42. It sits among unreferenced rts stubs (0x26b7e-0x26b86) after cm550_calculateNoLoadFuel.
    No CM848 counterpart is proven: the start-up orders differ. (was cm550_emptyStubFunction12; PR
@@ -29792,7 +29784,7 @@ void cm550_calculateEngineLoadLowHorsepowerCurvePercent(void)
 // Function: cm550_initializeEnginePositionPhaseLag @ 0x00026e86
 //
 
-/* Start-up step (one call from mc68k_applicationMain, after
+/* Start-up step (one call from run_power_cycle, after
    cm550_initializeEngineSpeedSensorSyncPulseThresholds and before
    cm550_initializeEnginePositionSignalInputs): runs cm550_calculateEnginePositionPhaseLag once, so
    the phase lags are set before the 20 ms task first runs it. (was cm550_FUN_00026e86; PR #53 round
@@ -29811,7 +29803,7 @@ void cm550_initializeEnginePositionPhaseLag(void)
 // Function: cm550_calculateEnginePositionPhaseLag @ 0x00026e8e
 //
 
-/* Engine position phase lag, every 20 ms (cm550_runEvery4FramesTaskSetPhase0) and once at start-up
+/* Engine position phase lag, every 20 ms (cm550_runEvery4PassesTaskSetPhase0) and once at start-up
    (0x26e86). ESPS00PG (e2m 11AA +2) = (ESPSPGIN (11A9 +4) + the average engine speed ESAVES (100C
    +0) x ESPSPGSL (11A9 +6) / 16 + ESCWAJ (11A9 +8, the one-time TDC adjustment for misaligned cam
    wheels)) / 16. ESPG (11AA +0) is the same with the normal line ESPGIN (11A9 +0) / ESPGSL (11A9
@@ -30842,10 +30834,10 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
 // Function: mc68k_runPowerDownSequence @ 0x00027f9c
 //
 
-/* The power-down sequence mc68k_applicationMain runs after its background loop ends (ROM 0x289FA;
-   the .cpp shows no caller because Ghidra prunes the main's exit). CM848's
-   cm848_runPowerDownSequence runs the same sequence with the same constants. mc68k_ for its
-   CTM4_BIUTBR reads (was vp44_FUN_00027f9c; PR #53 round 85) */
+/* The power-down sequence run_power_cycle runs after its background loop ends (ROM 0x289FA; the
+   .cpp shows no caller because Ghidra prunes the main's exit). CM848's cm848_runPowerDownSequence
+   runs the same sequence with the same constants. mc68k_ for its CTM4_BIUTBR reads (was
+   vp44_FUN_00027f9c; PR #53 round 85) */
 
 void mc68k_runPowerDownSequence(void)
 
@@ -31086,20 +31078,21 @@ void mc68k_runPowerDownSequence(void)
 
 
 //
-// Function: mc68k_applicationMain @ 0x000284e8
+// Function: run_power_cycle @ 0x000284e8
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Removing unreachable block (ram,0x000289ea) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The application main: mc68k_main calls it once (ROM 0x1DCF4) and it never returns. Its start-up
-   clears working RAM (clearWorkingRam) after mc68k_loadTpuMicrocode - copies the calibration
-   (copyCalibrationFromRomToRam) - loads a parameter block - and configures the QSM / SIM / TPU /
-   CTM4 interrupts and channels; then it runs the background loop and mc68k_runPowerDownSequence.
-   0x28978 inside it is the restart entry restartOnKeyOnDuringPowerDown jumps to. CM848's
-   cm848_applicationMain has the same skeleton (was vp44_FUN_000284e8; PR #53 round 85) */
+/* One power cycle from reset to power-down: mc68k_main calls it once (ROM 0x1DCF4) and it never
+   returns. Its start-up clears working RAM (clearWorkingRam) after mc68k_loadTpuMicrocode - copies
+   the calibration (copyCalibrationFromRomToRam) - loads a parameter block - and configures the QSM
+   / SIM / TPU / CTM4 interrupts and channels; then it runs the background loop and
+   mc68k_runPowerDownSequence. 0x28978 inside it is the restart entry restartOnKeyOnDuringPowerDown
+   jumps to. CM848's run_power_cycle has the same skeleton (was vp44_FUN_000284e8; PR #53 round 85)
+   Do not rename without consent from the code owner, Joshua Austill. */
 
-void mc68k_applicationMain(void)
+void run_power_cycle(void)
 
 {
   char in_XF;
@@ -31537,7 +31530,7 @@ void mc68k_applicationMain(void)
   func_0x000478c6();
   do {
     do {
-    } while (enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
+    } while (main_loop_timing_enable == 0);
     for (loop_counter_for_idle_loop_0_65535 = 0;
         loop_counter_for_idle_loop_0_65535 < number_of_loop_delays_cal_0_65535;
         loop_counter_for_idle_loop_0_65535 = loop_counter_for_idle_loop_0_65535 + 1) {
@@ -31554,9 +31547,9 @@ void mc68k_applicationMain(void)
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Removing unreachable block (ram,0x000289ea) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* This is the application main's restart entry: a point in mc68k_applicationMain's tail that has
-   its own function row. restartOnKeyOnDuringPowerDown jumps to it. (was cm550_FUN_00028978; PR #53
-   round 87) */
+/* This is the application main's restart entry: a point in run_power_cycle's tail that has its own
+   function row. restartOnKeyOnDuringPowerDown jumps to it. (was cm550_FUN_00028978; PR #53 round
+   87) */
 
 void cm550_restartApplicationWithoutReset(void)
 
@@ -31569,7 +31562,7 @@ void cm550_restartApplicationWithoutReset(void)
   func_0x000478c6();
   do {
     do {
-    } while (enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
+    } while (main_loop_timing_enable == 0);
     for (loop_counter_for_idle_loop_0_65535 = 0;
         loop_counter_for_idle_loop_0_65535 < number_of_loop_delays_cal_0_65535;
         loop_counter_for_idle_loop_0_65535 = loop_counter_for_idle_loop_0_65535 + 1) {
@@ -32719,7 +32712,7 @@ void initializePowerTakeOffReferenceFilter(void)
 //
 
 /* Selects power_take_off_or_user_fueling and its state (e2m 1265 +4 PTSLFL / +6 PTSLFLST) after
-   cm550_runPowerTakeOffGovernor in cm550_runEvery4FramesTaskSetPhase1, together with
+   cm550_runPowerTakeOffGovernor in cm550_runEvery4PassesTaskSetPhase1, together with
    power_take_off_throttle_override_flag (1265 +2 PTTHOV) and
    power_take_off_throttle_override_engine_speed_limit (1265 +0 PTTHDQRP). User fueling states 1, 2,
    30 and 3 always pass the user fueling (user_fueling with user_fueling_state). Otherwise, while
@@ -32792,9 +32785,9 @@ void cm550_selectPowerTakeOffOrUserFueling(void)
 // Function: initializePowerTakeOffThrottleOverride @ 0x0002ddbc
 //
 
-/* Start-up step (one call from mc68k_applicationMain): power_take_off_throttle_override_flag (e2m
-   1265 +2 PTTHOV) = 0 and power_take_off_throttle_override_engine_speed_limit (1265 +0 PTTHDQRP) =
-   the maximum engine speed with no derate (1262 +0 EPNTDQRP). These are the values the PTO / user
+/* Start-up step (one call from run_power_cycle): power_take_off_throttle_override_flag (e2m 1265 +2
+   PTTHOV) = 0 and power_take_off_throttle_override_engine_speed_limit (1265 +0 PTTHDQRP) = the
+   maximum engine speed with no derate (1262 +0 EPNTDQRP). These are the values the PTO / user
    fueling selector stores while the throttle is not overriding. Twin of CM848 0x2bd38 (one shared
    name). (was cm550_FUN_0002ddbc; PR #53 round 96) */
 
@@ -33604,8 +33597,8 @@ void cm550_claimRemoteThrottleOverride(void)
 // Function: cm550_initializeRemoteThrottle @ 0x0002ed62
 //
 
-/* Start-up step of mc68k_applicationMain: clears remote_throttle_active_flag (0x801c78), the
-   transition latch that cm550_claimRemoteThrottleOverride sets and tests. CM848's counterpart
+/* Start-up step of run_power_cycle: clears remote_throttle_active_flag (0x801c78), the transition
+   latch that cm550_claimRemoteThrottleOverride sets and tests. CM848's counterpart
    cm848_initializeRemoteThrottle clears remote_throttle_transition_verified_flag and, with the
    remote throttle disabled, the remote throttle fault bits 171 / 172. (was cm550_FUN_0002ed62; PR
    #53 round 96) */
@@ -35469,7 +35462,7 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The trip information task (cm550_runEvery20FramesTaskSetPhase19, 100 ms), run while
+/* The trip information task (cm550_runEvery20PassesTaskSetPhase19, 100 ms), run while
    algorithm_enable_flags_3_cal.trip_information_enable is set. A tool's reset request
    (trip_counters_reset_pending_flag, e2m 1215 +14 TIRF) zeroes the trip records and the 25 speed
    histogram bins. It then sets trip_information_engine_state (1215 +12 TIEGST: 0 engine off / 1
@@ -35697,7 +35690,7 @@ ushort cm550_flagTripInformationPowerDownDataLoss(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Start-up initializer of the trip information task (called once from mc68k_applicationMain):
+/* Start-up initializer of the trip information task (called once from run_power_cycle):
    trip_information_engine_state (e2m 1215 +12 TIEGST - the engine state as determined by trip
    information) = 0 and the previous-value copies are loaded from the stored trip records: 0x801e82
    = 1216 +74 TIITFU (integrated fuel delivered) - 0x801e92 = 1216 +60 TIEGAVLD (lifetime average
@@ -35738,7 +35731,7 @@ void cm550_emptyInterruptHandler(void)
 // Function: cm550_emptyStartupStepAfterSchedulerInitialization @ 0x00030b0e
 //
 
-/* Empty function (a single rts). Its one call is start-up call 29 of mc68k_applicationMain (jsr at
+/* Empty function (a single rts). Its one call is start-up call 29 of run_power_cycle (jsr at
    0x28774), right after mc68k_scheduler_init and before the undumped 0x42ad4. It sits in ROM
    between 0x30b04 and cm550_applyMaximumTimingAdvanceLimit. No CM848 counterpart is known; an empty
    body cannot prove one. (was cm550_emptyStubFunction11; PR #53 round 97) */
@@ -36005,7 +35998,7 @@ void mc68k_loadTpuMicrocode(void)
 // Function: cm550_evaluateTrendingTriggers @ 0x00031496
 //
 
-/* Engine data trending trigger check, the first call of cm550_runEvery20FramesTaskSetPhase5 (100
+/* Engine data trending trigger check, the first call of cm550_runEvery20PassesTaskSetPhase5 (100
    ms). It runs when algorithm_enable_flags_18_cal.trending_enable is set, the engine is not stopped
    and the trending interval window is open (trending_interval_window_active_flag_cal, e2m 126D +1A
    TRITWNAE). It then sets one flag per window, each value above the lower limit and up to the upper
@@ -36086,9 +36079,9 @@ ushort cm550_evaluateTrendingTriggers(void)
 // Function: cm550_runTrendingIntervalAndStoreSamples @ 0x000315be
 //
 
-/* Engine data trending interval: the frame-3 call of executiveFrameInterruptHandler (jsr at
-   0x1b9ea, once per 40-frame cycle = 200 ms), divided by 300 (counter 0x801ea0) to once a minute.
-   With algorithm_enable_flags_18_cal.trending_enable set and the engine not stopped, it snapshots
+/* Engine data trending interval: the phase-3 call of main_loop (jsr at 0x1b9ea, once per 40-phase
+   cycle = 200 ms), divided by 300 (counter 0x801ea0) to once a minute. With
+   algorithm_enable_flags_18_cal.trending_enable set and the engine not stopped, it snapshots
    lifetime_fuel_used at the interval start (e2m 126D +2C TRFLUSSR). It counts TRITTM up to the
    interval length (2000 minutes while fewer than 3 samples are stored, then 126C +2 TRITTR hours x
    60), then runs a capture window a tenth of that length (TRITWNLM / TRITWNTM; TRITWNAE is 1 while
@@ -36280,15 +36273,14 @@ void cm550_runTrendingIntervalAndStoreSamples(void)
 // Function: cm550_restartTrendingAfterEngineRebuild @ 0x00031a68
 //
 
-/* Start-up step of mc68k_applicationMain (jsr at 0x287f8, right after
-   cm550_initializeTripInformation). When algorithm_enable_flags_18_cal.trending_enable is set and
-   trending_engine_rebuild_flag_cal is non-zero (e2m 126D +0 TRRBOC 'flag that indicates when (if)
-   an engine rebuild occurred'), it clears the interval and window timers and flags (TRITTM /
-   TRITWNTM / TRTRCDTM / TRTRCDTR / TRITWNAE / TRITWNAL), the load count TRAVNOCU, the load
-   accumulator TRLDRNT2 and the rebuild flag. It moves the stored sample count TRNOSATN into
-   trending_sample_count_before_rebuild_cal (TRNOSARB) and zeroes it. It stamps
-   trending_engine_rebuild_time_stamp_cal (TRRBTMST) with engine_hour_meter. CM848 has no trending
-   feature. (was cm550_FUN_00031a68; PR #53 round 95) */
+/* Start-up step of run_power_cycle (jsr at 0x287f8, right after cm550_initializeTripInformation).
+   When algorithm_enable_flags_18_cal.trending_enable is set and trending_engine_rebuild_flag_cal is
+   non-zero (e2m 126D +0 TRRBOC 'flag that indicates when (if) an engine rebuild occurred'), it
+   clears the interval and window timers and flags (TRITTM / TRITWNTM / TRTRCDTM / TRTRCDTR /
+   TRITWNAE / TRITWNAL), the load count TRAVNOCU, the load accumulator TRLDRNT2 and the rebuild
+   flag. It moves the stored sample count TRNOSATN into trending_sample_count_before_rebuild_cal
+   (TRNOSARB) and zeroes it. It stamps trending_engine_rebuild_time_stamp_cal (TRRBTMST) with
+   engine_hour_meter. CM848 has no trending feature. (was cm550_FUN_00031a68; PR #53 round 95) */
 
 ushort cm550_restartTrendingAfterEngineRebuild(void)
 
@@ -39440,7 +39432,7 @@ void cm550_initializePgn65279WaterInFuelIndicatorBuffer(void)
 // Function: advanceHourMeters @ 0x00034512
 //
 
-/* Twin of CM848 0x506780. Last task of phase 0 of the 40-phase executive: adds 1 to
+/* Twin of CM848 0x506780. Last task of phase 0 of the 40-phase main loop: adds 1 to
    engine_hour_meter (e2m 11BC +0 CMEGTR - time that the engine is not in stop state) unless
    engine_state is ENGINE_STATE_STOPPED and always adds 1 to key_on_hour_meter (0004 +0 - time key
    switch is on and ECM is running) (was cm550_FUN_00034512 / cm848_advanceHourMeters). (was
@@ -39463,7 +39455,7 @@ void advanceHourMeters(void)
 //
 
 /* Start-up: loads the running hour meters from their EEPROM copies, called once from
-   mc68k_applicationMain after the input and output channel set-up. key_on_hour_meter =
+   run_power_cycle after the input and output channel set-up. key_on_hour_meter =
    key_on_hour_meter_cal (EEPROM 0x34, mirror 0x803b3e), then engine_hour_meter =
    engine_hour_meter_cal (EEPROM 0x46, mirror 0x803b50), both in 0.2 s counts.
    mc68k_runPowerDownSequence and restartThroughBootRom save the two words back. The twin of CM848
@@ -39533,7 +39525,7 @@ void selectUserCommandedFueling(void)
 //
 
 /* Selects the user fueling state user_fueling_state (e2m 1050 +2 FSDSFLST, User_Fueling_State) on
-   each pass of cm550_runEvery4FramesTaskSetPhase1. It saves the previous state, sets
+   each pass of cm550_runEvery4PassesTaskSetPhase1. It saves the previous state, sets
    FUELING_STATE_NOT_SELECTED and lets the selectors claim it in priority order: all speed governor
    application (0xd18a), TSC1 torque control (0x34540), TSC1 speed control (0xd1a4), the calibrated
    fixed fuel demand (0x34564), the accelerator pedal fault (cm550_selectPedalFaultMode), the
@@ -40116,7 +40108,7 @@ void vp44_liftPumpFuelDeliveryController(void)
 // Function: cm550_calculateWetStackTimingAdvance @ 0x00034d52
 //
 
-/* Wet stack timing, the third call of cm550_runEvery4FramesTaskSetPhase3 (20 ms).
+/* Wet stack timing, the third call of cm550_runEvery4PassesTaskSetPhase3 (20 ms).
    wet_stack_timing_advance (e2m 1077 +0 WSTA 'timing advance as commanded by wet stack') = the base
    wet_stack_timing_base_value_0_120 (1077 +4 WSADTA: the larger of the intake manifold and coolant
    temperature table values, set by 0x34cc4) while final_fueling is at or below 1074 +2 WSMXLMFL.

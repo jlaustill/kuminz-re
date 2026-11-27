@@ -342,7 +342,13 @@ public class ApplyLocalVariables extends GhidraScript {
                     }
 
                     if (!found) {
-                        println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName);
+                        StringBuilder names = new StringBuilder();
+                        java.util.Iterator<HighSymbol> all = localSymbolMap.getSymbols();
+                        while (all.hasNext()) {
+                            names.append(names.length() == 0 ? "" : ", ").append(all.next().getName());
+                        }
+                        println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName +
+                                " (locals: " + names + ")");
                         result.skipped++;
                     }
                 }
@@ -388,7 +394,7 @@ public class ApplyLocalVariables extends GhidraScript {
             java.util.Iterator<PcodeOpAST> ops = highFunc.getPcodeOps(address);
             while (ops.hasNext()) {
                 Varnode out = ops.next().getOutput();
-                if (out != null && out.getAddress().equals(register.getAddress()) && out.getHigh() != null) {
+                if (out != null && out.getHigh() != null && out.isRegister() && registerHolds(register, out)) {
                     written = out;
                 }
             }
@@ -408,7 +414,13 @@ public class ApplyLocalVariables extends GhidraScript {
                 }
             }
             if (high == null) {
-                println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName);
+                StringBuilder names = new StringBuilder();
+                java.util.Iterator<HighSymbol> all = localSymbolMap.getSymbols();
+                while (all.hasNext()) {
+                    names.append(names.length() == 0 ? "" : ", ").append(all.next().getName());
+                }
+                println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName +
+                        " (locals: " + names + ")");
                 return false;
             }
             uses.addAll(java.util.Arrays.asList(high.getInstances()));
@@ -455,6 +467,18 @@ public class ApplyLocalVariables extends GhidraScript {
             return false;
         }
         return true;
+    }
+
+    // A varnode is a write of register when it lies inside it: a ushort held in r31 is r31's low half, which on
+    // the big-endian PowerPC is the varnode at r31's address + 2.
+    private boolean registerHolds(ghidra.program.model.lang.Register register, Varnode out) {
+        Address start = register.getAddress();
+        Address at = out.getAddress();
+        if (!at.getAddressSpace().equals(start.getAddressSpace())) {
+            return false;
+        }
+        long offset = at.getOffset() - start.getOffset();
+        return offset >= 0 && offset + out.getSize() <= register.getMinimumByteSize();
     }
 
     // The uses of seed's variable joined to it through MULTIEQUAL / INDIRECT ops (one loop's variable), leaving

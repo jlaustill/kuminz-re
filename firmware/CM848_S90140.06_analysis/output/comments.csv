@@ -57,3 +57,4 @@ address,comment
 0x00006efc,"Boot kernel, time-shared RAM: ram0x003fee01 is the download start address, the dword at bytes 2-5 of the request (read here as _eeprom_write_request_type); later blocks write at it + eeprom_xfer_state.bytes_transferred"
 0x000204ec,"0x575dd is the table base minus 0x41: the echo lengths of services 0x41-0x4e are the bytes at 0x5761e-0x5762b"
 0x0004a96c,"Rows are 1-based: row n's 8-byte mask record is at 0x57d2e + 8 x n (row 1 at 0x57d36); its second dword (0x57d32 + 8 x n) is the fast-decay flag mask"
+0x005396e8,"The shift is transmit_mailbox_number - 1 (the compiler adds 0xffff to transmit_mailbox_number; Ghidra folds that into last_mailbox_before_j1939 + 0x10000), so this is the transmit mailbox's IMASK bit (mailbox n is bit n - 1); the loop below adds the bit of each receive mailbox after it"

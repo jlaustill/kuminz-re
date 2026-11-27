@@ -1283,7 +1283,7 @@ Scripts are in `session_folder/round22/`.
     - the torque curve plate: only the clamp-mask path keeps the minimum; the priority path sets the five fuelings;
     - the configuration flags' 0x4 / 0x8 / 0xc / 0x40: 0x4 also tracks the maximum, 0x8 the minimum, and 0x40
       also picks the fueling severity in the fault derate fuel limit.
-  - `hpcr_initializeEngineProtection` is called only from `cm848_applicationMain`, so the "boot / restart" plates
+  - `hpcr_initializeEngineProtection` is called only from `run_power_cycle`, so the "boot / restart" plates
     hold.
 - **Closed leads:**
   - `function_definitions.csv`'s `int` maps to unsigned `dword` on purpose (`int32_t` is the signed one), and its
@@ -1414,7 +1414,7 @@ rows, with round 6's checks.
     - The kernel's byte at +0 is the SCI receive count, and +2 is the learned output speed / vehicle speed ratio.
     - A word typed for the application moves the pieces into the kernel's SCI code, so choose the representation
       first.
-  - The executive timing records at 0x40be6a are an array of 12-byte `scheduler_task_stat_t`: `main_loop` clears them
+  - The main loop timing records at 0x40be6a are an array of 12-byte `scheduler_task_stat_t`: `main_loop` clears them
     up to `ram_refresh_enable` and walks `scheduler_task_stat_ptr_b` by 12 a pass. To do: type the array and the two
     walking pointers, and spell out `min_time` / `max_time`.
   - The sensor channel blocks: most channel calls still pass Ghidra labels for their config / state / cache / filter
@@ -1471,8 +1471,8 @@ Scripts are in `session_folder/round25/`.
   - New: `toucan_a` (`toucan_module_registers_t`, the register CSV's own mnemonics at the right base) and
     `toucan_a_message_buffers` (`toucan_message_buffer_t[16]`).
   - 31 global rows and 26 register rows went; pieces fell 492 -> 480.
-- **Stage C (438b543, types): the executive frame timing (e2m 12A6).**
-  - `executive_frame_timings` (`executive_frame_timing_t[40]`): one record per main loop phase.
+- **Stage C (438b543, types): the main loop frame timing (e2m 12A6).**
+  - `main_loop_phase_timings` (`main_loop_phase_timing_t[40]`): one record per main loop phase.
   - Its two walking pointers are typed, so `main_loop` reads `->maximum_ticks` and so on.
   - The helpers are named, and 0x3feec0 has its row.
   - Stage C's commit message and first comment said 11 phases: a case count that missed the hex labels. `main_loop`
@@ -2402,9 +2402,9 @@ A peer relay started the round; the scripts are in `session_folder/round51/`.
   - The script is `apply_r51c_bitfield_structs_rejected.py` (log `verify_r51c_bitfield_structs.log`), so the user can
     overrule this in one line.
 - **Closing:** the flag function has one call site, a bl at 0x54de0 in `cm848_restartApplicationWithoutReset`
-  (`find_branch_callers.py`). `cm848_applicationMain` falls through into that code from 0x54d2c, so both
+  (`find_branch_callers.py`). `run_power_cycle` falls through into that code from 0x54d2c, so both
   decompilations show it. The 0x30d4 is 12500 from `li r3,12500 / mtdec r3`, the decrementer reload. Stage A's plate
-  ("cm848_applicationMain twice") and stage B's "two calls" were wrong; the plate and the prototype comment are fixed.
+  ("run_power_cycle twice") and stage B's "two calls" were wrong; the plate and the prototype comment are fixed.
 - **Proof:** stage A: `prove_caches.py` (casts folded, the function rename applied to the old .cpp) matches 1967 of 1968 functions, the other differing only in local declaration order; stage B: 1962 match and the six others equal the old text once each enum member value is put back and the removed argument dropped (`prove_r51b_enum.py`); closing: no function body differs, only the flag function plate. Every verify byte-identical.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
 - **Leads:**
@@ -2437,7 +2437,7 @@ A peer relay started the round; the scripts are in `session_folder/round52/`.
     "prescaler").
   - 15B4 (7): the reset capture. The exception stubs move SRR0 / a vector byte / LR into SPRG0-2, so the rows become
     `exception_srr0 / _vector / _link_register`. `hardware_timer_capture` becomes
-    `power_on_reset_to_first_executive_frame_time`.
+    `power_on_reset_to_first_main_loop_pass_time`.
   - 8B9A / 8BB4: the rest of round 51's transmission RAM, now four blocks back to back at 0x40b620. Round 51's "no
     RAM record" for the limp-in timer was wrong.
   - The governor pressure solenoid's retest records (8BB5 +50 / +52, 8BB6 +1A) get documentation rows. Nothing reads
@@ -3792,7 +3792,7 @@ as workflows. The scripts are in `session_folder/round85/`.
     - `injectorTimingCalculation` -> `mc68k_sampleAndDebounceDiscreteInputs`;
     - `oilPressureRpmFaultMonitor` -> `mc68k_monitorPwmOutputReadBackFaults`;
     - the four TPU channel 10 primary speed handlers, one per `speed_measurement_mode`;
-    - `mc68k_applicationMain` and `mc68k_runPowerDownSequence`;
+    - `run_power_cycle` and `mc68k_runPowerDownSequence`;
     - the parameter block loaders and savers;
     - `cm550_flashEraseFromRam`.
   - **9 spurious function records deleted** (`deleted_functions.csv`): mid-function points with no reference
@@ -3815,9 +3815,9 @@ as workflows. The scripts are in `session_folder/round85/`.
   - **Twins for a two-firmware rename:**
     - `cm550_restartOnKeyOnDuringPowerDown` / `cm848_restartOnKeyOnDuringPowerDown`;
     - `mc68k_runPowerDownSequence` / `cm848_runPowerDownSequence`;
-    - `mc68k_applicationMain` / `cm848_applicationMain`;
+    - `run_power_cycle` / `run_power_cycle`;
     - `cm550_copyCalibrationFromRomToRam` / `cm848_copyRomToRamBuffer`.
-  - `main_loop` (shared with CM848) is the 40-phase executive's periodic interrupt handler, not a loop.
+  - `main_loop` (shared with CM848) is the 40-phase main loop's periodic interrupt handler, not a loop.
   - **Still to name:**
     - `mc68k_FUN_00015df0` (the chip select 2 output set-up and the TPU channel 13 handshake);
     - `cm550_FUN_00028978` (the application main's restart entry);
@@ -3880,8 +3880,8 @@ with the audit's proposals and verdicts (`audit_result_r87.json`, `audit_summary
   groups are applied here; the filter library is round 88's.
   - 8 cross-firmware twins now share one unprefixed name: `restartOnKeyOnDuringPowerDown`,
     `copyCalibrationFromRomToRam`, `clearWorkingRam`, `getJ1939DiagnosticResponseEchoLength`,
-    `executiveFrameInterruptHandler` (both were `main_loop`: the periodic interrupt timer's handler, one frame of the
-    40-phase executive per interrupt), `restartThroughBootRom`, `handleJ1939RestartService` and
+    `main_loop` (both were `main_loop`: the periodic interrupt timer's handler, one frame of the
+    40-phase main loop per interrupt), `restartThroughBootRom`, `handleJ1939RestartService` and
     `ignoreCanTransmitInterrupt` (the skeptic found its CM848 half, 0x26f78). `runPowerDownSequence` was rejected:
     the two are counterparts.
   - CM550: the chip select 5 CAN receive dispatcher and its two interrupt branches (`vp44_`; there is no "mode"), the
@@ -3907,7 +3907,7 @@ with the audit's proposals and verdicts (`audit_result_r87.json`, `audit_summary
     0xC0DAC0DA to `working_ram_end_marker` (0x41428e, the end of the RAM that `clearWorkingRam` clears) at start-up;
     `cm848_checkWorkingRamEndMarker` (was `cm848_main_loop_initialization`) sets fault 318
     (`working_ram_end_marker_error`, P0604 internal control module RAM error) when it is gone; stage B said
-    fault 462, which stage C corrected. `executive_frame_phase` (was
+    fault 462, which stage C corrected. `main_loop_phase` (was
     `main_loop_scheduler_phase`).
   - **Proof:** CM550: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); every new plate rendered; no new build warning (unmapped types 5429 -> 5428: the removed row). CM848: verify DETERMINISTIC; 0 functions removed or added; label-only except 3 functions - one local declaration moved in mpc555_areBootModeStrapPinsHigh, the marker compare prints 0xc0dac0da (was -0x3f253f26) now that working_ram_end_marker is a dword, and clearWorkingRam shows its one 4-byte store per step (was two word stores) with pointer casts; no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 28 -> 27: the removed row).
 - **Stage C (542184f2), from an advisor review of stages A-B:**
@@ -4199,7 +4199,7 @@ Peer relays started and continued the round (21:19, 21:50, 22:20, 22:50). Script
   literal text "APPEND to the current comment: ..." from a proposal. Restored from the commit before round 91. The
   round 93 apply script refuses a comment that reads like an instruction.
 - **a417e39e + 392a66f9 + 96ffcfa8, 52 function rows that were not functions:** rows on an address in the middle of a
-  function (21 inside the executive frame task sets, 30 elsewhere, 1 on a switch case). Each made Ghidra cut a
+  function (21 inside the main loop frame task sets, 30 elsewhere, 1 on a switch case). Each made Ghidra cut a
   function and print its tail a second time under an unrelated name; two functions shared one name
   (`vp44_evenPhaseSchedulerTaskSet`).
   - **Proof per row, from the ROM:** no jsr / jmp operand, branch displacement, pointer or PC-relative reference
@@ -4217,8 +4217,8 @@ Peer relays started and continued the round (21:19, 21:50, 22:20, 22:50). Script
   CM550 functions and their four CM848 counterparts take parallel names (`..._captureFaultFreezeFrame`,
   `..._assignFaultFreezeFrameEntry`, `..._findOldestFreezeFrameEntryByFaultStatus`; CM550's DM4 handler was
   `evaluateTemperatureDiagnosticState`).
-- **7cf52470, the executive frame schedule:** the 45 task sets are `cm550_runEveryFrameTaskSet` and
-  `cm550_runEvery<N>FramesTaskSetPhase<P>` (N = 2 / 4 / 8 / 10 / 20), read from the handler's 40-case switch. A frame
+- **7cf52470, the main loop frame schedule:** the 45 task sets are `cm550_runEveryPassTaskSet` and
+  `cm550_runEvery<N>PassesTaskSetPhase<P>` (N = 2 / 4 / 8 / 10 / 20), read from the handler's 40-case switch. A frame
   is 5 ms (the hour meters step once per 40 frames and count 0.2 s).
 - **31f911b4 + bf0c580d, typing:** 1943 global rows leave 'undefined' (4475 -> 2519).
   - Pass 1 (614 rows): every ROM access has one width, the decompiler printed the row only at that width, and the
@@ -4310,8 +4310,8 @@ proofs, both workflows' scripts and results, and the agents' scratch folders are
 Peer relays started and continued the round (09:53, 10:23, 10:53, 11:23). Scripts, proofs, the workflow script and
 results, the agents' scratch folders and the MPC555 manual extracts the register work used are in
 `session_folder/round95/`. Three commits; every build verify DETERMINISTIC.
-- **98c5f90b, CM848's executive task sets by schedule slot (38 renames):** `cm848_runEveryFrameTaskSet` /
-  `cm848_runEvery<N>FramesTaskSetPhase<P>`, the scheme CM550 has used since round 93. The schedule is read from the
+- **98c5f90b, CM848's executive task sets by schedule slot (38 renames):** `cm848_runEveryPassTaskSet` /
+  `cm848_runEvery<N>PassesTaskSetPhase<P>`, the scheme CM550 has used since round 93. The schedule is read from the
   ROM's 40-entry jump table at 0xc198 and from the decompiled switch; both agree for all 40 frames. The old names were
   role guesses (`cm848_periodicTaskSet_canTx` runs the vehicle speed updates), ordinals and snake_case phase names.
 - **699816aa, the MPC555 register blocks against the MPC555 User's Manual:**
