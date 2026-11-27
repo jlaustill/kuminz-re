@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:36:07 UTC 2026
+// Generated: Fri Nov 27 02:38:26 UTC 2026
 
 
 //
@@ -86224,9 +86224,9 @@ LAB_005212a0:
     if ((bVar1 == 0) || (bVar2 == 0)) {
       uVar4 = 0;
       do {
-        if ((&DAT_003fcf64)[uVar4] != 0) {
+        if (injector_cutout_test_timeout_counts[uVar4] != 0) {
           injector_cutout_test_count = injector_cutout_test_count + -1;
-          (&DAT_003fcf64)[uVar4] = 0;
+          injector_cutout_test_timeout_counts[uVar4] = 0;
           cylinder_cutout_test_mask = 0;
         }
         uVar4 = uVar4 + 1 & 0xff;
@@ -86245,21 +86245,21 @@ LAB_005212a0:
       uVar4 = uVar4 + 0xfb;
       if (bVar2 == 1) {
         uVar3 = uVar4 * 2 & 0x1fe;
-        if (*(short *)((int)&DAT_003fcf64 + uVar3) != 0) {
+        if (*(short *)((int)injector_cutout_test_timeout_counts + uVar3) != 0) {
           injector_cutout_test_count = injector_cutout_test_count + -1;
-          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 0;
+          *(undefined2 *)((int)injector_cutout_test_timeout_counts + uVar3) = 0;
           cylinder_cutout_test_mask = cylinder_cutout_test_mask & ~(ushort)(1 << (uVar4 & 0x3f));
         }
       }
       else {
         uVar3 = uVar4 * 2 & 0x1fe;
-        if (*(short *)((int)&DAT_003fcf64 + uVar3) == 0) {
+        if (*(short *)((int)injector_cutout_test_timeout_counts + uVar3) == 0) {
           injector_cutout_test_count = injector_cutout_test_count + '\x01';
-          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+          *(undefined2 *)((int)injector_cutout_test_timeout_counts + uVar3) = 1000;
           cylinder_cutout_test_mask = cylinder_cutout_test_mask | (ushort)(1 << (uVar4 & 0x3f));
         }
         else {
-          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+          *(undefined2 *)((int)injector_cutout_test_timeout_counts + uVar3) = 1000;
         }
       }
     }
