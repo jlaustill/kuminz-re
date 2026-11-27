@@ -88,6 +88,8 @@ firmware/
 
 ## CM848 (S90140.06) Analysis
 
+**Cruise control** (buttons, states, cruise fueling, the vacuum throttle servo, J1939 paths): [CM848_S90140.06_analysis/docs/cruise_control.md](CM848_S90140.06_analysis/docs/cruise_control.md).
+
 ### Dual-Bank Flash Architecture
 
 | Bank | Address Range | Size | File |
