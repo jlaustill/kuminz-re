@@ -13,14 +13,9 @@ address,name,type,comment
 0x0000811a,block_data_structure.block_start_address[0],,(PR #53 round 69)
 0x0000812c,block_data_structure.block_capacity[0],,(PR #53 round 69)
 0x0000813e,block_data_structure.block_length[0],,(PR #53 round 69)
-0x00008600,,byte,
-0x00008980,,byte,
-0x00008b0a,,byte,
-0x00008c00,,byte,
-0x00009c8a,,byte,
-0x0000a002,,byte,
-0x0000a0fa,,pointer,
-0x0000ac3a,,byte,
+0x0000814e,calibration_eeprom_region_count,dword,255: the number of calibration_eeprom_region_table records right after it (the block right after block_data_structure; no code in ROM or flash2 reads it)
+0x00008152,calibration_eeprom_region_table,calibration_region_t[255],Calibration items stored in EEPROM: start = EEPROM offset (0x1-0x18c5) and length in bytes; offsets ascend. No code in ROM or flash2 reads it - presumably for the service tool
+0x0000894a,calibration_parameter_region_table,calibration_region_t[1472],Calibration items by absolute address and length in bytes: 1314 in ROM (block_data_structure 0x8112 / 60 first; smart_boot_indicator 0x8100 / 4; checksum_table_descriptor 0x8104 / 10; checksum_region_table 0xb752 / 24) - 152 in EEPROM (0x0100xxxx) - 6 in flash2. Ends at application_overlay_core_software_version. No code in ROM or flash2 reads it; it was decoded as the fake function cm848_keyOnStatusMonitor (0xb44c)
 0x0000b74a,application_overlay_core_software_version,byte[4],e2m 0019 +0 Calibration_Version_Number 'APPLICATION OVERLAY WITH CORE SOFTWARE VERSION' (address from the ECU's parameter ID table): 4 ROM bytes, passed by pointer to cm848_formatNumberAsDecimalText (really a number-to-decimal-text helper) that writes each byte as two decimal digits into the 4th field of the PGN 65242 software identification message ... (new row 2026-11-19, wave 12)
 0x0000b752,checksum_region_table,checksum_region_table_t,The calibration image's checksum table (checksum_table_descriptor.checksum_table_pointer) - mpc555_verifyDownloadedCalibration sums each region (PR #53 round 69)
 0x0000b754,checksum_region_table.first_region,,(PR #53 round 69)

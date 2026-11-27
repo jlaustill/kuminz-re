@@ -164,3 +164,4 @@ address,reason
 0x00057120,mid-function split inside cm848_signedDivision32 +0x30 (was cm848_signedDivision64)
 0x000571e0,mid-function split inside cm848_unsignedDivision32 +0x30 (was cm848_unsignedDivision64Wrapper)
 0x0006432c,not code - a halfword data table (0xA000 / 0xA008 ...) past the code (was cm848_invalidInstructionData)
+0x0000b44c,not code - inside calibration_parameter_region_table (u32 address / u32 length records; Ghidra decoded them as lfdu / .long and stopped at halt_baddata) (was cm848_keyOnStatusMonitor)

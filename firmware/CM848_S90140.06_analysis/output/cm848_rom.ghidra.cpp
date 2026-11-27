@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 01:52:36 UTC 2026
+// Generated: Fri Nov 27 02:00:23 UTC 2026
 
 
 //
@@ -1908,10 +1908,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -6787,21 +6787,6 @@ void cm848_forceSupervisorWatchdogReset(void)
   qsmcm_qspi.SPCR0 = wVar1;
   qsmcm_portqs_low = 0x7b;
   return;
-}
-
-
-
-//
-// Function: cm848_keyOnStatusMonitor @ 0x0000b44c
-//
-
-/* WARNING: Control flow encountered bad instruction data */
-
-void cm848_keyOnStatusMonitor(void)
-
-{
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
 }
 
 
@@ -23169,22 +23154,21 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
                (word fueling,dword point_5_on_droop_line_flag)
 
 {
-  undefined *puVar1;
+  uint uVar1;
   
   if (engine_speed_limit_droop_slope == 0) {
-    puVar1 = (undefined *)(uint)j1939_torque_curve_derate_engine_speed;
+    uVar1 = (uint)j1939_torque_curve_derate_engine_speed;
   }
   else {
-    puVar1 = (undefined *)
-             ((((uint)(ushort)engine_speed_limit_droop_slope *
-               (((uint)engine_speed_limit_ramped_maximum_fuel_quantity - (uint)fueling) * 8 & 0xfff8
-               )) / 0x8888 & 0xffff) + (uint)engine_speed_limit_arbitrated);
-    if (&DAT_00009c40 < puVar1) {
-      puVar1 = &DAT_00009c40;
+    uVar1 = (((uint)(ushort)engine_speed_limit_droop_slope *
+             (((uint)engine_speed_limit_ramped_maximum_fuel_quantity - (uint)fueling) * 8 & 0xfff8))
+             / 0x8888 & 0xffff) + (uint)engine_speed_limit_arbitrated;
+    if (40000 < uVar1) {
+      uVar1 = 40000;
     }
   }
-  j1939_torque_curve_speed_at_point_2 = (word)puVar1;
-  j1939_torque_curve_speed_at_point_5 = (word)puVar1;
+  j1939_torque_curve_speed_at_point_2 = (word)uVar1;
+  j1939_torque_curve_speed_at_point_5 = (word)uVar1;
   if (point_5_on_droop_line_flag == 0) {
     j1939_torque_curve_speed_at_point_5 = j1939_engine_speed_at_point_5;
   }
@@ -25887,7 +25871,7 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
 
 {
   byte bVar1;
-  undefined *puVar2;
+  uint uVar2;
   byte bVar3;
   undefined1 local_8;
   
@@ -25904,13 +25888,12 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
     j1939_ccvs1_wheel_based_vehicle_speed = 0xffff;
   }
   else {
-    puVar2 = (undefined *)(uint)vehicle_speed;
-    if (0x9c < (uint)((int)puVar2 >> 8)) {
-      puVar2 = &DAT_00009c00;
+    uVar2 = (uint)vehicle_speed;
+    if (0x9c < (uint)((int)uVar2 >> 8)) {
+      uVar2 = 0x9c00;
     }
-    local_8 = (undefined1)((uint)((int)puVar2 * 0x19c) >> 0x10);
-    j1939_ccvs1_wheel_based_vehicle_speed =
-         CONCAT11((char)((uint)((int)puVar2 * 0x19c) >> 8),local_8);
+    local_8 = (undefined1)(uVar2 * 0x19c >> 0x10);
+    j1939_ccvs1_wheel_based_vehicle_speed = CONCAT11((char)(uVar2 * 0x19c >> 8),local_8);
   }
   if ((switch_input_datalink_source_bits_cal[1] & 0x80) == 0) {
     if (switch_input_state_bits.clutch_switch == 0) {
@@ -26112,12 +26095,12 @@ void cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage(void)
 
 {
   if ((algorithm_enable_flags_3_cal.road_speed_governor_enable == 0) ||
-     (&DAT_00009e00 < (undefined *)(uint)maximum_road_speed)) {
+     (0x9e00 < maximum_road_speed)) {
     j1939_pgn65261_payload.max_vehicle_speed_limit = 0xff;
   }
   else {
     j1939_pgn65261_payload.max_vehicle_speed_limit =
-         (byte)((uint)((int)(uint)maximum_road_speed * 0xa1) / 100 >> 8);
+         (byte)(((uint)maximum_road_speed * 0xa1) / 100 >> 8);
   }
   if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
     j1939_pgn65261_payload.cruise_high_set_limit_speed = 0xff;
@@ -41243,8 +41226,11 @@ undefined4 cm848_handlePciLinkEvent(void)
 /* Power-up fill of every PCI RX / TX payload buffer (cm848_initializeJ1939CommunicationSystem from
    cm848_applicationMain): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED
    from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string_cal / RX[0] source 0xF0 (was
-   hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability
-   Medium Accuracy Confidence High (was cm848_initPciMessagePayloads; PR #53 round 97) */
+   hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-26 - Readability High
+   Accuracy Confidence High: every loop pointer starts one byte before its buffer (stbu/lbzu
+   pre-increment) so Ghidra names the previous message timer; a comments.csv line above each loop
+   names the buffer it fills. iVar1 is the decompiler copy that carries next_vin_index into each VIN
+   loop (was cm848_initPciMessagePayloads; PR #53 round 97) */
 
 void cm848_initializePciMessagePayloads(void)
 
@@ -46993,7 +46979,7 @@ void cm848_initializeEngineRetarderRequestState(void)
 void cm848_calculateHighSpeedGovernorCompensatedEngineSpeed(void)
 
 {
-  undefined *puVar1;
+  uint uVar1;
   
   if ((((drivetrain_ratio < high_speed_governor_compensator_maximum_gear_ratio) &&
        (drivetrain_ratio_unsettled_flag == 0)) || (fault_detected_cal.vss_signal_lost_error != 0))
@@ -47024,22 +47010,21 @@ void cm848_calculateHighSpeedGovernorCompensatedEngineSpeed(void)
       (uint)high_speed_governor_compensator_working_filter_coefficient_1 +
       (uint)high_speed_governor_compensator_output_previous *
       (uint)high_speed_governor_compensator_working_filter_coefficient_3) {
-    puVar1 = (undefined *)
-             ((uint)high_speed_governor_compensator_output_previous *
-              (uint)high_speed_governor_compensator_working_filter_coefficient_3 +
-              ((uint)engine_speed_state.filtered_engine_speed *
-               (uint)high_speed_governor_compensator_working_filter_coefficient_1 -
-              (uint)high_speed_governor_compensator_engine_speed_previous *
-              (uint)high_speed_governor_compensator_working_filter_coefficient_2) >> 0xf);
-    if (&DAT_00008ca0 < puVar1) {
-      puVar1 = &DAT_00008ca0;
+    uVar1 = (uint)high_speed_governor_compensator_output_previous *
+            (uint)high_speed_governor_compensator_working_filter_coefficient_3 +
+            ((uint)engine_speed_state.filtered_engine_speed *
+             (uint)high_speed_governor_compensator_working_filter_coefficient_1 -
+            (uint)high_speed_governor_compensator_engine_speed_previous *
+            (uint)high_speed_governor_compensator_working_filter_coefficient_2) >> 0xf;
+    if (36000 < uVar1) {
+      uVar1 = 36000;
     }
   }
   else {
-    puVar1 = (undefined *)0x0;
+    uVar1 = 0;
   }
-  high_speed_governor_compensated_engine_speed = (word)puVar1;
-  high_speed_governor_compensator_output_previous = (word)puVar1;
+  high_speed_governor_compensated_engine_speed = (word)uVar1;
+  high_speed_governor_compensator_output_previous = (word)uVar1;
   high_speed_governor_compensator_engine_speed_previous = engine_speed_state.filtered_engine_speed;
   return;
 }
@@ -68063,7 +68048,7 @@ void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
 
 {
   int iVar1;
-  undefined *puVar2;
+  uint uVar2;
   
   if (fault_derate_active_flag == 1) {
     j1939_pgn65251_speed_points_request_flags =
@@ -68072,56 +68057,52 @@ void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
         fault_derate_torque_curve_priority_bit) {
       if ((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable == 0) ||
          (iVar1 = (int)low_speed_governor_droop_selected_slope, iVar1 == 0)) {
-        puVar2 = (undefined *)(uint)low_speed_governor_reference.reference_speed;
+        uVar2 = (uint)low_speed_governor_reference.reference_speed;
       }
       else {
-        puVar2 = (undefined *)
-                 ((uint)low_speed_governor_reference.reference_speed -
-                 (int)(CONCAT44((int)((ulonglong)
-                                      ((longlong)iVar1 *
-                                      (longlong)
-                                      (int)(uint)
-                                           fault_derate_curve_low_speed_governor_intercept_fueling)
-                                     >> 0x20),
-                                iVar1 * (uint)
-                                        fault_derate_curve_low_speed_governor_intercept_fueling) /
-                      0xa7));
-        if ((int)puVar2 < 0) {
-          puVar2 = (undefined *)0x0;
+        uVar2 = (uint)low_speed_governor_reference.reference_speed -
+                (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)iVar1 *
+                                     (longlong)
+                                     (int)(uint)
+                                          fault_derate_curve_low_speed_governor_intercept_fueling)
+                                    >> 0x20),
+                               iVar1 * (uint)fault_derate_curve_low_speed_governor_intercept_fueling
+                              ) / 0xa7);
+        if ((int)uVar2 < 0) {
+          uVar2 = 0;
         }
-        else if (40000 < (int)puVar2) {
-          puVar2 = &DAT_00009c40;
+        else if (40000 < (int)uVar2) {
+          uVar2 = 40000;
         }
       }
-      j1939_torque_curve_speed_at_point_1 = (word)puVar2;
+      j1939_torque_curve_speed_at_point_1 = (word)uVar2;
       if ((((engine_speed_limit_arbitration.limiting_source_number == 2) ||
            (engine_speed_limit_arbitration.limiting_source_number == 1)) ||
           (engine_speed_limit_arbitration.limiting_source_number == 4)) ||
          ((engine_speed_limit_arbitration.limiting_source_number == 5 ||
           (engine_speed_limit_arbitration.limiting_source_number == 0xc)))) {
-        puVar2 = (undefined *)
-                 ((int)(CONCAT44((int)((ulonglong)
-                                       ((longlong)
-                                        (int)((uint)engine_speed_limit_ramped_maximum_fuel_quantity
-                                             - (uint)
-                                               fault_derate_curve_high_speed_governor_intercept_fueling
-                                             ) * (longlong)(int)engine_speed_limit_droop_slope) >>
-                                      0x20),
-                                 ((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
-                                 (uint)fault_derate_curve_high_speed_governor_intercept_fueling) *
-                                 (int)engine_speed_limit_droop_slope) / 0x1111) +
-                 (uint)engine_speed_limit_arbitration.lowest_source_speed_limit);
-        if ((int)puVar2 < 0) {
-          puVar2 = (undefined *)0x0;
+        uVar2 = (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)
+                                      (int)((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
+                                           (uint)
+                                           fault_derate_curve_high_speed_governor_intercept_fueling)
+                                     * (longlong)(int)engine_speed_limit_droop_slope) >> 0x20),
+                               ((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
+                               (uint)fault_derate_curve_high_speed_governor_intercept_fueling) *
+                               (int)engine_speed_limit_droop_slope) / 0x1111) +
+                (uint)engine_speed_limit_arbitration.lowest_source_speed_limit;
+        if ((int)uVar2 < 0) {
+          uVar2 = 0;
         }
-        else if (40000 < (int)puVar2) {
-          puVar2 = &DAT_00009c40;
+        else if (40000 < (int)uVar2) {
+          uVar2 = 40000;
         }
       }
       else {
-        puVar2 = (undefined *)(uint)fault_derate_curve_engine_speed_point_2;
+        uVar2 = (uint)fault_derate_curve_engine_speed_point_2;
       }
-      j1939_torque_curve_speed_at_point_2 = (word)puVar2;
+      j1939_torque_curve_speed_at_point_2 = (word)uVar2;
       j1939_torque_curve_speed_at_point_3 = fault_derate_curve_engine_speed_point_3;
       j1939_torque_curve_speed_at_point_4 = fault_derate_curve_engine_speed_point_4;
       j1939_torque_curve_speed_at_point_5 = fault_derate_curve_engine_speed_point_5;
@@ -74974,19 +74955,18 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void)
 
 {
   dword dVar1;
-  undefined *puVar2;
-  uint uVar3;
+  uint uVar2;
   
   if (variable_geometry_turbocharger_enable_flag != 0) {
-    uVar3 = ((uint)variable_geometry_turbocharger_motor_mean_squared_current *
+    uVar2 = ((uint)variable_geometry_turbocharger_motor_mean_squared_current *
              (uint)variable_geometry_turbocharger_normalized_resistance >> 0xb) +
             (uint)(variable_geometry_turbocharger_motor_iron_core_temperature >> 3);
-    if (0xffff < uVar3) {
-      uVar3 = 0xffff;
+    if (0xffff < uVar2) {
+      uVar2 = 0xffff;
     }
-    variable_geometry_turbocharger_motor_winding_temperature_filter_input = (word)uVar3;
+    variable_geometry_turbocharger_motor_winding_temperature_filter_input = (word)uVar2;
     dVar1 = cm848_exponentialMovingAverage
-                      (uVar3 & 0xffff,
+                      (uVar2 & 0xffff,
                        &variable_geometry_turbocharger_motor_winding_temperature_filter_state);
     variable_geometry_turbocharger_motor_winding_temperature = (word)dVar1;
     if (0x12c0 < (dVar1 & 0xffff)) {
@@ -75003,25 +74983,24 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void)
     if (0x5000 < variable_geometry_turbocharger_motor_ambient_temperature) {
       variable_geometry_turbocharger_motor_ambient_temperature = 0x5000;
     }
-    puVar2 = (undefined *)
-             (((int)(((uint)variable_geometry_turbocharger_motor_winding_temperature * 8 -
-                     (uint)variable_geometry_turbocharger_motor_ambient_temperature) *
-                    (uint)variable_geometry_turbocharger_motor_temperature_fraction) >> 10) +
-             (uint)variable_geometry_turbocharger_motor_ambient_temperature);
-    if ((int)puVar2 < 0x9601) {
-      if ((int)puVar2 < 0) {
-        puVar2 = (undefined *)0x0;
+    uVar2 = ((int)(((uint)variable_geometry_turbocharger_motor_winding_temperature * 8 -
+                   (uint)variable_geometry_turbocharger_motor_ambient_temperature) *
+                  (uint)variable_geometry_turbocharger_motor_temperature_fraction) >> 10) +
+            (uint)variable_geometry_turbocharger_motor_ambient_temperature;
+    if ((int)uVar2 < 0x9601) {
+      if ((int)uVar2 < 0) {
+        uVar2 = 0;
       }
     }
     else {
-      puVar2 = &DAT_00009600;
+      uVar2 = 0x9600;
     }
-    variable_geometry_turbocharger_motor_iron_core_temperature_filter_input = (word)puVar2;
+    variable_geometry_turbocharger_motor_iron_core_temperature_filter_input = (word)uVar2;
     dVar1 = cm848_exponentialMovingAverage
-                      ((uint)puVar2 & 0xffff,
+                      (uVar2 & 0xffff,
                        &variable_geometry_turbocharger_motor_iron_core_temperature_filter_state);
     variable_geometry_turbocharger_motor_iron_core_temperature = (word)dVar1;
-    if (&DAT_00009600 < (undefined *)(dVar1 & 0xffff)) {
+    if (0x9600 < (dVar1 & 0xffff)) {
       variable_geometry_turbocharger_motor_iron_core_temperature = 0x9600;
     }
     variable_geometry_turbocharger_motor_temperature_warning_flag =
@@ -102013,4 +101992,4 @@ void cm848_updateOutputReadBackFaultBits(void)
 
 
 
-// Export complete - 1971 functions processed
+// Export complete - 1970 functions processed

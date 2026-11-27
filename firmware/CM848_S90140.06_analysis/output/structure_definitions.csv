@@ -1888,6 +1888,9 @@ memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below st
 memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified
 memory_region_t,0x003f9858,,,,region 4 0x1000000-0x1003fff EEPROM - marker,,verified
 memory_region_t,0x003f9862,,,,region 5 0x2fc000-0x307fff type 3 - effectively 0x2fc000-0x301fff: region 3 matches the rest first - marker,,verified
+# calibration_region_t - one {start, length} record of calibration_eeprom_region_table / calibration_parameter_region_table
+calibration_region_t,,start_address,dword,4,The item's first byte: an EEPROM offset in calibration_eeprom_region_table; an absolute address (ROM / flash2 / EEPROM 0x0100xxxx) in calibration_parameter_region_table,,verified
+calibration_region_t,,length,dword,4,The item's size in bytes,,verified
 # checksum_region_t - one region of checksum_region_table that mpc555_verifyDownloadedCalibration sums (PR #53 round 69)
 checksum_region_t,,expected_sum,word,2,The 16-bit sum of the region's words that the verifier requires,,verified
 checksum_region_t,,start_address,word*,4,The region's first word,,verified
