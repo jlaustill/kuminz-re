@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:09:49 UTC 2026
+// Generated: Fri Nov 27 03:11:58 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -6350,9 +6350,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -85541,8 +85541,8 @@ LAB_0051f804:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
       uVar1 = accelerator_pedal_channel97_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[6] & 2) == 0) {
-        if (DAT_003fdb3a < 0x81) {
-          uVar5 = (uint)DAT_003fdb3a;
+        if (accelerator_pedal_channel97_qadc_channel_cal < 0x81) {
+          uVar5 = (uint)accelerator_pedal_channel97_qadc_channel_cal;
         }
         else {
           uVar5 = 0;
@@ -85559,8 +85559,8 @@ LAB_0051f804:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
       uVar1 = accelerator_pedal_channel98_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[6] & 4) == 0) {
-        if (DAT_003fdb3c < 0x81) {
-          uVar5 = (uint)DAT_003fdb3c;
+        if (accelerator_pedal_channel98_qadc_channel_cal < 0x81) {
+          uVar5 = (uint)accelerator_pedal_channel98_qadc_channel_cal;
         }
         else {
           uVar5 = 0;
