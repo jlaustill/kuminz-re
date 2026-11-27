@@ -68,9 +68,9 @@ firmware/
     └── output/*.csv              # CSVs + decompilation
 ```
 
-**Script utilities:** `firmware/scripts/ScriptUtils.java` and `CsvCommentIndex.java` contain all pure (non-Ghidra) logic — CSV parsing, address parsing, type classification, comment preservation. New scripts should use these rather than copy-pasting. No Ghidra JARs needed to compile or test them.
+**Script utilities:** `firmware/scripts/ScriptUtils.java`, `CsvCommentIndex.java` and `BitfieldPieceRewriter.java` contain all pure (non-Ghidra) logic — CSV parsing, address parsing, type classification, comment preservation. New scripts should use these rather than copy-pasting. No Ghidra JARs needed to compile or test them.
 
-**Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 118 JUnit 5 tests covering ScriptUtils and CsvCommentIndex. Tests live in `firmware/script_tests/` (NOT inside `firmware/scripts/`) because Ghidra's `GhidraSourceBundle` recurses into subdirectories when compiling the bundle. Any `.java` file with imports not on Ghidra's classpath (e.g. JUnit) inside `firmware/scripts/` will break ALL script compilation with "class not found" errors.
+**Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 124 JUnit 5 tests covering ScriptUtils, CsvCommentIndex and BitfieldPieceRewriter. Tests live in `firmware/script_tests/` (NOT inside `firmware/scripts/`) because Ghidra's `GhidraSourceBundle` recurses into subdirectories when compiling the bundle. Any `.java` file with imports not on Ghidra's classpath (e.g. JUnit) inside `firmware/scripts/` will break ALL script compilation with "class not found" errors.
 
 ---
 
@@ -713,30 +713,41 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       P0500 detectors.
     - `logical_output_request_bits_16_to_23_t`.
     - A bit that nobody proved is `reserved_bit_N`, with the guess kept in its comment.
-    - **Use a bitfield only for a word that the code tests.** If the code updates the byte with `|` / `&` masks, keep
-      it a byte field and put the bit meanings in its comment. Ghidra 12.1 does not fold those read-modify-writes
-      into bitfield stores, so it prints them as `._8_1_` pieces of the struct. Wave 11 reverted two bitfields for
-      this reason: `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and `transmission_control_flags_t.limp_home_flags_4`
-      (then `protection_status_flags_t.status_flags` / `protection_condition_flags_t.fault_state_flags`).
-      The two bitfields had given 18 named tests but 31 pieces.
-      - **One exception, by the user's decision (2026-11-21, PR #53 round 16): `switch_input_state_t` is all
-        bitfields.** Its 180 named bit accesses outweigh the 10 pieces in three single-bit setters
-        (`cm848_checkSwitch31OnTimeFault`, `cm848_updateAirConditioningSwitchFromPci`,
-        `cm848_deriveSecondBrakeSwitchSignal`). Its indexed loops print `(&switch_input_state_bits.field_0x0)[i]`.
-      - **A second exception, by the user's decision (2026-11-22, PR #53 round 27): the fault words.**
-        Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault n = bit n % 16 of word n / 16). Bits
-        are named from e2m 1036 where the code resolves the abbreviation; the others are `fault_<n>`.
-        - **What it gained:** 780 bit-name references (656 in tests, 108 in writes, 16 elsewhere), such as
-          `fault_detected_cal.coolant_temperature_high_error == 0`.
-        - **What it cost:** 943 piece tokens. 856 of them are the set / clear writes that Ghidra 12.1 does not fold
-          (`fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20`); the other 87 are tests and whole-word uses.
+    - **Bitfield read-modify-writes are printed by field name at export (2026-11-27, PR #56).** Ghidra 12.1 does
+      not fold `|` / `&` mask updates into bitfield stores; it prints them as pieces of the struct
+      (`fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20`). `ExportAnalysis` passes every function
+      through `BitfieldPieceRewriter`, which rewrites only the exact shapes, using the struct layout Ghidra holds:
+      - `S._o_n_ = S._o_n_ | K;` → one `S.field = 1;` (or all ones) line per field, when K is exactly whole fields;
+      - `S._o_n_ = S._o_n_ & K;` → one `S.field = 0;` line per field that K clears, under the same condition;
+      - `(S._o_n_ & K) == 0` / `!= 0` → `S.field == 0` / `!= 0`, and `(S._o_n_ & K) == (T._o_n_ & K)` →
+        `S.field == T.field`, when K is exactly one field.
+      Anything else stays as Ghidra printed it: a mask that covers part of a field or bits with no field, a merged
+      temporary (`uVar1 = fault_detected_cal._50_2_ & 0xffef | 0x20; ... fault_detected_cal._50_2_ = uVar1;`),
+      a value read (`flag = fault_detected_cal._82_2_ & 0x8000`) and a test against a non-zero constant
+      (`(fault_detected_cal._90_2_ & 0x100) != 1`, which the machine code really does). The build log prints
+      `Bitfield pieces printed by field name: N`. First run: 456 rewrites in CM848 (446 fault words, 10 switch
+      inputs); every piece count before / after is in PR #56.
+      - **Check after a change:** an independent CSV-based re-implementation (the PR #56 session's `verify.py`)
+        applied to the pre-rewrite output gave a byte-identical file.
+    - **Bitfield structs:**
+      - **`switch_input_state_t` is all bitfields (PR #53 round 16).** Its indexed loops print
+        `(&switch_input_state_bits.field_0x0)[i]`. Its 10 single-bit setter pieces (`cm848_checkSwitch31OnTimeFault`,
+        `cm848_updateAirConditioningSwitchFromPci`, `cm848_deriveSecondBrakeSwitchSignal`) now print by name.
+      - **The fault words (PR #53 round 27).** Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault
+        n = bit n % 16 of word n / 16). Bits are named from e2m 1036 where the code resolves the abbreviation; the
+        others are `fault_<n>`.
+        - **Pieces:** 948 piece tokens on the three fault instances before the export rewrite, 56 after. The 56 are
+          the shapes listed above that stay as Ghidra printed them.
         - **Word 0 stays the plain word `faults_0_to_15`.** It is the base of the 200 indexed accesses, which print
           `*(undefined2 *)(&fault_detected_cal.field_0x0 + i)` once word 0 holds bitfields.
         - **One type per word does not work:** a nested `fault_bits_A_to_B_t` field prints
           `ZPULL(fault_detected_cal.faults_16_to_31,3,1)` and struct casts.
         - The mask-exact proof (`prove_fault_bitfields.py` in the session folder) rewrites each bit name back to its
           own word and mask and compares every function.
-        The rule still holds for every other struct.
+      - Wave 11 (before the export rewrite) reverted two bitfields for their pieces:
+        `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and
+        `transmission_control_flags_t.limp_home_flags_4` (then `protection_status_flags_t.status_flags` /
+        `protection_condition_flags_t.fault_state_flags`). They can be revisited now.
     - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
       went up.
   - **`end_of_line_test_settings_cal`** (0x3fd938 = EEPROM 0x4b6) is the Chrysler in-plant test block. The old names
@@ -1035,8 +1046,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     unlimited only for 0x03, 6 s for the others (task 022).
   - **Enums:** `TSC1_OVERRIDE_MODE` (SPN 695), `J1939_CONTROL_DEVICE` (none / transmission / ABS / ASR / unknown)
     and `CONTROL_NETWORK` (J1922 / J1939).
-  - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A multi-bit mask on a
-    bitfield renders as a raw piece (`_32_2_ & 3`), so masked flag words stay words.
+  - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A mask that covers part of a
+    multi-bit bitfield renders as a raw piece (`_32_2_ & 3`), so masked flag words stay words.
 - **Round 7 (2026-11-21, PR #53):** the J1939 monitor (j1939mon) and the drivetrain ratio module.
   - **`j1939_control_session_t`** is the 24-byte session record (e2m 10FD history table `[5]` at 0x3fead6,
     10FE / 10FF active engine / retarder records at 0x3feb50 / 0x3feb6a, each behind a length word).

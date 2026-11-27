@@ -11,15 +11,24 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ghidra.app.script.GhidraScript;
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileOptions;
 import ghidra.app.decompiler.DecompileResults;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.data.BitFieldDataType;
+import ghidra.program.model.data.DataType;
+import ghidra.program.model.data.DataTypeComponent;
+import ghidra.program.model.data.Structure;
+import ghidra.program.model.data.TypeDef;
+import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionIterator;
+import ghidra.program.model.symbol.Symbol;
 import ghidra.util.task.TaskMonitor;
 
 public class ExportAnalysis extends GhidraScript {
@@ -105,6 +114,7 @@ public class ExportAnalysis extends GhidraScript {
         Collections.sort(functions, (f1, f2) -> f1.getEntryPoint().compareTo(f2.getEntryPoint()));
 
         int functionCount = 0;
+        BitfieldPieceRewriter pieces = new BitfieldPieceRewriter(this::bitfieldsOf);
 
         try (FileWriter writer = new FileWriter(outputFile)) {
             writer.write("// Ghidra C++ Decompilation Export - " + firmwareName + " Firmware\n");
@@ -129,7 +139,7 @@ public class ExportAnalysis extends GhidraScript {
                         writer.write("// Function: " + funcName + " @ " + address + "\n");
                         writer.write("//\n");
 
-                        String decompiledCode = results.getDecompiledFunction().getC();
+                        String decompiledCode = pieces.rewrite(results.getDecompiledFunction().getC());
                         writer.write(decompiledCode);
                         writer.write("\n\n");
 
@@ -146,11 +156,53 @@ public class ExportAnalysis extends GhidraScript {
             }
 
             writer.write("// Export complete - " + functionCount + " functions processed\n");
+            println("  Bitfield pieces printed by field name: " + pieces.rewrites());
 
         } finally {
             decompiler.dispose();
         }
 
         return functionCount;
+    }
+
+    private final Map<String, List<BitfieldPieceRewriter.Field>> bitfieldCache = new HashMap<>();
+
+    // The bitfields inside the size-byte unit at byte offset of the struct global named symbol, with each field's
+    // least significant bit counted from the unit's; null when symbol is not one struct global.
+    private List<BitfieldPieceRewriter.Field> bitfieldsOf(String symbol, int offset, int size) {
+        return bitfieldCache.computeIfAbsent(symbol + "@" + offset + ":" + size, key -> {
+            List<Symbol> symbols = currentProgram.getSymbolTable().getGlobalSymbols(symbol);
+            if (symbols.size() != 1) {
+                return null;
+            }
+            Data data = currentProgram.getListing().getDataAt(symbols.get(0).getAddress());
+            if (data == null) {
+                return null;
+            }
+            DataType type = data.getDataType();
+            while (type instanceof TypeDef) {
+                type = ((TypeDef) type).getBaseDataType();
+            }
+            if (!(type instanceof Structure)) {
+                return null;
+            }
+            boolean bigEndian = currentProgram.getLanguage().isBigEndian();
+            List<BitfieldPieceRewriter.Field> fields = new ArrayList<>();
+            for (DataTypeComponent component : ((Structure) type).getDefinedComponents()) {
+                int start = component.getOffset();
+                int end = start + component.getLength();
+                if (end <= offset || start >= offset + size) {
+                    continue;
+                }
+                if (start < offset || end > offset + size || !component.isBitFieldComponent()) {
+                    return null;
+                }
+                BitFieldDataType bitfield = (BitFieldDataType) component.getDataType();
+                int storageLsb = 8 * (bigEndian ? offset + size - end : start - offset);
+                fields.add(new BitfieldPieceRewriter.Field(component.getFieldName(),
+                    storageLsb + bitfield.getBitOffset(), bitfield.getBitSize()));
+            }
+            return fields;
+        });
     }
 }

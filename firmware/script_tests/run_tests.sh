@@ -20,12 +20,15 @@ javac -cp "$JUNIT_JAR" \
     -d "$BUILD_DIR" \
     "$SCRIPTS_DIR/ScriptUtils.java" \
     "$SCRIPTS_DIR/CsvCommentIndex.java" \
+    "$SCRIPTS_DIR/BitfieldPieceRewriter.java" \
     "$SCRIPT_DIR/ScriptUtilsTest.java" \
-    "$SCRIPT_DIR/CsvCommentIndexTest.java"
+    "$SCRIPT_DIR/CsvCommentIndexTest.java" \
+    "$SCRIPT_DIR/BitfieldPieceRewriterTest.java"
 
 echo "Running tests..."
 java -jar "$JUNIT_JAR" \
     --class-path "$BUILD_DIR" \
     --select-class ScriptUtilsTest \
     --select-class CsvCommentIndexTest \
+    --select-class BitfieldPieceRewriterTest \
     --details=tree
