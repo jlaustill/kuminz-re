@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:36:34 UTC 2026
+// Generated: Fri Nov 27 03:39:26 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -12433,8 +12433,7 @@ void cm848_runWastegateDutyController(void)
    wastegate_duty_integrator_q16, governor_rpm_band_rate_working, the duty request of the controller
    state struct and the battery-voltage averaging accumulator wastegate_battery_voltage_filter_state
    (coefficient pointer set to wastegate_battery_voltage_filter_coefficient), and sets the twelve
-   lookup hint words DAT_003fa17e to DAT_003fa19a to 2. (was mpc555_initTurboCompensationVariables)
-    */
+   lookup hint words 0x3fa17e to 0x3fa19a to 2. (was mpc555_initTurboCompensationVariables) */
 
 void cm848_initializeWastegateDutyController(void)
 
@@ -12452,7 +12451,7 @@ void cm848_initializeWastegateDutyController(void)
   turbocharger_speed_derate_gain_cached_axis_offset = 2;
   wastegate_duty_ceiling_adjustment_by_altitude_cached_axis_offset = 2;
   wastegate_duty_second_error_gain_by_error_cached_axis_offset = 2;
-  DAT_003fa192 = 2;
+  wastegate_duty_unused_cached_axis_offset = 2;
   wastegate_duty_floor_cached_axis_offsets[0] = 2;
   wastegate_duty_floor_cached_axis_offsets[1] = 2;
   wastegate_duty_ceiling_cached_axis_offsets[0] = 2;
@@ -16027,7 +16026,7 @@ void cm848_initializeOffNominalCompensationLookupCaches(void)
 
 {
   charge_temperature_off_nominal_adjustment_cached_axis_offset = 2;
-  DAT_003fa6d4 = 2;
+  off_nominal_compensation_unused_cached_axis_offset = 2;
   fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_cached_axis_offset = 2;
   injection_timing_off_nominal_adjustment_cached_axis_offset = 2;
   injection_timing_reference_adjustment_cached_axis_offset = 2;
@@ -25176,7 +25175,7 @@ void cm848_j1939HandlePgn56832Reset(j1939_received_message_t *message)
 
 {
   if (algorithm_enable_flags_29_cal.trip_reset_enable != 0) {
-    DAT_003faa64 = *message->data_pointer;
+    j1939_pgn56832_reset_request_byte = *message->data_pointer;
   }
   if (algorithm_enable_flags_29_cal.service_component_reset_enable != 0) {
     j1939_proprietary_cmd_byte1 = message->data_pointer[1];
@@ -27469,8 +27468,8 @@ void initializePgn65262EngineTemperature1Handler(void)
   j1939_pgn65262_tx_message.header.can_id =
        CONCAT31(j1939_pgn65262_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65262_field1_init_word = 0xffff;
-  DAT_003fae04 = 0xff;
-  DAT_003fae05 = 0xff;
+  j1939_et1_intercooler_temperature_byte = 0xff;
+  j1939_et1_intercooler_thermostat_opening_byte = 0xff;
   registerJ1939PgnRequestHandler(0xfeee,cm848_buildPgn65262EngineTemperature1Message);
   return;
 }
@@ -38649,7 +38648,8 @@ void cm848_onSupervisorRegister36Read(void)
   }
   else {
     supervisor_register_36_bit_1_low_held_flag = 1;
-    supervisor_register_36_bit_1_release_delay_counter = DAT_00408744;
+    supervisor_register_36_bit_1_release_delay_counter =
+         supervisor_register_36_bit_1_release_delay_limit;
   }
   return;
 }
@@ -44336,7 +44336,7 @@ void cm848_initializeMaximumRoadSpeeds(void)
   drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
   maximum_road_speed = maximum_road_speed_trim_cal;
   cruise_maximum_road_speed_cal = cruise_maximum_road_speed_trim_cal;
-  DAT_0040b5c0 = maximum_road_speed_trim_cal;
+  maximum_road_speed_trim_unused_copy = maximum_road_speed_trim_cal;
   fault_reaction_request_bits_previous = 0;
   return;
 }
@@ -48208,7 +48208,8 @@ void cm848_runCylinderContributionTest(void)
   else {
     cylinder_contribution_test_status = SERVICE_TOOL_TEST_RUNNING;
     cylinder_balance_trim_limits_exceeded_flag = 0;
-    if ((cylinder_contribution_test_request_flag != 0) && (DAT_003fb596 == '\0')) {
+    if ((cylinder_contribution_test_request_flag != 0) &&
+       (cylinder_contribution_test_request_previous_flag == 0)) {
       ram_refresh_enable = RAM_REFRESH_DISABLED;
       uVar5 = 0;
       do {
@@ -48244,8 +48245,8 @@ void cm848_runCylinderContributionTest(void)
                 (uint)cylinder_4_contribution_percent) / 3);
   }
   SVar2 = cylinder_contribution_test_status;
-  if ((cylinder_contribution_test_status != SERVICE_TOOL_TEST_RUNNING) && (DAT_003fb597 == '\x01'))
-  {
+  if ((cylinder_contribution_test_status != SERVICE_TOOL_TEST_RUNNING) &&
+     (cylinder_contribution_test_status_previous == SERVICE_TOOL_TEST_RUNNING)) {
     cylinder_balance_fueling_trim_maximum = cylinder_balance_fueling_trim_maximum_snapshot;
     cylinder_balance_fueling_trim_minimum = cylinder_balance_fueling_trim_minimum_snapshot;
     uVar5 = 0;
@@ -48255,8 +48256,8 @@ void cm848_runCylinderContributionTest(void)
     } while (uVar5 < 6);
     ram_refresh_enable = RAM_REFRESH_ENABLED;
   }
-  DAT_003fb596 = bVar1;
-  DAT_003fb597 = SVar2;
+  cylinder_contribution_test_request_previous_flag = bVar1;
+  cylinder_contribution_test_status_previous = SVar2;
   return;
 }
 
@@ -92677,7 +92678,7 @@ void cm848_checkFuelPressureWithoutInjection(void)
      (fuel_pressure_allowed_decay_check_enable == 0)) {
     return;
   }
-  if (((((((DAT_00409aae < engine_speed_state.filtered_engine_speed) &&
+  if (((((((fuel_pressure_check_engine_speed_minimum < engine_speed_state.filtered_engine_speed) &&
           ((short)fuel_pressure_feedback_filtered <= (short)fuel_pressure_feedback_maximum)) &&
          ((short)fuel_pressure_feedback_minimum <= (short)fuel_pressure_feedback_filtered)) &&
         ((engine_state == ENGINE_STATE_RUNNING &&
@@ -92889,8 +92890,9 @@ void cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand(void)
   else {
     fuel_metering_feedback_monitor_enable_flag = 0;
   }
-  if (DAT_00409acb != '\0') {
-    fuel_metering_feedback_monitor_enable_flag = DAT_00409acf;
+  if (fuel_metering_feedback_monitor_enable_override != 0) {
+    fuel_metering_feedback_monitor_enable_flag =
+         fuel_metering_feedback_monitor_enable_override_value;
   }
   if (fuel_metering_feedback_monitor_enable_flag == 0) {
     return;
