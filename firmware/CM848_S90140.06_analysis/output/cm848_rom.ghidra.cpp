@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:41:39 UTC 2026
+// Generated: Fri Nov 27 02:44:30 UTC 2026
 
 
 //
@@ -6349,9 +6349,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -86385,7 +86385,7 @@ void cm848_initializeSciCommand37TestTimeouts(void)
 void cm848_sciCommand39WriteEepromSetting(void)
 
 {
-  DAT_003fcf82 = 0;
+  sci_command_39_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand39WriteEepromSettingCallback;
   cm848_sciStartTransmit();
   return;
@@ -86410,22 +86410,23 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
   uint uVar4;
   byte local_10 [4];
   
-  (&DAT_003fcf83)[DAT_003fcf82] = *(undefined1 *)sci_buffer_cursor;
-  uVar4 = DAT_003fcf82 + 1;
-  DAT_003fcf82 = (byte)uVar4;
+  (&sci_command_39_setting_group)[sci_command_39_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar4 = sci_command_39_received_byte_count + 1;
+  sci_command_39_received_byte_count = (byte)uVar4;
   if (2 < (uVar4 & 0xff)) {
     if (sci_security_state == 1) {
-      pbVar1 = (byte *)cm848_sciLookupEepromSettingAddress(DAT_003fcf83,DAT_003fcf84);
+      pbVar1 = (byte *)cm848_sciLookupEepromSettingAddress
+                                 (sci_command_39_setting_group,sci_command_39_setting_index);
       if (pbVar1 == (byte *)0x0) {
         sci_buffer[sci_transmit_byte_count] = 0xf0;
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
       }
       else {
-        local_10[0] = DAT_003fcf85;
-        if (DAT_003fcf83 == '\x02') {
-          local_10[0] = (byte)(1 << ((uint)DAT_003fcf84 + ((int)(uint)DAT_003fcf84 >> 3) * -8 & 0x3f
-                                    ));
-          if (DAT_003fcf85 == 0) {
+        local_10[0] = sci_command_39_setting_value;
+        if (sci_command_39_setting_group == 2) {
+          local_10[0] = (byte)(1 << ((uint)sci_command_39_setting_index +
+                                     ((int)(uint)sci_command_39_setting_index >> 3) * -8 & 0x3f));
+          if (sci_command_39_setting_value == 0) {
             local_10[0] = *pbVar1 & ~local_10[0];
             *pbVar1 = local_10[0];
           }
@@ -86481,7 +86482,7 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
 void cm848_sciCommand40ReadEepromSetting(void)
 
 {
-  DAT_003fcf86 = 0;
+  sci_command_40_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand40ReadEepromSettingCallback;
   cm848_sciStartTransmit();
   return;
@@ -86502,15 +86503,17 @@ void cm848_sciCommand40ReadEepromSettingCallback(void)
   byte *pbVar1;
   uint uVar2;
   
-  (&DAT_003fcf87)[DAT_003fcf86] = *(undefined1 *)sci_buffer_cursor;
-  uVar2 = DAT_003fcf86 + 1;
-  DAT_003fcf86 = (byte)uVar2;
+  (&sci_command_40_setting_group)[sci_command_40_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar2 = sci_command_40_received_byte_count + 1;
+  sci_command_40_received_byte_count = (byte)uVar2;
   if (1 < (uVar2 & 0xff)) {
-    pbVar1 = (byte *)cm848_sciLookupEepromSettingAddressForRead(DAT_003fcf87,DAT_003fcf88);
+    pbVar1 = (byte *)cm848_sciLookupEepromSettingAddressForRead
+                               (sci_command_40_setting_group,sci_command_40_setting_index);
     if (pbVar1 != (byte *)0x0) {
-      if (DAT_003fcf87 == '\x02') {
-        if (((uint)*pbVar1 & 1 << ((uint)DAT_003fcf88 + ((int)(uint)DAT_003fcf88 >> 3) * -8 & 0x3f))
-            == 0) {
+      if (sci_command_40_setting_group == 2) {
+        if (((uint)*pbVar1 &
+            1 << ((uint)sci_command_40_setting_index +
+                  ((int)(uint)sci_command_40_setting_index >> 3) * -8 & 0x3f)) == 0) {
           sci_buffer[sci_transmit_byte_count] = 0;
         }
         else {
@@ -86545,7 +86548,7 @@ void cm848_sciCommand40ReadEepromSettingCallback(void)
 void cm848_sciCommand41WriteTableValue(void)
 
 {
-  DAT_003fcf8a = 0;
+  sci_command_41_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand41WriteTableValueCallback;
   cm848_sciStartTransmit();
   return;
@@ -86563,19 +86566,20 @@ void cm848_sciCommand41WriteTableValue(void)
 void cm848_sciCommand41WriteTableValueCallback(void)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   uint uVar2;
   
-  (&DAT_003fcf8b)[DAT_003fcf8a] = *(undefined1 *)sci_buffer_cursor;
-  uVar2 = DAT_003fcf8a + 1;
-  DAT_003fcf8a = (byte)uVar2;
+  (&sci_command_41_table_number)[sci_command_41_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar2 = sci_command_41_received_byte_count + 1;
+  sci_command_41_received_byte_count = (byte)uVar2;
   if (2 < (uVar2 & 0xff)) {
-    puVar1 = (undefined1 *)cm848_sciLookupTable250Or252Address(DAT_003fcf8b,DAT_003fcf8c);
-    if (puVar1 == (undefined1 *)0x0) {
+    pbVar1 = (byte *)cm848_sciLookupTable250Or252Address
+                               (sci_command_41_table_number,sci_command_41_table_offset);
+    if (pbVar1 == (byte *)0x0) {
       sci_buffer[sci_transmit_byte_count] = 0xf0;
     }
     else {
-      *puVar1 = DAT_003fcf8d;
+      *pbVar1 = sci_command_41_value;
       sci_buffer[sci_transmit_byte_count] = 0xe5;
     }
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
@@ -86716,7 +86720,7 @@ void cm848_sciCommand43RequestSecuritySeed(void)
 void cm848_sciCommand44SendSecurityKey(void)
 
 {
-  DAT_003fcf8e = 0;
+  sci_command_44_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand44SendSecurityKeyCallback;
   cm848_sciStartTransmit();
   return;
@@ -86756,18 +86760,20 @@ void cm848_sciCommand44SendSecurityKeyCallback(void)
 {
   uint uVar1;
   
-  (&DAT_003fcf8f)[DAT_003fcf8e] = *(undefined1 *)sci_buffer_cursor;
-  uVar1 = DAT_003fcf8e + 1;
-  DAT_003fcf8e = (byte)uVar1;
+  (&sci_command_44_key_high_byte)[sci_command_44_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar1 = sci_command_44_received_byte_count + 1;
+  sci_command_44_received_byte_count = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
-    if ((char)(DAT_003fcf8f + DAT_003fcf90 + ',') == DAT_003fcf91) {
+    if ((byte)(sci_command_44_key_high_byte + sci_command_44_key_low_byte + 0x2c) ==
+        sci_command_44_checksum) {
       if (sci_security_state == 1) {
         sci_buffer[sci_transmit_byte_count] = 0;
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
       }
       else if ((sci_security_failed_key_count < 3) && (sci_security_state != 2)) {
         if (sci_key_retry_delay == 0) {
-          sci_security_received_key = CONCAT11(DAT_003fcf8f,DAT_003fcf90);
+          sci_security_received_key =
+               CONCAT11(sci_command_44_key_high_byte,sci_command_44_key_low_byte);
           cm848_sciValidateSecurityKey();
           if (sci_security_key_matched_flag == 0) {
             sci_security_failed_key_count = sci_security_failed_key_count + 1;
@@ -87035,7 +87041,7 @@ void cm848_sciCommand51ReportActiveFaultDtcs(void)
 void cm848_sciCommand52ReportFaultStatusByDtc(void)
 
 {
-  DAT_003fcf92 = 0;
+  sci_command_52_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand52ReportFaultStatusByDtcCallback;
   cm848_sciStartTransmit();
   return;
@@ -87121,11 +87127,12 @@ void cm848_sciCommand52ReportFaultStatusByDtcCallback(void)
   ushort local_8 [4];
   
   bVar3 = 0;
-  (&DAT_003fcf93)[DAT_003fcf92] = *(undefined1 *)sci_buffer_cursor;
-  uVar1 = DAT_003fcf92 + 1;
-  DAT_003fcf92 = (byte)uVar1;
+  (&sci_command_52_dtc_high_byte)[sci_command_52_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar1 = sci_command_52_received_byte_count + 1;
+  sci_command_52_received_byte_count = (byte)uVar1;
   if ((uVar1 & 0xff) < 2) goto LAB_00522660;
-  sVar2 = cm848_lookupFaultIndexByDtcCode(local_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
+  sVar2 = cm848_lookupFaultIndexByDtcCode
+                    (local_8,CONCAT11(sci_command_52_dtc_high_byte,sci_command_52_dtc_low_byte));
   uVar1 = (uint)local_8[0];
   if (sVar2 != 0) {
     bVar3 = (&fault_status_records_cal)[uVar1].flags >> 4 & 6;
