@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:31:06 UTC 2026
+// Generated: Fri Nov 27 02:36:07 UTC 2026
 
 
 //
@@ -83935,10 +83935,10 @@ switchD_0051dc5c_default:
   case 0xf7:
     goto switchD_0051dc5c_default;
   case 0xf8:
-    DAT_003fcf1a = 0;
+    sci_high_speed_fault_queue_offset = 0;
     goto LAB_0051dcac;
   case 0xf9:
-    DAT_003fcf1a = 4;
+    sci_high_speed_fault_queue_offset = 4;
 LAB_0051dcac:
     sci_next_byte_handler = cm848_sciHighSpeedTable248And249Callback;
     cm848_sciStartTransmit();
@@ -83990,10 +83990,10 @@ undefined4 cm848_sciHighSpeedHandleTableSelect(void)
   case 0xf7:
     return 0;
   case 0xf8:
-    DAT_003fcf1a = 0;
+    sci_high_speed_fault_queue_offset = 0;
     goto LAB_0051ddf4;
   case 0xf9:
-    DAT_003fcf1a = 4;
+    sci_high_speed_fault_queue_offset = 4;
 LAB_0051ddf4:
     sci_next_byte_handler = cm848_sciHighSpeedTable248And249Callback;
     break;
@@ -84045,7 +84045,8 @@ void cm848_sciHighSpeedTable248And249Callback(void)
       cm848_sciEndTransfer();
     }
     else {
-      pfVar4 = fault_entry_pointer_queue_cal[(bVar1 + 0xff & 0xff) / 0x32 + (uint)DAT_003fcf1a];
+      pfVar4 = fault_entry_pointer_queue_cal
+               [(bVar1 + 0xff & 0xff) / 0x32 + (uint)sci_high_speed_fault_queue_offset];
       if (pfVar4 == (fault_entry_t *)0x0) {
         sci_buffer[0] = 0;
         cm848_sciStartTransmit();

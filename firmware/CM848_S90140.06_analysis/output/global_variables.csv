@@ -8467,3 +8467,4 @@ address,name,type,comment
 0x003fb33d,supervisor_register_46_reply_word,word,Reply word of supervisor_register_46_read_job; cm848_onSupervisorRegister46Read copies it to supervisor_register_46_reply
 0x003fb34f,supervisor_start_up_reply_words,word[5],Reply words of cm848_configureSupervisorChip's stack job: it repeats the start-up words until the low byte of reply word 1 is 2
 0x0040b222,supervisor_register_46_reply,word,Copy of supervisor_register_46_reply_word made by cm848_onSupervisorRegister46Read
+0x003fcf1a,sci_high_speed_fault_queue_offset,byte,"SCI high-speed read: 0 for table 0xF8 and 4 for table 0xF9 (cm848_sciHighSpeedTableSelectCallback, stb); cm848_sciHighSpeedTable248And249Callback adds it to the fault_entry_pointer_queue_cal index (lbz), so table 248 reads queue entries 0-3 and table 249 entries 4-7"
