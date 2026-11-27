@@ -719,6 +719,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       through `BitfieldPieceRewriter`, which rewrites only the exact shapes, using the struct layout Ghidra holds:
       - `S._o_n_ = S._o_n_ | K;` → one `S.field = 1;` (or all ones) line per field, when K is exactly whole fields;
       - `S._o_n_ = S._o_n_ & K;` → one `S.field = 0;` line per field that K clears, under the same condition;
+      - `S._o_n_ = S._o_n_ & K1 | K2;` → the `= 0` lines for the fields K1 clears and K2 does not set, then the
+        `= 1` lines for K2, when both are whole fields (also when Ghidra wraps any of these after the `=`);
       - `(S._o_n_ & K) == 0` / `!= 0` → `S.field == 0` / `!= 0`, and `(S._o_n_ & K) == (T._o_n_ & K)` →
         `S.field == T.field`, when K is exactly one field.
       Anything else stays as Ghidra printed it: a mask that covers part of a field or bits with no field, a merged
@@ -726,7 +728,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       a value read (`flag = fault_detected_cal._82_2_ & 0x8000`) and a test against a non-zero constant
       (`(fault_detected_cal._90_2_ & 0x100) != 1`, which the machine code really does). The build log prints
       `Bitfield pieces printed by field name: N`. First run: 456 rewrites in CM848 (446 fault words, 10 switch
-      inputs); every piece count before / after is in PR #56.
+      inputs); 463 with the wrapped and `& K1 | K2` forms and the limp-home bytes. Piece counts are in PR #56.
       - **Check after a change:** an independent CSV-based re-implementation (the PR #56 session's `verify.py`)
         applied to the pre-rewrite output gave a byte-identical file.
     - **Bitfield structs:**

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 13:56:50 UTC 2026
+// Generated: Fri Nov 27 14:00:08 UTC 2026
 
 
 //
@@ -96164,7 +96164,8 @@ void cm848_monitorFuelLevelLowDistance(void)
           fault_registered_cal.obd_fuel_level_low_error = 0;
         }
         if (fuel_level_low_distance_accumulator_limit < fuel_level_low_distance_accumulator_cal) {
-          fault_detected_cal._48_2_ = fault_detected_cal._48_2_ & 0xdfff | 0x4000;
+          fault_detected_cal.obd_fuel_level_low_error = 0;
+          fault_detected_cal.fuel_level_rationality_error = 1;
           fault_registered_cal.obd_fuel_level_low_error = 0;
           fuel_level_low_distance_check_armed_flag_cal = 0;
         }

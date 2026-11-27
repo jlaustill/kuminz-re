@@ -46,6 +46,9 @@ public final class BitfieldPieceRewriter {
 
     private static final Pattern WRITE = Pattern.compile(
         "^([ \\t]*)" + ID + "\\._(\\d+)_(\\d+)_ =(?: |\\n[ \\t]*)\\2\\._\\3_\\4_ ([|&]) " + CONST + ";$", Pattern.MULTILINE);
+    private static final Pattern CLEAR_SET = Pattern.compile(
+        "^([ \\t]*)" + ID + "\\._(\\d+)_(\\d+)_ =(?: |\\n[ \\t]*)\\2\\._\\3_\\4_ & " + CONST + " \\| " + CONST + ";$",
+        Pattern.MULTILINE);
     private static final Pattern PAIR_TEST = Pattern.compile(
         "\\(" + ID + "\\._(\\d+)_(\\d+)_ & " + CONST + "\\) (==|!=) \\(" + ID + "\\._\\2_\\3_ & \\4\\)");
     private static final Pattern ZERO_TEST = Pattern.compile(
@@ -68,6 +71,7 @@ public final class BitfieldPieceRewriter {
             return code;
         }
         code = rewriteWrites(code);
+        code = rewriteClearSets(code);
         code = rewritePairTests(code);
         return rewriteZeroTests(code);
     }
@@ -97,6 +101,40 @@ public final class BitfieldPieceRewriter {
                         .append(value < 10 ? Long.toString(value) : "0x" + Long.toHexString(value)).append(';');
                 }
                 replacement = lines.toString();
+                rewrites++;
+            }
+            m.appendReplacement(out, Matcher.quoteReplacement(replacement));
+        }
+        m.appendTail(out);
+        return out.toString();
+    }
+
+    private String rewriteClearSets(String code) {
+        Matcher m = CLEAR_SET.matcher(code);
+        StringBuilder out = new StringBuilder();
+        while (m.find()) {
+            String indent = m.group(1);
+            String symbol = m.group(2);
+            int offset = Integer.parseInt(m.group(3));
+            int size = Integer.parseInt(m.group(4));
+            long unit = unitMask(size);
+            long keep = parse(m.group(5));
+            long set = parse(m.group(6));
+            long cleared = ~keep & ~set & unit;
+            List<Field> zeros = cleared == 0 ? new ArrayList<>() : covering(symbol, offset, size, cleared, unit, keep);
+            List<Field> ones = covering(symbol, offset, size, set, unit, set);
+            String replacement = m.group(0);
+            if (zeros != null && ones != null && (keep & ~unit) == 0) {
+                StringBuilder lines = new StringBuilder();
+                for (Field f : zeros) {
+                    lines.append(indent).append(symbol).append('.').append(f.name).append(" = 0;\n");
+                }
+                for (Field f : ones) {
+                    long value = (1L << f.bits) - 1;
+                    lines.append(indent).append(symbol).append('.').append(f.name).append(" = ")
+                        .append(value < 10 ? Long.toString(value) : "0x" + Long.toHexString(value)).append(";\n");
+                }
+                replacement = lines.substring(0, lines.length() - 1);
                 rewrites++;
             }
             m.appendReplacement(out, Matcher.quoteReplacement(replacement));
