@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:11:58 UTC 2026
+// Generated: Fri Nov 27 03:14:09 UTC 2026
 
 
 //
@@ -3374,7 +3374,7 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
   byte bVar1;
   undefined4 uVar2;
   uint uVar3;
-  undefined1 *puVar4;
+  byte *pbVar4;
   
   if (reflash_transfer_state.buffer_write_enabled_flag == 0) {
     data_transfer_buffer_status = 0;
@@ -3393,10 +3393,10 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
     reflash_transfer_state.byte_count = (word)(uVar3 + param_3);
     if (((uVar3 + param_3 & 0xffff) < 0x1001) &&
        (cm848_serviceSupervisorWatchdog(), (param_3 & 0xffff) != 0)) {
-      puVar4 = (undefined1 *)(param_1 + -1);
+      pbVar4 = (byte *)(param_1 + -1);
       do {
-        puVar4 = puVar4 + 1;
-        (&DAT_003fdc3a)[data_transfer_write_index] = *puVar4;
+        pbVar4 = pbVar4 + 1;
+        (&boot_data_transfer_ring_buffer)[data_transfer_write_index] = *pbVar4;
         uVar3 = data_transfer_write_index + 1;
         data_transfer_write_index = (short)uVar3 + (short)((int)(uVar3 & 0xffff) >> 0xc) * -0x1000;
         param_3 = param_3 + 0xffff;
@@ -3462,13 +3462,14 @@ void cm848_fillFlashProgramPageBuffer(void)
   if ((uVar2 & 0xff) != 0x40) {
     uVar4 = 0;
     do {
-      (&DAT_003fec3a)[uVar4] = 0xff;
+      boot_flash_program_page_buffer[uVar4] = 0xff;
       mpc555_sciPollDuringEepromWrite();
       uVar4 = uVar4 + 1 & 0xff;
     } while (uVar4 < 0x40);
   }
   for (; uVar1 < uVar3; uVar1 = uVar1 + 1 & 0xff) {
-    (&DAT_003fec3a)[uVar1] = (&DAT_003fdc3a)[data_transfer_read_index];
+    boot_flash_program_page_buffer[uVar1] =
+         (&boot_data_transfer_ring_buffer)[data_transfer_read_index];
     uVar4 = data_transfer_read_index + 1;
     data_transfer_read_index = (short)uVar4 + (short)((int)(uVar4 & 0xffff) >> 0xc) * -0x1000;
     mpc555_sciPollDuringEepromWrite();
@@ -6350,9 +6351,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -10929,14 +10930,14 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
-  dword exit_time_base_low;
-  int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
   word current_interrupt_mask;
   byte interrupt_code;
+  uint entry_time_base_low;
+  dword exit_time_base_low;
+  int entry_time_base_high;
   
   do {
     entry_time_base_high = TBUr;
@@ -63057,7 +63058,7 @@ void cm848_initializeSignedSensorChannel
     goto LAB_0050119c;
   }
   if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
-    if ((*(ushort *)(&DAT_003fda58 + iVar7 * 2) & uVar9) != 0) {
+    if ((sensor_channel_default_value_enable_bits_cal[iVar7] & uVar9) != 0) {
       wVar4 = configuration_pointer->default_value;
       filter_state_pointer->accumulator = (int)(short)wVar4 << 0x10;
       (&sensor_channel_filtered_output)[channel_index] = wVar4;
@@ -63664,7 +63665,7 @@ void cm848_initializeUnsignedSensorChannel
     goto LAB_005022a4;
   }
   if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
-    if ((*(ushort *)(&DAT_003fda58 + channel_word_index * 2) & sensor_value) != 0) {
+    if ((sensor_channel_default_value_enable_bits_cal[channel_word_index] & sensor_value) != 0) {
       uVar1 = configuration_pointer->default_value;
       filter_state_pointer->accumulator = (uint)uVar1 << 0x10;
       (&sensor_channel_filtered_output)[channel_index] = uVar1;
@@ -66943,7 +66944,7 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       load_histogram_total_sample_count_cal = 0;
       uVar9 = 0;
       do {
-        (&DAT_003fde4e)[uVar9] = 0;
+        load_histogram_bin_counts_cal[uVar9] = 0;
         uVar9 = uVar9 + 1 & 0xff;
       } while (uVar9 < 0x52);
       uVar9 = 0;
@@ -67033,7 +67034,7 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       if (uVar10 <= uVar10 + 7) {
         uVar5 = uVar10 + 7;
         do {
-          uVar7 = uVar7 + (&DAT_003fde4e)[uVar10];
+          uVar7 = uVar7 + load_histogram_bin_counts_cal[uVar10];
           uVar10 = uVar10 + 1 & 0xff;
         } while (uVar10 <= uVar5);
       }
@@ -67042,12 +67043,14 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
                  (ulonglong)load_histogram_total_sample_count_cal);
       uVar9 = uVar9 + 1 & 0xff;
     } while (uVar9 < 10);
-    DAT_003fdfac = (undefined2)
-                   (CONCAT44((int)((ulonglong)DAT_003fdf8e * 0x6400 >> 0x20),DAT_003fdf8e * 0x6400)
-                   / (ulonglong)load_histogram_total_sample_count_cal);
-    DAT_003fdfae = (undefined2)
-                   (CONCAT44((int)((ulonglong)DAT_003fdf92 * 0x6400 >> 0x20),DAT_003fdf92 * 0x6400)
-                   / (ulonglong)load_histogram_total_sample_count_cal);
+    percent_time_in_load_histogram_bin_80_cal =
+         (word)(CONCAT44((int)((ulonglong)load_histogram_bin_counts_cal[0x50] * 0x6400 >> 0x20),
+                         load_histogram_bin_counts_cal[0x50] * 0x6400) /
+               (ulonglong)load_histogram_total_sample_count_cal);
+    percent_time_in_load_histogram_bin_81_cal =
+         (word)(CONCAT44((int)((ulonglong)load_histogram_bin_counts_cal[0x51] * 0x6400 >> 0x20),
+                         load_histogram_bin_counts_cal[0x51] * 0x6400) /
+               (ulonglong)load_histogram_total_sample_count_cal);
   }
   return;
 }
@@ -97294,7 +97297,7 @@ void cm848_monitorIntakeAirHeaterPerformance(void)
         }
         uVar8 = (uint)intake_air_heater_performance_test_sample_ring_index;
         intake_air_heater_performance_test_sample_count = uVar4;
-        *(word *)(&DAT_003fd1f6 + uVar8 * 2) = wVar3;
+        intake_air_heater_performance_test_sample_ring[uVar8] = wVar3;
         wVar1 = intake_air_heater_preheat_remaining_ticks;
         wVar3 = intake_air_heater_performance_test_preheat_end_remaining_ticks;
         if (2 < uVar8) {
@@ -97307,7 +97310,7 @@ void cm848_monitorIntakeAirHeaterPerformance(void)
           uVar8 = 1;
           uVar10 = 0;
           do {
-            uVar10 = uVar10 + *(ushort *)(&DAT_003fd1f6 + uVar8 * 2);
+            uVar10 = uVar10 + intake_air_heater_performance_test_sample_ring[uVar8];
             uVar8 = uVar8 + 1 & 0xff;
           } while (uVar8 < 4);
           uVar8 = (uVar10 & 0xffff) / 3;
