@@ -5172,7 +5172,7 @@ address,name,type,comment
 0x0040b0ec,transmission_control_flags.axle_ratio_learning_flags,,
 0x0040b0ed,transmission_control_flags.limp_home_flags_1,,
 0x0040b0ee,transmission_control_flags.limp_home_flags_2,,
-0x0040b0ef,transmission_control_flags.limp_home_flags_3,,
+0x0040b0ef,transmission_control_flags.governor_sensor_circuit_limp,,
 0x0040b0f0,transmission_control_flags.governor_sensor_offset_limp,,
 0x0040b0f1,transmission_control_flags.low_range_boost_flags,,
 0x0040b0f2,transmission_shift_strategy_flags,transmission_shift_strategy_flags_t,e2m 8C19 +A..+11 (transmission_shift_strategy_flags_t): the WOT flags, the anti-hunt / detent flags, the actuator test and service tool test requests, the limp-home 3rd gear / temperature flags (was protection_status_flags_t_0040b0f2)

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 13:54:17 UTC 2026
+// Generated: Fri Nov 27 13:56:50 UTC 2026
 
 
 //
@@ -37049,7 +37049,7 @@ LAB_00034278:
       transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 8;
     }
   }
-  if ((((transmission_control_flags.limp_home_flags_3 & 1) != 0) ||
+  if (((transmission_control_flags.governor_sensor_circuit_limp != 0) ||
       (transmission_control_flags.governor_sensor_offset_limp != 0)) ||
      (transmission_control_flags.gcst_circuit_limp != 0)) {
     transmission_shift_strategy_flags.limp_home_and_temperature_flags =
@@ -37468,11 +37468,10 @@ void cm848_updateTransmissionLimpHomeFlags(void)
   if (((fault_detected_cal.transmission_governor_pressure_high_error == 0) &&
       (fault_detected_cal.transmission_governor_pressure_low_error == 0)) &&
      (governor_pressure_rationality_monitor_state != DIAGNOSTIC_MONITOR_STATE_FAILED)) {
-    transmission_control_flags.limp_home_flags_3 =
-         transmission_control_flags.limp_home_flags_3 & 0xfe;
+    transmission_control_flags.governor_sensor_circuit_limp = 0;
   }
   else {
-    transmission_control_flags.limp_home_flags_3 = transmission_control_flags.limp_home_flags_3 | 1;
+    transmission_control_flags.governor_sensor_circuit_limp = 1;
   }
   if (fault_detected_cal.transmission_variable_force_solenoid_battery_driver_low_control_error == 0)
   {

@@ -748,7 +748,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
         `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and
         `transmission_control_flags_t.limp_home_flags_4` (then `protection_status_flags_t.status_flags` /
         `protection_condition_flags_t.fault_state_flags`).
-        - **`limp_home_flags_4` is bitfields again (PR #56):** one field per e2m RE_Limp_Flags4 bit; all 12 uses
+        - **`limp_home_flags_3` / `_4` are bitfields (PR #56):** one field per e2m RE_Limp_Flags3 / 4 bit; all 16 uses
           print by name (`transmission_control_flags.output_speed_sensor_limp = 1`).
         - **`wide_open_throttle_flags` stays a byte:** most of its updates go through merged temporaries
           (`bVar3 = flags & 0xdf; ... flags = bVar3 | 0x40;`), which stay pieces, and bits 0x08 / 0x10 are unproven.
