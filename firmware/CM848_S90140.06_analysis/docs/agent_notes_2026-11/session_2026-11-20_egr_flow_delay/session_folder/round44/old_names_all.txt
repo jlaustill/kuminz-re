@@ -1,0 +1,5 @@
+governor_override_fuel_decay
+governor_override_fuel_threshold
+cruise_speed_target_min
+fuel_demand_enable_sync_flag_shadow+2
+fuel_demand_enable_sync_flag_shadow_2

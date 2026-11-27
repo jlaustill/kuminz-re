@@ -1,0 +1,5 @@
+pieces total 494 -> 494 (16 removed, 16 added)
+  +6  j1708_receive_byte_pointer  (0 -> 6)
+  +5  j1708_transmit_byte_pointer  (0 -> 5)
+  +4  j1708_receive_buffer_write_pointer  (0 -> 4)
+  +1  j1708_receive_buffer_read_pointer  (0 -> 1)

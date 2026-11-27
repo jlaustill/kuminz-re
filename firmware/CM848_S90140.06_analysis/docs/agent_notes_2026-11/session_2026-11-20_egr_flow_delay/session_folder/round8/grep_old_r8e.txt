@@ -1,0 +1,5 @@
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:35449: ...   cm848_processProtectionRateLimitFlags) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:35519: ...   cm848_calculateProtectionThresholdLimit) */
+work/tasks/025-cm848-naming-wave-followups.md:402: ...engine / output ratio enters the per-gear window (cm848_processProtectionRateLimitFlags) and stands in for ETC1 SPN 5
+work/tasks/027-cm848-naming-wave-2-followups.md:66: ...- The RPM escalation trigger chain (protection_rpm_threshold = 3075 rpm / protection_rpm_p
+work/tasks/027-cm848-naming-wave-2-followups.md:81: ...pressure_gear1_rpm_peak / gear2_rpm_peak; related protection_rpm_threshold ...

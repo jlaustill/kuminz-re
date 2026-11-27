@@ -1,0 +1,11 @@
+cm848: round 12 closing (2) - stage C in the docs, the logs, verify
+
+- **Docs:** task 046, the PR body and the session README describe stage C (the remaining fuel metering names, the
+  plate, the stale text).
+- **Archive:** the large-files tarball adds build_r12c.log and the final verify_round12.log.
+- **Checks on the final tree:**
+  - ./analyze.sh verify: two byte-identical builds; the .cpp matches 5698e89 except its timestamp.
+  - lookup_tables.py (0 sizing problems), test_lookup_tables.py / test_disasm_tools.py / test_e2m_block_addresses.py /
+    test_rename_waves.py pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

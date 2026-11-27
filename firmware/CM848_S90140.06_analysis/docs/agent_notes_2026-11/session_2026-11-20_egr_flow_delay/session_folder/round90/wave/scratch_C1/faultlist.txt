@@ -1,0 +1,407 @@
+014872: link.w	%a6, #65532
+014876: movem.l	%d2-%d5/%a0-%a5, -(%sp)
+01487a: move.l	#8389940, %a4
+014880: move.l	#8415172, %a5
+014886: .word 0x40e7  (undecodable)
+014888: ori.w	#1792, #12308   [manual]
+01488e: move.l	#8413184, %a0
+014894: .word 0x3030  (undecodable)
+014896: andi.b	#20, %d0   [manual]
+01489a: move.l	#8413248, %a0
+0148a0: .word 0x8070  (undecodable)
+0148a2: move.b	%d0, %d1
+0148a4: move.w	%d0, (65532,%a6)
+0148a8: move.w	(%a4), %d0
+0148aa: move.l	#8413248, %a0
+0148b0: clr.w	0(%a0,%d0.w)   [manual]
+0148b4: .word 0x46df  (undecodable)
+0148b6: moveq	#1, %d7   [manual]
+0148b8: clr.w	-2(%a6)   [manual]
+0148bc: move.w	(65532,%a6), %d0
+0148c0: and.w	%d7, %d0
+0148c2: beq	$286
+0148c6: move.w	(%a4), %d2
+0148c8: lsl.w	#4, %d2
+0148ca: add.w	(65534,%a6), %d2
+0148ce: move.l	#8414572, %a0
+0148d4: .word 0x3430  (undecodable)
+0148d6: move.l	%d0, %d1
+0148d8: cmpi.w	#125, %d2
+0148dc: bcc	$4c0
+0148e0: move.w	(%a4), %d0
+0148e2: move.l	#8413312, %a0
+0148e8: .word 0x3030  (undecodable)
+0148ea: andi.b	#71, %d0   [manual]
+0148ee: bne	$4ae
+0148f2: cmpi.b	#31, $8058d4
+0148fa: beq	$4a2
+0148fe: move.w	(%a4), %d0
+014900: move.l	#8415932, %a0
+014906: .word 0x3030  (undecodable)
+014908: andi.b	#71, %d0   [manual]
+01490c: beq	$490
+014910: move.w	%d2, %d0
+014912: move.w	%d0, %d1
+014914: lsl.w	#2, %d0
+014916: add.w	%d1, %d0
+014918: move.l	#8411685, %a0
+01491e: cmpi.b	#255, 0(%a0,%d0.w)   [manual]
+014924: bcc	$12
+014926: move.w	%d2, %d0
+014928: move.w	%d0, %d1
+01492a: lsl.w	#2, %d0
+01492c: add.w	%d1, %d0
+01492e: move.l	#8411685, %a0
+014934: addq.b	#1, ea6/0   [manual]
+014936: andi.b	#124, %d0   [manual]
+01493a: ori.l	#1503545904, %d0   [manual]
+014940: move.l	%d0, %d0
+014942: bne	$1e8
+014946: move.w	%d2, -(%sp)
+014948: jsr	$14720
+01494e: addq.l	#2, %a7   [manual]
+014950: move.w	%d2, %d0
+014952: move.w	%d0, %d1
+014954: lsl.w	#2, %d0
+014956: add.w	%d1, %d0
+014958: move.l	#8411684, %a0
+01495e: .word 0x11bc  (undecodable)
+014960: ori.b	#0, %d3   [manual]
+014964: move.w	%d2, %d0
+014966: move.w	%d0, %d1
+014968: lsl.w	#2, %d0
+01496a: add.w	%d1, %d0
+01496c: move.l	#8411676, %a0
+014972: .word 0x21b9  (undecodable)
+014974: ori.l	#3181642240, %d0   [manual]
+01497a: move.w	%d2, %d0
+01497c: move.w	%d0, %d1
+01497e: lsl.w	#2, %d0
+014980: add.w	%d1, %d0
+014982: move.l	#8411680, %a0
+014988: clr.l	0(%a0,%d0.w)   [manual]
+01498c: clr.b	%d4   [manual]
+01498e: clr.b	%d3   [manual]
+014990: moveq	#0, %d0   [manual]
+014992: move.w	%d2, %d0
+014994: move.l	%d0, %d1
+014996: add.l	%d0, %d0
+014998: add.l	%d1, %d0
+01499a: .word 0x41f5  (undecodable)
+01499c: eori.b	#72, %d0   [manual]
+0149a0: bra	$c6
+0149a4: addq.b	#1, %d3   [manual]
+0149a6: moveq	#0, %d0   [manual]
+0149a8: move.b	$8058f4, %d0
+0149ae: moveq	#0, %d1   [manual]
+0149b0: move.b	%d3, %d1
+0149b2: subq.l	#1, %d1   [manual]
+0149b4: cmp.l	%d1, %d0
+0149b6: bne	$6
+0149b8: moveq	#1, %d4   [manual]
+0149ba: bra	$ac
+0149be: moveq	#0, %d0   [manual]
+0149c0: move.b	%d3, %d0
+0149c2: move.l	#8411380, %a0
+0149c8: .word 0x1030  (undecodable)
+0149ca: ori.b	#128, %d0   [manual]
+0149ce: ori.b	#255, %d0   [manual]
+0149d2: moveq	#0, %d1   [manual]
+0149d4: move.w	%d2, %d1
+0149d6: cmp.l	%d1, %d0
+0149d8: bne	$8e
+0149dc: moveq	#1, %d4   [manual]
+0149de: tst.b	4(%a2)   [manual]
+0149e2: beq	$36
+0149e4: move.w	(2,%a2), %d0
+0149e8: andi.w	#64, %d0   [manual]
+0149ec: bne	$2c
+0149ee: moveq	#0, %d6   [manual]
+0149f0: move.b	(4,%a2), %d6
+0149f4: asr.l	#3, %d6
+0149f6: move.b	(4,%a2), %d0
+0149fa: andi.b	#7, %d0   [manual]
+0149fe: moveq	#1, %d5   [manual]
+014a00: lsl.b	%d0, %d5
+014a02: moveq	#0, %d0   [manual]
+014a04: move.b	%d6, %d0
+014a06: move.l	#398154, %a0
+014a0c: .word 0x1030  (undecodable)
+014a0e: ori.b	#5, %d0   [manual]
+014a12: beq	$6
+014a14: subq.w	#1, $80599a   [manual]
+014a1a: subq.b	#1, $8058f4   [manual]
+014a20: subq.w	#1, $805954   [manual]
+014a26: move.w	$805996, %d0
+014a2c: move.l	#8411380, %a0
+014a32: .word 0x1030  (undecodable)
+014a34: ori.b	#0, %d0   [manual]
+014a38: move.b	%d3, %d1
+014a3a: move.l	#8411380, %a0
+014a40: .word 0x1180  (undecodable)
+014a42: move.b	%d0, %d0
+014a44: move.w	$805996, %d0
+014a4a: subq.w	#1, $805996   [manual]
+014a50: move.l	#8411476, %a0
+014a56: .word 0x3030  (undecodable)
+014a58: andi.b	#0, %d0   [manual]
+014a5c: move.b	%d3, %d1
+014a5e: move.l	#8411476, %a0
+014a64: .word 0x3180  (undecodable)
+014a66: move.b	%d0, %d1
+014a68: tst.b	%d4   [manual]
+014a6a: beq	$ff38
+014a6e: addq.b	#1, $8058d4   [manual]
+014a74: addq.w	#1, $805914   [manual]
+014a7a: addq.w	#1, $805994   [manual]
+014a80: move.w	$805994, %d0
+014a86: move.l	#8411348, %a0
+014a8c: .word 0x1182  (undecodable)
+014a8e: ori.b	#0, %d0   [manual]
+014a92: move.w	%d2, %d0
+014a94: move.l	%d0, %d1
+014a96: add.l	%d0, %d0
+014a98: add.l	%d1, %d0
+014a9a: .word 0x41f5  (undecodable)
+014a9c: eori.b	#72, %d0   [manual]
+014aa0: move.w	$805994, %d0
+014aa6: move.l	#8411412, %a0
+014aac: .word 0x3192  (undecodable)
+014aae: andi.b	#42, %d0   [manual]
+014ab2: ori.b	#112, %d4   [manual]
+014ab6: moveq	#0, %d0   [manual]
+014ab8: move.w	%d2, %d0
+014aba: move.l	%d0, %d1
+014abc: add.l	%d0, %d0
+014abe: add.l	%d1, %d0
+014ac0: .word 0x3035  (undecodable)
+014ac2: eori.b	#64, %d2   [manual]
+014ac6: ori.w	#26134, %d0   [manual]
+014aca: move.b	%d2, %d0
+014acc: ori.b	#128, %d0   [manual]
+014ad0: move.w	%d0, -(%sp)
+014ad2: pea	$80bc8c   [manual]
+014ad8: jsr	$1bfa2
+014ade: addq.l	#6, %a7   [manual]
+014ae0: moveq	#0, %d0   [manual]
+014ae2: move.w	%d2, %d0
+014ae4: move.l	%d0, %d1
+014ae6: add.l	%d0, %d0
+014ae8: add.l	%d1, %d0
+014aea: .word 0x41f5  (undecodable)
+014aec: eori.b	#72, %d0   [manual]
+014af0: move.w	(2,%a0), %d0
+014af4: andi.w	#8192, %d0   [manual]
+014af8: bne	$2c
+014afa: moveq	#0, %d6   [manual]
+014afc: move.b	(4,%a2), %d6
+014b00: asr.l	#3, %d6
+014b02: move.b	(4,%a2), %d0
+014b06: andi.b	#7, %d0   [manual]
+014b0a: moveq	#1, %d5   [manual]
+014b0c: lsl.b	%d0, %d5
+014b0e: moveq	#0, %d0   [manual]
+014b10: move.b	%d6, %d0
+014b12: move.l	#398154, %a0
+014b18: .word 0x1030  (undecodable)
+014b1a: ori.b	#5, %d0   [manual]
+014b1e: beq	$6
+014b20: addq.w	#1, $805998   [manual]
+014b26: addq.w	#1, $80599c   [manual]
+014b2c: move.l	#8411550, %a0
+014b32: cmpi.b	#255, 0(%a0,%d2.w)   [manual]
+014b38: bcc	$264
+014b3c: move.l	#8411550, %a0
+014b42: addq.b	#1, ea6/0   [manual]
+014b44: move.l	%d0, %d0
+014b46: bra	$256
+014b4a: move.w	(%a4), %d0
+014b4c: move.l	#8413312, %a0
+014b52: .word 0x3030  (undecodable)
+014b54: andi.b	#71, %d0   [manual]
+014b58: beq	$244
+014b5c: move.w	(%a4), %d2
+014b5e: lsl.w	#4, %d2
+014b60: add.w	(65534,%a6), %d2
+014b64: move.l	#8414572, %a0
+014b6a: .word 0x3430  (undecodable)
+014b6c: move.l	%d0, %d1
+014b6e: cmpi.w	#125, %d2
+014b72: bcc	$22a
+014b76: move.w	(%a4), %d0
+014b78: move.l	#8415932, %a0
+014b7e: .word 0x3030  (undecodable)
+014b80: andi.b	#71, %d0   [manual]
+014b84: beq	$218
+014b88: move.l	#8411550, %a0
+014b8e: tst.b	0(%a0,%d2.w)   [manual]
+014b92: beq	$20a
+014b96: move.l	#8411550, %a0
+014b9c: subq.b	#1, ea6/0   [manual]
+014b9e: move.l	%d0, %d0
+014ba0: move.l	#8411550, %a0
+014ba6: tst.b	0(%a0,%d2.w)   [manual]
+014baa: bne	$1f2
+014bae: move.w	%d2, %d0
+014bb0: move.w	%d0, %d1
+014bb2: lsl.w	#2, %d0
+014bb4: add.w	%d1, %d0
+014bb6: move.l	#8411684, %a0
+014bbc: .word 0x11bc  (undecodable)
+014bbe: ori.b	#0, %d2   [manual]
+014bc2: move.w	%d2, %d0
+014bc4: move.w	%d0, %d1
+014bc6: lsl.w	#2, %d0
+014bc8: add.w	%d1, %d0
+014bca: move.l	#8411676, %a0
+014bd0: .word 0x21b9  (undecodable)
+014bd2: ori.l	#3181642240, %d0   [manual]
+014bd8: clr.b	%d4   [manual]
+014bda: clr.b	%d3   [manual]
+014bdc: moveq	#0, %d0   [manual]
+014bde: move.w	%d2, %d0
+014be0: move.l	%d0, %d1
+014be2: add.l	%d0, %d0
+014be4: add.l	%d1, %d0
+014be6: .word 0x41f5  (undecodable)
+014be8: eori.b	#72, %d0   [manual]
+014bec: bra	$e2
+014bf0: addq.b	#1, %d3   [manual]
+014bf2: moveq	#0, %d0   [manual]
+014bf4: move.b	$8058d4, %d0
+014bfa: moveq	#0, %d1   [manual]
+014bfc: move.b	%d3, %d1
+014bfe: subq.l	#1, %d1   [manual]
+014c00: cmp.l	%d1, %d0
+014c02: bne	$6
+014c04: moveq	#1, %d4   [manual]
+014c06: bra	$c8
+014c0a: moveq	#0, %d0   [manual]
+014c0c: move.b	%d3, %d0
+014c0e: move.l	#8411348, %a0
+014c14: .word 0x1030  (undecodable)
+014c16: ori.b	#128, %d0   [manual]
+014c1a: ori.b	#255, %d0   [manual]
+014c1e: moveq	#0, %d1   [manual]
+014c20: move.w	%d2, %d1
+014c22: cmp.l	%d1, %d0
+014c24: bne	$aa
+014c28: moveq	#1, %d4   [manual]
+014c2a: tst.b	4(%a2)   [manual]
+014c2e: beq	$52
+014c30: move.w	(2,%a2), %d0
+014c34: andi.w	#64, %d0   [manual]
+014c38: bne	$12
+014c3a: move.b	%d2, %d0
+014c3c: move.w	%d0, -(%sp)
+014c3e: pea	$80bc8c   [manual]
+014c44: jsr	$1bfa2
+014c4a: addq.l	#6, %a7   [manual]
+014c4c: move.w	(2,%a2), %d0
+014c50: andi.w	#8192, %d0   [manual]
+014c54: bne	$2c
+014c56: moveq	#0, %d6   [manual]
+014c58: move.b	(4,%a2), %d6
+014c5c: asr.l	#3, %d6
+014c5e: move.b	(4,%a2), %d0
+014c62: andi.b	#7, %d0   [manual]
+014c66: moveq	#1, %d5   [manual]
+014c68: lsl.b	%d0, %d5
+014c6a: moveq	#0, %d0   [manual]
+014c6c: move.b	%d6, %d0
+014c6e: move.l	#398154, %a0
+014c74: .word 0x1030  (undecodable)
+014c76: ori.b	#5, %d0   [manual]
+014c7a: beq	$6
+014c7c: subq.w	#1, $805998   [manual]
+014c82: subq.b	#1, $8058d4   [manual]
+014c88: subq.w	#1, $805914   [manual]
+014c8e: move.w	$805994, %d0
+014c94: move.l	#8411348, %a0
+014c9a: .word 0x1030  (undecodable)
+014c9c: ori.b	#0, %d0   [manual]
+014ca0: move.b	%d3, %d1
+014ca2: move.l	#8411348, %a0
+014ca8: .word 0x1180  (undecodable)
+014caa: move.b	%d0, %d0
+014cac: move.w	$805994, %d0
+014cb2: subq.w	#1, $805994   [manual]
+014cb8: move.l	#8411412, %a0
+014cbe: .word 0x3030  (undecodable)
+014cc0: andi.b	#0, %d0   [manual]
+014cc4: move.b	%d3, %d1
+014cc6: move.l	#8411412, %a0
+014ccc: .word 0x3180  (undecodable)
+014cce: move.b	%d0, %d1
+014cd0: tst.b	%d4   [manual]
+014cd2: beq	$ff1c
+014cd6: cmpi.b	#31, $8058f4
+014cde: beq	$b8
+014ce2: addq.b	#1, $8058f4   [manual]
+014ce8: addq.w	#1, $805954   [manual]
+014cee: addq.w	#1, $805996   [manual]
+014cf4: move.w	$805996, %d0
+014cfa: move.l	#8411380, %a0
+014d00: .word 0x1182  (undecodable)
+014d02: ori.b	#0, %d0   [manual]
+014d06: move.w	%d2, %d0
+014d08: move.l	%d0, %d1
+014d0a: add.l	%d0, %d0
+014d0c: add.l	%d1, %d0
+014d0e: .word 0x41f5  (undecodable)
+014d10: eori.b	#72, %d0   [manual]
+014d14: move.w	(%a0), %d0
+014d16: move.w	$805996, %d1
+014d1c: move.l	#8411476, %a0
+014d22: .word 0x3180  (undecodable)
+014d24: move.b	%d0, %d1
+014d26: moveq	#0, %d0   [manual]
+014d28: move.w	%d2, %d0
+014d2a: move.l	%d0, %d1
+014d2c: add.l	%d0, %d0
+014d2e: add.l	%d1, %d0
+014d30: tst.b	4(%a5,%d0.l)   [manual]
+014d34: beq	$62
+014d36: moveq	#0, %d0   [manual]
+014d38: move.w	%d2, %d0
+014d3a: move.l	%d0, %d1
+014d3c: add.l	%d0, %d0
+014d3e: add.l	%d1, %d0
+014d40: .word 0x3035  (undecodable)
+014d42: eori.b	#64, %d2   [manual]
+014d46: move.l	%d0, %d0
+014d48: bne	$4e
+014d4a: moveq	#0, %d6   [manual]
+014d4c: move.b	(4,%a3), %d6
+014d50: asr.l	#3, %d6
+014d52: move.b	(4,%a3), %d0
+014d56: andi.b	#7, %d0   [manual]
+014d5a: moveq	#1, %d5   [manual]
+014d5c: lsl.b	%d0, %d5
+014d5e: moveq	#0, %d0   [manual]
+014d60: move.b	%d6, %d0
+014d62: move.l	#398154, %a0
+014d68: .word 0x1030  (undecodable)
+014d6a: ori.b	#5, %d0   [manual]
+014d6e: beq	$28
+014d70: addq.w	#1, $80599a   [manual]
+014d76: cmpi.b	#31, $80bca8
+014d7e: bcc	$18
+014d80: moveq	#0, %d0   [manual]
+014d82: addq.b	#1, $80bca8   [manual]
+014d88: move.b	$80bca8, %d0
+014d8e: move.l	#8436904, %a0
+014d94: .word 0x1182  (undecodable)
+014d96: ori.b	#121, %d0   [manual]
+014d9a: ori.l	#1503452743, %d0   [manual]
+014da0: addq.w	#1, -2(%a6)   [manual]
+014da4: cmpi.w	#16, (65534,%a6)
+014daa: bcs	$fb10
+014dae: move.w	(%a4), %d0
+014db0: move.l	#8413312, %a0
+014db6: .word 0x31ae  (undecodable)
+014db8: .word 0xfffc  (undecodable)
+014dba: andi.b	#238, %d0   [manual]
+014dbe: move.w	#65492, (%a6)+
+014dc2: unlk	%a6
+014dc4: rts

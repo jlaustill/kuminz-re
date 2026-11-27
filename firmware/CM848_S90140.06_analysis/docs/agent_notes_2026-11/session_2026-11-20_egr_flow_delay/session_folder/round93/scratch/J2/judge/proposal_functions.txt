@@ -1,0 +1,308 @@
+====================================================================================================
+address: 0x1fdc0
+current_name: cm550_j1939MessageTypeCounter
+proposed_name: cm550_recordJ1922ControlOccurrence
+role: Records one ended engine control period of the given mode in the J1922 monitor's counts and hour stamps.
+discriminator: The only writer of the e2m 1101 JC22* records 0x804164-0x80417b (0x1fd6c only clears them); it reads the J1922 monitor bit 0x80, not the J1939 monitor bit 0x800.
+relation: standalone
+plate_comment: Records one ended engine control period for the J1922 monitor (algorithm_enable_flags_2_cal.j1922_monitor_enable, e2m JC22MRSW): for control mode 1 (speed) / 2 (torque) / 3 (limit) it adds 1 to the total count 0x804164 (e2m 1101 JC22CU) and to the mode's count and stores key_on_hour_meter in the mode's time and the last control time 0x804166. Called when a J1922 request changes and, without a network type test, whenever cm550_resetEngineTsc1Request ends a request. CM848 has no counterpart.
+evidence: 0x1fdc6 flags 2 & 0x80, else rts; argument 1 -> 0x1fdec (0x804164 + 1, 0x804170 + 1, hour meter to 0x804172 / 0x804166), 2 -> 0x1fe08 (0x804176 / 0x804178), 3 -> 0x1fe24 (0x80416a / 0x80416c); e2m 1101 = EEPROM 0x65A -> 0x804164. Callers: jsr at 0x231fc and 0x234c2.
+confidence: high
+====================================================================================================
+address: 0x1ff38
+current_name: cm550_engineRunTimeHistogramAccumulator
+proposed_name: cm550_runJ1939PeriodicTransmitQueues
+role: Runs the two J1939 periodic transmit queues once per 10 ms and calls the builders of the due entries.
+discriminator: The only code that walks the entry tables 0x80096e / 0x800a36 and calls their builders; the other reader of the J1939 enable bit (0x212b2) drains the receive ring.
+relation: counterpart
+cm848_address: 0x538d3c
+cm848_current_name: cm848_runJ1939PeriodicTransmitQueues
+plate_comment: The 10 ms J1939 periodic transmit scheduler, second call of the odd frame task set 0x1b504. With algorithm_enable_flags_11_cal.j1939_communication_enable set it runs queue 0 (the engine node: up to 20 10-byte entries at 0x80096e) while bit 2 of the broadcast enable word 0x80aa12 is set (e2m JCEGBCEA) and queue 1 (the retarder node: up to 10 at 0x800a36) while bit 3 is set (JCRDBCEA). CM848's counterpart also tests the DM13 broadcast flags.
+evidence: 0x1ff4e flags 11 & 8; 0x1ff5a (0x80aa12) & 4: entries from 0x80096e, count 0x800a9a, (4,a2) == tick -> add (2,a2), jsr ((6,a2)), step 10; 0x1ff92 & 8: 0x800a36 / 0x800a9b. Caller: jsr at 0x1b50a. CM848 0x538d78-0x538d88 adds the DM13 test.
+confidence: high
+====================================================================================================
+address: 0x212b2
+current_name: mc68k_FUN_000212b2
+proposed_name: mc68k_dispatchJ1939ReceivedMessages
+role: Drains the J1939 CAN receive ring within a time budget and calls the receive handler registered for each PGN key.
+discriminator: The only reader of the ring pointers 0x80d9b6 / 0x80d9ba and the only code that scans j1939_receive_handler_table; it reads CTM4 0xfff404 and writes the 82527 at 0xffd810 + 16 n, hence mc68k_.
+relation: counterpart
+cm848_address: 0x538ef4
+cm848_current_name: cm848_dispatchJ1939ReceivedMessages
+plate_comment: J1939 receive dispatcher, first call of the even frame task set 0x1b4d8. With algorithm_enable_flags_11_cal.j1939_communication_enable set it drains the CAN receive ring (18-byte records at 0x80d72e) for at most 250 CTM4 time base counts: the PGN key is record bytes 1-2 (the PDU specific byte cleared for a PDU1 frame to the engine's address or 0xFF), byte 3 goes to j1939_received_source_address, a source in the blocking table 0x80d9e0 (e2m JCSABLTB) is dropped, otherwise the handler registered in j1939_receive_handler_table gets the record. CM848's counterpart adds the DM13 hook and uses the TouCAN.
+evidence: 0x212ba reads CTM4 0xfff404, budget 250 (0x21406); key = record bytes 1-2 (0x212de-0x21336); blocking scan 0x21344-0x2136a; handler scan 0x21370-0x2139a (jsr ((2,a2))); ring step 18 (0x2139c); 0xfb to 0xffd810 + 16 n (0x213dc). Caller: jsr at 0x1b4d8.
+confidence: high
+====================================================================================================
+address: 0x2142c
+current_name: cm550_FUN_0002142c
+proposed_name: endRetarderShiftAssistAboveFuelDemandLimit
+role: Ends the retarder torque control request once the user fueling reaches the shift assist limit.
+discriminator: Of the three readers of the shift assist bit 0x1000 it is the periodic one: it compares fuel_demand_selected with 0x8089a8, writes only the retarder request state and parses no message.
+relation: twin
+cm848_address: 0x50aec0
+cm848_current_name: cm848_endRetarderShiftAssistAboveFuelDemandLimit
+plate_comment: With algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable set (e2m JCRDTXEA), the retarder in torque control (mode 2) from the transmission (control device 1) and the engine in speed control (mode 1) from the transmission, it ends the retarder request once the user fueling fuel_demand_selected (e2m FSDSFL) reaches the limit 0x8089a8 (JCEBSILM): retarder mode 0, torque limit 125, 0x80da8e / 0x80da90 cleared. First call of the odd frame task set 0x1b504. Twin of CM848 0x50aec0.
+evidence: 10 steps in the same order, constants 0x1000 / 2 / 1 / 1 / 1 / 125: 0x21432-0x21482 | 0x50aec4-0x50af50 (bit 0x1000, retarder mode == 2, retarder device == 1, engine mode == 1, engine device == 1, fueling >= limit, 4 stores). One caller each, directly before the periodic queue runner (jsr at 0x1b504 | cm848_phase_group_a_processing).
+confidence: high
+====================================================================================================
+address: 0x216c6
+current_name: cm550_FUN_000216c6
+proposed_name: handleJ1939WriteByParameterIdLongLengthService
+role: PGN 61184 service 0x45 handler: write by parameter ID with a 4-byte length.
+discriminator: Of the four write-by-parameter-ID handlers the one with a 4-byte length at data + 3 and offset 0; registered for service 0x45.
+relation: twin
+cm848_address: 0x50b298
+cm848_current_name: cm848_handleJ1939WriteByParameterIdLongLengthService
+plate_comment: PGN 61184 service 0x45 (registered by registerJ1939MemoryWriteServices): request bytes 1-2 the parameter ID and 3-6 the length, then the data - written at the ID's address (offset 0) through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b298.
+evidence: Same 3 steps, constants 1 / 2 / 3 / 4 / 0: memcpy(&id, data + 1, 2), memcpy(&length, data + 3, 4), worker(request, id, 0, length): 0x216d0-0x21708 | 0x50b2ac-0x50b2e4. Registered for service 0x45 at 0x21886 | 0x50b4f4.
+confidence: high
+====================================================================================================
+address: 0x21778
+current_name: cm550_FUN_00021778
+proposed_name: handleJ1939WriteByParameterIdLongOffsetService
+role: PGN 61184 service 0x49 handler: write by parameter ID with a 4-byte offset and a 4-byte length.
+discriminator: Of the four write-by-parameter-ID handlers the one with three copies (2 bytes at data + 1, 4 at + 3, 4 at + 7); registered for service 0x49.
+relation: twin
+cm848_address: 0x50b38c
+cm848_current_name: cm848_handleJ1939WriteByParameterIdLongOffsetService
+plate_comment: PGN 61184 service 0x49 (registered by registerJ1939MemoryWriteServices): request bytes 1-2 the parameter ID / 3-6 the offset / 7-10 the length, then the data - written at the ID's address + offset through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b38c.
+evidence: Same 4 steps: memcpy(&id, data + 1, 2), (&offset, data + 3, 4), (&length, data + 7, 4), worker(request, id, offset, length): 0x21782-0x217d2 | 0x50b3a0-0x50b3ec. Registered for service 0x49 at 0x218b6 | 0x50b534.
+confidence: high
+====================================================================================================
+address: 0x21872
+current_name: cm550_FUN_00021872
+proposed_name: registerJ1939MemoryWriteServices
+role: Registers the six PGN 61184 memory write service handlers.
+discriminator: Its six registrations are exactly the memory write services; the other registrars called by mc68k_initializeJ1939Datalink register other service IDs.
+relation: twin
+cm848_address: 0x50b4d8
+cm848_current_name: cm848_registerJ1939MemoryWriteServices
+plate_comment: From mc68k_initializeJ1939Datalink: registers the PGN 61184 memory write services 0x44 / 0x45 / 0x4b / 0x4d / 0x47 / 0x49 (handlers 0x2167e / 0x216c6 / 0x217de / 0x21826 / 0x21714 / 0x21778) with registerJ1939DiagnosticService. Twin of CM848 0x50b4d8: the same six services in the same order.
+evidence: Six registerJ1939DiagnosticService calls with the same IDs in the same order (0x44, 0x45, 0x4b, 0x4d, 0x47, 0x49): 0x2187a-0x218c0 | 0x50b4e4-0x50b540; each handler is the twin of CM550's. One caller each, the J1939 datalink initializer (jsr at 0x28e4a | cm848_j1939_system_init).
+confidence: high
+====================================================================================================
+address: 0x21920
+current_name: cm550_FUN_00021920
+proposed_name: cm550_buildJ1939LampStatusByte
+role: Builds the J1939 DM1 / DM2 lamp status byte from the lamp driver command byte.
+discriminator: It only reads the byte 0x80bcf6 and returns the lamp status bits 0x40 / 0x10 / 0x04 / 0x01; no other input, no store.
+relation: counterpart
+cm848_address: 0x50b5b4
+cm848_current_name: cm848_buildJ1939LampStatusByte
+plate_comment: Builds the DM1 / DM2 lamp status byte from the lamp driver command byte 0x80bcf6 (e2m 000E +28): 0x40 malfunction indicator and 0x01 protect for bit 4 (MLLP / LCEGPNLP), 0x10 red stop for bit 1 (LCSPLPEA), 0x04 amber warning for bit 6 (LCWNLPEA). Called by j1939HandlePgn65226Dm1ActiveDtc and cm550_previousDtcListBuilder. CM848's counterpart reads four lamp flags.
+evidence: 0x21928 bit 4 of (0x80bcf6) -> 0x40 (0x21934) and 0x01 (0x2194e); btst #1 -> 0x10 (0x2193c); btst #6 -> 0x04 (0x21946). Callers: jsr at 0x322f2 and 0x3243c. CM848 0x50b5b4 compares four flag words with 1.
+confidence: high
+====================================================================================================
+address: 0x21f4e
+current_name: cm550_diagnosticGroupPositionBufferStore
+proposed_name: storeJ1939ControlSessionInHistoryTable
+role: Copies the active engine or retarder session record into the next entry of the J1939 history table.
+discriminator: The only code that addresses the history table 0x80417e and the next-entry word 0x804232; its argument picks the record (0 engine, else retarder).
+relation: twin
+cm848_address: 0x50be6c
+cm848_current_name: cm848_storeJ1939ControlSessionInHistoryTable
+plate_comment: Files a finished J1939 control session in the history table (e2m 10FD JCHSTB: 5 entries of 24 bytes at 0x80417e): copies the 12 words of the engine record 0x8041f8 (session_kind 0) or the retarder record 0x804212 into the entry numbered by 0x804232 (e2m 1100 +8 JCHSTBPO), which counts up and wraps from 4 to 0. Called by trackJ1939ControlSessions. Twin of CM848 0x50be6c.
+evidence: Same 6 steps, constants 24 / 5 / 12: read the index 0x804232, + 1, entry = table + 24 x index, wrap at 5, pick the record by the argument, copy 12 words: 0x21f52-0x21fa4 | 0x50be74-0x50bee4. Callers: only the session tracker (5 bsr | 4 bl, one shared by two paths).
+confidence: high
+====================================================================================================
+address: 0x21fac
+current_name: cm550_diagnosticGroupSnapshotCapture
+proposed_name: startJ1939ControlSession
+role: Opens an engine or retarder J1939 control session: status 1 and a fresh active session record.
+discriminator: The only writer of 1 to the status words 0x80422a / 0x80422c and the only code that initializes a whole active record; the tracker only appends modes and stores the duration.
+relation: twin
+cm848_address: 0x50beec
+cm848_current_name: cm848_startJ1939ControlSession
+plate_comment: Opens a J1939 control session record. session_kind 0: the engine control status 0x80422a = 1 (e2m 1100 +0 JCEGCOSS), the control source 0x80422e = the control device 0x80da4e, and the record 0x8041f8 (e2m 10FE JCAEEG) gets kind 0, the source address, the device, one mode (the engine control mode 0x80da50), the start time key_on_hour_meter and duration 0. Any other kind: the same for the retarder (0x80422c / 0x804230 / record 0x804212, kind 1). Twin of CM848 0x50beec.
+evidence: Same 13 stores per half, constants 1 / kind 0 or 1 / count 1: 0x21fce-0x22010 and 0x2201a-0x22066 | 0x50bef4-0x50bf6c and 0x50bf74-0x50bfec. ONE DIFFERENCE: the four cleared mode words are stored ascending here, descending in CM848. Callers: only the session tracker.
+confidence: high
+====================================================================================================
+address: 0x22070
+current_name: cm550_memoryRegisterController
+proposed_name: trackJ1939ControlSessions
+role: J1939 monitor: opens, extends and closes the engine and retarder control session records from the control state changes.
+discriminator: The reader of the J1939 monitor bit 0x800; the only code that uses the previous-value words 0x800b12-0x800b19 and appends modes to the active records.
+relation: twin
+cm848_address: 0x50bff4
+cm848_current_name: cm848_trackJ1939ControlSessions
+plate_comment: J1939 monitor (algorithm_enable_flags_2_cal.j1939_monitor_enable, e2m JC39MREA), third call of the even frame task set 0x1b4d8: a control that starts on network 1 opens a session record (startJ1939ControlSession), each new mode from the same source is appended to the record's five mode words, and when the control ends or the source changes it stores the duration, clears the control status and files the record (storeJ1939ControlSessionInHistoryTable). Twin of CM848 0x50bff4.
+evidence: Same decision tree and constants (0x800, 1, 5, offsets 4 / 6 / 0xe / 0x10 / 0x14): engine half 0x22080-0x221ae | 0x50c008-0x50c1b8, retarder half 0x221b8-0x222a4 | 0x50c1bc-0x50c300, with the same quirk (the retarder source word compared with the previous byte); CM848 shares one store call between two engine paths (b 0x50c1a0). One caller each, third in the J1939 task list (jsr at 0x1b4e4 | cm848_phase_group_a_processing).
+confidence: high
+====================================================================================================
+address: 0x231da
+current_name: cm550_fuelArbitratorResetHandler
+proposed_name: cm550_resetEngineTsc1Request
+role: Ends the engine's datalink control request and records the ended mode as a J1922 control occurrence.
+discriminator: The engine-side reset: it clears 0x80da50 / 0x80da4e / 0x80da60 / 0x80da80 / 0x80da7e and calls the recorder; its sibling 0x23216 clears the retarder's words and calls nothing.
+relation: counterpart
+cm848_address: 0x26f80
+cm848_current_name: cm848_runTsc1LostManagement
+plate_comment: Ends the engine's datalink control request (a J1939 TSC1 request or a J1922 command): keeps the control mode in 0x801982, sets the mode 0x80da50, the control device 0x80da4e and the speed control status 0x80da60 to 0, records the ended mode with cm550_recordJ1922ControlOccurrence and clears the request timeout 0x80da80 and the time limit timer 0x80da7e. Called by cm550_runJ1939PowertrainControlTimeouts on a timeout or time limit. CM848 has cm848_runTsc1LostManagement at those call sites.
+evidence: 0x231ea-0x2320a: (0x801982) = mode; clr.w mode, 0x80da4e, 0x80da60; jsr 0x1fdc0 with the saved mode; clr.w 0x80da80, 0x80da7e. Five callers, all in 0x23244 (jsr at 0x2350c / 0x23532 / 0x23544 / 0x23572 / 0x23584). CM848 0x26f80 clears the same timers but the mode and device only outside its TSC1 lost ramp.
+confidence: medium
+====================================================================================================
+address: 0x23244
+current_name: cm550_fuelDemandLimitOrchestrator
+proposed_name: cm550_runJ1939PowertrainControlTimeouts
+role: Counts down the datalink powertrain control timers and acts on request timeouts, time limits and link timeout counts.
+discriminator: The only code that decrements the timers 0x80da7e-0x80da94 and uses the previous-value words 0x801982-0x801990; it alone sets the link timeout fault bits (word 7 mask 0x8, word 5 mask 0x400).
+relation: counterpart
+cm848_address: 0x2715c
+cm848_current_name: cm848_runJ1939PowertrainControlTimeouts
+plate_comment: Runs the datalink powertrain control timers, second call of the even frame task set 0x1b4d8: the high idle override (time limit, timeout, recovery), the progressive shift disable and out of gear flags, the retarder zero torque timer, the J1939 vehicle speed timers, and the request timeout and time limit of the engine and the retarder control request (J1939 and J1922 alike). A timeout counts toward the J1708 (0x804266) or J1939 (0x804268) link timeout fault; a new request asks for that fault to be cleared. Counterpart of cm848_runJ1939PowertrainControlTimeouts.
+evidence: Timers 0x23268-0x23440; change test 0x23442-0x23466; jump tables 0x2347e (time limit by mode) and 0x234fa (timeout -> jsr 0x231da, time limit -> jsr 0x238ac + 0x231da); retarder 0x235f2-0x236b8; link faults 0x236c2-0x2381a (ori.w #8,(0x80600e) / #0x400,(0x80600a)). Caller: jsr at 0x1b4de.
+confidence: medium
+====================================================================================================
+address: 0x23216
+current_name: cm550_FUN_00023216
+proposed_name: resetEngineRetarderTsc1Request
+role: Ends the engine retarder control request: seven stores, no call.
+discriminator: The retarder-side reset: seven stores (mode, device, limit, 0x80da84, 0x80da82, 0x80da8e, 0x80da90) and no call.
+relation: twin
+cm848_address: 0x27118
+cm848_current_name: cm848_resetEngineRetarderTsc1Request
+plate_comment: Ends the engine retarder control request: retarder_control_mode off, the control device 0x80d9e6 none, the torque limit 0x80d9ee 125 (no limit), and the request timeout 0x80da84, the time limit timer 0x80da82, the zero torque timer 0x80da8e and the word 0x80da90 cleared. Called three times by cm550_runJ1939PowertrainControlTimeouts. Twin of CM848 0x27118: the same seven stores in the same order.
+evidence: The same seven stores in the same order, constant 125: 0x23216-0x2323c | 0x27120-0x27154 (mode, device, limit, request timeout, time limit timer, zero torque timer, speed control flag). Callers: only the timeout runner (jsr at 0x2366e / 0x23692 / 0x236aa | 2 calls).
+confidence: high
+====================================================================================================
+address: 0x21642
+current_name: cm550_j1939MemoryDataCopyResolver
+proposed_name: writeJ1939DiagnosticMemoryByParameterId
+role: Resolves a parameter ID and writes the request's data at its address + offset; 8 for an unknown ID.
+discriminator: The shared worker of the four write-by-parameter-ID services: one ID lookup, the constant 8, one call of the memory writer.
+relation: twin
+cm848_address: 0x50b1b8
+cm848_current_name: cm848_writeJ1939DiagnosticMemoryByParameterId
+plate_comment: Writes by parameter ID for the PGN 61184 services 0x44 / 0x45 / 0x47 / 0x49: resolves the ID with cm550_lookupParameterIdAddress (8 = unknown ID), then writeJ1939DiagnosticMemory(request / the ID's address + offset / length). Parameters: the request / the ID / the offset / the length. Twin of CM848 0x50b1b8.
+evidence: Same 4 steps, constant 8: look the ID up (jsr 0x10e16 | bl 0x539768), nonzero -> return 8, address + offset, writeJ1939DiagnosticMemory(request, address, length): 0x21648-0x21672 | 0x50b1d8-0x50b20c. Callers: the four write-by-parameter-ID handlers in both.
+confidence: high
+====================================================================================================
+address: 0x238ac
+current_name: cm550_ioControlEntryAdd
+proposed_name: cm550_addEngineTsc1IgnoredRequestEntry
+role: Appends an entry to the engine ignored request list (at most 5).
+discriminator: It writes the list 0x801994 (count byte 0x8019d0) from three arguments; the retarder appender 0x238ec writes the 4-byte list from one.
+relation: counterpart
+cm848_address: 0x53d3c
+cm848_current_name: cm848_addEngineTsc1IgnoredRequestEntry
+plate_comment: Appends an entry (network type word, source address, control mode, countdown = the recovery time 0x808188) to the engine ignored request list (8-byte entries at 0x801994, at most 5, count byte 0x8019d0). cm550_runJ1939PowertrainControlTimeouts calls it when a speed or torque control request reaches its time limit; the request handlers then ignore that sender and mode until the entry expires. CM848's counterpart holds 10 entries.
+evidence: 0x238b4 cmpi.b #5 on the count 0x8019d0; entry = 0x801994 + 8 x count; stores word (8,a7), byte (0xb,a7), word (0xc,a7), (0x808188) at +0 / +2 / +4 / +6. Callers: jsr at 0x2352a / 0x2356a. CM848 0x53d3c: the same steps with cmpwi 10 - the one differing constant.
+confidence: high
+====================================================================================================
+address: 0x238ec
+current_name: cm550_ioControlTimeoutEntryAdd
+proposed_name: cm550_addRetarderTsc1IgnoredRequestEntry
+role: Appends an entry to the retarder ignored request list (at most 5).
+discriminator: It writes the 4-byte list 0x8019bc (count byte 0x8019d1) from one argument; the engine appender 0x238ac writes the 8-byte list from three.
+relation: counterpart
+cm848_address: 0x53d84
+cm848_current_name: cm848_addRetarderTsc1IgnoredRequestEntry
+plate_comment: Appends an entry (source address, countdown = the recovery time 0x808188) to the retarder ignored request list (4-byte entries at 0x8019bc, at most 5, count byte 0x8019d1). cm550_runJ1939PowertrainControlTimeouts calls it when the retarder torque control request reaches its time limit; cm550_retarderControlModeHandler then ignores that sender until the entry expires. CM848's counterpart has 6-byte entries with the control mode.
+evidence: 0x238f4 cmpi.b #5 on the count 0x8019d1; entry = 0x8019bc + 4 x count; stores byte (9,a7) at +0 and (0x808188) at +2. Caller: jsr at 0x2368a. CM848 0x53d84: 6-byte entries (mulli 6) with a mode word, capacity 10.
+confidence: high
+====================================================================================================
+address: 0x2167e
+current_name: cm550_j1939DataCopyWrapper2Byte
+proposed_name: handleJ1939WriteByParameterIdService
+role: PGN 61184 service 0x44 handler: write by parameter ID with a 1-byte length.
+discriminator: Of the four write-by-parameter-ID handlers the one with a single-byte length at data + 3 and offset 0; registered for service 0x44.
+relation: twin
+cm848_address: 0x50b228
+cm848_current_name: cm848_handleJ1939WriteByParameterIdService
+plate_comment: PGN 61184 service 0x44 (registered by registerJ1939MemoryWriteServices): request bytes 1-2 the parameter ID and 3 the length, then the data - written at the ID's address (offset 0) through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b228.
+evidence: Same 3 steps: memcpy(&id, data + 1, 2), length = data byte 3 zero-extended, worker(request, id, 0, length): 0x21688-0x216bc | 0x50b23c-0x50b27c. Registered for service 0x44 at 0x2187a | 0x50b4e4.
+confidence: high
+====================================================================================================
+address: 0x21714
+current_name: cm550_j1939DataCopyWrapperExtended
+proposed_name: handleJ1939WriteByParameterIdShortOffsetService
+role: PGN 61184 service 0x47 handler: write by parameter ID with a 2-byte offset and a 1-byte length.
+discriminator: Of the four write-by-parameter-ID handlers the one with a 2-byte offset from data bytes 3-4 and a single-byte length at 5; registered for service 0x47.
+relation: twin
+cm848_address: 0x50b300
+cm848_current_name: cm848_handleJ1939WriteByParameterIdShortOffsetService
+plate_comment: PGN 61184 service 0x47 (registered by registerJ1939MemoryWriteServices): request bytes 1-2 the parameter ID / 3-4 the offset / 5 the length, then the data - written at the ID's address + offset through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b300.
+evidence: Same 4 steps: memcpy(&id, data + 1, 2), offset = data bytes 3-4, length = data byte 5, worker(request, id, offset, length): 0x2171e-0x2176c | CM848 0x50b300 (frozen decompile: the same reads and call). Registered for service 0x47 at 0x218aa | 0x50b524.
+confidence: high
+====================================================================================================
+address: 0x1fd6c
+current_name: cm550_j1939TimeoutDataClearHandler
+proposed_name: cm550_clearExpiredJ1922ControlOccurrences
+role: Zeroes the J1922 monitor's eight records once they are older than the clear occurrence time.
+discriminator: The only code that clears the JC22* records and the only reader of 0x808190; it reads the clear enable bit 0x100, not the monitor bit 0x80 of 0x1fdc0.
+relation: standalone
+plate_comment: Clears the J1922 monitor's records when they are old: with algorithm_enable_flags_2_cal.j1922_monitor_clear_enable set (e2m JC22CCSW) and the last control time 0x804166 (JC22TM) + the clear occurrence time 0x808190 (JC22CCTM) before key_on_hour_meter, it zeroes the eight records that cm550_recordJ1922ControlOccurrence writes. Called by the task set 0x1b6d6. Nothing in it concerns J1939 or a timeout; CM848 has no counterpart.
+evidence: 0x1fd6c flags 2 & 0x100; 0x1fd7a (0x804166) + (0x808190) < (0x80bda4) -> eight clr at 0x1fd8e-0x1fdb8 (0x804164 / 66 / 70 / 72 / 76 / 78 / 6a / 6c). Caller: jsr at 0x1b6d6.
+confidence: high
+====================================================================================================
+address: 0x142a8
+current_name: cm550_canBusConfigTypeSelector
+proposed_name: lookupJ1939ControlDevice
+role: Returns the control device code (1 transmission / 2 ABS / 3 ASR / 4 unknown) of a source address.
+discriminator: A pure lookup: one byte compared with the low bytes of three calibration words, four constant results, no store; it configures no CAN bus.
+relation: twin
+cm848_address: 0x53a4c
+cm848_current_name: cm848_lookupJ1939ControlDevice
+plate_comment: Returns the J1939 control device of a source address (e2m JCEGCOID / JCRDCOID '0 = NONE 1 = TRANS 2 = ABS 3 = ASR 4 = UNKNOWN'): 1 for the low byte of the transmission source address 0x60f82 (e2m 10E3 +4 JCTRSA), 2 for the ABS address 0x60f84 (JCABSA), 3 for the ASR address 0x60f86 (JCARSA), else 4. processEngineTsc1Request stores it in 0x80da4e, cm550_retarderControlModeHandler in 0x80d9e6. Twin of CM848 0x53a4c.
+evidence: Same 4 steps, constants 1 / 2 / 3 / 4: the byte compared with the low bytes of three calibration words, else 4: 0x142ac-0x142d0 | 0x53a50-0x53aa0 (e2m 10E3 JCTRSA / JCABSA / JCARSA on both sides). Same callers: processEngineTsc1Request 3 times, the retarder request handler twice.
+confidence: high
+====================================================================================================
+address: 0x23820
+current_name: cm550_diagnosticMessageValidator
+proposed_name: refreshEngineTsc1IgnoredRequestEntry
+role: Finds an engine ignored request entry by network type, source address and mode and reloads its countdown; returns 1 when found.
+discriminator: Of the list's functions the one that compares all three key fields and writes only the countdown; it validates no diagnostic message.
+relation: twin
+cm848_address: 0x53c68
+cm848_current_name: cm848_refreshEngineTsc1IgnoredRequestEntry
+plate_comment: Searches the engine ignored request list (8-byte entries at 0x801994, count byte 0x8019d0) for the entry with network type param 1, source address param 2 and control mode param 3: when found it reloads the countdown with the recovery time 0x808188 and returns 1, else 0. processEngineTsc1Request and the J1922 command handlers 0x1f4e8 / 0x1f8bc call it first and ignore the request on 1. Twin of CM848 0x53c68.
+evidence: Same loop, offsets 0 / 2 / 4 / 6, step 8, no capacity constant: compare word 0, byte 2, word 4, reload word 6, return 1, else 0: 0x23830-0x23868 | 0x53c68-0x53cd0. Both called by processEngineTsc1Request (jsr at 0x2f1ac); CM550 also by its J1922 handlers (0x1f522 / 0x1f904).
+confidence: high
+====================================================================================================
+address: 0x23870
+current_name: cm550_ioControlTimeoutTableLookup
+proposed_name: cm550_refreshRetarderTsc1IgnoredRequestEntry
+role: Finds a retarder ignored request entry by source address and reloads its countdown; returns 1 when found.
+discriminator: It walks the 4-byte list 0x8019bc and compares one byte; the engine list's 0x23820 compares three fields of 8-byte entries.
+relation: counterpart
+cm848_address: 0x53cd8
+cm848_current_name: cm848_refreshRetarderTsc1IgnoredRequestEntry
+plate_comment: Searches the retarder ignored request list (4-byte entries at 0x8019bc, count byte 0x8019d1) for the entry with source address param 1: when found it reloads the countdown with the recovery time 0x808188 and returns 1, else 0. cm550_retarderControlModeHandler ignores the request on 1. CM848's counterpart also matches the control mode in 6-byte entries.
+evidence: 0x23878 list 0x8019bc, count 0x8019d1: cmp.b (a0) -> move.w (0x808188),(2,a0), return 1; step 4; else 0. Caller: jsr at 0x2f886. CM848 0x53cd8 also compares the mode word and steps 6.
+confidence: high
+====================================================================================================
+address: 0x23920
+current_name: cm550_phase3_countdown_timer_manager
+proposed_name: cm550_processTsc1IgnoredRequestTimeouts
+role: Counts every ignored request entry down by 1 and removes the entries that reach 0.
+discriminator: The only code that decrements the entry countdowns; it walks both lists from the last entry down and takes no argument.
+relation: counterpart
+cm848_address: 0x53dc8
+cm848_current_name: cm848_processTsc1IgnoredRequestTimeouts
+plate_comment: Counts down the two ignored request lists once per pass, third call of the odd frame task set 0x1b504: each entry's countdown (word +6 of the 8-byte engine entries at 0x801994, word +2 of the 4-byte retarder entries at 0x8019bc) drops by 1; an entry at 0 is removed - the count byte drops and the last entry is copied into its place. CM848's counterpart also clears its blocked message bits.
+evidence: 0x2392a-0x23982 engine list: subq.w #1,(6,a2), at 0 count - 1 and the last entry copied in; 0x23984-0x239ca retarder list with (2,a2) and step 4. Caller: jsr at 0x1b510. CM848 0x53dc8 also clears j1939_blocked_message_bits.
+confidence: high
+====================================================================================================
+address: 0x239d2
+current_name: cm550_diagnosticStateInitializer
+proposed_name: removeEngineTsc1IgnoredRequestEntry
+role: Removes the engine ignored request entries of a network type and source address.
+discriminator: Of the list's functions the one that matches two fields (word 0 and byte 2, not the mode) and removes; it initializes nothing.
+relation: twin
+cm848_address: 0x53fa8
+cm848_current_name: cm848_removeEngineTsc1IgnoredRequestEntry
+plate_comment: Removes the engine ignored request list entries (8-byte entries at 0x801994, count byte 0x8019d0) with network type param 1 and source address param 2, whatever their control mode: the count drops and the last entry is copied into the gap. processEngineTsc1Request calls it when that sender sends control mode 0, the J1922 command handlers when they accept a mode 1 / 2 / 3 command. Twin of CM848 0x53fa8.
+evidence: Same backward loop, no capacity constant: match word 0 and byte 2, count - 1, copy the last entry (word 0, byte 2, word 4, word 6) into the gap: 0x239de-0x23a34 | 0x53fb0-0x54054. Both called by processEngineTsc1Request (jsr at 0x2f198); CM550 also by its J1922 handlers, CM848 by cm848_updateParkNeutralFlagAndTsc1Activity.
+confidence: high
+====================================================================================================
+address: 0x23a3c
+current_name: cm550_ioControlEntryRemove
+proposed_name: cm550_removeRetarderTsc1IgnoredRequestEntry
+role: Removes the retarder ignored request entries of a source address.
+discriminator: It walks the 4-byte list 0x8019bc and matches one byte; the engine list's remover 0x239d2 matches two fields of 8-byte entries.
+relation: counterpart
+cm848_address: 0x54064
+cm848_current_name: cm848_removeRetarderTsc1IgnoredRequestEntry
+plate_comment: Removes the retarder ignored request list entries (4-byte entries at 0x8019bc, count byte 0x8019d1) with source address param 1: the count drops and the last entry is copied into the gap. cm550_retarderControlModeHandler calls it when that sender sends control mode 0. CM848's counterpart has 6-byte entries.
+evidence: 0x23a44-0x23a88: cmp.b (a2) with the argument, count - 1, copy byte 0 and word 2 of the last entry, step 4 backward. Caller: jsr at 0x2f878. CM848 0x54064: 6-byte entries (mulli 6).
+confidence: high

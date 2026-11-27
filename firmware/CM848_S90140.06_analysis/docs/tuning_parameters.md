@@ -278,8 +278,8 @@ periodicTaskGroup0_fuelFinal() @ 0x0000b8fc
 | `updateEngineLoadPercentage` | 0x00523148 | Calculate engine load % |
 | `checkFuelDemandEnableConditions` | 0x0050370c | Fuel enable flag logic |
 | `initCalibrationSequenceHandler` | 0x00537584 | Calibration sequence init |
-| `sensorChannelConfigInit` | 0x00500234 | Sensor channel setup |
-| `updateSensorChannelWithConfig` | 0x00500a4c | Sensor value updates |
+| `cm848_processSignedSensorChannel` | 0x00500234 | Sensor channel setup |
+| `cm848_initializeSignedSensorChannel` | 0x00500a4c | Sensor value updates |
 
 ### Architecture Notes
 

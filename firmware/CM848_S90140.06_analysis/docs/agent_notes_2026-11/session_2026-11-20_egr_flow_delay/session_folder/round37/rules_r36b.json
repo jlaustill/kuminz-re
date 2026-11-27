@@ -1,0 +1,106 @@
+{
+ "*": [
+  [
+   "\\(char\\)",
+   "(byte)"
+  ],
+  [
+   "(\\w+) = \\1 & 0xff;",
+   ""
+  ]
+ ],
+ "cm848_sendDiagServiceResponse": [
+  [
+   "\\*\\*\\(byte \\*\\*\\)\\(param_1 \\+ 6\\)",
+   "*request->data_pointer"
+  ],
+  [
+   "\\*\\*\\(undefined1 \\*\\*\\)\\(param_1 \\+ 6\\)",
+   "*request->data_pointer"
+  ],
+  [
+   "\\(byte \\*\\)\\(\\*\\(int \\*\\)\\(param_1 \\+ 6\\) \\+ -1\\)",
+   "request->data_pointer + -1"
+  ],
+  [
+   "\\(undefined1 \\*\\)\\(\\*\\(int \\*\\)\\(param_1 \\+ 6\\) \\+ -1\\)",
+   "request->data_pointer + -1"
+  ],
+  [
+   "\\*param_1 >> 2",
+   "request->priority_dp_flags >> 2"
+  ],
+  [
+   "param_1\\[3\\]",
+   "request->source_address"
+  ],
+  [
+   "param_1\\[2\\]",
+   "request->dest_address"
+  ],
+  [
+   "\\bparam_1\\b",
+   "request"
+  ],
+  [
+   "\\bparam_2\\b",
+   "result_code"
+  ],
+  [
+   "\\(uint\\)(T\\d+)",
+   "(dword)\\1"
+  ]
+ ],
+ "cm848_dispatchDiagnosticService": [
+  [
+   "iVar2 = CONCAT31\\(in_register_0000000c,service_code\\);",
+   ""
+  ],
+  [
+   "\\biVar2\\b",
+   "request"
+  ],
+  [
+   "\\bservice_code\\b",
+   "request"
+  ],
+  [
+   "'\\\\x05'",
+   "5"
+  ],
+  [
+   "'\\\\n'",
+   "10"
+  ],
+  [
+   "(cVar\\d+) = -1;",
+   "\\1 = 0xff;"
+  ],
+  [
+   "(cVar\\d+) == -1",
+   "\\1 == 0xff"
+  ],
+  [
+   "(cVar\\d+) != -1",
+   "\\1 != 0xff"
+  ],
+  [
+   "\\*\\*\\(byte \\*\\*\\)\\(request \\+ 6\\)",
+   "*request->data_pointer"
+  ]
+ ],
+ "mpc555_handleJ1939TransportDataPacket": [
+  [
+   "cm848_dispatchDiagnosticService\\(0x2d,[A-Za-z0-9_]+,[A-Za-z0-9_]+\\)",
+   "cm848_dispatchDiagnosticService ((j1939_rx_msg_t *)&boot_j1939_transport_receive_session.request_to_send_can_id)"
+  ],
+  [
+   "mpc555_sendJ1939TransportEndOfMessageAcknowledge\\(dest_address,\\(byte \\*\\)\\(uint\\)([A-Za-z0-9_]+),\\(word\\)[A-Za-z0-9_]+\\)",
+   "mpc555_sendJ1939TransportEndOfMessageAcknowledge(dest_address,\\1)"
+  ],
+  [
+   "\\bdest_address\\b",
+   "destination_address"
+  ]
+ ]
+}

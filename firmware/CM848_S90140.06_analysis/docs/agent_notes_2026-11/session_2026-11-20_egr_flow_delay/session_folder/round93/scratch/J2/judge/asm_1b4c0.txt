@@ -1,0 +1,20 @@
+01b4c0: c87e                     .word 0xc87e
+01b4c2: 0279fffd00fffe20         andi.w #0xfffd,(0xfffe20).l
+01b4ca: 4cdf0303                 movem.l (a7)+,d0/d1/a0/a1
+01b4ce: 4e73                     rte
+01b4d0: 4eb9000159ee             jsr (0x159ee).l
+01b4d6: 4e75                     rts
+01b4d8: 4eb9000212b2             jsr (0x212b2).l
+01b4de: 4eb900023244             jsr (0x23244).l
+01b4e4: 4eb900022070             jsr (0x22070).l
+01b4ea: 4eb9000230ee             jsr (0x230ee).l
+01b4f0: 4eb900021edc             jsr (0x21edc).l
+01b4f6: 4eb900021070             jsr (0x21070).l
+01b4fc: 4eb9000420bc             jsr (0x420bc).l
+01b502: 4e75                     rts
+01b504: 4eb90002142c             jsr (0x2142c).l
+01b50a: 4eb90001ff38             jsr (0x1ff38).l
+01b510: 4eb900023920             jsr (0x23920).l
+01b516: 4e75                     rts
+01b518: 4267                     clr.w -(a7)
+01b51a: 4eb900013616             jsr (0x13616).l

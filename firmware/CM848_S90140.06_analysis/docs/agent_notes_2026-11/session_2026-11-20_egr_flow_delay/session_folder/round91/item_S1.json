@@ -1,0 +1,499 @@
+{
+ "proposal": {
+  "item": "S1",
+  "summary": "0x805a1c is CM550's fault count table: e2m 1031 DGFUCUBF 'FAULT_COUNT_TABLE.H' (1250 bytes; CM848's e2m names the same record Fault_Count_Table). It holds 125 10-byte records, one per fault code index, and lives in the flash parameter block, so the counts survive key cycles. Each record is status_change_time (dword), last_countdown_time (dword, the +4 field the e2m fault countdown uses), status (byte: bit 0 = active, bit 1 = holds a snapshot slot) and occurrence_count (byte). The layout comes from all 44 accessing instructions in 13 functions, checked against the RAM dump and both flash copies. The 27 unreferenced rows sit inside records 2-117 (10 of them in the middle of a dword) and nothing uses them. They are leftovers from the J90280.05 address map, so they go, together with the two field label rows. One user, cm550_phase2_sensor_data_processor (0x1452e), is a fall-through split of the countdown function 0x144bc and should be deleted.",
+  "structs": [
+   {
+    "firmware": "CM550",
+    "struct_name": "fault_count_record_t",
+    "size": 10,
+    "fields": [
+     {
+      "offset": 0,
+      "name": "status_change_time",
+      "type": "dword",
+      "size": 4,
+      "comment": "+0: key_on_hour_meter (0.2 s counts) when the fault last became active (status 3) or inactive (status 2) - cm550_processFaultScanGroup stores it (move.l at 0x14972 / 0x14bd0). The first countdown step waits until key_on_hour_meter minus it reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode); cm550_oldestDiagnosticTimestampSearch picks the snapshot slot whose fault has the smallest one (cmp.l at 0x146fa); cm550_resetFaultStatus zeroes it. Unsigned (sub.l then cmp.l / bls)"
+     },
+     {
+      "offset": 4,
+      "name": "last_countdown_time",
+      "type": "dword",
+      "size": 4,
+      "comment": "+4: key_on_hour_meter at the last countdown step (move.l at 0x145bc); 0 until the first step - the activation (clr.l at 0x14988) and cm550_resetFaultStatus (clr.l at 0x2fe0e) zero it. While it is not 0 each step waits until key_on_hour_meter minus it reaches the mode's count down rate (e2m DGnnCUDN at 0x806550 + 8 x mode). Unsigned (sub.l then cmp.l / bhi)"
+     },
+     {
+      "offset": 8,
+      "name": "status",
+      "type": "byte",
+      "size": 1,
+      "comment": "+8: bit 0 = active / bit 1 = given a snapshot slot in diagnostic_fault_code_table. cm550_processFaultScanGroup writes 3 on activation (after cm550_diagnosticCodeRegistrar assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_FUN_000315be / cm550_FUN_00013ed8)"
+     },
+     {
+      "offset": 9,
+      "name": "occurrence_count",
+      "type": "byte",
+      "size": 1,
+      "comment": "+9: times the fault became active: +1 on each new fault bit mapped to it up to 255 (cmpi.b #0xff / bcc at 0x1491e) and -1 per countdown step (subq.b at 0x145d4); at 0 the record is cleared and the fault leaves previously_active_dtc_list. DM1 / DM2 send it capped at 127 (cmpi.b #0x7f / bls) and the InSite fault list (J1587 PID 194 layout) sends it whole; cm550_insitePidDtcHandler skips a fault whose count is 0. Unsigned"
+     }
+    ],
+    "evidence": "Every access, decoded by hand from the ROM (llvm-mc-18 cannot decode the CPU32 scaled-index modes): movea.l #base,a0 then (0,a0,dN.w*1 or *2) with the index = code x 10 ((x + 4x) x 2, x x 10 or moveq #10 strides). +0 (base 0x805a1c, 6 instructions): move.l 0x14564 / 0x14706, cmp.l 0x146fa, stores 0x14972 / 0x14bd0, clr.l 0x2fe04. +4 (base 0x805a20, 6 instructions; the current .cpp shows raw 0x805a20): tst.l 0x1454e / 0x14580, move.l 0x14598, store 0x145bc, clr.l 0x14988 / 0x2fe0e. +8 (base 0x805a24, 17 instructions): byte btst / tst.b / cmpi.b #1-#3 / move.b #1-#3 / clr.b / move.b. +9 (base 0x805a25, 15 instructions): byte tst.b / cmpi.b #0xff + addq.b / cmpi.b #1 + subq.b / cmpi.b #0x7f / clr.b / move.b. Total: 44 instructions in 13 functions. No ROM operand, pointer or branch reaches any other address in 0x805a1c-0x805efd. The only other reference is the parameter ID table entry (0x35524) for e2m block 1031. Count 125: cm550_FUN_000315be (0x316c0) and cm550_insitePidDtcHandler (0x14fa2) loop with cmpi.b #0x7d,d3 / bcs and a stride of 10; cm550_FUN_00014872 accepts code indexes < 0x7d; e2m length 1250 = 125 x 10; the same index addresses the 125 fault data records DG0000FU-DG0124FU (6 bytes at 0x8067c4). RAM dump: 13 records in use (e.g. record 1 = 0d8d3652 00000000 03 01, record 48 = ... 03 0b), +4 is 0 in all of them. Both flash parameter block copies in the dumped ROM (0x4a86 / 0x6a86) have the same layout with older counts. Counterpart, not twin, of CM848 fault_state_t (the 7-byte fault_state_records_cal records of the same e2m record, with a countdown step count instead of the second time), so the type name must differ."
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00805a1c",
+    "current_name": "diagnostic_fault_status_change_time",
+    "proposed_name": "fault_count_table",
+    "proposed_type": "fault_count_record_t[125]",
+    "comment": "e2m 1031 +0 DGFUCUBF 'FAULT_COUNT_TABLE.H' (1250 bytes = 125 x 10; CM848's e2m names the record Fault_Count_Table): one fault_count_record_t per fault code index 0-124. The index is that of the fault's 6-byte fault data record (e2m DG0000FU-DG0124FU at 0x8067c4), and the fault code assignment table DGFUCATB (0x80656c) maps each status bit to it (125 = none). Every access is 0x805a1c / 0x805a20 / 0x805a24 / 0x805a25 + index x 10 (44 instructions in 13 functions); cm550_FUN_000315be and cm550_insitePidDtcHandler walk all 125 (cmpi.b #0x7d with a stride of 10). Writers: cm550_processFaultScanGroup (activation / deactivation), cm550_countDownPreviouslyActiveFault (countdown), cm550_diagnosticCodeRegistrar (snapshot slot hand-over), cm550_resetFaultStatus (clear). Readers: the datalogger fault-code triggers cm550_FUN_00013cc8 / cm550_FUN_00013e64 / cm550_FUN_00013ed8, cm550_oldestDiagnosticTimestampSearch, the trending task cm550_FUN_000315be (any fault active), cm550_insitePidDtcHandler, cm550_insiteFaultDetailBuilder, j1939HandlePgn65226Dm1ActiveDtc and cm550_previousDtcListBuilder (DM2). The 10 bytes after it (0x805efe) are not a record: no code reaches them, because the empty snapshot slot code 125 is never used as an index, and they hold the same constant in RAM and both flash blocks. No _cal: it is in the flash parameter block (RAM 0x804f9a-0x806547). cm550_loadParameterBlock1FromFlash / 2 load the block at start-up and cm550_saveParameterBlock1ToFlash / 2 save it at power-down, and the dumped ROM holds copies at flash 0x4a86 / 0x6a86. Counterpart of CM848 fault_state_records_cal (fault_state_t[170]: 7-byte records with a countdown step count in place of the second time). (were diagnostic_fault_status_change_time at +0 / diagnostic_fault_status_table at +8 / diagnostic_fault_occurrence_count at +9, and 27 unreferenced rows from the J90280.05 address map: diagnostic_fault_status_array at +26 / diagnostic_snapshot_throttle_value at +28 / diagnostic_snapshot_fuel_value at +34 / diagnostic_snapshot_sensor_reading at +38 / diagnostic_snapshot_throttle_raw at +40 / fault_flags_active_base at +982 / fault_status_flags_2 at +984 / engine_fault_status_reg at +986 / io_fault_status_reg_1 at +990 / io_fault_status_reg_2 at +992 / io_fault_status_reg_3 at +994 / io_fault_status_reg_4 at +996 / vp44_status_register_5e12 at +1014 / vp44_fault_status_reg at +1016 / vp44_fso_fault_flags_active at +1018 / fault_flags_history_base at +1046 / fault_status_flags_8_previous at +1048 / engine_fault_latch_reg at +1050 / io_fault_latch_reg_1 at +1054 / io_fault_latch_reg_2 at +1056 / io_fault_latch_reg_3 at +1058 / io_fault_latch_reg_4 at +1060 / vp44_fso_fault_flags at +1078 / vp44_fso_fault_accumulator at +1080 / vp44_fso_fault_flags_history at +1082 / diagnostic_fault_group_bitmask_array at +1110 / rpm_histogram_buffer_start at +1176; PR #53 round 91)",
+    "evidence": "e2m_block_addresses.py --firmware cm550 1031: block 1031 +0 DGFUCUBF (type B, 1250 bytes) resolves to 0x805a1c, and no other e2m record resolves between 0x8058d4 and 0x805f08. The loop bounds and stride are in the struct evidence. The flash parameter block range comes from cm550_loadParameterBlock1FromFlash (0x10e80: copies flash 0x4004 up to RAM 0x806548). Precedent for the type and comment form: engine_overspeed_log (0x80553a, engine_overspeed_event_t[5]), the same block."
+   }
+  ],
+  "functions": [
+   {
+    "firmware": "CM550",
+    "address": "0x000144bc",
+    "current_name": "cm550_diagnosticCodeDebounceHandler",
+    "proposed_name": "cm550_countDownPreviouslyActiveFault",
+    "relation": "counterpart",
+    "other_firmware_address": "0x0001c9a0",
+    "plate_comment": "Counts down one previously active fault (code_index) - the e2m fault countdown. It acts only while fault_count_table[code_index].status bit 0 is clear (btst #0) and both the fault's countdown mode (byte +5 of its 6-byte fault data record at 0x8067c4 - e2m DG0000FU) and its occurrence_count are not 0. The first step waits until key_on_hour_meter - status_change_time reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode: 11 h for mode 1 in this dump). Each later step waits until key_on_hour_meter - last_countdown_time reaches the mode's count down rate (DGnnCUDN at 0x806550 + 8 x mode: 4 h). A step stores key_on_hour_meter in last_countdown_time and takes 1 off occurrence_count. At 0 it clears the record (cm550_resetFaultStatus) and moves the last previously_active_dtc_list entry into the fault's place (with its J1587 count). Nothing in it debounces. Counterpart of CM848 cm848_faultTimeoutHandler (0x1c9a0): the same e2m settings with a step count in place of the second time (was cm550_diagnosticCodeDebounceHandler; PR #53 round 91)",
+    "evidence": "Disassembly 0x144bc-0x1466e. a3 = 0x8067c4 (fault data records), a5 = &key_on_hour_meter, a4 = &_inactive_fault_debounce_scan_index. 0x144e6 btst #0 on the status. 0x144fa tst.b (5,a3,index*6) reads the countdown mode. 0x14512 tst.b on occurrence_count. 0x1452e-0x1453a: a2 = 0x80654c + mode x 8, d3 = (a2), d5 = 4(a2). 0x14564 / 0x1456e: key_on - status_change_time compared with d3 (bls). 0x14598 / 0x145a2: key_on - last_countdown_time compared with d5 (bhi). 0x145bc stores key_on. 0x145d4 subq.b #1. 0x145ec jsr 0x2fddc at 0. e2m block F: DGnnELTM 'ELAPSED TIME BEFORE STARTING COUNTDOWN FOR A MODE n FAULT' at +8n, DGnnCUDN 'TIME THAT MUST ELAPSE BEFORE THE FAULT COUNT IS DECREMENTED' at +8n+4. Parameter ID 15 = 0x80654c. RAM dump: mode 1 = 198000 / 72000 counts (113 of the 125 faults use mode 1, the other 12 mode 0). CM848 cm848_faultTimeoutHandler does the same job with fault_countdown_elapsed_time_mode_0 / fault_countdown_decrement_interval_mode_0 and a 7-byte record, so the two are counterparts."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00014670",
+    "current_name": "cm550_FUN_00014670",
+    "proposed_name": "cm550_countDownPreviouslyActiveFaults",
+    "relation": "counterpart",
+    "other_firmware_address": "0x0001cd1c",
+    "plate_comment": "Runs cm550_countDownPreviouslyActiveFault on each entry of previously_active_dtc_list (1 to the count in entry 0), with _inactive_fault_debounce_scan_index as the cursor. The callee moves the last entry into a cleared fault's place and steps the cursor back. cm550_faultFlagScannerAndProcessor calls it when key_on_hour_meter has moved more than 24 counts (about 5 s) since _DAT_0080052e. Counterpart of CM848 cm848_activeFaultScanProcessor (0x1cd1c) (was cm550_FUN_00014670; PR #53 round 91)",
+    "evidence": "Decompile line 9343: for cursor = 1 .. previously_active_dtc_list[0] calls 0x144bc with previously_active_dtc_list[cursor]; its only caller, cm550_faultFlagScannerAndProcessor (jsr at 0x14f30), runs it when 0x18 < key_on_hour_meter - _DAT_0080052e. CM848 0x1cd1c walks previously_active_dtc_list_cal the same way with an extra fault_definition_table flag test, so the two are counterparts."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00014872",
+    "current_name": "cm550_FUN_00014872",
+    "proposed_name": "cm550_processFaultScanGroup",
+    "relation": "counterpart",
+    "other_firmware_address": "0x0001d224",
+    "plate_comment": "Processes one 16-fault status word per call (_fault_status_word_scan_index; cm550_faultFlagScannerAndProcessor picks the next word with a bit to process). Each bit of status word | first-occurrence word (the latter is then cleared) is compared with the previous pass's word (0x806080 + 2 x word) and gated by fault_confirm_status_word (0x806abc + 2 x word). The fault code assignment table (e2m DGFUCATB at 0x80656c) maps the bit to a fault code index (125 = none). A new bit, while active_dtc_list is not full, adds 1 to fault_count_table[index].occurrence_count (up to 255). If the fault's active-bit count at 0x80599e + index was 0, the fault also gets a snapshot slot (cm550_diagnosticCodeRegistrar), status 3, status_change_time = key_on_hour_meter and last_countdown_time = 0, and it moves from previously_active_dtc_list to active_dtc_list with its J1587 / InSite counts. A cleared bit takes 1 off the active-bit count. At 0 the fault gets status 2 and a new status_change_time and moves to previously_active_dtc_list (at most 31 entries). The function ends by storing the combined word as the next previous word. Counterpart of CM848 cm848_processFaultScanGroup (0x1d224) (was cm550_FUN_00014872; PR #53 round 91)",
+    "evidence": "Decompile lines 9470-9640 and the disassembly: addq.b #1 on occurrence_count after cmpi.b #0xff at 0x1491e / 0x14934; move.b #3 status at 0x1495e; move.l key_on_hour_meter to +0 at 0x14972; clr.l +4 at 0x14988; move.b #2 at 0x14bbc and move.l key_on to +0 at 0x14bd0; code index from (local_6 + word x 16) x 2 + 0x80656c (e2m block F +0x20 DGFUCATB 'FAULT CODE ASSIGNMENT TABLE', 600 bytes) checked < 0x7d. cross_firmware_matches.csv already pairs 0x14872 with CM848 0x1d224 (score 21). CM848's version adds OBD steps (cm848_latchNewlyActiveFault, fault_handled_bitmap) and uses the 7-byte record, so the two are counterparts with the same stem."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0002fddc",
+    "current_name": "cm550_diagnosticTableEntryClear",
+    "proposed_name": "cm550_resetFaultStatus",
+    "relation": "counterpart",
+    "other_firmware_address": "0x0001dee0",
+    "plate_comment": "Clears fault_count_table[code_index]: occurrence_count, status_change_time and last_countdown_time = 0. When the status is 2 it then releases the fault's snapshot slot (cm550_FUN_0002fd90 writes 125 to the slot's code words at 0x80426e / 0x80462e + 48 x slot). Last, status = 0. Called by cm550_countDownPreviouslyActiveFault when the count reaches 0 and by cm550_FUN_00014812 for every previously active fault on a clear request. Counterpart of CM848 cm848_resetFaultStatus (0x1dee0) (was cm550_diagnosticTableEntryClear; PR #53 round 91)",
+    "evidence": "Disassembly: clr.b +9 at 0x2fdfa, clr.l +0 at 0x2fe04, clr.l +4 at 0x2fe0e, cmpi.b #2 on +8 at 0x2fe18 then bsr 0x2fd90, clr.b +8 at 0x2fe2e. references_to.py: called from 0x145ec and 0x14838. CM848 0x1dee0 clears timer / timestamp / debounce_count, runs cm848_updateFaultEntryCounters when the status is 2 (or the OBD handler is on) and writes status 0: the same role with different code, so the CM550 name takes the same stem."
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0001c9a0",
+    "current_name": "cm848_faultTimeoutHandler",
+    "proposed_name": "cm848_countDownPreviouslyActiveFault",
+    "relation": "counterpart",
+    "other_firmware_address": "0x000144bc",
+    "plate_comment": "Counts down one previously active fault (param_1) - the e2m fault countdown. It acts while fault_state_records_cal[param_1].status bit 0 is clear and both the fault's countdown mode (fault_definition_table[].aging_flags & 3) and .timer are not 0. .timer is the occurrence count: cm848_processFaultScanGroup adds 1 per activation up to 255 and DM1 / DM2 cap it at 127. The first step comes when key_on_hour_meter - .timestamp exceeds the mode's Fault_Countdown_Elapsed_Time (fault_countdown_elapsed_time_mode_0 + 8 x mode). Step n + 1 comes when that difference exceeds the elapsed time + n x the mode's Count_Down_Rate (n = .debounce_count - the steps taken; the activation zeroes it). A step adds 1 to .debounce_count and takes 1 off .timer. At 0 it resets the fault (cm848_resetFaultStatus) and removes it from previously_active_dtc_list_cal. Counterpart of CM550 cm550_countDownPreviouslyActiveFault (0x144bc: a second time stamp in place of the step count) (was cm848_faultTimeoutHandler; PR #53 round 91)",
+    "evidence": "cm848_rom.ghidra.cpp lines 19627-19670: the compares against (&fault_countdown_elapsed_time_mode_0)[mode x 2] / (&fault_countdown_decrement_interval_mode_0)[mode x 2], the e2m Fault_Countdown_Elapsed_Time_Mode_n / Fault_Countdown_Count_Down_Rate_Mode_n (block 0023, resolved to 0x5983a / 0x5983e). Line 20092 adds 1 to .timer (up to 0xff), line 20099 zeroes .debounce_count on activation, lines 25602 / 25703 / 25807 cap .timer at 0x7f. Nothing in it times out. Optional for S1: it keeps the counterpart stems aligned with the CM550 rename."
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0001cd1c",
+    "current_name": "cm848_activeFaultScanProcessor",
+    "proposed_name": "cm848_countDownPreviouslyActiveFaults",
+    "relation": "counterpart",
+    "other_firmware_address": "0x00014670",
+    "plate_comment": "Runs cm848_countDownPreviouslyActiveFault on each fault of previously_active_dtc_list_cal (active_fault_scan_counter is the cursor) whose fault_definition_table entry has entry_flags bit 0 clear or aging_flags bit 7 set. The old name read it as an active fault scan, but it walks the previously active list. Counterpart of CM550 cm550_countDownPreviouslyActiveFaults (0x14670) (was cm848_activeFaultScanProcessor; PR #53 round 91)",
+    "evidence": "cm848_rom.ghidra.cpp lines 19736-19756: the do-while over previously_active_dtc_list_cal.slots calling cm848_faultTimeoutHandler. Optional for S1: it keeps the counterpart stems aligned."
+   }
+  ],
+  "rows_to_remove": [
+   {
+    "firmware": "CM550",
+    "address": "0x00805a24",
+    "name": "diagnostic_fault_status_table",
+    "reason": "Becomes fault_count_table[0].status (+8): a field label row inside the instance (17 accesses, all base + index x 10)"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805a25",
+    "name": "diagnostic_fault_occurrence_count",
+    "reason": "Becomes fault_count_table[0].occurrence_count (+9): a field label row inside the instance (15 accesses, all base + index x 10)"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805a36",
+    "name": "diagnostic_fault_status_array",
+    "reason": "Inside fault_count_table: +26 = record 2 last_countdown_time byte 2. No user: 0 .cpp references and no ROM operand reaches it. J90280.05 address-map leftover (commit 1d82e3f4)"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805a38",
+    "name": "diagnostic_snapshot_throttle_value",
+    "reason": "Inside fault_count_table: +28 = record 2 status. No user (0 .cpp references, no ROM operand). J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805a3e",
+    "name": "diagnostic_snapshot_fuel_value",
+    "reason": "Inside fault_count_table: +34 = record 3 last_countdown_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805a42",
+    "name": "diagnostic_snapshot_sensor_reading",
+    "reason": "Inside fault_count_table: +38 = record 3 status. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805a44",
+    "name": "diagnostic_snapshot_throttle_raw",
+    "reason": "Inside fault_count_table: +40 = record 4 status_change_time (the RAM dump holds 0d8134dd there, with status 3 and count 1 at 0x805a4c / 0x805a4d). No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805df2",
+    "name": "fault_flags_active_base",
+    "reason": "Inside fault_count_table: +982 = record 98 status_change_time byte 2. No user. Looks like the J90280.05 address of the fault status words, which are at 0x806000 (+0x20e) in J90350.00"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805df4",
+    "name": "fault_status_flags_2",
+    "reason": "Inside fault_count_table: +984 = record 98 last_countdown_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805df6",
+    "name": "engine_fault_status_reg",
+    "reason": "Inside fault_count_table: +986 = record 98 last_countdown_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805dfa",
+    "name": "io_fault_status_reg_1",
+    "reason": "Inside fault_count_table: +990 = record 99 status_change_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805dfc",
+    "name": "io_fault_status_reg_2",
+    "reason": "Inside fault_count_table: +992 = record 99 status_change_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805dfe",
+    "name": "io_fault_status_reg_3",
+    "reason": "Inside fault_count_table: +994 = record 99 last_countdown_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e00",
+    "name": "io_fault_status_reg_4",
+    "reason": "Inside fault_count_table: +996 = record 99 last_countdown_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e12",
+    "name": "vp44_status_register_5e12",
+    "reason": "Inside fault_count_table: +1014 = record 101 last_countdown_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e14",
+    "name": "vp44_fault_status_reg",
+    "reason": "Inside fault_count_table: +1016 = record 101 last_countdown_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e16",
+    "name": "vp44_fso_fault_flags_active",
+    "reason": "Inside fault_count_table: +1018 = record 101 status. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e32",
+    "name": "fault_flags_history_base",
+    "reason": "Inside fault_count_table: +1046 = record 104 last_countdown_time byte 2. No user. Looks like the J90280.05 address of the first-occurrence words, which are at 0x806040 (+0x20e) in J90350.00"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e34",
+    "name": "fault_status_flags_8_previous",
+    "reason": "Inside fault_count_table: +1048 = record 104 status. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e36",
+    "name": "engine_fault_latch_reg",
+    "reason": "Inside fault_count_table: +1050 = record 105 status_change_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e3a",
+    "name": "io_fault_latch_reg_1",
+    "reason": "Inside fault_count_table: +1054 = record 105 last_countdown_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e3c",
+    "name": "io_fault_latch_reg_2",
+    "reason": "Inside fault_count_table: +1056 = record 105 last_countdown_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e3e",
+    "name": "io_fault_latch_reg_3",
+    "reason": "Inside fault_count_table: +1058 = record 105 status. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e40",
+    "name": "io_fault_latch_reg_4",
+    "reason": "Inside fault_count_table: +1060 = record 106 status_change_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e52",
+    "name": "vp44_fso_fault_flags",
+    "reason": "Inside fault_count_table: +1078 = record 107 status. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e54",
+    "name": "vp44_fso_fault_accumulator",
+    "reason": "Inside fault_count_table: +1080 = record 108 status_change_time. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e56",
+    "name": "vp44_fso_fault_flags_history",
+    "reason": "Inside fault_count_table: +1082 = record 108 status_change_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805e72",
+    "name": "diagnostic_fault_group_bitmask_array",
+    "reason": "Inside fault_count_table: +1110 = record 111 status_change_time. No user. Looks like the J90280.05 address of the previous-pass status words, which are at 0x806080 (+0x20e) in J90350.00"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00805eb4",
+    "name": "rpm_histogram_buffer_start",
+    "reason": "Inside fault_count_table: +1176 = record 117 last_countdown_time byte 2. No user. J90280.05 leftover"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0001452e",
+    "name": "cm550_phase2_sensor_data_processor",
+    "reason": "function_renames.csv row, not a global: 0x1452e is not a function entry. It is the movea.l #0x80654c,a0 at byte 0x72 of 0x144bc, reached only by fall-through from the lsl.w #3,d0 at 0x1452c. references_to.py finds 0 references, and no pointer 0x0001452e is in the ROM or the RAM / extended RAM / EEPROM dumps. The row came from the J90280.05 relocation map (phase2_sensor_data_processor 0x11060 -> 0x1452e). Its unaff_D2b / A3 / A4 / A5 pseudo-parameters are the registers 0x144bc loads, and 0x144bc already decompiles the same code."
+   }
+  ],
+  "local_rows": [],
+  "notes": "Pointer locals / parameters: none. Every access reloads an absolute field address (movea.l #0x805a1c / 0x805a20 / 0x805a24 / 0x805a25) plus an index register. The a2 / a3 pointers in the users walk the 6-byte fault data records at 0x8067c4 or the countdown modes at 0x80654c, not this table. code_index / fault_status stay ushort (indexes and values). The unaff_ pseudo-parameters go away with the 0x1452e split.\n\nThe 27 rows are not a different structure. No ROM operand reaches any of their addresses, they fall inside records 2-117 (10 of them in the middle of a dword), and the RAM dump and both flash copies show fault records there. The real status / first-occurrence / previous words are at 0x806000 / 0x806040 / 0x806080. The rows arrived in commit 1d82e3f4 (J90280.05 removal), and the relocation map is also where the 0x1452e function row came from. The type-only templates fault_status_registers_t and vp44_fault_state_t (structure_definitions.csv) mirror the stale rows at 0x805df2-0x805e00 / 0x805e14-0x805e16. They have no instance and no user (0 .cpp hits; only firmware_types.hpp), so they can be removed too (optional, header-only change).\n\nApplying:\n(1) Add the 4 fault_count_record_t rows as a type-only template (empty address column; comments are comma-free).\n(2) Retype and rename the 0x805a1c row.\n(3) Remove the 29 global rows.\n(4) Remove the 0x1452e function_renames.csv row and add this deleted_functions.csv row (precedent: 0x15e06 / 0x28508): 0x0001452e,not a function entry: the movea.l #0x80654c at byte 0x72 of cm550_countDownPreviouslyActiveFault (0x144bc) - reached only by fall-through from 0x1452c; 0 references (references_to.py; no pointer in the ROM or the RAM / extended RAM / EEPROM dumps) - the row came from the J90280.05 relocation map (was cm550_phase2_sensor_data_processor; PR #53 round 91).\n(5) Build CM550. Check that the 44 sites render fault_count_table field names and that the raw 0x805a20 constants become last_countdown_time references. Index forms such as (&fault_count_table[0].status)[(short)(x * 5) * 2] are possible, because the code computes (x + 4x) x 2. Also check that 0x1452e is gone and that 0x144bc's body is otherwise unchanged.\n(6) If the CM848 renames are applied, build CM848 too.\n(7) Regenerate the headers (generate_headers.py functions) and parameter_id_lookup_table.csv (e2m_block_addresses.py --firmware cm550 --write-table).\n\nComment refreshes (old names): function_definitions.csv rows 242 / 243 (0x146b4: 'DGFUCUBF time stamp (0x805a1c + code * 10)', 'diagnostic_fault_status_table value'), row 323 (0x2fddc: 'clears 0x805a1c / 0x805a20 / diagnostic_fault_occurrence_count / diagnostic_fault_status_table') and the function-name column of rows 91 / 323 if the renames go in. The global row 0x803d66 (datalogger_trigger_1_fault_code_flag_cal) says 'track its status in diagnostic_fault_status_table'. The CM848 rows 0x5983a / 0x5983e mention cm848_faultTimeoutHandler. The proposed comments use the proposed function names; if a rename is skipped, use the current name instead (cm550_FUN_00014872 / cm550_diagnosticCodeDebounceHandler / cm550_FUN_00014670 / cm550_diagnosticTableEntryClear).\n\nOptional enum (not proposed as the field type, since a render check needs a build): status could take FAULT_STATUS (size 1) with 0 INACTIVE_NO_SNAPSHOT / 1 ACTIVE_NO_SNAPSHOT / 2 INACTIVE_WITH_SNAPSHOT / 3 ACTIVE_WITH_SNAPSHOT, all written by the code. The btst #0 test would stay numeric. Status 2 does not guarantee a slot (see the field comment).\n\nLeads (outside S1):\n(a) RAM 0x80654c = e2m block F +0..+0x1f: DG00ELTM / DG00CUDN .. DG03ELTM / DG03CUDN, 4 x {elapsed time before countdown dword, count down rate dword}; 0x144bc loads it through a2 = 0x80654c + mode x 8. CM848's twin is ROM 0x5983a (same e2m records in block 0023, same 4 x 8 layout followed by DGFUCATB at +0x20 in both). CM848 types it as two flat mode-0 dwords, fault_countdown_elapsed_time_mode_0 / fault_countdown_decrement_interval_mode_0. This is a twin struct candidate for both firmwares (one shared struct name; CM550 has no rows there yet).\n(b) fault_confirm_status_word_0 (0x806abc) is e2m block F +0x570 DGFUIDEN 'BIT MAPPED PARAMETER USED TO DISABLE/ENABLE THE PROCESSING OF A [fault]' (38 bytes, up to block 1003 at 0x806ae2): a misname.\n(c) RAM 0x80599e-0x805a1a: 125 unnamed bytes, each fault's count of active status bits (0x14872: +1 / -1, activation and deactivation at 0).\n(d) Snapshot slots: 20 x 48 bytes from 0x80426a (dword hour meter, then code word = diagnostic_fault_code_table at 0x80426e = +4, 125 = empty), plus a second set at 0x80462a / 0x80462e. Struct candidate. 0x2fd90 = release snapshot slot, 0x14720 = assign snapshot slot, 0x146b4 = find the oldest slot with a status.\n(e) 0x14812 cm550_FUN_00014812 = the clear of previously active faults on a diagnostic_clear_request_state bit-0 request (when not_safe_to_program_flag == 2). Its counterpart is the previously-active loop in CM848 cm848_clearDiagnosticState (0x1d01c), not CM848's OBD cm848_clearPreviouslyActiveFaults.\n(f) CM848 fault_state_t field names are wrong. .timer is the occurrence count (+1 up to 0xff at line 20092, capped at 0x7f at 25602 / 25703 / 25807) and .debounce_count is the countdown step count (zeroed at activation at line 20099, +1 per step at 19648). The instance could take the e2m name Fault_Count_Table (fault_count_table_cal). CM848 active_fault_scan_counter is the cursor over the previously active list.\n(g) cm550_initHourMeterSystem (0x14fae) only initializes the fault change ring at 0x80bc8c that 0x14872 pushes to.\n\nScratch scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S1/ (refs.py decoder, map_hits.py, flash_copy.py, fault_definitions.py, removal_list.py)."
+ },
+ "verdict": {
+  "item": "S1",
+  "verdicts": [
+   {
+    "element": "struct fault_count_record_t",
+    "verdict": "CONFIRMED",
+    "reason": "I decoded every access again with capstone (CM550 mode; I read the index scale from the operand detail because the text output drops *2 on .l indexes). I also scanned every byte offset of the ROM: the only 32-bit values in 0x805a1c-0x805f07 are the four field bases, at 44 code sites, plus the parameter ID table entry 0x35524 / 0x35528. A displacement sweep of all 755 functions found no base+disp access into the range, and a sanity test found the known 0x8067c4+disp accesses. The fields: +0 is a long, 6 sites (move.l 0x14564 / 0x14706, cmp.l 0x146fa, store key_on 0x14972 / 0x14bd0, clr.l 0x2fe04). +4 is a long, 6 sites (tst.l 0x1454e / 0x14580, move.l 0x14598, store key_on 0x145bc, clr.l 0x14988 / 0x2fe0e). +8 is a byte, 17 sites. +9 is a byte, 15 sites. No access touches +1..+3 or +5..+7 alone, and none reads +8/+9 as a word. Every index register holds code x 10: (x + 4x) with a *2 scale, x*4+x+x, or a stride of moveq #10. Both dwords are unsigned (sub.l, then cmp.l with bls / bhi; 0x146fa cmp.l with bls). The count is unsigned (cmpi.b #$ff with bcc at 0x1491e; cmpi.b #$7f with bls at 0x32348 / 0x324b6). Roles: +4 is key_on at the last countdown step and gates the later steps against DGnnCUDN at 4(a2), a2 = 0x80654c + 8 x mode. +0 is the activation / deactivation time and gates the first step against DGnnELTM. Status values 0/1/2/3 are written at 0x147c0 / 0x14806 / 0x14bbc / 0x1495e and 0x2fe2e. The RAM dump and both flash copies (0x4a86 / 0x6a86) agree: 13 records in use and +4 = 0 in each of them. The field sizes sum to 10. All four comments are comma-free and match the code. Counterpart, not twin: CM848 fault_state_t is a 7-byte record, with .timer as the occurrence count and .debounce_count as the step count. So a separate type name is right, and data types carry no cm550_ prefix in this repository."
+   },
+   {
+    "element": "global 0x00805a1c",
+    "verdict": "CONFIRMED",
+    "reason": "fault_count_table, fault_count_record_t[125]. e2m 1031 +0 DGFUCUBF is type B, 1250 bytes = 125 x 10. CM848's e2m (CHR_CC 11.10 / 11.12) names block 1031 +0 Fault_Count_Table 'FAULT_COUNT_TABLE.H'. The 125 bound appears four ways. Loops with cmpi.b #$7d and bcs at 0x316c0 (stride 10, status 1 / 3), 0x14fa2 (stride 10, count) and 0x13ebe (the 125 fault data records). Range checks cmpi.w #$7d with bcc at 0x148d8 / 0x14b6e. The fault data records DG0000FU-DG0124FU at F+0x278, 6 bytes each, 0x8067c4. The writer and reader lists match the 13 functions. The comment's claim that index 125 is never used holds. 0x146b4 has no < 0x7d test, but its only two references are the registrar's bsr at 0x14788 / 0x147ce, after the loop at 0x1475c has returned on any slot code 0x7d. Every other index source is bounded: the DGFUCATB checks, the lists filled from them, and the datalogger index bytes 0x800366+i, which only 0x13ea4 writes, with d2 < 0x7d. 0x805efe-0x805f07 holds 00080f00140025801e00 in RAM and in both flash copies, and no operand reaches it. No _cal is right: the loader 0x10e80 copies flash 0x4000 to 0x804f96 (one long), then flash 0x4004.. to RAM 0x804f9a-0x806547, so the table is flash 0x4a86 / 0x6a86 and lies outside the EEPROM mirror. The CM550 CSVs have no name collision. One evidence nit, not in the comment so nothing changes: 'no other e2m record resolves between 0x8058d4 and 0x805f08' is wrong as written. Block 1097 DGAEFUBF / DGIEFUBF / DGAEFOBF / DGIEFOBF / JCFUCUDA resolve to 0x8058d4-0x805a1b. The true statement is that JCFUCUDA (1097 +0xC0, 136 bytes) ends at 0x805a1b, no record resolves in 0x805a1c-0x805f07 apart from DGFUCUBF, and 1329 SSPWCU at 0x805f08 comes next."
+   },
+   {
+    "element": "function 0x000144bc (CM550)",
+    "verdict": "AMENDED",
+    "reason": "The name cm550_countDownPreviously\u00adActiveFault is right. The only caller is the bsr at 0x14690 in 0x14670's walk of previously_active_dtc_list. The function follows the countdown exactly: btst #0 at 0x144e6, mode tst.b 5(a3,x*6) at 0x144fa, count at 0x14512, ELTM with bls at 0x1456e, CUDN with bhi at 0x145a2, store at 0x145bc, subq at 0x145d4, jsr 0x2fddc at 0. The mode 1 values in the dump are 198000 / 72000 counts = 11 h / 4 h; 113 faults use mode 1 and 12 use mode 0. Nothing in it debounces. CM848 0x1c9a0 does the same job with a step count (strict bgt / ble), so the pair is a counterpart. One plate clause is wrong. At 0x1462a-0x14664 the items that move with the list entry are the fault index byte and its previously_active_dtc_cummins_fault_codes word. The J1587 count at 0x80599a is only decremented (0x14618).",
+    "amendment": "In the plate, replace 'At 0 it clears the record (cm550_resetFaultStatus) and moves the last previously_active_dtc_list entry into the fault's place (with its J1587 count).' with 'At 0 it clears the record (cm550_resetFaultStatus) - takes 1 off _inactive_fault_j1587_reportable_count when the fault data record's SPN byte (+4) is not 0 and its flags word (+2) has bit 0x2000 clear - and moves the last previously_active_dtc_list entry and its previously_active_dtc_cummins_fault_codes word into the fault's place and steps the cursor (_inactive_fault_debounce_scan_index) back.' Keep the rest of the plate and the evidence. Name: cm550_countDownPreviouslyActiveFault (unchanged)."
+   },
+   {
+    "element": "function 0x00014670 (CM550)",
+    "verdict": "CONFIRMED",
+    "reason": "cm550_countDownPreviouslyActiveFaults. At 0x14672-0x146ae it sets the cursor 0x800532 = 1, then loops while cursor <= byte 0x8058f4 (ble), calling bsr 0x144bc with the cursor-th entry. The only reference is the jsr at 0x14f30 in cm550_faultFlagScannerAndProcessor. That call is gated by key_on - (0x80052e) >= 25 (moveq #$19 / bhi at 0x14f2e), i.e. '0x18 <' = more than 24 counts = 5.0 s. The CM848 caller of 0x1cd1c has the same 0x18 gate. 0x1cd1c adds a fault_definition_table flag test, so the pair is a counterpart. No name collision."
+   },
+   {
+    "element": "function 0x00014872 (CM550)",
+    "verdict": "AMENDED",
+    "reason": "The name cm550_processFaultScanGroup and the counterpart pairing with CM848 cm848_processFaultScanGroup (0x1d224) are right. cross_firmware_matches.csv row 86 pairs them with score 21, and CM848 adds the OBD steps and the 0xaa / 7-byte record. The code matches the plate. Status | first-occurrence is read with interrupts masked, and first-occurrence is cleared at 0x148b0. DGFUCATB is read at (word*16+bit)*2+0x80656c with a < 0x7d check. The previous-pass word is at 0x806080 and the 0x806abc gate applies. The 0x1f full check is at 0x148f2. The count goes up when below 0xff (0x1491e / 0x14934). 0x80599e = 0 leads to the registrar, status 3, +0 = key_on and clr.l +4 (0x14946-0x14988). Deactivation is at 0x14b88-0x14bd0. Two clauses need fixing. 'with its J1587 / InSite counts' is loose. The plate also never says that every new bit adds 1 to the active-bit count: 0x14b2c-0x14b42 runs for each new bit, after the activation block as well.",
+    "amendment": "In the plate, replace 'and it moves from previously_active_dtc_list to active_dtc_list with its J1587 / InSite counts. A cleared bit takes 1 off the active-bit count.' with 'and it moves, with its Cummins fault code word, from previously_active_dtc_list to active_dtc_list (for a reportable fault _inactive_fault_j1587_reportable_count -1 and _active_j1922_reportable_fault_count +1; _insite_active_fault_count +1; index | 0x80 pushed to the fault change ring at 0x80bc8c when flags bit 0x40 is clear). Every new bit then adds 1 to the active-bit count (up to 255); a cleared bit takes 1 off it.' Name unchanged: cm550_processFaultScanGroup."
+   },
+   {
+    "element": "function 0x0002fddc (CM550)",
+    "verdict": "CONFIRMED",
+    "reason": "cm550_resetFaultStatus. The disassembly: clr.b +9 at 0x2fdfa, clr.l +0 at 0x2fe04, clr.l +4 at 0x2fe0e, then cmpi.b #2 on +8 at 0x2fe18 with bsr 0x2fd90 (which writes 0x7d to the slot's code words at 0x80426e / 0x80462e), then clr.b +8 at 0x2fe2e. The only references are 0x145ee (0x144bc) and 0x1483a (0x14812). CM848 cm848_resetFaultStatus (0x1dee0) clears timer / timestamp / debounce_count and calls cm848_updateFaultEntryCounters when the OBD handler is on or the status is 2, then writes status 0. Same role, different code, so a counterpart with the same stem. No name collision in CM550."
+   },
+   {
+    "element": "function 0x0001c9a0 (CM848)",
+    "verdict": "CONFIRMED",
+    "reason": "cm848_countDownPreviouslyActiveFault. The only caller is 0x1cd1c (line 19754). The disassembly: lbz 5(rec) & 1 is the status, lbz 5(definition) & 3 is the mode, lbz 6(rec) is .timer. First step: (key_on - timestamp) cmplw ELTM, bgt. Later steps: diff - ELTM - CUDN*(n-1) cmplw CUDN, ble exit. Each step adds 1 to .debounce_count at +4 and takes 1 off .timer at +6, and at 0 calls bl 0x1dee0. The plate's 'exceeds' and its formula 'elapsed time + n x Count_Down_Rate' are exact. .timer is the occurrence count (+1 up to 0xff at line 20092, capped at 0x7f at 25602 / 25703 / 25807), and the activation zeroes .debounce_count (20099). Nothing times out. No collision. The CM848 global rows 0x5983a / 0x5983e name the old function and need refreshing, as the proposal says."
+   },
+   {
+    "element": "function 0x0001cd1c (CM848)",
+    "verdict": "CONFIRMED",
+    "reason": "cm848_countDownPreviouslyActiveFaults. Lines 19743-19756: active_fault_scan_counter runs from 1 to previously_active_dtc_list_cal.count and calls the countdown for slots[counter-1] when entry_flags bit 0 is clear or aging_flags bit 7 is set. It walks the previously active list, not the active one. The only caller is line 20315, gated by 0x18 < key_on - fault_event_timing_prev, the same gate as CM550's 0x14f2e. It is a counterpart of 0x14670, which lacks the flag test. No collision."
+   },
+   {
+    "element": "remove 0x00805a24",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_fault_status_table becomes fault_count_table[0].status (+8). All 17 accesses are a byte at base 0x805a24 + code x 10, with zero displacement. It is a label row inside the instance. Refresh the comments that cite the old name: function_definitions rows 243 / 323 and global 0x803d66."
+   },
+   {
+    "element": "remove 0x00805a25",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_fault_occurrence_count becomes fault_count_table[0].occurrence_count (+9). All 15 accesses are a byte at base 0x805a25 + code x 10. It is a label row inside the instance."
+   },
+   {
+    "element": "remove 0x00805a36",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_fault_status_array: +26 = record 2, bytes 2-3 of last_countdown_time. No user: 0 .cpp references, no 32-bit value in any dump, and no displacement access. It arrived with the J90280.05 removal (commit 1d82e3f4). It appears only in global_variables.csv and firmware_globals.hpp."
+   },
+   {
+    "element": "remove 0x00805a38",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_snapshot_throttle_value: +28 = record 2 status. No user (same scans). J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805a3e",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_snapshot_fuel_value: +34 = record 3 last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805a42",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_snapshot_sensor_reading: +38 = record 3 status. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805a44",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_snapshot_throttle_raw: +40 = record 4 status_change_time. In the RAM dump, record 4 = 0d8134dd 00000000 03 01, a live fault record. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805df2",
+    "verdict": "CONFIRMED",
+    "reason": "fault_flags_active_base: +982 = record 98, bytes 2-3 of status_change_time. No user. 0x805df2 + 0x20e = 0x806000, the J90350.00 status words, which supports the J90280.05 address-map origin."
+   },
+   {
+    "element": "remove 0x00805df4",
+    "verdict": "CONFIRMED",
+    "reason": "fault_status_flags_2: +984 = record 98 last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805df6",
+    "verdict": "CONFIRMED",
+    "reason": "engine_fault_status_reg: +986 = record 98, bytes 2-3 of last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805dfa",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_status_reg_1: +990 = record 99 status_change_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805dfc",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_status_reg_2: +992 = record 99, bytes 2-3 of status_change_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805dfe",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_status_reg_3: +994 = record 99 last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e00",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_status_reg_4: +996 = record 99, bytes 2-3 of last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e12",
+    "verdict": "CONFIRMED",
+    "reason": "vp44_status_register_5e12: +1014 = record 101 last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e14",
+    "verdict": "CONFIRMED",
+    "reason": "vp44_fault_status_reg: +1016 = record 101, bytes 2-3 of last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e16",
+    "verdict": "CONFIRMED",
+    "reason": "vp44_fso_fault_flags_active: +1018 = record 101 status. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e32",
+    "verdict": "CONFIRMED",
+    "reason": "fault_flags_history_base: +1046 = record 104, bytes 2-3 of last_countdown_time. No user. 0x805e32 + 0x20e = 0x806040, the J90350.00 first-occurrence words."
+   },
+   {
+    "element": "remove 0x00805e34",
+    "verdict": "CONFIRMED",
+    "reason": "fault_status_flags_8_previous: +1048 = record 104 status. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e36",
+    "verdict": "CONFIRMED",
+    "reason": "engine_fault_latch_reg: +1050 = record 105 status_change_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e3a",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_latch_reg_1: +1054 = record 105 last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e3c",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_latch_reg_2: +1056 = record 105, bytes 2-3 of last_countdown_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e3e",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_latch_reg_3: +1058 = record 105 status. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e40",
+    "verdict": "CONFIRMED",
+    "reason": "io_fault_latch_reg_4: +1060 = record 106 status_change_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e52",
+    "verdict": "CONFIRMED",
+    "reason": "vp44_fso_fault_flags: +1078 = record 107 status. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e54",
+    "verdict": "CONFIRMED",
+    "reason": "vp44_fso_fault_accumulator: +1080 = record 108 status_change_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e56",
+    "verdict": "CONFIRMED",
+    "reason": "vp44_fso_fault_flags_history: +1082 = record 108, bytes 2-3 of status_change_time. No user. J90280.05 leftover."
+   },
+   {
+    "element": "remove 0x00805e72",
+    "verdict": "CONFIRMED",
+    "reason": "diagnostic_fault_group_bitmask_array: +1110 = record 111 status_change_time. No user. 0x805e72 + 0x20e = 0x806080, the J90350.00 previous-pass words."
+   },
+   {
+    "element": "remove 0x00805eb4",
+    "verdict": "CONFIRMED",
+    "reason": "rpm_histogram_buffer_start: +1176 = record 117, bytes 2-3 of last_countdown_time. No user. J90280.05 leftover. I recomputed all 27 positions and all match; 10 of them sit mid-dword."
+   },
+   {
+    "element": "remove 0x0001452e",
+    "verdict": "CONFIRMED",
+    "reason": "This is the function_renames.csv row cm550_phase2_sensor_data_processor. 0x1452e is the movea.l #$80654c,a0 at byte 0x72 of 0x144bc. The lsl.w #3,d0 at 0x1452c falls through into it, and the adda.w d0,a0 at 0x14534 uses that d0, so it cannot be an entry. references_to.py finds 0 references, and no 32-bit 0x0001452e appears at any byte offset of the ROM, RAM, extended RAM or EEPROM dumps. The row came from relocation_map.csv row 396 (0x11060 to 0x1452e, matched). That map only feeds ApplyLabels, and CM550 has no labels.csv, so nothing recreates the function. The proposed deleted_functions.csv row is harmless if the analysis never creates the function ('Not found - fine') and follows the 0x15e06 / 0x28508 precedent. Also refresh the comment of global 0x00805954 (previously_active_dtc_cummins_fault_codes): it names 'cm550_phase2_sensor_data_processor (0x1452e)' as an updater, which would become a dangling name."
+   }
+  ],
+  "overall": "S1 holds. I re-derived all of it from the code: the 10-byte layout with 4 fields from the 44 accesses in 13 functions, the 125 count, the 27 stale rows, the fall-through split at 0x1452e, and the four counterpart pairings. Nothing is refuted. Two CM550 plate comments need clause fixes (0x144bc, 0x14872). The rest is confirmed as proposed, and the CM848 renames are verified.\n\nMissing from the proposal's list of comments to refresh:\n- Global rows 0x008058d4 / 0x008058f4 / 0x00805914 / 0x00805954 name cm550_FUN_00014872 / cm550_diagnosticCodeDebounceHandler. 0x00805954 also names the deleted cm550_phase2_sensor_data_processor (0x1452e).\n- function_definitions.csv row 322 (0x2fd90 code_index) names cm550_diagnosticTableEntryClear.\n- relocation_map.csv row 396 still maps phase2_sensor_data_processor to 0x1452e. It is historical and nothing builds from it, so editing it is optional.\n\nNo other CSV has rows in 0x805a1c-0x805efd: I checked the structure_definitions.csv addresses and constants.csv, and CM550 has no arrays.csv or labels.csv. The proposed names collide with nothing in either firmware. The two dead templates fault_status_registers_t and vp44_fault_state_t have 0 .cpp hits, so removing them is optional.\n\nNot verified, because I could not build: the step 5 render expectations, i.e. that the 44 sites print fault_count_table fields, that the raw 0x805a20 becomes .last_countdown_time, and that 0x144bc's body is unchanged without the 0x1452e split.\n\nOut of scope, noted for later: inactive_fault_debounce_scan_index (0x800532) is the countdown cursor, not a debounce index, and _DAT_0080052e is the time of the last countdown pass. The scratch tools are in /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S1/skeptic/: m68kdis.py (capstone CPU32 decoding with index scale), ptrscan.py, dispscan.py and ramtable.py."
+ }
+}

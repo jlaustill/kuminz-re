@@ -1,0 +1,38 @@
+both firmwares + tools: round 94 stage D - CM550's EEPROM image is 0x148a bytes: the _cal window, the address tool and the CLI's EEPROM dump follow
+
+mc68k_initializeSerialEepromDriverAndLoadMirror (0x26854) sets the start-up load length first and the refresh length
+after the load:
+  0x2694a  move.l #0x804f94,d0 / subi.l #0x803b08,d0 / addi.w #-2,d0 / move.w d0,(a2)   -> 0x148a (a2 = 0x801a88)
+  0x269da  move.l #0x804156,d0 / subi.l #0x803b08,d0 / addi.w #-2,d0 / move.w d0,(a2)   -> 0x64c
+So RAM 0x803b0a-0x804f93 is EEPROM 0x0-0x1489, loaded at every start-up, and only 0x0-0x64b is refreshed afterwards.
+Round 73 had set the CM550 _cal window to the refresh (0x803b0a-0x804155). CM848's window is its whole start-up
+load (0x3fd482-0x3feec1 = 0x1a40 bytes; its refresh is 0x8e8), so CM550's window is the whole load too. The rows past
+offset 0x1000 are non-volatile records (fault code lists, InSite statistics, trending), and the parameter ID table
+tags EEPROM 0x72a + 2n for j1939_input_signal_timeouts.
+
+- firmware/scripts/audit_cal_suffixes.py: CM550's EEPROM regions end at 0x0100148A / RAM 0x804F94.
+- firmware/scripts/e2m_block_addresses.py (+ test): CM550 EEPROM addresses map to RAM for the whole image
+  (0x01001000 -> 0x804B0A, 0x01001489 -> 0x804F93, 0x0100148A unchanged); the CM550 parameter ID table is regenerated.
+- 71 CM550 rows in RAM 0x804156-0x804f93 take _cal (fault_freeze_frame_entries_cal, the J1939 control session
+  records - now the same names as CM848's j1939_control_session_history_cal / j1939_active_*_control_session_cal /
+  j1939_control_session_history_next_entry_cal - the J1922 session counters, the trending, InSite and fault code
+  list words ...). CM848's twin array j1939_input_signal_timeouts (arrays.csv, 0x3feaa4, inside CM848's mirror; the
+  _cal audit does not read arrays.csv; every user is application code in Bank 2) is j1939_input_signal_timeouts_cal,
+  so the twins keep one name.
+- clip-core TClipPacket.h: CM550_EEPROM_SIZE 0x148A (was 4 KB) and CM550_EEPROM_END 0x01001489, so kuminz-cli
+  --dump-eeprom / --dump-all read the whole image (the memory services translate EEPROM addresses into this RAM image
+  with no upper bound - 0x224b6 - so a 4 KB read missed 0x1000-0x1489 and a longer one would return RAM past it).
+  The CLI and clip-core build and clip-core's test passes; not run against an ECU.
+- Docs: CLAUDE.md (the region table and the --dump-eeprom line), firmware/CLAUDE.md (the CM550 EEPROM line; the J1939
+  input layer bullet names j1939_input_signal_timeouts_cal), the CM550 README and docs/memory_map.md.
+
+Proof (both firmwares built twice, deterministic; base = HEAD 9b467c63):
+- Both: the function sets are unchanged (CM550 704, CM848 1968); every token change is in the maps (71 CM550 renames,
+  the CM848 array); no function changed its statement count; the caller census shows no rise; no old name is left in
+  the code; no row sits newly inside another row's span.
+- The _cal audit (with the new window) is 0 hard / 0 soft / 14 missing in CM550 and 0 / 0 / 206 in CM848 - the same as
+  before, so every named row in the extended window now carries _cal.
+- Headers regenerated (g++ 0 errors); the five Python suites (test_e2m_block_addresses with the new 0x01001000 /
+  0x01001489 / 0x0100148A cases) and the 109 JUnit tests pass; kuminz-cli and clip-core build, clip-core's test passes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

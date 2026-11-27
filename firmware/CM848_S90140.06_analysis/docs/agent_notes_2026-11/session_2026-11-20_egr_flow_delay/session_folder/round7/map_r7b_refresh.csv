@@ -1,0 +1,3 @@
+address,name,old_label,kind
+0x003feb50,j1939_active_engine_control_session_cal,DAT_003feb50,global
+0x003feb6a,j1939_active_retarder_control_session_cal,DAT_003feb6a,global

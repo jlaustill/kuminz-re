@@ -1,0 +1,6 @@
+work/tasks/025-cm848-naming-wave-followups.md:504: ... mph (2560) and 15 percent load (3840)). 0x507e20 hpcr_initFuelTemperatureSensorChannel really is fuel temperature: i
+work/tasks/025-cm848-naming-wave-followups.md:511: ...- 0x00507e20 hpcr_initFuelTemperatureSensorChannel was rightly left alone. It po
+work/tasks/025-cm848-naming-wave-followups.md:531: ...- 0x00507e20 hpcr_initFuelTemperatureSensorChannel (in scope, left alone) - it o
+work/tasks/025-cm848-naming-wave-followups.md:688: ...ssProtectionControlStateMachine 0x2b088 0x2b0fc / protection_threshold_check 0x507ef8 / fuel_demandRateLim
+work/tasks/025-cm848-naming-wave-followups.md:694: ...sw31 in 0x2c23c 0x2c468 0x2c61c - sw31 == sw31 in protection_threshold_check for DAT_000597d6) and the sel
+work/tasks/025-cm848-naming-wave-followups.md:705: ...nsumer of the 100 ms test-switch pulse was found: protection_threshold_check (degenerate self-compare) / f

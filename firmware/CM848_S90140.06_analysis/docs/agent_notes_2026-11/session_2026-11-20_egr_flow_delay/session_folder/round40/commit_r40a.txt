@@ -1,0 +1,57 @@
+cm848: round 40 stage A - the application's EEPROM mirror names gain _cal, 7 renamed from their records and code
+
+audit_cal_suffixes.py's MISSING list (EEPROM-backed names without _cal) drops from 258 to 234.
+- **Which rows:** only rows that application code alone uses (missing_users.py) and whose name describes the
+  application's EEPROM value.
+  - The boot-named rows stay: they sit at addresses the boot kernel uses before the application loads the mirror over
+    them. So do the dual-use rows.
+  - The region labels stay: eeprom_mirror (EEPROM 0x0, e2m 000B ECM_STAT) and eeprom_checksummed_block_start.
+  - Rows without evidence stay as leads: qadc_adc_enable_flag, fault_list_iteration_counter, and the
+    fault_status_array / _word_array pair (it needs a shape).
+- **Every candidate went through the ECU's parameter ID table first.** It resolves 8. The rest lie past the 1441
+  records in the dump, which is absence of data, not evidence.
+- **Seven names change with the evidence:**
+  - lifetime_fuel_used_at_governed_speed -> lifetime_idle_fuel_used_cal (e2m 117F +A Total_Idle_Fuel_Used).
+    - The "governed speed" flag is the low speed governor fueling state within +-400 counts (50 rpm) of its reference,
+      i.e. idle.
+    - So the family follows: lifetime_idle_time_cal, trip_idle_fuel_used_cal, trip_idle_time_cal, and
+      engine_at_governed_speed_flag -> engine_idling_flag.
+  - governor_speed_target_trim -> low_speed_governor_no_load_fuel_trim_cal: its only use adds it into the no-load fuel.
+  - j1939_governor_feature_byte -> feature_selection_bits_cal: a scan-tool-programmed feature bitmap (SCI EEPROM
+    setting type 2), not J1939.
+    - bit 0 / 1: the cab / remote power take-off governor;
+    - bit 2: the oil change monitor;
+    - bit 3: the initial overdrive flags;
+    - bit 4: the water in fuel sensor's second configuration.
+  - sensor_validation_startup_accumulator -> eeprom_verify_retry_lifetime_total_cal: the power-down save adds
+    cm848_getEepromVerifyRetryTotal() to it.
+  - governor_mode_code_diag_snapshot -> final_fueling_state_before_shutdown_or_excess_injection_fault_cal, next to its
+    sibling total_fueling_before_shutdown_or_excess_injection_fault_cal.
+  - protection_b_fault_active_flag -> exhaust_brake_switch_learned_flag_cal.
+    - It is set once the exhaust brake switch is seen on, which turns on the engine brake 1 output read-back check.
+    - The SCI status byte reports it next to four_wheel_drive_switch_learned_flag_cal.
+    - Block 1930's offsets drift in 11.46, so the table's BTR_Numerator at that address is not used.
+- **The others only gain _cal:**
+  - the VIN and its 16 documentation rows;
+  - lifetime_distance_pulses (117F Total_Distance), trip_average_fuel_economy, ignition_key_off_count (1329
+    Key_Off_Count);
+  - the 0x19ce-0x19f2 lifetime / trip counters;
+  - cruise_control_switches_learned_flag, supervisor_watchdog_serious_error_events, immobilizer_secret_key_byte_3;
+  - temperature_rationality_coolant_soak_reference (the EEPROM copy of its _working twin).
+- **arrays.csv** also named the VIN. Its arrays stage runs after the import, so the first build still rendered the old
+  name; the second build renders the new one.
+- **Comments** updated in enums.csv, structure_definitions.csv, docs/engine_hours_and_odometer.md and
+  tools/update_odometer.sh (comments only).
+- **firmware/CLAUDE.md (name refreshes):**
+  - The trip / lifetime, vehicle speed, switch, sensor channel and power take-off sections now use the new names
+    (refresh_references.py).
+  - One factual fix: "governor mode 11 within +/-400 rpm of its target - probably idle" now reads +-400 counts = 50 rpm,
+    idle by e2m 117F +A.
+
+Proof:
+- prove_caches.py: 1967 of 1968 functions match. cm848_getVinCharacter differs only by whitespace: statement_diff.py
+  shows 0 differing statements.
+- The thunk line stays 18 / 14. No old name is left in the .cpp, the headers, the CSVs or the docs.
+- HARD stays 0. lookup_tables.py: 0 sizing problems. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

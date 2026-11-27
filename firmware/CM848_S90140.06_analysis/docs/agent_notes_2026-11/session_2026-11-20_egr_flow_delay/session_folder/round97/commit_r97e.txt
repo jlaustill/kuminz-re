@@ -1,0 +1,40 @@
+both firmwares: round 97 stage E - the governor families of workflow batches R1-R4 (CM550: 13 functions, 314 globals, the low speed governor gain set struct)
+
+Workflow batches R1-R4 (an investigator per family, an adversarial judge per batch) named the CM550 governor families:
+R1 the low speed governor, R2 the high speed and all speed governors, R3 the acceleration noise control, road speed
+governor, air fuel control and power take-off words, and R4 the engine position sensor and pulse period tables. Only
+the judges' CONFIRMED / AMENDED verdicts were applied.
+
+- 13 CM550 function renames and 314 CM550 global renames / retypes (335 map rows), 3 CM848 rows: the twins
+  selectLowSpeedGovernorTsc1GainSet / selectLowSpeedGovernorOverrideGainSet share one name with CM550 now, and
+  0x3fa8a4 is j1939_torque_curve_derate_engine_speed.
+- New struct cm550_low_speed_governor_gain_set_t (proportional / integral / derivative gain, 6 bytes; the RAM dump's
+  working gains 530 / 283 / 55 equal the set at 0x808230 that both gain set pointers hold). Its instances are the
+  default, aggressive, middle gear, high gear, J1939 and override gain sets; the pointers dereference it as
+  low_speed_governor_gain_set_pointer->integral_gain.
+- New enum LOW_SPEED_GOVERNOR_GAIN_STATE in both firmwares (DEFAULT 0 / AGGRESSIVE 1 / MIDDLE_GEAR 2 / HIGH_GEAR 3 /
+  J1939 4).
+- 130 CM550 rows that sat inside a judged global's span are removed (the gain set fields, the pulse period table
+  backup dword[100] at 0x80ceae, the programmable power fueling curve word[210] at 0x8086f2, ...).
+- Prototypes: cm550_updateLowSpeedGovernorAggressiveGainLogic returns void (its caller ignores d0) and
+  selectLowSpeedGovernorTsc1GainSet returns ushort (moveq #1 / clr.w d0).
+- Four judged types the apply had kept were forced: the default gain set 0x808314, 0x80a942 word, and the i16 rows
+  0x80d652 (engine_speed_limit_droop_slope) / 0x80de68.
+- The CM550 parameter ID lookup table, both firmwares' headers and the references are refreshed.
+
+Proof (both builds DETERMINISTIC x2, 0 import failures, 0 script errors):
+- CM848: 6 functions change, enum renders only.
+- CM550: 77 functions change, the same function set; 0 old labels left in the code; register artifacts 193 -> 190,
+  CONCAT 530 -> 520.
+- Three statement counts change, each checked against the machine code:
+  - cm550_updateLowSpeedGovernorAggressiveGainLogic 34 -> 18: the gotos and CONCAT22 lines were d0 return tracking,
+    and every branch of the new render matches 0x26110-0x26242.
+  - presetHighSpeedGovernorIntegrator 12 -> 13: the i32 integrator lost its WARNING, and the render now shows the 4
+    stores the code makes (the old one showed 6).
+  - selectLowSpeedGovernorTsc1GainSet 5 -> 4: in_D0 & 0xffff0000 is gone.
+- Pieces 507 -> 510: the three move.w (2,a2) reads of the integrator's low word render as
+  high_speed_governor_integrator._2_2_ (were _DAT_00800718). A struct would turn every add.l / cmp.l into pieces
+  instead.
+- 64 names render nowhere, and none of their old names rendered either.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

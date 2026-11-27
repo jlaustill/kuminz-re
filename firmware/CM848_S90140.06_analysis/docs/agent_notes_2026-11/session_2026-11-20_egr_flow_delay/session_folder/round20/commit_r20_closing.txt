@@ -1,0 +1,22 @@
+cm848: round 20 closing - docs, the session archive, verify
+
+- task 046: the round 20 section. It covers the block and its three read paths, stages A-E, the naming tiers, the
+  methods (a "no reader" claim needs three searches) and the leads (calculateAlpha's r4 alias, the PGN 65269 ambient
+  temperature bytes, the length word's 70).
+- PR body:
+  - the round 20 entry and test line;
+  - the open list now reads "after round 20". Its stale switch bytes 0 / 1 / 3 item (round 16 shipped those bitfields
+    with the user's approval) gives way to round 20's leads.
+- Current texts that named round 20's old names:
+  - todo line 32 (algorithm_enable_flags_28_cal.j1939_multiplex_enable);
+  - thermal_protection_trigger.md's mapping note (algorithm_enable_flags_29_cal);
+  - task 042's duplicate-name lead, now resolved (0x40a550 since wave 5, 0x40b22a = cold_delta_fuel).
+  The task 046 history sections keep the names they used.
+- todo line 046.
+- The session archive:
+  - session_folder/round20/ (38 files: the worklists, generators, normalizers, evidence dumps and commit texts);
+  - the round 20 build and verify logs in the large-files tarball;
+  - the PR body copy and the README entry.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

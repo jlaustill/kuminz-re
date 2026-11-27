@@ -1,0 +1,42 @@
+cm848: round 10 stage C - the lookup cache suffix spelled out, the 48RE monitor and relay names (label-only)
+
+- **The lookup cache suffix:** 127 cache words named <table>_interp_state (103) or <table>_interpolation_state (24)
+  now end in _cached_axis_offset. "interp" is a short form; the word holds the last axis segment offset, and 41 rows
+  plus the lookupTableInterpolation parameter already used _cached_axis_offset. The seven word[2] 2-D grid caches end
+  in _cached_axis_offsets. coolant_temp and injection_timing_min_fuel are spelled out on the way.
+- **The transmission relay:** logical_output_request_bits_16_to_23_t.reserved_bit_0 is now transmission_relay_request
+  (output 16).
+  - cm848_mainLoopMonitor checks output 16 with diag_faultMatch_outputCheck_update(0x10,0x16,0x88,0x89,...). Faults
+    136 / 137 are P0883 / P0882 'TCM power input signal high / low'.
+  - Fault 137 sets the e2m 8C19 bit RE_Trans_Relay_Circuit_Open ('transmission power relay is open-circuit').
+  - Outputs 17 / 18 (the overdrive and converter clutch solenoids) carry the same kind of pairs (P0974 / P0973,
+    P2770 / P2769).
+- **Functions:**
+  - cm848_updateTransmissionRelayRequest (was cm848_evaluateProtectionFaultCondition): requests the relay while the
+    engine runs and no relay / solenoid circuit limp bit is set.
+  - cm848_updateTransmissionLimpHomeFlags (was cm848_processProtectionFaultSeverity): the e2m 8C19 limp bits from the
+    fault bits.
+  - cm848_updateTransmissionControlInputs (was cm848_evaluateProtectionModeFlags).
+  - The two phases of the transmission controller in phase group B: cm848_updateTransmissionControlState (was
+    cm848_processCalibrationTablesMain) and cm848_runTransmissionControlWhenEnabled (was
+    cm848_processProtectionStateMachine).
+  - cm848_initializeGovernorPressureTrackingMonitor (was initHpcr_FaultCounters).
+  - cm848_initializeAlternatorFieldControl (was cm848_initProtectionFilterValues: it initializes only the alternator
+    field and charging controller).
+- **The P1762 monitor (e2m 8C56):** governor_pressure_rationality_monitor_state (was j1939_fault_state, 8C56 +2
+  RE_Governor_Pressure_Rationality_Status), governor_pressure_rationality_cycle_divider and
+  governor_pressure_rationality_tested_in_park_neutral_flag (were j1939_fault_state_cycle_divider /
+  j1939_load_protection_fault_reported_flag).
+- **The P1756 / P1757 monitor's protection_coldStart_* words:**
+  - governor_pressure_tracking_cycle_divider
+  - governor_pressure_mid_range_check_fault_reported_flag
+  - governor_pressure_zero_check_window_tested_flag / governor_pressure_mid_range_check_window_tested_flag
+- **transmission_normal_operation_flag** (was protection_mode_changed_flag): 1 while no actuator or service test owns
+  the outputs.
+- **Checks:**
+  - CM550 has none of these names.
+  - reverse_names.py EQUIVALENT (label-only; the map carries both spellings of the _-prefixed 0x3fceee row and the
+    field row).
+  - keyed_refresh_audit.py finds no rewritten history sentence.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

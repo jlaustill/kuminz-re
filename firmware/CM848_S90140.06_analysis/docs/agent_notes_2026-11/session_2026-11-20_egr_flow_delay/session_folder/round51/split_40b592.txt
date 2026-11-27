@@ -1,0 +1,24 @@
+gap 0x40b592 +52 (0x40b592..0x40b5c5) after 8C34 before 1269
+== free 0x40b592 +52: accessed / named ['0x40b592', '0x40b594', '0x40b596', '0x40b59a', '0x40b59e', '0x40b5a0', '0x40b5a2', '0x40b5a4', '0x40b5a8', '0x40b5aa', '0x40b5ae', '0x40b5b2', '0x40b5ba', '0x40b5bc', '0x40b5be', '0x40b5c0', '0x40b5c2', '0x40b5c4']
+   rows: 0x40b592 governor_pressure word, 0x40b594 governor_pressure_integral_term word, 0x40b596 governor_pressure_error_slope dword, 0x40b59a governor_pressure_error_sum dword, 0x40b59e governor_pressure_proportional_term word, 0x40b5a0 governor_pressure_sensor_zero_offset word, 0x40b5a2 governor_pressure_controller_output word, 0x40b5a4 governor_pressure_solenoid_read_back_fault_latched_flag word, 0x40b5a8 vehicle_speed_unfiltered word, 0x40b5aa vehicle_speed_conversion_numerator dword, 0x40b5ae vehicle_speed_sensor_scaled_period dword, 0x40b5b2 vehicle_speed_filter_state ema_filter_state_t, 0x40b5ba rock_cycle_engine_speed_limit_phase word, 0x40b5bc road_speed_governor_reference_speed word, 0x40b5be road_speed_governor_reference_speed_copy word, 0x40b5c2 drivetrain_gear_range DRIVETRAIN_GEAR_RANGE, 0x40b5c4 fault_vehicle_speed_limit word
+   accesses: 0x40b592 ['lhz', 'sth'], 0x40b594 ['sth'], 0x40b596 ['lwz', 'stw'], 0x40b59a ['addi'], 0x40b59e ['sth'], 0x40b5a0 ['lhz', 'sth'], 0x40b5a2 ['lhz', 'sth'], 0x40b5a4 ['addi'], 0x40b5a8 ['addi', 'lhz', 'sth'], 0x40b5aa ['lwz', 'stw'], 0x40b5ae ['addi'], 0x40b5b2 ['addi'], 0x40b5ba ['addi', 'lha', 'sth'], 0x40b5bc ['addi', 'lha', 'lhz', 'sth'], 0x40b5be ['sth'], 0x40b5c0 ['sth'], 0x40b5c2 ['lha', 'sth'], 0x40b5c4 ['addi']
+   candidate 8D58 (size 52):
+   +00 0x40b592 CAN_Keyswitch_Status [U2] acc=['lhz', 'sth'] row=governor_pressure 
+   +02 0x40b594 AC_Pressure_Voltage_Implausible_Timer [U4] acc=['sth'] row=governor_pressure_integral_term sth width 2 != 4; row governor_pressure_integral_term is word
+   +06 0x40b598 CAN_Bus_Off_Condition [U2] acc=[] row=- 
+   +08 0x40b59a CAN_Error_Status_Register [U2] acc=['addi'] row=governor_pressure_error_sum row governor_pressure_error_sum is dword
+   +0A 0x40b59c CAN_Error_Timer [U4] acc=[] row=- 
+   +0E 0x40b5a0 CAN_Lost_Comm_Detection_Enable [U2] acc=['lhz', 'sth'] row=governor_pressure_sensor_zero_offset 
+   +10 0x40b5a2 CAN_Lost_Comm_Detection_Timer [U2] acc=['lhz', 'sth'] row=governor_pressure_controller_output 
+   +12 0x40b5a4 CAN_Network_Diag_Timer [U4] acc=['addi'] row=governor_pressure_solenoid_read_back_fault_latched_flag row governor_pressure_solenoid_read_back_fault_latched_flag is word
+   +16 0x40b5a8 CAN_Network_Diag_Enable [U2] acc=['addi', 'lhz', 'sth'] row=vehicle_speed_unfiltered 
+   +18 0x40b5aa Fuel_Voltage_Implausible_Timer [U4] acc=['lwz', 'stw'] row=vehicle_speed_conversion_numerator 
+   +1C 0x40b5ae Ign_Off_Timer_Implausible_Timer [U4] acc=['addi'] row=vehicle_speed_sensor_scaled_period 
+   +20 0x40b5b2 Implausible_Signal_Detection_Timer [U4] acc=['addi'] row=vehicle_speed_filter_state 
+   +24 0x40b5b6 Vehicle_Speed_Implausible_Timer [U4] acc=[] row=- 
+   +28 0x40b5ba CAN_Bus_On_Retry_Flag [U2] acc=['addi', 'lha', 'sth'] row=rock_cycle_engine_speed_limit_phase lha sign S != U
+   +2A 0x40b5bc CAN_Bus_Off_Phase_Flag [U2] acc=['addi', 'lha', 'lhz', 'sth'] row=road_speed_governor_reference_speed lha sign S != U
+   +2C 0x40b5be CAN_Bus_Off_PhaseA_Timer [U2] acc=['sth'] row=road_speed_governor_reference_speed_copy 
+   +2E 0x40b5c0 CAN_Bus_On_Retry_Timer [U2] acc=['sth'] row=- 
+   +30 0x40b5c2 Ign_Off_Time_First_Msg_Timer [U4] acc=['lha', 'sth'] row=drivetrain_gear_range sth width 2 != 4; lha width 2 != 4; lha sign S != U
+      -> FAILS 9; uncovered ['0x40b596', '0x40b59e', '0x40b5c4']

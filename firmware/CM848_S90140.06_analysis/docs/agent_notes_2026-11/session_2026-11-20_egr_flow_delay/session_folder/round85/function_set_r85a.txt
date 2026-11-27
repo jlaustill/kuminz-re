@@ -1,0 +1,96 @@
+removed 9: 0x00015e06 clearModuleSyncFlag, 0x00028508 vp44_mainSystemInitialization, 0x0002874a vp44_slowCycle4Coordinator, 0x00028792 vp44_engineDiagnosticSystemCoordinator, 0x00028816 cm550_fuelDemandUpdateOrchestrator, 0x00028828 cm550_advancedEngineProtectionCoordinator, 0x00028936 cm550_shutdownMinimumSelectorOrchestrator, 0x00028990 cm550_phase4InitSequence, 0x00028e32 cm550_mainCanTransmissionLoop
+added 0: 
+changed 7
+  0x00010fe0 cm550_saveParameterBlock1ToFlash: 67 lines
+      -  int iVar1;
+      -  short sVar2;
+      +  dword dVar1;
+      +  short sVar3;
+      +  int iVar2;
+      -  ushort uVar3;
+      -  byte bVar4;
+      +  ushort uVar4;
+      +  byte bVar5;
+      -  char cVar5;
+      +  char cVar6;
+      -  undefined2 uVar6;
+      +  undefined2 uVar7;
+      -  uVar6 = (undefined2)((uint)unaff_D2 >> 0x10);
+      +  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
+      -  uVar3 = 0;
+      -  while ((uVar3 < 5000 && (_calibration_bank1_write_sequence != local_6))) {
+      +  uVar4 = 0;
+      +  while ((uVar4 < 5000 && (_calibration_bank1_write_sequence != local_6))) {
+      -    uVar3 = uVar3 + 1;
+      +    uVar4 = uVar4 + 1;
+      -  iVar1 = cm550_flashEraseFromRam(0x4000,0);
+      -  if (iVar1 == 0) {
+      +  dVar1 = cm550_flashEraseFromRam(0x4000,0);
+  0x0001125a cm550_saveParameterBlock2ToFlash: 67 lines
+      -  int iVar1;
+      -  short sVar2;
+      +  dword dVar1;
+      +  short sVar3;
+      +  int iVar2;
+      -  ushort uVar3;
+      -  byte bVar4;
+      +  ushort uVar4;
+      +  byte bVar5;
+      -  char cVar5;
+      +  char cVar6;
+      -  undefined2 uVar6;
+      +  undefined2 uVar7;
+      -  uVar6 = (undefined2)((uint)unaff_D2 >> 0x10);
+      +  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
+      -  uVar3 = 0;
+      -  while ((uVar3 < 5000 && (_calibration_bank2_write_sequence != local_6))) {
+      +  uVar4 = 0;
+      +  while ((uVar4 < 5000 && (_calibration_bank2_write_sequence != local_6))) {
+      -    uVar3 = uVar3 + 1;
+      +    uVar4 = uVar4 + 1;
+      -  iVar1 = cm550_flashEraseFromRam(0x6000,0);
+      -  if (iVar1 == 0) {
+      +  dVar1 = cm550_flashEraseFromRam(0x6000,0);
+  0x00015f8e mc68k_dispatchJ1708ReceivedMessages: 2 lines
+      +  word currentTimerCount;
+      -  word currentTimerCount;
+  0x0001c484 cm550_flashEraseFromRam: 23 lines
+      -void cm550_flashEraseFromRam(dword start_address,dword end_address)
+      +dword cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
+      -  undefined2 *puVar1;
+      -  code *pcVar2;
+      +  dword dVar1;
+      +  undefined2 *puVar2;
+      +  code *pcVar3;
+      -  _flash_target_address_ptr = start_address;
+      -  _DAT_008006a6 = end_address;
+      -  puVar1 = (undefined2 *)auStack_804;
+      -  for (pcVar2 = mc68k_flashEraseBlock; pcVar2 < cm550_flashEraseFromRam; pcVar2 = pcVar2 + 2) {
+      -    *puVar1 = *(undefined2 *)pcVar2;
+      -    puVar1 = puVar1 + 1;
+      +  _flash_target_address_ptr = block_address;
+      +  _DAT_008006a6 = suspend_check_disabled;
+      +  puVar2 = (undefined2 *)auStack_804;
+      +  for (pcVar3 = mc68k_flashEraseBlock; pcVar3 < cm550_flashEraseFromRam; pcVar3 = pcVar3 + 2) {
+      +    *puVar2 = *(undefined2 *)pcVar3;
+      +    puVar2 = puVar2 + 1;
+      -  (*(code *)auStack_804)();
+      -  return;
+      +  dVar1 = (*(code *)auStack_804)();
+      +  return dVar1;
+  0x0001e086 cm550_serialNodeAddressForwarder: 3 lines
+      -    mc68k_queueCanCs4ReceiveMessage((uint)CONCAT12(in_stack_00000005,(short)((uint)unaff_D2 >> 0x10)));
+      +    mc68k_queueCanCs4ReceiveMessage
+      +              ((uint)CONCAT12(in_stack_00000005,(short)((uint)unaff_D2 >> 0x10)));
+  0x0001e5f0 mc68k_queueCanCs4ReceiveMessage: 4 lines
+      -void mc68k_queueCanCs4ReceiveMessage(dword channel_config)
+      +void mc68k_queueCanCs4ReceiveMessage(dword message_object)
+      -    bVar4 = (byte)(channel_config >> 0x10);
+      +    bVar4 = (byte)(message_object >> 0x10);
+  0x0002ce64 cm550_updateBootBlockFromImage: 6 lines
+      -  int iVar1;
+      +  dword dVar1;
+      -    iVar1 = cm550_flashEraseFromRam(0,1);
+      -    if (iVar1 == 0) {
+      +    dVar1 = cm550_flashEraseFromRam(0,1);
+      +    if (dVar1 == 0) {

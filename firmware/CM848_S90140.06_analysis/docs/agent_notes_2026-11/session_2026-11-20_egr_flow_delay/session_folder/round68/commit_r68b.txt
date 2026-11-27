@@ -1,0 +1,24 @@
+cm848: round 68 follow-up - ecm_part_number_cal from e2m, exact e2m quotes, two history notes repaired
+
+From the round's closing review:
+- EEPROM 0x0c is e2m 0001 +0 ECM_Part_Number ('Module Part Number', HEX, 4 bytes).
+  - eeprom_status_block (0x0100000c) -> ecm_part_number_cal (dword);
+  - its boot copy at 0x3fee26 -> boot_ecm_part_number (3be13ab6 coined boot_eeprom_status_block).
+- Two e2m quotes in 3be13ab6's struct comments are now e2m's exact text:
+  - Fuel_Lvl_Last_Valid_Percent's description had been cut at 160 characters and completed by hand;
+  - IAH_Redundant_Preheat_Req's comma had become a dash. The file is quote-aware, so the field is quoted.
+- intake_air_heater_preheat_depleted_flag's comment named the removed eeprom_status_flags.
+- cm848_loadCalibrationFromEeprom's plate names the part number.
+- Two history notes repaired. refresh_references.py protects old labels after "was", but not after "named it", so:
+  - this round's "3be13ab6 named it boot_eeprom_status_block" had become "... named it boot_ecm_part_number";
+  - round 66's "382fa677 named it net_combustion_torque_coolant_friction_scale" had become the current name in
+    c48cc435.
+  Both now read "(was <old> in <hash>)", which the refresh protects.
+- 3be13ab6's message says 13 application functions; the count is 14 (10 + 3 + 1).
+
+Proof (round 67's prove_r67.sh with map_r68b.csv): 0 of 1968 functions differ after canonicalization; the part
+number's dword type adds no cast. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed;
+locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass,
+audit_cal_suffixes.py HARD 0 / MISSING 211 (was 212).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,18 @@
+cm848: round 19 stage B - SENSOR_VALUE_SOURCE on eleven source words, the humidity table cache (types)
+
+- SENSOR_VALUE_SOURCE (PRIMARY / BACKUP / DEFAULT): eleven e2m records share the value list '0=PRIMARY, 1=BACKUP,
+  2=DEFAULT' (the barometric pressure selected / reference sources, altitude, battery voltage, charge pressure, charge
+  temperature, coolant, EGR orifice temperature, EGR position, exhaust pressure, VGT position). The code stores and
+  compares only 0 / 1 / 2 in each and never takes an address. barometric_altitude_source (1921 +12, 0x40a1a6) gets a
+  row.
+- ambient_relative_humidity_cached_axis_offsets: the humidity table's 2-D cache at 0x3fb9f2 as word[2] (was the
+  'dims' word boost_fuel_rpm_blend_table_row_count; its second word was DAT_003fb9f4).
+- injection_timing_combustion_limits_input_source (0x3fa702, renamed in stage C) typed
+  INJECTION_TIMING_INTERMEDIATE_SOURCE: its store of 25 reads COMBUSTION_REFERENCE.
+
+Proof: check_enum_proof3.py - the 90 SENSOR_VALUE_SOURCE renders and the INJECTION_TIMING_INTERMEDIATE_SOURCE store
+are pure substitutions (no OR-combined renders). The three functions left are the two cache users ([0] / [1] = 2,
+the array argument) and one known local declaration order flip. Headers regenerated (0 g++ errors),
+lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,18 @@
+cm848: round 43 stage B - 30 junk '<name>+<N>' rows removed from global_variables.csv
+
+An old export left untyped rows named after another row plus an offset (governor_speed_limit_output+1,
+sensor_validation_accum+2, eeprom_write_buffer+2 / +3, ...). They are labels for interior bytes of another row's data.
+- Their names are not identifiers, nothing renders them (0 hits in the .cpp and the headers), and several misled:
+  sensor_validation_accum+2 sat inside lifetime_distance_pulses_cal.
+- All 30 are removed: 27 plain, then 3 dotted ones (field +1 / +2 documentation rows). The removed rows are in the
+  round 43 session folder.
+- The one typed row of the kind, fuel_demand_enable_sync_flag_shadow+2 (undefined2), stays as a lead. Removing a
+  type can change the build.
+
+Proof: two builds, after the 27 and after the 3. Against stage A, the .cpp differs only in the order of local
+declarations, in two functions (mpc555_areBootModeStrapPinsHigh and the PCI timeout check). Every function body is
+identical, and the thunks stay 18 / 14.
+
+audit_cal_suffixes.py: HARD 0. MISSING 233 -> 221: twelve of the rows sat in the EEPROM mirror.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

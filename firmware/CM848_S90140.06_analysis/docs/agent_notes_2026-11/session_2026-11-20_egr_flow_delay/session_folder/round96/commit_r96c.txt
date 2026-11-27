@@ -1,0 +1,21 @@
+both firmwares: round 96 stage C - the J1939 / CAN struct types spell their words out
+
+The naming rule bans invented abbreviations (J1939 / CAN stay). Renamed in every CSV column of both firmwares and the
+current-state docs (no history note named one):
+- j1939_rx_msg_t -> j1939_received_message_t (CM848: the receive ring entry every PGN handler takes; 91 rendered lines);
+- j1939_tx_msg_t -> j1939_transmit_message_t (both firmwares: the 14-byte transmit descriptor);
+- j1939_msg_hdr_t -> j1939_message_header_t (both);
+- can_rx_channel_t -> can_receive_channel_t (CM848);
+- j1939_ccss_tx_payload_t -> j1939_pgn65261_payload_t (CM848: CCSS is J1939-71's acronym for PGN 65261, Cruise Control
+  / Vehicle Speed Setup; the name follows its siblings j1939_pgn65251 / 65263 / 65249 / 65242_payload_t). Its instance
+  at 0x3fab0a had no row and rendered as the default label j1939_ccss_tx_payload_t_003fab0a: it is
+  j1939_pgn65261_payload now.
+firmware/CLAUDE.md's two mentions of j1939_tx_msg_t follow.
+
+Proof: both firmwares built twice, deterministic, in copies of their folders (base = HEAD db9bfe59).
+Label-only in both: every token change is in the map (the five type names and, in CM848, the default label of
+0x3fab0a), the function sets are unchanged (706 / 1969), statement counts are equal and no old name is left in the
+code; j1939_pgn65261_payload renders where the default label did (13 lines). Headers regenerated in both (g++ 0
+errors); the _cal audit, the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

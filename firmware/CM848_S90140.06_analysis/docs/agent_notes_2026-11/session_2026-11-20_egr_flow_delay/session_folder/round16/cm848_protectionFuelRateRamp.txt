@@ -1,0 +1,14 @@
+=== cm848_protectionFuelRateRamp (lines 44020-44038, 13 non-blank)
+// Function: cm848_protectionFuelRateRamp @ 0x00040978
+//
+void cm848_protectionFuelRateRamp(int param_1)
+{
+  word wVar1;
+  wVar1 = cruise_maximum_road_speed_cal;
+  if ((int)(uint)cruise_speed_command < (int)((uint)cruise_maximum_road_speed_cal - param_1)) {
+    wVar1 = cruise_speed_command + (short)param_1;
+  }
+  cruise_speed_command = wVar1;
+  return;
+}
+//

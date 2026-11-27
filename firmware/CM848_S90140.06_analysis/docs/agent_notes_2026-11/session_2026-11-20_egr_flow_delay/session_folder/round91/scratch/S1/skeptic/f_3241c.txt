@@ -1,0 +1,82 @@
+03241c: 48e7383c                 movem.l d2-d4/a2-a5, -(a7)
+032420: 287c0080265c             movea.l #$80265c, a4
+032426: 2a4c                     movea.l a4, a5
+032428: 588d                     addq.l #$4, a5
+03242a: 103900802d60             move.b $802d60.l, d0
+032430: 020000f0                 andi.b #$f0, d0
+032434: 660000f0                 bne.w $32526
+032438: 3abc0002                 move.w #$2, (a5)
+03243c: 4eb900021920             jsr $21920.l
+032442: 13c00080266a             move.b d0, $80266a.l
+032448: 4a39008058f4             tst.b $8058f4.l
+03244e: 660e                     bne.b $3245e
+032450: 70ff                     moveq #$ff, d0
+032452: 23c00080266c             move.l d0, $80266c.l
+032458: 5855                     addq.w #$4, (a5)
+03245a: 600000c0                 bra.w $3251c
+03245e: 7601                     moveq #$1, d3
+032460: 247c0080266c             movea.l #$80266c, a2
+032466: 264d                     movea.l a5, a3
+032468: 600000a8                 bra.w $32512
+03246c: 7000                     moveq #$0, d0
+03246e: 1003                     move.b d3, d0
+032470: 207c008058f4             movea.l #$8058f4, a0
+032476: 14300000                 move.b (a0, d0.w), d2
+03247a: 7000                     moveq #$0, d0
+03247c: 1002                     move.b d2, d0
+03247e: 3200                     move.w d0, d1
+032480: d040                     add.w d0, d0
+032482: d041                     add.w d1, d0
+032484: 207c008067c6             movea.l #$8067c6, a0
+03248a: 30300200                 move.w (a0, d0.w * 2), d0
+03248e: 02404000                 andi.w #$4000, d0
+032492: 667a                     bne.b $3250e
+032494: 7000                     moveq #$0, d0
+032496: 1003                     move.b d3, d0
+032498: 207c008058f4             movea.l #$8058f4, a0
+03249e: 14300000                 move.b (a0, d0.w), d2
+0324a2: 7000                     moveq #$0, d0
+0324a4: 1002                     move.b d2, d0
+0324a6: 2200                     move.l d0, d1
+0324a8: e588                     lsl.l #$2, d0
+0324aa: d081                     add.l d1, d0
+0324ac: d080                     add.l d0, d0
+0324ae: 2800                     move.l d0, d4
+0324b0: 207c00805a25             movea.l #$805a25, a0
+0324b6: 0c30007f0000             cmpi.b #$7f, (a0, d0.w)
+0324bc: 6304                     bls.b $324c2
+0324be: 787f                     moveq #$7f, d4
+0324c0: 600a                     bra.b $324cc
+0324c2: 207c00805a25             movea.l #$805a25, a0
+0324c8: 18304000                 move.b (a0, d4.w), d4
+0324cc: 7000                     moveq #$0, d0
+0324ce: 1002                     move.b d2, d0
+0324d0: 207c00060fac             movea.l #$60fac, a0
+0324d6: 20300400                 move.l (a0, d0.w * 4), d0
+0324da: 720d                     moveq #$d, d1
+0324dc: e2a8                     lsr.l d1, d0
+0324de: 02800007ffff             andi.l #$7ffff, d0
+0324e4: 720d                     moveq #$d, d1
+0324e6: e3a8                     lsl.l d1, d0
+0324e8: 7200                     moveq #$0, d1
+0324ea: 1202                     move.b d2, d1
+0324ec: 207c00060fae             movea.l #$60fae, a0
+0324f2: 12301400                 move.b (a0, d1.w * 4), d1
+0324f6: 02810000001f             andi.l #$1f, d1
+0324fc: e189                     lsl.l #$8, d1
+0324fe: 8081                     or.l d1, d0
+032500: 7200                     moveq #$0, d1
+032502: 1204                     move.b d4, d1
+032504: 8081                     or.l d1, d0
+032506: 00400080                 ori.w #$80, d0
+03250a: 2480                     move.l d0, (a2)
+03250c: 5853                     addq.w #$4, (a3)
+03250e: 588a                     addq.l #$4, a2
+032510: 5203                     addq.b #$1, d3
+032512: b639008058f4             cmp.b $8058f4.l, d3
+032518: 6300ff52                 bls.w $3246c
+03251c: 2f0c                     move.l a4, -(a7)
+03251e: 4eb9000104e8             jsr $104e8.l
+032524: 588f                     addq.l #$4, a7
+032526: 4cdf3c1c                 movem.l (a7)+, d2-d4/a2-a5
+03252a: 4e75                     rts 

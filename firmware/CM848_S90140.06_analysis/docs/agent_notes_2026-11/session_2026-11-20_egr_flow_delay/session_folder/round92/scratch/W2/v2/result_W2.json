@@ -1,0 +1,673 @@
+{
+ "batch": "W2",
+ "words": [
+  {
+   "word": 7,
+   "address": "0x803ca2",
+   "current_name": "(no row; renders _DAT_00803ca2)",
+   "proposed_name": "algorithm_enable_flags_7_cal",
+   "proposed_type": "cm550_algorithm_enable_flags_7_t",
+   "shared_with_cm848": false,
+   "row_comment": "Algorithm enable flags word 7 (EEPROM 0x198; e2m 106B +10): the engine protection enables of channels 0-3 - coolant level 0x1-0x8 / coolant temperature 0x10-0x80 / intake manifold temperature 0x100-0x800 / oil pressure 0x1000-0x8000, four bits per channel: fueling limiting / rpm limiting / shutdown / restart (Calterm EPCV / EPCQ / EPIM / EPO2 + FLEN / RPEN / SOEN / RYEN; channel n = config record 0x807032 + 36 x n). The protection loops read them as table bit 0x70 + 4 x channel + k from word 0 (0x803c94): k 0 the fault derate fuel limit loop cm550_FUN_00019702, k 1 cm550_calculateFaultDerateEngineSpeedLimit, k 2 the shutdown loop processDiagnosticLimitStatus, k 2 and k 3 the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator. One direct reader: cm550_FUN_00019702 tests 0x1000 at 0x1983e for the oil pressure start-up inhibit. No store in the dumped ROM. 0xffff in the EEPROM and RAM dumps (all four channels fully enabled). CM848 twin algorithm_enable_flags_7_cal (0x3fd5aa) has the same 16 e2m records but stays a plain word (nothing reads it there). (no row before; PR #53 round 92)",
+   "differences_from_cm848": "No bit differs: CM848's word 7 (0x3fd5aa) has the same 16 e2m records at the same masks (Coolant_Level / Coolant_Temperature / IMT / Oil_Pressure x Fueling_Limiting / RPM_Limiting / Shutdown / Restart). But CM848 keeps it a plain word (its engine protection loops start at table bit 128 so nothing reads it) and has no algorithm_enable_flags_7_t, so there is no CM848 type to share: the type is CM550's own, with field names spelled from CM848's e2m record names. In CM550 the loops start at table bit 112 and channels 0-3 read all 16 bits.",
+   "code_tests": "Direct: 0x1983e move.w (0x803ca2).l,d0 + andi.w #0x1000 + beq (cm550_FUN_00019702 @ 0x19702) = bit 12. Indexed from word 0 (movea.l #0x803c94,a0 then move.w (0,a0,dn.w*2): word index = bit / 16, mask = 1 shifted left by bit mod 16): table bit 0x70 + 4 x channel + k, channels 0-3 = this word. k 0 cm550_FUN_00019702 (moveq #0x70 at 0x19718); k 1 cm550_calculateFaultDerateEngineSpeedLimit (moveq #0x71 at 0x18e22); k 2 processDiagnosticLimitStatus (moveq #0x72 at 0x1902a); k 2 and k 3 of the recorded shutdown channel in cm550_diagnosticProtectionEvaluator (addi.w #0x70 at 0x18b64, then +2 / +3) and cm550_protectionState1DiagnosticValidator (moveq #0x70 at 0x18cf8). What the bits do there: k 0 / k 1 - the loop computes the channel's fueling / rpm severity only while the bit or the channel's history-only bit (table bit 0x1a0 + channel = word 26) is set; k 2 - the channel's shutdown timers run only while set (clear zeroes them); k 3 - with k 2 set and the channel recorded as the shutdown channel, cm550_diagnosticProtectionEvaluator examines it before cranking once the shutdown count has reached its maximum (it skips channel 3) and cm550_protectionState1DiagnosticValidator updates its restart severity indexes. Channel identity from the extended RAM dump: each state record (0x80d0dc + 46 x channel) starts with the channel's input pointer - channel 0 0x8091e6 (the coolant level low switch input) / 1 0x80a336 (e2m ADCLTPFT filtered coolant temperature) / 2 0x80a26a (the intake manifold temperature pre-processed for engine protection) / 3 0x80a30a (ADOLPRFT filtered oil pressure). .cpp: 1 plain test, no value-flow form.",
+   "writes": "none: the one absolute reference is the move.w read at 0x1983e, the indexed accesses are move.w reads, and nothing references the odd byte 0x803ca3. Only the generic EEPROM mirror writers can change it.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "coolant_level_fueling_limiting_enable",
+     "comment": "EPCVFLEN 'BIT 0 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITIN(G DUE TO COOLANT LEVEL)'; table bit 112 = 0x70 + 4 x 0 + 0 (channel 0): read by the fuel limit loop cm550_FUN_00019702; set in the dumps"
+    },
+    {
+     "bit": 1,
+     "name": "coolant_level_rpm_limiting_enable",
+     "comment": "EPCVRPEN 'BIT 1 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING (DUE TO COOLANT LEVEL)'; table bit 113 = 0x70 + 4 x 0 + 1 (channel 0): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps"
+    },
+    {
+     "bit": 2,
+     "name": "coolant_level_shutdown_enable",
+     "comment": "EPCVSOEN 'BIT 2 OF 0-15. ENABLE SHUTDOWN ON COOLANT LEVEL (ERRORS)'; table bit 114 = 0x70 + 4 x 0 + 2 (channel 0): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps"
+    },
+    {
+     "bit": 3,
+     "name": "coolant_level_restart_enable",
+     "comment": "EPCVRYEN 'B3. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > (MAX SHUTDN CNT DUE TO CLT LEV)'; table bit 115 = 0x70 + 4 x 0 + 3 (channel 0): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; set in the dumps"
+    },
+    {
+     "bit": 4,
+     "name": "coolant_temperature_fueling_limiting_enable",
+     "comment": "EPCQFLEN 'BIT 4 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITIN(G DUE TO COOLANT TEMPERATURE)'; table bit 116 = 0x70 + 4 x 1 + 0 (channel 1): read by the fuel limit loop cm550_FUN_00019702; set in the dumps"
+    },
+    {
+     "bit": 5,
+     "name": "coolant_temperature_rpm_limiting_enable",
+     "comment": "EPCQRPEN 'BIT 5 OF 5-15. EPF COOLANT TEMPERATURE RPM LIMIT(ING ENABLE)'; table bit 117 = 0x70 + 4 x 1 + 1 (channel 1): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps"
+    },
+    {
+     "bit": 6,
+     "name": "coolant_temperature_shutdown_enable",
+     "comment": "EPCQSOEN 'BIT 6 OF 0-15. ENABLE SHUTDOWN ON COOLANT TEMPER(ATURE ERRORS)'; table bit 118 = 0x70 + 4 x 1 + 2 (channel 1): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps"
+    },
+    {
+     "bit": 7,
+     "name": "coolant_temperature_restart_enable",
+     "comment": "EPCQRYEN 'BIT 7 OF 0-15. PREVENTS RESTART AT POWERUP WHEN S(HUTDN CNT > MAX SHUTDN CNT)'; table bit 119 = 0x70 + 4 x 1 + 3 (channel 1): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; set in the dumps"
+    },
+    {
+     "bit": 8,
+     "name": "intake_manifold_temperature_fueling_limiting_enable",
+     "comment": "EPIMFLEN 'BIT 8 OF 0-15 ENABLE FOR TVO LIMITING DUE TO INTA(KE MANIFOLD TEMP)'; table bit 120 = 0x70 + 4 x 2 + 0 (channel 2): read by the fuel limit loop cm550_FUN_00019702; set in the dumps"
+    },
+    {
+     "bit": 9,
+     "name": "intake_manifold_temperature_rpm_limiting_enable",
+     "comment": "EPIMRPEN 'BIT 9 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING (DUE TO IMT)'; table bit 121 = 0x70 + 4 x 2 + 1 (channel 2): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps"
+    },
+    {
+     "bit": 10,
+     "name": "intake_manifold_temperature_shutdown_enable",
+     "comment": "EPIMSOEN 'BIT 10 OF 0-15. ENABLE SHUTDOWN ON INTAKE MANIFO(LD TEMPERATURE ERRORS)'; table bit 122 = 0x70 + 4 x 2 + 2 (channel 2): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "intake_manifold_temperature_restart_enable",
+     "comment": "EPIMRYEN 'BIT 11 OF 0-15. PREVENTS RESTART AT POWERUP WHEN (SHUTDN CNT > MAX SHUTDN CNT)'; table bit 123 = 0x70 + 4 x 2 + 3 (channel 2): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; set in the dumps"
+    },
+    {
+     "bit": 12,
+     "name": "oil_pressure_fueling_limiting_enable",
+     "comment": "EPO2FLEN 'BIT 12 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITI(NG DUE TO OIL PRESSURE)'; table bit 124 = 0x70 + 4 x 3 + 0 (channel 3): read by the fuel limit loop cm550_FUN_00019702; also tested directly: andi.w #0x1000 at 0x1983e (cm550_FUN_00019702) - while set and oil_pressure_fault_inhibit_timer is below the power-up period 0x807f34 the oil pressure fueling severity index and the loop maximum are forced to 0x100 (the full derate); set in the dumps"
+    },
+    {
+     "bit": 13,
+     "name": "oil_pressure_rpm_limiting_enable",
+     "comment": "EPO2RPEN 'BIT 13 OF 0-15. EPF OIL PRESSURE FAULT ENABLE PA(RAMETER)' (CM848 label Oil_Pressure_RPM_Limiting_Enable); table bit 125 = 0x70 + 4 x 3 + 1 (channel 3): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps"
+    },
+    {
+     "bit": 14,
+     "name": "oil_pressure_shutdown_enable",
+     "comment": "EPO2SOEN 'BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE (ERRORS)'; table bit 126 = 0x70 + 4 x 3 + 2 (channel 3): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps"
+    },
+    {
+     "bit": 15,
+     "name": "oil_pressure_restart_enable",
+     "comment": "EPO2RYEN 'BIT 15 OF 0-15. PREVENTS RESTART AT POWERUP WHEN (SHUTDN CNT > MAX SHUTDN CNT)'; table bit 127 = 0x70 + 4 x 3 + 3 (channel 3): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; cm550_diagnosticProtectionEvaluator skips channel 3 so only cm550_protectionState1DiagnosticValidator reads this one; set in the dumps"
+    }
+   ]
+  },
+  {
+   "word": 8,
+   "address": "0x803ca4",
+   "current_name": "(no row; renders _DAT_00803ca4)",
+   "proposed_name": "algorithm_enable_flags_8_cal",
+   "proposed_type": "cm550_algorithm_enable_flags_8_t",
+   "shared_with_cm848": false,
+   "row_comment": "Algorithm enable flags word 8 (EEPROM 0x19a; e2m 106B +12): the engine protection enables of channels 4-7 - water in fuel 0x1-0x8 / boost pressure 0x10-0x80 / engine sync fuel pressure 0x100-0x800 / fuel temperature 0x1000-0x8000, four bits per channel: fueling limiting / rpm limiting / shutdown / restart (Calterm EPWF / EPBS / EPFP / EPFT + FLEN / RPEN / SOEN / RYEN). Read by the protection loops as table bit 0x70 + 4 x channel + k from word 0 (0x803c94), like word 7. Direct reader: vp44_FUN_0001cad6 tests 0x1000 / 0x2000 (0x1caec / 0x1cafa) before it updates the fuel temperature channel's input. No store in the dumped ROM. 0x0000 in the EEPROM and RAM dumps (the four channels are unused: their configuration flags are 0 too). CM848's word 8 has other channels (fuel temperature / compressor outlet temperature / turbine inlet temperature at bits 0-11). (no row before; PR #53 round 92)",
+   "differences_from_cm848": "Different channels. CM848 word 8 (0x3fd5ac, a plain word): bits 0-3 fuel temperature / 4-7 C_Out (compressor outlet) temperature / 8-11 T_In (turbine inlet) temperature / 12-15 no record. CM550: bits 0-3 water in fuel / 4-7 boost pressure / 8-11 engine sync fuel pressure / 12-15 fuel temperature. The fuel temperature channel is in both, at bits 12-15 here and 0-3 in CM848.",
+   "code_tests": "Direct: 0x1caec move.w (0x803ca4).l,d0 + andi.l #0x1000 + bne and 0x1cafa andi.l #0x2000 + beq (vp44_FUN_0001cad6 @ 0x1cad6) = bits 12 and 13. Indexed from word 0: table bit 0x70 + 4 x channel + k for channels 4-7 in the same five functions as word 7 (cm550_FUN_00019702 k 0 / cm550_calculateFaultDerateEngineSpeedLimit k 1 / processDiagnosticLimitStatus k 2 / cm550_diagnosticProtectionEvaluator and cm550_protectionState1DiagnosticValidator k 2 and k 3). Channel identity from the extended RAM dump (the input pointer at 0x80d0dc + 46 x channel): channel 4 0x80a46a (e2m ADWFFT filtered water in fuel) / 5 0x80a320 (ADFTBSPR filtered boost pressure) / 6 0x80a2f4 (ADSYFPFT the fuel pressure channel) / 7 0x80a254 (vp44_fuel_temperature_value - the value the direct reader updates). .cpp: 2 tests and both also flow into the function's returned value (uVar1 = the word masked with 0x1000 at line 18230 / with 0x2000 at 18231).",
+   "writes": "none: the two absolute references are move.w reads, the indexed accesses are reads, and nothing references 0x803ca5.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "water_in_fuel_fueling_limiting_enable",
+     "comment": "EPWFFLEN S mask 0x1 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO WATER IN( FUEL)'; table bit 128 = 0x70 + 4 x 4 + 0 (channel 4): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps"
+    },
+    {
+     "bit": 1,
+     "name": "water_in_fuel_rpm_limiting_enable",
+     "comment": "EPWFRPEN S mask 0x2 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO WATE(R IN FUEL)'; table bit 129 = 0x70 + 4 x 4 + 1 (channel 4): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps"
+    },
+    {
+     "bit": 2,
+     "name": "water_in_fuel_shutdown_enable",
+     "comment": "EPWFSOEN S mask 0x4 'ENABLE SHUTDOWN ON WATER IN FUEL ERRORS'; table bit 130 = 0x70 + 4 x 4 + 2 (channel 4): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps"
+    },
+    {
+     "bit": 3,
+     "name": "water_in_fuel_restart_enable",
+     "comment": "EPWFRYEN S mask 0x8 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 131 = 0x70 + 4 x 4 + 3 (channel 4): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps"
+    },
+    {
+     "bit": 4,
+     "name": "boost_pressure_fueling_limiting_enable",
+     "comment": "EPBSFLEN S mask 0x10 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC' (the text is the engine sync record's; the mnemonic and its three siblings say boost pressure); table bit 132 = 0x70 + 4 x 5 + 0 (channel 5): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps"
+    },
+    {
+     "bit": 5,
+     "name": "boost_pressure_rpm_limiting_enable",
+     "comment": "EPBSRPEN S mask 0x20 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO BOOS(T PRESSURE)'; table bit 133 = 0x70 + 4 x 5 + 1 (channel 5): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps"
+    },
+    {
+     "bit": 6,
+     "name": "boost_pressure_shutdown_enable",
+     "comment": "EPBSSOEN S mask 0x40 'ENABLE SHUTDOWN ON BOOST PRESSURE ERRORS'; table bit 134 = 0x70 + 4 x 5 + 2 (channel 5): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps"
+    },
+    {
+     "bit": 7,
+     "name": "boost_pressure_restart_enable",
+     "comment": "EPBSRYEN S mask 0x80 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 135 = 0x70 + 4 x 5 + 3 (channel 5): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps"
+    },
+    {
+     "bit": 8,
+     "name": "engine_sync_fuel_pressure_fueling_limiting_enable",
+     "comment": "EPFPFLEN S mask 0x100 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC( FUEL PRESSURE)'; table bit 136 = 0x70 + 4 x 6 + 0 (channel 6): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps"
+    },
+    {
+     "bit": 9,
+     "name": "engine_sync_fuel_pressure_rpm_limiting_enable",
+     "comment": "EPFPRPEN S mask 0x200 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO ENG (SYNC FUEL PRESSURE)'; table bit 137 = 0x70 + 4 x 6 + 1 (channel 6): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps"
+    },
+    {
+     "bit": 10,
+     "name": "engine_sync_fuel_pressure_shutdown_enable",
+     "comment": "EPFPSOEN S mask 0x400 'ENABLE SHUTDOWN ON ENGINE SYNC FUEL PRESSURE ERRORS'; table bit 138 = 0x70 + 4 x 6 + 2 (channel 6): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "engine_sync_fuel_pressure_restart_enable",
+     "comment": "EPFPRYEN S mask 0x800 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 139 = 0x70 + 4 x 6 + 3 (channel 6): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps"
+    },
+    {
+     "bit": 12,
+     "name": "fuel_temperature_fueling_limiting_enable",
+     "comment": "EPFTFLEN 'BIT 12 OF 0-15 ENABLES FUEL LIMITING DUE TO FUEL (TEMPERATURE ERRORS)'; table bit 140 = 0x70 + 4 x 7 + 0 (channel 7): read by the fuel limit loop cm550_FUN_00019702; also tested directly: andi.l #0x1000 at 0x1caec (vp44_FUN_0001cad6) - with engine protection enabled (word 2 bit 4) and this bit or bit 13 set it updates the channel input vp44_fuel_temperature_value; clear in the dumps"
+    },
+    {
+     "bit": 13,
+     "name": "fuel_temperature_rpm_limiting_enable",
+     "comment": "EPFTRPEN 'BIT 13 OF 0-15 ENABLES RPM LIMITING DUE TO FUEL T(EMPERATURE ERRORS)'; table bit 141 = 0x70 + 4 x 7 + 1 (channel 7): read by cm550_calculateFaultDerateEngineSpeedLimit; also tested directly: andi.l #0x2000 at 0x1cafa (vp44_FUN_0001cad6) - the second operand of the fuel temperature input update (see bit 12); clear in the dumps"
+    },
+    {
+     "bit": 14,
+     "name": "fuel_temperature_shutdown_enable",
+     "comment": "EPFTSOEN 'BIT 14 OF 0-14 ENABLES SHUTDOWN ON FUEL TEMPERATU(RE ERRORS)'; table bit 142 = 0x70 + 4 x 7 + 2 (channel 7): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps"
+    },
+    {
+     "bit": 15,
+     "name": "fuel_temperature_restart_enable",
+     "comment": "EPFTRYEN 'BIT 15 OF 0-15 PREVENTS RESTART AT POWERUP WHEN S(HUTDN CNT > MAX SHUTDN CNT)'; table bit 143 = 0x70 + 4 x 7 + 3 (channel 7): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps"
+    }
+   ]
+  },
+  {
+   "word": 9,
+   "address": "0x803ca6",
+   "current_name": "(no row; no reference by its own address)",
+   "proposed_name": "algorithm_enable_flags_9_cal",
+   "proposed_type": "word",
+   "shared_with_cm848": false,
+   "row_comment": "Algorithm enable flags word 9 (EEPROM 0x19c; e2m 106B +14): the engine protection enables of channel 8, ambient air pressure - 0x1 EPAAFLEN fueling limiting / 0x2 EPAARPEN rpm limiting / 0x4 EPAASOEN shutdown / 0x8 EPAARYEN restart; bits 4-15 have no record. No direct reader: the protection loops (cm550_FUN_00019702 / cm550_calculateFaultDerateEngineSpeedLimit / processDiagnosticLimitStatus / cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator) read bits 0-3 as table bits 144-147 = 0x70 + 4 x 8 + k from word 0 (0x803c94), so it stays a plain word like CM848's unread words. No store in the dumped ROM. 0x0000 in the EEPROM and RAM dumps. CM848 has no row and no e2m record for word 9. (no row before; PR #53 round 92)",
+   "differences_from_cm848": "CM848 has no row, no e2m record and no reader for word 9 (0x3fd5ae; 0x0000 in its dump): the ambient air pressure protection channel is CM550's own.",
+   "code_tests": "No absolute reference to 0x803ca6 / 0x803ca7 in the dumped ROM. Bits 0-3 are read only as channel 8 of the indexed protection loops (table bits 144-147 from word 0): k 0 cm550_FUN_00019702, k 1 cm550_calculateFaultDerateEngineSpeedLimit, k 2 processDiagnosticLimitStatus, k 2 and k 3 cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator. The loops stop at load_breakpoint_table 0x807176 = 9 channels, so bits 4-15 are never read. Channel 8's input pointer in the extended RAM dump (0x80d24c) is 0x80a3ba = e2m ADAAPRFT filtered ambient air pressure.",
+   "writes": "none: no reference at all by its own address.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "ambient_air_pressure_fueling_limiting_enable",
+     "comment": "EPAAFLEN S mask 0x1 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO AMBIENT (AIR PRESSURE)'; table bit 144 = 0x70 + 4 x 8 + 0 (channel 8): read by the fuel limit loop cm550_FUN_00019702; clear in the dumps"
+    },
+    {
+     "bit": 1,
+     "name": "ambient_air_pressure_rpm_limiting_enable",
+     "comment": "EPAARPEN S mask 0x2 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO AMBI(ENT AIR PRESSURE)'; table bit 145 = 0x70 + 4 x 8 + 1 (channel 8): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps"
+    },
+    {
+     "bit": 2,
+     "name": "ambient_air_pressure_shutdown_enable",
+     "comment": "EPAASOEN S mask 0x4 'ENABLE SHUTDOWN ON AMBIENT AIR PRESSURE ERRORS'; table bit 146 = 0x70 + 4 x 8 + 2 (channel 8): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps"
+    },
+    {
+     "bit": 3,
+     "name": "ambient_air_pressure_restart_enable",
+     "comment": "EPAARYEN S mask 0x8 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 147 = 0x70 + 4 x 8 + 3 (channel 8): read by the restart checks cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator; clear in the dumps"
+    },
+    {
+     "bit": 4,
+     "name": "reserved_bit_4",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM pressure channel here (EPOE* masks 0x10-0x80); clear in the dumps"
+    },
+    {
+     "bit": 5,
+     "name": "reserved_bit_5",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM pressure channel here (EPOE* masks 0x10-0x80); clear in the dumps"
+    },
+    {
+     "bit": 6,
+     "name": "reserved_bit_6",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM pressure channel here (EPOE* masks 0x10-0x80); clear in the dumps"
+    },
+    {
+     "bit": 7,
+     "name": "reserved_bit_7",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM pressure channel here (EPOE* masks 0x10-0x80); clear in the dumps"
+    },
+    {
+     "bit": 8,
+     "name": "reserved_bit_8",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM switch channel here (EPOS* masks 0x100-0x800); clear in the dumps"
+    },
+    {
+     "bit": 9,
+     "name": "reserved_bit_9",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM switch channel here (EPOS* masks 0x100-0x800); clear in the dumps"
+    },
+    {
+     "bit": 10,
+     "name": "reserved_bit_10",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM switch channel here (EPOS* masks 0x100-0x800); clear in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "reserved_bit_11",
+     "comment": "no record in v64t6_s and not read (the protection loops stop after channel 8 = bit 3); guess: 20 other ISB e2m files have the OEM switch channel here (EPOS* masks 0x100-0x800); clear in the dumps"
+    },
+    {
+     "bit": 12,
+     "name": "reserved_bit_12",
+     "comment": "no record in any e2m file and not read; clear in the dumps"
+    },
+    {
+     "bit": 13,
+     "name": "reserved_bit_13",
+     "comment": "no record in any e2m file and not read; clear in the dumps"
+    },
+    {
+     "bit": 14,
+     "name": "reserved_bit_14",
+     "comment": "no record in any e2m file and not read; clear in the dumps"
+    },
+    {
+     "bit": 15,
+     "name": "reserved_bit_15",
+     "comment": "no record in any e2m file and not read; clear in the dumps"
+    }
+   ]
+  },
+  {
+   "word": 11,
+   "address": "0x803caa",
+   "current_name": "diagnostic_subsystem_enable_flags",
+   "proposed_name": "algorithm_enable_flags_11_cal",
+   "proposed_type": "algorithm_enable_flags_11_t",
+   "shared_with_cm848": true,
+   "row_comment": "Algorithm enable flags word 11 (EEPROM 0x1a0; e2m 106B +18): the datalink protocol enables - 0x1 JCJPEA proprietary / 0x2 JC87CZEA J1587 / 0x4 JC22CZEA J1922 / 0x8 JC39CZEA J1939 communication; bits 4-15 have no record. 7 single-bit reads and no store in the dumped ROM: mc68k_dispatchJ1708ReceivedMessages gates the proprietary (message identifier below 8) / J1922 (0x45-0x56) / J1587 (0x80 and up) messages with bits 0 / 2 / 1, cm550_diagnosticMessageTransmissionManager the periodic J1922 and J1587 transmissions with bits 2 / 1, and bit 3 gates the J1939 periodic transmit schedule (cm550_engineRunTimeHistogramAccumulator) and receive dispatch (mc68k_FUN_000212b2). 0x000b in the EEPROM and RAM dumps (proprietary + J1587 + J1939), the same value as the CM848 truck. CM848 twin algorithm_enable_flags_11_cal (0x3fd5b2), the same type. (was diagnostic_subsystem_enable_flags: it enables the datalink protocols, not a diagnostic subsystem; PR #53 round 92)",
+   "differences_from_cm848": "None: the same four records at the same bits (proprietary 0 / J1587 1 / J1922 2 / J1939 3) and bits 4-15 reserved in both, so the word takes CM848's algorithm_enable_flags_11_t with its field names verbatim. CM848 reads only bit 3; CM550 reads all four, and each reader agrees with its record.",
+   "code_tests": "7 reads, all move.w (0x803caa).l,d0 + andi.w + beq: 0xebac #0x4 and 0xebe0 #0x2 (cm550_diagnosticMessageTransmissionManager @ 0xeba4); 0x15fe8 #0x1 / 0x16396 #0x2 / 0x163be #0x4 (mc68k_dispatchJ1708ReceivedMessages @ 0x15f8e); 0x1ff4e #0x8 (cm550_engineRunTimeHistogramAccumulator @ 0x1ff38); 0x212c0 #0x8 (mc68k_FUN_000212b2 @ 0x212b2). .cpp: 7 plain tests + 3 CONCAT22(.., word) masked with 0xffff00NN value forms (lines 4041 / 21550 / 22657) that may print as pieces once typed.",
+   "writes": "none: all 7 absolute references are move.w reads and nothing references 0x803cab.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "proprietary_communication_enable",
+     "comment": "JCJPEA 'PARAMETER INDICATING WHETHER DATALINK PROTOCOLS ARE TURNED ON' (an N record with no bit; CM848's label Proprietary_Communication_Enable has S mask 0x1); andi.w #0x1 at 0x15fe8: mc68k_dispatchJ1708ReceivedMessages handles the proprietary J1708 messages (message identifier below 8: the security key / development mode / shutdown / restart commands) only while set; set in the dumps (0x000b)"
+    },
+    {
+     "bit": 1,
+     "name": "j1587_communication_enable",
+     "comment": "JC87CZEA 'BIT 1 OF 0-15 INDICATES WHETHER J1587 COMMUNICATION IS ENABLED'; andi.w #0x2 at 0xebe0 (cm550_diagnosticMessageTransmissionManager: the periodic J1587 broadcast vp44_insiteParameterTableIterator) and 0x16396 (mc68k_dispatchJ1708ReceivedMessages: message identifiers 0x80 and up); set"
+    },
+    {
+     "bit": 2,
+     "name": "j1922_communication_enable",
+     "comment": "JC22CZEA 'BIT 2 OF 0-15 INDICATES WHETHER J1922 COMMUNICATION IS ENABLED'; andi.w #0x4 at 0xebac (cm550_diagnosticMessageTransmissionManager: the periodic cm550_diagnosticMessage45Builder / cm550_diagnosticMessage53Builder) and 0x163be (mc68k_dispatchJ1708ReceivedMessages: message identifiers 0x45-0x56 = 69-86 the J1922 range); clear"
+    },
+    {
+     "bit": 3,
+     "name": "j1939_communication_enable",
+     "comment": "JC39CZEA 'BIT 3 OF 0-15 INDICATES WHETHER J1939 COMMUNICATI(ON IS ENABLED)'; andi.w #0x8 at 0x1ff4e (cm550_engineRunTimeHistogramAccumulator = the J1939 periodic transmit schedule) and 0x212c0 (mc68k_FUN_000212b2 = the J1939 receive dispatch) - the twins of CM848's two readers; set"
+    },
+    {
+     "bit": 4,
+     "name": "reserved_bit_4",
+     "comment": "no record in v64t6_s and no reader in the dumped ROM; guess JCRWDXEN 'J1587 TRANSPORT PROTOCOL ENABLE' (S mask 0x10 in 14 other ISB e2m files); CM848 reserved_bit_4 too; clear in the dumps"
+    },
+    {
+     "bit": 5,
+     "name": "reserved_bit_5",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 6,
+     "name": "reserved_bit_6",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 7,
+     "name": "reserved_bit_7",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 8,
+     "name": "reserved_bit_8",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 9,
+     "name": "reserved_bit_9",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 10,
+     "name": "reserved_bit_10",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "reserved_bit_11",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 12,
+     "name": "reserved_bit_12",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 13,
+     "name": "reserved_bit_13",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 14,
+     "name": "reserved_bit_14",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    },
+    {
+     "bit": 15,
+     "name": "reserved_bit_15",
+     "comment": "no e2m record and no reader in the dumped ROM; CM848 reserved too; clear in the dumps"
+    }
+   ]
+  },
+  {
+   "word": 12,
+   "address": "0x803cac",
+   "current_name": "calibration_feature_enable_flags_word_9",
+   "proposed_name": "algorithm_enable_flags_12_cal",
+   "proposed_type": "cm550_algorithm_enable_flags_12_t",
+   "shared_with_cm848": false,
+   "row_comment": "Algorithm enable flags word 12 (EEPROM 0x1a2; e2m 106B +1A, the records say WORD C): 0x1 LSISSVEN idle speed save / 0x2 EPOSFSO fuel shutoff on overspeed / 0x4 WFAGEN water in fuel / 0x8 AFENMAN air fuel control override / 0x10 SPAGEN Electronic Smart Power / 0x20 SPRVEN its launch application / 0x40 LSDPEN low speed governor droop / 0x80 ANEN accelerator interlock / 0x100 VSMVEN and 0x200 VSSTEN the vehicle speed sensor lost while moving / stopped detections / 0x800 PTBRODEN and 0x1000 PTCHODEN brake / clutch cancel the cab power take-off / 0x2000 OCEA oil change monitor / 0x4000 LSCIIHEN cold idle override / 0x8000 EDEN engine data files; 0x400 has no record. 12 single-bit reads (bits 0-6 and 14) and no store in the dumped ROM; bits 7-9 / 11-13 / 15 are set in the calibration but have no reader there (call targets at 0x40000+ are not dumped). 0xbb87 in the EEPROM and RAM dumps. CM848 twin algorithm_enable_flags_12_cal (0x3fd5b4) differs in bits 10 / 14 / 15, so the type is CM550's own. (was calibration_feature_enable_flags_word_9: the word is number 12, not 9; PR #53 round 92)",
+   "differences_from_cm848": "Bits 0 / 2-9 / 11-13 have CM848's positions and meanings (the same Calterm records), so CM848's field names are reused. Bit 1 (EPOSFSO) has the same record in CM848's own e2m (Overspeed_FSO_Override 0x2) but CM848 left it reserved_bit_1: a rename is proposed. Bit 10 is obd_fault_handler_enable in CM848 (DGOBFUHN 0x400); J90350.00 has no record and no reader, so it is reserved here. Bits 14 (LSCIIHEN) and 15 (EDEN) are CM550's: CM848 keeps reserved_bit_14 / reserved_bit_15 with no record in its own e2m and no reader. Three bits differ, so the type is cm550_.",
+   "code_tests": "12 reads (move.w (0x803cac).l,d0 + andi.w or andi.l): bit 0 0x26546 and 0x265a0; bit 1 0x1ca9a; bit 2 0x34c3e; bit 3 0xc19c; bit 4 0xc3ea / 0x1abcc / 0x1cd96; bit 5 0x1ad52; bit 6 0xfa1c / 0x1850e; bit 14 0x26646. No test of bits 7-13 or 15. .cpp: 15 plain tests (the sites 0x1ca9a / 0x26546 / 0x265a0 print twice because overlapping function entries share the code), of which 5 also flow into an assigned or returned value (lines 1888 / 4961 / 18162 / 18199 / 37601), + 1 CONCAT22 form (line 15320).",
+   "writes": "none: all 12 absolute references are move.w reads and nothing references 0x803cad.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "idle_speed_save_enable",
+     "comment": "LSISSVEN 'BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT(DOWN)'; andi.w #0x1 at 0x26546 (cm550_engineModeTimingAdjuster / vp44_rpm_derate_monitor: set keeps the operator idle adjustment in rpm_added_to_lsg_reference_300_300 0x805f0a - clear zeroes it) and 0x265a0 (cm550_fuelDemandLimitSource2Selector / vp44_initVP44StatusFlags: the start-up restore of that adjustment); CM848 field name; set in the dumps (0xbb87)"
+    },
+    {
+     "bit": 1,
+     "name": "overspeed_fuel_shutoff_enable",
+     "comment": "EPOSFSO 'IF T FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI(T 1 OF 0 - 15 OF WORD C)' (FSO = fuel shut off: e2m DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER'); andi.l #0x2 at 0x1ca9a (cm550_fuelDemandLimitSelector11 / vp44_canPinVp44StatusController): in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit 0x20 of fuel_system_output_driver_control is cleared only while set; CM848 reserved_bit_1 with the same record (rename proposed); set"
+    },
+    {
+     "bit": 2,
+     "name": "water_in_fuel_enable",
+     "comment": "WFAGEN 'BIT 2 ENABLE FLAG USED FOR WATER_IN_FUEL ALGORITHM.'; andi.w #0x4 at 0x34c3e (vp44FaultRegisterBit2Monitor): set = a wet water_in_fuel_sensor_state sets fault status word 4 bit 0x2000 and lamp driver bit 0x10 - clear = that fault bit is cleared; CM848 field name; set"
+    },
+    {
+     "bit": 3,
+     "name": "air_fuel_control_override_enable",
+     "comment": "AFENMAN 'BIT 3 OF 0-15 IN WORD C'; andi.w #0x8 at 0xc19c (cm550_fuelTimingTransitionStateMachine): set takes the derate fuel adjustment from afc_fueling_derate_value_when_afc_override_is_enabled_0_100 instead of the engine speed x boost pressure table; CM848 field name; clear"
+    },
+    {
+     "bit": 4,
+     "name": "electronic_smart_power_enable",
+     "comment": "SPAGEN '0 - DISBALE 1 - ENABLE ESP ALGORITHM BIT 4 OF 0 - 15.' (e2m group ESP_08 'ELECTRONIC SMART POWER GROUP'); andi #0x10 at 0x1abcc (gates cm550_updateElectronicSmartPowerTau) / 0xc3ea (calculateAlpha copies the alpha into the timing alpha only while clear) / 0x1cd96 (cm550_FUN_0001cc72: the maximum fueling without programmable power comes from the low horsepower curve while set); CM848 field name; clear"
+    },
+    {
+     "bit": 5,
+     "name": "reverse_electronic_smart_power_enable",
+     "comment": "SPRVEN '0 - DISBALE 1 - ENABLE ESP LAUNCH APPLICATION ALGORITH(M BIT 5 OF 0 - 15.)' (CM848 label Reverse_ESP_Enable S mask 0x20); andi.l #0x20 at 0x1ad52: cm550_updateElectronicSmartPowerTau enters ESP tau source state 1 (e2m 11DC +6 SPTUST lists NORMAL / LAUNCH / STEEP) only while set; CM848 field name; clear"
+    },
+    {
+     "bit": 6,
+     "name": "low_speed_governor_droop_enable",
+     "comment": "LSDPEN 'LSG DROOP ENABLE BIT 6 OF 0 - 15 IN WORD C'; andi.l #0x40 at 0xfa1c (vp44State2TransitionHandler) and 0x1850e (cm550_FUN_000184c6): set lowers the torque curve speed point 1 by fueling x the selected droop slope 0x80daf4 (e2m LSDPSE) / 167 - the same droop as CM848's reader; CM848 field name; clear"
+    },
+    {
+     "bit": 7,
+     "name": "accelerator_interlock_enable",
+     "comment": "ANEN 'BIT 7 OF 0-15 IN WORD C ACCELERATOR INTERLOCK ENABLE B(IT)'; no reader in the dumped ROM; CM848 field name; set"
+    },
+    {
+     "bit": 8,
+     "name": "vehicle_speed_sensor_signal_loss_enable",
+     "comment": "VSMVEN 'BIT 8 WORD C. ENABLES VSS SENSOR LOST WHILE MOVING( DETECTION)'; no reader in the dumped ROM; CM848 field name (named there after the detector it gates); set"
+    },
+    {
+     "bit": 9,
+     "name": "vehicle_speed_sensor_zero_under_load_enable",
+     "comment": "VSSTEN 'BIT 9 WORD C. ENABLES VSS SENSOR LOST WHILE STOPPE(D DETECTION)'; no reader in the dumped ROM; CM848 field name (named there after its detector: the sensor reads 0 while the engine is under load); set"
+    },
+    {
+     "bit": 10,
+     "name": "reserved_bit_10",
+     "comment": "no record in v64t6_s and no reader in the dumped ROM; guess DGOBFUHN 'INDICATES WHETHER OBDII FAULT HANDLER IS ENABLED' (mask 0x400 here in 26 other e2m files; CM848 obd_fault_handler_enable); clear in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "power_take_off_brake_override_enable",
+     "comment": "PTBRODEN 'WHEN ENABLED IT ALLOWS THE BRAKE TO CANCEL CAB PTO. WORD C BIT (B)' (v64t6_s cuts the bit letter: 22 other e2m files give it and every S record has mask 0x800); no reader in the dumped ROM; CM848 field name; set"
+    },
+    {
+     "bit": 12,
+     "name": "power_take_off_clutch_override_enable",
+     "comment": "PTCHODEN 'WHEN ENABLED IT ALLOWS THE CLUTCH TO CANCEL CAB PTO. WORD C BIT( C)' (v64t6_s cuts the bit letter: 22 other e2m files give it and every S record has mask 0x1000); no reader in the dumped ROM; CM848 field name; set"
+    },
+    {
+     "bit": 13,
+     "name": "oil_change_monitor_enable",
+     "comment": "OCEA 'ENABLES OIL CHANGE MONITOR FEATURE BIT 13 OF 0-15 OF W(ORD C)'; no reader in the dumped ROM; CM848 field name; set"
+    },
+    {
+     "bit": 14,
+     "name": "low_speed_governor_cold_idle_override_enable",
+     "comment": "LSCIIHEN 'ENABLE FOR OVERRIDING THE COLD IDLE ADJUST IN THE LSG' (13 other e2m files go on '- BIT 14'); andi.w #0x4000 at 0x26646 (cm550_FUN_00026616): the cold idle speed adder raises the idle reference unless this bit is set and the cold idle override flag 0x80db08 (e2m 1049 +6 LSCIOD 'TRUE INHIBITS COLD IDLE ADJUSTMEN(T)') is non-zero; CM848 reserved_bit_14 (no record there); clear"
+    },
+    {
+     "bit": 15,
+     "name": "engine_data_files_enable",
+     "comment": "EDEN 'BIT 15 OF 0 - 15; ENABLES/DISABLES EDF FEATURE.' in e2m group 12C ENDTFL07 'ENGINE DATA FILES ENABLE AND POWER-DOWNS' (EDF = engine data files); no reader in the dumped ROM; CM848 reserved_bit_15 (no record there); set"
+    }
+   ]
+  },
+  {
+   "word": 13,
+   "address": "0x803cae",
+   "current_name": "switch_override_configuration",
+   "proposed_name": "algorithm_enable_flags_13_cal",
+   "proposed_type": "cm550_algorithm_enable_flags_13_t",
+   "shared_with_cm848": false,
+   "row_comment": "Algorithm enable flags word 13 (EEPROM 0x1a4; e2m 106B +1C DIG_SIG): the user override enables of logical switches 0-15, bit s = switch s - 0x1 key switch (no record) / 0x2 0x4 0x8 cruise control resume, set and on/off / 0x10 manual fan / 0x20 powertrain protection / 0x40 high speed governor droop select / 0x80 idle and 0x100 not idle (the idle validation pair) / 0x200 accelerator interlock / 0x400 clutch / 0x800 brake / 0x1000 engine brake select 1 / 0x2000 0x4000 idle increment and decrement / 0x8000 diagnostic test. Set: the switch status bit (0x80bcce + s / 8, bit s % 8) comes from the user value (0x80bcd8 + s / 8) instead of the debounced input; the J1939 multiplexed switches write that value only while the bit is set (cm550_FUN_00020890, table bit 0xd0 + s from word 0). It is also the first word of the 10-byte e2m record DSSWUO 'COVERS ALL USER OVERRIDE ENABLES' (words 13-17): cm550_initializeDiscreteInputs stores its address in discrete_input_override_mask_ptr and mc68k_sampleAndDebounceDiscreteInputs / mc68k_ioDriverStrobeHandler read bytes [0] (bits 8-15) and [1] (bits 0-7) through it as masks. 6 direct single-bit reads (0x80 four times, 0x2000, 0x4000) and no store in the dumped ROM. 0x0000 in the EEPROM and RAM dumps. CM848's word 13 holds unrelated enables. (was switch_override_configuration; PR #53 round 92)",
+   "differences_from_cm848": "Unrelated: CM848's word 13 (0x3fd5b6, algorithm_enable_flags_13_t) is EB_Switch_Level_Override / Active_Driver_Demand_With_Jcomm / Net_Torque_Derate_Enable / Fuel_Press_Idle_Diag_Enable, and no CHR e2m has the switch user override records. CM848 keeps its per-switch datalink source bits elsewhere (switch_input_datalink_source_bits_cal, EEPROM 0x74c, outside this table).",
+   "code_tests": "Direct (move.w (0x803cae).l,d0 + andi + beq): 0x15830 #0x2000 and 0x15850 #0x4000 (mc68k_sampleAndDebounceDiscreteInputs); 0x204e6 #0x80 (cm550_outputControlState1Handler); 0x20cbe #0x80 (cm550_FUN_00020c98); 0x20e5a #0x80 (cm550_FUN_00020e14); 0x32ed4 #0x80 (j1939HandlePgn61443Eec2). Address taken: move.l #0x803cae,(0x80054c).l at 0x15dd2 (cm550_initializeDiscreteInputs) = discrete_input_override_mask_ptr (0x00803cae in the RAM dump); through it mc68k_sampleAndDebounceDiscreteInputs and mc68k_ioDriverStrobeHandler read [0] = 0x803cae (bits 8-15, over status 0x80bccf) and [1] = 0x803caf (bits 0-7, over 0x80bcce) as status = (input AND NOT mask) OR (user value AND mask). Indexed from word 0 (table bit 0xd0 + logical switch; addi.l #0xd0 at 0x208d4): cm550_FUN_00020890 for the J1939 descriptor entries 6 / 7 / 5 / 1 / 4 / 3 / 9 / 8 / 15 = bits 1 / 2 / 3 / 9 / 10 / 11 / 13 / 14 / 15. .cpp: 6 plain tests, of which 2 also flow into a returned value (lines 22322 / 22398), + 1 CONCAT22 form (21960) + the address-of at 10575.",
+   "writes": "none: the 6 absolute word references are move.w reads; the pointer users only read the bytes; nothing references 0x803caf by address.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "key_switch_override_enable",
+     "comment": "no 106B record; logical switch 0: status e2m 000E +0 DSKYSWSS 'BIT 0 OF BYTE 0 STATUS OF THE VEHICLE KEY SWITCH - DEBOUNCED' (cm550_updateEngineState and mc68k_runPowerDownSequence read that bit as the key); named from the code and the status record; code: mask byte [1] bit 0 over status 0x80bcce / set = the key switch state comes from user value 0x80bcd8 bit 0; clear in the dumps"
+    },
+    {
+     "bit": 1,
+     "name": "cruise_control_resume_switch_override_enable",
+     "comment": "DSCRRUUO S mask 0x2 'BIT 1 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL( RESUME SWITCH)' / DS01SWUO 'SWITCH 1'; logical switch 1: status DSRUSWSS 'STATUS OF CRUISE RESUME/ACCEL SWITCH INPUT' / priority 12A8 +1 DSPZCRRU; code: mask byte [1] bit 1 over status 0x80bcce / table bit 209 tested by cm550_FUN_00020890 for J1939 entry 6 (j1939_received_cruise_control_resume_switch); clear in the dumps"
+    },
+    {
+     "bit": 2,
+     "name": "cruise_control_set_switch_override_enable",
+     "comment": "DSCRSEUO S mask 0x4 'BIT 2 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL( SWITCH SET ACTIVATION)' / DS02SWUO 'SWITCH 2'; logical switch 2: status DSSESWSS 'STATUS OF CRUISE SET/COAST SWITCH INPUT' / priority 12A8 +2 DSPZCRSE; code: mask byte [1] bit 2 over status 0x80bcce / table bit 210 tested by cm550_FUN_00020890 for J1939 entry 7 (j1939_received_cruise_control_set_switch); clear in the dumps"
+    },
+    {
+     "bit": 3,
+     "name": "cruise_control_on_off_switch_override_enable",
+     "comment": "DSCRONUO S mask 0x8 'BIT 3 USER OVERRIDE ENABLE FLAG FOR THE CC/PTO ON/OFF S(WITCH)' / DS03SWUO 'SWITCH 3'; logical switch 3: the cruise control and power take-off on/off switch - status DSCRSWSS 'STATUS OF CRUISE ON SWITCH INPUT' / priority 12A8 +3 DSPZCRON; code: mask byte [1] bit 3 over status 0x80bcce / table bit 211 tested by cm550_FUN_00020890 for J1939 entry 5 (j1939_received_cruise_control_enable_switch); clear in the dumps"
+    },
+    {
+     "bit": 4,
+     "name": "manual_fan_switch_override_enable",
+     "comment": "DSMNFNUO S mask 0x10 'BIT 4 USER OVERRIDE ENABLE FLAG FOR THE MANUAL FAN INPU(T SWITCH)' / DSFACLUO 'USER OVERRIDE ENABLE FLAG FOR FAN CLUTCH SWITCH' / DS05SWUO 'SWITCH 5'; logical switch 4: status DSFMSW 'STATUS OF THE MANUAL FAN INPUT SWITCH - DEBOUNCED VALUE' / priority 12A8 +4 DSPZFMIP; code: mask byte [1] bit 4 over status 0x80bcce; clear in the dumps"
+    },
+    {
+     "bit": 5,
+     "name": "powertrain_protection_switch_override_enable",
+     "comment": "DSPPSWUO S mask 0x20 'USER OVERRIDE ENABLE FLAG FOR PTP SWITCHED INPUT SWITCH' (PTP = powertrain protection: e2m group PTP_07) / DS06SWUO 'SWITCH 6'; logical switch 5: status PTSWINSW 'DEBOUNCED VALUE OF THE PTP SWITCHED INPUT SWIT(CH)' / priority 12A8 +5 DSP2PTSW (12A8 and 12FC also keep the older alias PTO_VALIDATE); code: mask byte [1] bit 5 over status 0x80bcce; clear in the dumps"
+    },
+    {
+     "bit": 6,
+     "name": "high_speed_governor_droop_select_switch_override_enable",
+     "comment": "DSHSDPUO S mask 0x40 'USER OVERRIDE ENABLE FLAG FOR HSG DROOP SELECT SWITCH' / DS07SWUO 'SWITCH 7'; logical switch 6: status HSDRSLSW 'DEBOUNCED VALUE FOR THE HSG DROOOP SELECT SWIT(CH)' / priority 12A8 +6 DSPZHGSW; code: mask byte [1] bit 6 over status 0x80bcce; clear in the dumps"
+    },
+    {
+     "bit": 7,
+     "name": "idle_switch_override_enable",
+     "comment": "DSIVSWUO S mask 0x80 'BIT 7 USER OVERRIDE ENABLE FLAG FOR THE RAW IDLE SWITCH( INPUT)' / DS08SWUO 'SWITCH 8'; logical switch 7: status DSIVSWSS 'DEBOUNCED VALUE OF IDLE VALIDATION 1 SWITCH' / priority 12A8 +7 DSPZISSW IDLE_SWITCH; code: mask byte [1] bit 7 over status 0x80bcce / direct tests andi #0x80 at 0x204e6 (cm550_outputControlState1Handler: the J1939 low idle switch writes the override value) - 0x20cbe (cm550_FUN_00020c98: the J1939 accelerator pedal position becomes the throttle override) - 0x20e5a (cm550_FUN_00020e14: the idle switch pair values) - 0x32ed4 (j1939HandlePgn61443Eec2 sends the EEC2 low idle switch as 3 while set); clear in the dumps"
+    },
+    {
+     "bit": 8,
+     "name": "not_idle_switch_override_enable",
+     "comment": "DSNTIVUO S mask 0x100 'BIT 8 USER OVERRIDE ENABLE FLAG FOR THE RAW NOT IDLE SW(ITCH INPUT)' / DS09SWUO 'SWITCH 9'; logical switch 8: status DSIVNTSW 'DEBOUNCED VALUE OF IDLE VALIDATION 2 SWITCH' / priority 12A8 +8 DSPZNTIS NOT_IDLE_SWITCH; code: mask byte [0] bit 0 over status 0x80bccf; clear in the dumps"
+    },
+    {
+     "bit": 9,
+     "name": "accelerator_interlock_switch_override_enable",
+     "comment": "DSOVAISW S mask 0x200 'WORD 13 BIT 9 OF BITS 0-15 STATUS OF OVERRIDE FLAG TO' (cut) / DS10SWUO 'SWITCH 10'; logical switch 9: priority 12A8 +9 DSPZAISW 'PRIORITY OF CLIENT CURRENTLY OVERRIDING ACCELERATOR INTERLOCK SWI(TCH)' / default 12FC DSGDAISW / status DSACILSS; code: mask byte [0] bit 1 over status 0x80bccf / table bit 217 tested by cm550_FUN_00020890 for J1939 entry 1 (j1939_received_accelerator_interlock_switch); clear in the dumps"
+    },
+    {
+     "bit": 10,
+     "name": "clutch_switch_override_enable",
+     "comment": "DSCHSWUO S mask 0x400 'BIT A USER OVERRIDE ENABLE FLAG FOR THE CLUTCH SWITCH' / DS11SWUO 'SWITCH 11'; logical switch 10: status DSCHSWSS 'DEBOUNCED VALUE OF CLUTCH SWITCH INPUT' / priority 12A8 +A DSPZCHSW; code: mask byte [0] bit 2 over status 0x80bccf / table bit 218 tested by cm550_FUN_00020890 for J1939 entry 4 (j1939_received_clutch_switch); clear in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "brake_switch_override_enable",
+     "comment": "DSBRSWUO S mask 0x800 'BIT B USER OVERRIDE ENABLE FLAG FOR THE BRAKE SWITCH' / DS12SWUO 'SWITCH 12'; logical switch 11: status DSBRSWSS 'DEBOUNCED VALUE OF SERVICE BRAKE SWITCH INPU(T)' / priority 12A8 +B DSPZBRSW; code: mask byte [0] bit 3 over status 0x80bccf / table bit 219 tested by cm550_FUN_00020890 for J1939 entry 3 (j1939_received_brake_switch); clear in the dumps"
+    },
+    {
+     "bit": 12,
+     "name": "engine_brake_select_1_switch_override_enable",
+     "comment": "DSEBUO01 S mask 0x1000 'BIT C USER OVERRIDE ENABLE ENGINE BRAKE SELECT 1' / DSOVEBSW 'USER OVERRIDE ENABLE FOR ENGINE_BRAKE_SWITCH' / DS13SWUO 'SWITCH 13'; logical switch 12: status DSEBS1 'DEBOUNCED VALUE OF ENGINE BRAKE SELECT 1 SWITCH INPUT' / priority 12A8 +C DSPZEBS1 (CM848 names its switch 12 from the same Engine_Brake_Select_1); code: mask byte [0] bit 4 over status 0x80bccf; clear in the dumps"
+    },
+    {
+     "bit": 13,
+     "name": "idle_increment_switch_override_enable",
+     "comment": "DSICSWUO S mask 0x2000 'BIT D USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST INC(REMENT SWITCH)' / DS14SWUO 'SWITCH 14'; logical switch 13: status DSICSWSS 'DEBOUNCED VALUE OF IDLE INCREMENT SWITCH INP(UT)' / priority 12A8 +D DSPZICSW; code: mask byte [0] bit 5 over status 0x80bccf / table bit 221 tested by cm550_FUN_00020890 for J1939 entry 9 (j1939_received_engine_idle_increment_switch) / direct test andi.w #0x2000 at 0x15830 (mc68k_sampleAndDebounceDiscreteInputs: after the increment / decrement decode from the cruise switches it takes status 0x80bccf bit 5 from switch_9_to_16_override_values again); clear in the dumps"
+    },
+    {
+     "bit": 14,
+     "name": "idle_decrement_switch_override_enable",
+     "comment": "DSDTSWUO S mask 0x4000 'BIT E USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST DEC(REMENT SWITCH)' / DS15SWUO 'SWITCH 15'; logical switch 14: status DSDTSWSS 'DEBOUNCED VALUE OF IDLE DECREMENT SWITCH INP(UT)' / priority 12A8 +E DSPZDTSW; code: mask byte [0] bit 6 over status 0x80bccf / table bit 222 tested by cm550_FUN_00020890 for J1939 entry 8 (j1939_received_engine_idle_decrement_switch) / direct test andi.w #0x4000 at 0x15850 (mc68k_sampleAndDebounceDiscreteInputs: status 0x80bccf bit 6 from switch_9_to_16_override_values after the cruise switch decode); clear in the dumps"
+    },
+    {
+     "bit": 15,
+     "name": "diagnostic_test_switch_override_enable",
+     "comment": "DSTESWUO S mask 0x8000 'BIT F USER OVERRIDE ENABLE FLAG FOR THE DIAGNOSTIC TEST( AND FAULT FLASH OUT)' / DS16SWUO 'SWITCH 16'; logical switch 15: status DSTESWSS 'DEBOUNCED VALUE OF THE DIAGNOSTIC/TEST SWITC(H)' / priority 12A8 +F DSPZTESW; code: mask byte [0] bit 7 over status 0x80bccf / table bit 223 tested by cm550_FUN_00020890 for J1939 entry 15 (j1939_received_engine_diagnostic_test_mode_switch); clear in the dumps"
+    }
+   ]
+  },
+  {
+   "word": 14,
+   "address": "0x803cb0",
+   "current_name": "(no row; renders _DAT_00803cb0)",
+   "proposed_name": "algorithm_enable_flags_14_cal",
+   "proposed_type": "cm550_algorithm_enable_flags_14_t",
+   "shared_with_cm848": false,
+   "row_comment": "Algorithm enable flags word 14 (EEPROM 0x1a6; e2m 106B +1E DIG_SIG): the user override enables of logical switches 16-31, bit n = switch 16 + n - 0x2 air conditioning pressure turnkey / 0x4 rear axle ratio / 0x8 remote throttle / 0x10 remote power take-off / 0x20 coolant level low / 0x40 user datalogger / 0x80 parking brake / 0x100 coolant level high / 0x200 switched throttle control governor or all speed governor droop / 0x2000 air conditioning cycle / 0x4000 air conditioning on/off; 0x1 0x400 0x800 0x1000 0x8000 are the e2m's switches 17 / 27 / 28 / 23 / 31 with no settled function. Set: the switch status bit (word bits 0-7 = status byte 0x80bcd0, bits 8-15 = 0x80bcd1) comes from the user value (0x80bcda / 0x80bcdb) instead of the debounced input: mc68k_sampleAndDebounceDiscreteInputs and mc68k_ioDriverStrobeHandler read the word as bytes [2] (bits 8-15) and [3] (bits 0-7) of discrete_input_override_mask_ptr (the second word of e2m DSSWUO). One direct reader: cm550_FUN_00020784 tests 0x8 at 0x207d0 (the J1939 remote accelerator); cm550_FUN_00020890 tests bits 3 / 4 by index for the J1939 remote accelerator enable and remote power take-off switches. No store in the dumped ROM. 0x0000 in the EEPROM and RAM dumps. CM848 has no row and no record for word 14. (no row before; PR #53 round 92)",
+   "differences_from_cm848": "CM848 has no row, no e2m record (no CHR e2m has 106B +001E) and no reader for word 14 (0x3fd5b8; 0x0000 in its dump): no CM848 counterpart.",
+   "code_tests": "Direct: 0x207d0 move.w (0x803cb0).l,d0 + andi.l #0x8 + beq (cm550_FUN_00020784 @ 0x20784) = bit 3. Bytewise through discrete_input_override_mask_ptr: [2] = 0x803cb0 (bits 8-15, over status 0x80bcd1) and [3] = 0x803cb1 (bits 0-7, over 0x80bcd0) in mc68k_sampleAndDebounceDiscreteInputs and mc68k_ioDriverStrobeHandler. Indexed from word 0: cm550_FUN_00020890 tests table bits 227 / 228 (bits 3 / 4) for the J1939 descriptor entries 14 / 13. .cpp: 1 test, which also flows into the function's returned value (line 22137).",
+   "writes": "none: the one absolute reference is a move.w read; the pointer users only read the bytes; nothing references 0x803cb1 by address.",
+   "fields": [
+    {
+     "bit": 0,
+     "name": "switch_17_override_enable",
+     "comment": "DS17SWUO S mask 0x1 'BIT 0 SWITCH 17 USER OVERRIDE ENABLE FLAG' is the only record; logical switch 16: no function name in 106B / 000E / 12A8 / 12FC / 1234 and no reader of the status bit; code: mask byte [3] bit 0 over status 0x80bcd0; clear in the dumps"
+    },
+    {
+     "bit": 1,
+     "name": "air_conditioning_pressure_turnkey_switch_override_enable",
+     "comment": "DSAKTKUO S mask 0x2 'WORD 14 BIT 1 OF BITS 0-15 STATUS OF OVERRIDE FLAG TO' (cut) / DS18SWUO 'SWITCH 18'; logical switch 17: default 12FC DSDFACTK 'DEFAULT/INITIALIZATION VALUE FOR THE AC PRESSURE TURNKEY SWITCH' / priority 12A8 +11 DSPZACPT / inversion 1234 DSINACPT; code: mask byte [3] bit 1 over status 0x80bcd0 / the debouncer copies status 0x80bcd0 bit 1 into 0x80bcd7 bit 0 (e2m 000E +9 DSAKPRSW 'SOFTWARE VALUE OF AIR CONDITIONER PRESSURE S(WITCH)'); clear in the dumps"
+    },
+    {
+     "bit": 2,
+     "name": "rear_axle_ratio_switch_override_enable",
+     "comment": "DSRARSUO S mask 0x4 'USER OVERRIDE ENABLE FLAG FOR REAR AXLE RATIO SWITCH' / DS19SWUO 'SWITCH 19'; logical switch 18: status DSRARASW 'DEBOUNCED VALUE FOR REAR_AXLE_RATIO_SWITCH' (j1939HandlePgn65265CruiseVehicleSpeed reads it) / priority 12A8 +12 DSPZRARA; code: mask byte [3] bit 2 over status 0x80bcd0; clear in the dumps"
+    },
+    {
+     "bit": 3,
+     "name": "remote_throttle_switch_override_enable",
+     "comment": "DSRMTHUO S mask 0x8 'BIT 3 USER OVERRIDE ENABLE FLAG FOR THE REMOTE THROTTLE( SWITCH)' / DS20SWUO 'SWITCH 20'; logical switch 19: status RMTHSW 'DEBOUNCED VALUE OF REMOTE THROTTLE SWITCH INPU(T)' / priority 12A8 +13 DSPZRTSW; code: mask byte [3] bit 3 over status 0x80bcd0 / table bit 227 tested by cm550_FUN_00020890 for J1939 entry 14 (j1939_received_remote_accelerator_enable_switch) / direct test andi.l #0x8 at 0x207d0 (cm550_FUN_00020784: with word 18 bit 12 it lets the J1939 remote accelerator pedal position into analog_sensor_override_values[11]); clear in the dumps"
+    },
+    {
+     "bit": 4,
+     "name": "remote_power_take_off_switch_override_enable",
+     "comment": "DSRXSWUO S mask 0x10 'BIT 4 USER OVERRIDE ENABLE FLAG FOR THE REMOTE PTO SWIT(CH)' / DS21SWUO 'SWITCH 21'; logical switch 20: status DSRXSWSS 'DEBOUNCED VALUE OF REMOTE PTO SWITCH INPUT' / priority 12A8 +14 DSPZRXSW; code: mask byte [3] bit 4 over status 0x80bcd0 / table bit 228 tested by cm550_FUN_00020890 for J1939 entry 13 (j1939_received_remote_power_take_off_switch); clear in the dumps"
+    },
+    {
+     "bit": 5,
+     "name": "coolant_level_low_switch_override_enable",
+     "comment": "DSCLLOUO S mask 0x20 'USER OVERRIDE ENABLE FLAG FOR COOLANT LEVEL LOW SWITCH' / DS22SWUO 'SWITCH 22'; logical switch 21: status DSCLLOSW 'STATUS OF THE SWITCH (COOLANT LEVEL LOW)' (the debouncer's coolant level switch pair check reads it) / priority 12A8 +15 DSPZCLLO; code: mask byte [3] bit 5 over status 0x80bcd0; clear in the dumps"
+    },
+    {
+     "bit": 6,
+     "name": "user_datalogger_switch_override_enable",
+     "comment": "DSUSDLUO and DSORUDSW S mask 0x40 'USER OVERRIDE ENABLE FLAG FOR USER DATALOGGER SWITCH' / DS26SWUO 'BIT 6 SWITCH 26'; logical switch 22: status DSILSSSW 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH' (cm550_updateDataloggerTriggers reads it) / priority 12A8 +16 DSPZININ (12A8 and 12FC also keep the alias PTO1); code: mask byte [3] bit 6 over status 0x80bcd0; clear in the dumps"
+    },
+    {
+     "bit": 7,
+     "name": "parking_brake_switch_override_enable",
+     "comment": "DSPRBRUO S mask 0x80 (its text 'USER OVERRIDE ENABLE FLAG MANUAL FAN INPUT SWITCH' is the manual fan record's - the mnemonic says parking brake) / DS24SWUO 'BIT 7 SWITCH 24'; logical switch 23: value 000E +C DSPRBRUC 'USER VALUE OF THE PARKING BRAKE SWITCH' / priority 12A8 +17 DSPZPRBR 'PARKING_BRAKE_SW(ITCH)' / inversion 1234 DSPRBRIV - no reader of the status bit; code: mask byte [3] bit 7 over status 0x80bcd0; clear in the dumps"
+    },
+    {
+     "bit": 8,
+     "name": "coolant_level_high_switch_override_enable",
+     "comment": "DSCLHIUO S mask 0x100 'USER OVERRIDE ENABLE FLAG FOR COOLANT LEVEL HIGH SWITCH' / DS25SWUO 'BIT 8 SWITCH 25'; logical switch 24: status DSCLHISW 'STATUS OF THE SWITCH (COOLANT LEVEL HIGH)' (the coolant level switch pair check reads it) / priority 12A8 +18 DSPZCLHI; code: mask byte [2] bit 0 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 9,
+     "name": "switched_throttle_control_or_all_speed_governor_droop_switch_override_enable",
+     "comment": "DSSTCNUO S mask 0x200 'USER OVERRIDE ENABLE FLAG FOR STCG ASG DROOP SWITCH' (STCG = switched throttle control governor per STCGASDS - ASG = all speed governor) / DS04SWUO 'BIT 9 SWITCH 4'; logical switch 25: status SLTHCNSW 'DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH' (cm550_acceleratorThrottleFaultDetector and cm550_FUN_0000d4ae read it with word 27 bit 3) / priority 12A8 +19 DSPZSTCN; code: mask byte [2] bit 1 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 10,
+     "name": "switch_27_override_enable",
+     "comment": "DS27SWUO S mask 0x400 'BIT A SWITCH 27 USER OVERRIDE ENABLE FLAG' is the only 106B record; logical switch 26: guess an air conditioning pressure switch (12A8 +1A DSPZAKPR 'AIR CONDITIONER' / 12FC DSDFAKPR 'AIR_CONDITIONER_PRESSURE_SWITC(H)' / 1234 DSINACHP 'AC HIGH PRESSURE SWIT(CH)') - but this ROM keeps the air conditioning pressure switch at logical switch 72 (J1939 entry 0) and nothing reads the status bit; code: mask byte [2] bit 2 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 11,
+     "name": "switch_28_override_enable",
+     "comment": "DS28SWUO S mask 0x800 'BIT B SWITCH 28 USER OVERRIDE ENABLE FLAG' plus two function records that disagree: DSAKHIUO 'WORD 14 BIT 11 OF BITS 0-15 STATUS OF OVERRIDE FLAG T' (cut - the AC high pressure switch: 12A8 +1B DSPZACHP / 12FC DSDFACHP) and DSTHILUO 'USER OVERRIDE ENABLE FLAG FOR THE ACCELERATOR INTERLOCK' (the throttle interlock: DSTHILSS / DSPZTHIL / DSDFTHIL); logical switch 27: undecided - this ROM routes the J1939 accelerator interlock to logical switch 9 (word 13 bit 9) so the interlock alias looks stale and nothing reads the status bit; code: mask byte [2] bit 3 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 12,
+     "name": "switch_23_override_enable",
+     "comment": "DS23SWUO S mask 0x1000 'BIT C SWITCH 23 USER OVERRIDE ENABLE FLAG' is the only 106B record; logical switch 28: guess engine brake select 2 (12FC DSDFEBS2 'DEFAULT/INITIALIZATION VALUE FOR ENGINE_BRAKE_SELECT_2' / 12A8 +1C DSPZEBS2) - no reader of the status bit; code: mask byte [2] bit 4 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 13,
+     "name": "air_conditioning_cycle_switch_override_enable",
+     "comment": "DSAKCYUO S mask 0x2000 'WORD 14 BIT 13 OF BITS 0-15 STATUS OF OVERRIDE FLAG T' (cut) / DS29SWUO 'SWITCH 29'; logical switch 29: default 12FC DSDFACCY 'DEFAULT/INITIALIZATION VALUE FOR THE AC CYCLE SWITCH' / inversion 1234 DSACCYIV / priority 12A8 +1D DSPZACCY (12A8 and 12FC also keep the alias PTO2) - no reader of the status bit; code: mask byte [2] bit 5 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 14,
+     "name": "air_conditioning_on_off_switch_override_enable",
+     "comment": "DSAKONUO S mask 0x4000 (its text 'BIT 6 OF 0-7 STATUS OF THE SWITCH' is the status record's) / DS30SWUO 'SWITCH 30'; logical switch 30: value 000E +D DSAKONUC 'USER SUPPLIED VALUE FOR AC_ON_OFF_SWITCH' / priority 12A8 +1E DSPZACOO 'AC ON OFF SWITCH' / default 12FC DSDFACOO - no reader of the status bit; code: mask byte [2] bit 6 over status 0x80bcd1; clear in the dumps"
+    },
+    {
+     "bit": 15,
+     "name": "switch_31_override_enable",
+     "comment": "DS31SWUO S mask 0x8000 'BIT F SWITCH 31 USER OVERRIDE ENABLE FLAG' is the only record; logical switch 31: no function name in 106B / 000E / 12A8 / 12FC / 1234 and no reader of the status bit; code: mask byte [2] bit 7 over status 0x80bcd1; clear in the dumps"
+    }
+   ]
+  }
+ ],
+ "cm848_field_renames": [
+  {
+   "type_name": "algorithm_enable_flags_12_t",
+   "bit": 1,
+   "current_field": "reserved_bit_1",
+   "proposed_field": "overspeed_fuel_shutoff_enable",
+   "evidence": "CM848's own e2m (CHR_CC_11.45.01.07) names the bit: 106B +001A Overspeed_FSO_Override, S mask 0x2, '[EPOSFSO] If T, FSO closes when ovrspd detected by main micro. Bit 1 of 0 - 15 of Word C' - the struct comment already cites it. CM848's CSV already spells FSO as fuel shutoff (fault_bit_words_t.fuel_shutoff_control_error = e2m FSO_Control_Error) and CM550's e2m spells it out (DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER. ENABLE = FSO ON'; CM848's e2m has the same mnemonic as FSO_Command). CM848 has no reader in either bank and its .cpp never prints the field, so the rename is label-only; round 20 named word 12's other unread bits 0 and 5 from their records and left this one (no reason recorded). CM550 reads the same bit at 0x1ca9a: in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit is cleared only while it is set. The proposed name equals the CM550 field."
+  }
+ ],
+ "notes": "METHOD. Every absolute-long reference to 0x803ca2-0x803cb1 in J90350.00.rom.bin was found and decoded (scratch direct_tests.py): 29 move.w (abs).l,d0 reads, each followed by andi.w / andi.l with a single-bit mask and a branch, plus one address load (move.l #0x803cae,(0x80054c).l at 0x15dd2). No store, no btst, no byte access, no reference to an odd address and none to word 10 (0x803ca8). The indexed accesses use word 0 as their base; I hand-decoded two of them (0x19734-0x19756 and 0x208ce-0x208fc: moveq / addi the bit number, divide or mask by 16, lsl a 1, asr.l #4, move.w (0,a0,dn.w*2)) so table bit i = word i / 16, mask 1 shifted left by i mod 16, and I read the loop constants in the machine code (moveq #0x70 / #0x71 / #0x72, addi.l #0xd0). llvm-objdump-18 and llvm-mc-18 drop many m68k opcodes, so the instruction addresses come from the byte scan and the behaviour from the committed .cpp. The nine protection channels are identified three ways that agree: the 106B records, the e2m names of each channel's own records (configs 0x807032 + 36n, states 0x80d0dc + 46n, severities 0x8057c0 + 30n) and the input pointer at the start of each state record in the extended RAM dump (read at file offset address - 0x809242, the dump being 0x80 short). Dump values: EEPROM 0x198-0x1a7 equals RAM 0x803ca2-0x803cb1 (w7 0xffff, w8 0, w9 0, w10 0, w11 0x000b, w12 0xbb87, w13 0, w14 0).\n\nOLD NAMES AGAINST THE E2M WORD NUMBER. Only calibration_feature_enable_flags_word_9 (0x803cac) is misnumbered: (0x803cac - 0x803c94) / 2 = 12 and its records say WORD C. diagnostic_subsystem_enable_flags (word 11) is a wrong domain: the word enables the datalink protocols. switch_override_configuration (word 13) is right in substance. The e2m writes the word number in hex for word 12 (C) and in decimal for words 13 / 14 ('WORD 13 BIT 9', 'WORD 14 BIT 1'); both fit offset = 2 + 2 x n.\n\nTYPES. Word 11 takes CM848's algorithm_enable_flags_11_t (the only shared type of the batch; check_shared_r92.py prints 'names equal' for it). Words 7 / 8 / 12 / 13 / 14 are cm550_ bitfields: each has direct single-bit tests and no store. Word 9 stays a plain word: nothing reads it by its own address (CM848's rule for its words 7 / 8 / 26), so its fields are for the row comment only.\n- Word 7 is the one judgment call on the type: all 16 bits equal CM848's e2m records for its word 7, but CM848 has no algorithm_enable_flags_7_t (a plain word with no reader), so there is nothing to share and I used cm550_algorithm_enable_flags_7_t. If you would rather have one shared type, rename it algorithm_enable_flags_7_t and add the same rows to CM848 (its row can be retyped with no render change, since nothing reads it); the field names already follow CM848's e2m record names.\n\nNAMING CHOICES TO REVIEW.\n- Engine protection bits: CHANNEL_fueling_limiting_enable / _rpm_limiting_enable / _shutdown_enable / _restart_enable, after CM848's e2m record names (Coolant_Level_Fueling_Limiting_Enable ... Coolant_Level_Restart_Enable) and algorithm_enable_flags_2_t.engine_protection_restart_enable. The restart bit does not allow a restart: with the shutdown bit it lets the restart checks shut the engine down again ('PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT'). CHANNEL_restart_limitation_enable would say that more plainly (the e2m and CM848 both call the algorithm the restart limitation); I kept CM848's wording so the twins match. Channel names are the ones W4 used for word 26 (the same nine channels).\n- Word 12 bits 8 / 9 take CM848's field names, which describe CM848's detectors; J90350.00 has no reader for them in the dump, only the same VSMVEN / VSSTEN records.\n- Word 12 bit 5 keeps CM848's reverse_electronic_smart_power_enable (label Reverse_ESP_Enable); CM550's own text and code say ESP launch application (tau source state 1 of NORMAL / LAUNCH / STEEP).\n- Word 12 bit 1 is overspeed_fuel_shutoff_enable in both firmwares (the CM848 rename), parallel to W1's word 0 bit 6 engine_retarder_fuel_shutoff_enable: the two bits gate the same fuel shutoff decision at 0x1ca54.\n- Word 13 bit 0 has no 106B record. I named it key_switch_override_enable because the code proves it: the byte mask [1] applies to all eight bits of status byte 0, and bit 0 of that byte is the key switch (000E DSKYSWSS; the engine state and power-down code read it as the key). If a bit needs its own 106B record to be named, make it reserved_bit_0 and keep this as the guess.\n- Words 13 / 14: a bit is named for a function when its own 106B record names that function (by text or by a mnemonic that the 000E / 12A8 / 12FC / 1234 records of the same logical switch spell out) or when the code proves it. Where the 106B record gives only a switch number, the name is switch_N_override_enable with the e2m's switch number (word 14 bits 0 / 10 / 12 / 15) and the other blocks' aliases are guesses in the comment. Word 14 bit 11 has two complete alias sets (AC high pressure switch and throttle interlock), so it is switch_28_override_enable.\n- Accelerator interlock: the J1939 descriptor table (ROM 0x20108 entry 1 = JCTHILMU, the multiplexed throttle interlock value) drives logical switch 9, so word 13 bit 9 is the accelerator interlock override. The e2m's DSTHILUO (group MUX_PARA) puts it at word 14 bit 11; that group's other 106B record MXLPANEA is also off by one word against the code (W4).\n- Word 14 bit 9 has a 76-character name, switched_throttle_control_or_all_speed_governor_droop_switch_override_enable, because the e2m's 'STCG ASG DROOP SWITCH' is one switch with two roles (word 27 bit 3 picks the switched throttle control governor or the all speed governor droop). The shorter switched_throttle_control_governor_droop_switch_override_enable drops the all speed governor half.\n\nSIBLING CONSISTENCY (please reconcile).\n- W3's word 16 uses cruise_control_resume_switch_override_enable and cruise_control_set_switch_override_enable for the DECODED cruise status bits (0x80bcd4). Word 13 bits 1 / 2 are the raw switches that the e2m gives exactly those names (DSCRRUUO / DSCRSEUO). Two structs may share a field name, but the two layers should not: I suggest renaming W3's (for example cruise_control_resume_status_override_enable).\n- W3 writes air_conditioner_ (word 15 bit 11, word 17 bit 8). I used air_conditioning_, as CM848 (air_conditioning_switch, fan_air_conditioning_pressure_enable), W1 and W4 do.\n- Engine brake: W1 / W4 say engine_retarder_ for EB records, W3 says engine_brake_relay_. For the switch I used engine_brake_select_1_ because CM848's own switch record is Engine_Brake_Select_1 (and its switch_input_state_t has engine_brake_driver_1_feedback).\n- The row comments call word 0 'word 0 (0x803c94)' because W1 renames it; put the final row name in if you prefer.\n\nE2M TEXT CAVEATS. v64t6_s cuts descriptions at about 50 characters. Completions in parentheses come from longer copies of the same record in other e2m files (42t9_rls, the CHR files) for word 7, EPFT*, EPOSFSO, SPRVEN, PTBRODEN / PTCHODEN (their bit letters B / C), LSCIIHEN (bit 14) and the DS..UO switch records; for EPWF / EPBS / EPFP / EPAA no longer copy exists (33 files, all cut) and the completion comes from the record's SOEN sibling. Texts that contradict their own record: EPBSFLEN (engine sync text on the boost record), DSPRBRUO (manual fan text on the parking brake record), DSAKONUO (the status record's text), EPCQRPEN 'BIT 5 OF 5-15', EPFTSOEN 'BIT 14 OF 0-14'. One counter-witness on the parking brake (word 14 bit 7, logical switch 23): block 12FC lists its default DSDFPRBR at mask 0x80000 (logical switch 19, next to the remote throttle switch) and only 'SWITCH 24' at bit 23, against three records at 23 (000E value DSPRBRUC, 12A8 +17 DSPZPRBR, 1234 DSPRBRIV) and the 106B mnemonic. Quotes are comma-stripped for the CSV. EDF is spelled out by the e2m's own group record 12C (ENDTFL07 'ENGINE DATA FILES ENABLE AND POWER-DOWNS'), ESP by group 43 (ESP_08 'ELECTRONIC SMART POWER GROUP'), PTP by group PTP_07, STCG by STCGASDS.\n\n'NO READER' always means none in the dumped 256 KB (109 call targets above 0x40000 are not dumped). Word 12 has bits 7 / 8 / 9 / 11 / 12 / 13 / 15 set in the calibration with no reader in the dump.\n\nRENDERING RISKS (I could not build). Value-flow forms that may print as pieces once typed: word 8 2 of 2 tests; word 11 3 CONCAT22 forms; word 12 5 assigned / returned values + 1 CONCAT22; word 13 2 + 1 CONCAT22; word 14 1 of 1. Word 7's single test is plain. Word 13's address is stored in discrete_input_override_mask_ptr as the base of byte reads that run through words 13-17 (W3 covers [4] / [5] / [9]); as a 2-byte struct that assignment may print with a cast. The 15 indexed tests print through word 0's symbol and are unaffected as long as word 0 stays a plain word.\n\nSTALE CITATIONS OF THE OLD NAMES. firmware/CM550_J90350.00_analysis/output/function_renames.csv line 170 (cm550_initializeDiscreteInputs: 'points discrete_input_override_mask_ptr at switch_override_configuration') and line 257 (cm550_updateElectronicSmartPowerTau: 'runs while calibration_feature_enable_flags_word_9 bit 0x10 is set'); firmware_globals.hpp lines 1456-1458 regenerate. No other live CSV or doc cites the three names (the context_tier1 / context_tier2 folders and the session archives are snapshots).\n\nCM848. One rename: algorithm_enable_flags_12_t bit 1. Nothing else qualifies: bits 14 / 15 of word 12 and bit 4 of word 11 have no record in CM848's own e2m and no CM848 reader (EDF_Enable 0x8000 exists only in the CHR_B2 files, a different module), and words 7 / 8 are plain words there.\n\nLEADS (not renamed here). processDiagnosticLimitStatus = the engine protection shutdown (twin cm848_updateEngineProtectionShutdown); cm550_diagnosticProtectionEvaluator = the examination before cranking (twin cm848_examineEngineProtectionBeforeCranking; it sets 0x80d28a = e2m 10B1 +10 EPPKSO); cm550_protectionState1DiagnosticValidator = twin cm848_updateEngineProtectionRestartSeverity; cm550_FUN_00019702 = twin cm848_calculateFaultDerateFuelLimit; vp44_FUN_0001cad6 = the fuel temperature protection input; cm550_fuelDemandLimitSelector11 / vp44_canPinVp44StatusController = the fuel shutoff driver command; vp44FaultRegisterBit2Monitor = the water in fuel monitor; cm550_FUN_00026616 = the cold idle speed adder (0x80db08 = e2m 1049 +6 LSCIOD, no row); vp44State2TransitionHandler / cm550_FUN_000184c6 = the J1939 torque curve speed points (twin cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints; 0x80daf4 = LSDPSE the selected low speed governor droop slope, no row); cm550_engineRunTimeHistogramAccumulator = the J1939 periodic transmit schedule; mc68k_FUN_000212b2 = the J1939 receive dispatch; cm550_diagnosticMessageTransmissionManager = the periodic J1922 / J1587 transmissions; cm550_FUN_00020890 = twin cm848_evaluateJ1939InputSignalFault. The four switch status bytes carry one bit's e2m name each (0x80bcce value_used_for_monitoring_switch_data..., 0x80bccf debounced_switch_value_for_switch_16..., 0x80bcd0 debounced_value_for_rear_axle_ratio_switch..., 0x80bcd1 state_of_the_throttle_interlock_switch...): they are switch status bytes 0-3 (logical switches 0-31). high_horsepower_mode_state 0x80d2b6 is e2m SPTUST, the ESP tau source.\n\nASIDE. Word 20 (0x803cbc) is in no batch but has a direct test: andi.w #0x200 at 0x20fd8 (cm550_FUN_00020fac, the J1939 wet tank pressure into analog_sensor_raw_override_values[0]). v64t6_s has no 106B +2A record; six other ISB e2m files have AD25OD 0x200 'BIT 9 OF 0-15. A/D CHANNEL 25 OVERRIDE' there.\n\nSCRATCH. /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W2/v2/: direct_tests.py (the reference scan), survey_e2m.py (every e2m file's 106B records per offset) with survey_*.txt, switch_xref.py + switch_xref.txt (logical switches 0-31 over 106B / 000E / 12A8), dump_values.py and channel_inputs.py (the dumps), showfn.py, switch_fields_v2.py + build_result_v2.py which writes result_W2.json (the validated copy of this result). The files one level up are an earlier draft of this batch; every claim here was re-derived."
+}

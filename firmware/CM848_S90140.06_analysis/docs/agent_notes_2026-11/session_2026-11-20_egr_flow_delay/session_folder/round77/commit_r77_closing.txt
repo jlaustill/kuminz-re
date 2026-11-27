@@ -1,0 +1,12 @@
+cm550: round 77 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 77" records the multi-address struct scan (18 in CM550, none in CM848) and stage A
+  (4e84a68c: the J1708 state structs removed, the J1708 globals typed, the CTM4 bus timer functions named), with the
+  proof.
+- Leads: the other 16 multi-address structs (most are the declared types of existing globals), j1708_pending_abort_count's
+  meaning, and round 76's external devices and parameter buffer.
+- The PR body: the Round 77 bullet, "Beyond CM848" for rounds 72-77, and the test plan line.
+- work/todo.md, the session README, session_folder/round77/, the large-files tarball (the round's verify log),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

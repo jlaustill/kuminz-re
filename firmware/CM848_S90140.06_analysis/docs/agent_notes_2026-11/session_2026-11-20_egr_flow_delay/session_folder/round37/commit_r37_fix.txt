@@ -1,0 +1,28 @@
+cm848: round 37 fix - stale and over-reaching text from rounds 33-36, statement-diff checks
+
+A review of rounds 33-37 found text that the code no longer supports, or never did:
+- structure_definitions.csv: the # line above j1939_tx_msg_t said that cm848_transmitCanMessage takes &msg.header.
+  Since 68c58e4 it takes the whole record (diagnostic_response_message_t).
+- firmware/CLAUDE.md said "19 thunks / 13 call overrides". Since 20a26d2 the CI payload covers the boot-called RAM
+  copy of mpc555_can2TransmitInterruptHandler at 0x3fab3c, giving 18 / 14 (a factual refresh).
+- PGN 65504's engine_net_output_torque: "125 % in 1/256 % units" is marked as an inference from the 0x7d7f
+  constant.
+- EFL/P1: the header says that bytes 2 / 3 / 8 follow the J1939-71 sequence, because the databases give no
+  positions. Bytes 1 / 4 / 7 and the 5-6 word are set by the code.
+- Task 046: the round 37 lead says that the cache which took a table's bare name gets renamed with its siblings.
+
+Stages 35C and 36B had read some functions only through filtered or truncated diffs. statement_diff.py (in
+session_folder/round37) drops declarations, numbers the temporaries by first use and maps each function's old raw
+forms to the new field forms. It was run against the exact committed .cpp of each stage (68c58e4 / c7d1515):
+- mpc555_sendJ1939TransportDataPackets / ClearToSend / cm848_diagService65_handler: names and casts only.
+- cm848_sendDiagServiceResponse: the signature and temporaries renumbered by one.
+- cm848_dispatchDiagnosticService: the signature only, once the old CONCAT31 alias and the char result (-1 /
+  '\x05') are mapped to the uint form (& 0xff / 0xff / 5).
+- mpc555_handleJ1939TransportDataPacket: the same byte copy (the source pointer is now the data pointer itself,
+  because the bogus third acknowledge argument no longer needs its end value). The rest is the two fixed calls and
+  the propagated destination_address.
+So the commits' "read as diffs" claims hold.
+
+Comment-only: a build leaves the .cpp unchanged apart from the timestamp. firmware_types.hpp regenerated.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

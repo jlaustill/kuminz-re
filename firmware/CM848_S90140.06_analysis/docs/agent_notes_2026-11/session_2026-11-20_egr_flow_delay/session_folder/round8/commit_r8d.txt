@@ -1,0 +1,17 @@
+cm848: round 8 closing - resolved-name notes, the round 7 lead marked resolved, the round 8 logs, verify
+
+- Old-name sweep over the repo (grep_old_names.py with old_names_r8.txt). The hits that are left are history only:
+  "(was ...)" plate comments that wrap a line, and the round 7 leads, now marked resolved ("Round 8: they are
+  cm848_learnVehicleInertia and cm848_selectGovernorPressureAntiHunt"). The generated snapshots (classification.csv,
+  bank2_functions.cpp, memory-mappings, the old worklist batches) stay as they are, as in the earlier rounds.
+- firmware/CLAUDE.md: the stage B reference refresh had rewritten a history sentence in the power-down bullet ("the
+  EEPROM copies of protection_timer_a/b ... the real protection timers are the RAM pair at 0x40b10a / 0x40b10c, which
+  keep their names"). It now keeps the old names and says what round 8 found the RAM pair to be.
+  refresh_audit.py lists every comment-only refresh of stages A and B; the others are current-use mentions.
+- Tasks 025 and 027 get a "Resolved by PR #53 round 8" section that lists, for each old name they cite, its new
+  name (append_resolved_r8.py, from the round 7 script).
+- The session folder: the round 8 closing scripts (close_r8.py, old_names_r8.py, memory_round8.py,
+  update_large_tar_r8.sh, the sweep results). The large-files tarball gets the round 8 build and verify logs.
+- ./analyze.sh verify: the two builds are byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

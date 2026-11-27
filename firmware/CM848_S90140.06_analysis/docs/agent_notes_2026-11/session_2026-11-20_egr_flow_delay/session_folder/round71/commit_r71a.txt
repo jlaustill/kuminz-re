@@ -1,0 +1,42 @@
+cm848: round 71 stage A - MEMORY_REGION_TYPE: both kernels' memory region maps typed; application_memory_region_table; serial_download_region_type
+
+Both write-permission maps decode to the same type codes, and both kernels' readers and writers branch on them the
+same way:
+- 0 RAM: a plain copy.
+- 2 Bank 2 flash.
+- 3 AUTHORIZATION_REQUIRED: copied after the write authorization.
+- 4 main flash: the boot worker programs it; the application writer refuses it.
+- 5 EEPROM: after the authorization.
+- 9 UNMAPPED and 10 REFUSED are passed back as the service result. That is why J1939_DIAGNOSTIC_RESULT 0x09 / 0x0a
+  share the numbers, and why the boot read handler tests 9 and 10 too.
+
+The words for 9 / 10 are J1939_DIAGNOSTIC_RESULT's own.
+- MEMORY_REGION_TYPE (1 byte) types memory_region_t's two type bytes.
+  - The second byte was "region_type_copy: same value in every entry", true only of the boot table. It is the
+    application's type while development_mode is OFF, where its register ranges become REFUSED, so it is now
+    development_mode_off_region_type.
+- The first match wins. So the boot table's type 3 entry (0x2fc000-0x307fff) is effectively 0x2fc000-0x301fff, and
+  the RAM entry takes the TPU / TouCAN registers. The application map leaves out the dual-port TPU RAM, which comes
+  back UNMAPPED (round 70's emulation mode). The comments say so.
+- application_memory_region_table: memory_region_t[7] at 0x53a33a, right after j1939_memory_read_reply_services. It
+  had been two type-only pointer rows; one created a DAT_0006ffff label in mpc555_cmfEraseBlocks.
+- memory_region_table -> boot_memory_region_table, for the symmetry.
+- 0x3fee05 sensor_fault_threshold_state -> serial_download_region_type (MEMORY_REGION_TYPE). Only the boot
+  kernel's mpc555_sciHandleDownloadDataBlock uses it: it stores the lookup's answer and branches on Bank 2 / main
+  flash / EEPROM.
+- Both lookups get full prototypes returning MEMORY_REGION_TYPE. The two writers that pass a region code back as
+  their result get explicit byte / char returns, so the region codes do not name their results.
+- firmware/CLAUDE.md line 108: the reference refresh renamed memory_region_table to boot_memory_region_table (a
+  factual rename).
+
+Proof (prove_r71.py): 17 of 1968 functions differ, with 28 placeholders fewer and 8 casts more.
+- The region compares now name MEMORY_REGION_TYPE members: the download handlers, both writers, both read handlers,
+  and the PCI diagnostic handler.
+- Both lookups read their tables' fields; the application one lost its 5 casts.
+- The 0x19 handler's region / result mix is explicit: BVar6 = (BOOT_DIAGNOSTIC_RESULT)MVar7.
+- The new casts convert pointer arguments (code * / byte * / the PCI pointer) to the lookups' integer address.
+verify is byte-identical with round 70's WARNING lines; thunks 18 / 14; prototype and local rows 0 failed; locals
+Skipped 8 (the same warnings as round 66); no enum compositions. Headers regenerated (0 g++ errors), tests pass, lookup
+tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

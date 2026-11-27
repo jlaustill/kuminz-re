@@ -1,0 +1,80 @@
+10DA +0234 DGAAFLLF [HEX] -> 0x80576e (no name) (no row); EPF CHANNEL AMBIENT_AIR_PRESSURE LOG OF FAULT TO SET FUEL INDEX E~NONE
+10DA +025C DGAARPLF [HEX] -> 0x805796 (no name) (no row); EPF CHANNEL AMBIENT_AIR_PRESSURE LOG OF FAULT TO SET RPM  INDEX E~NONE
+10DA +0144 DGBSFLLF [HEX] -> 0x80567e (no name) (no row); EPF CHANNEL BOOST_PRESSURE       LOG OF FAULT TO SET FUEL INDEX E~NONE
+10DA +016C DGBSRPLF [HEX] -> 0x8056a6 (no name) (no row); EPF CHANNEL BOOST_PRESSURE       LOG OF FAULT TO SET RPM  INDEX E~NONE
+10DA +0028 DGCLLVLF [HEX] -> 0x805562 coolant_level_engine_protection_fault_log word[20]; KEEPS HISTORY OF COOLANT_LEVEL_FAULT INFO.~NONE
+10DA +0050 DGCLTPLF [HEX] -> 0x80558a coolant_temperature_engine_protection_fault_log word[20]; KEEPS HISTORY OF COOLANT_TEMPERATURE_FAULT INFO.~NONE
+10DA +0194 DGFPFLLF [HEX] -> 0x8056ce (no name) (no row); EPF CHANNEL FUEL_PRESSURE        LOG OF FAULT TO SET FUEL INDEX E~NONE
+10DA +01BC DGFPRPLF [HEX] -> 0x8056f6 (no name) (no row); EPF CHANNEL FUEL_PRESSURE        LOG OF FAULT TO SET RPM  INDEX E~NONE
+10DA +01E4 DGFTFLLF [HEX] -> 0x80571e (no name) (no row); EPF CHANNEL FUEL_TEMPERATURE     LOG OF FAULT TO SET FUEL INDEX E~NONE
+10DA +020C DGFTRPLF [HEX] -> 0x805746 (no name) (no row); EPF CHANNEL FUEL_TEMPERATURE     LOG OF FAULT TO SET RPM  INDEX E~NONE
+10DA +00A0 DGLOPRLF [HEX] -> 0x8055da oil_pressure_engine_protection_fueling_fault_log word[20]; KEEPS HISTORY OF LOW_OIL_PRESSURE_FAULT INFO.~NONE
+10DA +0118 DGPWDX [HEX] -> 0x805652 engine_overspeed_log_entry_open_flag word; COVERS THE REST OF THE POWERDOWN DATA USED IN DIAGNOSTIC~NONE
+10DA +0118 DGRPOSFG [T/F] -> 0x805652 engine_overspeed_log_entry_open_flag word; FAULT LOG RECORDING FLAG FOR ENGINE SPEED OVERSPEED ERR~1=TRUE/0=FALSE
+10DA +011A DGRPOSIN [NONE] -> 0x805654 engine_overspeed_log_index word; FAULT LOG INDEX INTO ENGINE SPEED OVERSPEED ERROR LOG~0 - 4
+10DA +0000 DGRPOSLF [HEX] -> 0x80553a engine_overspeed_log engine_overspeed_event_t[5]; FAULT LOG FOR ENGINE SPEED OVERSPEED CONDITIONS~NONE
+10DA +00C8 DGVYPRLF [HEX] -> 0x805602 oil_pressure_engine_protection_engine_speed_fault_log word[20]; KEEPS HISTORY OF VERY_LOW_OIL_PRESSURE_FAULT INFO.~NONE
+10DA +00F0 DGWFFLLF [HEX] -> 0x80562a (no name) (no row); EPF CHANNEL WATER_IN_FUEL        LOG OF FAULT TO SET FUEL INDEX E~NONE
+10DA +011C DGWFRPLF [HEX] -> 0x805656 (no name) (no row); EPF CHANNEL WATER_IN_FUEL        LOG OF FAULT TO SET RPM  INDEX E~NONE
+10B7 +0000 EPCVCG [HEX] -> 0x807032 engine_protection_config_table_base undefined; CONFIGURATION WORD FOR EPF COOLANT LEVEL~0-65535
+10B0 +0016 EPCVEREN [  ] -> 0x80d0f2 EPCVEREN word; TRUE = COOLANT LEVEL ERROR ALLOWED, FALSE = NO ERROR ALLOW~TRUE, FALSE
+10B0 +0024 EPCVERFG [  ] -> 0x80d100 errors_allowed_timer_running_flag_for_coolant_lev_0_1 word; ERRORS ALLOWED TIMER RUNNING FLAG FOR COOLANT LEV.~0-1
+10B0 +0022 EPCVERTM [SEC] -> 0x80d0fe time_since_rpm_crossed_coolant_lev_start_mon_rpm_0_65535 word; TIME SINCE RPM CROSSED COOLANT LEV. START MON RPM~0-65535
+10B2 +0008 EPCVEX [  ] -> 0x8057c8 (no name) (no row); COOLANT LEVEL EXTEMITY (NONE)~0
+10B2 +000A EPCVEXTM [  ] -> 0x8057ca coolant_level_extremity_time_0_2_32 dword; COOLANT LEVEL EXTREMITY TIME~0 - 2^32
+10B7 +0002 EPCVFLDD [SEC.] -> 0x807034 time_from_overlimit_reached_to_starting_fuel_derate_0_65535_7034 word; TIME FROM OVERLIMIT REACHED TO STARTING FUEL DERATE.~0 - 65535
+10B2 +000E EPCVFLET [SEC.] -> 0x8057ce total_time_coolant_level_fuel_fault_has_been_active_0_2_29 dword; TOTAL TIME COOLANT LEVEL FUEL FAULT HAS BEEN ACTIVE~0 - 2^29
+10B2 +0016 EPCVFLFG [  ] -> 0x8057d6 fault_log_recording_flag_for_coolant_level_fueling_0_1 word; FAULT LOG RECORDING FLAG FOR COOLANT LEVEL FUELING~0 - 1
+10B7 +001A EPCVFLFU [HEX] -> 0x80704c fault_index_indicating_epf_coolant_level_fuel_error_found_0_ffff word; FAULT INDEX INDICATING EPF COOLANT LEVEL FUEL ERROR FOUND~0-FFFF
+10B7 +0006 EPCVFLIC [SEC] -> 0x807038 time_to_reach_full_derate_during_coolant_level_engine_pro_0_0039_256_7038 word; TIME TO REACH FULL DERATE DURING COOLANT LEVEL ENGINE PRO~0.0039 - 256
+10B2 +0018 EPCVFLIN [  ] -> 0x8057d8 index_into_epf_fault_log_for_coolant_level_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR COOLANT LEVEL FUELING~0 - 4
+10B2 +0000 EPCVFLIX [  ] -> 0x8057c0 coolant_level_fueling_severity_index_0_0_1_0 undefined; COOLANT LEVEL FUELING SEVERITY INDEX~0.0 - 1.0
+10B2 +0004 EPCVFLRI [  ] -> 0x8057c4 coolant_level_fueling_restart_severity_index_0_0_1_0 word; COOLANT LEVEL FUELING RESTART SEVERITY INDEX~0.0 - 1.0
+10B0 +0026 EPCVFLSA [ADDR] -> 0x80d102 pointer_to_coolant_level_fuel_fault_log_data_0_2_32 dword; POINTER TO COOLANT LEVEL FUEL FAULT LOG DATA~0 - 2^32
+10B7 +0010 EPCVFLSD [SEC.] -> 0x807042 shutdown_threshold_for_coolant_level_fueling_0_65535 word; SHUTDOWN THRESHOLD FOR COOLANT LEVEL FUELING~0 - 65535
+10B7 +0020 EPCVFLSS [NONE] -> 0x807052 shutdown_threshold_for_coolant_level_fueling_0_1 word; SHUTDOWN THRESHOLD FOR COOLANT LEVEL FUELING~0/1
+10B0 +0006 EPCVFLTM [SEC.] -> 0x80d0e2 amount_of_time_since_coolant_level_low_failure_was_detected_0_65535 word; AMOUNT OF TIME SINCE COOLANT LEVEL LOW FAILURE WAS DETECTED.~0 - 65535
+10B0 +001A EPCVFSCU [SEC] -> 0x80d0f6 amount_of_time_over_coolant_level_fuel_shutdown_threshold_0_65535 word; AMOUNT OF TIME OVER COOLANT LEVEL FUEL SHUTDOWN THRESHOLD~0-65535
+10B0 +001E EPCVFSWT [SEC] -> 0x80d0fa delay_before_warning_about_shutdown_from_coolant_level_fuel_0_65535 word; DELAY BEFORE WARNING ABOUT SHUTDOWN FROM COOLANT LEVEL FUEL~0-65535
+10B0 +000A EPCVMNSA [ADDR] -> 0x80d0e6 pointer_to_coolant_level_fuel_min_threshold_0_2_32 dword; POINTER TO COOLANT LEVEL FUEL MIN THRESHOLD~0 - 2^32
+10B7 +000A EPCVMNTD [NONE] -> 0x80703c minimum_threshold_for_coolant_level_fuel_limiting_0 word; MINIMUM THRESHOLD FOR COOLANT LEVEL FUEL LIMITING.~0
+10B0 +000E EPCVMXSA [ADDR] -> 0x80d0ea pointer_to_coolant_level_fuel_max_threshold_0_2_32 dword; POINTER TO COOLANT LEVEL FUEL MAX THRESHOLD~0 - 2^32
+10B7 +000C EPCVMXTD [NONE] -> 0x80703e maximum_threshold_for_coolant_level_fueling_limiting_0 word; MAXIMUM THRESHOLD FOR COOLANT LEVEL FUELING LIMITING.~0
+10B0 +0018 EPCVPKER [  ] -> 0x80d0f4 coolant_level_system_error_detected_before_cranking_i_1_true_0_false undefined; TRUE = COOLANT LEVEL PRECRANK ERROR~TRUE, FALSE
+10B0 +0012 EPCVRLSA [ADDR] -> 0x80d0ee pointer_to_coolant_level_rpm_limit_threshold_0_2_32 dword; POINTER TO COOLANT LEVEL RPM LIMIT THRESHOLD~0 - 2^32
+10B7 +0004 EPCVRPDD [SEC.] -> 0x807036 time_from_coolant_level_thresh_reached_to_starting_rpm_dera_0_65535 word; TIME FROM COOLANT LEVEL THRESH. REACHED TO STARTING RPM DERA~0 - 65535
+10B2 +0012 EPCVRPET [SEC.] -> 0x8057d2 total_time_coolant_level_rpm_fault_has_been_active_0_2_29 dword; TOTAL TIME COOLANT LEVEL RPM FAULT HAS BEEN ACTIVE~0 - 2^29
+10B2 +001A EPCVRPFG [  ] -> 0x8057da fault_log_recording_flag_for_coolant_level_rpm_0_1 word; FAULT LOG RECORDING FLAG FOR COOLANT LEVEL RPM~0 - 1
+10B7 +001C EPCVRPFU [HEX] -> 0x80704e fault_index_indicating_epf_coolant_level_rpm_error_found_0_ffff word; FAULT INDEX INDICATING EPF COOLANT LEVEL RPM ERROR FOUND~0-FFFF
+10B7 +0008 EPCVRPIC [SEC] -> 0x80703a time_to_reach_full_derate_during_coolant_level_engine_pro_0_0039_256_703a word; TIME TO REACH FULL DERATE DURING COOLANT LEVEL ENGINE PRO~0.0039 - 256
+10B2 +001C EPCVRPIN [  ] -> 0x8057dc index_into_epf_fault_log_for_coolant_level_rpm_0_4 word; INDEX INTO EPF FAULT LOG FOR COOLANT LEVEL RPM~0 - 4
+10B2 +0002 EPCVRPIX [  ] -> 0x8057c2 severity_index_for_epf_coolant_level_fault_0_0_1_0 undefined; SEVERITY INDEX FOR EPF COOLANT LEVEL FAULT.~0.0 - 1.0
+10B7 +000E EPCVRPLL [NONE] -> 0x807040 minimum_threshold_for_coolant_level_rpm_limiting_0_65535 word; MINIMUM THRESHOLD FOR COOLANT LEVEL RPM LIMITING~0 - 65535
+10B2 +0006 EPCVRPRI [  ] -> 0x8057c6 coolant_level_rpm_restart_severity_index_0_0_1_0 word; COOLANT LEVEL RPM RESTART SEVERITY INDEX~0.0 - 1.0
+10B0 +002A EPCVRPSA [ADDR] -> 0x80d106 pointer_to_coolant_level_rpm_fault_log_data_0_2_32 dword; POINTER TO COOLANT LEVEL RPM FAULT LOG DATA~0 - 2^32
+10B7 +0012 EPCVRPSD [SEC] -> 0x807044 shutdown_threshold_for_coolant_level_rpm_0_65535 word; SHUTDOWN THRESHOLD FOR COOLANT LEVEL RPM~0-65535
+10B7 +0022 EPCVRPSS [NONE] -> 0x807054 shutdown_threshold_for_coolant_level_rpm_0_1 word; SHUTDOWN THRESHOLD FOR COOLANT LEVEL RPM~0/1
+10B0 +0008 EPCVRPTM [SEC.] -> 0x80d0e4 amount_of_time_since_coolant_level_low_rpm_failure_was_detec_0_65535 word; AMOUNT OF TIME SINCE COOLANT LEVEL LOW RPM FAILURE WAS DETEC~0 - 65535
+10B0 +001C EPCVRSCU [SEC] -> 0x80d0f8 amount_of_time_over_coolant_level_rpm_shutdown_threshold_0_65535 word; AMOUNT OF TIME OVER COOLANT LEVEL RPM SHUTDOWN THRESHOLD~0-65535
+10B0 +0020 EPCVRSWT [SEC] -> 0x80d0fc delay_before_warning_about_shutdown_from_coolant_leve_rpm_0_65535 word; DELAY BEFORE WARNING ABOUT SHUTDOWN FROM COOLANT LEVE RPM~0-65535
+10B0 +0000 EPCVSA [ADDR] -> 0x80d0dc protection_system_sensor_data_ptr undefined; POINTER TO SOURCE OF COOLANT LEVEL INPUT~0 - 2^32
+10B0 +0004 EPCVSAMK [MASK] -> 0x80d0e0 mask_for_input_of_coolant_level_0_65535 word; MASK FOR INPUT OF COOLANT LEVEL~0 - 65535
+10B7 +0014 EPCVSODY [SEC.] -> 0x807046 shutdown_delay_for_coolant_level_shutdown_0_255 word; SHUTDOWN DELAY FOR COOLANT LEVEL SHUTDOWN~0-255
+10B7 +0016 EPCVSRRP [RPM] -> 0x807048 rpm_to_reach_before_coolant_level_errors_0_8000 word; RPM TO REACH BEFORE COOLANT LEVEL ERRORS.~0-8000
+10B7 +0018 EPCVSRTM [SEC] -> 0x80704a delay_after_rpm_reached_before_coolant_level_errors_0_255 word; DELAY AFTER RPM REACHED BEFORE COOLANT LEVEL ERRORS.~0-255
+10B7 +001E EPCVWNTM [SEC] -> 0x807050 time_duration_to_warn_driver_before_shutdown_due_to_coolant_0_65535_7050 word; TIME DURATION TO WARN DRIVER BEFORE SHUTDOWN DUE TO COOLANT ~0 - 65535
+10B1 +000E EPESLM [RPM] -> 0x80d288 engine_speed_limit_fault_derate word; MAXIMUM RPM ALLOWED DUE TO EPF DERATING.~0 - 3000
+10B1 +000A EPFLLM [MM3S] -> 0x80d284 fault_derate_fuel_limit word; MAXIMUM FUELING PERMITTED BY THE ENGINE PROTECTION FEATURES.~0 - 100
+10B1 +000C EPFLLMSS [  ] -> 0x80d286 fault_derate_active_flag word; INDICATOR FROM ENGINE PROTECTION THAT FUEL DERATE~1 = ACTIVE/0 = INACT
+10DA +0078 EPIMFULG [HEX] -> 0x8055b2 (no name) (no row); KEEPS HISTORY OF IMT_FAULT INFO.~NONE
+10B0 +0018 EPPKCTER [  ] -> 0x80d0f4 coolant_level_system_error_detected_before_cranking_i_1_true_0_false undefined; COOLANT LEVEL SYSTEM ERROR DETECTED BEFORE CRANKING I~1=TRUE / 0=FALSE
+10B0 +0018 EPPKCVER [  ] -> 0x80d0f4 coolant_level_system_error_detected_before_cranking_i_1_true_0_false undefined; COOLANT LEVEL SYSTEM ERROR DETECTED BEFORE CRANKING I~1=TRUE / 0=FALSE
+10B1 +0010 EPPKSO [  ] -> 0x80d28a (no name) (no row); EPF SHUTDOWN ENGINE COMMAND FROM RESTART EXAMINE BEFO~1=TRUE / 0=FALSE
+10B1 +0016 EPRPDC [RPM] -> 0x80d290 (no name) (no row); DIFFERENCE BETWEEN NO_DERATE_RPM AND MAXIMUM_DERATE_RPM.~0 - 3000
+10B1 +0000 EPRYO2SO [  ] -> 0x80d27a epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false word; EPF SHUTDOWN ENGINE COMMAND FROM RESTART LIMITATION A~1=TRUE / 0=FALSE
+10B1 +0002 EPRYO2SQ [  ] -> 0x80d27c epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false word; EPF SHUTDOWN APPROACHING COMMAND FROM RESTART LIMITAT~1=TRUE / 0=FALSE
+10B3 +0000 EPSOAE [NONE] -> 0x8058ce engine_protection_active_fault_index i16; NO = 255, C. LEV. = 0, C. TEMP. = 1, IMT = 2, OIL PRESS. = 3, ~0 - 255
+10B3 +0002 EPSOCU [  ] -> 0x8058d0 engine_protection_consecutive_shutdown_count word; NUMBER OF SHUTDOWNS WHILE ERROR IS ACTIVE.~0 - 255
+10B3 +0004 EPSOTF [NONE] -> 0x8058d2 (no name) (no row); TOTAL NUMBER OF SHUTDOWNS.~0 - 255
+10B1 +0014 EPSQ [  ] -> 0x80d28e engine_protection_shutdown_approaching_flag word; EPS SHUTDOWN APPROACHING.~1=TRUE / 0=FALSE
+10B1 +0012 SHSS [  ] -> 0x80d28c engine_shutdown_command_flag word; TURN OFF ALL SOLENOIDS.  1=TRUE ; 0=FALSE~1=TRUE / 0=FALSE

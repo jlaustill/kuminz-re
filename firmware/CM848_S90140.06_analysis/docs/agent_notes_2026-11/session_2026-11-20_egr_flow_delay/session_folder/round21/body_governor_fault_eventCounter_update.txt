@@ -1,0 +1,52 @@
+=== governor_fault_eventCounter_update (lines 66210-66266, 51 non-blank)
+66210: // Function: governor_fault_eventCounter_update @ 0x0050802c
+66211: //
+66213: void governor_fault_eventCounter_update(void)
+66215: {
+66216:   ushort uVar1;
+66217:   short sVar2;
+66218:   word *pwVar3;
+66219:   undefined **ppuVar4;
+66220:   word *pwVar5;
+66222:   pwVar5 = &fuel_temperature_derate_configuration_flags;
+66223:   ppuVar4 = &fuel_temperature_derate_input_pointer;
+66224:   pwVar3 = fault_derate_fuel_limit_by_engine_speed_axis;
+66225:   do {
+66226:     if (*(short *)((int)ppuVar4 + 0x16) == 0) {
+66227:       *(undefined2 *)((int)ppuVar4 + 6) = 0;
+66228: LAB_00508100:
+66229:       sVar2 = 0;
+66230: LAB_00508104:
+66231:       *(short *)(ppuVar4 + 2) = sVar2;
+66232:     }
+66233:     else {
+66234:       uVar1 = *pwVar5;
+66235:       if ((uVar1 & 0x101) != 0) {
+66236:         sVar2 = protection_threshold_check(pwVar5,ppuVar4,0,0);
+66237:         if (sVar2 == 0) {
+66238:           sVar2 = 0;
+66239:         }
+66240:         else {
+66241:           if (*(short *)((int)ppuVar4 + 6) == -1) goto LAB_005080b8;
+66242:           sVar2 = *(short *)((int)ppuVar4 + 6) + 1;
+66243:         }
+66244:         *(short *)((int)ppuVar4 + 6) = sVar2;
+66245:       }
+66246: LAB_005080b8:
+66247:       if ((uVar1 & 0x402) != 0) {
+66248:         sVar2 = protection_threshold_check(pwVar5,ppuVar4,1,0);
+66249:         if (sVar2 == 0) goto LAB_00508100;
+66250:         if (*(short *)(ppuVar4 + 2) == -1) goto LAB_00508108;
+66251:         sVar2 = *(short *)(ppuVar4 + 2) + 1;
+66252:         goto LAB_00508104;
+66253:       }
+66254:     }
+66255: LAB_00508108:
+66256:     pwVar5 = pwVar5 + 0x12;
+66257:     ppuVar4 = (undefined **)((int)ppuVar4 + 0x3e);
+66258:     if (pwVar3 <= pwVar5) {
+66259:       return;
+66260:     }
+66261:   } while( true );
+66262: }
+66266: //

@@ -1,0 +1,18 @@
+cm848: type the stage 5 words - i16 for the e2m-signed lha loads, void(void) for the charge pressure estimate
+
+- i16 (e2m 'S', every load an lha): exhaust_pressure_offset (198C +0),
+  the three exhaust pressure estimate constants (198C +4 / +6 / +8),
+  charge_pressure_estimate_offset (1A23 +4) and the EGR / engine delta
+  pressures egr_orifice_delta_pressure / egr_valve_delta_pressure /
+  engine_delta_pressure (1A19 +0 / +4 / +8). Their (short) casts are
+  gone in 6 functions.
+- void(void) for cm848_estimateChargePressure (0x13294: r4 / r3 are
+  written before any read); its stale boost_input / rpm rows and their
+  build warning are gone, and the control loop no longer passes the VGT
+  H-bridge fault function's return value into it.
+
+Changed functions vs stage 5: 8 (the users of those words and the
+caller); pieces 508 -> 508; lookup_tables.py clean; headers
+regenerated (g++ clean).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

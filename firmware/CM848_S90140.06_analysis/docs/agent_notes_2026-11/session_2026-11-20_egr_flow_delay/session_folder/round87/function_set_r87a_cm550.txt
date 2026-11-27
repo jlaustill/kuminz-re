@@ -1,0 +1,336 @@
+removed 0: 
+added 0: 
+changed 50
+  0x0000ac3c cm550_FUN_0000ac3c: 2 lines
+      -  if (((_feature_enable_flags_word & 8) != 0) && (_smoke_limiter_output_value != 1)) {
+      +  if (((_feature_enable_flags_word & 8) != 0) && (engine_state != 1)) {
+  0x0000c326 calculateAlpha: 3 lines
+      -  if (((_smoke_limiter_output_value == 1) || (_smoke_limiter_output_value == 2)) ||
+      -     (_smoke_limiter_output_value == 6)) {
+      +  if (((engine_state == 1) || (engine_state == 2)) || (engine_state == 6)) {
+  0x0000c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 3 lines
+      -  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (_smoke_limiter_output_value != 3)
+      -     ) {
+      +  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (engine_state != 3)) {
+  0x0000d610 updateEngineSyncStatus: 20 lines
+      -               (aux_driver_fso_low_side_error_count == 2)) && (_smoke_limiter_output_value != 5)) &&
+      -             (_smoke_limiter_output_value != 8)) {
+      +               (aux_driver_fso_low_side_error_count == 2)) && (engine_state != 5)) &&
+      +             (engine_state != 8)) {
+      -               (aux_driver_engine_brake_low_side_error_count == 2)) &&
+      -              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+      +               (aux_driver_engine_brake_low_side_error_count == 2)) && (engine_state != 5)) &&
+      +             (engine_state != 8)) {
+      -               (aux_driver_cold_start_aid1_low_side_error_count == 2)) &&
+      -              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+      +               (aux_driver_cold_start_aid1_low_side_error_count == 2)) && (engine_state != 5)) &&
+      +             (engine_state != 8)) {
+      -               (aux_driver_cold_start_aid2_low_side_error_count == 2)) &&
+      -              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+      +               (aux_driver_cold_start_aid2_low_side_error_count == 2)) && (engine_state != 5)) &&
+      +             (engine_state != 8)) {
+      -               (aux_driver_ether_start_low_side_error_count == 2)) &&
+      -              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+      +               (aux_driver_ether_start_low_side_error_count == 2)) && (engine_state != 5)) &&
+      +             (engine_state != 8)) {
+  0x0000e998 cm550_FUN_0000e998: 2 lines
+      -    if (_smoke_limiter_output_value == 3) {
+      +    if (engine_state == 3) {
+  0x00010e80 cm550_loadParameterBlock1FromFlash: 4 lines
+      -  if (((short)uVar1 != parameter_block_1_checksum_cal) && (DAT_000055b2 != -0x5e5f)) {
+      +  if (((word)uVar1 != parameter_block_1_checksum_cal) && (DAT_000055b2 != -0x5e5f)) {
+      -  _calibration_bank_active = 1;
+      +  parameter_block_uploaded = 1;
+  0x00010f32 cm550_loadParameterBlock2FromFlash: 4 lines
+      -  if ((short)uVar1 != parameter_block_2_checksum_cal) {
+      +  if ((word)uVar1 != parameter_block_2_checksum_cal) {
+      -  _calibration_bank_active = 2;
+      +  parameter_block_uploaded = 2;
+  0x00010fe0 cm550_saveParameterBlock1ToFlash: 19 lines
+      -  short local_6;
+      -  if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
+      -    local_6 = _calibration_bank1_write_sequence + 1;
+      +  word local_6;
+      +  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) == 0) {
+      +    local_6 = parameter_block_1_save_start_count_cal + 1;
+      -    local_6 = _calibration_bank1_write_sequence + 2;
+      +    local_6 = parameter_block_1_save_start_count_cal + 2;
+      -  while ((uVar4 < 5000 && (_calibration_bank1_write_sequence != local_6))) {
+      +  while ((uVar4 < 5000 && (parameter_block_1_save_start_count_cal != local_6))) {
+      -        cm550_parameterCircularBufferWrite(0x803fd8,&parameter_block_1_save_start_count_cal,2);
+      +        cm550_parameterCircularBufferWrite
+      +                  (0x803fd8,(byte *)&parameter_block_1_save_start_count_cal,2);
+      -        while ((uVar4 < 5000 && (parameter_block_1_save_complete_count_cal != _calibration_bank1_write_sequence))) {
+      +        while ((uVar4 < 5000 &&
+      +               (parameter_block_1_save_complete_count_cal != parameter_block_1_save_start_count_cal)
+      +               )) {
+      -        _calibration_bank_active = 1;
+      +        parameter_block_uploaded = 1;
+  0x0001125a cm550_saveParameterBlock2ToFlash: 19 lines
+      -  short local_6;
+      -  if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
+      -    local_6 = _calibration_bank2_write_sequence + 2;
+      +  word local_6;
+      +  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) == 0) {
+      +    local_6 = parameter_block_2_save_start_count_cal + 2;
+      -    local_6 = _calibration_bank2_write_sequence + 1;
+      +    local_6 = parameter_block_2_save_start_count_cal + 1;
+      -  while ((uVar4 < 5000 && (_calibration_bank2_write_sequence != local_6))) {
+      +  while ((uVar4 < 5000 && (parameter_block_2_save_start_count_cal != local_6))) {
+      -        cm550_parameterCircularBufferWrite(0x803fe0,&parameter_block_2_save_start_count_cal,2);
+      +        cm550_parameterCircularBufferWrite
+      +                  (0x803fe0,(byte *)&parameter_block_2_save_start_count_cal,2);
+      -        while ((uVar4 < 5000 && (parameter_block_2_save_complete_count_cal != _calibration_bank2_write_sequence))) {
+      +        while ((uVar4 < 5000 &&
+      +               (parameter_block_2_save_complete_count_cal != parameter_block_2_save_start_count_cal)
+      +               )) {
+      -        _calibration_bank_active = 2;
+      +        parameter_block_uploaded = 2;
+  0x000114d4 vp44_validateRedundantSensors: 15 lines
+      -  _calibration_bank_active = 0;
+      +  parameter_block_uploaded = 0;
+      -  else if ((_calibration_bank1_write_sequence != parameter_block_1_save_complete_count_cal) ||
+      -          (_calibration_bank2_write_sequence != parameter_block_2_save_complete_count_cal)) {
+      -    if (_calibration_bank1_write_sequence != parameter_block_1_save_complete_count_cal) {
+      -      if (_calibration_bank2_write_sequence == parameter_block_2_save_complete_count_cal) {
+      +  else if ((parameter_block_1_save_start_count_cal != parameter_block_1_save_complete_count_cal) ||
+      +          (parameter_block_2_save_start_count_cal != parameter_block_2_save_complete_count_cal)) {
+      +    if (parameter_block_1_save_start_count_cal != parameter_block_1_save_complete_count_cal) {
+      +      if (parameter_block_2_save_start_count_cal == parameter_block_2_save_complete_count_cal) {
+      -  else if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
+      +  else if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) ==
+      +           0) {
+      -  if (_calibration_bank_active == 0) {
+      +  if (parameter_block_uploaded == 0) {
+  0x0001192a restartThroughBootRom: 2 lines
+      -  if (_smoke_limiter_output_value == 1) {
+      +  if (engine_state == 1) {
+  0x00011a74 commitEepromMirrorToEeprom: 2 lines
+      -    _calibration_bank_copy_valid = 0;
+      +    power_down_refresh_enable = 0;
+  0x000127c2 vp44_FUN_000127c2: 4 lines
+      -        (_oil_pressure_mode_init_flag == 0)) || (_smoke_limiter_output_value != 3)) {
+      +        (_oil_pressure_mode_init_flag == 0)) || (engine_state != 3)) {
+      -        ((_current_engine_rpm_filtered < _DAT_00807290 && (_smoke_limiter_output_value == 3)))))) {
+      +        ((_current_engine_rpm_filtered < _DAT_00807290 && (engine_state == 3)))))) {
+  0x000138b6 cm550_FUN_000138b6: 2 lines
+      -    if (_smoke_limiter_output_value == 1) {
+      +    if (engine_state == 1) {
+  0x00014fca mc68k_sampleAndDebounceDiscreteInputs: 3 lines
+      -      (debounced_switch_value_for_switch_16_on_off & 0x80) != 0)) &&
+      -     (_smoke_limiter_output_value == 3)) {
+      +      (debounced_switch_value_for_switch_16_on_off & 0x80) != 0)) && (engine_state == 3)) {
+  0x00016dd4 cm550_highRpmEngineProtectionStateMachine: 9 lines
+      -     (((_high_rpm_fuel_limit_idle != 0 && (_smoke_limiter_output_value != 1)) ||
+      -      (_DAT_0080ccc8 != 0)))) {
+      +     (((_high_rpm_fuel_limit_idle != 0 && (engine_state != 1)) || (_DAT_0080ccc8 != 0)))) {
+      -    if (_smoke_limiter_output_value == 1) {
+      +    if (engine_state == 1) {
+      -    if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 7)) ||
+      -       ((_smoke_limiter_output_value == 3 || (_smoke_limiter_output_value == 6)))) {
+      +    if (((engine_state == 2) || (engine_state == 7)) || ((engine_state == 3 || (engine_state == 6)))
+      +       ) {
+  0x00017120 cm550_FUN_00017120: 2 lines
+      -  if (((_smoke_limiter_output_value == 3) && (_high_rpm_fuel_limit_active != 0)) &&
+      +  if (((engine_state == 3) && (_high_rpm_fuel_limit_active != 0)) &&
+  0x000171be cm550_fuel_limit_arbitrator: 2 lines
+      -  if (_smoke_limiter_output_value == 1) {
+      +  if (engine_state == 1) {
+  0x000177c2 cm550_rpmBasedFuelLimitCalculator: 3 lines
+      -  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
+      -     (_smoke_limiter_output_value == 7)) {
+      +  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
+  0x00017a06 cm550_rpmBasedFuelTimingInterpolation: 3 lines
+      -  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
+      -     (_smoke_limiter_output_value == 7)) {
+      +  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
+  0x00017ca6 cm550_peakTorqueFuelCorrection: 2 lines
+      -  _DAT_008005ee = _smoke_limiter_output_value;
+      +  _DAT_008005ee = engine_state;
+  0x00017cf0 cm550_engineModeTransitionStateUpdater: 3 lines
+      -  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
+      -     (_smoke_limiter_output_value == 7)) {
+      +  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
+  0x00017d2a cm550_engineModeTransitionHandler: 6 lines
+      -  if (((_DAT_008005f0 == 1) && (_smoke_limiter_output_value == 2)) ||
+      -     ((_DAT_008005f0 == 3 && (_smoke_limiter_output_value == 7)))) {
+      +  if (((_DAT_008005f0 == 1) && (engine_state == 2)) || ((_DAT_008005f0 == 3 && (engine_state == 7)))
+      +     ) {
+      -  _DAT_008005f0 = _smoke_limiter_output_value;
+      +  _DAT_008005f0 = engine_state;
+  0x00017d6a cm550_ioOutputFlagMappingSlowCycle40Coordinator: 7 lines
+      -  if ((_smoke_limiter_output_value == 6) &&
+      -     (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
+      +  if ((engine_state == 6) && (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
+      -  if ((_DAT_008005f2 == 7) && (_smoke_limiter_output_value == 1)) {
+      +  if ((_DAT_008005f2 == 7) && (engine_state == 1)) {
+      -  _DAT_008005f2 = _smoke_limiter_output_value;
+      +  _DAT_008005f2 = engine_state;
+  0x00017e06 cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator: 6 lines
+      -  if ((((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) &&
+      +  if ((((engine_state == 2) || (engine_state == 6)) &&
+      -  if ((_DAT_008005f4 != 3) && (_smoke_limiter_output_value == 3)) {
+      +  if ((_DAT_008005f4 != 3) && (engine_state == 3)) {
+      -  _DAT_008005f4 = _smoke_limiter_output_value;
+      +  _DAT_008005f4 = engine_state;
+  0x00017e62 cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator: 11 lines
+      -  if (_smoke_limiter_output_value == 3) {
+      +  if (engine_state == 3) {
+      -  if (_smoke_limiter_output_value == 1) {
+      +  if (engine_state == 1) {
+      -  if (_smoke_limiter_output_value == 2) {
+      +  if (engine_state == 2) {
+      -  else if (((_DAT_008005f6 == 7) && (_smoke_limiter_output_value == 1)) ||
+      -          (_smoke_limiter_output_value == 8)) {
+      +  else if (((_DAT_008005f6 == 7) && (engine_state == 1)) || (engine_state == 8)) {
+      -  _DAT_008005f6 = _smoke_limiter_output_value;
+      +  _DAT_008005f6 = engine_state;
+  0x00017eba cm550_frictionalLoadTorqueTransitionHandler: 4 lines
+      -  if (((_DAT_008005f8 == 3) && (_smoke_limiter_output_value == 7)) &&
+      +  if (((_DAT_008005f8 == 3) && (engine_state == 7)) &&
+      -  _DAT_008005f8 = _smoke_limiter_output_value;
+      +  _DAT_008005f8 = engine_state;
+  0x00017f7c vp44TimingFaultMonitor: 46 lines
+      -  switch(_smoke_limiter_output_value) {
+      +  switch(engine_state) {
+      -      _smoke_limiter_output_value = 2;
+      +      engine_state = 2;
+      -      _smoke_limiter_output_value = 8;
+      +      engine_state = 8;
+      -          _smoke_limiter_output_value = 6;
+      +          engine_state = 6;
+      -          _smoke_limiter_output_value = 8;
+      +          engine_state = 8;
+      -        _smoke_limiter_output_value = 3;
+      +        engine_state = 3;
+      -      _smoke_limiter_output_value = 1;
+      +      engine_state = 1;
+      -      _smoke_limiter_output_value = 4;
+      +      engine_state = 4;
+      -        _smoke_limiter_output_value = 8;
+      +        engine_state = 8;
+      -        _smoke_limiter_output_value = 5;
+      +        engine_state = 5;
+      -      _smoke_limiter_output_value = 7;
+      +      engine_state = 7;
+      -      _smoke_limiter_output_value = 3;
+      +      engine_state = 3;
+  0x00018384 cm550_FUN_00018384: 2 lines
+      -  _smoke_limiter_output_value = 1;
+      +  engine_state = 1;
+  0x00018fcc processDiagnosticLimitStatus: 6 lines
+      -  if (_smoke_limiter_output_value == 1) {
+      +  if (engine_state == 1) {
+      -  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) || (_smoke_limiter_output_value == 8))
+      -     || (_smoke_limiter_output_value == 1)) {
+      +  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) || (engine_state == 8)) ||
+      +     (engine_state == 1)) {
+  0x0001c152 fuelTimingOilPressureModeController: 12 lines
+      -  if (_smoke_limiter_output_value == 1) {
+      +  if (engine_state == 1) {
+      -  else if (_smoke_limiter_output_value == 8) {
+      +  else if (engine_state == 8) {
+      -    if (_smoke_limiter_output_value == 5) {
+      +    if (engine_state == 5) {
+      -      if (_smoke_limiter_output_value == 4) {
+      +      if (engine_state == 4) {
+      -      else if ((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) {
+      +      else if ((engine_state == 2) || (engine_state == 6)) {
+      -        if ((_smoke_limiter_output_value == 7) &&
+      +        if ((engine_state == 7) &&
+  0x0001ca54 cm550_fuelDemandLimitSelector11: 5 lines
+      -     (((_smoke_limiter_output_value != 5 ||
+      +     (((engine_state != 5 ||
+      -       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (_smoke_limiter_output_value == 5)))
+      -     ) {
+      +       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (engine_state == 5)))) {
+  0x0001ca5c vp44_canPinVp44StatusController: 5 lines
+      -     (((_smoke_limiter_output_value != 5 ||
+      +     (((engine_state != 5 ||
+      -       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (_smoke_limiter_output_value == 5)))
+      -     ) {
+      +       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (engine_state == 5)))) {
+  0x0001d9b4 vp44SensorStatusMonitor: 2 lines
+      -        if (_smoke_limiter_output_value == 2) {
+      +        if (engine_state == 2) {
+  0x00024d40 cm550_faultCodeDisplayController: 3 lines
+      -  if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) ||
+      -     (_smoke_limiter_output_value != 1)) {
+      +  if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) || (engine_state != 1)) {
+  0x000254b6 cm550_FUN_000254b6: 2 lines
+      -      ) && (_smoke_limiter_output_value == 3)) {
+      +      ) && (engine_state == 3)) {
+  0x00026616 cm550_FUN_00026616: 6 lines
+      -  if (_smoke_limiter_output_value == 1) {
+      +  if (engine_state == 1) {
+      -  else if (_smoke_limiter_output_value != 2) {
+      +  else if (engine_state != 2) {
+      -    if ((_smoke_limiter_output_value == 3) &&
+      +    if ((engine_state == 3) &&
+  0x00027cd0 cm550_savePowerDownDataToFlashBank: 8 lines
+      -      _eeprom_calibration_write_success = 1;
+      +      flash_write_failure_flag_cal = 1;
+      -      _eeprom_calibration_write_success = 0;
+      +      flash_write_failure_flag_cal = 0;
+      -      _eeprom_calibration_write_success = 1;
+      +      flash_write_failure_flag_cal = 1;
+      -      _eeprom_calibration_write_success = 0;
+      +      flash_write_failure_flag_cal = 0;
+  0x00027f9c mc68k_runPowerDownSequence: 12 lines
+      -  if (_calibration_bank_copy_valid != 0) {
+      +  if (power_down_refresh_enable != 0) {
+      -    if (_calibration_bank_active == 2) {
+      +    if (parameter_block_uploaded == 2) {
+      -  cVar3 = _calibration_bank_active == 0;
+      -  if (_calibration_bank_active == 1) {
+      +  cVar3 = parameter_block_uploaded == 0;
+      +  if (parameter_block_uploaded == 1) {
+      -    cVar3 = _calibration_bank_active < 2;
+      -    if (_calibration_bank_active == 2) {
+      +    cVar3 = parameter_block_uploaded < 2;
+      +    if (parameter_block_uploaded == 2) {
+  0x000284e8 mc68k_applicationMain: 2 lines
+      -  if (_eeprom_calibration_write_success == 0) {
+      +  if (flash_write_failure_flag_cal == 0) {
+  0x0002d216 cm550_memoryPatchingSystem: 2 lines
+      -          _calibration_bank_copy_valid = 0;
+      +          power_down_refresh_enable = 0;
+  0x0002e9f8 cm550_canMemoryPointerTableInit: 4 lines
+      -  if (_calibration_bank_active == 2) {
+      +  if (parameter_block_uploaded == 2) {
+      -  _calibration_bank_copy_valid = 1;
+      +  power_down_refresh_enable = 1;
+  0x0002eadc cm550_canMessageMemorySyncController: 6 lines
+      -  if (_calibration_bank_active == 0) {
+      +  if (parameter_block_uploaded == 0) {
+      -        (_calibration_bank_copy_valid == 0)))) {
+      +        (power_down_refresh_enable == 0)))) {
+      -      if ((puVar1 == (undefined4 *)&DAT_00801c5a) && (_calibration_bank_copy_valid == 0)) {
+      +      if ((puVar1 == (undefined4 *)&DAT_00801c5a) && (power_down_refresh_enable == 0)) {
+  0x000304f4 cm550_rpmHistogramAndAveragingStatistics: 4 lines
+      -  if (((_smoke_limiter_output_value == 8) && (_DAT_00801e90 != 8)) &&
+      +  if (((engine_state == 8) && (_DAT_00801e90 != 8)) &&
+      -  _DAT_00801e90 = _smoke_limiter_output_value;
+      +  _DAT_00801e90 = engine_state;
+  0x0003061a cm550_fuelLimitRestoreFromCapture: 4 lines
+      -  if (((_smoke_limiter_output_value == 8) && (_DAT_00801e90 != 8)) &&
+      +  if (((engine_state == 8) && (_DAT_00801e90 != 8)) &&
+      -  _DAT_00801e90 = _smoke_limiter_output_value;
+      +  _DAT_00801e90 = engine_state;
+  0x00031496 cm550_FUN_00031496: 3 lines
+      -  if (((uVar1 != 0) && (_smoke_limiter_output_value != 1)) && (_trending_data_capture_active == 1))
+      -  {
+      +  if (((uVar1 != 0) && (engine_state != 1)) && (_trending_data_capture_active == 1)) {
+  0x000315be cm550_FUN_000315be: 2 lines
+      -     (_smoke_limiter_output_value != 1)) {
+      +     (engine_state != 1)) {
+  0x0003216a cm550_diagnosticMultiPacketResponseBuilder: 3 lines
+      -  bVar2 = getJ1939DiagnosticResponseEchoLength((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_ptr));
+      +  bVar2 = getJ1939DiagnosticResponseEchoLength
+      +                    ((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_ptr));
+  0x00032b38 vp44_diagnosticByteResponseSender: 2 lines
+      -  _lift_pump_table_lookup_arg_3472 = byteSwap16(&response_code);
+      +  j1939_dm8_test_value = byteSwap16(&response_code);
+  0x00034512 cm550_FUN_00034512: 2 lines
+      -  if (_smoke_limiter_output_value != 1) {
+      +  if (engine_state != 1) {

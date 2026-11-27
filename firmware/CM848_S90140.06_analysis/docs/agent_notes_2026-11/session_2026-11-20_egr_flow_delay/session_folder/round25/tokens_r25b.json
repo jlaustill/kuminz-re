@@ -1,0 +1,32 @@
+{
+ "old": {
+  "toucan_a_mcr.CTRL": "TA_MCR",
+  "toucan_a_mcr.ID_LO": "TA_CANICR",
+  "toucan_a_mcr.DATA0._0_1_": "TA_CANCTRL0",
+  "toucan_a_mcr.DATA0._1_1_": "TA_CANCTRL1",
+  "toucan_a_mcr.DATA2._0_1_": "TA_PRESDIV",
+  "toucan_a_mcr.DATA2._1_1_": "TA_CANCTRL2",
+  "toucan_a_mcr.DATA4": "TA_TIMER",
+  "toucan_a_mcr": "TA_BASE",
+  "toucan_a_mb1_t_00307090._0_4_": "TA_RXGMSK",
+  "toucan_a_mb1_t_00307090._4_4_": "TA_RX14MSK",
+  "toucan_a_mb2_t_003070a0.ID_HI": "TA_IMASK",
+  "toucan_a_mb2_t_003070a0.ID_LO": "TA_IFLAG",
+  "DAT_00307100": "TA_MB0"
+ },
+ "new": {
+  "toucan_a.MCR": "TA_MCR",
+  "toucan_a.CANICR": "TA_CANICR",
+  "toucan_a.CANCTRL0": "TA_CANCTRL0",
+  "toucan_a.CANCTRL1": "TA_CANCTRL1",
+  "toucan_a.PRESDIV": "TA_PRESDIV",
+  "toucan_a.CANCTRL2": "TA_CANCTRL2",
+  "toucan_a.TIMER": "TA_TIMER",
+  "toucan_a": "TA_BASE",
+  "toucan_a.RXGMSK": "TA_RXGMSK",
+  "toucan_a.RX14MSK": "TA_RX14MSK",
+  "toucan_a.IMASK": "TA_IMASK",
+  "toucan_a.IFLAG": "TA_IFLAG",
+  "toucan_a_message_buffers": "TA_MB0"
+ }
+}

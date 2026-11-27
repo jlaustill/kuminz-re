@@ -1,0 +1,8 @@
+[
+["0x00408e0a", "WORD_00408e0a", "cruise_droop_fueling_filter_coefficient", "e2m 1186 +E Cruise_RSG_Droop_Fueling_Filter_Constant 'time constant of fueling filter used in CC/RSG droop' (address from the ECU's parameter ID table): the coefficient of cruise_droop_fueling_filter (62966 = 0.96 in the RAM dump)"],
+["0x00408e70", "WORD_00408e70", "cruise_governor_preset_fueling_filter_coefficient", "e2m 1189 +24 Cruise_RSG_Preset_Filter_Constant 'Filter constant used in cruise integrator preset calculation' (address from the ECU's parameter ID table): the coefficient of cruise_governor_preset_fueling_filter (62259 = 0.95 in the RAM dump)"],
+["0x003fd00a", "ema_filter_state_t_003fd00a", "cruise_droop_fueling_filter", "The EMA filter of final_fueling into cruise_droop_fueling_filtered (coefficient cruise_droop_fueling_filter_coefficient; cm848_runCruiseAndRoadSpeedGovernor)"],
+["0x003fd03c", "ema_filter_state_t_003fd03c", "cruise_governor_preset_fueling_filter", "The EMA filter of final_fueling into the preset fueling window's filtered fueling (coefficient cruise_governor_preset_fueling_filter_coefficient)"],
+["0x00408e30", "WORD_ARRAY_00408e30", "cruise_governor_gear_ratio_gain_axis", "e2m 11A5 Cruise_RSG_Gain_Adj_X 'X-AXIS OF TABLE USED BY CC/RSG TO ADJUST ERROR BASED ON FILTERED GEAR RATIO' (address from the ECU's parameter ID table): the drivetrain ratio axis (1/2048) of cruise_governor_gear_ratio_gain, a byte-length word then 6 breakpoints (0.5 / 1 / 1.5 / 2 / 3 / 5)"],
+["0x00408e3e", "WORD_ARRAY_00408e3e", "cruise_governor_gear_ratio_gain_values", "e2m 11A6 Cruise_RSG_Gain_Adj_Y: the gear ratio gains (0.01; a byte-length word then 6 values, all 100 = 1.00 in this calibration)"]
+]

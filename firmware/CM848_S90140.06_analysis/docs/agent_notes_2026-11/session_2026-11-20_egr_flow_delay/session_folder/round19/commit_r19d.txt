@@ -1,0 +1,19 @@
+cm848: round 19 stage D - the pilot and rail pressure cranking maps (label-only, review)
+
+Stage A's main timing cranking map has siblings, each a cranking table or word by its e2m record and placed by the
+ECU's parameter ID table (they were *_cold_start_*):
+- injection_timing_pilot_offset_cranking_x_axis / _y_axis / _grid: e2m 8078-807A Pilot_SOI_Cranking_*.
+- injection_quantity_pilot_cranking_x_axis / _y_axis / _grid (8D76-8D78 Pilot_Quantity_Crank_*), its output
+  injection_quantity_pilot_cranking_correction (806A +26), the crank coolant factor (8068 / 8069) and
+  injection_quantity_pilot_cranking_logic_select (805F +22).
+- fuel_pressure_setpoint_cranking_value (803F +2 HPCR_Crank_Fuelpr_Setpoint 'Output of cranking fuel pressure
+  setpoint table') and that table with its cache.
+Five comments / plates that described these maps say 'cranking' now; the SENSOR_VALUE_SOURCE member comments keep
+only the e2m labels. Task 046 and the PR body: stage C's hash, the ANC check (a raw scan of both banks with a positive
+control, and the three ANC enable bits have no reader), and the leads (AENBLFLG word 3 at 0x3fd5a2, the ambient
+module's unnamed filter).
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT; the renamed rows match their e2m
+sizes. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

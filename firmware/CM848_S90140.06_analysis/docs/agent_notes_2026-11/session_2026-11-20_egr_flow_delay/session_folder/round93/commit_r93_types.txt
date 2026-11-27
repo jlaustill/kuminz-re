@@ -1,0 +1,30 @@
+cm550: round 93 - type 614 global rows whose width the ROM, the decompiler and Calterm agree on
+
+4462 named global rows were typed 'undefined'. Ghidra takes such a row as 1 byte, so every word or long read of it
+printed as _name and its type was guessed again at each use. This pass types the rows whose width has two
+witnesses, and checks a third:
+- the ROM (untyped_width_scan_r93.py): every aligned occurrence of the row's address is the operand of an
+  instruction of one size (move / cmp / tst / clr / add / sub / and / or / bit instructions; an occurrence the scan
+  cannot decode disqualifies the row), nothing accesses the bytes inside that width, and the next row starts after
+  it. 622 rows qualify; 564 have an occurrence that is not decoded (mostly address loads) and 3247 have no direct
+  access: those stay undefined.
+- the decompiler (untyped_cpp_check_r93.py): a word / dword row printed only with the underscore, a byte row only
+  plain. 5 candidates are not in the code and 3 are pointers (movea.l loads; their type should name the pointee):
+  614 rows remain.
+- Calterm (e2m_width_sign_r93.py): 419 of the 614 have a plain-value record; its length equals the typed width for
+  418. The exception, 0x80a992, has two records (2 and 4 bytes) and only word accesses; it stays a word.
+Signedness: 52 rows printed (short) / (int) casts once typed unsigned and had no unsigned cast before (the code
+reads them signed), and 40 more have a signed Calterm record (a signed constant stored into one had turned into
+hex: asg_state_x1_2000_2000 = 0x8300 for -32000). Those 92 are i16 / i32.
+Result: 387 word, 85 i16, 101 byte, 34 dword, 7 i32. No name changes; each row's comment says how many accesses of
+which size the ROM has.
+
+Proof:
+- CM550 verify DETERMINISTIC; 0 functions removed / added. None of the 614 prints with an underscore or as a piece
+  (name._0_1_) any more: 3150 renders are plain. Beyond the underscores, 66 functions have type renders only: casts
+  (39 gone, 24 new), temporaries that take the row's type, char literals printed as numbers ('\0' -> 0). Statement
+  counts are equal in every function but 5, which differ by one temporary declaration. Caller artifacts unchanged
+  (unaff_ 17, in_ 32, uStack 37, CONCAT 139). No new build warning (unmapped types 4462 -> 3848).
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

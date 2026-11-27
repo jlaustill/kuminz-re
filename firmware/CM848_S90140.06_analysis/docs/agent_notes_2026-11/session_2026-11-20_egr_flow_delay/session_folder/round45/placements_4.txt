@@ -1,0 +1,70 @@
+== 1496 at 0x40aeb2 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40aeb2 LSG_Adjusted_Ref_Before_Droop [N2] dump 6000: [LSRFBFDP] LSG reference speed before droop
+        row: low_speed_governor_adjusted_reference_before_droop word | e2m 1496 +0 LSG_Adjusted_Ref_Before_Droop '[LSRFBFDP] LSG reference speed before droop': the slewed reference 
+   +02 0x40aeb4 Desired_Low_Idle_Ref_Speed [N2] dump 6000: [LSDSRFRP] Operator adjusted LSG Breakpoint Speed
+        row: low_speed_governor_desired_reference_speed word | e2m 1496 +2 Desired_Low_Idle_Ref_Speed: the largest speed request
+   +04 0x40aeb6 LSG_AC_Speed [N2] dump 0: Output of Chrysler LSG Air Conditioner Logic
+        row: low_speed_governor_air_conditioning_speed_request word | e2m 1496 +4 LSG_AC_Speed: low_speed_governor_air_conditioning_idle_speed while switch 13 (the A/C switch) is o
+   +06 0x40aeb8 LSG_Coolant_Temp_Speed [N2] dump 6000: Output of Chrysler LSG Coolant Temp Logic
+        row: low_speed_governor_coolant_temperature_speed_request word | e2m 1496 +6 LSG_Coolant_Temp_Speed: the coolant temperature speed table result
+   +08 0x40aeba LSG_Extended_Speed [N2] dump 0: Output of Chrysler LSG Extended Idle Logic
+        row: low_speed_governor_extended_idle_speed_request word | e2m 1496 +8 LSG_Extended_Speed: low_speed_governor_extended_idle_speed once the extended idle conditions held 
+   +0A 0x40aebc LSG_Extended_Idle_Status [N2] dump 0: Status of LSG extended idle (1=on)
+        row: low_speed_governor_extended_idle_active_flag word | e2m 1496 +A LSG_Extended_Idle_Status 'Status of LSG extended idle (1=on)': set by the slew when the reference 
+   +0C 0x40aebe LSG_J1850_Speed [N2] dump 0: Output of Chrysler LSG J1850 Logic
+        row: low_speed_governor_j1850_speed_request word | e2m 1496 +C LSG_J1850_Speed: pci_requested_idle_speed when low_speed_governor_j1850_request_enable is 1
+   +0E 0x40aec0 LSG_PN_Speed [N2] dump 6000: Output of Chrysler LSG Park/Neutral Logic
+        row: low_speed_governor_park_or_drive_speed_request word | e2m 1496 +E LSG_PN_Speed: low_speed_governor_park_idle_speed in park or neutral with the vehicle at rest
+   +10 0x40aec2 LSG_Reference_Speed [N2] dump 6000: [LSRF] Current reference speed being used by the LSG feature
+        row: low_speed_governor_reference low_speed_governor_reference_t | e2m 1496 +10..+19: the LSG reference speed
+   +12 0x40aec4 No_Load_Fuel_At_LSG_Ref [N2] dump 521: [LSRFNLFL] No load fueling value at LSG reference speed before droop
+        row: low_speed_governor_reference.no_load_fuel  | 
+   +14 0x40aec6 LSG_Reference_Speed_State [S2] dump 5: Indication of which logic is controlling LSG idle speed
+        row: low_speed_governor_reference.reference_speed_state  | 
+   +16 0x40aec8 LSG_Altitude_Speed [N4] dump 1536000: Output of Chrysler LSG Altitude Logic
+        row: low_speed_governor_reference.altitude_speed  | 
+   +1A 0x40aecc SCI_Cmd19_Status [N2] dump 0: Indication that SCI CMD19 is active (0xE5C1 = tool requesting LSG over
+        row: sci_set_engine_speed_request_key word | e2m 1496 +1A SCI_Cmd19_Status 'Indication that SCI CMD19 is active (0xE5C1 = tool requesting LSG override)'. W
+   +1C 0x40aece LSG_Tool_Speed [N2] dump 0: Output of Chrysler LSG tool override speed logic
+        row: low_speed_governor_tool_speed_request word | e2m 1496 +1C LSG_Tool_Speed 'Output of Chrysler LSG tool override speed logic': sci_set_engine_speed_request u
+   +1E 0x40aed0 SCI_LSG_Speed [N2] dump 0: Request speed from SCI for LSG reference speed
+        row: sci_set_engine_speed_request word | e2m 1496 +1E SCI_LSG_Speed. Word (1/8 rpm): the engine speed of the service tool's SCI command 0x19 (DRB 'SET 
+   +20 0x40aed2 LSG_Moving_Speed [N2] dump 5600: Output of Chrysler LSG Vehicle Moving Logic
+        row: low_speed_governor_moving_speed_request word | e2m 1496 +20 LSG_Moving_Speed: the moving speed table by vehicle speed
+== 8B3C at 0x40913a (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40913a HPCR_Cold_MPROP_Temperature [N2] dump 62976: Cold start dutycycle table is used at this temperature
+        row: fuel_metering_cold_start_temperature word | e2m 8B3C +0 HPCR_Cold_MPROP_Temperature 'Cold start dutycycle table is used at this temperature' (-40 F in the
+   +02 0x40913c HPCR_Hot_MPROP_Temperature [N2] dump 31680: Hot start dutycycle table is used at this temperature
+        row: fuel_metering_hot_start_temperature word | e2m 8B3C +2 HPCR_Hot_MPROP_Temperature 'Hot start dutycycle table is used at this temperature': the upper boun
+   +04 0x40913e HPCR_MPROP_Temperature_Flag_N [N2] dump 1: Selects temperature source for current loop int reset
+        row: fuel_metering_outer_loop_preset_temperature_source word | e2m 8B3C +4 HPCR_MPROP_Temperature_Flag 'Selects temperature source for current loop int reset' (1 in the dump
+   +06 0x409140 CP3_Pump_Regulator_Diag_Min_Duty_Cycle [N2] dump 245: If duty cycle < this cal, don't diagnose errors
+        row: fuel_metering_read_back_minimum_command word | cm848_tpuBReadBackChannel11ReadFeedback: for a fuel metering command above 0 but below this the MDASM29 pin ch
+   +08 0x409142 HPCR_Dutycycle_Output_Tool_Value [N2] dump 1025: Indicates if tool override request for CP3 driver
+        row: fuel_metering_tool_override_command word | e2m 8B3C +8 HPCR_Dutycycle_Output_Tool_Value: the M-PROP command used for the service tool override (was engin
+   +0A 0x409144 HPCR_Open_Loop_Dutycycle [N2] dump 2865: Duty cycle during open loop
+        row: fuel_pressure_governor_sensor_fault_command word | Demand in FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT (2865 = 70 % of the 4095 command). Was cam_sync_ref_count_state4
+   +0C 0x409146 HPCR_Dutycycle_Output_Tool_State_Flag [N2] dump 0: 0=Allow CP3 driver override for tool in STOP state only;1=all states
+        row: fuel_metering_tool_override_while_running_enable word | e2m 8B3C +C HPCR_Dutycycle_Output_Tool_State_Flag ('0=Allow CP3 driver override for tool in' engine stopped on
+   +0E 0x409148 HPCR_Coil_Resistance_Filter_Coeff [N2] dump 55706: Filter applied to calculated coil resistance
+        row: fuel_metering_coil_resistance_filter_coefficient word | e2m 8B3C +E HPCR_Coil_Resistance_Filter_Coeff 'Filter applied to calculated coil resistance': the coefficient 
+   +10 0x40914a HPCR_Current_Sample_Minimum_Counts [N2] dump 25: Estimated coil temp considered good with this many samples
+        row: fuel_metering_coil_resistance_minimum_samples word | e2m 8B3C +10 HPCR_Current_Sample_Minimum_Counts 'Estimated coil temp considered good with this many samples' (
+   +12 0x40914c HPCR_MPROP_Inner_Loop_Temperature_Flag_N [N2] dump 1: Selects temperature source for current loop int reset
+        row: fuel_metering_inner_loop_preset_temperature_source word | e2m 8B3C +12 HPCR_MPROP_Inner_Loop_Temperature_Flag: the current loop integrator preset runs when it is 5 (was
+   +14 0x40914e HPCR_Duty_Out_Filter_Coeff [N2] dump 16384: Filter applied to dutycycle used for coil resistance calculation
+        row: fuel_metering_command_filter_coefficient word | Coefficient of a cm848_signedFirstOrderFilter record
+   +16 0x409150 HPCR_MPROP_Coil_Initial_Resistance [N2] dump 620: Initial value at power-up
+        row: fuel_metering_coil_initial_resistance word | e2m 8B3C +16 HPCR_MPROP_Coil_Initial_Resistance 'Initial value at power-up' (0.005 ohm; 620 = 3.1 ohm): cm848_
+   +18 0x409152 HPCR_MPROP_Startup_Pulse_Dutycycle [N2] dump 1311: Temporary output dutycycle at startup while RPM is zero
+        row: fuel_metering_startup_pulse_duty_cycle word | e2m 8B3C +18 HPCR_MPROP_Startup_Pulse_Dutycycle 'Temporary output dutycycle at startup while RPM is zero' (was
+   +1A 0x409154 HPCR_MPROP_Startup_Pulse_Time [N2] dump 100: Duration of temporary dutycycle command at power-up at 0 RPM
+        row: fuel_metering_startup_pulse_time word | e2m 8B3C +1A HPCR_MPROP_Startup_Pulse_Time 'Duration of temporary dutycycle command at power-up at 0 RPM' (0.0
+   +1C 0x409156 HPCR_MPROP_Temperature_Gain [N2] dump 13890: Slope for resistance to temperature calculation
+        row: fuel_metering_coil_temperature_gain word | e2m 8B3C +1C HPCR_MPROP_Temperature_Gain 'Slope for resistance to temperature calculation': fuel_metering_coil
+   +1E 0x409158 HPCR_MPROP_Temperature_Offset [N2] dump 41480: Offset for resistance to temperature calculation
+        row: fuel_metering_coil_temperature_offset word | e2m 8B3C +1E HPCR_MPROP_Temperature_Offset 'Offset for resistance to temperature calculation' (was engine_sync
+   +20 0x40915a HPCR_Resistance_Current_Threshold [N2] dump 900: Min current to allow resistance calculation
+        row: fuel_metering_resistance_minimum_current word | e2m 8B3C +20 HPCR_Resistance_Current_Threshold 'Min current to allow resistance calculation' (900 mA) (was cam
+   +22 0x40915c HPCR_Resistance_PWM_Threshold [N2] dump 615: Temporary output dutycycle at startup while RPM is zero
+        row: fuel_metering_resistance_minimum_duty_cycle word | e2m 8B3C +22 HPCR_Resistance_PWM_Threshold: the minimum duty cycle for a coil resistance sample (was cam_speed

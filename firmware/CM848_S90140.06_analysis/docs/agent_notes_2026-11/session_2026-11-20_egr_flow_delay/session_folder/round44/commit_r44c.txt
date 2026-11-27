@@ -1,0 +1,19 @@
+cm848: round 44 stage C - the PPS learning time limit and its timer, the PPS block inactive here (TPS)
+
+A review of stage B found two rows whose e2m record contradicts the name:
+- 0x408a8a accelerator_pedal_idle_learning_total_step_limit -> accelerator_pedal_idle_learning_time_limit.
+  - It is e2m 8BAC +0x18 PPS_AZ_Time_Limit: 'Time allowed from key on for pps auto zero when auto zero conditions
+    exist' (MSEC, 100 per count; 299 = 29.9 s).
+- 0x3fb42e accelerator_pedal_idle_learning_total_step_counter -> accelerator_pedal_idle_learning_timer.
+  - cm848_learnAcceleratorPedalIdlePositions increments it on every pass in which either channel's learning
+    conditions hold, whether or not a step is taken.
+  - The per-channel counters count the steps (PPS_AZ_Update_Limit).
+  - The function's plate now names both limits.
+- 0x408a84 (8BAC +0x12 Accelerator_Position_Sensor_Type, 1 = PPS, 0 = TPS) is 0 in ROM.
+  - So the PPS block is inactive in this calibration, and the five PPS block functions do nothing.
+  - The rows of 0x408a84 and 0x408a76 (the test cell threshold) now say so.
+
+Proof: prove_caches.py matches all 1968 functions. verify is byte-identical; thunks 18 / 14. Headers regenerated
+(0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

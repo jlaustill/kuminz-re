@@ -1,0 +1,17 @@
+cm848: round 74 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 74" records stages A (6ea1b5c2), B (2b24c319) and C (03e166a0), and their proofs.
+  - Stage A's word is corrected: 6ea1b5c2 says "all predicted", but the A2 widths came from the build, so "all
+    explained" is right.
+  - The boot key check's tail compares with eeprom_shadow_header.header_block.
+- Leads:
+  - pointer types for the four address-holding dword rows;
+  - names for the former span's type-only rows (block 1002 +2 = Key_Switch_Override in CM848's e2m);
+  - the boot eeprom_shadow_header field names;
+  - clip-core's SecurityAuth uses the application tables, so a CM848 boot kernel write needs the boot mask;
+  - the remaining old CM550 enums, and the snapshots left as they are.
+- The PR body's "Beyond CM848" bullet covers rounds 72-74: eleven CM550 twins and the struct dismantle.
+- work/todo.md, the session README, session_folder/round74/, the large-files tarball (the round's 7 build / verify
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

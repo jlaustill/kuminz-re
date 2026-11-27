@@ -1,0 +1,60 @@
+=== cm848_presetLowSpeedGovernorIntegrator (lines 27242-27307, 59 non-blank)
+// Function: cm848_presetLowSpeedGovernorIntegrator @ 0x00027e4c
+//
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* Presets the LSG integrator accumulator (between the preset minimum - in drive or not - and
+   maximum - or the previous value) and clears the proportional / derivative / jerk terms (was
+   cm848_updateSpeedProtectionLimits) */
+void cm848_presetLowSpeedGovernorIntegrator(int param_1)
+{
+  word *pwVar1;
+  word wVar2;
+  cm848_processSpeedSensorCompensation();
+  pwVar1 = &low_speed_governor_integrator_preset_maximum;
+  low_speed_governor_integrator_preset_maximum =
+       low_speed_governor_integrator_preset_maximum_offset + governor_speed_correction;
+  low_speed_governor_integral_accumulator =
+       ((uint)final_fueling -
+       (int)(CONCAT44((int)((ulonglong)
+                            ((longlong)(int)(short)low_speed_governor_filtered_speed_error *
+                            (longlong)
+                            ((int)low_speed_governor_proportional_gain *
+                            (int)(short)low_speed_governor_proportional_gain_adjustment)) >> 0x20),
+                      (int)(short)low_speed_governor_filtered_speed_error *
+                      (int)low_speed_governor_proportional_gain *
+                      (int)(short)low_speed_governor_proportional_gain_adjustment) / 0x22c86)) -
+       param_1;
+  if (((engine_state == ENGINE_STATE_RUNNING) &&
+      (low_speed_governor_integrator_preset_use_previous_enable != 0)) &&
+     (((short)governor_speed_low_clamp < low_speed_governor_integrator_preset_acceleration_limit ||
+      (vehicle_speed <= low_speed_governor_integrator_preset_vehicle_speed_limit)))) {
+    low_speed_governor_integral_accumulator = (dword)low_speed_governor_integral_term;
+    low_speed_governor_integrator_preset_used_previous_flag = 1;
+  }
+  else {
+    low_speed_governor_integrator_preset_used_previous_flag = 0;
+  }
+  if ((int)low_speed_governor_integral_accumulator <=
+      (int)(short)(low_speed_governor_integrator_preset_maximum_offset + governor_speed_correction))
+  {
+    if (((transmission_park_or_neutral_flag != 0) &&
+        (wVar2 = low_speed_governor_integrator_preset_minimum,
+        (int)low_speed_governor_integral_accumulator <
+        (int)low_speed_governor_integrator_preset_minimum)) ||
+       ((transmission_park_or_neutral_flag == 0 &&
+        (wVar2 = low_speed_governor_integrator_preset_minimum_in_drive,
+        (int)low_speed_governor_integral_accumulator <
+        (int)low_speed_governor_integrator_preset_minimum_in_drive)))) goto LAB_00027fb0;
+    pwVar1 = (word *)((int)&low_speed_governor_integral_accumulator + 2);
+  }
+  wVar2 = *pwVar1;
+LAB_00027fb0:
+  low_speed_governor_integral_accumulator = (uint)wVar2 << 0x10;
+  low_speed_governor_proportional_term = 0;
+  low_speed_governor_derivative_term = 0;
+  low_speed_governor_jerk_term = 0;
+  low_speed_governor_fueling_working = final_fueling;
+  low_speed_governor_proportional_gain_previous = low_speed_governor_proportional_gain;
+  return;
+}
+//

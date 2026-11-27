@@ -1,0 +1,13 @@
+global_variables.csv 0x003fcd66: ...d,cm848_controlAirConditioningClutchForDrTruck: bit 0x40 of [air_conditioning_clutch -> logical_output]
+global_variables.csv 0x003fcd66: ...tchForDrTruck: bit 0x40 of air_conditioning_clutch_request_b[yte -> its_32_to_39]
+global_variables.csv 0x0040869a: ...orDrTruck (the A/C clutch request logic: logical output 38, [air_conditioning_clutch -> logical_output]
+global_variables.csv 0x0040869a: ... logic: logical output 38, air_conditioning_clutch_request_b[yte -> its_32_to_39]
+global_variables.csv 0x00408738: ...ection_coolant_classb_active_flag (coolant above 241 F with [air_conditioning_clutch -> logical_output]
+global_variables.csv 0x00408738: ... (coolant above 241 F with air_conditioning_clutch_request_b[yte -> its_32_to_39]
+global_variables.csv 0x00409ee2: ....9 / 21.1 / 23.2 / 25.2 mm3): entry 1 = A/C clutch request ([air_conditionin -> lo]
+global_variables.csv 0x00409ee2: ... / 25.2 mm3): entry 1 = A/C clutch request (air_conditioning[_clutch -> ical_output]
+global_variables.csv 0x00409ee2: ...ry 1 = A/C clutch request (air_conditioning_clutch_request_b[yte -> its_32_to_39]
+global_variables.csv: rows only in HEAD (renamed): 5; only in the tree: 11
+function_renames.csv 0x0050dba8: ...uel_Adjustment, table of engine speed; 0 unless bit 0x40 of [air_conditioning_clutch -> logical_output]
+function_renames.csv 0x0050dba8: ...peed; 0 unless bit 0x40 of air_conditioning_clutch_request_b[yte -> its_32_to_39]
+function_renames.csv: rows only in HEAD (renamed): 2; only in the tree: 3

@@ -1,0 +1,544 @@
+=== 0x807ce4 -> accelerator_pedal_highest_valid_minimum word
+   current: (no row)
+   e2m: 1048+6 CTHISATH [%] MAXIMUM THROTTLE_MIN THAT ANY VALID PEDAL CAN HAVE~8-20  len/sign/type=('2', 'U', 'N')
+   refs (4): 0x10a52: move.w (abs).l,<dst> (source) @0x10a50 || 0x10c78: move.w (abs).l,<dst> (source) @0x10c76 || 0x10c96: move.w (abs).l,<dst> (source) @0x10c94 || 0x10e08: move.w (abs).l,<dst> (source) @0x10e06
+=== 0x80052c -> friction_fuel_coolant_temperature_correction word
+   current: (no row)
+   refs (2): 0x1430a: ? || 0x143d8: move.w <src>,(abs).l (destination) @0x143d6
+=== 0x807d4c -> j1939_peak_fueling_tau_0 word
+   current: jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 | word | typed word: 6 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10DF+A JCMXT0FL [MM3S] JCOMM PEAK FUELING TAU 0 MAX FUELING ON 100% THROTTLE CURVE FO~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (6): 0x14328: move.w (abs).l,<dst> (source) @0x14326 || 0x1449c: move.w (abs).l,<dst> (source) @0x1449a || 0x1f6e0: move.w (abs).l,<dst> (source) @0x1f6de || 0x1f786: move.w (abs).l,<dst> (source) @0x1f784 || 0x1faaa: move.w (abs).l,<dst> (source) @0x1faa8 || 0x1fb40: move.w (abs).l,<dst> (source) @0x1fb3e
+=== 0x807d4e -> j1939_rated_speed_tau_0 word
+   current: shutdown_protection_step_2 | word | typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10DF+C JCRTT0RP [RPM] JCOMM RATED SPEED TAU 0 RATED MAX ENGINE SPEED TAU = 0 ALS~0,56 - 3000  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1439e: move.w (abs).l,<dst> (source) @0x1439c || 0x143fc: move.w (abs).l,<dst> (source) @0x143fa || 0x1f370: move.w (abs).l,<dst> (source) @0x1f36e
+=== 0x807d50 -> j1939_speed_breakpoint_3_tau_0 word
+   current: shutdown_protection_step_1 | word | typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10DF+E JCT0RP03 [RPM] JCOMM SPEED BREAKPOINT 3 TAU 0 ENGINE SPEED BREAKPOINT 3 D~0,56 - 3000  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1436e: move.w (abs).l,<dst> (source) @0x1436c || 0x14410: move.w (abs).l,<dst> (source) @0x1440e || 0x1f3a4: move.w (abs).l,<dst> (source) @0x1f3a2
+=== 0x807d52 -> j1939_speed_breakpoint_4_tau_0 word
+   current: engine_running_timer_threshold | word | typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10DF+10 JCT0RP04 [RPM] JCOMM SPEED BREAKPOINT 4 TAU 0 ENGINE SPEED BREAKPOINT 4 D~0,56 - 3000  len/sign/type=('2', 'U', 'N')
+   refs (4): 0x1437e: move.w (abs).l,<dst> (source) @0x1437c || 0x14424: move.w (abs).l,<dst> (source) @0x14422 || 0x1446a: move.w (abs).l,<dst> (source) @0x14468 || 0x1f3d8: move.w (abs).l,<dst> (source) @0x1f3d6
+=== 0x807d54 -> j1939_speed_breakpoint_5_tau_0 word
+   current: frictional_load_torque_table_value | word | typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10DF+12 JCT0RP05 [RPM] JCOMM SPEED BREAKPOINT 5 TAU 0 ENGINE SPEED BREAKPOINT 5 D~0,56 - 3000  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1438e: move.w (abs).l,<dst> (source) @0x1438c || 0x14438: move.w (abs).l,<dst> (source) @0x14436 || 0x1f40c: move.w (abs).l,<dst> (source) @0x1f40a
+=== 0x80bc82 -> j1939_friction_load_fueling_at_low_idle word
+   current: frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100 | word | typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10E2+E JCFCLDIS [%FU] FRICTIONAL LOAD INTERPOLATED FROM THE NO LOAD CURVE AT LSG REF S~0-100  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x14368: move.w <src>,(abs).l (destination) @0x14366 || 0x143e2: move.w (abs).l,<dst> (source) @0x143e0
+=== 0x80bc84 -> j1939_friction_load_fueling_at_rated_speed word
+   current: frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84 | word | typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10E2+10 JCFCBKRR [MM3S] FRICTIONAL LOAD TORQUE (IN FUELING) AT RATED ENGINE RPM~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x143ac: move.w <src>,(abs).l (destination) @0x143aa || 0x143f6: move.w (abs).l,<dst> (source) @0x143f4
+=== 0x80bc86 -> j1939_friction_load_fueling_at_breakpoint_3 word
+   current: frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86 | word | typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10E2+12 JCFCBK03 [MM3S] FRICTIONAL LOAD TORQUE (IN FUELING) AT BREAKPOINT 3 ENGINE RPM~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x14378: move.w <src>,(abs).l (destination) @0x14376 || 0x1440a: move.w (abs).l,<dst> (source) @0x14408
+=== 0x80bc88 -> j1939_friction_load_fueling_at_breakpoint_4 word
+   current: frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88 | word | typed word: Calterm record JCFCBK04 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 10E2+14 JCFCBK04 [MM3S] FRICTIONAL LOAD TORQUE (IN FUELING) AT BREAKPOINT 4 ENGINE RPM~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (8): 0x1432e: ? || 0x14388: move.w <src>,(abs).l (destination) @0x14386 || 0x1441e: move.w (abs).l,<dst> (source) @0x1441c || 0x14454: ? || 0x1f6e6: ? || 0x1f78c: ? || 0x1fab0: ? || 0x1fb46: ?
+=== 0x80bc8a -> j1939_friction_load_fueling_at_breakpoint_5 word
+   current: frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a | word | typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10E2+16 JCFCBK05 [MM3S] FRICTIONAL LOAD TORQUE (IN FUELING) AT BREAKPOINT 5 ENGINE RPM~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x14398: move.w <src>,(abs).l (destination) @0x14396 || 0x14432: move.w (abs).l,<dst> (source) @0x14430
+=== 0x80de78 -> diagnostic_fault_to_erase word
+   current: fault_to_erase_none | word | PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+   e2m: 1080+0 FLT2ERAS [HEX] FAULT TO ERASE~NONE  len/sign/type=('2', 'U', 'N')
+   refs (4): 0x14864: clr.w (abs).l @0x14862 || 0x1eb2e: move.w <src>,(abs).l (destination) @0x1eb2c || 0x3579c: ? || 0x357a0: ?
+=== 0x807f3e -> fault_derate_curve_low_speed_governor_intercept_fueling word
+   current: intercept_fueling_between_lsg_ref_and_the_epf_curve_0_100 | word | typed word: Calterm record EPLSINFL is 2 bytes unsigned (PR #53 round 93)
+   e2m: 12BA+0 EPLSINFL [MM3S] INTERCEPT FUELING BETWEEN LSG REF AND THE EPF CURVE.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x18538: move.w (abs).l,<dst> (source) @0x18536 || 0x3696c: ? || 0x36970: ?
+=== 0x807f40 -> fault_derate_curve_high_speed_governor_intercept_fueling word
+   current: intercept_fueling_between_hsg_brkpt_and_the_epf_curve_0_100 | word | typed word: 1 word access in the ROM and no other (PR #53 round 93)
+   e2m: 12BA+2 EPHSINFL [MM3S] INTERCEPT FUELING BETWEEN HSG BRKPT AND THE EPF CURVE.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1857a: ?
+=== 0x807f42 -> fault_derate_curve_engine_speed_point_2 word
+   current: (no row)
+   e2m: 12BA+4 EPRPP2 [RPM] EPF CURVE SPEED AT BREAKPOINT 2.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x185b4: move.w (abs).l,<dst> (source) @0x185b2
+=== 0x807f44 -> fault_derate_curve_engine_speed_point_3 word
+   current: (no row)
+   e2m: 12BA+6 EPRPP3 [RPM] EPF CURVE SPEED AT BREAKPOINT 3.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x185ba: move.w (abs).l,<dst> (source) @0x185b8; move.w <src>,(abs).l (destination) @0x185b8
+=== 0x807f46 -> fault_derate_curve_engine_speed_point_4 word
+   current: (no row)
+   e2m: 12BA+8 EPRPP4 [RPM] EPF CURVE SPEED AT BREAKPOINT 4.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x185c4: move.w (abs).l,<dst> (source) @0x185c2; move.w <src>,(abs).l (destination) @0x185c2
+=== 0x807f48 -> fault_derate_curve_engine_speed_point_5 word
+   current: (no row)
+   e2m: 12BA+A EPRPP5 [RPM] EPF CURVE SPEED AT BREAKPOINT 5.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x185ce: move.w (abs).l,<dst> (source) @0x185cc; move.w <src>,(abs).l (destination) @0x185cc
+=== 0x807f4a -> fault_derate_curve_priority_bit_position word
+   current: (no row)
+   e2m: 12BA+C EPTQPZ [NONE] PRIORITY LEVEL OF THE EPF CURVE CONFIGURATION AND BIT POSITION ~0 - 15  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x185fa: move.w (abs).l,<dst> (source) @0x185f8
+=== 0x807f4c -> fault_derate_curve_clamp_priority_mask word
+   current: (no row)
+   e2m: 12BA+E EPTQCG [HEX] BITMAP INDICATING WHEN A FEATURE SHOULD CLAMP A FUELING POINT~0-FFFF  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x18428: move.w (abs).l,<dst> (source) @0x18426 || 0x1847a: move.w (abs).l,<dst> (source) @0x18478
+=== 0x80060c -> fault_derate_torque_curve_priority_bit word
+   current: epf_source_bitmask | word | typed word: 5 word accesses in the ROM and no other (PR #53 round 93)
+   refs (5): 0x18492: move.w (abs).l,<dst> (source) @0x18490 || 0x1849e: move.w (abs).l,<dst> (source) @0x1849c || 0x184f0: move.w (abs).l,<dst> (source) @0x184ee || 0x185e2: move.w (abs).l,<dst> (source) @0x185e0 || 0x18602: move.w <src>,(abs).l (destination) @0x18600
+=== 0x80d0da -> j1939_pgn65251_speed_points_request_flags word
+   current: state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff | word | typed word: Calterm record EPAERPST is 2 bytes unsigned (PR #53 round 93)
+   e2m: 12BB+0 EPAERPST [HEX] STATE FLAG TO USE EPF'S RPM BREAKPOINTS FOR J1939.~0 - FFFF  len/sign/type=('2', 'U', 'N')
+   refs (8): 0x1842e: ? || 0x18480: ? || 0x1848a: move.w (abs).l,<dst> (source) @0x18488 || 0x184de: ? || 0x1c836: move.w (abs).l,<dst> (source) @0x1c834 || 0x1c8ac: ? || 0x36974: ? || 0x36978: ?
+=== 0x80d286 -> fault_derate_active_flag word
+   current: indicator_from_engine_protection_that_fuel_derate_1_active_0_inact | word | typed word: 6 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 10B1+C EPFLLMSS [  ] INDICATOR FROM ENGINE PROTECTION THAT FUEL DERATE~1 = ACTIVE/0 = INACT  len/sign/type=('2', 'U', 'N')
+   refs (6): 0xc3ca: cmpi.w #0x1,(abs).l @0xc3c6 || 0x184e6: cmpi.w #0x1,(abs).l @0x184e2 || 0x186a0: clr.w (abs).l @0x1869e || 0x1994a: ? || 0x19956: clr.w (abs).l @0x19954 || 0x19996: clr.w (abs).l @0x19994
+=== 0x80daf4 -> low_speed_governor_droop_selected_slope i16
+   current: (no row)
+   e2m: 1065+16 LSDPSE [R/FU] LSG DROOP SELECTED SLOPE~-20.0 - 20.0  len/sign/type=('2', 'S', 'N')
+   refs (3): 0xfa18: ? || 0x1851e: tst.w (abs).l @0x1851c || 0x1852e: move.w (abs).l,<dst> (source) @0x1852c
+=== 0x808010 -> j1939_pgn65251_speed_at_point_1_low_speed_governor_offset i16
+   current: (no row)
+   e2m: 12BD+0 JCLSRFOF [RPM] OFFSET FROM LSG REFERENCE WHICH IS BROADCAST PT1~-3600 - 3600  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1c854: move.w (abs).l,<dst> (source) @0x1c852 || 0x36984: ? || 0x36988: ?
+=== 0x808014 -> j1939_pgn65251_speed_at_point_3 word
+   current: (no row)
+   e2m: 12BD+4 PPTHES03 [RPM] JCOMM SPEED AT POINT 3 FOR BROADCAST~0, 56-8000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1c880: move.w (abs).l,<dst> (source) @0x1c87e; move.w <src>,(abs).l (destination) @0x1c87e
+=== 0x808016 -> j1939_pgn65251_speed_at_point_4 word
+   current: (no row)
+   e2m: 12BD+6 PPTHES04 [RPM] JCOMM SPEED AT POINT 4 FOR BROADCAST~0, 56-8000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1c88a: move.w (abs).l,<dst> (source) @0x1c888; move.w <src>,(abs).l (destination) @0x1c888
+=== 0x808018 -> j1939_pgn65251_speed_at_point_5 word
+   current: (no row)
+   e2m: 12BD+8 PPTHES05 [RPM] JCOMM SPEED AT POINT 5 FOR BROADCAST~0, 56-8000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1c894: move.w (abs).l,<dst> (source) @0x1c892; move.w <src>,(abs).l (destination) @0x1c892
+=== 0x80801a -> throttle_100_fueling_point_clamp_bitmap word
+   current: bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff | word | typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 12BD+A FSMXTHCG [HEX] BITMAP INDICATING WHEN A FEATURE SHOULD CLAMP A FUELING POINT~0-FFFF  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x1c93c: move.w (abs).l,<dst> (source) @0x1c93a || 0x1c98a: move.w (abs).l,<dst> (source) @0x1c988
+=== 0x80801c -> throttle_100_priority_bit_index word
+   current: bitmap_indicating_which_algorithms_wish_to_set_rpms_0_15 | word | typed word: 1 word access in the ROM and no other (PR #53 round 93)
+   e2m: 12BD+C FSMXMNCG [NONE] BITMAP INDICATING WHICH ALGORITHMS WISH TO SET RPMS~0-15  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1c8c8: move.w (abs).l,<dst> (source) @0x1c8c6
+=== 0x8006e6 -> throttle_100_speed_points_request_bit word
+   current: torque_curve_feature_bitmask | undefined | 
+   refs (2): 0x1c82e: ? || 0x1c8b2: ?
+=== 0x8006e8 -> throttle_100_speed_points_request_bit_initialized_flag word
+   current: (no row)
+   refs (2): 0x1c8be: tst.w (abs).l @0x1c8bc || 0x1c8d4: ?
+=== 0x80da38 -> j1939_torque_curve_speed_at_point_1 word
+   current: torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 | word | typed word: Calterm record JCTQRPP1 is 2 bytes unsigned (PR #53 round 93) | signedness: mixed in the
+   e2m: 1102+22 JCTQRPP1 [RPM] TORQUE CURVE SPEED AT BREAKPOINT 1 (LSG REFERENCE).~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (11): 0xfa0c: ? || 0xfa7a: ? || 0xfd08: move.w (abs).l,<dst> (source) @0xfd06 || 0xfd14: move.w (abs).l,<dst> (source) @0xfd12 || 0xfd28: move.w (abs).l,<dst> (source) @0xfd26 || 0xfd32: move.w (abs).l,<dst> (source) @0xfd30 || 0xfefe: move.w (abs).l,<dst> (source) @0xfefc; move.w <src>,(abs).l (destination) @0xfefc || 0x183e8: move.w (abs).l,<dst> (source) @0x183e6 || 0x184d8: ? || 0x1c828: ? || 0x1c8f6: move.w (abs).l,<dst> (source) @0x1c8f4
+=== 0x80da3a -> j1939_torque_curve_speed_at_point_2 word
+   current: torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 | word | typed word: Calterm record JCTQRPP2 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1102+24 JCTQRPP2 [RPM] TORQUE CURVE SPEED AT BREAKPOINT 2 (HSG BREAKPOINT).~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (6): 0xfab0: ? || 0xfb2c: ? || 0x183f4: move.w (abs).l,<dst> (source) @0x183f2 || 0x184d2: ? || 0x1c87a: move.w (abs).l,(abs).l (destination) @0x1c874 || 0x1c904: move.w (abs).l,<dst> (source) @0x1c902
+=== 0x80da3c -> j1939_torque_curve_speed_at_point_3 word
+   current: torque_curve_speed_at_breakpoint_3_0_5000 | word | typed word: Calterm record JCTQRPP3 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1102+26 JCTQRPP3 [RPM] TORQUE CURVE SPEED AT BREAKPOINT 3.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (6): 0xfa6e: ? || 0xfb38: ? || 0x18400: move.w (abs).l,<dst> (source) @0x183fe || 0x185be: move.w (abs).l,(abs).l (destination) @0x185b8 || 0x1c884: move.w (abs).l,(abs).l (destination) @0x1c87e || 0x1c912: move.w (abs).l,<dst> (source) @0x1c910
+=== 0x80da3e -> j1939_torque_curve_speed_at_point_4 word
+   current: torque_curve_speed_at_breakpoint_4_0_5000 | word | typed word: 9 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 1102+28 JCTQRPP4 [RPM] TORQUE CURVE SPEED AT BREAKPOINT 4.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (9): 0xfc80: move.w (abs).l,(abs).l (destination) @0xfc7a || 0xfcea: move.w (abs).l,(abs).l (destination) @0xfce4 || 0xfd7c: move.w (abs).l,(abs).l (destination) @0xfd76 || 0xfdd4: move.w (abs).l,(abs).l (destination) @0xfdce || 0xff14: move.w (abs).l,<dst> (source) @0xff12; move.w <src>,(abs).l (destination) @0xff12 || 0x1840c: move.w (abs).l,<dst> (source) @0x1840a || 0x185c8: move.w (abs).l,(abs).l (destination) @0x185c2 || 0x1c88e: move.w (abs).l,(abs).l (destination) @0x1c888 || 0x1c920: move.w (abs).l,<dst> (source) @0x1c91e
+=== 0x80da40 -> j1939_torque_curve_speed_at_point_5 word
+   current: torque_curve_speed_at_breakpoint_5_0_5000 | word | typed word: Calterm record JCTQRPP5 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1102+2A JCTQRPP5 [RPM] TORQUE CURVE SPEED AT BREAKPOINT 5.~0 - 5000  len/sign/type=('2', 'U', 'N')
+   refs (6): 0xfab6: ? || 0xfb3e: ? || 0x18418: move.w (abs).l,<dst> (source) @0x18416 || 0x185d2: move.w (abs).l,(abs).l (destination) @0x185cc || 0x1c898: move.w (abs).l,(abs).l (destination) @0x1c892 || 0x1c92e: move.w (abs).l,<dst> (source) @0x1c92c
+=== 0x80da42 -> j1939_torque_curve_fueling_at_point_1 word
+   current: torque_curve_fueling_at_idle_speed_breakpoint_0_100 | word | typed word: 12 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 1102+2C JCTQFLP1 [MM3S] TORQUE CURVE FUELING AT IDLE SPEED BREAKPOINT.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (12): 0xfa5e: move.w <src>,(abs).l (destination) @0xfa5c || 0xfa9c: move.w (abs).l,<dst> (source) @0xfa9a || 0xfd1a: move.w (abs).l,<dst> (source) @0xfd18; move.w <src>,(abs).l (destination) @0xfd18 || 0xfd38: move.w (abs).l,<dst> (source) @0xfd36; move.w <src>,(abs).l (destination) @0xfd36 || 0xfdf2: move.w (abs).l,<dst> (source) @0xfdf0 || 0xff2a: move.w <src>,(abs).l (destination) @0xff28 || 0x18436: cmp.w (abs).l,d6 @0x18434 || 0x1843e: move.w <src>,(abs).l (destination) @0x1843c || 0x184a8: move.w <src>,(abs).l (destination) @0x184a6 || 0x1c946: cmp.w (abs).l,d6 @0x1c944 || 0x1c94e: move.w <src>,(abs).l (destination) @0x1c94c || 0x1c9a8: move.w <src>,(abs).l (destination) @0x1c9a6
+=== 0x80da44 -> j1939_torque_curve_fueling_at_point_2 word
+   current: torque_curve_fueling_at_point_2_speed_breakpoint_0_100 | word | typed word: Calterm record JCTQFLP2 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1102+2E JCTQFLP2 [MM3S] TORQUE CURVE FUELING AT POINT 2 SPEED BREAKPOINT.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (8): 0xfb16: move.w <src>,(abs).l (destination) @0xfb14 || 0xfb32: ? || 0x18444: cmp.w (abs).l,d5 @0x18442 || 0x1844c: move.w <src>,(abs).l (destination) @0x1844a || 0x184ae: move.w <src>,(abs).l (destination) @0x184ac || 0x1c954: cmp.w (abs).l,d5 @0x1c952 || 0x1c95c: move.w <src>,(abs).l (destination) @0x1c95a || 0x1c9ae: move.w <src>,(abs).l (destination) @0x1c9ac
+=== 0x80da46 -> j1939_torque_curve_fueling_at_point_3 word
+   current: torque_curve_fueling_at_point_3_speed_breakpoint_0_100 | word | typed word: Calterm record JCTQFLP3 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1102+30 JCTQFLP3 [MM3S] TORQUE CURVE FUELING AT POINT 3 SPEED BREAKPOINT.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (13): 0xfa74: ? || 0xfc90: move.w (abs).l,(abs).l (destination) @0xfc8a || 0xfcf4: move.w (abs).l,(abs).l (destination) @0xfcee || 0xfd1e: move.w (abs).l,(abs).l (destination) @0xfd18 || 0xfd3c: move.w (abs).l,(abs).l (destination) @0xfd36 || 0xfe5a: move.w (abs).l,<dst> (source) @0xfe58 || 0xff32: move.w <src>,(abs).l (destination) @0xff30 || 0x18452: cmp.w (abs).l,d4 @0x18450 || 0x1845a: move.w <src>,(abs).l (destination) @0x18458 || 0x184b4: move.w <src>,(abs).l (destination) @0x184b2 || 0x1c962: cmp.w (abs).l,d4 @0x1c960 || 0x1c96a: move.w <src>,(abs).l (destination) @0x1c968 || 0x1c9b4: move.w <src>,(abs).l (destination) @0x1c9b2
+=== 0x80da48 -> j1939_torque_curve_fueling_at_point_4 word
+   current: torque_curve_fueling_at_point_4_speed_breakpoint_0_100 | word | typed word: 12 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 1102+32 JCTQFLP4 [MM3S] TORQUE CURVE FUELING AT POINT 4 SPEED BREAKPOINT.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (12): 0xfc9a: move.w (abs).l,(abs).l (destination) @0xfc94 || 0xfcfe: move.w (abs).l,(abs).l (destination) @0xfcf8 || 0xfd8c: move.w (abs).l,(abs).l (destination) @0xfd86 || 0xfdde: move.w (abs).l,(abs).l (destination) @0xfdd8 || 0xfe90: move.w (abs).l,<dst> (source) @0xfe8e || 0xff38: move.w <src>,(abs).l (destination) @0xff36 || 0x18460: cmp.w (abs).l,d3 @0x1845e || 0x18468: move.w <src>,(abs).l (destination) @0x18466 || 0x184ba: move.w <src>,(abs).l (destination) @0x184b8 || 0x1c970: cmp.w (abs).l,d3 @0x1c96e || 0x1c978: move.w <src>,(abs).l (destination) @0x1c976 || 0x1c9ba: move.w <src>,(abs).l (destination) @0x1c9b8
+=== 0x80da4a -> j1939_torque_curve_fueling_at_point_5 word
+   current: torque_curve_fueling_at_point_5_speed_breakpoint_0_100 | word | typed word: Calterm record JCTQFLP5 is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1102+34 JCTQFLP5 [MM3S] TORQUE CURVE FUELING AT POINT 5 SPEED BREAKPOINT.~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (9): 0xfb1c: move.w <src>,(abs).l (destination) @0xfb1a || 0xfc4a: move.w <src>,(abs).l (destination) @0xfc48 || 0xfca4: move.w (abs).l,(abs).l (destination) @0xfc9e || 0xfd4c: move.w <src>,(abs).l (destination) @0xfd4a || 0xfd96: move.w (abs).l,(abs).l (destination) @0xfd90 || 0xfec6: move.w (abs).l,<dst> (source) @0xfec4 || 0xff3e: move.w <src>,(abs).l (destination) @0xff3c || 0x183e2: ? || 0x1c8b8: ?
+=== 0x80061e -> engine_protection_power_up_shutdown_channel i16
+   current: (no row)
+   refs (2): 0x19280: cmp.w (abs).l,d0 @0x1927e || 0x192e6: move.w (abs).l,(abs).l (destination) @0x192e0
+=== 0x80d33e -> four_dimensional_fueling word
+   current: (no row)
+   e2m: 1053+0 5DFL [MM3S] FUELING VALUE CALCULATED FROM THE 4D FUELING TABLES~0 - 100  len/sign/type=('2', 'U', 'N')
+   refs (4): 0xf7c6: move.w (abs).l,<dst> (source) @0xf7c4 || 0x1c652: move.w <src>,(abs).l (destination) @0x1c650 || 0x35634: ? || 0x35638: ?
+=== 0x80d340 -> four_dimensional_fueling_interpolation_factor word
+   current: timing_alpha_blend_factor | word | typed word: Calterm record FLINML is 2 bytes unsigned (PR #53 round 93)
+   e2m: 1053+2 FLINML [NONE] INTERPOLATION FACTOR FOR 4-D FUELING, MAX FUELING CALCULATION.~0 - 1  len/sign/type=('2', 'U', 'N')
+   refs (10): 0xc3fa: move.w <src>,(abs).l (destination) @0xc3f8 || 0xfbce: cmpi.w #0x4000,(abs).l @0xfbca || 0x1adde: move.w <src>,(abs).l (destination) @0x1addc || 0x1cb88: ? || 0x1cc32: move.w (abs).l,<dst> (source) @0x1cc30 || 0x1d798: move.w (abs).l,<dst> (source) @0x1d796 || 0x1d93a: move.w (abs).l,<dst> (source) @0x1d938; move.w <src>,(abs).l (destination) @0x1d938 || 0x1deb6: move.w (abs).l,<dst> (source) @0x1deb4 || 0x1e050: ? || 0x25964: ?
+=== 0x80d342 -> four_dimensional_fueling_user_maximum i16
+   current: maximum_user_fueling_allowed_0_100 | i16 | typed i16 (the code reads it signed): 3 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 1053+4 5DIRMXFL [%FU] MAXIMUM USER FUELING ALLOWED~0-100  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1e00a: cmp.w (abs).l,d2 @0x1e008 || 0x1e012: move.w (abs).l,<dst> (source) @0x1e010 || 0x1e01a: ?
+=== 0x803f3a -> four_dimensional_fueling_increment_cal i16
+   current: (no row)
+   e2m: 125A+C 5DFLAJ [MM3S] INCREMENTAL FUELING VALUE ADDED TO 4-D FUELING VALUE~-8.7 - 8.7  len/sign/type=('2', 'S', 'N')
+   refs (4): 0x1cbf2: ? || 0x1cc02: ? || 0x1cc4e: ? || 0x1dff6: ?
+=== 0x80a254 -> engine_protection_fuel_temperature word
+   current: vp44_fuel_temperature_value | undefined | 
+   e2m: 81FA+0 EPFLTP [DEGF] FUEL TEMPERATURE USED FOR THE EPF~-40 TO 300  len/sign/type=('2', 'U', 'N')
+   refs (5): 0x188d8: ? || 0x1cada: ? || 0x1cb42: move.w (abs).l,(abs).l (destination) @0x1cb3c || 0x38734: ? || 0x38738: ?
+=== 0x80784a -> engine_protection_fuel_temperature_source word
+   current: dzg_pressure_max_limit | word | typed word: 1 word access in the ROM and no other (PR #53 round 93)
+   e2m: 81F9+2 EPFTFG [HEX] VP44 OR ECM FUEL TEMPERATURE SOURCE FOR EPF (0=VP44 FUEL TEMP)~0-1  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1cb0a: tst.w (abs).l @0x1cb08
+=== 0x80d686 -> injector_fault_engine_speed_limit word
+   current: (no row)
+   e2m: 10C4+0 ZILMES [RPM] OUTPUT ENGINE SPEED LIMIT GOING TO HSG REFERENCE SPEED ALG~1400 - 3000  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1dbde: move.w (abs).l,(abs).l (destination) @0x1dbd8 || 0x359bc: ? || 0x359c0: ?
+=== 0x8072c0 -> cylinder_balance_enable_flag word
+   current: (no row)
+   e2m: 823C+34 CBDEN [NONE] CYLINDER BALANCING ENABLE~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1267c: cmpi.w #0x1,(abs).l @0x12678 || 0x12794: cmpi.w #0x1,(abs).l @0x12790 || 0x127ca: cmpi.w #0x1,(abs).l @0x127c6
+=== 0x8072dc -> cylinder_balance_start_tooth word
+   current: (no row)
+   e2m: 823C+50 CBDST [NONE] CYLINDER BALANCING START TOOTH~0-23  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x126a8: cmp.w (abs).l,d3 @0x126a6
+=== 0x80728e -> cylinder_balance_delta_speed_threshold word
+   current: (no row)
+   e2m: 823C+2 CBDDST [RPM] CYLINDER BALANCING DELTA SPEED THRESHOLD~0-1000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1298c: cmp.w (abs).l,d0 @0x1298a
+=== 0x807290 -> cylinder_balance_upper_speed_limit word
+   current: (no row)
+   e2m: 823C+4 CBDUSL [RPM] CYLINDER BALANCING UPPER SPEED LIMIT~0-3000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x12aba: cmp.w (abs).l,d0 @0x12ab8
+=== 0x807292 -> cylinder_balance_lower_speed_limit word
+   current: (no row)
+   e2m: 823C+6 CBDLSL [RPM] CYLINDER BALANCING LOWER SPEED LIMIT~0-3000  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x12aaa: cmp.w (abs).l,d0 @0x12aa8
+=== 0x807296 -> cylinder_balance_magnitude_gain_2 word
+   current: (no row)
+   e2m: 823C+A CBDMG2 [N] CYLINDER BALANCING MAGNITUDE GAIN_2~0-100  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12f5a: move.w (abs).l,<dst> (source) @0x12f58 || 0x12f70: move.w (abs).l,<dst> (source) @0x12f6e
+=== 0x807298 -> cylinder_balance_magnitude_gain_3 word
+   current: (no row)
+   e2m: 823C+C CBDMG3 [N] CYLINDER BALANCING MAGNITUDE GAIN_3~0-100  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x12fc2: move.w (abs).l,<dst> (source) @0x12fc0
+=== 0x80729a -> cylinder_balance_error_filter_coefficient word
+   current: (no row)
+   e2m: 823C+E CBDEFCN [N] CYLINDER BALANCING ERROR FILTER CONSTANT~0-1  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12ada: move.w (abs).l,<dst> (source) @0x12ad8 || 0x12afe: move.w (abs).l,<dst> (source) @0x12afc
+=== 0x8072a0 -> cylinder_balance_fueling_trim_maximum word
+   current: (no row)
+   e2m: 823C+14 CBDFTMX [MG/S] CYLINDER BALANCING FUELING TRIM MAXIMUM~0-5  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x131d6: move.w (abs).l,<dst> (source) @0x131d4
+=== 0x8072a2 -> cylinder_balance_fueling_trim_minimum i16
+   current: (no row)
+   e2m: 823C+16 CBDFTMN [MG/S] CYLINDER BALANCING FUELING TRIM MINIMUM~-5-0  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x131d0: move.w (abs).l,<dst> (source) @0x131ce
+=== 0x8072be -> cylinder_balance_motoring_fuel_threshold word
+   current: (no row)
+   e2m: 823C+32 CBDMFT [MM3S] CYLINDER BALANCING MOTORING FUEL THRESHOLD~0-100  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x12a90: cmp.w (abs).l,d0 @0x12a8e
+=== 0x8072c2 -> cylinder_balance_reference_1_cylinder_1_real i16
+   current: (no row)
+   e2m: 823C+36 CBDR1C1R [N] CYLINDER BALANCING REFERENCE_1 CYLINDER_1 REAL~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12cb4: move.w (abs).l,<dst> (source) @0x12cb2
+=== 0x8072c4 -> cylinder_balance_reference_1_cylinder_1_imaginary i16
+   current: (no row)
+   e2m: 823C+38 CBDR1C1I [N] CYLINDER BALANCING REFERENCE_1 CYLINDER_1 IMAG~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12ca4: move.w (abs).l,<dst> (source) @0x12ca2
+=== 0x8072c6 -> cylinder_balance_reference_1_cylinder_5_real i16
+   current: (no row)
+   e2m: 823C+3A CBDR1C5R [N] CYLINDER BALANCING REFERENCE_1 CYLINDER_5 REAL~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12ce6: move.w (abs).l,<dst> (source) @0x12ce4
+=== 0x8072c8 -> cylinder_balance_reference_1_cylinder_5_imaginary i16
+   current: (no row)
+   e2m: 823C+3C CBDR1C5I [N] CYLINDER BALANCING REFERENCE_1 CYLINDER_5 IMAG~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12cd6: move.w (abs).l,<dst> (source) @0x12cd4
+=== 0x8072ca -> cylinder_balance_reference_1_cylinder_3_real i16
+   current: (no row)
+   e2m: 823C+3E CBDR1C3R [N] CYLINDER BALANCING REFERENCE_1 CYLINDER_3 REAL~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12d18: move.w (abs).l,<dst> (source) @0x12d16
+=== 0x8072cc -> cylinder_balance_reference_1_cylinder_3_imaginary i16
+   current: (no row)
+   e2m: 823C+40 CBDR1C3I [N] CYLINDER BALANCING REFERENCE_1 CYLINDER_3 IMAG~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12d08: move.w (abs).l,<dst> (source) @0x12d06
+=== 0x8072ce -> cylinder_balance_reference_2_cylinder_1_real i16
+   current: (no row)
+   e2m: 823C+42 CBDR2C1R [N] CYLINDER BALANCING REFERENCE_2 CYLINDER_1 REAL~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12d98: move.w (abs).l,<dst> (source) @0x12d96
+=== 0x8072d0 -> cylinder_balance_reference_2_cylinder_1_imaginary i16
+   current: (no row)
+   e2m: 823C+44 CBDR2C1I [N] CYLINDER BALANCING REFERENCE_2 CYLINDER_1 IMAG~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12d8c: move.w (abs).l,<dst> (source) @0x12d8a
+=== 0x8072d2 -> cylinder_balance_reference_2_cylinder_5_real i16
+   current: (no row)
+   e2m: 823C+46 CBDR2C5R [N] CYLINDER BALANCING REFERENCE_2 CYLINDER_5 REAL~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12dc2: move.w (abs).l,<dst> (source) @0x12dc0
+=== 0x8072d4 -> cylinder_balance_reference_2_cylinder_5_imaginary i16
+   current: (no row)
+   e2m: 823C+48 CBDR2C5I [N] CYLINDER BALANCING REFERENCE_2 CYLINDER_5 IMAG~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12db6: move.w (abs).l,<dst> (source) @0x12db4
+=== 0x8072d6 -> cylinder_balance_reference_2_cylinder_3_real i16
+   current: (no row)
+   e2m: 823C+4A CBDR2C3R [N] CYLINDER BALANCING REFERENCE_2 CYLINDER_3 REAL~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12dec: move.w (abs).l,<dst> (source) @0x12dea
+=== 0x8072d8 -> cylinder_balance_reference_2_cylinder_3_imaginary i16
+   current: (no row)
+   e2m: 823C+4C CBDR2C3I [N] CYLINDER BALANCING REFERENCE_2 CYLINDER_3 IMAG~-1-1  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x12de0: move.w (abs).l,<dst> (source) @0x12dde
+=== 0x8072da -> cylinder_balance_reference_3 word
+   current: (no row)
+   e2m: 823C+4E CBDR3 [N] CYLINDER BALANCING REFERENCE_3~0-1  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12e64: move.w (abs).l,<dst> (source) @0x12e62; move.w <src>,(abs).l (destination) @0x12e62 || 0x12e70: tst.w (abs).l @0x12e6e
+=== 0x8072de -> cylinder_balance_compensation_enable word
+   current: (no row)
+   e2m: 823C+52 CBDCEN [N] CYLINDER BALANCING COMPENSATION ENABLE~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x130b4: cmpi.w #0x1,(abs).l @0x130b0 || 0x13288: tst.w (abs).l @0x13286 || 0x13316: cmpi.w #0x1,(abs).l @0x13312
+=== 0x8072e0 -> cylinder_balance_dynamic_compensation_reset_enable word
+   current: (no row)
+   e2m: 823C+54 CBDDCR [NONE] CYLINDER BALANCING DYNAMICS COMPENSATION RESET~0-1  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x12c22: cmpi.w #0x1,(abs).l @0x12c1e
+=== 0x8072e4 -> cylinder_balance_trim_gain_1_small word
+   current: (no row)
+   e2m: 823C+58 CBDTG1S [MG/S] CYLINDER BALANCING TRIM GAIN_1 SMALL~0-1  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x13032: move.w (abs).l,<dst> (source) @0x13030; move.w <src>,(abs).l (destination) @0x13030
+=== 0x8072e6 -> cylinder_balance_trim_gain_2_small word
+   current: (no row)
+   e2m: 823C+5A CBDTG2S [MG/S] CYLINDER BALANCING TRIM GAIN_2 SMALL~0-1  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x13056: move.w (abs).l,<dst> (source) @0x13054; move.w <src>,(abs).l (destination) @0x13054
+=== 0x8072e8 -> cylinder_balance_trim_gain_3_small word
+   current: (no row)
+   e2m: 823C+5C CBDTG3S [MG/S] CYLINDER BALANCING TRIM GAIN_3 SMALL~0-1  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1307a: move.w (abs).l,<dst> (source) @0x13078; move.w <src>,(abs).l (destination) @0x13078
+=== 0x8072ea -> cylinder_balance_coolant_temperature_threshold word
+   current: (no row)
+   e2m: 823C+5E CBDCLTP [DEGF] CYL BALANCE DISABLED BELOW THIS COOLANT TEMP~-50 TO 255  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x13100: cmp.w (abs).l,d0 @0x130fe
+=== 0x8072ec -> cylinder_balance_intake_manifold_temperature_threshold word
+   current: (no row)
+   e2m: 823C+60 CBDIMTP [DEGF] CYL BALANCE DISABLED BELOW THIS INTAKE AIR TEMP~-50 TO 255  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x13110: cmp.w (abs).l,d0 @0x1310e
+=== 0x8072ee -> cylinder_balance_cutout_disable_time word
+   current: (no row)
+   e2m: 823C+62 CBDDSTM [SEC] TIME DELAY BEFORE CBD RESUMES AFTER CYL CUTOUT~0 TO 60  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x1309e: move.w (abs).l,<dst> (source) @0x1309c; move.w <src>,(abs).l (destination) @0x1309c
+=== 0x8072f0 -> cylinder_balance_fueling_trim_limit_mode word
+   current: (no row)
+   e2m: 823C+64 CBDLMMD [NONE] LIMIT MODE;0=NONE;1=RESET TO LAST;2=RESET TO 0~0 TO 2  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x131dc: move.w (abs).l,<dst> (source) @0x131da || 0x1322c: cmpi.w #0x1,(abs).l @0x13228 || 0x13252: cmpi.w #0x2,(abs).l @0x1324e
+=== 0x8072f2 -> cylinder_balance_update_maximum_road_speed word
+   current: (no row)
+   e2m: 823C+66 CBDVSTD [MPH] CBD UPDATES DISABLED ABOVE THIS ROAD SPEED~0 TO 120  len/sign/type=('2', 'U', 'N')
+   refs (1): 0x130f0: cmp.w (abs).l,d0 @0x130ee
+=== 0x8091e8 -> cylinder_balance_filtered_fueling word
+   current: (no row)
+   e2m: 823D+0 CBDFFL [MM3S] CYLINDER BALANCING FILTERED FUELING~0-1000  len/sign/type=('2', 'U', 'N')
+   refs (6): 0x1278c: ? || 0x12916: move.w (abs).l,<dst> (source) @0x12914; move.w <src>,(abs).l (destination) @0x12914 || 0x12a8a: move.w (abs).l,<dst> (source) @0x12a88 || 0x12c66: move.w (abs).l,<dst> (source) @0x12c64; move.w <src>,(abs).l (destination) @0x12c64 || 0x3894c: ? || 0x38950: ?
+=== 0x8091ea -> cylinder_balance_speed_buffer_1 dword
+   current: intake_manifold_temp_raw | undefined | 
+   e2m: 823D+2 CBDSB1 [N] CYLINDER BALANCING SPEED BUFFER_1~0-0.00001  len/sign/type=('4', 'S', 'N')
+   refs (2): 0x12728: ? || 0x127f6: ?
+=== 0x809206 -> cylinder_balance_fourier_real_component_1 i32
+   current: (no row)
+   e2m: 823D+1E CBDFRC1 [TICS] CYLINDER BALANCING FFT REAL COMP_1~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (5): 0x1283c: move.l <src>,(abs).l (destination) @0x1283a || 0x12cbe: ? || 0x12cf0: ? || 0x12d22: ? || 0x12e88: tst.l (abs).l @0x12e86
+=== 0x80920a -> cylinder_balance_fourier_imaginary_component_1 i32
+   current: (no row)
+   e2m: 823D+22 CBDFIC1 [TICS] CYLINDER BALANCING FFT REAL COMP_1~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (5): 0x1286a: move.l <src>,(abs).l (destination) @0x12868 || 0x12cae: ? || 0x12ce0: ? || 0x12d12: ? || 0x12eaa: tst.l (abs).l @0x12ea8
+=== 0x80920e -> cylinder_balance_fourier_real_component_2 i32
+   current: (no row)
+   e2m: 823D+26 CBDFRC2 [TICS] CYLINDER BALANCING FFT REAL COMP_1~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (3): 0x12898: move.l <src>,(abs).l (destination) @0x12896 || 0x128aa: ? || 0x129f8: move.l (abs).l,<dst> (source) @0x129f6
+=== 0x809212 -> cylinder_balance_fourier_imaginary_component_2 i32
+   current: (no row)
+   e2m: 823D+2A CBDFIC2 [TICS] CYLINDER BALANCING FFT REAL COMP_1~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (2): 0x128dc: move.l <src>,(abs).l (destination) @0x128da || 0x12a2c: move.l (abs).l,<dst> (source) @0x12a2a
+=== 0x809216 -> cylinder_balance_fourier_real_component_3 i32
+   current: (no row)
+   e2m: 823D+2E CBDFRC3 [TICS] CYLINDER BALANCING FFT REAL COMP_1~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (1): 0x12906: move.l <src>,(abs).l (destination) @0x12904
+=== 0x80922e -> cylinder_balance_stop_compensation_flag word
+   current: (no row)
+   e2m: 823D+46 CBDSCF [N] CYLINDER BALANCING STOP COMPENSATION FLAG~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x129a8: ? || 0x129b0: clr.w (abs).l @0x129ae || 0x130be: tst.w (abs).l @0x130bc
+=== 0x809230 -> cylinder_balance_fourier_threshold word
+   current: (no row)
+   e2m: 823D+48 CBDFT [TICS] CYLINDER BALANCING FFT THRESHOLD~0-10000  len/sign/type=('2', 'U', 'N')
+   refs (4): 0x13012: move.w <src>,(abs).l (destination) @0x13010 || 0x1301e: cmp.w (abs).l,d0 @0x1301c || 0x13042: cmp.w (abs).l,d0 @0x13040 || 0x13066: cmp.w (abs).l,d0 @0x13064
+=== 0x809232 -> cylinder_balance_fourier_magnitude_1 word
+   current: (no row)
+   e2m: 823D+4A CBDFM1 [TICS] CYLINDER BALANCING FILTERED ERROR_3~0-15000  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12f02: move.w <src>,(abs).l (destination) @0x12f00 || 0x13018: move.w (abs).l,<dst> (source) @0x13016
+=== 0x809234 -> cylinder_balance_fourier_magnitude_2 word
+   current: (no row)
+   e2m: 823D+4C CBDFM2 [TICS] CYLINDER BALANCING FILTERED ERROR_3~0-15000  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12f9a: move.w <src>,(abs).l (destination) @0x12f98 || 0x1303c: move.w (abs).l,<dst> (source) @0x1303a
+=== 0x809236 -> cylinder_balance_fourier_magnitude_3 word
+   current: (no row)
+   e2m: 823D+4E CBDFM3 [TICS] CYLINDER BALANCING FILTERED ERROR_3~0-15000  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12fec: move.w <src>,(abs).l (destination) @0x12fea || 0x13060: move.w (abs).l,<dst> (source) @0x1305e
+=== 0x809246 -> cylinder_balance_fueling_trim_1 i16
+   current: cyl_balance_correction_array | undefined | 
+   e2m: 823D+5E CBDDFO1 [MG/S] CYLINDER BALANCING FUELING TRIM_1~-5-5  len/sign/type=('2', 'S', 'N')
+   refs (9): 0x131b2: ? || 0x131e2: ? || 0x131f6: ? || 0x13270: ? || 0x13292: ? || 0x132a6: ? || 0x132b8: ? || 0x132fc: ? || 0x1332a: move.w (abs).l,<dst> (source) @0x13328
+=== 0x809248 -> cylinder_balance_fueling_trim_2 i16
+   current: (no row)
+   e2m: 823D+60 CBDDFO2 [MG/S] CYLINDER BALANCING FUELING TRIM_2~-5-5  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x133a2: move.w (abs).l,<dst> (source) @0x133a0
+=== 0x80924a -> cylinder_balance_fueling_trim_3 i16
+   current: (no row)
+   e2m: 823D+62 CBDDFO3 [MG/S] CYLINDER BALANCING FUELING TRIM_3~-5-5  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x13366: move.w (abs).l,<dst> (source) @0x13364
+=== 0x80924c -> cylinder_balance_fueling_trim_4 i16
+   current: (no row)
+   e2m: 823D+64 CBDDFO4 [MG/S] CYLINDER BALANCING FUELING TRIM_4~-5-5  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x133c0: move.w (abs).l,<dst> (source) @0x133be
+=== 0x80924e -> cylinder_balance_fueling_trim_5 i16
+   current: (no row)
+   e2m: 823D+66 CBDDFO5 [MG/S] CYLINDER BALANCING FUELING TRIM_5~-5-5  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x13348: move.w (abs).l,<dst> (source) @0x13346
+=== 0x809250 -> cylinder_balance_fueling_trim_6 i16
+   current: (no row)
+   e2m: 823D+68 CBDDFO6 [MG/S] CYLINDER BALANCING FUELING TRIM_6~-5-5  len/sign/type=('2', 'S', 'N')
+   refs (1): 0x13384: move.w (abs).l,<dst> (source) @0x13382
+=== 0x80925e -> cylinder_balance_trim_limits_exceeded_flag word
+   current: (no row)
+   e2m: 823D+76 CBDTLE [N] CYLINDER BALANCING TRIM LIMITS EXCEEDED~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x13204: ? || 0x13212: clr.w (abs).l @0x13210 || 0x13222: cmpi.w #0x1,(abs).l @0x1321e
+=== 0x809260 -> cylinder_balance_trim_index_1 word
+   current: (no row)
+   e2m: 823D+78 CBDTI1 [N] CYLINDER BALANCING TRIM INDEX_1~0-5  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12d86: move.w <src>,(abs).l (destination) @0x12d84 || 0x1314c: move.w (abs).l,<dst> (source) @0x1314a
+=== 0x809262 -> cylinder_balance_trim_index_2 word
+   current: (no row)
+   e2m: 823D+7A CBDTI2 [N] CYLINDER BALANCING TRIM INDEX_2~0-5  len/sign/type=('2', 'U', 'N')
+   refs (2): 0x12e56: move.w <src>,(abs).l (destination) @0x12e54 || 0x13134: move.w (abs).l,<dst> (source) @0x13132
+=== 0x809264 -> cylinder_balance_trim_index_3 word
+   current: (no row)
+   e2m: 823D+7C CBDTI3 [N] CYLINDER BALANCING TRIM INDEX_3~0-5  len/sign/type=('2', 'U', 'N')
+   refs (4): 0x12e68: move.w (abs).l,(abs).l (destination) @0x12e62 || 0x12e7a: ? || 0x12e82: clr.w (abs).l @0x12e80 || 0x1311c: move.w (abs).l,<dst> (source) @0x1311a
+=== 0x80926e -> cylinder_balance_trim_increment_1 word
+   current: throttle_position_raw | word | typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+   e2m: 823D+86 CBDTINC1 [N] CYLINDER BALANCING TRIM INCREMENT_1~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1302a: move.w (abs).l,(abs).l (destination) @0x13024 || 0x13036: move.w (abs).l,(abs).l (destination) @0x13030 || 0x13176: move.w (abs).l,<dst> (source) @0x13174
+=== 0x809270 -> cylinder_balance_trim_increment_2 word
+   current: (no row)
+   e2m: 823D+88 CBDTINC2 [N] CYLINDER BALANCING TRIM INCREMENT_2~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x1304e: move.w (abs).l,(abs).l (destination) @0x13048 || 0x1305a: move.w (abs).l,(abs).l (destination) @0x13054 || 0x13170: move.w (abs).l,<dst> (source) @0x1316e
+=== 0x809272 -> cylinder_balance_trim_increment_3 word
+   current: (no row)
+   e2m: 823D+8A CBDTINC3 [N] CYLINDER BALANCING TRIM INCREMENT_3~0-1  len/sign/type=('2', 'U', 'N')
+   refs (3): 0x13072: move.w (abs).l,(abs).l (destination) @0x1306c || 0x1307e: move.w (abs).l,(abs).l (destination) @0x13078 || 0x1316a: move.w (abs).l,<dst> (source) @0x13168
+=== 0x809276 -> cylinder_balance_adjusted_real_component_2 i16
+   current: (no row)
+   e2m: 823D+8E CBDARC2 [N] CYLINDER BALANCING ADJUSTED REAL COMP_2~-10000-10000  len/sign/type=('2', 'S', 'N')
+   refs (9): 0x12a26: move.w <src>,(abs).l (destination) @0x12a24 || 0x12ad0: move.w (abs).l,<dst> (source) @0x12ace || 0x12aec: move.w (abs).l,<dst> (source) @0x12aea || 0x12d9e: ? || 0x12dc8: ? || 0x12df2: ? || 0x12f08: tst.w (abs).l @0x12f06 || 0x12f10: move.w (abs).l,<dst> (source) @0x12f0e || 0x12f20: move.w (abs).l,<dst> (source) @0x12f1e; move.w <src>,(abs).l (destination) @0x12f1e
+=== 0x809278 -> cylinder_balance_adjusted_imaginary_component_2 i16
+   current: (no row)
+   e2m: 823D+90 CBDAIC2 [N] CYLINDER BALANCING ADJUSTED IMAG COMP_2~-10000-10000  len/sign/type=('2', 'S', 'N')
+   refs (9): 0x12a58: move.w <src>,(abs).l (destination) @0x12a56 || 0x12af4: move.w (abs).l,<dst> (source) @0x12af2 || 0x12b10: move.w (abs).l,<dst> (source) @0x12b0e || 0x12d92: ? || 0x12dbc: ? || 0x12de6: ? || 0x12f2a: tst.w (abs).l @0x12f28 || 0x12f32: move.w (abs).l,<dst> (source) @0x12f30 || 0x12f42: move.w (abs).l,<dst> (source) @0x12f40; move.w <src>,(abs).l (destination) @0x12f40
+=== 0x80927a -> cylinder_balance_adjusted_real_component_3 i16
+   current: (no row)
+   e2m: 823D+92 CBDARC3 [N] CYLINDER BALANCING ADJUSTED REAL COMP_2~-10000-10000  len/sign/type=('2', 'S', 'N')
+   refs (5): 0x12c9e: move.w <src>,(abs).l (destination) @0x12c9c || 0x12e5c: tst.w (abs).l @0x12e5a || 0x12fa0: tst.w (abs).l @0x12f9e || 0x12fa8: move.w (abs).l,<dst> (source) @0x12fa6 || 0x12fb8: move.w (abs).l,<dst> (source) @0x12fb6; move.w <src>,(abs).l (destination) @0x12fb6
+=== 0x809288 -> cylinder_balance_acceleration_buffer_2 i32
+   current: (no row)
+   e2m: 823D+A0 CBDAXB2 [NONE] CYLINDER BALANCING ACCELARATION BUFFER_2~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (5): 0x1281e: ? || 0x12850: ? || 0x1287e: ? || 0x128c4: ? || 0x128e2: move.l (abs).l,<dst> (source) @0x128e0
+=== 0x80928c -> cylinder_balance_acceleration_buffer_3 i32
+   current: (no row)
+   e2m: 823D+A4 CBDAXB3 [NONE] CYLINDER BALANCING ACCELARATION BUFFER_3~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (3): 0x12830: ? || 0x1289e: move.l (abs).l,<dst> (source) @0x1289c || 0x128fa: ?
+=== 0x809290 -> cylinder_balance_acceleration_buffer_4 i32
+   current: (no row)
+   e2m: 823D+A8 CBDAXB4 [NONE] CYLINDER BALANCING ACCELARATION BUFFER_4~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (5): 0x12824: ? || 0x12856: ? || 0x12884: ? || 0x128be: ? || 0x128e8: ?
+=== 0x809294 -> cylinder_balance_acceleration_buffer_5 i32
+   current: (no row)
+   e2m: 823D+AC CBDAXB5 [NONE] CYLINDER BALANCING ACCELARATION BUFFER_5~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (5): 0x12818: ? || 0x1285c: ? || 0x1288a: ? || 0x128ca: ? || 0x12900: ?
+=== 0x809298 -> cylinder_balance_acceleration_buffer_6 i32
+   current: (no row)
+   e2m: 823D+B0 CBDAXB6 [NONE] CYLINDER BALANCING ACCELARATION BUFFER_6~-10000-10000  len/sign/type=('4', 'S', 'N')
+   refs (3): 0x12836: ? || 0x128a4: ? || 0x128ee: ?
+=== 0x8092e0 -> cylinder_balance_component_3_adjustment i16
+   current: (no row)
+   e2m: 823D+F8 CBDC3ADJ [N] CYLINDER BALANCING COMP_3 ADJUSTMENT~-10000-10000  len/sign/type=('2', 'S', 'N')
+   refs (2): 0x12c8c: move.w <src>,(abs).l (destination) @0x12c8a || 0x12c98: ?
+=== 0x8092e2 -> cylinder_balance_active_trim_gain word
+   current: cyl_balance_gain_percent | undefined | 
+   e2m: 823D+FA CBDATG [NONE] CYLINDER BALANCING ACTIVE TRIM GAIN~0-1  len/sign/type=('2', 'U', 'N')
+   refs (8): 0x12944: move.w <src>,(abs).l (destination) @0x12942 || 0x1297e: cmpi.w #0x64,(abs).l @0x1297a || 0x13330: ? || 0x1334e: ? || 0x1336c: ? || 0x1338a: ? || 0x133a8: ? || 0x133c6: ?
+=== 0x8092e4 -> cylinder_balance_speed_buffer_ready_flag word
+   current: (no row)
+   e2m: 823D+FC CBDSBRF [NONE] CYLINDER BALANCING SPEED BUFFER READY FLAG~0-1  len/sign/type=('2', 'U', 'N')
+   refs (4): 0x1275a: ? || 0x12772: clr.w (abs).l @0x12770 || 0x127d6: cmpi.w #0x1,(abs).l @0x127d2 || 0x133f2: clr.w (abs).l @0x133f0
+=== 0x804158 -> cylinder_balance_saved_fueling_trims_cal i16[6]
+   current: cyl_balance_trim_array_cal | undefined | (was cyl_balance_trim_array; PR #53 round 94: the EEPROM image is 0x148a bytes
+   e2m: 8241+0 CBDDFTO1 [MSEC] CYL 1 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5  len/sign/type=('2', 'S', 'N')
+   e2m inside: 0x80415a ['8241+2 CBDDFTO2 [MSEC] CYL 2 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5']; 0x80415c ['8241+4 CBDDFTO3 [MSEC] CYL 3 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5']; 0x80415e ['8241+6 CBDDFT04 [MSEC] CYL 4 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5']; 0x804160 ['8241+8 CBDDFTO5 [MSEC] CYL 5 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5']; 0x804162 ['8241+A CBDDFTO6 [MSEC] CYL 6 CBD ONTIME TRIM, SAVED AT POWER-DOWN~-5-5']
+   refs (6): 0x131b8: ? || 0x1323c: ? || 0x1325c: ? || 0x13276: ? || 0x13302: ? || 0x13548: ?
+=== 0x80a1ac -> balanced_cylinder_fueling_offsets i16[6]
+   current: (no row)
+   refs (2): 0x13342: move.w <src>,(abs).l (destination) @0x13340 || 0x133e2: ?
+=== 0x8002a4 -> cylinder_balance_segment_index word
+   current: load_trending_table_1_ptr | undefined | 
+   refs (1): 0x12674: ?
+=== 0x8002a6 -> cylinder_balance_segment_period_sum dword
+   current: (no row)
+   rows inside: 0x8002a8 fuel_timing_blend_rpm_input_1 undefined
+   refs (5): 0x126b0: clr.l (abs).l @0x126ae || 0x126c6: ? || 0x12702: move.l (abs).l,<dst> (source) @0x12700 || 0x1271a: move.l (abs).l,<dst> (source) @0x12718 || 0x12766: clr.l (abs).l @0x12764
+=== 0x8002aa -> cylinder_balance_segment_tooth_count word
+   current: load_trending_table_2_base | word | typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+   refs (4): 0x126b6: clr.w (abs).l @0x126b4 || 0x126cc: ? || 0x126d4: cmpi.w #0x4,(abs).l @0x126d0 || 0x12760: clr.w (abs).l @0x1275e
+=== 0x800322 -> cylinder_balance_segment_periods dword[7]
+   current: throttle_zero_position_counter | undefined | 
+   rows inside: 0x80032a throttle_timer_capture_backup undefined, 0x800332 rpm_filter_buffer_ptr undefined, 0x80033a oil_pressure_crank_exit_ptr undefined
+   refs (3): 0x126fc: ? || 0x12722: ? || 0x12752: move.l <src>,(abs).l (destination) @0x12750
+=== 0x80033e -> cylinder_balance_speed_buffer_processed_flag word
+   current: oil_pressure_mode_init_flag | word | typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+   refs (3): 0x127e2: ? || 0x12994: tst.w (abs).l @0x12992 || 0x129b6: clr.w (abs).l @0x129b4
+=== 0x8002c6 -> cylinder_balance_engine_speed_previous word
+   current: load_trending_table_6_ptr | word | typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+   refs (2): 0x12954: move.w (abs).l,<dst> (source) @0x12952 || 0x12976: move.w (abs).l,(abs).l (destination) @0x12970
+=== 0x8002c8 -> cylinder_balance_engine_speed_change word
+   current: (no row)
+   refs (3): 0x12964: move.w <src>,(abs).l (destination) @0x12962 || 0x1296c: move.w <src>,(abs).l (destination) @0x1296a || 0x12986: move.w (abs).l,<dst> (source) @0x12984
+=== 0x8002ca -> cylinder_balance_absolute_fourier_real_component_1 word
+   current: peak_torque_engine_mode_input | word | typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+   refs (4): 0x12e98: move.w <src>,(abs).l (destination) @0x12e96 || 0x12ea4: move.w (abs).l,(abs).l (destination) @0x12e9e || 0x12ecc: move.w (abs).l,<dst> (source) @0x12eca || 0x12edc: move.w (abs).l,<dst> (source) @0x12eda
+=== 0x8002cc -> cylinder_balance_absolute_fourier_imaginary_component_1 word
+   current: engine_operating_mode_previous | word | typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+   refs (4): 0x12eba: move.w <src>,(abs).l (destination) @0x12eb8 || 0x12ec6: move.w (abs).l,(abs).l (destination) @0x12ec0 || 0x12ed2: cmp.w (abs).l,d0 @0x12ed0 || 0x12ee6: move.w (abs).l,<dst> (source) @0x12ee4
+=== 0x8002ce -> cylinder_balance_absolute_adjusted_real_component_2 word
+   current: engine_mode_previous_0 | word | typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+   refs (4): 0x12f18: move.w <src>,(abs).l (destination) @0x12f16 || 0x12f24: move.w (abs).l,(abs).l (destination) @0x12f1e || 0x12f4c: move.w (abs).l,<dst> (source) @0x12f4a || 0x12f60: ?
+=== 0x8002d0 -> cylinder_balance_absolute_adjusted_imaginary_component_2 word
+   current: engine_mode_previous_1 | undefined | 
+   rows inside: 0x8002d1 protection_reserved_1 undefined
+   refs (4): 0x12f3a: move.w <src>,(abs).l (destination) @0x12f38 || 0x12f46: move.w (abs).l,(abs).l (destination) @0x12f40 || 0x12f52: cmp.w (abs).l,d0 @0x12f50 || 0x12f76: ?
+=== 0x8002d2 -> cylinder_balance_absolute_adjusted_real_component_3 word
+   current: engine_mode_previous_state_2d2 | word | typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+   refs (3): 0x12fb0: move.w <src>,(abs).l (destination) @0x12fae || 0x12fbc: move.w (abs).l,(abs).l (destination) @0x12fb6 || 0x12fc8: ?
+=== 0x8002d4 -> cylinder_balance_power_up_fueling_trims i16[6]
+   current: engine_mode_previous_2 | undefined | 
+   rows inside: 0x8002d5 protection_reserved_2 undefined, 0x8002d6 engine_overspeed_counter undefined, 0x8002d8 vp44_communication_status_latch undefined, 0x8002d9 protection_reserved_3 undefined, 0x8002da protection_state_machine_index undefined, 0x8002dc protection_reserved_5 undefined, 0x8002de protection_threshold_table_ptr undefined
+   refs (2): 0x13236: ? || 0x13542: ?
+=== 0x8002e0 -> cylinder_balance_real_2_dynamics_compensation_previous_values word[16]
+   current: system_timer_array | undefined | 
+   rows inside: 0x8002e2 protection_threshold_status_shifted undefined, 0x8002e6 engine_rpm_previous_nonzero word, 0x8002e8 high_rpm_shutdown_previous , 0x8002ea diagnostic_protection_previous , 0x8002ec engine_mode_transition_flag , 0x8002ee protection_fault_id_table undefined, 0x8002f2 engine_state_timer undefined, 0x8002f6 engine_mode_transition_timer undefined, 0x8002fa protection_state2_rpm_timer undefined, 0x8002fc protection_state2_threshold undefined, 0x8002fe protection_state2_lookup_args undefined
+   refs (4): 0x12b1e: ? || 0x12bb6: ? || 0x12c32: ? || 0x13412: ?
+=== 0x800300 -> cylinder_balance_imaginary_2_dynamics_compensation_previous_values word[16]
+   current: protection_state2_table_ptr_1 | undefined | 
+   rows inside: 0x800304 protection_state2_rpm_snapshot undefined, 0x800306 protection_state2_table_ptr_2 undefined
+   refs (4): 0x12b62: ? || 0x12bf6: ? || 0x12c2c: ? || 0x1340c: ?
+=== 0x800320 -> cylinder_balance_engine_speed_bin_index i16
+   current: rpm_speed_bin_index | i16 | typed i16 (the code reads it signed): 18 word accesses in the ROM and no other (PR #53 round 93)
+   refs (18): 0x12a5e: clr.w (abs).l @0x12a5c || 0x12a7c: move.w <src>,(abs).l (destination) @0x12a7a || 0x12b18: move.w (abs).l,<dst> (source) @0x12b16 || 0x12b2a: move.w (abs).l,<dst> (source) @0x12b28 || 0x12b3a: move.w (abs).l,<dst> (source) @0x12b38 || 0x12b4c: move.w (abs).l,<dst> (source) @0x12b4a || 0x12b5c: move.w (abs).l,<dst> (source) @0x12b5a || 0x12b6e: move.w (abs).l,<dst> (source) @0x12b6c || 0x12b7e: move.w (abs).l,<dst> (source) @0x12b7c || 0x12b90: move.w (abs).l,<dst> (source) @0x12b8e || 0x12ba0: move.w (abs).l,<dst> (source) @0x12b9e || 0x12bb0: move.w (abs).l,<dst> (source) @0x12bae || 0x12bc0: move.w (abs).l,<dst> (source) @0x12bbe || 0x12bd0: move.w (abs).l,<dst> (source) @0x12bce || 0x12be0: move.w (abs).l,<dst> (source) @0x12bde || 0x12bf0: move.w (abs).l,<dst> (source) @0x12bee
+=== 0x800220 -> cylinder_balance_cutout_disable_timer word
+   current: manifold_temp_table_3_x_ptr | word | typed word: 5 word accesses in the ROM and no other (PR #53 round 93)
+   refs (5): 0x13084: tst.w (abs).l @0x13082 || 0x1308c: ? || 0x130a2: move.w (abs).l,(abs).l (destination) @0x1309c || 0x130e0: tst.w (abs).l @0x130de || 0x13320: tst.w (abs).l @0x1331e

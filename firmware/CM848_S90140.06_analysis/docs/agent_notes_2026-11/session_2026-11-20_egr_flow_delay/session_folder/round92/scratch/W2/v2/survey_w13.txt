@@ -1,0 +1,110 @@
++0x1c ADEBLVOD   types={'S': 16} masks={'1': 16} files=16 labels=['EB_Switch_Level_Override']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] A/D OVERRIDE FOR ENGINE BRAKE SWITCH LEVEL.
++0x1c Active_Driver_Demand_With_Jcomm types={'S': 6} masks={'2': 6} files=6 labels=['Active_Driver_Demand_With_Jcomm']
+      [ 6 files e.g. CHR_CC_11.35.24.02.e2m] MAKES DRIVER DEMAND TORQUE ACTIVE DURRING JCOMM CONTROL MODE MSGS.
++0x1c DS01SWUO   types={'S': 94} masks={'2': 94} files=41 labels=['DS01SWUO']
+      [41 files e.g. 00V2.e2m] BIT 1 SWITCH 1 USER OVERRIDE ENABLE FLAG
++0x1c DS02SWUO   types={'S': 94} masks={'4': 94} files=41 labels=['DS02SWUO']
+      [41 files e.g. 00V2.e2m] BIT 2 SWITCH 2 USER OVERRIDE ENABLE FLAG
++0x1c DS03SWUO   types={'S': 94} masks={'8': 94} files=41 labels=['DS03SWUO']
+      [41 files e.g. 00V2.e2m] BIT 3 SWITCH 3 USER OVERRIDE ENABLE FLAG
++0x1c DS05SWUO   types={'S': 93} masks={'10': 93} files=41 labels=['DS05SWUO']
+      [41 files e.g. 00V2.e2m] BIT 4 SWITCH 5 USER OVERRIDE ENABLE FLAG
++0x1c DS06SWUO   types={'S': 93} masks={'20': 93} files=41 labels=['DS06SWUO']
+      [41 files e.g. 00V2.e2m] BIT 5 SWITCH 6 USER OVERRIDE ENABLE FLAG
++0x1c DS07SWUO   types={'S': 93} masks={'40': 93} files=41 labels=['DS07SWUO']
+      [41 files e.g. 00V2.e2m] BIT 6 SWITCH 7 USER OVERRIDE ENABLE FLAG
++0x1c DS08SWUO   types={'S': 132} masks={'80': 132} files=43 labels=['DS08SWUO']
+      [43 files e.g. 00V2.e2m] BIT 7 SWITCH 8 USER OVERRIDE ENABLE FLAG
++0x1c DS09SWUO   types={'S': 132} masks={'100': 132} files=43 labels=['DS09SWUO']
+      [43 files e.g. 00V2.e2m] BIT 8 SWITCH 9 USER OVERRIDE ENABLE FLAG
++0x1c DS10SWUO   types={'S': 93} masks={'200': 93} files=41 labels=['DS10SWUO']
+      [41 files e.g. 00V2.e2m] BIT 9 SWITCH 10 USER OVERRIDE ENABLE FLAG
++0x1c DS11SWUO   types={'S': 132} masks={'400': 132} files=43 labels=['DS11SWUO']
+      [43 files e.g. 00V2.e2m] BIT A SWITCH 11 USER OVERRIDE ENABLE FLAG
++0x1c DS12SWUO   types={'S': 93} masks={'800': 93} files=41 labels=['DS12SWUO']
+      [41 files e.g. 00V2.e2m] BIT B SWITCH 12 USER OVERRIDE ENABLE FLAG
++0x1c DS13SWUO   types={'S': 93} masks={'1000': 93} files=41 labels=['DS13SWUO']
+      [41 files e.g. 00V2.e2m] BIT C SWITCH 13 USER OVERRIDE ENABLE FLAG
++0x1c DS14SWUO   types={'S': 93} masks={'2000': 93} files=41 labels=['DS14SWUO']
+      [41 files e.g. 00V2.e2m] BIT D SWITCH 14 USER OVERRIDE ENABLE FLAG
++0x1c DS15SWUO   types={'S': 93} masks={'4000': 93} files=41 labels=['DS15SWUO']
+      [41 files e.g. 00V2.e2m] BIT E SWITCH 15 USER OVERRIDE ENABLE FLAG
++0x1c DS16SWUO   types={'S': 93} masks={'8000': 93} files=41 labels=['DS16SWUO']
+      [41 files e.g. 00V2.e2m] BIT F SWITCH 16 USER OVERRIDE ENABLE FLAG
++0x1c DSBRSWUO   types={'S': 93} masks={'800': 93} files=41 labels=['DSBRSWUO']
+      [41 files e.g. 00V2.e2m] BIT B USER OVERRIDE ENABLE FLAG FOR THE BRAKE SWITCH
++0x1c DSCHSWUO   types={'S': 93} masks={'400': 93} files=41 labels=['DSCHSWUO']
+      [41 files e.g. 00V2.e2m] BIT A USER OVERRIDE ENABLE FLAG FOR THE CLUTCH SWITCH
++0x1c DSCRONUO   types={'S': 94} masks={'8': 94} files=41 labels=['DSCRONUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 3 USER OVERRIDE ENABLE FLAG FOR THE CC/PTO ON/OFF SWITCH
+      [37 files e.g. 00V2.e2m] BIT 3 USER OVERRIDE ENABLE FLAG FOR THE CC/PTO ON/OFF S
++0x1c DSCRRUUO   types={'S': 94} masks={'2': 94} files=41 labels=['DSCRRUUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 1 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL RESUME SWITCH
+      [37 files e.g. 00V2.e2m] BIT 1 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL
++0x1c DSCRSEUO   types={'S': 94} masks={'4': 94} files=41 labels=['DSCRSEUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 2 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL SWITCH SET ACT
+      [37 files e.g. 00V2.e2m] BIT 2 USER OVERRIDE ENABLE FLAG FOR THE CRUISE CONTROL
++0x1c DSDTSWUO   types={'S': 93} masks={'4000': 93} files=41 labels=['DSDTSWUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT E USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST DECREMENT SWITCH
+      [37 files e.g. 00V2.e2m] BIT E USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST DEC
++0x1c DSEBUO01   types={'S': 93} masks={'1000': 93} files=41 labels=['DSEBUO01']
+      [41 files e.g. 00V2.e2m] BIT C USER OVERRIDE ENABLE ENGINE BRAKE SELECT 1
++0x1c DSFACLUO   types={'S': 72} masks={'10': 72} files=33 labels=['DSFACLUO']
+      [33 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FLAG FOR FAN CLUTCH SWITCH
++0x1c DSFEPFUO   types={'N': 5} masks={} files=5 labels=['DSFEPFUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 13, BIT 6 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
++0x1c DSHSDPUO   types={'S': 61} masks={'40': 61} files=29 labels=['DSHSDPUO']
+      [29 files e.g. 64c6.e2m] USER OVERRIDE ENABLE FLAG FOR HSG DROOP SELECT SWITCH
++0x1c DSICSWUO   types={'S': 93} masks={'2000': 93} files=41 labels=['DSICSWUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT D USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST INCREMENT SWITCH
+      [37 files e.g. 00V2.e2m] BIT D USER OVERRIDE ENABLE FLAG FOR THE IDLE ADJUST INC
++0x1c DSILSSUO   types={'N': 5} masks={} files=5 labels=['DSILSSUO']
+      [ 5 files e.g. 42t9_rls.e2m] WORD 13, BIT 9 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO ALLOW USER INP
++0x1c DSIVSWUO   types={'S': 132} masks={'80': 132} files=43 labels=['DSIVSWUO']
+      [ 6 files e.g. 42t9_rls.e2m] BIT 7 USER OVERRIDE ENABLE FLAG FOR THE RAW IDLE SWITCH INPUT
+      [39 files e.g. 00V2.e2m] BIT 7 USER OVERRIDE ENABLE FLAG FOR THE RAW IDLE SWITCH
++0x1c DSLOCPUO   types={'S': 42} masks={'2': 42} files=20 labels=['DSLOCPUO']
+      [20 files e.g. 74be62rls.e2m] FUNCTION ENABLE FOR OLM LOW OIL COMPLEMENTARY SWITCH
++0x1c DSLOO1UO   types={'S': 42} masks={'4': 42} files=20 labels=['DSLOO1UO']
+      [20 files e.g. 74be62rls.e2m] FUNCTION ENABLE FOR OLM LOW OIL SWITCH
++0x1c DSMNFNUO   types={'S': 93} masks={'10': 93} files=41 labels=['DSMNFNUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 4 USER OVERRIDE ENABLE FLAG FOR THE MANUAL FAN INPUT SWITCH
+      [37 files e.g. 00V2.e2m] BIT 4 USER OVERRIDE ENABLE FLAG FOR THE MANUAL FAN INPU
++0x1c DSNTIVUO   types={'S': 132} masks={'100': 132} files=43 labels=['DSNTIVUO']
+      [ 6 files e.g. 42t9_rls.e2m] BIT 8 USER OVERRIDE ENABLE FLAG FOR THE RAW NOT IDLE SWITCH INPUT
+      [39 files e.g. 00V2.e2m] BIT 8 USER OVERRIDE ENABLE FLAG FOR THE RAW NOT IDLE SW
++0x1c DSORMASW   types={'S': 10} masks={'400': 10} files=5 labels=['DSORMASW']
+      [ 5 files e.g. 63c5.e2m] USER OVERRRIDE ENABLE FLAG
++0x1c DSORPDSW   types={'S': 14} masks={'4': 14} files=6 labels=['DSORPDSW']
+      [ 6 files e.g. 63c5.e2m] BIT 2 USER OVERRIDE ENABLE FLAG FOR PTO_INCREMENT_SWITC
++0x1c DSORPISW   types={'S': 14} masks={'1': 10, '2': 4} files=6 labels=['DSORPISW']
+      [ 6 files e.g. 63c5.e2m] BIT 1 USER OVERRIDE ENABLE FLAG FOR PTO_INCREMENT_SWITC
++0x1c DSORPVSW   types={'S': 14} masks={'40': 14} files=6 labels=['DSORPVSW']
+      [ 6 files e.g. 63c5.e2m] USER OVERRRIDE ENABLE FLAG
++0x1c DSOVAISW   types={'S': 68} masks={'200': 68} files=32 labels=['DSOVAISW']
+      [32 files e.g. 63c5.e2m] WORD 13, BIT 9 OF BITS 0-15, STATUS OF OVERRIDE FLAG TO
++0x1c DSOVEBSW   types={'S': 71} masks={'1000': 71} files=33 labels=['DSOVEBSW']
+      [33 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FOR ENGINE_BRAKE_SWITCH
++0x1c DSOVPTRS   types={'S': 14} masks={'20': 14} files=6 labels=['DSOVPTRS']
+      [ 6 files e.g. 63c5.e2m] USER OVERRIDE ENABLE FLAG FOR BOOST POWER REQUEST SWITC
++0x1c DSPPSWUO   types={'S': 61} masks={'20': 61} files=29 labels=['DSPPSWUO']
+      [29 files e.g. 64c6.e2m] USER OVERRIDE ENABLE FLAG FOR PTP SWITCHED INPUT SWITCH
++0x1c DSPTVDUO   types={'S': 22} masks={'20': 22} files=10 labels=['DSPTVDUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 5 USER OVERRIDE ENABLE FLAG FOR THE PTO VALIDATE SWITCH
+      [ 6 files e.g. 00V2.e2m] BIT 5 USER OVERRIDE ENABLE FLAG FOR THE PTO VALIDATE SW
++0x1c DSRMCPUO   types={'S': 42} masks={'40': 42} files=20 labels=['DSRMCPUO']
+      [20 files e.g. 74be62rls.e2m] FUNCTION ENABLE FOR OLM REMOTE OIL COMPLEMENTARY SWITCH
++0x1c DSSWUO     types={'B': 82} masks={} files=43 labels=['DSSWUO']
+      [43 files e.g. 00V2.e2m] COVERS ALL USER OVERRIDE ENABLES.
++0x1c DSTESWUO   types={'S': 93} masks={'8000': 93} files=41 labels=['DSTESWUO']
+      [ 5 files e.g. 42t9_rls.e2m] BIT F USER OVERRIDE ENABLE FLAG FOR THE DIAGNOSTIC TEST AND FAULT FLAS
+      [37 files e.g. 00V2.e2m] BIT F USER OVERRIDE ENABLE FLAG FOR THE DIAGNOSTIC TEST
++0x1c DSVLCPUO   types={'S': 42} masks={'40': 42} files=20 labels=['DSVLCPUO']
+      [20 files e.g. 74be62rls.e2m] FUNCTION ENABLE FOR OLM VERY LOW OIL COMPLEMENTARY SWIT
++0x1c EB_Switch_Level_Override types={'S': 7} masks={'1': 7} files=7 labels=['EB_Switch_Level_Override']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR ENGINE_BRAKE FEATURE
++0x1c Fuel_Press_Idle_Diag_Enable types={'S': 7} masks={'20': 7} files=7 labels=['Fuel_Press_Idle_Diag_Enable']
+      [ 7 files e.g. CHR_CC_11.20.13.16.e2m] ENABLE FOR FUEL PRESSURE IDLE DIAGNOSTIC
++0x1c Net_Torque_Derate_Enable types={'S': 10} masks={'4': 10} files=10 labels=['Net_Torque_Derate_Enable']
+      [10 files e.g. CHR_CC_11.15.08.04.e2m] ENABLE FOR NET TORQUE DERATE ALGORIHM

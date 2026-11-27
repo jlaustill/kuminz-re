@@ -1,0 +1,17 @@
+cm848: round 73 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 73" records stages A0 (e165ebe3), A (722b2aee), B (aa841ca9) and C (9326cf14), and
+  their proofs.
+- Leads:
+  - The misapplied 256-byte j1708_multipacket_msg_t instance at 0x80ddc6. 13 e2m blocks map inside its span, and its
+    fields render 980 times.
+  - CM550's old 'calibration bank' / CALIBRATION_WRITE_PROTECT enum members, which render nowhere.
+  - The candidate twin cm848_validateWriteAuth / validateSecurityKey inside CM848.
+  - The CM550 mirror's 31 MISSING names.
+  - cm550_circularBufferWrite, which has no body in the .cpp.
+  - The writers' locals.
+  - The skill notes' CM550 _cal line, which lives in .claude/skills and is not edited here.
+- work/todo.md, the session README, session_folder/round73/, the large-files tarball (the round's 6 build / verify
+  logs), pr_body.md: a Round 73 section and a test plan line.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,233 @@
+=== cm848_checkEgrDeltaPressureSensorPerformance (lines 89880-90118, 232 non-blank)
+89880: // Function: cm848_checkEgrDeltaPressureSensorPerformance @ 0x0052e29c
+89881: //
+89883: /* EGR delta pressure sensor performance monitor (egr_delta_pressure_sensor_output = sensor channel
+89884:    105 after autozero), run every 20th main-loop phase; its faults 774-777 have no DTC slot. (1) Key
+89885:    on (switch 0) and engine_state ENGINE_STATE_STOPPED (1 = before the engine starts) with
+89886:    egr_valve_position below the pre-start limit (0 in this ROM), one try per initialization: after
+89887:    100 passes a reading of more than 126 counts either way sets faults 777 and 774, otherwise 777 is
+89888:    cleared. (2) With bit 0x10000 of monitor_enabling_conditions_met set, below 1800 rpm, engine load
+89889:    under 3.1 percent and egr_valve_position under 70 percent: a reading above 251 for 100 passes
+89890:    sets 775 and 774, 126 or less for 100 passes clears 775. (3) Above 2200 rpm, engine load above
+89891:    3.1 percent and egr_valve_position above 20 percent: a reading below -63 for 100 passes sets 776
+89892:    and 774, 126 or more for 100 passes clears 776. Fault 774 clears with the last of 775 / 776 /
+89893:    777; every check stops while EGR valve position sensor faults 642 / 643, delta pressure sensor
+89894:    faults 690 / 691, fault 725 or faults 514 / 515 are set. The tail sets bit 16 of
+89895:    diagnostic_monitor_complete_bits (was cm848_calibration_group22_load). */
+89897: void cm848_checkEgrDeltaPressureSensorPerformance(void)
+89899: {
+89900:   word wVar1;
+89901:   ushort uVar2;
+89902:   word wVar3;
+89903:   short sVar4;
+89904:   int iVar5;
+89906:   if (((switch_input_state_bits[0] & 1) != 0) && (egr_delta_pressure_pre_start_check_done_flag != 1)
+89907:      ) {
+89908:     if ((((fault_detected_bits_640_to_655 & 4) == 0) &&
+89909:         ((((fault_detected_bits_640_to_655 & 8) == 0 && ((fault_detected_bits_512_to_527 & 4) == 0))
+89910:          && ((fault_detected_bits_720_to_735 & 0x20) == 0)))) &&
+89911:        (((((fault_detected_bits_512_to_527 & 8) == 0 && ((fault_detected_bits_688_to_703 & 8) == 0))
+89912:          && ((fault_detected_bits_688_to_703 & 4) == 0)) &&
+89913:         ((engine_state == ENGINE_STATE_STOPPED &&
+89914:          ((short)egr_valve_position < egr_delta_pressure_pre_start_check_maximum_egr_valve_position)
+89915:          ))))) {
+89916:       if (egr_delta_pressure_pre_start_check_dwell_count_a <
+89917:           egr_delta_pressure_pre_start_check_dwell_limit_a) {
+89918:         egr_delta_pressure_pre_start_check_dwell_count_a =
+89919:              egr_delta_pressure_pre_start_check_dwell_count_a + 1;
+89920:       }
+89921:       if (egr_delta_pressure_pre_start_check_dwell_count_b <
+89922:           egr_delta_pressure_pre_start_check_dwell_limit_b) {
+89923:         egr_delta_pressure_pre_start_check_dwell_count_b =
+89924:              egr_delta_pressure_pre_start_check_dwell_count_b + 1;
+89925:       }
+89926:     }
+89927:     else {
+89928:       egr_delta_pressure_pre_start_check_dwell_count_a = 0;
+89929:       egr_delta_pressure_pre_start_check_dwell_count_b = 0;
+89930:       egr_delta_pressure_pre_start_check_done_flag = 1;
+89931:     }
+89932:     if ((egr_delta_pressure_pre_start_check_dwell_limit_a <=
+89933:          egr_delta_pressure_pre_start_check_dwell_count_a) &&
+89934:        (egr_delta_pressure_pre_start_check_dwell_limit_b <=
+89935:         egr_delta_pressure_pre_start_check_dwell_count_b)) {
+89936:       iVar5 = (int)egr_delta_pressure_sensor_output;
+89937:       if (iVar5 < 0) {
+89938:         iVar5 = -iVar5;
+89939:       }
+89940:       if (egr_delta_pressure_pre_start_check_maximum_reading < iVar5) {
+89941:         uVar2 = fault_detected_bits_768_to_783 | 0x240;
+89942:         wVar1 = fault_registered_bits_768_to_783;
+89943:       }
+89944:       else {
+89945:         uVar2 = fault_detected_bits_768_to_783 & 0xfdff;
+89946:         wVar1 = fault_registered_bits_768_to_783 & 0xfdff;
+89947:         if (((fault_detected_bits_768_to_783 & 0x100) == 0) &&
+89948:            ((fault_detected_bits_768_to_783 & 0x80) == 0)) {
+89949:           uVar2 = fault_detected_bits_768_to_783 & 0xfdbf;
+89950:           wVar1 = fault_registered_bits_768_to_783 & 0xfdbf;
+89951:         }
+89952:       }
+89953:       fault_registered_bits_768_to_783 = wVar1;
+89954:       fault_detected_bits_768_to_783 = uVar2;
+89955:       egr_delta_pressure_pre_start_check_done_flag = 1;
+89956:     }
+89957:   }
+89958:   wVar1 = fault_detected_bits_768_to_783;
+89959:   wVar3 = fault_registered_bits_768_to_783;
+89960:   if (monitor_enabling_conditions_met.egr_delta_pressure_sensor_performance == 0) goto LAB_0052e9c0;
+89961:   uVar2 = fault_registered_bits_768_to_783;
+89962:   if (((((((fault_detected_bits_640_to_655 & 4) == 0) && ((fault_detected_bits_640_to_655 & 8) == 0)
+89963:          ) && ((fault_detected_bits_512_to_527 & 4) == 0)) &&
+89964:        (((fault_detected_bits_720_to_735 & 0x20) == 0 && ((fault_detected_bits_512_to_527 & 8) == 0)
+89965:         ))) && ((fault_detected_bits_688_to_703 & 8) == 0)) &&
+89966:      ((((fault_detected_bits_688_to_703 & 4) == 0 && (engine_state != ENGINE_STATE_STOPPED)) &&
+89967:       ((engine_speed_state.filtered_engine_speed <
+89968:         egr_delta_pressure_high_reading_check_maximum_engine_speed &&
+89969:        ((engine_load_at_current_speed_percent <
+89970:          egr_delta_pressure_high_reading_check_maximum_engine_load &&
+89971:         ((short)egr_valve_position <
+89972:          egr_delta_pressure_high_reading_check_maximum_egr_valve_position)))))))) {
+89973:     if (egr_delta_pressure_high_reading_check_dwell_count <
+89974:         egr_delta_pressure_high_reading_check_dwell_limit) {
+89975:       egr_delta_pressure_high_reading_check_dwell_count =
+89976:            egr_delta_pressure_high_reading_check_dwell_count + 1;
+89977:     }
+89978:     else {
+89979:       if (egr_delta_pressure_high_reading_check_threshold < egr_delta_pressure_sensor_output) {
+89980:         if (egr_delta_pressure_high_reading_check_debounce_count <
+89981:             egr_delta_pressure_high_reading_check_debounce_limit) {
+89982:           sVar4 = 1;
+89983: LAB_0052e618:
+89984:           egr_delta_pressure_high_reading_check_debounce_count =
+89985:                egr_delta_pressure_high_reading_check_debounce_count + sVar4;
+89986:         }
+89987:       }
+89988:       else if (egr_delta_pressure_high_reading_check_debounce_count != 0) {
+89989:         sVar4 = -1;
+89990:         goto LAB_0052e618;
+89991:       }
+89992:       if (egr_delta_pressure_high_reading_check_recovery_threshold <
+89993:           egr_delta_pressure_sensor_output) {
+89994:         if (egr_delta_pressure_high_reading_check_recovery_count != 0) {
+89995:           sVar4 = -1;
+89996:           goto LAB_0052e674;
+89997:         }
+89998:       }
+89999:       else if (egr_delta_pressure_high_reading_check_recovery_count <
+90000:                egr_delta_pressure_high_reading_check_recovery_limit) {
+90001:         sVar4 = 1;
+90002: LAB_0052e674:
+90003:         egr_delta_pressure_high_reading_check_recovery_count =
+90004:              egr_delta_pressure_high_reading_check_recovery_count + sVar4;
+90005:       }
+90006:       if (egr_delta_pressure_high_reading_check_debounce_limit <=
+90007:           egr_delta_pressure_high_reading_check_debounce_count) {
+90008:         fault_detected_bits_768_to_783 = fault_detected_bits_768_to_783 | 0xc0;
+90009:       }
+90010:       wVar1 = fault_detected_bits_768_to_783;
+90011:       if (egr_delta_pressure_high_reading_check_recovery_limit <=
+90012:           egr_delta_pressure_high_reading_check_recovery_count) {
+90013:         wVar1 = fault_detected_bits_768_to_783 & 0xff7f;
+90014:         uVar2 = fault_registered_bits_768_to_783 & 0xff7f;
+90015:         if (((fault_detected_bits_768_to_783 & 0x100) == 0) &&
+90016:            ((fault_detected_bits_768_to_783 & 0x200) == 0)) {
+90017:           wVar1 = fault_detected_bits_768_to_783 & 0xff3f;
+90018:           uVar2 = fault_registered_bits_768_to_783 & 0xff3f;
+90019:         }
+90020:       }
+90021:     }
+90022:   }
+90023:   else {
+90024:     egr_delta_pressure_high_reading_check_dwell_count = 0;
+90025:   }
+90026:   fault_registered_bits_768_to_783 = uVar2;
+90027:   fault_detected_bits_768_to_783 = wVar1;
+90028:   wVar1 = fault_detected_bits_768_to_783;
+90029:   wVar3 = fault_registered_bits_768_to_783;
+90030:   if ((((((fault_detected_bits_640_to_655 & 4) != 0) || ((fault_detected_bits_640_to_655 & 8) != 0))
+90031:        || ((fault_detected_bits_512_to_527 & 4) != 0)) ||
+90032:       ((((fault_detected_bits_720_to_735 & 0x20) != 0 || ((fault_detected_bits_512_to_527 & 8) != 0)
+90033:         ) || (((fault_detected_bits_688_to_703 & 8) != 0 ||
+90034:               (((fault_detected_bits_688_to_703 & 4) != 0 ||
+90035:                (engine_speed_state.filtered_engine_speed <=
+90036:                 egr_delta_pressure_low_reading_check_minimum_engine_speed)))))))) ||
+90037:      ((engine_load_at_current_speed_percent <=
+90038:        egr_delta_pressure_low_reading_check_minimum_engine_load ||
+90039:       ((short)egr_valve_position <= egr_delta_pressure_low_reading_check_minimum_egr_valve_position)
+90040:       ))) {
+90041:     egr_delta_pressure_low_reading_check_dwell_count = 0;
+90042:     goto LAB_0052e9c0;
+90043:   }
+90044:   if (egr_delta_pressure_low_reading_check_dwell_count <
+90045:       egr_delta_pressure_low_reading_check_dwell_limit) {
+90046:     egr_delta_pressure_low_reading_check_dwell_count =
+90047:          egr_delta_pressure_low_reading_check_dwell_count + 1;
+90048:     goto LAB_0052e9c0;
+90049:   }
+90050:   if (egr_delta_pressure_sensor_output < egr_delta_pressure_low_reading_check_threshold) {
+90051:     if (egr_delta_pressure_low_reading_check_debounce_count <
+90052:         egr_delta_pressure_low_reading_check_debounce_limit) {
+90053:       sVar4 = 1;
+90054: LAB_0052e880:
+90055:       egr_delta_pressure_low_reading_check_debounce_count =
+90056:            egr_delta_pressure_low_reading_check_debounce_count + sVar4;
+90057:     }
+90058:   }
+90059:   else if (egr_delta_pressure_low_reading_check_debounce_count != 0) {
+90060:     sVar4 = -1;
+90061:     goto LAB_0052e880;
+90062:   }
+90063:   if (egr_delta_pressure_sensor_output < egr_delta_pressure_low_reading_check_recovery_threshold) {
+90064:     if (egr_delta_pressure_low_reading_check_recovery_count != 0) {
+90065:       sVar4 = -1;
+90066:       goto LAB_0052e8dc;
+90067:     }
+90068:   }
+90069:   else if (egr_delta_pressure_low_reading_check_recovery_count <
+90070:            egr_delta_pressure_low_reading_check_recovery_limit) {
+90071:     sVar4 = 1;
+90072: LAB_0052e8dc:
+90073:     egr_delta_pressure_low_reading_check_recovery_count =
+90074:          egr_delta_pressure_low_reading_check_recovery_count + sVar4;
+90075:   }
+90076:   if (egr_delta_pressure_low_reading_check_debounce_limit <=
+90077:       egr_delta_pressure_low_reading_check_debounce_count) {
+90078:     fault_detected_bits_768_to_783 = fault_detected_bits_768_to_783 | 0x140;
+90079:   }
+90080:   wVar1 = fault_detected_bits_768_to_783;
+90081:   if (egr_delta_pressure_low_reading_check_recovery_limit <=
+90082:       egr_delta_pressure_low_reading_check_recovery_count) {
+90083:     wVar1 = fault_detected_bits_768_to_783 & 0xfeff;
+90084:     wVar3 = fault_registered_bits_768_to_783 & 0xfeff;
+90085:     if (((fault_detected_bits_768_to_783 & 0x80) == 0) &&
+90086:        ((fault_detected_bits_768_to_783 & 0x200) == 0)) {
+90087:       wVar1 = fault_detected_bits_768_to_783 & 0xfebf;
+90088:       wVar3 = fault_registered_bits_768_to_783 & 0xfebf;
+90089:     }
+90090:   }
+90091: LAB_0052e9c0:
+90092:   fault_registered_bits_768_to_783 = wVar3;
+90093:   fault_detected_bits_768_to_783 = wVar1;
+90094:   if (((diagnostic_monitor_complete_bits & 0x10000) == 0) &&
+90095:      (((((egr_delta_pressure_pre_start_check_dwell_limit_b <=
+90096:           egr_delta_pressure_pre_start_check_dwell_count_b ||
+90097:          (egr_delta_pressure_high_reading_check_recovery_limit <=
+90098:           egr_delta_pressure_high_reading_check_recovery_count)) ||
+90099:         (egr_delta_pressure_low_reading_check_recovery_limit <=
+90100:          egr_delta_pressure_low_reading_check_recovery_count)) ||
+90101:        ((fault_detected_bits_768_to_783 & 0x40) != 0)) &&
+90102:       (((fault_detected_bits_768_to_783 & 0x40) == (fault_previous_pass_bits_768_to_783 & 0x40) &&
+90103:        (diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000,
+90104:        (monitor_readiness_code_cal & 0x10000) != 0)))))) {
+90105:     if (((fault_detected_bits_768_to_783 & 0x40) == 0) ||
+90106:        ((monitor_pending_readiness_code_cal & 0x10000) == 0)) {
+90107:       monitor_readiness_code_cal = monitor_readiness_code_cal & 0xfffeffff;
+90108:     }
+90109:     else {
+90110:       monitor_pending_readiness_code_cal = monitor_pending_readiness_code_cal & 0xfffeffff;
+90111:     }
+90112:   }
+90113:   return;
+90114: }
+90118: //

@@ -1,0 +1,5 @@
+address,name,old_label,kind,dims
+0x0001df64,cm848_captureFaultFreezeFrame,hpcr_setFaultActiveStatus,symbol,1
+0x0001cea4,cm848_assignFaultFreezeFrameEntry,cm848_registerFaultInActiveList,symbol,1
+0x0001cdc0,cm848_findOldestFreezeFrameEntryByFaultStatus,cm848_faultCodeLookup,symbol,1
+0x0001ce28,cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags,cm848_findFaultByTypeAndSeverity,symbol,1

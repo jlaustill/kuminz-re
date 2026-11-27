@@ -1,0 +1,16 @@
+cm848: round 14 closing - docs, stale text, the session archive, verify
+
+- **Comments the refresh tool skips:** an enums.csv comment, a structure_definitions.csv comment and a
+  test_lookup_tables.py comment still named governor_speed_limit_active_flag /
+  governor_minimum_speed_by_vehicle_speed_axis.
+- **Task notes that described the chain:** task 025 (it had sketched the low-idle selection and part of 14EE), 042,
+  045 and 046 now carry the round 14 names.
+  - Round 13's LSG lead is resolved.
+  - The frozen exports (classification.csv, the memory mapping, bank2_functions.cpp, the worklists) stay as history.
+- **Docs:** task 046 (a round 14 section and leads), the PR body, the session README and work/todo.md.
+- **Archive:** session_folder/round14/ and the large-files tarball (the round 14 build logs and the final verify).
+- **Checks on the final tree:**
+  - ./analyze.sh verify: two byte-identical builds.
+  - lookup_tables.py reports 0 sizing problems; the four test scripts pass; the headers compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

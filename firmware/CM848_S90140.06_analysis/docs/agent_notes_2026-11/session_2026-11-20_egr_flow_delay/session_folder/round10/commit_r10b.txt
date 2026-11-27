@@ -1,0 +1,26 @@
+cm848: round 10 stage B - 26 RE calibrations as i16, the label-only rows typed, the learned 1-2 shift lag table
+
+- **Signed calibrations:** 26 RE rows go from word to i16. Their e2m record is a signed 2-byte value and every load of
+  them is lha (classify_signed_loads.py over re_audit.csv, the round 3 rule). They are the transmission temperature
+  thresholds (range 2-5, overheat, overdrive off, cold, 3rd gear lockup, governor pressure offset calibration window,
+  the coolant / battery temperature pairs) and the shift model's acceleration limit. Seven more signed records are
+  only stored, never loaded, so they keep word.
+- **The label-only rows of rounds 9 / 10 get types (98 rows):**
+  - The 8BB5 / 8BBB calibration words: word. The exceptions follow the loads: 0x408af2 RE_Max_Pressure_Delta is i32
+    (lwz and a signed compare), 0x408b22 RE_PID_Switch_Temperature is i16 (lha), and 0x408b26
+    governor_pressure_offset_calibration_method is a byte, so its compare prints 1, not '\x01'.
+  - The controller's terms: word.
+  - The 54 lookup caches: word. The five 2-D grid caches are word[2], so `&cache` is now `cache` and the initializer
+    stores are `cache[0] / cache[1]`.
+- **The learned 1-2 shift lag table:** transmission_1_2_shift_lag_cal word[6] at 0x3fede2 (e2m RE_One_Two_Lag, 'Shift
+  lag tbl corresponding to temperature range, pwr-dwn trim'; EEPROM mirror, so _cal).
+  - The WOT and low range modes read it as transmission_1_2_shift_lag_cal[transmission_temperature_range], where the
+    code had *(word *)(range * 2 + 0x3fede2).
+  - cm848_updateTransmissionConditionFlags trims it within its limits.
+  - The 2-3 twin (RE_Two_Three_Lag) at 0x3fedee lies under the boot kernel's diagnostic rows, which keep their names
+    and carry the application role in their comments.
+- **Proof:** cast_normalized_diff.py: 15 functions changed. 7 still differ after removing casts, and each difference is
+  one of the changes above: the lag table index (3 functions), the grid caches (3), and the byte literal (1). The
+  `_`-prefixed name count is unchanged (65), and lookup_tables.py reports 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

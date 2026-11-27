@@ -1,0 +1,45 @@
+1070 +0000 EB_Command_Level [%BRAKE] -> 0x40a352 engine_retarder_arbitrated_request_percent word; Commanded level of engine braking
+1070 +0002 EB_Override_Command_Source [UNITLESS] -> 0x40a354 engine_retarder_tsc1_request_source_code word; eb ovrd. src. 1=JC_OVRD,2=CRUISE,3=SWITCH,4=JC_LIM,5=NOT_SET,6=NO_OVRD
+1070 +0004 EB_Override_Command [%] -> 0x40a356 engine_retarder_tsc1_request_percent word; relates to JCEBSW: driv.1 on-33%, driv.2 on-67%, both-100%
+1070 +0006 SOI_Before_Engine_Brake [CRANK_DEG_BTDC] -> 0x40a358 (no name) (no row); Timing command prior to engine brake override of the value.
+1070 +000A EB_Immediate_Brake [UNITLESS] -> 0x40a35c service_brake_active_governor_mode_config_bit_0_flag dword; Engage the Engine Brake without rate limiting.
+1070 +000C EB_Rate_Timer [SEC] -> 0x40a35e (no name) (no row); Times the required duration spent at any given E-Brake level.
+1070 +000E EB_Service_Brake_Event_Flag [UNITLESS] -> 0x40a360 service_brake_delayed_active_flag word; Indicates service brake pedal has been tapped recently
+1070 +0010 EB_Switch_Command [UNITLESS] -> 0x40a362 engine_retarder_switch_percent word; Engine Brake Switch Selects' (1, 2, and 3) binary sum.
+1070 +0012 Engine_Brake_Inhibit [UNITLESS] -> 0x40a364 engine_retarder_request_shift_hold_flag word; Prevents EB from being engaged while a time delay is in process.
+1070 +0014 EB_Allowed_State [UNITLESS] -> 0x40a366 engine_retarder_enable_state word; algs allowed to req. brakes: 0=NONE,1=OVERRIDE,2=OVER_OR_NON
+1070 +0016 EB_Non_Override_Command_Source [UNITLESS] -> 0x40a368 engine_retarder_limit_source_code word; source of eb req.: 1=JC_OVRD,2=CRUISE,3=SWITCH,4=JC_LIM,5=NOT_SET,6=NO_OVRD
+1070 +0018 EB_Non_Override_Command [%BRAKE] -> 0x40a36a engine_retarder_limit_percent word; Level of eng. braking req. by non-override algorithms
+1070 +001E EB_Charge_Flow_Command [LB/MIN] -> 0x40a370 mass_charge_flow_engine_retarder_command word; Final Charge Flow commanded by Brake Manager during braking
+1070 +0020 EB_Active_Driver_Fraction [UNITLESS] -> 0x40a372 engine_retarder_switch_percent_2 word; Fraction (0-1) of engine brake hardware currently active
+1070 +0022 VG_Brake_State [UNITLESS] -> 0x40a374 engine_retarder_engaged_flag word; Indicates VG is being used for engine braking
+1070 +001A Jcomm_Retarder_Control_Mode_Test_Point [UNITLESS] -> 0x40a36c engine_retarder_internal_override_control_mode word; Test override for Jcomm Retarder Control Mode
+1070 +001C E_Brake_Command_Source_Test_Point [UNITLESS] -> 0x40a36e engine_retarder_request_arbitration_inhibit_flag word; ALLOWS OVERRIDE OF EB_Command_Level AND E_Brake_Command_Source
+1071 +0000 Engine_Brake_Minimum_Engage_RPM [RPM] -> 0x408e9a engine_retarder_enter_minimum_engine_speed_warm_oil word; ENGINE SPEED ABOVE WHICH ENGINE BRAKES MAY BE ENABLED
+1071 +0002 EB_Brake_to_Fuel_Delay [SEC] -> 0x408e9c engine_retarder_release_passes word; DELAY BETWEEN BRAKES COMMANDED OFF TO STATUS(EBSS) DEACTIVATION
+1071 +0004 EB_Boost_Sensor_Error_Delay [SEC] -> 0x408e9e engine_retarder_boost_sensor_fault_hold_passes word; DELAY IN TURNING ENGINE BRAKES ON WHENEVER BOOST SENSOR FAULT IS ACTIVE
+1071 +0006 EB_Maximum_Boost_Pressure [IN_HG] -> 0x408ea0 engine_retarder_enter_maximum_boost_pressure word; BOOST PRESSURE ABOVE WHICH ENGINE BRAKES MAY NOT BE ENABLED
+1071 +0008 EB_Minimum_Disengage_RPM_Min_Limit [RPM] -> 0x408ea2 (no name) (no row); MINIMUM ALLOWABLE VALUE AT WHICH THE DISABLE RPM MAY BE SET
+1071 +000A EB_Minimum_Disengage_RPM_Max_Limit [RPM] -> 0x408ea4 (no name) (no row); MAXIMUM ALLOWABLE VALUE AT WHICH THE DISABLE RPM MAY BE SET
+1071 +000C EB_Fuel_to_Brake_Delay_RPM [RPM] -> 0x408ea6 engine_retarder_engage_delay_speed_boundary_low word; RPM above this limit = delay 1 execution, RPM below limit = delay 2 exec.'s
+1071 +000E EB_Max_Fuel_Threshold [MM3S] -> 0x408ea8 engine_retarder_fuel_demand_threshold word; Fueling threshold above which engine brakes may not be enabled
+1071 +0010 EB_Service_Brake_Delay_Time [SEC] -> 0x408eaa service_brake_release_delay_passes word; Time within which Service Brake must be tapped for EB engagement.
+1071 +0012 EB_Fuel_to_Brake_Delay_RPM_2 [RPM] -> 0x408eac engine_retarder_engage_delay_speed_boundary_middle word; RPM above this limit and below EBDYRP3 = delay 80ms for EB ON
+1071 +0014 EB_Fuel_to_Brake_Delay_RPM_3 [RPM] -> 0x408eae engine_retarder_engage_delay_speed_boundary_high word; RPM above this limit = delay 60ms for EB ON
+1071 +0016 EB_Cold_Minimum_Engage_RPM [RPM] -> 0x408eb0 engine_retarder_enter_minimum_engine_speed_cold_oil word; ENG. rpm BELOW WHICH EB will not be enabled when eng. is cold
+1071 +0018 EB_Cold_Minimum_Disengage_RPM [RPM] -> 0x408eb2 engine_retarder_exit_engine_speed_cold_oil word; ENG. rpm BELOW WHICH EB IS DISABLED when eng. is cold
+1071 +001A EB_Cold_Oil_Temperature [DEG_F] -> 0x408eb4 engine_retarder_oil_temperature_threshold i16; Oil_Temperature below which indicates cold engine for e-brakes
+1071 +001C EB_Shift_In_Process_TL [MSEC] -> 0x408eb6 engine_retarder_shift_hold_passes word; Time Limit for Jcomm_Shift_In_Process to hold off E-brake changes.
+1071 +001E EB_Max_Fuel_Idle_Threshold [MM3S] -> 0x408eb8 engine_retarder_fuel_demand_threshold_governor_mode_11 word; Fueling threshold above which engine brakes may not be enabled at idle
+1071 +0020 EB_Max_Fuel_PTO_Threshold [MM3S] -> 0x408eba engine_retarder_fuel_demand_threshold_governor_mode_4 word; Fueling threshold above which engine brakes may not be enabled during PTO
+1071 +0022 Maximum_PTO_EB_Speed [RPM] -> 0x408ebc engine_retarder_monitored_rpm_threshold_governor_mode_4 word; PTO reference speed below which Exhaust Brakes be allowed ON. For cab heat!
+1071 +0024 EB_Max_Idle_PTO_Coolant_Temperature [DEG_F] -> 0x408ebe engine_retarder_coolant_temperature_threshold i16; Coolant_Temperature below which Idle & PTO / exhaust brake operation is allowed
+1071 +0026 EB_Delay_On_Time [SEC] -> 0x408ec0 engine_retarder_request_on_delay_passes word; Delay from exhaust brake when transitioning from OFF to ON
+1071 +0028 EB_Brake_Type [UNITLESS] -> 0x408ec2 engine_retarder_output_mode_flags word; Selects devices used for engine braking. 0=NONE, 1=EXHAUST, 2=VG, 3=BOTH
+1071 +002A EB_Dual_Brake_RPM_Threshold [RPM] -> 0x408ec4 engine_retarder_output_maximum_engine_speed word; Max engine spd to allow ex brk when EB_Brake_Type = BOTH
+1192 +0000 Engine_Brake_Adj_Size [UNITLESS] -> EEPROM 0x4a0 = 0x3fd922 (no name) (no row); Size of engine brake adjustable parameters
+1192 +0002 Engine_Brake_Minimum_Disengage_RPM [RPM] -> EEPROM 0x4a2 = 0x3fd924 engine_retarder_exit_engine_speed_warm_oil_cal word; ENGINE SPEED BELOW WHICH ENGINE BRAKE IS DISABLED
+1192 +0004 Engine_Brake_Direct_Control [UNITLESS] -> EEPROM 0x4a4 = 0x3fd926 (no name) (no row); ENGINE BRAKE ALGORITHM CONTROL, 0=NON-DIRECT 1=DIRECT CONTROL
+1192 +0006 EB_Level_Dwell [SEC] -> EEPROM 0x4a6 = 0x3fd928 (no name) (no row); Minimum required duration to be spent at any given E-Brake level.
+1192 +0008 EB_Max_Level_Step [%] -> EEPROM 0x4a8 = 0x3fd92a (no name) (no row); Max brake level step size permitted for the current execution cycle.
+1192 +000A Engine_Brake_Minimum_Road_Speed [MPH] -> EEPROM 0x4aa = 0x3fd92c engine_retarder_exit_maximum_vehicle_speed_cal word; Speed above which the Engine Brake may be engaged.

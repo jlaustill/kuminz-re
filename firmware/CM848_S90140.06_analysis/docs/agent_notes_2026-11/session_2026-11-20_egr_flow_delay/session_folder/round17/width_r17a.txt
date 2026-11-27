@@ -1,0 +1,20 @@
+0x0040a352 engine_retarder_command_percent e2m 2 row 2 EB_Command_Level 
+0x0040a354 engine_retarder_override_command_source e2m 2 row 2 EB_Override_Command_Source 
+0x0040a356 engine_retarder_override_command_percent e2m 2 row 2 EB_Override_Command 
+0x0040a35c engine_retarder_immediate_brake_flag e2m 2 row 4 EB_Immediate_Brake   <-- WIDTH
+0x0040a360 service_brake_recently_applied_flag e2m 2 row 2 EB_Service_Brake_Event_Flag 
+0x0040a364 engine_retarder_engage_inhibit_flag e2m 2 row 2 Engine_Brake_Inhibit 
+0x0040a366 engine_retarder_allowed_state e2m 2 row 2 EB_Allowed_State 
+0x0040a368 engine_retarder_non_override_command_source e2m 2 row 2 EB_Non_Override_Command_Source 
+0x0040a36a engine_retarder_non_override_command_percent e2m 2 row 2 EB_Non_Override_Command 
+0x0040a374 variable_geometry_turbocharger_brake_active_ e2m 2 row 2 VG_Brake_State 
+0x00408ea8 engine_retarder_maximum_fueling e2m 2 row 2 EB_Max_Fuel_Threshold 
+0x00408eb4 engine_retarder_cold_oil_temperature e2m 2 row 2 EB_Cold_Oil_Temperature 
+0x00408eb8 engine_retarder_idle_maximum_fueling e2m 2 row 2 EB_Max_Fuel_Idle_Threshold 
+0x00408eba engine_retarder_power_take_off_maximum_fueli e2m 2 row 2 EB_Max_Fuel_PTO_Threshold 
+0x00408ebc engine_retarder_power_take_off_maximum_refer e2m 2 row 2 Maximum_PTO_EB_Speed 
+0x00408ebe engine_retarder_idle_power_take_off_maximum_ e2m 2 row 2 EB_Max_Idle_PTO_Coolant_Temperature 
+0x00408ec2 engine_retarder_brake_type e2m 2 row 2 EB_Brake_Type 
+0x00408ec4 engine_retarder_dual_brake_maximum_engine_sp e2m 2 row 2 EB_Dual_Brake_RPM_Threshold 
+0x0040a2b2 engine_retarder_output_level_percent e2m 2 row 2 EB_Driver_Level 
+0x003fd92c engine_retarder_minimum_road_speed_cal e2m 2 row 2 Engine_Brake_Minimum_Road_Speed 

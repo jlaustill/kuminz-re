@@ -1,0 +1,46 @@
+cm550: round 79 stage A - the two Intel 82527 CAN controllers on chip selects 5 / 4 named; their two CS5 functions named for what they drive
+
+From the round 76 lead (the external devices at 0xFFC800 / 0xFFD800). round 76's SIM register names make the chip
+selects readable: SIM_CSBAR5 = 0xffc8 and SIM_CSBAR4 = 0xffd8, with the same option word 0x5bf0, so these are two
+identical devices.
+- They are Intel 82527 CAN controllers. Every offset the code touches is a register in the 82527's address map
+  (Architectural Overview, section 4.1): 00H control, 01H status, 02H CPU interface, 06-07H / 08-0BH global masks,
+  0C-0FH message 15 mask, 1FH CLKOUT, 2FH bus configuration, 3FH / 4FH bit timing, 5FH interrupt, and message object n
+  at n * 10H (+0 / +1 control, +2-+5 arbitration, +6 message configuration).
+  - The code uses them as an 82527: the interrupt handler loops on the interrupt register and reaches message object
+    n - 2 at interrupt * 0x10 + base - 0x20. The control pairs are written as bit pairs (0x9955 / 0x5559). The
+    configuration bytes are 0x80 (receive) / 0x88 (transmit) with 8 data bytes.
+- 45 rows, named CAN_CS5_* / CAN_CS4_* after the chip select (the 0xFFC800 controller's masks come from the RAM
+  variables Cummins named the_can_1_*):
+  - every register the code reaches on the CS5 controller, including the control / arbitration / configuration of
+    message objects 1-6;
+  - the CS4 controller's scalar registers. Its message objects are reached by index from a base, so they are left
+    for a message object struct.
+  - Widths follow the accesses: the control 0 / 1 and arbitration 0 / 1 pairs are words, the CS5 standard mask is a
+    word, both message 15 masks are dwords, and the rest are bytes.
+- firmware/scripts/ApplyHardwareRegisters.java: the register block now starts at 0xFFC800, chip select 5's 2 KB
+  window, so the CS5 rows apply.
+  - The block is volatile, so the decompiler now keeps every access to those registers. Before, with no block, it
+    treated them as memory: it folded control register writes, and it read CPU interface bit 7 back as the RAM byte
+    that had been written there (DAT_00808491). That changes three functions, and the new renders follow the hardware.
+  - CM848 does not run this script.
+- 0xc760 mc68k_tpuTimerInitializer -> mc68k_configureCanCs5MessageObjects. It touches no TPU register; it configures
+  CS5's message objects 1-6: receive 11-bit identifiers 0x112 / 0x512 / 0x712 and transmit 0x100 / 0x500 / 0x700.
+- 0x1e1d0 mc68k_serialPort2IsrHandler -> mc68k_canCs5InterruptHandler: CS5's interrupt handler. No serial port is
+  involved.
+
+Proof:
+- CM550 verify is DETERMINISTIC after each of the three steps. The register stage applies 189 rows with no failure.
+- All 45 CAN rows render, and no DAT_ / Ram render is left at a named address.
+- After the renames, 3 functions differ at statement level (prove_r79a_cm550.py), all because the block is volatile:
+  mc68k_configureCanCs5MessageObjects, mc68k_canCs5InterruptHandler and mc68k_dualCanControllerInit now keep each
+  register read and write instead of folding them as memory.
+- The message 15 mask fix and the two function renames are label-only apart from the new plate comments.
+- CM848 builds with the script change, and its .cpp is unchanged apart from the Generated line.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_lookup_tables and
+  test_rename_waves pass.
+
+Sources: Intel 82527 Serial Communications Controller Architectural Overview (https://star.inp.nsk.su/~kozak/canbus/82527ao.pdf)
+and the MC68336/376 User's Manual, Appendix D (the chip-select registers).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

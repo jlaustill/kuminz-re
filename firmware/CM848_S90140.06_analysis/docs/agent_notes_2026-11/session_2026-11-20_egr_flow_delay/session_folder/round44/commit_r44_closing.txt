@@ -1,0 +1,15 @@
+cm848: round 44 closing - task 046, the session archive, the PR body
+
+- task 046, round 44:
+  - stage A: the evidence (the e2m negatives with offsets read as numbers, and the raw scan of both images);
+  - the proof;
+  - the leads it resolves: round 39's unverified rows, round 43's typed junk row, task 045's 0x3fb52a;
+  - two leads: the oil change monitor's third accumulator (CHR_B2's OCM "FOD" model does not transfer), and
+    cruise_out_of_gear_disable, which no code reads.
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 221.
+- PR body, README, todo, memory, and the round 44 session folder:
+  - apply_r44a.py, map_r44a.csv;
+  - e2m_negatives.py and its output, raw_address_scan.py, pedal_records.txt;
+  - the closing scripts.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

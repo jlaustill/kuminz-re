@@ -1,0 +1,1 @@
+CM550: the .cpp changes are the 128 watchdog writes now named CS2_WATCHDOG_SERVICE, the EEPROM log indexes losing their '_' prefixes, one underscore-overlap warning gone and one declaration reordered; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

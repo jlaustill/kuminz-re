@@ -1,0 +1,8 @@
+address,name,old_label,kind,dims
+0x004086c8,tsc1_lost_time_limit,j1939_tsc1_active_duration_reload,global,1
+0x004086ca,tsc1_lost_counter_initial_value,DAT_004086ca,global,1
+0x004086cc,tsc1_lost_intermittent_time_limit,j1939_tsc1_timing_fault_counter_threshold,global,1
+0x004086ce,tsc1_lost_maximum_intermittent_count,DAT_004086ce,global,1
+0x003fcd7a,tsc1_lost_counter,j1939_tsc1_active_duration_counter,global,1
+0x003fcd7c,tsc1_lost_intermittent_count,j1939_tsc1_timing_fault_cycle_count,global,1
+0x0005c30e,commanded_throttle_difference_threshold,DAT_0005c30e,global,1

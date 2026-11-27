@@ -1,0 +1,39 @@
+cm848: round 10 stage E - the P1740 monitor's protection_ words, the SCI actuator tests (label-only)
+
+- **The P1740 converter clutch / overdrive rationality monitor** (cm848_monitorConverterClutchAndOverdrivePerformance).
+  Its e2m 8C34 records are mapped at 0x40b57a; these are its working words with no record:
+  - converter_clutch_rationality_cycle_divider (was protection_output_rate_counter: the 5-pass divider)
+  - converter_clutch_rationality_last_throttle (was protection_fuel_demand_tick_snapshot: the previous pass's fuel
+    demand, 0xffff = no sample)
+  - converter_clutch_rationality_previous_throttle (was protection_fuel_demand_prev: stored, never loaded)
+  - converter_clutch_rationality_previous_ratio (was protection_pid_rpm_setpoint_prev: the previous engine / output
+    speed ratio sample that cm848_calculateConverterClutchRatioDelta subtracts from)
+  - converter_clutch_rationality_overdrive_request_snapshot (was protection_action_mode_b2_snapshot)
+  - converter_clutch_rationality_lockup_started_flag (was protection_output_phase_entry_flag)
+  - cm848_initializeConverterClutchRationalityMonitor (was initProtectionOutputFlags)
+- **The SCI command 0x13 actuator tests.** The DRB database (mydb, SCI transactions 13-xx) names every test code the
+  callback handles:
+  - 13-09 A/C clutch relay, 13-0F torque converter clutch, 13-16 overdrive solenoid
+  - 13-1A / 13-1B cruise vent / vacuum, 13-2C cruise 12 volt feed
+  - 13-28 / 13-29 intake heaters, 13-33 fuel transfer pump
+  - 13-43 'TRANS 12V RELAY' on output 16 (it confirms stage C's transmission relay)
+  - 13-49 wait to start lamp, 13-5D exhaust brake, 13-5E fuel control, 13-5F PWM radiator fan
+  The old cold_start_protection_* / diag_protection_* names described a cold-start guess.
+  - **Functions:** cm848_updateSciOutputTests (was engine_coldStart_protectionSequence_update),
+    cm848_stepSciOutputTest (was diag_protection_countdown_trigger), cm848_stopSciOutputTest (was
+    diag_protection_event_clear) and cm848_stopAllSciOutputTests (was diag_protection_fault_init_all).
+  - **Globals:** sci_output_test_active_count, sci_output_test_drive_phase_flag and sci_output_test_phase_countdown;
+    fuel_control_actuator_test_active_flag (was engine_sync_cold_start_flag, read by
+    cm848_calculateFuelMeteringCommand) and cooling_fan_actuator_test_active_flag (was
+    cold_start_injection_protection_flag, read by cm848_selectCoolingFanDutySource). The end-of-line test sets them
+    too.
+  - **Plates:** the plates of cm848_sciStartTimedOutputTest / cm848_sciCommand19OutputTestCallback are corrected.
+    The tests run only while the engine is stopped, not while cranking.
+- **New rows:**
+  - park_neutral_switch_start_check_failed_flag (DAT_003fcef6, the P0850 start check's verdict)
+  - governor_pressure_error_previous (DAT_003fcf0e)
+  - governor_pressure_unused_cached_axis_offset (DAT_003fcf08, set to 2 and never read)
+- **Checks:** CM550 has none of these names. reverse_names.py EQUIVALENT (two functions differ only in a local
+  declaration's position, as usual after inserted rows).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

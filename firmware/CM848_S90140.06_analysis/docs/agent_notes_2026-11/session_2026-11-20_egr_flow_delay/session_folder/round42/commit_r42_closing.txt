@@ -1,0 +1,12 @@
+cm848: round 42 closing - task 046, the session archive, verify
+
+- task 046, the round 42 section: stages A / B, the proofs, and the leads (the status record's unexplained bits, the
+  "stage N" torque tables without an e2m record).
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round42/: the apply scripts, the status record proof, the rules, maps and commit messages. The .cpp
+    copies are left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

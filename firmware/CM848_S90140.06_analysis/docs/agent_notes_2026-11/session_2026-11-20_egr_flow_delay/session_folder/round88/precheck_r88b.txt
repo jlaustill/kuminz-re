@@ -1,0 +1,123 @@
+GLOBAL CM550 0x00803fda -> power_down_left_ecm_powered_flag_cal word: row eeprom_powerdown_status:undefined
+GLOBAL CM550 0x00803fe2 -> power_cycle_sequence_number_cal word: NO ROW
+GLOBAL CM550 0x00803fe4 -> completed_power_down_sequence_number_cal word: NO ROW
+GLOBAL CM550 0x00803fe6 -> consecutive_incomplete_power_down_count_cal word: NO ROW
+GLOBAL CM550 0x00803fea -> incomplete_power_down_count_cal word: NO ROW
+GLOBAL CM550 0x00803fec -> completed_power_down_count_cal word: row vp44_reset_count:undefined
+GLOBAL CM550 0x00803fdc -> eeprom_write_failure_flag_cal word: NO ROW
+GLOBAL CM550 0x00808480 -> consecutive_incomplete_power_down_limit word: row number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255:undefined
+GLOBAL CM550 0x00808482 -> parameter_block_protection_enable word: row enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled:undefined
+GLOBAL CM550 0x00808484 -> engine_run_with_all_power_down_data_lost_flag word: row flag_indicating_if_engine_should_be_ran_if_all_powerdown_da_true_false:undefined
+GLOBAL CM550 0x008001d2 -> power_down_count_eeprom_write_value word: row hour_meter_tick_divider:undefined
+GLOBAL CM550 0x0080de2e -> key_off_shutdown_inhibit_flag word: row :word
+GLOBAL CM550 0x0080d28c -> engine_shutdown_command_flag word: row engine_protection_shutdown_command:undefined
+GLOBAL CM550 0x0080de7a -> diagnostic_clear_request_state word: row action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6:word
+GLOBAL CM550 0x00801c7a -> j1939_diagnostic_service_table j1939_diagnostic_service_entry_t[32]: NO ROW
+GLOBAL CM550 0x00801d3a -> j1939_diagnostic_handler_count byte: NO ROW
+GLOBAL CM550 0x0080dde4 -> eeprom_mirror_commit_j1708_reply_pending_flag byte: row :byte
+GLOBAL CM550 0x008005fd -> engine_overspeed_active_flag byte: row vp44_timing_fault_active:undefined
+GLOBAL CM550 0x008005fa -> engine_overspeed_debounce_count word: row vp44_timing_fault_debounce_counter:undefined
+GLOBAL CM550 0x008005fc -> engine_state_key_on_previous_flag byte: NO ROW
+GLOBAL CM848 0x003fa862 -> engine_state_key_on_previous_flag byte: row mios_timer_active_flag:byte
+GLOBAL CM550 0x00807f1c -> engine_overspeed_set_rpm_threshold word: row intake_manifold_temp_threshold:undefined
+GLOBAL CM550 0x00807f1e -> engine_overspeed_clear_rpm_threshold word: row throttle_position_raw_threshold:undefined
+GLOBAL CM550 0x00807f20 -> engine_overspeed_debounce_limit word: row intake_temp_upper_threshold:undefined
+GLOBAL CM550 0x00807f22 -> engine_stopped_speed word: row engine_speed_for_transition_into_out_of_crank_reentr_state_0_300:undefined
+INSTANCE CM550 0x0080553a engine_overspeed_event_t[5](40) -> engine_overspeed_log: +0 DGRPOSLF:undefined r1; +1 diagnostic_snapshot_limited_byte:undefined r0; +2 diagnostic_snapshot_fuel_mode_0:undefined r1; +4 vp44_sensor_diag_state_1:undefined r3; +6 fuel_arbitrator_rpm_target_history:undefined r2; +8 diagnostic_snapshot_zero_0:undefined r0; +10 diagnostic_snapshot_zero_1:undefined r0; +12 diagnostic_snapshot_zero_2:undefined r0; +14 fuel_arbitrator_rpm_history_index:undefined r0; +16 loop_counter_capture_start_2:undefined r0; +20 loop_counter_elapsed_time_2:undefined r0; +26 diagnostic_snapshot_position_flag:undefined r0; +27 diagnostic_snapshot_byte_1:undefined r0; +28 diagnostic_snapshot_fuel_mode_1:undefined r0; +30 vp44_sensor_diag_state_2:undefined r0; +32 fuel_arbitrator_state_history:undefined r0; +34 diagnostic_snapshot_zero_3:undefined r0; +36 diagnostic_snapshot_zero_4:undefined r0; +38 diagnostic_snapshot_zero_5:undefined r0
+GLOBAL CM550 0x00805652 -> engine_overspeed_log_entry_open_flag word: NO ROW
+GLOBAL CM550 0x00805654 -> engine_overspeed_log_index word: row diagnostic_snapshot_ring_index:undefined
+GLOBAL CM550 0x0080bda4 -> key_on_hour_meter dword: row hour_meter_ecm_run_time_none:undefined
+GLOBAL CM550 0x008057be -> engine_startup_inhibit word: row engine_startup_inhibit_true_false:undefined
+GLOBAL CM550 0x0080061c -> engine_shutdown_command_flag_previous word: row engine_protection_shutdown_command_previous:undefined
+GLOBAL CM550 0x0080d0ac -> crank_exit_speed word: row crank_fuel_limit_source_selector:undefined
+GLOBAL CM550 0x0080d0aa -> crank_reentry_speed word: row fsmxthfl_calc_input:undefined
+GLOBAL CM550 0x0080d0a0 -> crank_jump_start_timer word: row timer_used_to_dictate_a_jumpstart_condition_0_13107:undefined
+GLOBAL CM550 0x00807f0a -> crank_jump_start_time word: row crank_jumpstart_time_0_13107:undefined
+GLOBAL CM550 0x0080a9c8 -> engine_retarder_active_flag word: NO ROW
+GLOBAL CM550 0x008040c0 -> engine_brake_driveline_brake_type_cal word: NO ROW
+GLOBAL CM550 0x0080d356 -> key_off_shutdown_mode word: NO ROW
+GLOBAL CM550 0x0080d0c8 -> engine_state ENGINE_STATE: row engine_state:word
+GLOBAL CM550 0x00801c66 -> ram_refresh_current_block_pointer pointer: row can_memory_sync_table_pointer:undefined
+GLOBAL CM550 0x00801c6a -> ram_refresh_source_pointer pointer: row calibration_sync_rom_pointer:undefined
+GLOBAL CM550 0x00801c6e -> ram_refresh_target_pointer pointer: row calibration_sync_ram_pointer:undefined
+GLOBAL CM550 0x00801c72 -> ram_refresh_word_rewritten_flag word: NO ROW
+GLOBAL CM550 0x00801c74 -> ram_refresh_words_per_pass word: NO ROW
+GLOBAL CM550 0x00801c76 -> ram_refresh_enable_previous word: NO ROW
+GLOBAL CM550 0x0080bcf8 -> port_e_output_image byte: row enable_flag_to_allow_boot_block_programming_enable_disable:undefined
+GLOBAL CM550 0x80d9f4 -> j1939_transmit_message_object_number word: row can_first_receive_object_index:undefined
+GLOBAL CM550 0x80d9f6 -> j1939_last_receive_message_object_number word: row can_last_receive_object_index:undefined
+GLOBAL CM848 0x40ad68 -> j1939_transmit_message_object_number word: row can_tx_mailbox_start_index:word
+GLOBAL CM848 0x40ad6a -> j1939_last_receive_message_object_number word: row can_tx_mailbox_end_index:word
+INSTANCE CM550 0x801ebc j1939_tx_msg_t(14) -> j1939_pgn65269_tx_message: no rows
+GLOBAL CM550 0x801ed2 -> j1939_pgn65269_transmit_status byte: NO ROW
+INSTANCE CM550 0x801ed4 j1939_tx_msg_t(14) -> j1939_pgn65265_tx_message: no rows
+GLOBAL CM550 0x801eea -> j1939_pgn65265_transmit_status byte: NO ROW
+INSTANCE CM550 0x801eec j1939_tx_msg_t(14) -> j1939_pgn65261_tx_message: no rows
+GLOBAL CM550 0x801f02 -> j1939_pgn65261_transmit_status byte: NO ROW
+INSTANCE CM550 0x801f04 j1939_tx_msg_t(14) -> j1939_pgn65259_tx_message: no rows
+GLOBAL CM550 0x801f3a -> j1939_pgn65259_transmit_status byte: NO ROW
+INSTANCE CM550 0x801f3e j1939_tx_msg_t(14) -> j1939_dm10_tx_message: no rows
+GLOBAL CM550 0x801f54 -> j1939_dm10_transmit_status byte: NO ROW
+INSTANCE CM550 0x80344a j1939_tx_msg_t(14) -> j1939_pgn65230_tx_message: +0 oil_pressure_table_2_ptr:undefined r4; +4 oil_pressure_table_3_ptr:undefined r1; +8 oil_pressure_table_4_ptr:undefined r0; +12 oil_pressure_table_5_ptr:undefined r0
+GLOBAL CM550 0x803460 -> j1939_pgn65230_transmit_status byte: row base_timing_rpm_input:undefined
+INSTANCE CM550 0x803462 j1939_tx_msg_t(14) -> j1939_pgn65232_tx_message: +0 vp44_timing_table_size:undefined r4; +2 vp44_timing_fault_limit_ptr:undefined r0; +6 base_timing_fuel_value_input:undefined r1; +8 vp44_stuck_pump_threshold_ptr:undefined r0; +12 base_timing_table_lookup_arg_346e:undefined r0
+GLOBAL CM550 0x803478 -> j1939_pgn65232_transmit_status byte: row lift_pump_fuel_demand_input:undefined
+INSTANCE CM550 0x803482 j1939_tx_msg_t(14) -> j1939_pgn61441_tx_message: +0 vp44_lift_pump_table_3_ptr:undefined r3; +4 lift_pump_table_lookup_arg_3486:undefined r1; +8 vp44_can_msg_100_received_flag:undefined r0; +9 vp44_can_msg_100_retry_counter:undefined r0; +10 vp44_can_msg_timeout_counter:undefined r1; +12 lift_pump_diagnostic_mode_flag:undefined r0; +13 vp44_fso_circuit_fault_flag:undefined r0
+GLOBAL CM550 0x803490 -> j1939_pgn61441_transmit_status byte: row vp44_timing_expected_table_ptr:undefined
+INSTANCE CM550 0x80349a j1939_tx_msg_t(14) -> j1939_pgn61444_tx_message: +0 vp44_diagnostic_threshold_state:undefined r5; +2 vp44_timing_actual_init:undefined r0; +6 vp44_fso_fault_active_flag:undefined r1; +7 vp44_fso_fault_detection_enable:undefined r0; +8 vp44_fso_warmup_counter:undefined r0; +10 derate_threshold_change_counter:undefined r1; +11 vp44_timing_negative_fault_counter:undefined r0; +12 vp44_timing_max_fault_counter:undefined r0; +13 vp44_fuel_demand_range_fault_counter:undefined r0
+GLOBAL CM550 0x8034a8 -> j1939_pgn61444_transmit_status byte: row vp44_timing_min_fault_counter:undefined
+INSTANCE CM550 0x8034b2 j1939_tx_msg_t(14) -> j1939_pgn61443_tx_message: +0 fso_fault_latched_value:undefined r4; +2 fso_bit5_fault_set_counter:undefined r0; +3 fso_bit5_fault_clear_counter:undefined r0; +4 fso_fault_debounce_counter:undefined r1; +5 fso_bit6_fault_clear_counter:undefined r0; +6 fso_high_cmd_fault_debounce_counter:undefined r1; +7 fso_low_cmd_fault_clear_counter:undefined r0; +8 fso_stuck_fault_debounce_counter:undefined r0; +9 vp44_fso_range1_fault_counter:undefined r0; +10 vp44_fso_range2_fault_counter:undefined r1; +11 vp44_fso_recovery_counter:undefined r0; +12 vp44_fso_bit1_range1_fault_counter:undefined r0; +13 vp44_fso_bit1_range2_fault_counter:undefined r0
+GLOBAL CM550 0x8034c0 -> j1939_pgn61443_transmit_status byte: row vp44_fso_bit1_recovery_counter:undefined
+INSTANCE CM550 0x8034ca j1939_tx_msg_t(14) -> j1939_pgn65247_tx_message: +0 vp44_fso_condition_counter:undefined r4; +2 vp44_fso_duration_counter:undefined r0; +4 vp44_fso_timing_fault_counter:undefined r1; +6 vp44_fso_bit0_fault_counter:undefined r1; +8 vp44_fso_bit0_recovery_counter:undefined r0; +10 vp44_fso_bit15_fault_counter:undefined r1; +12 vp44_fso_bit15_limit_counter:undefined r0
+GLOBAL CM550 0x8034d8 -> j1939_pgn65247_transmit_status byte: row vp44_fso_bit15_recovery_counter:undefined
+INSTANCE CM550 0x8034da j1939_tx_msg_t(14) -> j1939_pgn65263_tx_message: +0 vp44_fso_multibit_fault_debounce_counter:undefined r4; +2 vp44_fso_multibit_clear_flag:undefined r0; +4 vp44_fso_multibit_fault_accumulator:undefined r1; +6 vp44_fso_multibit_fault_state:undefined r1; +8 vp44_fso_stuck_high_state:undefined r0; +10 vp44_fso_stuck_high_recovery_counter:undefined r1; +12 vp44_fso_zero_timing_fault_counter:undefined r0; +13 vp44_fso_demand_delta_fault_counter:undefined r0
+GLOBAL CM550 0x8034f0 -> j1939_pgn65263_transmit_status byte: NO ROW
+INSTANCE CM550 0x80352a j1939_tx_msg_t(14) -> j1939_pgn65251_tx_message: +2 loop_counter_reference:undefined r0
+GLOBAL CM550 0x803538 -> j1939_pgn65251_transmit_status byte: NO ROW
+INSTANCE CM550 0x80353a j1939_tx_msg_t(14) -> j1939_pgn65253_tx_message: no rows
+GLOBAL CM550 0x803550 -> j1939_pgn65253_transmit_status byte: NO ROW
+INSTANCE CM550 0x803552 j1939_tx_msg_t(14) -> j1939_pgn65262_tx_message: no rows
+GLOBAL CM550 0x803568 -> j1939_pgn65262_transmit_status byte: NO ROW
+INSTANCE CM550 0x803572 j1939_tx_msg_t(14) -> j1939_pgn61440_tx_message: no rows
+GLOBAL CM550 0x803580 -> j1939_pgn61440_transmit_status byte: NO ROW
+INSTANCE CM550 0x80358a j1939_tx_msg_t(14) -> j1939_pgn65213_tx_message: no rows
+GLOBAL CM550 0x803598 -> j1939_pgn65213_transmit_status byte: NO ROW
+INSTANCE CM550 0x80359a j1939_tx_msg_t(14) -> j1939_pgn65257_tx_message: no rows
+GLOBAL CM550 0x8035b0 -> j1939_pgn65257_transmit_status byte: NO ROW
+INSTANCE CM550 0x8035bc j1939_tx_msg_t(14) -> j1939_pgn65266_tx_message: no rows
+GLOBAL CM550 0x8035ca -> j1939_pgn65266_transmit_status byte: NO ROW
+INSTANCE CM550 0x8035d0 j1939_tx_msg_t(14) -> j1939_pgn65244_tx_message: +4 vp44_status_flags_1:undefined r1; +6 fuel_demand_control_flags:undefined r1; +8 protection_system_flags:undefined r0; +10 engine_operating_state_flags:undefined r1; +12 diagnostic_status_flags:undefined r0
+GLOBAL CM550 0x8035e6 -> j1939_pgn65244_transmit_status byte: NO ROW
+INSTANCE CM550 0x8035e8 j1939_tx_msg_t(14) -> j1939_pgn65252_tx_message: +2 diagnostic_service_enable_flags:undefined r0; +4 vp44_status_flags_2:undefined r1
+GLOBAL CM550 0x8035fe -> j1939_pgn65252_transmit_status byte: NO ROW
+INSTANCE CM550 0x803600 j1939_tx_msg_t(14) -> j1939_pgn65270_tx_message: no rows
+GLOBAL CM550 0x803616 -> j1939_pgn65270_transmit_status byte: NO ROW
+INSTANCE CM550 0x803618 j1939_tx_msg_t(14) -> j1939_pgn65264_tx_message: +0 engine_operating_mode_flags:undefined r4
+GLOBAL CM550 0x80362e -> j1939_pgn65264_transmit_status byte: NO ROW
+INSTANCE CM550 0x803644 j1939_tx_msg_t(14) -> j1939_pgn65249_tx_message: no rows
+GLOBAL CM550 0x803652 -> j1939_pgn65249_transmit_status byte: NO ROW
+INSTANCE CM550 0x803654 j1939_tx_msg_t(14) -> j1939_pgn65248_tx_message: no rows
+GLOBAL CM550 0x80366a -> j1939_pgn65248_transmit_status byte: NO ROW
+INSTANCE CM550 0x80366c j1939_tx_msg_t(14) -> j1939_pgn65271_tx_message: +12 vp44_comm_bit0_counter:undefined r0
+GLOBAL CM550 0x803682 -> j1939_pgn65271_transmit_status byte: row eeprom_calibration_check_value_2:undefined
+INSTANCE CM550 0x803684 j1939_tx_msg_t(14) -> j1939_pgn65255_tx_message: +0 eeprom_calibration_check_value_3:undefined r4; +2 vp44_comm_test_flag:undefined r0; +4 vp44_comm_test_sensor_value:undefined r1; +6 redundant_sensor_param_1:undefined r1; +8 redundant_sensor_param_2:undefined r0; +10 redundant_sensor_param_3:undefined r1
+GLOBAL CM550 0x80369a -> j1939_pgn65255_transmit_status byte: row fuel_demand_rate_limit_init:undefined
+INSTANCE CM550 0x80369c j1939_tx_msg_t(14) -> j1939_pgn65260_tx_message: +6 oil_pressure_rpm_limit_max:undefined r1
+GLOBAL CM550 0x8036aa -> j1939_pgn65260_transmit_status byte: NO ROW
+INSTANCE CM550 0x8036b4 j1939_tx_msg_t(14) -> j1939_pgn65279_tx_message: +6 vp44_comm_fault_monitor_state:undefined r1
+GLOBAL CM550 0x8036c2 -> j1939_pgn65279_transmit_status byte: NO ROW
+INSTANCE CM550 0x801ea4 j1939_tx_msg_t(14) -> j1939_pgn59392_tx_message: no rows
+GLOBAL CM550 0x801eba -> j1939_pgn59392_transmit_status byte: NO ROW
+INSTANCE CM550 0x801f56 j1939_tx_msg_t(14) -> j1939_dm1_tx_message: no rows
+GLOBAL CM550 0x80265a -> j1939_dm1_transmit_status byte: NO ROW
+INSTANCE CM550 0x80265c j1939_tx_msg_t(14) -> j1939_dm2_tx_message: +4 dm2_message_byte_count:undefined r5
+GLOBAL CM550 0x802d60 -> j1939_dm2_transmit_status byte: NO ROW
+INSTANCE CM550 0x802d62 j1939_tx_msg_t(14) -> j1939_pgn65229_tx_message: no rows
+GLOBAL CM550 0x803448 -> j1939_pgn65229_transmit_status byte: NO ROW
+INSTANCE CM550 0x801232 j1939_tx_msg_t(14) -> j1939_single_frame_tx_message: no rows
+INSTANCE CM550 0x800b1a j1939_tx_msg_t(14) -> j1939_transport_tx_message: no rows
+GLOBAL CM550 0x801240 -> j1939_single_frame_transmit_status byte: NO ROW
+GLOBAL CM550 0x800b28 -> j1939_transport_transmit_status byte: NO ROW
+GLOBAL CM550 0x803471 -> j1939_dm8_test_type_component_identifier byte: NO ROW
+GLOBAL CM550 0x803474 -> j1939_dm8_test_limit_maximum word: row vp44_lift_pump_table_ptr:undefined
+GLOBAL CM550 0x803476 -> j1939_dm8_test_limit_minimum word: NO ROW

@@ -1,0 +1,41 @@
+99 differing lines
+  -  if (((engine_state == 1) || (engine_state == 2)) ||
+  -     (engine_state == 6)) {
+  +  if (((engine_state == 1) || (engine_state == 2)) || (engine_state == 6)) {
+  -  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (engine_state != 3)
+  -     ) {
+  +  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (engine_state != 3)) {
+  -               (aux_driver_engine_brake_low_side_error_count == 2)) &&
+  -              (engine_state != 5)) && (engine_state != 8)) {
+  +               (aux_driver_engine_brake_low_side_error_count == 2)) && (engine_state != 5)) &&
+  +             (engine_state != 8)) {
+  -               (aux_driver_cold_start_aid1_low_side_error_count == 2)) &&
+  -              (engine_state != 5)) && (engine_state != 8)) {
+  +               (aux_driver_cold_start_aid1_low_side_error_count == 2)) && (engine_state != 5)) &&
+  +             (engine_state != 8)) {
+  -               (aux_driver_cold_start_aid2_low_side_error_count == 2)) &&
+  -              (engine_state != 5)) && (engine_state != 8)) {
+  +               (aux_driver_cold_start_aid2_low_side_error_count == 2)) && (engine_state != 5)) &&
+  +             (engine_state != 8)) {
+  -               (aux_driver_ether_start_low_side_error_count == 2)) &&
+  -              (engine_state != 5)) && (engine_state != 8)) {
+  +               (aux_driver_ether_start_low_side_error_count == 2)) && (engine_state != 5)) &&
+  +             (engine_state != 8)) {
+  -  if (((short)uVar1 != parameter_block_1_checksum_cal) && (DAT_000055b2 != -0x5e5f)) {
+  +  if (((word)uVar1 != parameter_block_1_checksum_cal) && (DAT_000055b2 != -0x5e5f)) {
+  -  if ((short)uVar1 != parameter_block_2_checksum_cal) {
+  +  if ((word)uVar1 != parameter_block_2_checksum_cal) {
+  -  short local_6;
+  -  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1U) == 0) {
+  +  word local_6;
+  +  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) == 0) {
+  -        cm550_parameterCircularBufferWrite(0x803fd8,&parameter_block_1_save_start_count_cal,2);
+  +        cm550_parameterCircularBufferWrite
+  +                  (0x803fd8,(byte *)&parameter_block_1_save_start_count_cal,2);
+  -        while ((uVar4 < 5000 && (parameter_block_1_save_complete_count_cal != parameter_block_1_save_start_count_cal))) {
+  +        while ((uVar4 < 5000 &&
+  +               (parameter_block_1_save_complete_count_cal != parameter_block_1_save_start_count_cal)
+  +               )) {
+  -  short local_6;
+  -  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1U) == 0) {
+  +  word local_6;

@@ -1,0 +1,22 @@
+cm848: round 57 follow-up - fault 59 has no DTC, 8B2D +A in the B2 releases, the 0x3fcd90 wording
+
+Three corrections from the closing checks (fix_r57c.py):
+- fuel_pressure_fault_active_flag: the stage B row and commit message read fault 59
+  (fuel_pressure_decay_below_model_error) as a second P1222. The ROM says fault 59 -> slot 158 (0x5985a) -> P0000
+  in obd_dtc_code_table, so it has no DTC. Faults 57 / 58 / 60 are P1221 / P1222 / P1223. The row now gives each
+  fault's code.
+- warning_chime_count_fuel_pressure_fault (8B2D +A): the CC e2m 11.45 ends 8B2D at +9, but the six CHR_B2 releases
+  (11.61-11.72) name this word Catalyst_Warning_Chime_Count. The truck's CC-family code chimes it for the fuel
+  pressure faults, so the name stands, and the row now says so.
+- cm848_initializeCruiseControl's plate said the 0x3fcd90 word it zeroes is read by nothing. That rests on a name
+  grep in the time-shared ROM-to-RAM window, so the plate now says no reader was found by name.
+- Also: task 046's stage B lines, and the memory note on return-only prototypes. The caller re-rendered with
+  renumbered locals, which matters for any local_variables.csv rows.
+
+Checked and clean: none of round 57's 31 old labels is in CM550.
+
+Proof: one plate changed in the .cpp; prove_r57.sh with an empty map shows 0 of 1968 functions differ. verify is
+byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged. Headers regenerated (0 g++ errors)
+and the tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

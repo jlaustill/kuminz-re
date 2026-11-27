@@ -1,0 +1,24 @@
+cm550: round 93 - remove 21 function rows that sit inside the executive frame task sets
+
+executiveFrameInterruptHandler (0x1b876) runs 40 phases; each phase calls a few task sets with bsr.w, and a task set
+is a straight list of jsr instructions ending in rts (45 of them in 0x1b4d0-0x1b875). 21 function_renames.csv rows
+named an address INSIDE such a list - the fourth jsr of the task set at 0x1b4d8, a list's own rts, and so on. Each row
+forced Ghidra to cut a function there, so the .cpp repeated the list's tail as a function of its own with an
+unrelated name (cm550_diagnosticMonitoringCoordinator, cm550_boostPressureControlInit, cm550_empty_debug_hook ...).
+One of them (0x1b62a, inside periodicTaskSet_fuelDemand) carried the name of the task set at 0x1b4d8,
+vp44_evenPhaseSchedulerTaskSet: two functions had one name, and every tool that keys functions by name saw only one.
+
+- The 21 rows are removed and recorded in deleted_functions.csv with the task set that holds each one.
+- The one comment that cited two of them (cm550_tickJ1939InputSupervision) now names the task set.
+
+Proof:
+- From the ROM (apply_r93_midbody.py checks this before it removes anything): the layer decodes as 45 lists of
+  jsr / clr.w -(a7) / addq.l #2,a7 ending in rts; each removed address is on an instruction boundary inside a list;
+  no jsr / jmp operand, no bsr / bra / Bcc displacement and no aligned 4-byte pointer in the dumped ROM reaches any
+  of the 21, while every remaining task set has a caller.
+- CM550 verify DETERMINISTIC. By address: 756 functions before, 735 after; the 21 left; no function arrived; no
+  remaining function changed its name or its code. No new build warning (the 21 deletion entries find no function
+  to remove once the rows are gone: "already absent").
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

@@ -109,6 +109,8 @@ prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
 
 - `engine_protection_timerStateMachine_init` / `engine_coldStart_protection_stateMachine` read and write
   `end_of_line_test_settings_cal.test_flags_2`. They are probably end-of-line test steps, not protection.
+  Resolved by PR #53 round 13: they are steps 0 and 1 of the end-of-line test sequence
+  (`cm848_runEndOfLineTestStartStep` / `cm848_runEndOfLineOutputTestStep`).
 - Suggested enums: the transmission temperature rationality state and the output speed sensor check states.
 - The misfire response polarity needs a running-engine dump.
 - `fault_setters.py` misses setters that write through a temporary (fault 777).
@@ -118,7 +120,7 @@ prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
   - the overspeed log (`engine_overspeed_event_t[5]`);
   - the `i16` limits at 0x408d4a / 0x408d52;
   - the orphan pad rows;
-  - `engine_rpm_state_t.filtered_rpm` and `governor_output_t.idle_reference_speed`;
+  - `engine_rpm_state_t.filtered_rpm` and `low_speed_governor_reference_t.idle_reference_speed`;
   - the P0720 bit (0x20 of `fault_state_flags`);
   - the misnames listed in wave 10 (commit 72eb81e);
   - `sensor_validation_timeout_cal`, which is `end_of_line_test_settings_cal.maximum_miles` plus a spare byte;
@@ -138,3 +140,14 @@ prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
   - no boot-ROM function changed beyond field renames;
   - the underscore warnings stayed at 43 and the importer stats did not change;
   - `piece_census.py` found the pieces added by the two RMW bitfields, which were reverted.
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`
+
+## Resolved by PR #53 round 9 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 9 (the text above keeps its wording):
+- `protection_status_flags_t` → `transmission_shift_strategy_flags_t`
+- `protection_condition_flags_t` → `transmission_control_flags_t`

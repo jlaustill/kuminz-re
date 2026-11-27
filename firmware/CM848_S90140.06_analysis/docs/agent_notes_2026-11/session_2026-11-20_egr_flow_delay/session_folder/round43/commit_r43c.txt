@@ -1,0 +1,25 @@
+cm848: round 43 stage C - the end of injection block named by e2m 8B47 / 8B48, the hydraulic delay
+
+Stage A searched the e2m for the end of injection with truncated output. The full search finds this block's own
+records:
+- 8B47 +0 EOI_Default, "Main end of injection default; EOI set to this when no injection";
+- 8B47 +2 EOI_Hydraulic_Delay, "Hydraulic delay added to HPCR_Duration_Main_Injection to determine EOI" (uSEC, 0.4 per
+  count);
+- 8B47 +4 EOI_Max_Limit and +6 EOI_Min_Limit (CRANK_DEG_BTDC, signed, 0.1171875 per count);
+- 8B48 +0 EOI, "Main end of injection".
+
+The dumped parameter ID table does not reach these blocks, but the match holds on every other count:
+- The names, order, signs and scales match the code exactly; 0.1171875 deg per count is the unit stage A derived.
+- The dump values fit: default -171 = -20.04 deg, maximum 512 = 60.00 deg, minimum -171, hydraulic delay
+  1975 = 790 us. The output equals the default with the engine stopped.
+- main_injection_timing_copy resolves to 103B +2 SOI, "Start of injection".
+
+Changes:
+- main_injection_end_timing_pulse_width_addend -> main_injection_end_timing_hydraulic_delay.
+- All five rows and the function's plate cite their records.
+- The i16 types of the default / maximum / minimum now meet both conditions of the signedness rule: a signed e2m
+  record and lha loads.
+
+Proof: prove_caches.py matches all 1968 functions. Thunks 18 / 14. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

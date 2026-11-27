@@ -1,0 +1,21 @@
+cm848: round 40 fix - the counts and the "only application code" claim say what was measured
+
+A review of the round found three pieces of pushed text wider than what was checked. Comment and document text only;
+global comments reach neither the .cpp nor the headers (round 39's fix build), so the build is unchanged.
+- **"Only application code uses it":** the 24 stage A comments said this, but it was measured as a name search of the
+  .cpp. As an address claim it is false for some rows: 0x3fd707 / 0x3fd882 / 0x3fd902 lie in the boot kernel's image
+  window and 0x3fee2f in the time-shared header range. They now say "only application code references this name".
+- **The counts:**
+  - The parameter ID table resolved 7 of the candidates, not 8.
+  - Ten names changed their base (nine EEPROM rows plus engine_idling_flag), not seven, and 15 rows only gained _cal,
+    not 17. The 7f54db1 title and message keep the old numbers; task 046 and the PR body are corrected.
+- **firmware/CLAUDE.md (factual refresh):** round 39's sentence still said 258 MISSING. It now gives the 234: 123
+  documentation rows, 77 boot-named and 10 dual-use rows at addresses the boot kernel shares, 18 with no reference by
+  name, and 6 deferred.
+- **Checked, no change needed:**
+  - The five e2m-cited rows match their record's size and sign.
+  - The refreshed comments, plates and CLAUDE.md lines of 7f54db1 substitute current references only.
+  - tools/update_odometer.sh parses (bash -n).
+- The memory notes and the round 40 session folder.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

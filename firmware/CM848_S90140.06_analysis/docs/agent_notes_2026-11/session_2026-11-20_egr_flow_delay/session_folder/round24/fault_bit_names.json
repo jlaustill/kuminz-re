@@ -1,0 +1,1105 @@
+{
+ "0": {
+  "6": [
+   "AFC_Low_Boost_Error"
+  ],
+  "8": [
+   "Boost_Pressure_High_Error"
+  ],
+  "9": [
+   "Boost_Pressure_Low_Error"
+  ],
+  "7": [
+   "FP_Idle_Error"
+  ],
+  "1": [
+   "FSO_Command_High_Control_Error"
+  ],
+  "2": [
+   "FSO_Command_Low_Control_Error"
+  ],
+  "14": [
+   "HPCR_OBD_Neg_Dev_Error"
+  ],
+  "15": [
+   "HPCR_OBD_Pos_Dev_Error"
+  ],
+  "12": [
+   "Oil_Pressure_High_Error"
+  ],
+  "13": [
+   "Oil_Pressure_Low_Error"
+  ],
+  "0": [
+   "RAM_Image_Word_Error"
+  ],
+  "10": [
+   "Sampled_Throttle_High_Error"
+  ],
+  "11": [
+   "Sampled_Throttle_Low_Error"
+  ],
+  "3": [
+   "TU_WG_Driver1_High_Control_Error"
+  ],
+  "4": [
+   "TU_WG_Driver1_Low_Control_Error"
+  ]
+ },
+ "1": {
+  "9": [
+   "Ambient_Air_Pressure_High_Error"
+  ],
+  "10": [
+   "Ambient_Air_Pressure_Low_Error"
+  ],
+  "0": [
+   "Coolant_Temperature_High_Error"
+  ],
+  "1": [
+   "Coolant_Temperature_Low_Error"
+  ],
+  "3": [
+   "Intake_Manifold_Temperature_High_Error"
+  ],
+  "4": [
+   "Intake_Manifold_Temperature_Low_Error"
+  ],
+  "11": [
+   "Overspeed_Injector_Shutoff_Error"
+  ],
+  "13": [
+   "VSS_Signal_Lost_Error"
+  ],
+  "14": [
+   "VSS_Tampering_Error"
+  ]
+ },
+ "2": {
+  "5": [
+   "CORS_Makeup_Valve_Driver_High_Control_Error"
+  ],
+  "6": [
+   "CORS_Makeup_Valve_Driver_Low_Control_Error"
+  ],
+  "9": [
+   "Engine_Brake_Driver_1_High_Control_Error"
+  ],
+  "10": [
+   "Engine_Brake_Driver_1_Low_Control_Error"
+  ],
+  "11": [
+   "Engine_Brake_Driver_2_High_Control_Error"
+  ],
+  "12": [
+   "Engine_Brake_Driver_2_Low_Control_Error"
+  ],
+  "13": [
+   "Engine_Brake_Driver_3_High_Control_Error"
+  ],
+  "14": [
+   "Engine_Brake_Driver_3_Low_Control_Error"
+  ],
+  "1": [
+   "FSO_Control_Error"
+  ],
+  "15": [
+   "Fuel_Temperature_High_Error"
+  ],
+  "3": [
+   "TU_WG_Driver2_High_Control_Error"
+  ],
+  "4": [
+   "TU_WG_Driver2_Low_Control_Error"
+  ]
+ },
+ "3": {
+  "5": [
+   "Frequency_Throttle_High_Error"
+  ],
+  "4": [
+   "Frequency_Throttle_Low_Error"
+  ],
+  "0": [
+   "Fuel_Temperature_Low_Error"
+  ],
+  "15": [
+   "Throttle_Validation_Process_Error"
+  ],
+  "14": [
+   "Throttle_Validation_Switch_Low_Error"
+  ],
+  "8": [
+   "Water_In_Fuel_Error"
+  ],
+  "6": [
+   "Water_In_Fuel_High_Error"
+  ],
+  "7": [
+   "Water_In_Fuel_Low_Error"
+  ]
+ },
+ "4": {
+  "3": [
+   "Battery_Voltage_High_Error"
+  ],
+  "2": [
+   "Battery_Voltage_Low_Error"
+  ],
+  "0": [
+   "Boost_In_Range_High_Error"
+  ],
+  "9": [
+   "Increment_Decrement_Switch_Error"
+  ],
+  "10": [
+   "Ram_Overrun_Error"
+  ],
+  "13": [
+   "Remote_Throttle_High_Error"
+  ],
+  "14": [
+   "Remote_Throttle_Low_Error"
+  ],
+  "4": [
+   "Throttle_Validation_Switch_High_Error"
+  ]
+ },
+ "5": {
+  "10": [
+   "All_Powerdown_Data_Lost_Error"
+  ],
+  "13": [
+   "EPS_Backup_Channel_Lost_Error"
+  ],
+  "12": [
+   "EPS_Main_Channel_Lost_Error"
+  ],
+  "4": [
+   "Flash_Failure_Error"
+  ],
+  "2": [
+   "Power_Off_Without_Ignition_Off_Error"
+  ],
+  "9": [
+   "Powerdown_Data_Lost_Error"
+  ],
+  "11": [
+   "Poweroff_Command_Ignored_Error"
+  ],
+  "0": [
+   "QSPI_Command_Error"
+  ],
+  "1": [
+   "QSPI_Initialization_Error"
+  ]
+ },
+ "6": {
+  "15": [
+   "J1939_Link_Cannot_Transmit_Error"
+  ]
+ },
+ "7": {
+  "5": [
+   "Cam_Crank_Sync_Mismatch_Error"
+  ],
+  "12": [
+   "Crank_Sync_Error"
+  ],
+  "9": [
+   "Fan_Clutch_1_PWM_Control_Error"
+  ],
+  "0": [
+   "J1939_Link_Not_Fast_Enough_Error"
+  ],
+  "15": [
+   "J1939_Mux_APS_System_Error"
+  ]
+ },
+ "8": {
+  "14": [
+   "Cruise_Vent_Driver_High_Control_Error",
+   "Fan_Clutch_Control_Driver2_High_Control_Error"
+  ],
+  "15": [
+   "Cruise_Vent_Driver_Low_Control_Error",
+   "Fan_Clutch_Control_Driver2_Low_Control_Error"
+  ],
+  "10": [
+   "Engine_Alarm_Driver_High_Control_Error",
+   "Transmission_Overdrive_Driver_High_Control_Error"
+  ],
+  "11": [
+   "Engine_Alarm_Driver_Low_Control_Error",
+   "Transmission_Overdrive_Driver_Low_Control_Error"
+  ],
+  "4": [
+   "Engine_Brake_Driver_4_High_Control_Error"
+  ],
+  "5": [
+   "Engine_Brake_Driver_4_Low_Control_Error"
+  ],
+  "6": [
+   "Engine_Brake_Driver_5_High_Control_Error"
+  ],
+  "7": [
+   "Engine_Brake_Driver_5_Low_Control_Error"
+  ],
+  "12": [
+   "Fan_Clutch_Control_Driver1_High_Control_Error",
+   "Transmission_TCC_Driver_High_Control_Error"
+  ],
+  "13": [
+   "Fan_Clutch_Control_Driver1_Low_Control_Error",
+   "Transmission_TCC_Driver_Low_Control_Error"
+  ],
+  "2": [
+   "J1939_Mux_Configuration_Error"
+  ],
+  "0": [
+   "J1939_Mux_PGN_Timeout_Error"
+  ],
+  "1": [
+   "J1939_Mux_Remote_Throttle_Data_Error"
+  ],
+  "8": [
+   "Transmission_VFS_Battery_Driver_High_Control_Error"
+  ],
+  "9": [
+   "Transmission_VFS_Battery_Driver_Low_Control_Error"
+  ]
+ },
+ "9": {
+  "6": [
+   "Ambient_Air_Temperature_High_Error"
+  ],
+  "7": [
+   "Ambient_Air_Temperature_Low_Error"
+  ],
+  "2": [
+   "Cruise_SC_Source_Driver_High_Control_Error"
+  ],
+  "3": [
+   "Cruise_SC_Source_Driver_Low_Control_Error"
+  ],
+  "0": [
+   "Cruise_Vacuum_Driver_High_Control_Error",
+   "Maintenance_Lamp_Driver_High_Control_Error"
+  ],
+  "1": [
+   "Cruise_Vacuum_Driver_Low_Control_Error",
+   "Maintenance_Lamp_Driver_Low_Control_Error"
+  ],
+  "5": [
+   "RE_Governor_Pressure_Rationality_Error"
+  ],
+  "8": [
+   "Transmission_Overdrive_Driver_2_High_Control_Error"
+  ],
+  "9": [
+   "Transmission_Overdrive_Driver_2_Low_Control_Error"
+  ],
+  "4": [
+   "Transmission_Park_Neutral_Switch_Error"
+  ],
+  "10": [
+   "Transmission_TCC_Driver_2_High_Control_Error"
+  ],
+  "11": [
+   "Transmission_TCC_Driver_2_Low_Control_Error"
+  ]
+ },
+ "10": {
+  "5": [
+   "EEPROM_Write_Error"
+  ],
+  "6": [
+   "Powerdown_EEPROM_Checksum_Error"
+  ],
+  "12": [
+   "RT_High_Error"
+  ],
+  "11": [
+   "RT_Low_Error"
+  ]
+ },
+ "12": {
+  "12": [
+   "Stop_Lamp_Driver_High_Control_Error"
+  ],
+  "13": [
+   "Stop_Lamp_Driver_Low_Control_Error"
+  ],
+  "14": [
+   "T2_High_Gear_Driver_High_Control_Error",
+   "T2_Shift_Driver_High_Control_Error"
+  ],
+  "15": [
+   "T2_High_Gear_Driver_Low_Control_Error",
+   "T2_Shift_Driver_Low_Control_Error"
+  ],
+  "4": [
+   "Throttle_Sensor_Supply_Voltage_High_Error"
+  ],
+  "5": [
+   "Throttle_Sensor_Supply_Voltage_Low_Error"
+  ]
+ },
+ "13": {
+  "0": [
+   "T2_Lamp_Driver_High_Control_Error"
+  ],
+  "1": [
+   "T2_Lamp_Driver_Low_Control_Error"
+  ],
+  "2": [
+   "T2_Lockout_Driver_High_Control_Error"
+  ],
+  "3": [
+   "T2_Lockout_Driver_Low_Control_Error"
+  ],
+  "4": [
+   "T2_Low_Gear_Driver_High_Control_Error"
+  ],
+  "5": [
+   "T2_Low_Gear_Driver_Low_Control_Error"
+  ],
+  "6": [
+   "T2_Neutral_Driver_High_Control_Error"
+  ],
+  "7": [
+   "T2_Neutral_Driver_Low_Control_Error"
+  ],
+  "8": [
+   "TAS_Lamp_Driver_High_Control_Error"
+  ],
+  "9": [
+   "TAS_Lamp_Driver_Low_Control_Error"
+  ],
+  "10": [
+   "Wait_To_Start_Lamp_Driver_High_Control_Error",
+   "Wait_To_Start_Lamp_High_Control_Error"
+  ],
+  "11": [
+   "Wait_To_Start_Lamp_Driver_Low_Control_Error",
+   "Wait_To_Start_Lamp_Low_Control_Error"
+  ],
+  "12": [
+   "Warning_Lamp_Driver_High_Control_Error"
+  ],
+  "13": [
+   "Warning_Lamp_Driver_Low_Control_Error"
+  ],
+  "14": [
+   "Water_In_Fuel_Lamp_Driver_High_Control_Error"
+  ],
+  "15": [
+   "Water_In_Fuel_Lamp_Driver_Low_Control_Error"
+  ]
+ },
+ "14": {
+  "8": [
+   "Maintenance_Lamp_Driver_Open_Control_Error"
+  ],
+  "4": [
+   "Overspeed_Pump_Shutoff_Error"
+  ],
+  "6": [
+   "Stop_Lamp_Driver_Open_Control_Error"
+  ],
+  "5": [
+   "Warning_Lamp_Driver_Open_Control_Error"
+  ]
+ },
+ "16": {
+  "7": [
+   "Fuel_Temperature_Fueling_Error_Active"
+  ],
+  "6": [
+   "Fuel_Temperature_RPM_Error_Active"
+  ],
+  "9": [
+   "HPCR_CP3_High_Current_Error"
+  ],
+  "8": [
+   "HPCR_CP3_Low_Current_Error"
+  ],
+  "14": [
+   "Injector_1_Fast_Decay_Error"
+  ],
+  "13": [
+   "Injector_1_Short_to_Ground_Error"
+  ],
+  "12": [
+   "Injector_1_Short_to_Vbatt_Error"
+  ],
+  "15": [
+   "Injector_5_Short_to_Vbatt_Error"
+  ]
+ },
+ "17": {
+  "14": [
+   "Injector_1_Open_Circuit_Error"
+  ],
+  "10": [
+   "Injector_2_Fast_Decay_Error"
+  ],
+  "9": [
+   "Injector_2_Short_to_Ground_Error"
+  ],
+  "8": [
+   "Injector_2_Short_to_Vbatt_Error"
+  ],
+  "4": [
+   "Injector_3_Fast_Decay_Error"
+  ],
+  "3": [
+   "Injector_3_Short_to_Ground_Error"
+  ],
+  "2": [
+   "Injector_3_Short_to_Vbatt_Error"
+  ],
+  "13": [
+   "Injector_4_Fast_Decay_Error"
+  ],
+  "12": [
+   "Injector_4_Short_to_Ground_Error"
+  ],
+  "11": [
+   "Injector_4_Short_to_Vbatt_Error"
+  ],
+  "1": [
+   "Injector_5_Fast_Decay_Error"
+  ],
+  "15": [
+   "Injector_5_Open_Circuit_Error"
+  ],
+  "0": [
+   "Injector_5_Short_to_Ground_Error"
+  ],
+  "7": [
+   "Injector_6_Fast_Decay_Error"
+  ],
+  "6": [
+   "Injector_6_Short_to_Ground_Error"
+  ],
+  "5": [
+   "Injector_6_Short_to_Vbatt_Error"
+  ]
+ },
+ "18": {
+  "7": [
+   "Cold_Start_Aid_1_High_Control_Error"
+  ],
+  "6": [
+   "Cold_Start_Aid_1_Low_Control_Error"
+  ],
+  "9": [
+   "Cold_Start_Aid_2_High_Control_Error"
+  ],
+  "8": [
+   "Cold_Start_Aid_2_Low_Control_Error"
+  ],
+  "15": [
+   "HPCR_Pressure_Too_High_Error"
+  ],
+  "3": [
+   "Injector_2_Open_Circuit_Error"
+  ],
+  "0": [
+   "Injector_3_Open_Circuit_Error"
+  ],
+  "4": [
+   "Injector_4_Open_Circuit_Error"
+  ],
+  "1": [
+   "Injector_6_Open_Circuit_Error"
+  ],
+  "11": [
+   "Transmission_Governor_Pressure_High_Error"
+  ],
+  "12": [
+   "Transmission_Governor_Pressure_Low_Error"
+  ],
+  "13": [
+   "Transmission_Oil_Temperature_High_Error"
+  ],
+  "14": [
+   "Transmission_Oil_Temperature_Low_Error"
+  ],
+  "10": [
+   "Transmission_Oil_Temperature_Rationality_Error"
+  ]
+ },
+ "19": {
+  "4": [
+   "Chry_Dat42_Stuck_Error"
+  ],
+  "3": [
+   "ECM_Internal_Temperature_High_Error"
+  ],
+  "2": [
+   "ECM_Internal_Temperature_Low_Error"
+  ],
+  "0": [
+   "Fuel_Rail_Pressure_High_Error"
+  ],
+  "1": [
+   "Fuel_Rail_Pressure_Low_Error"
+  ],
+  "15": [
+   "TCC_Rationality_Error"
+  ]
+ },
+ "20": {
+  "8": [
+   "Booster_Cap_1_Voltage_High_Error"
+  ],
+  "9": [
+   "Booster_Cap_1_Voltage_Low_Error"
+  ],
+  "10": [
+   "Booster_Cap_2_Voltage_High_Error"
+  ],
+  "11": [
+   "Booster_Cap_2_Voltage_Low_Error"
+  ],
+  "13": [
+   "CP3_Pump_Regulator_Control_Error"
+  ],
+  "12": [
+   "CWG_High_Boost_Error"
+  ],
+  "0": [
+   "OSS_Rationality_Error"
+  ],
+  "14": [
+   "PPS_Conformance_Error"
+  ],
+  "15": [
+   "Speed_Limp_Home_Error"
+  ]
+ },
+ "21": {
+  "4": [
+   "Ambient_Air_Pressure_In_Range_Error"
+  ],
+  "3": [
+   "Ambient_Air_Temperature_Rationality_Error"
+  ],
+  "5": [
+   "Low_Oil_Switch_Error"
+  ],
+  "9": [
+   "Odometer_E2_Not_Entered_Error"
+  ],
+  "12": [
+   "Pedal_Position_Sensor_1_High_Error"
+  ],
+  "11": [
+   "Pedal_Position_Sensor_1_Low_Error"
+  ],
+  "14": [
+   "Pedal_Position_Sensor_2_High_Error"
+  ],
+  "13": [
+   "Pedal_Position_Sensor_2_Low_Error"
+  ],
+  "2": [
+   "Sensor_Supply_1_Voltage_High_Error"
+  ],
+  "1": [
+   "Sensor_Supply_1_Voltage_Low_Error"
+  ],
+  "15": [
+   "Transmission_VFS_PWM_Driver_Error"
+  ],
+  "8": [
+   "VIN_E2_Not_Entered_Error"
+  ],
+  "10": [
+   "VTA_Secret_Key_E2_Not_Entered_Error"
+  ],
+  "0": [
+   "WIF_Too_Long_Error"
+  ]
+ },
+ "22": {
+  "8": [
+   "Ambient_Air_Temperature_Keyon_Rationality_Error"
+  ],
+  "7": [
+   "Battery_Temperature_Keyon_Rationality_Error"
+  ],
+  "1": [
+   "Battery_Temperature_Rationality_Error"
+  ],
+  "5": [
+   "Checksum_Error"
+  ],
+  "9": [
+   "Cylinder_1_Misfire_Error"
+  ],
+  "10": [
+   "Cylinder_2_Misfire_Error"
+  ],
+  "11": [
+   "Cylinder_3_Misfire_Error"
+  ],
+  "12": [
+   "Cylinder_4_Misfire_Error"
+  ],
+  "13": [
+   "Cylinder_5_Misfire_Error"
+  ],
+  "14": [
+   "Cylinder_6_Misfire_Error"
+  ],
+  "0": [
+   "HPCR_Cusum_Leak_Error"
+  ],
+  "6": [
+   "Intake_Manifold_Temperature_Keyon_Ration_Error"
+  ],
+  "2": [
+   "Intake_Manifold_Temperature_Rationality_Error"
+  ],
+  "3": [
+   "J1850_Open_Ckt_No_Message_Error"
+  ],
+  "4": [
+   "Jcomm_TSC_Lost_Fault"
+  ],
+  "15": [
+   "Multiple_Cylinders_Misfire_Error"
+  ]
+ },
+ "23": {
+  "3": [
+   "AC_Discrete_Output_High_Control_Error"
+  ],
+  "4": [
+   "AC_Discrete_Output_Low_Control_Error"
+  ],
+  "0": [
+   "Alternator_Error"
+  ],
+  "11": [
+   "Battery_Temperature_High_Error"
+  ],
+  "12": [
+   "Battery_Temperature_Low_Error"
+  ],
+  "1": [
+   "Charging_System_High_Error"
+  ],
+  "2": [
+   "Charging_System_Low_Error"
+  ],
+  "5": [
+   "Cruise_Control_Switch_Mux_High_Error"
+  ],
+  "6": [
+   "Cruise_Control_Switch_Mux_Low_Error"
+  ],
+  "9": [
+   "Engine_Conn_Sensors_SV_High_Error"
+  ],
+  "10": [
+   "Engine_Conn_Sensors_SV_Low_Error"
+  ],
+  "7": [
+   "Engine_Speed_Sensor_SV_High_Error"
+  ],
+  "8": [
+   "Engine_Speed_Sensor_SV_Low_Error"
+  ],
+  "13": [
+   "Fuel_Level_High_Error"
+  ],
+  "14": [
+   "Fuel_Level_Low_Error"
+  ],
+  "15": [
+   "J1850_System_Bus_Fault"
+  ]
+ },
+ "24": {
+  "0": [
+   "AC_Pressure_High_Error"
+  ],
+  "1": [
+   "AC_Pressure_Low_Error"
+  ],
+  "10": [
+   "Brake_Switch_High_Error"
+  ],
+  "11": [
+   "Brake_Switch_Low_Error"
+  ],
+  "5": [
+   "CT_Derate_Agg_Derate_Error"
+  ],
+  "6": [
+   "CT_Derate_Min_Derate_Error"
+  ],
+  "12": [
+   "EVR_Driver_Control_Error"
+  ],
+  "15": [
+   "FS_Shutdown_HW_Error"
+  ],
+  "14": [
+   "Fuel_Level_Rationality_Error"
+  ],
+  "2": [
+   "Lift_Pump_Driver_High_Control_Error"
+  ],
+  "3": [
+   "Lift_Pump_Driver_Low_Control_Error"
+  ],
+  "9": [
+   "Low_Oil_Pressure_Error"
+  ],
+  "13": [
+   "OBD_Fuel_Level_Low_Error"
+  ],
+  "8": [
+   "RE_Governor_Pr_Mid_Rationality_Error"
+  ],
+  "7": [
+   "RE_Governor_Pr_Zero_Rationality_Error"
+  ],
+  "4": [
+   "Watchdog_Fueling_Error"
+  ]
+ },
+ "25": {
+  "1": [
+   "Coolant_Temperature_In_Range_Error"
+  ],
+  "7": [
+   "Fan_Speed_Error"
+  ],
+  "14": [
+   "Fuel_Pressure_Keyon_Rationality_Error"
+  ],
+  "2": [
+   "Fuel_Temperature_In_Range_Error"
+  ],
+  "9": [
+   "HPCR_Cusum_Neg_Error"
+  ],
+  "8": [
+   "HPCR_Cusum_Pos_Error"
+  ],
+  "11": [
+   "Intake_Air_Heater_System_Error"
+  ],
+  "12": [
+   "Tcase_Switch_Mux_High_Error"
+  ],
+  "13": [
+   "Tcase_Switch_Mux_Low_Error"
+  ],
+  "6": [
+   "Tcase_Switch_Mux_OOR_Error"
+  ],
+  "4": [
+   "Transmission_Rx_Emissions_Fault"
+  ],
+  "5": [
+   "Transmission_Rx_Message_Fault"
+  ],
+  "0": [
+   "Tstat_System_Error"
+  ],
+  "15": [
+   "Turbo_High_Boost_Error"
+  ],
+  "3": [
+   "Wastegate_Pressure_Control_Driver_Error"
+  ]
+ },
+ "26": {
+  "0": [
+   "Cylinder_7_Misfire_Error"
+  ],
+  "1": [
+   "Cylinder_8_Misfire_Error"
+  ],
+  "8": [
+   "Injector_7_Fast_Decay_Error"
+  ],
+  "2": [
+   "Injector_7_Open_Circuit_Error"
+  ],
+  "6": [
+   "Injector_7_Short_to_Ground_Error"
+  ],
+  "4": [
+   "Injector_7_Short_to_Vbatt_Error"
+  ],
+  "9": [
+   "Injector_8_Fast_Decay_Error"
+  ],
+  "3": [
+   "Injector_8_Open_Circuit_Error"
+  ],
+  "7": [
+   "Injector_8_Short_to_Ground_Error"
+  ],
+  "5": [
+   "Injector_8_Short_to_Vbatt_Error"
+  ]
+ },
+ "27": {
+  "0": [
+   "CAN_General_Network_Error"
+  ],
+  "1": [
+   "Implausible_AC_Pressure_Voltage_From_TIPM_Error"
+  ],
+  "2": [
+   "Implausible_Fuel_Voltage_From_TIPM_Error"
+  ],
+  "3": [
+   "Implausible_Ign_Off_Timer_From_TIPM_Error"
+  ],
+  "4": [
+   "Implausible_Vehicle_Speed_From_ABS_Error"
+  ],
+  "5": [
+   "Lost_Communication_With_ABS_Error"
+  ],
+  "6": [
+   "Lost_Communication_With_TIPM_Error"
+  ],
+  "7": [
+   "VTA_Invalid_Key_Error"
+  ]
+ },
+ "31": {
+  "13": [
+   "Gen_Diag_Low_Battery_Voltage_Error"
+  ],
+  "14": [
+   "OBD_Low_Battery_Voltage_Error"
+  ]
+ },
+ "32": {
+  "6": [
+   "Boost_In_Range_Error"
+  ],
+  "15": [
+   "Charge_Press_IR_Error"
+  ],
+  "0": [
+   "EGR_Orifice_Temp_Rationality_Error"
+  ],
+  "1": [
+   "EGR_Orifice_Temp_Startup_Error"
+  ],
+  "2": [
+   "EGR_Valve_Rationality_Error"
+  ],
+  "3": [
+   "EGR_Valve_Response_Time_Error"
+  ],
+  "10": [
+   "TVA_AZ_Error"
+  ],
+  "14": [
+   "TVA_Electrical_Fault"
+  ],
+  "13": [
+   "TVA_Motor_Overcurrent_Error"
+  ],
+  "8": [
+   "TVA_Position_Rationality_Error"
+  ],
+  "9": [
+   "TVA_Span_Error"
+  ],
+  "7": [
+   "TVA_Stuck_Actuator_Error"
+  ]
+ },
+ "37": {
+  "4": [
+   "Oil_Pressure_Error"
+  ],
+  "5": [
+   "Oil_Pressure_High_Postprocessed_Error"
+  ]
+ },
+ "38": {
+  "3": [
+   "Turbo_Speed_High_Error"
+  ],
+  "10": [
+   "Turbo_Speed_In_Range_Error"
+  ],
+  "5": [
+   "Turbo_Speed_Low_Error"
+  ]
+ },
+ "40": {
+  "8": [
+   "Boost_Pressure_Absolute_High_Error"
+  ],
+  "9": [
+   "Boost_Pressure_Absolute_Low_Error"
+  ],
+  "2": [
+   "EGR_Position_Before_Autozero_High_Error"
+  ],
+  "3": [
+   "EGR_Position_Before_Autozero_Low_Error"
+  ]
+ },
+ "41": {
+  "2": [
+   "Exhaust_Throttle_Position_High_Error"
+  ],
+  "3": [
+   "Exhaust_Throttle_Position_Low_Error"
+  ],
+  "14": [
+   "VGT_Closed_Adjustment_Error"
+  ],
+  "15": [
+   "VGT_Span_Adjustment_Error"
+  ]
+ },
+ "42": {
+  "0": [
+   "Exhaust_Pressure_Sensor_High_Error"
+  ],
+  "1": [
+   "Exhaust_Pressure_Sensor_Low_Error"
+  ]
+ },
+ "43": {
+  "2": [
+   "EGR_Delta_P_Sensor_High_Error"
+  ],
+  "3": [
+   "EGR_Delta_P_Sensor_Low_Error"
+  ]
+ },
+ "44": {
+  "15": [
+   "EGR_Delta_P_Autozero_Error"
+  ],
+  "14": [
+   "EGR_Valve_Autozero_Error"
+  ],
+  "5": [
+   "VGT_Position_PP_High_Error"
+  ],
+  "6": [
+   "VGT_Position_PP_Low_Error"
+  ]
+ },
+ "45": {
+  "9": [
+   "Boost_In_Range_Low_Error"
+  ],
+  "5": [
+   "EGA_Control_Error"
+  ],
+  "7": [
+   "EGA_Driver_Over_Current"
+  ],
+  "6": [
+   "EGA_Electrical_Fault"
+  ],
+  "0": [
+   "EGA_Fault_HB1A"
+  ],
+  "1": [
+   "EGA_Fault_HB1B"
+  ],
+  "4": [
+   "EGA_Fault_HB1_Inrush"
+  ],
+  "2": [
+   "EGA_Fault_HB1_OC_HI"
+  ],
+  "3": [
+   "EGA_Fault_HB1_OC_LO"
+  ],
+  "8": [
+   "EGA_Over_Temperature"
+  ]
+ },
+ "46": {
+  "7": [
+   "VGA_Control_Error"
+  ],
+  "9": [
+   "VGA_Driver_Over_Current"
+  ],
+  "8": [
+   "VGA_Electrical_Fault"
+  ],
+  "2": [
+   "VGA_Fault_HB0A"
+  ],
+  "3": [
+   "VGA_Fault_HB0B"
+  ],
+  "6": [
+   "VGA_Fault_HB0_Inrush"
+  ],
+  "4": [
+   "VGA_Fault_HB0_OC_HI"
+  ],
+  "5": [
+   "VGA_Fault_HB0_OC_LO"
+  ],
+  "10": [
+   "VGA_Over_Temperature"
+  ]
+ },
+ "48": {
+  "10": [
+   "Boost_Ambient_Delta_Error"
+  ],
+  "6": [
+   "EGR_DP_In_Range_Error"
+  ],
+  "7": [
+   "EGR_DP_In_Range_High_Error"
+  ],
+  "8": [
+   "EGR_DP_In_Range_Low_Error"
+  ],
+  "9": [
+   "EGR_DP_Startup_Error"
+  ]
+ },
+ "49": {
+  "12": [
+   "EGR_Orifice_Temperature_High_Error"
+  ],
+  "13": [
+   "EGR_Orifice_Temperature_Low_Error"
+  ],
+  "4": [
+   "TVA_Sampled_Position_High_Error"
+  ],
+  "5": [
+   "TVA_Sampled_Position_Low_Error"
+  ]
+ },
+ "50": {
+  "12": [
+   "EGA_Valve_Fault_Over_Tmptr"
+  ],
+  "11": [
+   "VGA_Valve_Fault_Over_Tmptr"
+  ]
+ }
+}

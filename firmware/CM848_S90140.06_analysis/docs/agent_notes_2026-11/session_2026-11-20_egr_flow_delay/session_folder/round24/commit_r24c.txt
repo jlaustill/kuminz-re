@@ -1,0 +1,29 @@
+cm848: round 24 stage C - the cam / crank sync record (e2m 819C) and its state machine's functions (labels)
+
+The struct at 0x40b80a (the ECU's parameter ID table maps it to e2m block 819C) was engine_crank_state_t with guessed
+fields. The e2m names fit the code, and the existing limits already said so (crank_sync_error_count_limit /
+cam_sync_error_count_limit are compared with two of its words). Task 045's and round 3's leads.
+- engine_crank_state_t -> cam_crank_sync_state_t, the instance -> cam_crank_sync_state. Fields:
+  - start_counter -> cam_sync_error_count (Cam_Sync_Error_Count);
+  - crank_state -> cam_sync_state (Cam_Sync_State);
+  - cranking_flag -> crank_sync_error_count (Crank_Sync_Error_Count);
+  - run_state -> crank_sync_state (Crank_Sync_State).
+  The e2m value labels (0-3) do not match the code's numbering (0 no sync / 2 start / 3 preliminary / 4 in sync /
+  1 lost), so no enum.
+- The TPU-A channel 0 handler mpc555_updateEngineRunState -> mpc555_updateCrankSyncState.
+- Its setters, named by the state they enter and their caller:
+  - cm848_setEngineRunState1 -> cm848_enterCrankSyncLost;
+  - cm848_setEngineCrankState1 -> cm848_enterCamSyncLost;
+  - cm848_engineRunState3HandlerWithTimebaseCapture -> cm848_enterCrankPreliminarySync;
+  - cm848_engineRunState3Handler -> cm848_reenterCrankPreliminarySync;
+  - cm848_setEngineRunState3 -> cm848_setCrankPreliminarySyncFromCam;
+  - cm848_engineRunState4Handler -> cm848_enterCrankInSync;
+  - cm848_engineRunState4Handler2 -> cm848_enterCrankInSyncFromCam;
+  - cm848_engineRunState4Conditional -> cm848_setCrankInSyncFromCam.
+- Two earlier notes that had mixed a loose engine_crank_state. prefix with the new field names now read
+  cam_crank_sync_state.<field>.
+
+Proof: reverse_names.py EQUIVALENT. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four
+test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

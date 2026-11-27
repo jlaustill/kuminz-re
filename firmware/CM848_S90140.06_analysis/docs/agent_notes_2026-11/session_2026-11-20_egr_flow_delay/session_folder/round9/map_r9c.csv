@@ -1,0 +1,3 @@
+address,name,old_label,kind
+0x003fcf12,governor_pressure_controller_output_unclamped,_throttle_setpoint_limit_arg,global
+0x003fb192,transmission_output_speed_history,DAT_003fb192,global

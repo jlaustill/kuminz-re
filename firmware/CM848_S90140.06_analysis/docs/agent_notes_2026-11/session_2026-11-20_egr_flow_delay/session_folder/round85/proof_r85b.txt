@@ -1,0 +1,1 @@
+CM550: verify DETERMINISTIC; 8 functions changed as intended (struct fields in the 3 Huffman functions, FLASH_ERASE_RESULT at the 3 erase callers and the 2 erase functions), none removed or added; no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

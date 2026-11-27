@@ -1,0 +1,26 @@
+0x0001444e: 1 token changes: ( short ) => 
+0x00014872: 5 token changes:  => ( short ) |  => ( short ) | + =>  |  => ( short ) |  => ( short )
+0x00017baa: 6 token changes: ( ushort ) =>  | ( ushort ) =>  | ) ( ushort =>  | ( ushort ) =>  | ) ( ushort =>  | ( ushort ) => 
+0x00018ac4: 2 token changes: ( short ) =>  | ( short ) => 
+0x00018cb6: 1 token changes: ) ( short => 
+0x00018fcc: 7 token changes: word wVar4 => short sVar4 | wVar4 => sVar4 | word => short | ) ( short =>  | wVar4 => sVar4 | wVar4 => sVar4 | wVar4 => sVar4
+0x0001ce7c: 1 token changes:  => ( short )
+0x0001d5a0: 2 token changes: ( ushort ) =>  | ( ushort ) => 
+0x00024c5a: 2 token changes: ( ushort ) =>  | ( ushort ) => 
+0x00025b1c: 1 token changes: ( ushort ) => 
+0x00026ab8: 6 token changes: sword => word | sword sVar1 => word wVar1 | sVar1 => wVar1 | sVar1 => wVar1 | sVar1 => wVar1 | sVar1 => wVar1
+0x00026af0: 1 token changes: ( ushort ) => 
+0x0002f128: 2 token changes: ( short ) =>  | ( short ) => 
+---- census of distinct changes
+  10 ( ushort ) => 
+   5 ( short ) => 
+   5  => ( short )
+   4 wVar4 => sVar4
+   4 sVar1 => wVar1
+   2 ) ( ushort => 
+   2 ) ( short => 
+   1 + => 
+   1 word wVar4 => short sVar4
+   1 word => short
+   1 sword => word
+   1 sword sVar1 => word wVar1

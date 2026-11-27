@@ -1,0 +1,25 @@
+cm848: round 39 fix - the ROM-copy claims say what was measured, the e2m width check
+
+A review of the round found three claims stated more widely than they were checked. Comment and document text only;
+the build is byte-identical apart from its timestamp.
+- **The ROM copy, measured:** RAM 0x3feed0-0x40a048, from just past the EEPROM mirror, is a copy of ROM
+  0x64aea-0x6fc62 (RAM = ROM + 0x39a3e6). All 22717 words of the running RAM dump match.
+  - Stage C's message and comments said "the 0x40xxxx block". The copy is wider: it also holds the three 0x3ffxxx rows
+    (0x3ff6ce = ROM 0x652e8 + 0x39a3e6), so all 42 stage C rows are ROM-copied.
+  - The firmware/CLAUDE.md sentence (round 39's factual refresh) now gives that range.
+- **"Never written":** stage C's comments said it, from a name regex over the .cpp, which misses pointer and indexed
+  writes. They now state the measurement instead: "ROM-copied (RAM = ROM + 0x39a3e6; the running dump holds the ROM
+  value)". This covers 37 rows, the 3 unverified rows and the two 0x3ffxxx rows that had no ROM note.
+- **Width and sign against e2m (the wave 13 rule):** each of the 32 rows named from an e2m record matches the record's
+  size (2 bytes). The one signed record, Expected_Firing_Revs_X_Axis, is the lookup's signed axis. Tables stay
+  word[N] because they are passed as word *.
+- **Other checks, no change needed:**
+  - No _cal name is left outside the mirror in arrays.csv or structure_definitions.csv either (the three substring hits
+    are *_callback).
+  - The 16 comments the reference refresh rewrote in stage C substitute current references; none rewrote "was" history.
+  - No new name shadows a local variable.
+- **task 046:** stage C's text, the width check and two more leads: the fuel_rpm_compensated_offset clamps are i16
+  candidates, and audit_cal_suffixes.py calls the ROM copy WORKING_RAM.
+- The PR body's test plan line, the memory notes, and the round 39 session folder (the check scripts).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

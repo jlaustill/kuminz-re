@@ -1,0 +1,23 @@
+cm848: round 33 fix - the J1939 transmit status codes include the broadcast session
+
+Stage A's comments listed only the codes of the destination-specific (RTS / CTS) transport session (0x12 / 0x13 /
+9 / 10 / 6 / 7 / 8). But the five builders that test the status byte (EC1, DM1, DM2, DM4, RC) send PDU2 broadcasts.
+Those take the other branch of initiateJ1939TransportProtocol, which runs a BAM session through the per source
+address records at 0x3fbd74 / 0x3fbd94:
+- 0x10 after the announce frame;
+- 0x11 after each data packet (j1939_transport_singleFrame_send);
+- 5 once the last packet is out;
+- 2 when a session is already active for that source address;
+- the send result if a frame fails.
+Both sessions use 3 for a source address that is not ours. So the 0x1x values mean "a session is in progress" on
+both paths, and the builders' 0xf0 test is right.
+
+- The 30 status row comments and j1939_tx_msg_t.status_pointer now list both sets (firmware_types.hpp
+  regenerated).
+- Task 046 records the correction and widens round 34's lead to both transmit mechanisms. 0x3fbd7c is broadcast
+  record 0's advancing data pointer, so its derived label PTR_j1939_pgn65242_transmit_status_003fbd7c only says
+  that the dump's last broadcast was the 47-byte SOFT payload. Task 046 also marks the stage B commit's "RAM-dump
+  bytes disassembled" as an inference.
+- Comment-only: a build leaves the .cpp unchanged apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

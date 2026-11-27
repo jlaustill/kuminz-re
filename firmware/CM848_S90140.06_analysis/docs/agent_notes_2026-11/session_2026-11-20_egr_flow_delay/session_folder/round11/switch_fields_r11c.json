@@ -1,0 +1,49 @@
+{
+ "switches_0_to_7": [
+  "byte",
+  0
+ ],
+ "switches_8_to_15": [
+  "byte",
+  1
+ ],
+ "egr_valve_driver_feedback": [
+  "bit",
+  2,
+  1
+ ],
+ "variable_geometry_turbocharger_driver_feedback": [
+  "bit",
+  2,
+  2
+ ],
+ "remote_power_take_off_switch": [
+  "bit",
+  2,
+  8
+ ],
+ "park_neutral_switch": [
+  "bit",
+  2,
+  16
+ ],
+ "overdrive_off_switch": [
+  "bit",
+  2,
+  32
+ ],
+ "transmission_relay_feedback": [
+  "bit",
+  2,
+  64
+ ],
+ "overdrive_solenoid_feedback": [
+  "bit",
+  2,
+  128
+ ],
+ "switches_24_to_31": [
+  "byte",
+  3
+ ]
+}

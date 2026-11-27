@@ -1,0 +1,8 @@
+removed 0: 
+added 0: 
+changed 1
+  0x0002715c cm848_runJ1939PowertrainControlTimeouts: 4 lines
+      -         *(short *)((int)&(j1939_powertrain_control_state.tsc1_source_configuration_pointer)->data_link
+      -                   + iVar10) + 1;
+      +         *(short *)((int)&(j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
+      +                          data_link + iVar10) + 1;

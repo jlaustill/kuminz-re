@@ -1,0 +1,49 @@
+=== governor_cruise_speedReference_update (lines 85589-85641, 48 non-blank)
+// Function: governor_cruise_speedReference_update @ 0x00524aec
+//
+void governor_cruise_speedReference_update(void)
+{
+  if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_INDUCTIVE) &&
+     (two_speed_axle_enable_cal == 1)) {
+    if ((switch_input_state_bits.switches_24_to_31 & 0x80) == 0) {
+      cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
+      road_speed_governor_top_droop_gain =
+           road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;
+    }
+    else {
+      cruise_top_droop_gain = DAT_003fcff2;
+      road_speed_governor_top_droop_gain = DAT_003fcff6;
+    }
+  }
+  vehicle_speed_limit_fueling_bottom_droop_gain = road_speed_governor_bottom_droop_gain;
+  vehicle_speed_limit_fueling_top_droop_gain = road_speed_governor_top_droop_gain;
+  if ((cruise_deadband_active_flag == 1) && (cruise_control_engaged_flag == 1)) {
+    cruise_control_fueling_top_droop_gain = cruise_top_droop_gain;
+    cruise_control_fueling_bottom_droop_gain = cruise_bottom_droop_gain;
+  }
+  else {
+    cruise_control_fueling_top_droop_gain = 0;
+    cruise_control_fueling_bottom_droop_gain = 0;
+  }
+  if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
+    vehicle_speed_limit_fueling_top_droop_offset = cruise_speed_offset_default;
+    if (((cruise_speed_offset_mode != 0) &&
+        (vehicle_speed_limit_fueling_top_droop_offset = cruise_top_droop_offset_intermediate_tau,
+        cruise_speed_offset_mode != 1)) &&
+       (vehicle_speed_limit_fueling_top_droop_offset = cruise_top_droop_offset_tau_1,
+       cruise_speed_offset_mode != 2)) {
+      cruise_control_fueling_top_droop_offset = cruise_top_droop_offset;
+      vehicle_speed_limit_fueling_top_droop_offset = cruise_top_droop_offset;
+      return;
+    }
+  }
+  else {
+    vehicle_speed_limit_fueling_top_droop_offset =
+         (word)(((uint)current_horsepower_peak_fueling_cal *
+                (uint)cruise_top_droop_offset_peak_fueling_percent_times_256) / 0x6400);
+  }
+  cruise_top_droop_offset = vehicle_speed_limit_fueling_top_droop_offset;
+  cruise_control_fueling_top_droop_offset = vehicle_speed_limit_fueling_top_droop_offset;
+  return;
+}
+//

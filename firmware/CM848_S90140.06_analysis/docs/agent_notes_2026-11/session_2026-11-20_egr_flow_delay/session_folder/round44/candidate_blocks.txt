@@ -1,0 +1,101 @@
+8B12 +00 Cruise_Throttle_Transition_Threshold size 2 U scale .25 [7 files ]: If throttle <= to this cal, will transition to cruise if crus active
+8B12 +00 Cruise_Throttle_Transition_Threshold size 2 U scale 0.25 [16 files CHR_CC]: If throttle <= to this cal, will transition to cruise if crus active
+8B12 +02 Cruise_Bump_Up_Step_Adjust size 2 U scale .00390625 [7 files ]: Adjustment to the CC selected fueling handoff bump value.
+8B12 +02 Cruise_Bump_Up_Step_Adjust size 2 U scale 0.00390625 [10 files CHR_CC]: Adjustment to the CC selected fueling handoff bump value.
+8B13 +00 ASG_Throttle_Reset_Allow size 2 U scale 1 [23 files CHR_CC]: If=1, do not have to return throtle to 0% after reset
+8B4D +00 Checksum_Table_1 size 2 U scale 1.0 [16 files CHR_CC]: Algorithm enable checksum for integrity algorithm
+8B4D +02 Checksum_Table_2 size 2 U scale 1.0 [16 files CHR_CC]: Flash checksum for integrity algorithm
+8B4E +00 OCM_Gallons_Threshold size 4 U scale .01 [7 files ]: If amount of fuel burned > this parameter then oil change needed
+8B4E +00 OCM_Gallons_Threshold size 4 U scale 0.01 [2 files CHR_CC]: If amount of fuel burned > this parameter then oil change needed
+8B4E +04 OCM_Miles_Threshold size 4 U scale .000125 [7 files ]: If number of miles traveled > this parameter then oil change needed
+8B4E +04 OCM_Miles_Threshold size 4 U scale 0.000125 [2 files CHR_CC]: [OCMITD] If number of miles traveled > this parameter then oil change needed
+8B4E +08 OCM_Soot_Percentage_Threshold size 4 U scale .00000002351589501 [7 files ]: If amount of soot in oil > this parameter then oil change needed
+8B4E +08 OCM_Soot_Percentage_Threshold size 4 U scale 2.351589501e-8 [2 files CHR_CC]: If amount of soot in oil > this parameter then oil change needed
+8B4F +00 OCM_Oil_Severity_Factor size 2 U scale .01 [1 files ]: Severity factor multiplier for OCM gallons based on RPM and coolant temp
+8B4F +00 OCM_Oil_Severity_Factor size 2 U scale 0.01 [2 files CHR_CC]: Severity factor multiplier for OCM gallons based on RPM and coolant temp
+8B4F +00 OCM_Throttle_Cycle_Counter size 2 U scale 1 [6 files ]: Number of times throttle has been cycled
+8B4F +02 OCM_Throttle_Cycle_Start_Flag size 2 U scale 1 [6 files ]: Flag indication throttle cycle has started
+8B4F +04 OCM_Throttle_Cycle_Timer size 2 U scale .2 [6 files ]: Time elapsed since first throttle cycle
+8B4F +06 OCM_FOD_Factor size 2 U scale .01 [6 files ]: Fuel oil dilution multiplier factor
+8B4F +08 OCM_Oil_Severity_Factor size 2 U scale .01 [6 files ]: Severity factor multiplier for OCM gallons based on RPM and coolant temp
+8B4F +0A OCM_FOD_Quantity size 2 S scale .000976563 [6 files ]: Fuel oil dilution quantity
+8B4F +0C OCM_FOD_Scaled_Qty size 2 S scale .0009765625 [6 files ]: Fuel oil dilution quantity scaled
+8B50 +00 OCM_Fault_Status size 2 U scale 1.0 [2 files CHR_CC]: [OCFUSS] Set when any fault is active which may affect the OCM data
+8B50 +00 Total_Distance_At_Reset size 4 U scale .000125 [7 files ]: Total miles traveled at the last OCM reset
+8B50 +02 OCM_Gallons_Since_Last_Reset size 4 U scale 0.01 [2 files CHR_CC]: Amount of fuel burned since the last OCM reset.
+8B50 +04 OCM_Gallons_Since_Last_Reset size 4 U scale .01 [7 files ]: Amount of fuel burned since the last OCM reset.
+8B50 +06 OCM_Miles_Since_Last_Reset size 4 U scale 0.000125 [2 files CHR_CC]: ACTUAL NUMBER OF VEHICLE MILES SINCE THE LAST OCM RESET.
+8B50 +08 OCM_Miles_Since_Last_Reset size 4 U scale .000125 [1 files ]: ACTUAL NUMBER OF VEHICLE MILES SINCE THE LAST OCM RESET.
+8B50 +08 OCM_Soot_Percentage_Since_Last_Reset size 4 U scale .00000002351589501 [6 files ]: Percentage of soot in engine oil since the last OCM reset
+8B50 +0A OCM_Soot_Percentage_Since_Last_Reset size 4 U scale 2.351589501e-8 [2 files CHR_CC]: Percentage of soot in engine oil since the last OCM reset
+8B50 +0C OCM_Fault_Status size 2 U scale 1 [6 files ]: Set when any fault is active which may affect the OCM data
+8B50 +0C OCM_Soot_Percentage_Since_Last_Reset size 4 U scale .00000002351589501 [1 files ]: Percentage of soot in engine oil since the last OCM reset
+8B50 +0E Oil_Chg_Monitor_ITN_2792_Pad size 2 U scale 1 [6 files ]: GCC static padding.
+8B50 +0E Total_Distance_At_Reset size 4 U scale 0.000125 [2 files CHR_CC]: Total miles traveled at the last OCM reset
+8B50 +10 OCM_Fault_Status size 2 U scale 1 [1 files ]: Set when any fault is active which may affect the OCM data
+8B50 +12 Oil_Chg_Monitor_ITN_2792_Pad size 2 U scale 1 [1 files ]: GCC static padding.
+8BAC +00 PPS_Auto_Zero_Debounce_Delay size 2 U scale 100.0 [16 files CHR_CC]: time auto zero conditions must exist before calculating throttle auto zero
+8BAC +00 PPS_Test_Cell_Threshold_Auto_Zero size 2 U scale .25 [7 files ]: PPS Auto_Zero threshold value if greater than is considered in test cell
+8BAC +02 PPS_Auto_Zero_Debounce_Delay size 2 U scale 100 [7 files ]: time auto zero conditions must exist before calculating throttle auto zero
+8BAC +02 PPS_Deviation_Debounce_Delay size 2 U scale 20.0 [16 files CHR_CC]: time fault conditions must exist before logging a pps throttle fault
+8BAC +04 PPS_Deviation_Debounce_Delay size 2 U scale 20 [7 files ]: time fault conditions must exist before logging a pps throttle fault
+8BAC +04 PPS_Test_Cell_Threshold_Auto_Zero size 2 U scale 0.2500 [16 files CHR_CC]: PPS Auto_Zero threshold value if greater than is considered in test cell
+8BAC +06 Highest_PPS_Min size 2 U scale .25 [7 files ]: Maximum PPSx_Throttle_Min that any valid pedal can have
+8BAC +06 Highest_PPS_Min size 2 U scale 0.25 [16 files CHR_CC]: Maximum PPSx_Throttle_Min that any valid pedal can have
+8BAC +08 PPS_Auto_Zero_Offset size 2 U scale .25 [7 files ]: Sum of PPSx_Throttle_Min and this offset = PPSx_Auto_Zero
+8BAC +08 PPS_Auto_Zero_Offset size 2 U scale 0.25 [16 files CHR_CC]: Sum of PPSx_Throttle_Min and this offset = PPSx_Auto_Zero
+8BAC +0A PPS_Throttle_Range size 2 U scale .25 [7 files ]: sum of this and PPSx_Auto_Zero = 100% Commanded_Throttle
+8BAC +0A PPS_Throttle_Range size 2 U scale 0.25 [16 files CHR_CC]: sum of this and PPSx_Auto_Zero = 100% Commanded_Throttle
+8BAC +0C PPS_Confidence_Band size 2 U scale .25 [7 files ]: Percent above this and PPSx_Throttle_Min at which no Auto Zero occurs
+8BAC +0C PPS_Confidence_Band size 2 U scale 0.25 [16 files CHR_CC]: Percent above this and PPSx_Throttle_Min at which no Auto Zero occurs
+8BAC +0E PPS_Deviation_Limit size 2 U scale .25 [7 files ]: Percent error of PPS1 to PPS2 that initiates PPS_Conformance_Failed
+8BAC +0E PPS_Deviation_Limit size 2 U scale 0.25 [16 files CHR_CC]: Percent error of PPS1 to PPS2 that initiates PPS_Conformance_Failed
+8BAC +10 PPS_Idle_Threshold size 2 U scale .25 [7 files ]: PPS_Throttle percent above which Throttle_Status is NOT_IDLE(1).
+8BAC +10 PPS_Idle_Threshold size 2 U scale 0.25 [16 files CHR_CC]: PPS_Throttle percent above which Throttle_Status is NOT_IDLE(1).
+8BAC +12 Accelerator_Position_Sensor_Type size 1 U scale 1.0 [16 files CHR_CC]: Defines PPS or TPS operation for commanded throttle function 1=PPS,0=TPS
+8BAC +12 PPS_AZ_Time_Limit size 2 U scale 100 [7 files ]: Time allowed from key on for pps auto zero when auto zero conditions exist
+8BAC +13 PPS_Use_Auto_Zero_On_Conformance_Check size 1 U scale 1.0 [16 files CHR_CC]: Defines whether PPS conformance uses PPSx_Auto_Zero offsets. 1=TRUE 0=FALSE
+8BAC +14 PPS_AZ_Update_Limit size 2 U scale 1 [7 files ]: Number of PPS auto zero updates allowed when conditions exist for auto zero
+8BAC +14 PPS_Auto_Zero_Prop_Adjust size 2 U scale 0.0039062500 [16 files CHR_CC]: PPS throttle Auto Zero adjustment proportional gain
+8BAC +16 PPS_Auto_Zero_Prop_Adjust size 2 U scale .00390625 [7 files ]: PPS throttle Auto Zero adjustment proportional gain
+8BAC +16 PPS_Conformance_Error_Zero_Throttle_Lock size 2 U scale 1.0 [16 files CHR_CC]: Defines whether PPS conformance error uses Min wins or 0%. 1=TRUE 0=FALSE
+8BAC +18 PPS_AZ_Time_Limit size 2 U scale 100.0 [12 files CHR_CC]: Time allowed from key on for pps auto zero when auto zero conditions exist
+8BAC +18 PPS_Conformance_Error_Zero_Throttle_Lock size 2 U scale 1 [7 files ]: Defines whether PPS conformance error uses Min wins or 0%. 1=TRUE 0=FALSE
+8BAC +1A Accelerator_Position_Sensor_Type size 1 U scale 1 [1 files ]: Defines PPS or TPS operation for commanded throttle function 1=PPS,0=TPS
+8BAC +1A PPS_AZ_Update_Limit size 2 U scale 1.0 [12 files CHR_CC]: Number of PPS auto zero updates allowed when conditions exist for auto zero
+8BAC +1A PPS_Max_Sys_WD_Offset size 2 U scale .25 [6 files ]: Maximum allowed % adjustment increase for Sys_WD_Throt_Percent_Offset
+8BAC +1B PPS_Use_Auto_Zero_On_Conformance_Check size 1 U scale 1 [1 files ]: Defines whether PPS conformance uses PPSx_Auto_Zero offsets. 1=TRUE 0=FALSE
+8BAC +1C Accelerator_Position_Sensor_Type size 1 U scale 1 [6 files ]: Defines PPS or TPS operation for commanded throttle function 1=PPS,0=TPS
+8BAC +1D PPS_Use_Auto_Zero_On_Conformance_Check size 1 U scale 1 [6 files ]: Defines whether PPS conformance uses PPSx_Auto_Zero offsets. 1=TRUE 0=FALSE
+8BAC +1E PPS_Throttle_ITN_2871_Pad size 2 U scale 1 [6 files ]: Static GCC padding data
+8BAD +00 Calculated_PPS_Throttle size 2 U scale .25 [7 files ]: Intermediate calculated value of commanded throttle based on PPS standard input
+8BAD +00 Calculated_PPS_Throttle size 2 U scale 0.25 [16 files CHR_CC]: Intermediate calculated value of commanded throttle based on PPS standard input
+8BAD +02 PPS_Limp_Home_Active size 2 U scale 1 [7 files ]: Set true when any PPS throttle is in Limp Home Operation.
+8BAD +02 PPS_Throttle size 2 U scale 0.25 [16 files CHR_CC]: Determines Throttle_Status for limp home alg. based on PPS standard inputs
+8BAD +04 PPS_Conformance_Failed size 1 U scale 1.0 [16 files CHR_CC]: Set true when PPS signal disagree and debounce delay. 0=FALSE 1=TRUE
+8BAD +04 PPS_Throttle size 2 U scale .25 [7 files ]: Determines Throttle_Status for limp home alg. based on PPS standard inputs
+8BAD +05 PPS_OOR_Limp_Home size 1 U scale 1.0 [16 files CHR_CC]: Set true when any PPS related signal is out of range, OOR. 0=FALSE 1=TRUE
+8BAD +06 PPS1_OOR_Condition size 1 U scale 1.0 [16 files CHR_CC]: Set true when any PPS1 related signal is out of range, OOR. 0=FALSE 1=TRUE
+8BAD +06 PPS1_Throttle_Min size 2 U scale .25 [7 files ]: minimum Pedal_Position_Sensor_1 detected
+8BAD +07 PPS2_OOR_Condition size 1 U scale 1.0 [16 files CHR_CC]: Set true when any PPS2 related signal is out of range, OOR. 0=FALSE 1=TRUE
+8BAD +08 PPS1_Throttle_Min size 2 U scale 0.25 [16 files CHR_CC]: minimum Pedal_Position_Sensor_1 detected
+8BAD +08 PPS2_Throttle_Min size 2 U scale .25 [7 files ]: minimum Pedal_Position_Sensor_2 detected
+8BAD +0A PPS2_Throttle_Min size 2 U scale 0.25 [16 files CHR_CC]: minimum Pedal_Position_Sensor_2 detected
+8BAD +0A PPS_Conformance_Failed size 1 U scale 1 [7 files ]: Set true when PPS signal disagree and debounce delay. 0=FALSE 1=TRUE
+8BAD +0B PPS_OOR_Limp_Home size 1 U scale 1 [7 files ]: Set true when any PPS related signal is out of range, OOR. 0=FALSE 1=TRUE
+8BAD +0C PPS1_OOR_Condition size 1 U scale 1 [7 files ]: Set true when any PPS1 related signal is out of range, OOR. 0=FALSE 1=TRUE
+8BAD +0C PPS_Limp_Home_Active size 2 U scale 1.0 [16 files CHR_CC]: Set true when any PPS throttle is in Limp Home Operation.
+8BAD +0D PPS2_OOR_Condition size 1 U scale 1 [7 files ]: Set true when any PPS2 related signal is out of range, OOR. 0=FALSE 1=TRUE
+8BAE +00 PPS1_Auto_Zero size 2 U scale .25 [7 files ]: dynamic point in %Pedal_Pos_Sensor_1 that = 0% Commanded_Throttle
+8BAE +00 PPS1_Auto_Zero size 2 U scale 0.25 [16 files CHR_CC]: dynamic point in %Pedal_Pos_Sensor_1 that = 0% Commanded_Throttle
+8BAE +02 PPS2_Auto_Zero size 2 U scale .25 [7 files ]: dynamic point in %Pedal_Pos_Sensor_2 that = 0% Commanded_Throttle
+8BAE +02 PPS2_Auto_Zero size 2 U scale 0.25 [16 files CHR_CC]: dynamic point in %Pedal_Pos_Sensor_2 that = 0% Commanded_Throttle
+8C30 +00 Vac_Throttle_PWM_Override_Threshold size 2 S scale .00390625 [7 files ]: Throttle override assumed when vac duty-cycle < this value and e<thr
+8C30 +00 Vac_Throttle_PWM_Override_Threshold size 2 S scale 0.00390625 [10 files CHR_CC]: Throttle override assumed when vac duty-cycle < this value and e<thr
+8C30 +02 Vac_Throttle_Error_Override_Threshold size 2 S scale .25 [7 files ]: Throttle override assumed when pos error < this value and dc<thr
+8C30 +02 Vac_Throttle_Error_Override_Threshold size 2 S scale 0.25 [10 files CHR_CC]: Throttle override assumed when pos error < this value and dc<thr
+8C30 +04 Vac_Throttle_ASG_Delta size 2 U scale .067936 [7 files ]: ASG fuel is decreased by this amount when in cruise with vac throttle
+8C30 +04 Vac_Throttle_ASG_Delta size 2 U scale 0.06793600000 [10 files CHR_CC]: ASG fuel is decreased by this amount when in cruise with vac throttle
+8C30 +06 Sys_WD_Debounce_ASG_Decel_Limit size 2 U scale 20 [7 files ]: If debounce timer is > this value set decel fueling to 0
+8C30 +08 Sys_WD_Inj_Pulse_ASG_Decel_Limit size 2 U scale 1 [7 files ]: If injection pulses < this value set decel fueling to 0
+8C30 +0A ASG_ITN_2992_Pad size 2 U scale 1 [7 files ]: GCC static padding.

@@ -1,0 +1,234 @@
+0x003fd482	kernel-window	byte	eeprom_mirror	5		RAM mirror of the serial EEPROM: RAM = 0x3fd482 + EEPROM offset (0x0-0x1a3f) - loaded by cm848_initEepromDrive
+0x003fd708	documentation		vehicle_vin_string_cal[1]	0		
+0x003fd709	documentation		vehicle_vin_string_cal[2]	0		
+0x003fd70a	documentation		vehicle_vin_string_cal[3]	0		
+0x003fd70b	documentation		vehicle_vin_string_cal[4]	0		
+0x003fd70c	documentation		vehicle_vin_string_cal[5]	0		
+0x003fd70d	documentation		vehicle_vin_string_cal[6]	0		
+0x003fd70e	documentation		vehicle_vin_string_cal[7]	0		
+0x003fd70f	documentation		vehicle_vin_string_cal[8]	0		
+0x003fd710	documentation		vehicle_vin_string_cal[9]	0		
+0x003fd711	documentation		vehicle_vin_string_cal[10]	0		
+0x003fd712	documentation		vehicle_vin_string_cal[11]	0		
+0x003fd713	documentation		vehicle_vin_string_cal[12]	0		
+0x003fd714	documentation		vehicle_vin_string_cal[13]	0		
+0x003fd715	documentation		vehicle_vin_string_cal[14]	0		
+0x003fd716	documentation		vehicle_vin_string_cal[15]	0		
+0x003fd717	documentation		vehicle_vin_string_cal[16]	0		
+0x003fdb94	scalar	byte	diag_scan_step_counter	5		
+0x003fdb96	scalar	word	kernel_watchdog_question	8		Boot reflash kernel: current supervisor-watchdog question (reply word 4 low 4 bits) (was injector_sequence_ind
+0x003fdb98	scalar	word	kernel_watchdog_last_service_time	5		Boot reflash kernel: MIOS counter value at the last watchdog answer (was tpu3_timer_capture_value)
+0x003fdb9a	scalar	word	kernel_watchdog_error_count	8		Boot reflash kernel: supervisor-watchdog error counter (reply word 4 bits 4-6) (was tpu3_channel_status_count)
+0x003fdb9c	scalar	word	boot_mode_strap_pins_high	4		1 when all four strap pins read high (mpc555_areBootModeStrapPinsHigh): mpc555_hardwareInitialization then sta
+0x003fdb9e	scalar	word	supervisor_watchdog_not_armed_flag	2		cm848_initSupervisorWatchdog: 0 after arming the supervisor watchdog with 0x1440 / 1 after the 0x1400 command 
+0x003fdba0	scalar	word	kernel_watchdog_error_count_peak	3		Boot reflash kernel: highest watchdog error count seen (was tpu3_channel_status_snapshot)
+0x003fdba2	scalar	word	kernel_watchdog_status_at_peak	1		Boot reflash kernel: reply word 5 captured when the error count rose (was tpu3_rx5_capture_snapshot)
+0x003fdba5	time-shared		qadc_init_done_flag+1	0		
+0x003fdba6	time-shared	word	cmf_erase_pulse_total	7		Boot reflash kernel: high-voltage pulses applied so far by mpc555_cmfEraseBlocks
+0x003fdbaa	time-shared	dword	cmf_erase_control_base	5		Boot reflash kernel: CMFCTL timing base for erase
+0x003fdbae	time-shared	dword	cmf_erase_control_bits	13		Boot reflash kernel: extra CMFCTL bits ORed into every erase control write
+0x003fdbb4	time-shared		qadc_control_word_cal+2	0		
+0x003fdbb6	time-shared	dword	qadc_control_word_b	2		
+0x003fdbba	time-shared	word	qadc_control_word_c	0		
+0x003fdbbe	time-shared	word	qadc_control_word_d	0		
+0x003fdbc2	time-shared	word	qadc_control_word_e	0		
+0x003fdbc6	time-shared	word	qadc_control_word_f	0		
+0x003fdbca	time-shared	word	qadc_control_word_g	0		
+0x003fdbd4	time-shared		protection_event_output_polarity_bits_cal+2	0		
+0x003fdbd6	time-shared	dword	cmf_control_base	7		CMFCTL base value (timing bits) for flash program/erase
+0x003fdbda	time-shared	word	cmf_control_pulse_value	0		CMFCTL value for the next pulse (block select | step bits | SES|EHV); written as a dword so it renders with _ 
+0x003fdbde	time-shared	dword	cmf_control_step_bits	11		Per-step CMFCTL bits (indexed by cmf_pulse_step_index)
+0x003fdbe2	time-shared	dword	qadc_channel_config_mask_c	1		
+0x003fdbe6	time-shared	dword	qadc_channel_config_mask_d	1		
+0x003fdbea	time-shared	dword	qadc_channel_config_mask_e	1		
+0x003fdbee	time-shared	dword	qadc_channel_config_mask_f	1		
+0x003fdbf2	time-shared	dword	qadc_channel_config_mask_g	1		
+0x003fdbf6	time-shared	dword	qadc_channel_config_mask_h	1		
+0x003fdbfa	time-shared	dword	qadc_channel_config_mask_i	1		
+0x003fdbfe	time-shared	dword	qadc_queue_timing_config	7		TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as the per-step CMFTST value array; the ru
+0x003fdc00	time-shared		qadc_queue_timing_config+2	0		
+0x003fdc02	time-shared	dword	qadc_queue_timing_config_b	1		
+0x003fdc06	time-shared	dword	qadc_queue_timing_config_c	1		
+0x003fdc0a	time-shared	dword	qadc_queue_timing_config_d	1		
+0x003fdc0e	time-shared	dword	qadc_queue_timing_config_e	1		
+0x003fdc12	time-shared	dword	qadc_queue_timing_config_f	1		
+0x003fdc16	time-shared	dword	qadc_queue_timing_config_g	1		
+0x003fdc1a	time-shared	dword	qadc_queue_timing_config_h	1		
+0x003fdc1e	time-shared	word	cmf_pulses_per_step	3		Per-step high-voltage pulse count
+0x003fdc20	time-shared	word	qadc_prescale_count_b	1		
+0x003fdc22	time-shared	word	qadc_prescale_count_c	1		
+0x003fdc24	time-shared	word	qadc_prescale_count_d	1		
+0x003fdc26	time-shared	word	qadc_prescale_count_e	1		
+0x003fdc28	time-shared	word	qadc_prescale_count_f	1		
+0x003fdc2a	time-shared	word	qadc_prescale_count_g	1		
+0x003fdc2e	time-shared	dword	flash_poll_timeout_cycles	2		
+0x003fdc38	time-shared	word	data_transfer_retry_count	3		
+0x003fdc58	scalar	word	qadc_adc_enable_flag	1		
+0x003fdcf7	instance		governor_speed_limit_output+1	0		
+0x003fdd6a	scalar	word	eeprom_checksummed_block_start	5		EEPROM offset 0x8e8 in the mirror; the checksummed / saved block follows (was sensor_validation_array)
+0x003fdd6e	instance		sensor_validation_accum+2	0		
+0x003fe11c	documentation		j1587_fault_count_data_cal.previously_active_fault_count	25		
+0x003fe11e	documentation		j1587_fault_count_data_cal.emission_count	5		
+0x003fe120	documentation		j1587_fault_count_data_cal.total_emission_faults	11		
+0x003fe122	scalar	word	fault_list_iteration_counter	4		
+0x003fe976	documentation		fault_detected_cal.faults_16_to_31	5		
+0x003fe978	documentation		fault_detected_cal.faults_32_to_47	0		
+0x003fe97a	documentation		fault_detected_cal.faults_48_to_63	2		
+0x003fe97c	documentation		fault_detected_cal.faults_64_to_79	0		
+0x003fe97e	documentation		fault_detected_cal.faults_80_to_95	0		
+0x003fe980	documentation		fault_detected_cal.faults_96_to_111	0		
+0x003fe982	documentation		fault_detected_cal.faults_112_to_127	0		
+0x003fe984	documentation		fault_detected_cal.faults_128_to_143	0		
+0x003fe986	documentation		fault_detected_cal.faults_144_to_159	0		
+0x003fe988	documentation		fault_detected_cal.faults_160_to_175	0		
+0x003fe98a	documentation		fault_detected_cal.faults_176_to_191	0		
+0x003fe98c	documentation		fault_detected_cal.faults_192_to_207	0		
+0x003fe98e	documentation		fault_detected_cal.faults_208_to_223	0		
+0x003fe994	documentation		fault_detected_cal.faults_256_to_271	0		
+0x003fe996	documentation		fault_detected_cal.faults_272_to_287	0		
+0x003fe998	documentation		fault_detected_cal.faults_288_to_303	2		
+0x003fe99a	documentation		fault_detected_cal.faults_304_to_319	0		
+0x003fe99c	documentation		fault_detected_cal.faults_320_to_335	2		
+0x003fe99e	documentation		fault_detected_cal.faults_336_to_351	1		Word 21 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0
+0x003fe9a0	documentation		fault_detected_cal.faults_352_to_367	0		Word 22 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b1
+0x003fe9a2	documentation		fault_detected_cal.faults_368_to_383	5		Word 23 of the fault-detected bit array at 0x3fe974 (fault n = word n/16 bit n%16 - slot table 0x5985a then ob
+0x003fe9a4	documentation		fault_detected_cal.faults_384_to_399	2		Word 24 of the fault-detected bit array at 0x3fe974: bits 0-15 = P0533 P0532 P0629 P0628 P0606 P0217 P0217 P17
+0x003fe9a6	documentation		fault_detected_cal.faults_400_to_415	7		Word 25 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0
+0x003fe9a8	documentation		fault_detected_cal.faults_416_to_431	0		e2m 1036 +34 System_Error_Status_26 '[SSERSS26] 32 word bit mapped system error status - word 26' (address fro
+0x003fe9b2	documentation		fault_detected_cal.faults_496_to_511	1		Word 31 of the fault-detected array 0x3fe974 (0x3fe974 + 2 x 31): 0x4000 = fault 510 OBD low battery voltage e
+0x003fe9b4	documentation		fault_detected_cal.faults_512_to_527	2		0x3fe9b4 = 0x3fe974 + 2 x 32 is word 32 of the fault-detected array (its registered twin is fault_registered_c
+0x003fe9be	documentation		fault_detected_cal.faults_592_to_607	1		EEPROM 0x153c - e2m 1036 +4A System_Error_Status_37 [SSERSS37] '48 word bit mapped system error status - word 
+0x003fe9c0	documentation		fault_detected_cal.faults_608_to_623	4		Word 38 of fault-detected array 0x3fe974 ((0x3fe9c0 - 0x3fe974) / 2; fault bit = word x 16 + bit via ROM 0x598
+0x003fe9c4	documentation		fault_detected_cal.faults_640_to_655	0		0x3fe9c4 = 0x3fe974 + 2 x 40 is word 40 of the fault-detected array (like the existing fault_detected_cal.faul
+0x003fe9c6	documentation		fault_detected_cal.faults_656_to_671	3		code: word 41 of the fault-detected array 0x3fe974 (0x3fe9c6 - 0x3fe974 = 82 = 41 words); its mask 16384 / 327
+0x003fe9c8	documentation		fault_detected_cal.faults_672_to_687	1		code: word 42 of the fault-detected array; the position sensor passes fault 682 (mask 1024) and 683 (mask 2048
+0x003fe9ca	documentation		fault_detected_cal.faults_688_to_703	0		0x3fe9ca = 0x3fe974 + 2 x 43 is word 43 of the fault-detected array; the monitor tests masks 4 / 8 (bits 2 / 3
+0x003fe9cc	documentation		fault_detected_cal.faults_704_to_719	4		code: word 44 of the fault-detected array (0x3fe9cc - 0x3fe974 = 88); masks 32 / 64 (faults 709 / 710) are set
+0x003fe9ce	documentation		fault_detected_cal.faults_720_to_735	9		code: word 45 of the 50-word fault-detected array that starts at 0x3fe974 ((0x3fe9ce - 0x3fe974) / 2 = 45, fau
+0x003fe9d0	documentation		fault_detected_cal.faults_736_to_751	4		code: word 46 of the fault-detected array (92 bytes from 0x3fe974); written by the bridge fault handler (masks
+0x003fe9d4	documentation		fault_detected_cal.faults_768_to_783	1		Word 48 of fault-detected array 0x3fe974 ((0x3fe9d4 - 0x3fe974) / 2 = 48; fault bit = word x 16 + bit via ROM 
+0x003fe9d6	documentation		fault_detected_cal.faults_784_to_799	2		code: word 49 of the 50-word fault-detected array that starts at 0x3fe974 ((0x3fe9d6 - 0x3fe974) / 2 = 49, fau
+0x003fe9da	documentation		fault_registered_cal.faults_16_to_31	1		Word 1 of fault-registered array 0x3fe9d8 - cm848_processFaultScanGroup ORs in each processed detected bit cle
+0x003fe9de	documentation		fault_registered_cal.faults_48_to_63	0		Word 3 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fa
+0x003fe9e0	documentation		fault_registered_cal.faults_64_to_79	0		Word 4 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fa
+0x003fe9e2	documentation		fault_registered_cal.faults_80_to_95	0		Word 5 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fa
+0x003fe9e4	documentation		fault_registered_cal.faults_96_to_111	0		Word 6 of fault-registered array 0x3fe9d8 - registered copy of fault_detected_cal.faults_96_to_111 - no OBD DT
+0x003fe9e6	documentation		fault_registered_cal.faults_112_to_127	0		Word 7 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fa
+0x003fe9e8	documentation		fault_registered_cal.faults_128_to_143	0		Word 8 of the second fault bit array (fault_registered_cal.faults_0_to_15 at 0x3fe9d8 - bits ORed in while pre
+0x003fe9ea	documentation		fault_registered_cal.faults_144_to_159	0		Word 9 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fa
+0x003fe9ec	documentation		fault_registered_cal.faults_160_to_175	0		Word 10 of fault-registered array 0x3fe9d8 - registered copy of fault_detected_cal.faults_160_to_175 - no OBD 
+0x003fe9f2	documentation		fault_registered_cal.faults_208_to_223	0		Word 13 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fe9f8	documentation		fault_registered_cal.faults_256_to_271	0		Word 16 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fe9fc	documentation		fault_registered_cal.faults_288_to_303	0		Word 18 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fe9fe	documentation		fault_registered_cal.faults_304_to_319	0		Word 19 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fea00	documentation		fault_registered_cal.faults_320_to_335	0		Word 20 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fea02	documentation		fault_registered_cal.faults_336_to_351	0		Word 21 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fea04	documentation		fault_registered_cal.faults_352_to_367	0		Word 22 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fea06	documentation		fault_registered_cal.faults_368_to_383	0		Word 23 of the second fault bit array at 0x3fe9d8: cm848_processFaultScanGroup ORs in each detected bit it has
+0x003fea08	documentation		fault_registered_cal.faults_384_to_399	0		Word 24 of the second fault bit array at 0x3fe9d8: set by cm848_processFaultScanGroup for each processed detec
+0x003fea0a	documentation		fault_registered_cal.faults_400_to_415	0		Word 25 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as f
+0x003fea16	documentation		fault_registered_cal.faults_496_to_511	0		Word 31 of the fault-registered array 0x3fe9d8 (0x3fe9d8 + 2 x 31); cm848_updateMonitorEnablingConditionInputs
+0x003fea18	documentation		fault_registered_cal.faults_512_to_527	0		Word 32 of the fault-registered array 0x3fe9d8 (0x3fe9d8 + 2 x 32): each of its three clears (& 0x7fff / 0xfff
+0x003fea22	documentation		fault_registered_cal.faults_592_to_607	1		Word 37 of the fault-registered array 0x3fe9d8 (0x3fe9d8 + 2 x 37), the registered twin of fault_detected_cal.
+0x003fea24	documentation		fault_registered_cal.faults_608_to_623	0		Word 38 of fault-registered array 0x3fe9d8 ((0x3fea24 - 0x3fe9d8) / 2): registered copy of fault_detected_cal.
+0x003fea2a	documentation		fault_registered_cal.faults_656_to_671	0		code: word 41 of the registered array 0x3fe9d8 (0x3fe9d8 + 82); cleared together with the detected bit by the 
+0x003fea30	documentation		fault_registered_cal.faults_704_to_719	0		code: word 44 of the registered array (0x3fe9d8 + 88); cleared with masks 32 / 64 of the detected word in the 
+0x003fea32	documentation		fault_registered_cal.faults_720_to_735	0		code: word 45 of the fault-registered array that starts at 0x3fe9d8 ((0x3fea32 - 0x3fe9d8) / 2 = 45): the regi
+0x003fea34	documentation		fault_registered_cal.faults_736_to_751	0		code: word 46 of the registered array (0x3fe9d8 + 92), cleared with the detected word 736 to 751 at every site
+0x003fea38	documentation		fault_registered_cal.faults_768_to_783	0		Word 48 of fault-registered array 0x3fe9d8 ((0x3fea38 - 0x3fe9d8) / 2): registered copy of fault_detected_cal.
+0x003fea3a	documentation		fault_registered_cal.faults_784_to_799	0		code: word 49 of the registered array that starts at 0x3fe9d8 ((0x3fea3a - 0x3fe9d8) / 2 = 49), the registered
+0x003fea4e	documentation		fault_previous_pass_cal.faults_144_to_159	0		Word 9 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected wo
+0x003fea68	documentation		fault_previous_pass_cal.faults_352_to_367	0		Word 22 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected w
+0x003fea6c	documentation		fault_previous_pass_cal.faults_384_to_399	0		Word 24 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected w
+0x003fea6e	documentation		fault_previous_pass_cal.faults_400_to_415	1		Word 25 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected w
+0x003fea96	documentation		fault_previous_pass_cal.faults_720_to_735	0		Word 45 of the previous-pass array 0x3fea3c ((0x3fea96 - 0x3fea3c) / 2 = 45): previous-pass copy of fault_dete
+0x003fea9c	documentation		fault_previous_pass_cal.faults_768_to_783	0		Word 48 of the previous-pass array 0x3fea3c ((0x3fea9c - 0x3fea3c) / 2): previous-pass copy of fault_detected_
+0x003feb92	scalar	byte	fault_status_array	66		per-fault record flags byte (170x3B records; array base)
+0x003feb93	scalar	word	fault_status_word_array	42		per-fault record packed word at record+1 (age/epoch/flags; array base)
+0x003fec7a	scalar	dword	data_transfer_target_address	8		
+0x003fec7e	scalar	word	data_transfer_write_index	4		
+0x003fec80	scalar	word	data_transfer_read_index	4		
+0x003fec82	instance	reflash_transfer_state_t	reflash_transfer_state	56		The reflash download state of the boot ROM and the boot reflash kernel (reflash_transfer_state_t): the transfe
+0x003fec84	documentation		reflash_transfer_state.buffer_write_enabled_flag	5		
+0x003fec86	documentation		reflash_transfer_state.largest_write_length	4		
+0x003fec8a	documentation		reflash_transfer_state.pending_write_transport	9		
+0x003fec8b	documentation		reflash_transfer_state.finish_requested_flag	4		
+0x003fec8c	documentation		reflash_transfer_state.flash_program_step	14		
+0x003fec8d	documentation		reflash_transfer_state.flash2_erase_state	6		
+0x003fec8e	scalar	byte	data_transfer_buffer_status	14		
+0x003fec8f	scalar	byte	cmf_pulse_step_index	5		
+0x003fec90	scalar	dword	cmf_control_block_select	6		CMFCTL base | 0x8000 >> block
+0x003fec98	scalar	word	cmf_pulse_count	5		Pulses applied in the current step
+0x003fec9a	scalar	word	data_transfer_active_flag	3		
+0x003fec9e	scalar	pointer	memory_scan_pointer	8		
+0x003feca6	scalar	pointer	data_transfer_current_ptr	5		
+0x003fecaa	scalar	pointer	data_transfer_scan_ptr	5		
+0x003fecae	scalar	pointer	cmf_active_control_register	12		CMFCTL_A or CMFCTL_B for the selected block
+0x003fecb2	scalar	pointer	cmf_active_test_register	4		CMFTST_A or CMFTST_B for the selected block
+0x003fecb5	instance		qadc_active_port_ptr+3	0		
+0x003fecb6	scalar	pointer	diagnostic_callback_ptr	21		
+0x003fecba	scalar	dword	diag_serial_transfer_phase	15		
+0x003fecbe	instance	boot_sci_session_state_t	boot_sci_session_state	78		The boot ROM's SCI diagnostic session (boot_sci_session_state_t): session flags, the response write index and 
+0x003fecbf	documentation		boot_sci_session_state.response_write_index	50		
+0x003fecc0	documentation		boot_sci_session_state.response_cursor_pointer	17		
+0x003fecc4	scalar	byte	boot_sci_security_state	14		Boot ROM SCI security state: 0 locked / 1 unlocked (cm848_bootSciCheckSecurityKey accepted the key, or mpc555_
+0x003fecc5	scalar	undefined1	diag_request_pending_flag	20		
+0x003fecc6	scalar	word	serial_response_crc_expected	2		
+0x003fecc8	scalar	dword	crc16_working_value	12		
+0x003feccc	scalar	byte	diag_serial_crc_match_flag	3		serial response CRC16 match result
+0x003feccd	scalar	byte	boot_sci_failed_key_count	6		Wrong boot SCI security keys so far (cm848_bootSciCheckSecurityKey; reset by a correct key and by mpc555_initD
+0x003fecce	scalar	word	boot_sci_key_retry_delay	8		Set to 1000 after a wrong boot SCI security key and counted down by cm848_decrementDiagnosticTimeout; while it
+0x003fecd0	instance	byte[33]	diag_serial_buffer	42		
+0x003fecd1	documentation		diag_serial_buffer[1]	0		
+0x003fecd2	documentation		diag_serial_buffer[2]	0		
+0x003fecd3	documentation		diag_serial_buffer[3]	0		
+0x003fecef	documentation		diag_serial_buffer[31]	0		
+0x003fecf0	instance		diag_session_protocol_byte	0		
+0x003fecf1	scalar	EEPROM_DIAG_STATE	eeprom_diag_state	11		EEPROM diagnostic handler state machine
+0x003fecf2	scalar	byte	eeprom_write_request_type	8		EEPROM write operation type: 1=begin cal write 2=update magic
+0x003fedee	scalar	byte	eeprom_calibration_pending_flag	22		| application side (time-shared, the EEPROM mirror): word 0 (with the next byte) of e2m RE_Two_Three_Lag, the 
+0x003fedef	scalar	byte	diag_session_state_byte	16		
+0x003fedf0	scalar	dword	diagnostic_callback_init_ptr	3		| application side (time-shared, the EEPROM mirror): word 1 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag
+0x003fedf4	scalar	word	eeprom_write_pending_flag	4		| application side (time-shared, the EEPROM mirror): word 3 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag
+0x003fedf6	scalar	word	eeprom_write_request_pending	5		staged EEPROM write request type awaiting dispatch | application side (time-shared, the EEPROM mirror): word 4
+0x003fedf8	scalar	word	mios_cnt_snapshot	3		| application side (time-shared, the EEPROM mirror): word 5 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag
+0x003fedfc	instance	diag_clear_flags_t	diag_clear_flags_t_003fedfc	17		
+0x003fedfd	documentation		diag_clear_flags_t_003fedfc.diag_eeprom_work_byte	2		
+0x003fedfe	documentation		diag_clear_flags_t_003fedfc.learned_output_speed_to_vehicle_speed_ratio	2		
+0x003fee03	documentation		j1939_cruise_state_t_003fee00.cruise_state_pad_03	0		
+0x003fee05	scalar	byte	sensor_fault_threshold_state	5		
+0x003fee08	time-shared	eeprom_header_t	eeprom_shadow_header	76		RAM shadow of EEPROM header loaded at boot
+0x003fee0a	documentation		eeprom_shadow_header.magic	10		
+0x003fee0c	documentation		eeprom_shadow_header.header_block[0]	0		
+0x003fee12	documentation		eeprom_shadow_header.config_dword	2		
+0x003fee16	documentation		eeprom_shadow_header.config_word	0		
+0x003fee18	documentation		eeprom_shadow_header.calibration_block1[0]	0		
+0x003fee19	documentation		eeprom_shadow_header.calibration_block1[1]	0		
+0x003fee1a	documentation		eeprom_shadow_header.calibration_block1[2]	0		
+0x003fee1c	documentation		eeprom_shadow_header.calibration_block1[4]	0		
+0x003fee1d	documentation		eeprom_shadow_header.calibration_block1[5]	0		
+0x003fee1e	documentation		eeprom_shadow_header.eeprom_status_flags	5		
+0x003fee20	documentation		eeprom_shadow_header.cal_word2	5		
+0x003fee22	documentation		eeprom_shadow_header.cal_word3	5		
+0x003fee24	documentation		eeprom_shadow_header.serial_reflash_unlock_request	2		
+0x003fee26	documentation		eeprom_shadow_header.serial_number	0		
+0x003fee28	documentation		eeprom_shadow_header.serial_number+2	0		
+0x003fee2a	time-shared	dword	eeprom_write_buffer	8		
+0x003fee2c	time-shared		eeprom_write_buffer+2	0		
+0x003fee2d	time-shared		eeprom_write_buffer+3	0		
+0x003fee2e	time-shared	byte	eeprom_config_write_triggered_flag	6		one-shot guard against duplicate EEPROM config write
+0x003fee30	time-shared	word	flash2_operation_active_flag	10		
+0x003fee31	time-shared		flash2_operation_active_flag+1	0		
+0x003fee32	time-shared	word	immobilizer_present_flag	10		TIME-SHARED. App: EEPROM-mirror word (EEPROM 0x19b0) set to 1 by cm848_processImmobilizerStatusMessage when a 
+0x003fee3b	time-shared		sensor_validation_delta+1	0		
+0x003feebd	documentation		protection_b_state_t_003feebc.protection_b_pad_01	0		
+0x003feebf	documentation		protection_b_state_t_003feebc.protection_b_pad_03	0		
+0x01000002	scalar	byte	eeprom_security_key	1		
+0x0100000c	scalar	byte	eeprom_status_block	1		
+0x01000030	scalar	byte	eeprom_config_block	5		
+0x01000034	scalar	byte	eeprom_version_marker	2		
+0x0100004a	scalar	byte	eeprom_calibration_block	2		
+0x01000050	scalar	byte	eeprom_cal_word1	3		
+0x01000052	scalar	byte	eeprom_cal_word2	2		
+0x01000054	scalar	byte	eeprom_cal_word3	2		
+0x0100008e	scalar	byte	eeprom_serial_number	2		

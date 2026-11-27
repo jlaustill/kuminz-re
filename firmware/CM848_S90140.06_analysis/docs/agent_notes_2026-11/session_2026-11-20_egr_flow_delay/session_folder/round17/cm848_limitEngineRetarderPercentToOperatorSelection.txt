@@ -1,0 +1,16 @@
+=== cm848_limitEngineRetarderPercentToOperatorSelection (lines 44665-44685, 15 non-blank)
+// Function: cm848_limitEngineRetarderPercentToOperatorSelection @ 0x00041a10
+//
+/* Lowers the engine retarder percent limit engine_retarder_limit_percent to the operator selection
+   engine_retarder_selection_percent when that is smaller and records limit source code 3 (operator
+   selection, ERC1 retarder torque mode 1) in engine_retarder_limit_source_code. Step 3 of
+   cm848_processEngineRetarderRequest (was cm848_applyMinimumProtectionLimit). */
+void cm848_limitEngineRetarderPercentToOperatorSelection(void)
+{
+  if (engine_retarder_selection_percent < engine_retarder_limit_percent) {
+    engine_retarder_limit_percent = engine_retarder_selection_percent;
+    engine_retarder_limit_source_code = 3;
+  }
+  return;
+}
+//

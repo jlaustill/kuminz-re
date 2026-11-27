@@ -1,0 +1,55 @@
+both firmwares: round 94 stage C - apply the judged naming batches F1 / J1 / J2 / D1 (96 CM550 functions, 31 CM848 twins, 194 globals, 5 structs, 4 enums)
+
+Round 93's function-naming workflow (an investigator, an independent describer and an adversarial judge per
+call-graph family) finished in round 94: 316 elements judged, 283 CONFIRMED, 32 AMENDED, 1 REFUTED. This applies them
+with r94/apply_r94.py (the verdicts, plus overrides_r94.json for the hand decisions, each with its reason).
+
+- F1, the torque derate limiter chain: 22 functions (8 twins: applyAirFuelControlFuelLimit, applyAltitudeDerateFuelLimit,
+  applyFaultDerateFuelLimit, initializeFuelLimitChains, applyPowerTakeOffTorqueLimit, applyFuelSystemDerateFuelLimit,
+  applyTsc1TorqueLimit, advanceHourMeters), 41 globals, FUELING_STATE 17 / 18 / 33 named in CM550 and 37 / 38
+  (TOP2_TRANSMISSION_SPEED_CONTROL / _TORQUE_CONTROL) in both; CM848's header now lists (49 50) as unidentified.
+- J1, the J1939 multiplexed input layer: 22 functions (9 bitmap helper twins; the any...Active predicates became
+  isAny...), 25 globals; the rows inside the new arrays are gone: 0x808159 (the low byte of j1939_input_source_priority),
+  the 56 element rows of e2m 12A8 switch_input_source_priority (byte[80]), 0x807d60-0x807d66 / 0x807d6e (elements of
+  the dword[3] switch polarity / default state masks).
+- J2, J1939 receive dispatch, periodic transmit and control sessions: 26 functions (14 twins), 65 globals (the refuted
+  0x80da90 is skipped), J1939_DIAGNOSTIC_SERVICE members; new structs j1939_periodic_transmit_entry_t (10 bytes),
+  engine_tsc1_ignored_request_t (8) and cm550_retarder_tsc1_ignored_request_t (4; CM848's entry is 6 bytes); CM848's
+  j1939_control_session_t and its enums J1939_CONTROL_DEVICE / TSC1_OVERRIDE_MODE copied as twins (the Calterm labels
+  are the same). The neutral names for the J1708 / J1922 / ETC1-driven flags (progressive_shift_disable_flag ...).
+- D1, idle shutdown / lamps / duty cycle monitor / serial EEPROM driver: 26 functions (the three task set names stay
+  round 93's), 56 globals, enums IDLE_SHUTDOWN_STATE (6) and EEPROM_BYTE_WRITE_STATE (3), the struct
+  table_lookup_2d_arguments_t (22 bytes, read from cm550_tableLookup2D); mc68k_initializeSerialEepromDriverAndLoadMirror
+  and mc68k_runSerialEepromDriverStep. 0x801a8a is the EEPROM driver's write state, so can_buffer_setup_t (type and
+  instance) is removed.
+- The two lookup records can_buffer_setup_t had covered are typed and named from the tables their pointers point at
+  in the RAM dump: maximum_torque_map_lookup (0x801a94: MTTQMPXA / MTTQMPYA / MTTQMPZA, with the new
+  maximum_torque_map_x_axis / _y_axis / _grid - CM848's names) and injection_timing_misfire_limit_lookup (0x801aaa:
+  BSTABSXA / BSTAESYA / BSTATBZA, with injection_timing_misfire_limit_x_axis / _y_axis).
+- 127 rows that sat inside the new types are removed (every one is a field / element / low half the new type covers;
+  none has a reference of its own: the judges and abs_refs checked each).
+- Hand fixes (r94/post_apply_r94.py): restoring e2m mnemonic DCMNLGMP where the comment refresh had replaced it (the
+  old row name at 0x80546c was the mnemonic itself), D1's removal notes as 'were ...' history, the J1 comment and
+  prototype fixes (analog_sensor_override_values has writers; 0x206a8 takes (logical_input, output_number)), and a
+  correction note in work/docs/clip-protocol-spec.md (0x801998 / 0x8019b8 are TSC1 ignored-request fields).
+- Comment references refreshed in both firmwares' CSVs and firmware/CLAUDE.md (three lines name the CM848 twins by
+  their shared names now); two CM848 docs name advanceHourMeters.
+
+Proof (both firmwares built twice, deterministic; base = HEAD):
+- CM848: the function set is unchanged (1968); every token change is in the apply's map (31 twin renames, the
+  0x40ad56 rename, FUELING_STATE 37 / 38); statement counts, the caller census and the 1379 pieces are unchanged;
+  no old name is left in the code (only in the plate comments' 'was' notes).
+- CM550: the function set is unchanged (704). The token changes outside the map (81 functions) are typing effects,
+  sorted by r94/classify_census_r94.py: 162 decompiler temporaries renumbered, 212 unnamed addresses now named or
+  field paths, 47 numbers now enum members, 133 cast / index rewrites (pointer arithmetic to array elements and
+  fields), and 334 more reviewed by hand (typed struct pointers, the control session copies, the lookup record
+  initializers). Five functions changed their statement count, all from typing: the duty cycle histogram, the
+  control session history copy, the TSC1 ignored request scan, the maximum torque map initializer (the removed
+  can_buffer_setup_t's byte stores became the record's fields) and mc68k_initializeJ1939Datalink (a typed table
+  pointer). The caller census shows no rise (unaff_ 13, extraout_ 27, CONCAT 132). Pieces 496 -> 494: the two new
+  ones are the low-word reads of duty_cycle_monitor_load_ratio (move.w (0x800002) at 0xae4a). No old name is left in
+  the code, and no row sits newly inside another row's span.
+- Headers regenerated (g++ 0 errors); the _cal audit is 0 hard / 0 soft in both; the five Python suites and the 109
+  JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,56 @@
+both firmwares: round 94 stage E - the leads batches L1-L4 (14 CM550 functions, 19 CM848 functions, 63 globals, 15 lookup records, CM848's bare 'protection' names)
+
+The round 93 / 94 judges left leads. A second workflow (investigator, independent describer and adversarial judge per
+batch, reading a frozen copy of stage C) checked them: 96 elements judged, 80 CONFIRMED, 16 AMENDED, 0 REFUTED.
+r94/leads/apply_r94.py applies the verdicts (new in round 94: CM848-only function renames, verdict kind
+cm848_function) with r94/leads/overrides_r94.json.
+
+- L1, CM550 fuel limit side paths: cm550_runEngineWarmupProtection / cm550_initializeEngineWarmupProtection (e2m
+  11EA-11EF; were cm550_highRpmEngineProtectionStateMachine / cm550_fuelTemperatureLimitingSecondary - nothing in
+  them is about high engine speed or fuel temperature), cm550_convertTorqueDerateTorqueLimitToFuelLimit and its
+  initializer, the 105A throttle 100 fuelings, and loadHourMetersFromEeprom (0x3452a, a twin of CM848 0x5067bc: both
+  rows take the shared name); 24 globals (the warmup protection timers and limits, the derate torque limit ...).
+- L2, CM550 J1939 / J1587 datalink: scheduleJ1939PeriodicMessage (0x1fe84, a new row; the twin of CM848 0x538c8c), the
+  PGN 65252 shutdown payload builders, the maximum torque map / misfire limit lookup functions; 12 globals - the
+  PGN 61442 bytes are j1939_received_pgn61442_byte_1 / _byte_5 (were tsc1_message_*), the TSC1 acceptance words, and
+  fault_processing_enable_flags (e2m DGFUIDEN, word[19]; its five rows inside, e.g. fault_confirm_status_word_1, are
+  elements now). The bogus can_priority_table_start / j1939_priority_pgn<N> rows at 0x8037b6-0x8037ee are removed (no
+  code reference, no e2m record, none rendered).
+- L3: every cm550_tableLookup2D argument record is typed (35 calls on 19 records; 15 new, each named from the Calterm
+  tables its dump pointers point at: air_fuel_control_fuel_limit_lookup, altitude_derate_fuel_limit_lookup,
+  desired_cylinder_pressure_lookup, four_dimensional_fueling_steady_state_lookup, ...), the duty cycle monitor axes in
+  both firmwares (duty_cycle_monitor_engine_speed_axis word[10] / duty_cycle_monitor_load_axis word[8] in CM550,
+  word[10] / word[12] in CM848) and the cylinder balance compensation tables.
+- L4, CM848's 17 functions named with a bare 'protection' (protection of what?) or 'init': the four task sets take
+  their schedule slot (cm848_runEvery8FramesTaskSetPhase2 ...), cm848_convertTorqueDerateTorqueLimitToFuelLimit (was
+  cm848_calculateProtectionRateLimited), cm848_runFuelLimitChains (was cm848_processProtectionLimits), the J1939
+  torque curve point setters, cm848_initializeSwitchInputStates, cm848_calculateEngineLoadLowHorsepowerCurvePercent
+  (was cm848_validateFuelDemandRelativeToTiming) ...; 3 globals (main_injection_timing_before_misfire_limit i16,
+  maximum_torque_at_current_engine_speed, torque_management_transmission_type_3_code dword).
+- 104 rows that started inside the new types or were bogus are removed (76 fields / elements, 28 priority rows).
+- Hand fixes (r94/post_leads_r94.py): HIGH_RPM_PROTECTION_STATE / _FLAGS removed from both enums.csv (L1's judge:
+  nothing uses a member; FLAGS was the J1587 PID 71 idle shutdown timer status byte, STATE is superseded by
+  IDLE_SHUTDOWN_STATE); INSITE_PARAM_CODE 0x47 (= PID 71) is IDLE_SHUTDOWN_TIMER_STATUS in both (was
+  HIGH_RPM_PROTECTION_STATUS); 0x2efd0 is cm550_receivePgn61442ElectronicTransmissionController1Message (L2's judge:
+  registered for 0xf002 at 0x2f114; was cm550_diagnosticServiceDispatcherByPgn); e2m mnemonic DCMNLDTB restored where
+  the comment refresh had replaced it; two CM848 docs name loadHourMetersFromEeprom; work/docs/clip-protocol-spec.md's
+  correction note (stage C inserted it twice) is one note and also covers 0x2efd0.
+
+Proof (both firmwares built twice, deterministic; base = HEAD f8ead481):
+- CM848: the function set is unchanged (1968). Every token change is in the map (19 function renames, 3 globals, the
+  INSITE_PARAM_CODE member) except the new duty cycle axes in cm848_updateDutyCycleMonitorLoadHistogram
+  (*(ushort *)(i * 2 + 0x5c2c0) -> duty_cycle_monitor_engine_speed_axis[i], likewise the load axis). Statement counts,
+  the caller census and the 1379 pieces are unchanged.
+- CM550: 704 -> 705 functions: the new row 0x33d38 (cm550_buildPgn65252ShutdownMessage) creates a function where no
+  function was; nothing else is added or removed and no other function changes its statements apart from one. The token
+  changes outside the map (38 functions) are typing effects, sorted by r94/classify_census_r94.py: 166 unnamed
+  addresses now named or field paths, 97 cast / index rewrites, 8 temporaries renumbered and 84 reviewed by hand (the
+  lookup records' field stores, scheduleJ1939PeriodicMessage where FUN_0001fe84 rendered before its row existed, typed
+  table pointers, one local declaration reordered). cm550_updateDutyCycleMonitorLoadHistogram's speed axis loop is
+  restructured (the pointer starts at the axis and steps in the loop condition instead of starting at element 1;
+  the first compare is element 1 either way). The caller census shows no rise; the 494 pieces are unchanged.
+- Both: no old name is left in the code; every new name renders; no row sits newly inside another row's span.
+- Headers regenerated (g++ 0 errors); the _cal audit is 0 hard / 0 soft (CM550 12 missing, was 14: L1 named the two hour meter EEPROM dwords at 0x803b3e / 0x803b50 with _cal);
+  the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

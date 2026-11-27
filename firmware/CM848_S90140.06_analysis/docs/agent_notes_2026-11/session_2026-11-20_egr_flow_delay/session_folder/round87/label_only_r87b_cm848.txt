@@ -1,0 +1,20 @@
+19 differing lines
+  +  word qadc_b_pqb0_sample;
+  -  word qadc_b_pqb0_sample;
+  -  if (working_ram_end_marker == -0x3f253f26) {
+  +  if (working_ram_end_marker == 0xc0dac0da) {
+  -  word *pwVar2;
+  +  dword *pdVar2;
+  -    pwVar2 = pwVar1 + 0x80;
+  -    if (&working_ram_end_marker < pwVar1 + 0x80) {
+  -      pwVar2 = (word *)&working_ram_end_marker;
+  -    }
+  -    for (; pwVar1 <= pwVar2; pwVar1 = pwVar1 + 2) {
+  -      pwVar1[0] = 0;
+  -      pwVar1[1] = 0;
+  +    pdVar2 = (dword *)((int)pwVar1 + 0x100);
+  +    if (&working_ram_end_marker < (dword *)((int)pwVar1 + 0x100)) {
+  +      pdVar2 = &working_ram_end_marker;
+  +    }
+  +    for (; pwVar1 <= pdVar2; pwVar1 = (word *)((int)pwVar1 + 4)) {
+  +      *(dword *)pwVar1 = 0;

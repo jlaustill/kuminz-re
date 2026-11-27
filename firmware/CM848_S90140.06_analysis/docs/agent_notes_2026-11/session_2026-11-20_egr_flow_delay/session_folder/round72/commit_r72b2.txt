@@ -1,0 +1,15 @@
+cm848+cm550: round 72 stage B2 - CM848's stale MEMORY_ACCESS_FLAG (ported from CM550) removed; the CM550 writer's header no longer claims a MEMORY_OP_RESULT return
+
+From the closing review's repo-wide sweep for stage A / B1's old names:
+- CM848's enums.csv still carried MEMORY_ACCESS_FLAG ('Ported from CM550 (memory region protection)'). It has the
+  codes of MEMORY_REGION_TYPE (round 71) with the J90280.05-era reading (LOGGING_MODE for the EEPROM).
+  - It rendered nowhere, and nothing typed by it.
+  - It goes, as CM550's did in stage A2.
+- CM550's function_definitions.csv header for writeJ1939DiagnosticMemory said it returns MEMORY_OP_RESULT. Its
+  return is stage B1's char: the MEMORY_OP_RESULT numbers or the region type passed back.
+
+Proof: Both .cpp files are identical to B1's past the Generated line (the enum rendered nowhere; the CM550 edit is a
+comment), with B1's WARNING lines; CM848 verify byte-identical (thunks 18 / 14, locals Skipped 8); the CM848 headers no
+longer declare MEMORY_ACCESS_FLAG (0 g++ errors).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

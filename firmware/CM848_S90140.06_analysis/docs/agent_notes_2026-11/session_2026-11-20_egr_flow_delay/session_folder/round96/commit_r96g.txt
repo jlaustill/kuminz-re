@@ -1,0 +1,49 @@
+both firmwares: round 96 stage G - CM550's placeholders 0x10e06-0x1f4e8: cylinder balancing, the J1939 torque curve and the speed input set-ups (workflow batch Q3)
+
+Workflow wf_e321e981-9fd batch Q3 (an investigator, an independent describer and a judge): 37 CM550 functions (28
+CONFIRMED, 9 AMENDED for their plates only), 2 CM848 functions and 140 CM550 globals (136 + 4); nothing refuted,
+nothing skipped.
+- Cylinder balancing: mc68k_fillCylinderBalanceSpeedBuffers, cm550_calculateCylinderBalanceTrims and
+  cm550_initializeCylinderBalancing (counterparts of CM848's hpcr_cbd* functions) and their state - the segment
+  periods, Fourier components, reference vectors, trims and the dynamics compensation histories, now typed as the
+  arrays they are (cylinder_balance_segment_periods dword[7], *_dynamics_compensation_previous_values word[16],
+  cylinder_balance_power_up_fueling_trims / cylinder_balance_saved_fueling_trims_cal / balanced_cylinder_fueling_offsets
+  i16[6]). 25 rows inside them go (old guesses such as protection_state2_rpm_timer / engine_overspeed_counter that
+  nothing reads by name).
+- Four twins take one unprefixed name in both firmwares: calculateJ1939PercentPeakTorqueAtSpeed (0x142d4 / 0x18070),
+  calculateJ1939FrictionLoadFuelingAtBreakpoints (0x14348 / 0x1811c), initializeFaultDerateJ1939TorqueCurvePriority
+  (0x185f0 / 0x507c1c) and initializeFourDimensionalFuelingAndFrictionFuelLookups (0x1ddb4 / 0x1ea94, was
+  cm848_initFaultSeverityTables). CM848's cm848_calculateIntakeAirAdjustment is
+  cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature and cm848_calculateDualAxisFuelLimit is
+  cm848_calculateFourDimensionalFueling.
+- Also: the fault derate J1939 torque curve, engine protection shutdown counting, the fault derate fuel limit, the
+  TPU channel 10 / 0 / 1 speed input set-ups and interrupt handlers (mc68k_ for the code that writes TPU registers),
+  four dimensional fueling and its lookups, the injector fault engine speed limit and the J1922 engine control
+  request from source 74. Prefixes: vp44_ is dropped from 0x127c2 / 0x133fe / 0x1cad6 / 0x1cb3c and added to 0x1cb48
+  (vp44_convertPumpFuelTemperatureToSensorScale).
+- The four empty functions are named by their one call site, from the judge's plates
+  (cm550_emptyExecutiveFrame5ExtraTask and cm550_emptyEnginePositionSignalConfiguration{1,2,3}ThirdStep); the
+  numbered cm550_emptyStubFunction12-15 the batch proposed collide with 0x26b82.
+- CM550's parameter_id_lookup_table.csv is regenerated for the renamed rows (the e2m test caught it stale).
+
+Proof: CM550 and CM848 built twice each, deterministic, in a copy of the firmware folder (base = HEAD 07f7a70e).
+- CM848: no change outside the map (the 6 twin / counterpart function renames), function set 1969, pieces 1370.
+- CM550: the function set is unchanged (713) and no old name is left in the code. The changes outside the map are in
+  seven functions, all from the new types: renamed rows that rendered with an underscore render clean
+  (_cyl_balance_gain_percent -> cylinder_balance_active_trim_gain, _vp44_fuel_temperature_value ->
+  engine_protection_fuel_temperature, _torque_curve_feature_bitmask -> throttle_100_speed_points_request_bit), the
+  arrays replace pointer arithmetic (*(short *)(&protection_threshold_status_shifted + bin * 2) ->
+  cylinder_balance_real_2_dynamics_compensation_previous_values[bin + 1]), and temporaries are retyped / renumbered.
+  Two statement counts change, both declarations: cm550_calculateCylinderBalanceTrims +3 (typed pointer temporaries)
+  and cm550_initializeCylinderBalancing +1. One rendering change in cm550_calculateCylinderBalanceTrims: the machine
+  code stores cm550_scaleByRatioSigned's result into cylinder_balance_fourier_real_component_2
+  (move.l d0,(0x80920e) at 0x12896) and then adds into memory (add.l d0,(0x80920e) at 0x128a8); the new build shows
+  one assignment with the same final value where the base showed both. The 5 new pieces are the low words the code
+  reads from the new i32 Fourier components (cylinder_balance_fourier_real_component_1._2_2_ ...: move.w of the low
+  half; they rendered as unnamed _DAT_00809208-style words). The 8 names that do not render are the reference
+  vector entries 0x8072c6-0x8072cc, reached by a pointer walk from 0x8072c2.
+- unaff_ / extraout_ / CONCAT counts are equal in both firmwares (in_ counts fall by names that held 'in_').
+  Headers regenerated (g++ 0 errors in both); the _cal audit is 0 hard / 0 soft; the five Python suites and the 109
+  JUnit tests pass; no new overlapping rows.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

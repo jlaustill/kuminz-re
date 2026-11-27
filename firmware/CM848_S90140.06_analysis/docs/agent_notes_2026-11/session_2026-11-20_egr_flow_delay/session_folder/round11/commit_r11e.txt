@@ -1,0 +1,13 @@
+cm848: round 11 stage E - output 54 is driver_asic_shutoff_request (label-only, after the review)
+
+- **Why stage D's name was wrong:** it named logical output 54 fuel_shutoff_request from its requesters. That blurred
+  it with output 30 (e2m 1577 +3 0x40 FSO_Command), which cm848_processProtectionFaultsAndTiming requests on every pass.
+- **What output 54 does:** every reader pairs it with supervisor_register_36_bit_1_low_held_flag == 0. The output
+  read-back debounce, the injector and fuel metering feedback diagnostics and the fault scan stand down while either
+  is set. So output 54 shuts off the output driver ASIC (e2m ASIC_FS_Shutoff_Driver; FS is not expanded): the
+  software path next to the supervisor's shutdown line.
+- **Its requesters:** the fuel system fault reactions - fault reaction mask bit 3, fuel pressure too high behind
+  fuel_pressure_too_high_logical_output_request_enable, and fault 388 (excess fuel demand).
+- **Proof:** reverse_names.py EQUIVALENT (a field rename).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

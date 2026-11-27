@@ -1,0 +1,75 @@
+== J1
+- 0x201d6 cm550_FUN_000201d6 (5 lines); called by: cm550_FUN_00020380, cm550_FUN_0002041c, cm550_outputControlState1Handler, cm550_FUN_00020784, cm550_FUN_00020890, cm550_FUN_00020e14, cm550_FUN_00020fac
+- 0x20210 cm550_FUN_00020210 (5 lines); called by: cm550_outputControlState1Handler, cm550_FUN_00020784, cm550_FUN_00020e14
+- 0x2024a cm550_FUN_0002024a (5 lines); called by: cm550_FUN_00020380, cm550_FUN_0002041c, cm550_outputControlState1Handler, cm550_FUN_00020784, cm550_FUN_00020890, cm550_FUN_00020e14, cm550_FUN_00020fac
+- 0x20284 cm550_FUN_00020284 (10 lines); called by: cm550_FUN_00021070, cm550_FUN_00021146
+- 0x202a0 cm550_FUN_000202a0 (10 lines); called by: cm550_FUN_00021146
+- 0x202bc cm550_FUN_000202bc (10 lines); called by: cm550_FUN_00021070, cm550_FUN_00021146
+- 0x20310 cm550_FUN_00020310 (5 lines); called by: cm550_outputControlState1Handler, cm550_FUN_00020784, cm550_FUN_00020c98
+- 0x20348 cm550_FUN_00020348 (5 lines); called by: cm550_FUN_00020380, cm550_FUN_0002041c, cm550_outputControlState1Handler, cm550_FUN_00020784, cm550_FUN_00020890, cm550_FUN_00020c98, cm550_FUN_00020fac
+- 0x20380 cm550_FUN_00020380 (29 lines); called by: cm550_FUN_00021070; calls: cm550_FUN_000201d6, cm550_FUN_0002024a, setBitInArray, cm550_FUN_00020348; scored CM848 candidates (untrusted): handleIdleSpeedControlFlag@0x00509c78 (score 19)
+- 0x2041c cm550_FUN_0002041c (32 lines); called by: cm550_FUN_00021070; calls: cm550_FUN_000201d6, cm550_FUN_0002024a, setBitInArray, cm550_FUN_00020348; scored CM848 candidates (untrusted): processBoostPressureOffset@0x00509d78 (score 27)
+- 0x205c4 cm550_FUN_000205c4 (48 lines); called by: cm550_FUN_00020c98
+- 0x206a8 cm550_FUN_000206a8 (28 lines); called by: cm550_FUN_00021070
+- 0x20784 cm550_FUN_00020784 (42 lines); called by: cm550_FUN_00021146; calls: cm550_FUN_000201d6, cm550_FUN_00020210, cm550_FUN_0002024a, setBitInArray, cm550_FUN_00020310, cm550_FUN_00020348; scored CM848 candidates (untrusted): selectProtectionChannelMode@0x0003c18c (score 22)
+- 0x20890 cm550_FUN_00020890 (120 lines); called by: cm550_FUN_00021070; calls: cm550_FUN_000201d6, cm550_FUN_0002024a, setBitInArray, cm550_FUN_00020348; scored CM848 candidates (untrusted): multiplyAccumulateFixed32@0x000564f0 (score 25)
+- 0x20c98 cm550_FUN_00020c98 (63 lines); called by: cm550_FUN_00021146; calls: setBitInArray, cm550_FUN_00020310, cm550_FUN_00020348, cm550_FUN_000205c4
+- 0x20e14 cm550_FUN_00020e14 (86 lines); called by: cm550_FUN_00021146; calls: cm550_FUN_000201d6, cm550_FUN_00020210, cm550_FUN_0002024a, setBitInArray; scored CM848 candidates (untrusted): processProtectionControlLogic@0x0002c3c8 (score 21)
+- 0x20fac cm550_FUN_00020fac (33 lines); called by: cm550_FUN_00021146; calls: cm550_FUN_000201d6, cm550_FUN_0002024a, setBitInArray, cm550_FUN_00020348
+- 0x21070 cm550_FUN_00021070 (37 lines); called by: cm550_diagnosticMonitoringCoordinator, cm550_boostPressureControlInit; calls: cm550_FUN_00020284, cm550_FUN_000202bc, cm550_FUN_00020380, cm550_FUN_0002041c, cm550_FUN_000206a8, cm550_FUN_00020890
+- 0x21146 cm550_FUN_00021146 (36 lines); called by: cm550_rpmBasedFuelLimiterCoordinator, cm550_sensorStatusHistorySlowCycle20Coordinator; calls: cm550_FUN_00020284, cm550_FUN_000202a0, cm550_FUN_000202bc, cm550_outputControlState1Handler, cm550_FUN_00020784, cm550_FUN_00020c98, cm550_FUN_00020e14, cm550_FUN_00020fac; scored CM848 candidates (untrusted): sendJ1939ErrorFrame@0x00023f4c (score 23)
+- 0x211f4 cm550_FUN_000211f4 (5 lines); called by: nothing by name - its address is stored in the ROM at NOWHERE
+   (20 functions, 614 code lines)
+== J2
+- 0x1fdc0 cm550_j1939MessageTypeCounter (31 lines); called by: cm550_fuelArbitratorResetHandler, cm550_fuelDemandLimitOrchestrator
+- 0x1ff38 cm550_engineRunTimeHistogramAccumulator (36 lines); called by: cm550_oddPhaseSchedulerTaskSet
+- 0x212b2 mc68k_FUN_000212b2 (71 lines); called by: nothing by name - its address is stored in the ROM at 0x1b4da; scored CM848 candidates (untrusted): updateProtectionLockoutState@0x005115e8 (score 18)
+- 0x2142c cm550_FUN_0002142c (19 lines); called by: cm550_oddPhaseSchedulerTaskSet
+- 0x216c6 cm550_FUN_000216c6 (9 lines); called by: nothing by name - its address is stored in the ROM at 0x21888; calls: cm550_j1939MemoryDataCopyResolver, cm550_memcpy
+- 0x21778 cm550_FUN_00021778 (11 lines); called by: nothing by name - its address is stored in the ROM at 0x218b8; calls: cm550_j1939MemoryDataCopyResolver, cm550_memcpy
+- 0x21872 cm550_FUN_00021872 (10 lines); called by: mc68k_initializeJ1939Datalink; calls: registerJ1939DiagnosticService
+- 0x21920 cm550_FUN_00021920 (18 lines); called by: j1939HandlePgn65226Dm1ActiveDtc, cm550_previousDtcListBuilder
+- 0x21f4e cm550_diagnosticGroupPositionBufferStore (28 lines); called by: cm550_memoryRegisterController
+- 0x21fac cm550_diagnosticGroupSnapshotCapture (33 lines); called by: cm550_memoryRegisterController
+- 0x22070 cm550_memoryRegisterController (87 lines); called by: nothing by name - its address is stored in the ROM at 0x1b4e6; calls: cm550_diagnosticGroupPositionBufferStore, cm550_diagnosticGroupSnapshotCapture
+- 0x231da cm550_fuelArbitratorResetHandler (13 lines); called by: cm550_fuelDemandLimitOrchestrator; calls: cm550_j1939MessageTypeCounter
+- 0x23244 cm550_fuelDemandLimitOrchestrator (279 lines); called by: nothing by name - its address is stored in the ROM at 0x1b4e0; calls: cm550_j1939MessageTypeCounter, cm550_fuelArbitratorResetHandler, cm550_FUN_00023216, cm550_ioControlEntryAdd, cm550_ioControlTimeoutEntryAdd
+   (13 functions, 645 code lines)
+== D1
+- 0x0ac3c cm550_FUN_0000ac3c (150 lines); called by: cm550_FUN_0001b788, cm550_slowCycle8Coordinator; calls: cm550_tableLookup2D
+- 0x0e998 cm550_FUN_0000e998 (78 lines); called by: cm550_FUN_0001b754; scored CM848 candidates (untrusted): processFaultCountdownTimer2@0x0050de54 (score 26)
+- 0x1b754 cm550_FUN_0001b754 (7 lines); called by: executiveFrameInterruptHandler; calls: cm550_FUN_0000e998
+- 0x1b788 cm550_FUN_0001b788 (8 lines); called by: executiveFrameInterruptHandler; calls: cm550_FUN_0000ac3c, calculateSpeedRatioComponent, cm550_FUN_00026e2c
+- 0x1b7f2 vp44_FUN_0001b7f2 (8 lines); called by: executiveFrameInterruptHandler; calls: vp44SensorStatusMonitor
+- 0x1d9b4 vp44SensorStatusMonitor (111 lines); called by: vp44_FUN_0001b7f2
+- 0x253b0 cm550_FUN_000253b0 (32 lines); called by: cm550_FUN_000254b6
+- 0x254b6 cm550_FUN_000254b6 (34 lines); called by: cm550_dzgTimingAndPressureSlowCycle10Coordinator; calls: cm550_ioControlMaskStateMachine, vp44_ioControlLampStateMachine, cm550_faultCodeDisplayController, cm550_activeFaultLampStateMachine, cm550_faultLampBlinkPatternGenerator, cm550_FUN_000253b0, cm550_periodicLampFlashController; scored CM848 candidates (untrusted): processProtectionEntry@0x0002c764 (score 20)
+- 0x26834 mc68k_FUN_00026834 (13 lines); called by: mc68k_FUN_00026854; calls: mc68k_runSerialEepromWriteQueue; scored CM848 candidates (untrusted): triggerJ1939TransmitQueueProcess@0x0003dcf4 (score 16)
+- 0x26852 cm550_FUN_00026852 (4 lines); called by: mc68k_FUN_00026854
+- 0x26854 mc68k_FUN_00026854 (75 lines); called by: mc68k_applicationMain; calls: mc68k_runSerialEepromWriteQueue, mc68k_FUN_00026834, cm550_FUN_00026852
+   (11 functions, 520 code lines)
+== F1
+- 0x0b3b2 cm550_shutdownMinimumSelector21 (8 lines); called by: cm550_FUN_00030c3c
+- 0x0b4ce cm550_fuelDemandLimitMinimumUpdater (9 lines); called by: cm550_FUN_00030b34
+- 0x0c2a0 cm550_shutdownMinimumSelector16 (10 lines); called by: cm550_FUN_00030c3c
+- 0x0c2ee cm550_FUN_0000c2ee (15 lines); called by: cm550_FUN_00030b34; scored CM848 candidates (untrusted): checkProtectionOutputConditions@0x00037f28 (score 23)
+- 0x0c742 cm550_shutdownMinimumSelector15 (8 lines); called by: cm550_FUN_00030c3c
+- 0x12484 cm550_FUN_00012484 (20 lines); called by: cm550_FUN_00030b34
+- 0x17120 cm550_FUN_00017120 (9 lines); called by: cm550_FUN_00030c3c
+- 0x196e4 cm550_shutdownMinimumSelector29 (8 lines); called by: cm550_FUN_00030c3c
+- 0x1c152 fuelTimingOilPressureModeController (88 lines); called by: cm550_periodicTaskSet_fuelTiming; calls: cm550_diagnosticFuelLimitInterpolator, cm550_FUN_0001c0d4, cm550_FUN_00030c3c
+- 0x1ca54 cm550_fuelDemandLimitSelector11 (24 lines); called by: periodicTaskSet_fuelDemand, vp44_evenPhaseSchedulerTaskSet; scored CM848 candidates (untrusted): sensorFaultDetection@0x00006ab8 (score 19)
+- 0x1ce58 cm550_FUN_0001ce58 (9 lines); called by: cm550_FUN_00030c3c; scored CM848 candidates (untrusted): initProtectionStateWithFuelDemand@0x0001f318 (score 29)
+- 0x2658c cm550_fuelDemandLimitSource2Selector (15 lines); called by: mc68k_applicationMain
+- 0x26af0 cm550_FUN_00026af0 (16 lines); called by: cm550_FUN_00030b34
+- 0x2d9a8 cm550_FUN_0002d9a8 (8 lines); called by: cm550_FUN_00030c3c; scored CM848 candidates (untrusted): checkProtectionParamLimit@0x0002a918 (score 26)
+- 0x30ade cm550_FUN_00030ade (8 lines); called by: mc68k_applicationMain
+- 0x30b0e cm550_FUN_00030b0e (4 lines); called by: mc68k_applicationMain
+- 0x30b10 cm550_fuelDemandLimitSelector4 (9 lines); called by: cm550_FUN_00030b34
+- 0x30b34 cm550_FUN_00030b34 (12 lines); called by: vp44InjectionSystemStateController; calls: cm550_fuelDemandLimitMinimumUpdater, cm550_FUN_0000c2ee, cm550_FUN_00012484, cm550_engineModeTransitionStateUpdater, cm550_FUN_00026af0, cm550_fuelDemandLimitSelector4, cm550_FUN_00034dba
+- 0x30bf6 cm550_shutdownMinimumSelector28 (10 lines); called by: cm550_FUN_00030c3c
+- 0x30c14 cm550_shutdownMinimumSelector20 (11 lines); called by: cm550_FUN_00030c3c
+- 0x30c3c cm550_FUN_00030c3c (15 lines); called by: fuelTimingOilPressureModeController; calls: cm550_shutdownMinimumSelector21, cm550_shutdownMinimumSelector16, cm550_shutdownMinimumSelector15, cm550_FUN_00017120, cm550_shutdownMinimumSelector29, cm550_FUN_0001ce58, cm550_FUN_0002d9a8, cm550_shutdownMinimumSelector28, cm550_shutdownMinimumSelector20
+- 0x34512 cm550_FUN_00034512 (9 lines); called by: executiveFrameInterruptHandler
+- 0x34dba cm550_FUN_00034dba (9 lines); called by: cm550_FUN_00030b34
+   (23 functions, 334 code lines)

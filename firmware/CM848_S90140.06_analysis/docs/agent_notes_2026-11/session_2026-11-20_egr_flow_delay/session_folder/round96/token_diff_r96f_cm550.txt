@@ -1,0 +1,201 @@
+0x0000b3d0: 6 token changes: + =>  | _anc_timing_limit_active_timer => acceleration_noise_control_timing_limit_hold_timer | _anc_timing_limit_active_timer => acceleration_noise_control_timing_limit_hold_timer | _anc_timing_limit_active_timer => acceleration_noise_control_timing_limit_hold_timer | _anc_timing_limit_active_timer => acceleration_noise_control_timing_limit_hold_timer | _anc_timing_limit_active_timer => acceleration_noise_control_timing_limit_hold_timer
+0x0000d3b2: 4 token changes: 0x803bbc => & all_speed_governor_minimum_reference_speed_1_cal | 0x803bbe => & all_speed_governor_maximum_reference_speed_1_cal | 0x803bca => & all_speed_governor_minimum_reference_speed_2_cal | 0x803bcc => & all_speed_governor_maximum_reference_speed_2_cal
+0x0000d3e6: 3 token changes: _asg_selected_droop_slope_0_30 => asg_selected_droop_slope_0_30 | _asg_selected_droop_slope_0_30 => asg_selected_droop_slope_0_30 | _asg_selected_droop_slope_0_30 => asg_selected_droop_slope_0_30
+0x0000ed64: 7 token changes: undefined4 uVar2 => dword dVar2 | uVar2 => dVar2 | _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000 => total_idle_fuel_consumed | uVar2 => dVar2 | ( uint ) uVar2 => dVar2 | ( uint ) uVar2 => dVar2 | ( uint ) uVar2 => dVar2
+0x0000f716: 4 token changes: _anc_speed_limit_table_3_ptr => all_speed_governor_droop_snapshot | _asg_selected_droop_slope_0_30 => asg_selected_droop_slope_0_30 | _anc_speed_limit_table_3_ptr => all_speed_governor_droop_snapshot | _anc_speed_limit_table_3_ptr => all_speed_governor_droop_snapshot
+0x0001ec3c: 12 token changes: dword => j1708_memory_write_record_t | pdVar8 => pjVar8 | pdVar8 => pjVar8 | ( dword * ) & =>  | * pdVar8 => pjVar8 -> address | pdVar8 [ 1 ] => pjVar8 -> data_pointer | ( dword ) =>  | * ( byte * ) ( pdVar8 + 2 ) => pjVar8 -> length | * ( MEMORY_REGION_TYPE * ) ( ( int ) pdVar8 + 9 ) => pjVar8 -> region_type | pdVar8 => pjVar8 | ( dword * ) ( ( int ) pdVar8 => pjVar8 | 10 ) => 1
+0x0002595a: 6 token changes: _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity | _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity | _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity | _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity | ushort => word | _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity
+0x00025a34: 4 token changes: _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity | _lsg_proportional_gain_active => lsg_proportional_gain_active | _fuel_economy_sample_1 => low_speed_governor_integral_accumulator | _lsg_proportional_gain_active => lsg_proportional_gain_active
+0x00025b1c: 43 token changes: wVar3 => wVar4 |  => dword dVar3 ; | uVar4 => uVar5 | sVar5 => sVar6 | wVar3 => wVar4 | sVar5 => sVar6 | wVar3 => wVar4 | wVar3 => wVar4 | wVar3 => wVar4 | wVar3 => wVar4 | wVar3 => wVar4 | wVar3 => wVar4 | wVar3 => wVar4 | sVar5 => sVar6 | _lsg_proportional_gain_active => lsg_proportional_gain_active | uVar4 => uVar5 | uVar4 => uVar5 | uVar4 => uVar5 | uVar4 => uVar5 | _fuel_economy_sample_1 => low_speed_governor_integral_accumulator | _lsg_proportional_gain_active => lsg_proportional_gain_active | sVar5 => sVar6 | _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity |
+0x0002629e: 1 token changes: _lsg_proportional_gain_active => lsg_proportional_gain_active
+0x00026616: 5 token changes: _rpm_histogram_sample_divider => low_speed_governor_cold_idle_timer | _rpm_histogram_sample_divider => low_speed_governor_cold_idle_timer | _rpm_histogram_sample_divider => low_speed_governor_cold_idle_timer | _rpm_histogram_sample_divider => low_speed_governor_cold_idle_timer | _rpm_histogram_sample_divider => low_speed_governor_cold_idle_timer
+0x00026e8e: 1 token changes: short => word
+0x00028b80: 4 token changes: & LAB_0003229a => cm550_broadcastPgn65226Dm1WhileFaultsActive | & LAB_000339fe => cm550_buildPgn65213FanDrive1Message | & LAB_00032bbc => cm550_buildPgn61441ElectronicBrakeController1Message | & LAB_00034496 => cm550_sendPgn65279WaterInFuelIndicatorMessage
+0x0002cf7e: 36 token changes: undefined => j1708_memory_write_record_t | puVar5 => pjVar5 | undefined4 => byte | puVar6 ; undefined1 * puVar7 => pbVar6 | puVar5 => pjVar5 | & =>  | puVar5 [ 9 ] => pjVar5 -> region_type | ' \ x05 ' => MEMORY_REGION_TYPE_EEPROM | puVar5 [ 9 ] => pjVar5 -> region_type | ' \ x03 ' => MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED | puVar5 [ 8 ] => pjVar5 -> length | puVar5 => pjVar5 | puVar5 => pjVar5 | 10 => 1 | puVar6 => pjVar5 | ( undefined4 * ) & =>  | ( undefined1 * ) puVar6 [ 1 ] => pjVar5 -> data_pointer | * ( byte * ) ( puVar6 + 2 ) => pjVar5 -> length | * ( char * ) ( ( int ) puVar6 + 9 ) 
+0x0002ef1c: 2 token changes: param_1 => request_message | param_1 => request_message
+0x0002ef36: 1 token changes:  => 0xfecc , cm550_j1939HandlePgn65228Dm3ClearInactiveFaults
+0x0002ef4a: 6 token changes: dword msg_ptr => can_std_rx_desc_t * request_message | * ( char * * ) ( msg_ptr + 6 ) => request_message -> data_ptr | ' \ =>  | ' =>  | ' \ x01 ' => 1 | ( can_std_rx_desc_t * ) msg_ptr => request_message
+0x0002f4be: 12 token changes: char => j1939_pgn_handler_entry_t | pcVar2 => pjVar2 | pcVar2 => pjVar2 | & =>  | pcVar2 [ 1 ] => pjVar2 -> pgn_byte_0 | * pcVar2 => pjVar2 -> pgn_byte_1 | * =>  | * =>  | ( pcVar2 + 2 ) => pjVar2 -> handler_func | pcVar2 => pjVar2 | pcVar2 => pjVar2 | 6 => 1
+0x0002f538: 7 token changes:  => 0xfee4 , cm550_buildPgn65252ShutdownMessage |  => 0xfeed , cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage |  => 0xfeef , cm550_buildPgn65263EngineFluidLevelPressure1Message |  => 0xfef0 , cm550_buildPgn65264PowerTakeOffInformationMessage |  => 0xfef5 , cm550_buildPgn65269AmbientConditionsMessage |  => 0xfef6 , cm550_buildPgn65270InletExhaustConditions1Message |  => 0xfef7 , buildPgn65271VehicleElectricalPower1Message
+0x0002fb70: 4 token changes: int param_1 => can_std_rx_desc_t * message | param_1 => ( int ) & message -> id | param_1 => message | param_1 => message
+0x0002fcdc: 2 token changes: bool all_keys_match ; =>  |  => ; bool all_keys_match
+0x00031c84: 6 token changes: undefined1 => byte |  => [ 0 ] | undefined1 => byte | undefined1 => byte | DAT_00801ee4 => j1939_pgn65265_wheel_based_vehicle_speed [ 1 ] | undefined1 => byte
+0x00031ed2: 1 token changes:  => 0xfef1 , cm550_buildPgn65265CruiseControlVehicleSpeedMessage
+0x00031f30: 9 token changes:  => . max_vehicle_speed_limit | undefined1 => byte |  => . max_vehicle_speed_limit | DAT_00801efb => j1939_pgn65261_payload . cruise_high_set_limit_speed | undefined1 => byte | DAT_00801efb => j1939_pgn65261_payload . cruise_high_set_limit_speed | DAT_00801efc => j1939_pgn65261_payload . cruise_low_set_limit_speed | undefined1 => byte | DAT_00801efc => j1939_pgn65261_payload . cruise_low_set_limit_speed
+0x00031fee: 6 token changes:  => . max_vehicle_speed_limit | DAT_00801efd => j1939_pgn65261_payload . reserved3 | DAT_00801efe => j1939_pgn65261_payload . reserved4 | DAT_00801eff => j1939_pgn65261_payload . reserved5 | DAT_00801f00 => j1939_pgn65261_payload . reserved6 | DAT_00801f01 => j1939_pgn65261_payload . reserved7
+0x000320f6: 1 token changes:  => 0xfeeb , cm550_buildPgn65259ComponentIdentificationMessage
+0x00032244: 2 token changes:  => ( undefined * ) |  => 0xfed2 , buildPgn65234Dm10TestIdentifiersSupportMessage
+0x000323be: 1 token changes:  => 0xfeca , cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage
+0x0003252c: 1 token changes:  => 0xfecb , cm550_buildPgn65227Dm2PreviouslyActiveDiagnosticTroubleCodesMessage
+0x000329d2: 1 token changes:  => 0xfecd , cm550_j1939HandlePgn65229Dm4FreezeFrame
+0x00032a42: 6 token changes:  => . active_trouble_code_count | DAT_00803459 => j1939_pgn65230_payload . previously_active_trouble_code_count | base_timing_table_lookup_arg_345a => j1939_pgn65230_payload . obd_compliance | DAT_0080345b => j1939_pgn65230_payload . continuously_monitored_systems_support | _vp44_timing_idle_cmd_ptr => j1939_pgn65230_payload . non_continuously_monitored_systems_support | _DAT_0080345e => j1939_pgn65230_payload . non_continuously_monitored_systems_status
+0x00032ae2: 2 token changes:  => . active_trouble_code_count |  => 0xfece , buildPgn65230Dm5DiagnosticReadiness1Message
+0x00032c76: 11 token changes: undefined1 => byte | undefined1 uStack_5 => byte bStack_5 | ' } ' => 0x7d | ' } ' => 0x7d | - 2 => 0xfe | uStack_5 => bStack_5 | undefined1 => byte |  => [ 0 ] | uStack_5 => bStack_5 | undefined1 => byte | DAT_00803496 => j1939_pgn61444_engine_speed [ 1 ]
+0x00032e4c: 5 token changes: - 1 => 0xff | - 2 => 0xfe | undefined1 => byte | - 1 => 0xff | - 2 => 0xfe
+0x00033064: 1 token changes:  => 0xf003 , cm550_buildPgn61443ElectronicEngineController2Message
+0x000330c4: 7 token changes: undefined1 => byte | undefined1 uStack_5 => byte bStack_5 | ' } ' => 0x7d | uStack_5 => bStack_5 | undefined1 => byte | uStack_5 => bStack_5 | undefined1 => byte
+0x0003320e: 1 token changes: ( ushort ) => 
+0x00033754: 1 token changes:  => 0xfee5 , cm550_buildPgn65253EngineHoursRevolutionsMessage
+0x00033880: 1 token changes:  => 0xfeee , cm550_buildPgn65262EngineTemperature1Message
+0x000338ea: 2 token changes: - 1 => 0xff | ' } ' => 0x7d
+0x00033aea: 1 token changes:  => 0xfee9 , cm550_buildPgn65257FuelConsumptionMessage
+0x00033b40: 20 token changes: undefined1 => byte | undefined1 uStack_5 => byte bStack_5 | uStack_5 => bStack_5 | undefined1 => byte |  => [ 0 ] | uStack_5 => bStack_5 | undefined1 => byte | DAT_008035b5 => j1939_pgn65266_engine_fuel_rate [ 1 ] | uStack_5 => bStack_5 | undefined1 => byte |  => [ 0 ] | uStack_5 => bStack_5 | undefined1 => byte | DAT_008035b7 => j1939_pgn65266_engine_instantaneous_fuel_economy [ 1 ] | uStack_5 => bStack_5 | undefined1 => byte |  => [ 0 ] | uStack_5 => bStack_5 | undefined1 => byte | DAT_008035b9 => j1939_pgn65266_engine_average_fuel_economy [ 1 ]
+0x00033c28: 1 token changes: & => 
+0x00033c6c: 1 token changes: _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000 => total_idle_fuel_consumed
+0x00033ce2: 2 token changes:  => ( undefined * ) |  => 0xfedc , cm550_buildPgn65244IdleOperationMessage
+0x0003407a: 48 token changes: undefined1 => byte | undefined1 uStack_5 => byte bStack_5 |  => . retarder_type_and_location |  => . retarder_type_and_location | uStack_5 => bStack_5 | undefined1 => byte | DAT_00803632 => j1939_pgn65249_payload . retarder_speed_at_idle_point_1_low_byte | uStack_5 => bStack_5 | undefined1 => byte | DAT_00803633 => j1939_pgn65249_payload . retarder_speed_at_idle_point_1_high_byte | DAT_00803634 => j1939_pgn65249_payload . percent_torque_at_idle_point_1 | ' } ' => 0x7d | uStack_5 => bStack_5 | undefined1 => byte | DAT_00803635 => j1939_pgn65249_payload . maximum_retarder_speed_point_2_low_byte 
+0x000341e6: 2 token changes:  => . retarder_type_and_location | DAT_00803642 => j1939_pgn65249_payload . percent_torque_at_peak_torque_point_5
+0x0003429a: 1 token changes:  => 0xfee0 , cm550_buildPgn65248VehicleDistanceMessage
+0x00034334: 2 token changes: _eeprom_calibration_check_value_1 => j1939_pgn65271_charging_system_potential | _protection_flag_source_1 => j1939_pgn65271_keyswitch_battery_potential
+0x000343d2: 1 token changes:  => 0xfee7 , cm550_buildPgn65255VehicleHoursMessage
+0x00034440: 1 token changes:  => 0xfeec , sendPgn65260VehicleIdentificationMessage
+---- census of distinct changes
+  39 undefined1 => byte
+  22 uStack_5 => bStack_5
+   9 wVar3 => wVar4
+   8 _fuel_economy_sample_3 => low_speed_governor_reference_maximum_fuel_quantity
+   8 ' } ' => 0x7d
+   6 _lsg_proportional_gain_active => lsg_proportional_gain_active
+   6 iVar2 => iVar1
+   5 _anc_timing_limit_active_timer => acceleration_noise_control_timing_limit_hold_timer
+   5 uVar4 => uVar5
+   5 _rpm_histogram_sample_divider => low_speed_governor_cold_idle_timer
+   5  => [ 0 ]
+   4 _asg_selected_droop_slope_0_30 => asg_selected_droop_slope_0_30
+   4 _fuel_economy_sample_1 => low_speed_governor_integral_accumulator
+   4 sVar5 => sVar6
+   4 iVar1 => dVar3
+   4 puVar5 => pjVar5
+   4 puVar7 => pbVar6
+   4 pcVar2 => pjVar2
+   4 undefined1 uStack_5 => byte bStack_5
+   3 ( uint ) uVar2 => dVar2
+   3 _anc_speed_limit_table_3_ptr => all_speed_governor_droop_snapshot
+   3 pdVar8 => pjVar8
+   3 _fuel_economy_sample_1 => low_speed_governor_integral_accumulator . _0_2_
+   3 & => 
+   3  => . max_vehicle_speed_limit
+   3 - 2 => 0xfe
+   3 - 1 => 0xff
+   3  => . retarder_type_and_location
+   2 uVar2 => dVar2
+   2 _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000 => total_idle_fuel_consumed
+   2 10 ) => 1
+   2 iVar1 => ( int ) dVar3
+   2 puVar5 [ 9 ] => pjVar5 -> region_type
+   2 ' \ x05 ' => MEMORY_REGION_TYPE_EEPROM
+   2 ' \ x03 ' => MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED
+   2 puVar6 => pjVar5
+   2 * ( char * ) ( ( int ) puVar6 + 9 ) => pjVar5 -> region_type
+   2 * puVar6 => pjVar5 -> address
+   2 param_1 => request_message
+   2 * => 
+   2 param_1 => message
+   2 DAT_00801efb => j1939_pgn65261_payload . cruise_high_set_limit_speed
+   2 DAT_00801efc => j1939_pgn65261_payload . cruise_low_set_limit_speed
+   2  => ( undefined * )
+   2  => . active_trouble_code_count
+   1 + => 
+   1 0x803bbc => & all_speed_governor_minimum_reference_speed_1_cal
+   1 0x803bbe => & all_speed_governor_maximum_reference_speed_1_cal
+   1 0x803bca => & all_speed_governor_minimum_reference_speed_2_cal
+   1 0x803bcc => & all_speed_governor_maximum_reference_speed_2_cal
+   1 undefined4 uVar2 => dword dVar2
+   1 dword => j1708_memory_write_record_t
+   1 ( dword * ) & => 
+   1 * pdVar8 => pjVar8 -> address
+   1 pdVar8 [ 1 ] => pjVar8 -> data_pointer
+   1 ( dword ) => 
+   1 * ( byte * ) ( pdVar8 + 2 ) => pjVar8 -> length
+   1 * ( MEMORY_REGION_TYPE * ) ( ( int ) pdVar8 + 9 ) => pjVar8 -> region_type
+   1 ( dword * ) ( ( int ) pdVar8 => pjVar8
+   1 ushort => word
+   1  => dword dVar3 ;
+   1 ( uint ) iVar1 => dVar3
+   1 short => word
+   1 & LAB_0003229a => cm550_broadcastPgn65226Dm1WhileFaultsActive
+   1 & LAB_000339fe => cm550_buildPgn65213FanDrive1Message
+   1 & LAB_00032bbc => cm550_buildPgn61441ElectronicBrakeController1Message
+   1 & LAB_00034496 => cm550_sendPgn65279WaterInFuelIndicatorMessage
+   1 undefined => j1708_memory_write_record_t
+   1 undefined4 => byte
+   1 puVar6 ; undefined1 * puVar7 => pbVar6
+   1 puVar5 [ 8 ] => pjVar5 -> length
+   1 10 => 1
+   1 ( undefined4 * ) & => 
+   1 ( undefined1 * ) puVar6 [ 1 ] => pjVar5 -> data_pointer
+   1 * ( byte * ) ( puVar6 + 2 ) => pjVar5 -> length
+   1 ( undefined4 * ) ( ( int ) puVar6 => pjVar5
+   1  => 0xfecc , cm550_j1939HandlePgn65228Dm3ClearInactiveFaults
+   1 dword msg_ptr => can_std_rx_desc_t * request_message
+   1 * ( char * * ) ( msg_ptr + 6 ) => request_message -> data_ptr
+   1 ' \ => 
+   1 ' => 
+   1 ' \ x01 ' => 1
+   1 ( can_std_rx_desc_t * ) msg_ptr => request_message
+   1 char => j1939_pgn_handler_entry_t
+   1 pcVar2 [ 1 ] => pjVar2 -> pgn_byte_0
+   1 * pcVar2 => pjVar2 -> pgn_byte_1
+   1 ( pcVar2 + 2 ) => pjVar2 -> handler_func
+   1 6 => 1
+   1  => 0xfee4 , cm550_buildPgn65252ShutdownMessage
+   1  => 0xfeed , cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage
+   1  => 0xfeef , cm550_buildPgn65263EngineFluidLevelPressure1Message
+   1  => 0xfef0 , cm550_buildPgn65264PowerTakeOffInformationMessage
+   1  => 0xfef5 , cm550_buildPgn65269AmbientConditionsMessage
+   1  => 0xfef6 , cm550_buildPgn65270InletExhaustConditions1Message
+   1  => 0xfef7 , buildPgn65271VehicleElectricalPower1Message
+   1 int param_1 => can_std_rx_desc_t * message
+   1 param_1 => ( int ) & message -> id
+   1 bool all_keys_match ; => 
+   1  => ; bool all_keys_match
+   1 DAT_00801ee4 => j1939_pgn65265_wheel_based_vehicle_speed [ 1 ]
+   1  => 0xfef1 , cm550_buildPgn65265CruiseControlVehicleSpeedMessage
+   1 DAT_00801efd => j1939_pgn65261_payload . reserved3
+   1 DAT_00801efe => j1939_pgn65261_payload . reserved4
+   1 DAT_00801eff => j1939_pgn65261_payload . reserved5
+   1 DAT_00801f00 => j1939_pgn65261_payload . reserved6
+   1 DAT_00801f01 => j1939_pgn65261_payload . reserved7
+   1  => 0xfeeb , cm550_buildPgn65259ComponentIdentificationMessage
+   1  => 0xfed2 , buildPgn65234Dm10TestIdentifiersSupportMessage
+   1  => 0xfeca , cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage
+   1  => 0xfecb , cm550_buildPgn65227Dm2PreviouslyActiveDiagnosticTroubleCodesMessage
+   1  => 0xfecd , cm550_j1939HandlePgn65229Dm4FreezeFrame
+   1 DAT_00803459 => j1939_pgn65230_payload . previously_active_trouble_code_count
+   1 base_timing_table_lookup_arg_345a => j1939_pgn65230_payload . obd_compliance
+   1 DAT_0080345b => j1939_pgn65230_payload . continuously_monitored_systems_support
+   1 _vp44_timing_idle_cmd_ptr => j1939_pgn65230_payload . non_continuously_monitored_systems_support
+   1 _DAT_0080345e => j1939_pgn65230_payload . non_continuously_monitored_systems_status
+   1  => 0xfece , buildPgn65230Dm5DiagnosticReadiness1Message
+   1 DAT_00803496 => j1939_pgn61444_engine_speed [ 1 ]
+   1  => 0xf003 , cm550_buildPgn61443ElectronicEngineController2Message
+   1 ( ushort ) => 
+   1  => 0xfee5 , cm550_buildPgn65253EngineHoursRevolutionsMessage
+   1  => 0xfeee , cm550_buildPgn65262EngineTemperature1Message
+   1  => 0xfee9 , cm550_buildPgn65257FuelConsumptionMessage
+   1 DAT_008035b5 => j1939_pgn65266_engine_fuel_rate [ 1 ]
+   1 DAT_008035b7 => j1939_pgn65266_engine_instantaneous_fuel_economy [ 1 ]
+   1 DAT_008035b9 => j1939_pgn65266_engine_average_fuel_economy [ 1 ]
+   1  => 0xfedc , cm550_buildPgn65244IdleOperationMessage
+   1 DAT_00803632 => j1939_pgn65249_payload . retarder_speed_at_idle_point_1_low_byte
+   1 DAT_00803633 => j1939_pgn65249_payload . retarder_speed_at_idle_point_1_high_byte
+   1 DAT_00803634 => j1939_pgn65249_payload . percent_torque_at_idle_point_1
+   1 DAT_00803635 => j1939_pgn65249_payload . maximum_retarder_speed_point_2_low_byte
+   1 DAT_00803636 => j1939_pgn65249_payload . maximum_retarder_speed_point_2_high_byte
+   1 DAT_00803637 => j1939_pgn65249_payload . percent_torque_at_maximum_speed_point_2
+   1 DAT_00803638 => j1939_pgn65249_payload . retarder_speed_at_point_3_low_byte
+   1 DAT_00803639 => j1939_pgn65249_payload . retarder_speed_at_point_3_high_byte
+   1 DAT_0080363a => j1939_pgn65249_payload . percent_torque_at_point_3
+   1 DAT_0080363b => j1939_pgn65249_payload . retarder_speed_at_point_4_low_byte
+   1 DAT_0080363c => j1939_pgn65249_payload . retarder_speed_at_point_4_high_byte
+   1 DAT_0080363d => j1939_pgn65249_payload . percent_torque_at_point_4
+   1 DAT_0080363e => j1939_pgn65249_payload . retarder_speed_at_peak_torque_point_5_low_byte
+   1 DAT_0080363f => j1939_pgn65249_payload . retarder_speed_at_peak_torque_point_5_high_byte
+   1 DAT_00803640 => j1939_pgn65249_payload . reference_retarder_torque_low_byte
+   1 DAT_00803641 => j1939_pgn65249_payload . reference_retarder_torque_high_byte
+   1 DAT_00803642 => j1939_pgn65249_payload . percent_torque_at_peak_torque_point_5
+   1  => 0xfee0 , cm550_buildPgn65248VehicleDistanceMessage
+   1 _eeprom_calibration_check_value_1 => j1939_pgn65271_charging_system_potential
+   1 _protection_flag_source_1 => j1939_pgn65271_keyswitch_battery_potential
+   1  => 0xfee7 , cm550_buildPgn65255VehicleHoursMessage
+   1  => 0xfeec , sendPgn65260VehicleIdentificationMessage

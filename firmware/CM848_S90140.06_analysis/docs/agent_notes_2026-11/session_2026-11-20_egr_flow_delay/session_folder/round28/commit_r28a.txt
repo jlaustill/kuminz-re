@@ -1,0 +1,28 @@
+cm848: round 28 stage A - the sensor-present flags, the boot CAN ring state, the kernel's mailbox writer (labels)
+
+- Three flags lost their e2m meaning, so their names read as effects (one of them backwards):
+  - 0x3feff6 boost_is_gauge_pressure_flag -> absolute_boost_pressure_sensor_present_flag (e2m 11D5 +4
+    Absolute_Boost_Pressure_Sensor_Present). Set, cm848_calculateBoostPressure subtracts the barometric reference;
+    clear, the sensor's reading is the boost. The result is gauge boost either way; the old name and comment read
+    the clear case as absolute.
+  - 0x3feff4 boost_uses_barometric_pressure_flag -> barometric_pressure_sensor_present_flag (11D5 +2
+    Ambient_Air_Pressure_Sensor_Present). Clear, the barometric channel's default replaces the sensor.
+  - 0x3fd536 two_speed_axle_enable_cal -> two_speed_axle_switch_present_cal (1180 +E Rear_Axle_Ratio_Switch_Present).
+- cm848_writeCan2ControllerTxMailbox -> cm848_writeBootKernelCanTxMailbox. It is the boot kernel image's (ROM
+  0x3C30-0x7F60) byte-for-byte copy of cm848_writeCanControllerTxMailbox, and both write TouCAN A. "Can2" was not a
+  second controller.
+- can_tx_ring_t -> can_ring_state_t, instance j1939_can_ring_buf -> boot_can_ring_state. It holds both rings, and
+  only boot ROM / kernel code uses it: the four kernel CAN functions, mpc555_initDiagnosticSubsystem and
+  mpc555_diagService25_executeFunction.
+  - Fields: transmit_write_pointer / transmit_read_pointer / receive_write_pointer / receive_read_pointer /
+    transmit_message_buffer_pointer. The last is set to TouCAN A buffer 0x3070f0 + 16 x n, and the empty-ring path
+    clears its control byte.
+  - Five name-only rows inside it carried old QADC guesses (qadc_a_ccw_2 / _4 / _6, qadc_a_queue1 / 2_wrap_flag)
+    and rendered nowhere. They are dotted documentation rows of the fields now; the two flag bytes take the names
+    stage B gives them.
+- firmware/CLAUDE.md and docs/rom_to_ram_thunking.md: identifier refreshes.
+
+Proof: reverse_names.py EQUIVALENT; every new name renders. Headers regenerated (0 g++ errors), lookup_tables.py 0
+sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,32 @@
+clip-core: keep chunked memory dumps aligned - pad a failed chunk and list it (readInChunks); the shifted dumps
+
+Two dumps in this repo are 0x80 bytes short and shifted: cm848_ram.bin misses 0x40c200-0x40c27f (found in rename
+wave 14) and J90350.00.extended_ram.bin reads at address - 0x80 from 0x8092C2 on (three round 87 agents). The cause
+is ECUReader::readMemoryService4ALarge: on a failed chunk it advanced the offset and inserted nothing, so every later
+byte moved down one 128-byte chunk, and the dump still reported success. A reply with no bytes would also have looped
+forever (offset += 0, errors reset).
+
+- New clip/ChunkedRead.h / src/ChunkedRead.cpp: readInChunks(address, totalLength, chunkSize, readChunk, ...) retries
+  a failed chunk (2 retries), then fills it with 0xFF and records it as a gap (adjacent gaps merge), so byte n is
+  always the byte at address + n. An empty reply counts as a failure; a short reply advances by what it holds; extra
+  bytes are dropped; 5 failed chunks in a row stop the read (completed = false).
+- ECUReader::readMemoryService4ALarge uses it (the 10 ms pause and the progress text as before), logs each unread
+  range, and keeps it for lastReadGaps(); dumpMemoryService4AToFile writes <dump>.gaps.txt beside a dump that has
+  gaps. The API is unchanged apart from lastReadGaps().
+- clip-core gains a unit test target (clip-core-tests / ctest, built only when clip-core is the top-level project):
+  8 tests with a fake ECU memory - all chunks read, a failed chunk padded with the later bytes at their own offsets
+  (the 0x40c200 case), a retry that recovers, short / empty / long replies, too many failures, the pad byte and the
+  progress calls. Against a copy of the helper that skips a failed chunk (the old loop), 9 checks fail.
+- Docs: CM550 README.md / docs/memory_map.md say the extended RAM dump is 0x80 bytes short, which values are shifted
+  and that SetupMemoryMap.java still loads it at 0x8091C2; firmware/CLAUDE.md gives the cause under the CM848 RAM
+  dump gap.
+
+firmware/CLAUDE.md (three lines added after "the file is exactly 0x80 short of 0x440000."):
+    - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding.
+      Since PR #53 round 88 it pads the chunk with 0xFF and lists it in `<dump>.gaps.txt` (`readInChunks`, with unit tests).
+      CM550's extended RAM dump has the same 0x80 shift (its README).
+
+Tested: clip-core builds (one pre-existing unused-parameter warning in CLIPTransportLayer.cpp); ctest 1/1 and
+clip-core-tests "all tests passed"; kuminz-cli builds against it. CRLF kept in every clip-core file.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

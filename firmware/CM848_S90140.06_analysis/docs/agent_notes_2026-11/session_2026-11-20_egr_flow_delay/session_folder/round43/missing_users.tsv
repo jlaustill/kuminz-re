@@ -1,0 +1,98 @@
+0x003fd482	kernel-window	byte	eeprom_mirror	app	0	4				cm848_commitEepromMirrorToEeprom;cm848_initEepromDriverAndLoadMirror;cm848_processPciDiagnosticRequest
+0x003fdb94	scalar	byte	diag_scan_step_counter	boot	2	0	diag			
+0x003fdb96	scalar	word	kernel_watchdog_question	boot	3	0				
+0x003fdb98	scalar	word	kernel_watchdog_last_service_time	boot	2	0				
+0x003fdb9a	scalar	word	kernel_watchdog_error_count	boot	3	0				
+0x003fdb9c	scalar	word	boot_mode_strap_pins_high	boot	3	0				
+0x003fdb9e	scalar	word	supervisor_watchdog_not_armed_flag	boot	1	0				
+0x003fdba0	scalar	word	kernel_watchdog_error_count_peak	boot	2	0				
+0x003fdba2	scalar	word	kernel_watchdog_status_at_peak	boot	1	0				
+0x003fdba6	time-shared	word	cmf_erase_pulse_total	boot	2	0				
+0x003fdbaa	time-shared	dword	cmf_erase_control_base	boot	2	0				
+0x003fdbae	time-shared	dword	cmf_erase_control_bits	boot	2	0				
+0x003fdbb6	time-shared	dword	qadc_control_word_b	both	1	1				cm848_updateParkNeutralFlagAndTsc1Activity
+0x003fdbba	time-shared	word	qadc_control_word_c	none	0	0				
+0x003fdbbe	time-shared	word	qadc_control_word_d	none	0	0				
+0x003fdbc2	time-shared	word	qadc_control_word_e	none	0	0				
+0x003fdbc6	time-shared	word	qadc_control_word_f	none	0	0				
+0x003fdbca	time-shared	word	qadc_control_word_g	none	0	0				
+0x003fdbd6	time-shared	dword	cmf_control_base	boot	3	0				
+0x003fdbda	time-shared	word	cmf_control_pulse_value	none	0	0				
+0x003fdbde	time-shared	dword	cmf_control_step_bits	boot	5	0				
+0x003fdbe2	time-shared	dword	qadc_channel_config_mask_c	boot	1	0				
+0x003fdbe6	time-shared	dword	qadc_channel_config_mask_d	boot	1	0				
+0x003fdbea	time-shared	dword	qadc_channel_config_mask_e	boot	1	0				
+0x003fdbee	time-shared	dword	qadc_channel_config_mask_f	boot	1	0				
+0x003fdbf2	time-shared	dword	qadc_channel_config_mask_g	boot	1	0				
+0x003fdbf6	time-shared	dword	qadc_channel_config_mask_h	boot	1	0				
+0x003fdbfa	time-shared	dword	qadc_channel_config_mask_i	boot	1	0				
+0x003fdbfe	time-shared	dword	qadc_queue_timing_config	both	3	1				cm848_checkProtectionModeFlags
+0x003fdc02	time-shared	dword	qadc_queue_timing_config_b	boot	1	0				
+0x003fdc06	time-shared	dword	qadc_queue_timing_config_c	boot	1	0				
+0x003fdc0a	time-shared	dword	qadc_queue_timing_config_d	boot	1	0				
+0x003fdc0e	time-shared	dword	qadc_queue_timing_config_e	boot	1	0				
+0x003fdc12	time-shared	dword	qadc_queue_timing_config_f	boot	1	0				
+0x003fdc16	time-shared	dword	qadc_queue_timing_config_g	boot	1	0				
+0x003fdc1a	time-shared	dword	qadc_queue_timing_config_h	boot	1	0				
+0x003fdc1e	time-shared	word	cmf_pulses_per_step	boot	2	0				
+0x003fdc20	time-shared	word	qadc_prescale_count_b	boot	1	0				
+0x003fdc22	time-shared	word	qadc_prescale_count_c	boot	1	0				
+0x003fdc24	time-shared	word	qadc_prescale_count_d	boot	1	0				
+0x003fdc26	time-shared	word	qadc_prescale_count_e	boot	1	0				
+0x003fdc28	time-shared	word	qadc_prescale_count_f	boot	1	0				
+0x003fdc2a	time-shared	word	qadc_prescale_count_g	boot	1	0				
+0x003fdc2e	time-shared	dword	flash_poll_timeout_cycles	boot	2	0				
+0x003fdc38	time-shared	word	data_transfer_retry_count	boot	2	0				
+0x003fdc58	scalar	word	qadc_adc_enable_flag	app	0	1				cm848_checkProtectionModeFlags
+0x003fdd6a	scalar	word	eeprom_checksummed_block_start	app	0	2				cm848_commitEepromMirrorToEeprom;cm848_initEepromDriverAndLoadMirror
+0x003fe122	scalar	word	fault_list_iteration_counter	app	0	1				cm848_processFaultScanGroup
+0x003fec7a	scalar	dword	data_transfer_target_address	boot	4	0				
+0x003fec7e	scalar	word	data_transfer_write_index	boot	2	0				
+0x003fec80	scalar	word	data_transfer_read_index	boot	2	0				
+0x003fec82	instance	reflash_transfer_state_t	reflash_transfer_state	boot	9	0				
+0x003fec8e	scalar	byte	data_transfer_buffer_status	boot	3	0				
+0x003fec8f	scalar	byte	cmf_pulse_step_index	boot	2	0				
+0x003fec90	scalar	dword	cmf_control_block_select	boot	3	0				
+0x003fec98	scalar	word	cmf_pulse_count	boot	2	0				
+0x003fec9a	scalar	word	data_transfer_active_flag	boot	2	0				
+0x003fec9e	scalar	pointer	memory_scan_pointer	boot	2	0				
+0x003feca6	scalar	pointer	data_transfer_current_ptr	boot	3	0	ptr			
+0x003fecaa	scalar	pointer	data_transfer_scan_ptr	boot	2	0	ptr			
+0x003fecae	scalar	pointer	cmf_active_control_register	boot	2	0				
+0x003fecb2	scalar	pointer	cmf_active_test_register	boot	1	0				
+0x003fecb6	scalar	pointer	diagnostic_callback_ptr	boot	16	0	ptr			
+0x003fecba	scalar	dword	diag_serial_transfer_phase	boot	10	0	diag			
+0x003fecbe	instance	boot_sci_session_state_t	boot_sci_session_state	boot	21	0				
+0x003fecc4	scalar	byte	boot_sci_security_state	boot	4	0				
+0x003fecc5	scalar	undefined1	diag_request_pending_flag	boot	9	0	diag			
+0x003fecc6	scalar	word	serial_response_crc_expected	boot	2	0				
+0x003fecc8	scalar	dword	crc16_working_value	boot	2	0				
+0x003feccc	scalar	byte	diag_serial_crc_match_flag	boot	3	0	diag			
+0x003feccd	scalar	byte	boot_sci_failed_key_count	boot	2	0				
+0x003fecce	scalar	word	boot_sci_key_retry_delay	boot	3	0				
+0x003fecd0	instance	byte[33]	diag_serial_buffer	boot	16	0	diag			
+0x003fecf0	instance		diag_session_protocol_byte	none	0	0	diag			
+0x003fecf1	scalar	EEPROM_DIAG_STATE	eeprom_diag_state	boot	2	0	diag			
+0x003fecf2	scalar	byte	eeprom_write_request_type	boot	4	0				
+0x003fedee	scalar	byte	eeprom_calibration_pending_flag	both	10	1				cm848_updateTransmissionConditionFlags
+0x003fedef	scalar	byte	diag_session_state_byte	boot	6	0	diag			
+0x003fedf0	scalar	dword	diagnostic_callback_init_ptr	boot	2	0	init,ptr			
+0x003fedf4	scalar	word	eeprom_write_pending_flag	boot	3	0				
+0x003fedf6	scalar	word	eeprom_write_request_pending	boot	3	0				
+0x003fedf8	scalar	word	mios_cnt_snapshot	boot	1	0	cnt			
+0x003fedfc	instance	diag_clear_flags_t	diag_clear_flags_t_003fedfc	both	3	7	diag			cm848_calculateTransmissionOutputSpeed;cm848_clearDiagnosticState;cm848_controlAirConditioningClutchForDrTruck
+0x003fee05	scalar	byte	sensor_fault_threshold_state	boot	1	0				
+0x003fee08	time-shared	eeprom_header_t	eeprom_shadow_header	both	15	15				cm848_buildPciTransmitMessage13FuelLevel;cm848_checkFuelLevelChangeAtPowerUp;cm848_computeIntakeAirHeaterPreheatDuration
+0x003fee2a	time-shared	dword	eeprom_write_buffer	both	1	3				cm848_buildPciTransmitMessage9ImmobilizerSecretKey;cm848_runImmobilizerTask;cm848_sciLookupEepromSettingAddress
+0x003fee2e	time-shared	byte	eeprom_config_write_triggered_flag	both	1	2				cm848_buildPciTransmitMessage9ImmobilizerSecretKey;cm848_storeImmobilizerSecretKey
+0x003fee30	time-shared	word	flash2_operation_active_flag	both	2	2				cm848_buildPciTransmitMessage9ImmobilizerSecretKey;cm848_runImmobilizerTask
+0x003fee32	time-shared	word	immobilizer_present_flag	both	2	2				cm848_processImmobilizerStatusMessage;cm848_runImmobilizerTask
+0x01000002	scalar	byte	eeprom_security_key	boot	1	0				
+0x0100000c	scalar	byte	eeprom_status_block	boot	1	0				
+0x01000030	scalar	byte	eeprom_config_block	boot	4	0				
+0x01000034	scalar	byte	eeprom_version_marker	boot	2	0				
+0x0100004a	scalar	byte	eeprom_calibration_block	both	1	1				configurationValidationCheck
+0x01000050	scalar	byte	eeprom_cal_word1	boot	3	0				
+0x01000052	scalar	byte	eeprom_cal_word2	boot	2	0				
+0x01000054	scalar	byte	eeprom_cal_word3	boot	2	0				
+0x0100008e	scalar	byte	eeprom_serial_number	boot	2	0				

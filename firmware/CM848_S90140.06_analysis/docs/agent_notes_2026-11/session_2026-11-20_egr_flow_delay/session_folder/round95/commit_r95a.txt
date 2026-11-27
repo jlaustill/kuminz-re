@@ -1,0 +1,23 @@
+cm848: round 95 stage A - the executive task sets are named by their schedule slot (38 renames)
+
+executiveFrameInterruptHandler runs a 40-frame cycle (5 ms frames) through a jump table at ROM 0xc198. Its task sets
+are the contiguous block 0xb76c-0xc078. CM550 named its task sets by slot in round 93 and round 94 named four of
+CM848's; the other 38 had role guesses (cm848_periodicTaskSet_canTx, which runs the vehicle speed and A/C pressure
+updates), ordinals (cm848_periodicTaskGroup12_calibration1 ...), snake_case phase names
+(cm848_phase_common_processing / cm848_phase_group_a_processing / _b_processing) and one orphaned twin name
+(periodicTaskSet_fuelDemand; CM550's task set took its slot name in round 93).
+- Names: cm848_runEveryFrameTaskSet, cm848_runEvery<N>FramesTaskSetPhase<P> (N = 2 / 4 / 8 / 10 / 20), the scheme of
+  both firmwares now. Each plate gives the period, the frames, the call position in those frames and the callees in
+  order; an older plate stays as '| earlier note:'.
+- The schedule (r95/cm848_frame_schedule_r95.py) is read twice: from the ROM's jump table (each case's bl targets up
+  to its closing branch) and from the decompiled switch's case blocks. The two agree for all 40 frames.
+- The header comments of both function_renames.csv files named the task sets by their old names and paired them by
+  guessed roles; they now give the slot rule. CM848's header also said the boot kernel image runs from RAM "for
+  performance"; it is the boot reflash kernel (firmware/CLAUDE.md, PR #46). firmware/feature_comparison.csv and
+  docs/j1939_broadcast_investigation.md name the new task sets.
+
+Proof: CM848 built twice, deterministic, in a copy of the firmware folder (/tmp/kuminz-fwbuild-374b0424: round 95's
+naming agents read the worktree's CM848 .cpp through disasm_func.py while they ran). The function set is unchanged (1968); every token change is in the map (38 renames); statement counts are equal; no old name is left in the code and every new name renders. Headers regenerated (g++ 0 errors); the _cal audit, the five Python suites and the 109 JUnit tests pass. CM550 built twice,
+deterministic: its .cpp is byte-identical to HEAD apart from the Generated line (the header comments do not render).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

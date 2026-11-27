@@ -1,0 +1,10 @@
+cm550: round 86 stage D closing - task 046, the session archive, the PR body
+
+- work/tasks/046 "Done, round 86" records stage D (009958eb): the local rows of every changed function checked, the
+  one that stage C's renumbering moved removed, and the new artifact tokens read and classified.
+- Stage C's count is now stated as 60 functions (58 from the workflow + 2 wrappers), so it matches the stage C commit.
+- The PR body: the Stage D bullet, stage C's count, and the test plan line.
+- The session README, session_folder/round86/ (local_rows_check.py, new_token_lines.py, apply_r86d.py, the closing
+  scripts), the large-files tarball (the no-local-rows build and the stage D verify logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,35 @@
+cm848: round 10 stage D - DIAGNOSTIC_MONITOR_STATE on the 48RE monitors, the limp-home bit map, 23 lookup caches named
+
+- **DIAGNOSTIC_MONITOR_STATE (size 2):** the e2m value list the 48RE monitor states share. TCC_Rationality_Monitor_State
+  (8C34 +5), TTSR_Monitor_State and TVA_AZ_Monitor_Status list 0000=NORUN 0001=RUN 0002=CMPPS 0003=CMPFL 0004=ABORT.
+  The members are NOT_RUN / RUNNING / PASSED / FAILED / ABORTED, named by what the code does at each store:
+  - RUNNING when the test starts;
+  - PASSED with the fault cleared;
+  - FAILED with the fault set;
+  - ABORTED on a related fault or condition.
+  It types the six words that store exactly these values:
+  - governor_pressure_rationality_monitor_state (P1762, 8C56 +2)
+  - governor_pressure_zero_check_state / governor_pressure_mid_range_check_state (P1757 / P1756, 8C58 +2 / +8)
+  - output_speed_sensor_check_state (P0720, 8C4E +4)
+  - park_neutral_switch_monitor_state (P0850, 8C5B +0)
+  - converter_clutch_rationality_monitor_state (P1740, 8C34 +5)
+  transmission_temperature_rationality_state keeps word: its code stores 0-6.
+- **The limp-home bytes (transmission_control_flags_t limp_home_flags_1..4):** their comments now carry the e2m 8C19
+  bit map, each bit with its setter (fault and DTC) or 'no writer in this build'. They keep byte fields: wave 11
+  reverted a bitfield on limp_home_flags_4 because Ghidra 12.1 prints the | / & updates as ._N_1_ pieces.
+  - +5: 0x01 RE_Trans_Relay_Circuit_Open (P0882), 0x02 RE_TPS_Elect_Limp (the pedal faults);
+  - +6: 0x01 RE_Governor_Press_Sol_Circuit (P0748), 0x02 RE_Overdrive_Solenoid_Circuit (P0973);
+  - +7: 0x01 RE_Gov_Sensor_Limp_Circuit (P0868 / P0869 or P1762 failed);
+  - +8: 0x10 RE_Lockup_Converter_Clutch_Solenoid_Circuit (P2769), 0x20 RE_OSS_Limp (P0720).
+  RE_TPS_Rat_Limp, RE_Gov_Sensor_Limp_Offset and RE_GCST_Limp are read but never set in this build.
+- **Lookup caches named after their tables:**
+  - The fuel pressure governor's gain scaling caches (were engine_sync_init_state_c..i / _m).
+  - governor_speed_limit_by_coolant_temperature / governor_idle_speed_by_barometric_pressure /
+    governor_minimum_speed_by_vehicle_speed (were governor_interp_table_state_a / c / d).
+  - injection_timing_demand_floor (was injection_timing_interp_state_b, with its y word _a).
+  - The ten <table>_interp(olation)_state_y words of 2-D lookups are now <table>_cached_axis_offset_y.
+  - The caches of the cam_sync_*_cal fuel metering tables wait for those tables' own pass.
+- **Proof:** reverse_names.py --write-reversed, then check_enum_proof2.py: only DIAGNOSTIC_MONITOR_STATE substitutions
+  remain.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

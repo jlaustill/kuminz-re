@@ -350,6 +350,62 @@ class ScriptUtilsTest {
         assertNull(ScriptUtils.parseArrayType("word[99999999999]"));
     }
 
+    // ── parseFunctionType ─────────────────────────────────────────────────────
+    // A handler table's "handler" field was a plain pointer, so the decompiler guessed the callee's
+    // arguments at the indirect call (CM550: "(*(code *)entry->handler)((short)request)").
+
+    @Test void parseFunctionType_oneStructPointerParameter() {
+        ScriptUtils.FunctionTypeSpec spec =
+                ScriptUtils.parseFunctionType("function:byte(can_standard_receive_descriptor_t* request)");
+        assertNotNull(spec);
+        assertEquals("byte", spec.returnType);
+        assertEquals(1, spec.parameters.size());
+        assertArrayEquals(new String[] {"can_standard_receive_descriptor_t*", "request"}, spec.parameters.get(0));
+    }
+
+    @Test void parseFunctionType_noParameters() {
+        ScriptUtils.FunctionTypeSpec empty = ScriptUtils.parseFunctionType("function:void()");
+        assertNotNull(empty);
+        assertEquals("void", empty.returnType);
+        assertTrue(empty.parameters.isEmpty());
+        assertTrue(ScriptUtils.parseFunctionType("function:void(void)").parameters.isEmpty());
+        assertTrue(ScriptUtils.parseFunctionType("function:byte( )").parameters.isEmpty());
+    }
+
+    @Test void parseFunctionType_severalParametersAndSpacing() {
+        // ';' separates parameters (the CSV splits on ','); a '*' next to the name belongs to the type
+        ScriptUtils.FunctionTypeSpec spec = ScriptUtils.parseFunctionType(
+                " function: J1939_DIAGNOSTIC_RESULT ( word pgn ; j1939_received_message_t *message;byte * * out ) ");
+        assertNotNull(spec);
+        assertEquals("J1939_DIAGNOSTIC_RESULT", spec.returnType);
+        assertEquals(3, spec.parameters.size());
+        assertArrayEquals(new String[] {"word", "pgn"}, spec.parameters.get(0));
+        assertArrayEquals(new String[] {"j1939_received_message_t*", "message"}, spec.parameters.get(1));
+        assertArrayEquals(new String[] {"byte**", "out"}, spec.parameters.get(2));
+        assertEquals("byte*", ScriptUtils.parseFunctionType("function:byte *()").returnType);
+    }
+
+    @Test void parseFunctionType_otherTypesAreNotFunctionTypes() {
+        assertNull(ScriptUtils.parseFunctionType(null));
+        assertNull(ScriptUtils.parseFunctionType(""));
+        assertNull(ScriptUtils.parseFunctionType("byte"));
+        assertNull(ScriptUtils.parseFunctionType("pointer"));
+        assertNull(ScriptUtils.parseFunctionType("bitfield:1@3"));
+        assertNull(ScriptUtils.parseFunctionType("my_handler_function_t*"));
+    }
+
+    @Test void parseFunctionType_rejectsMalformedSignatures() {
+        assertNull(ScriptUtils.parseFunctionType("function:"));
+        assertNull(ScriptUtils.parseFunctionType("function:byte"));
+        assertNull(ScriptUtils.parseFunctionType("function:byte("));
+        assertNull(ScriptUtils.parseFunctionType("function:(word pgn)"));          // no return type
+        assertNull(ScriptUtils.parseFunctionType("function:byte(request)"));       // a parameter needs a type
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word)"));          // ... and a name
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word a,word b)")); // ',' is not a separator
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word a;)"));       // an empty parameter
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word 9a)"));
+    }
+
     // ── isIgnoredGlobalType ───────────────────────────────────────────────────
 
     @Test void isIgnoredGlobalType_blankAndUndefinedAreIgnored() {
@@ -425,6 +481,27 @@ class ScriptUtilsTest {
 
     // ── reconcileParams ──────────────────────────────────────────────────────
 
+    @Test void noParametersRow_alone_hasNoProblem() {
+        // 'none' + a return row: the empty list is committed
+        assertNull(ScriptUtils.noParametersRowProblem(true, 0));
+    }
+
+    @Test void noParametersRow_absent_hasNoProblem() {
+        assertNull(ScriptUtils.noParametersRowProblem(false, 0));
+        assertNull(ScriptUtils.noParametersRowProblem(false, 3));
+    }
+
+    @Test void noParametersRow_withPositionalRows_isAProblem() {
+        String problem = ScriptUtils.noParametersRowProblem(true, 2);
+        assertNotNull(problem);
+        assertTrue(problem.contains("none"));
+        assertTrue(problem.contains("2 parameter row"));
+    }
+
+    @Test void noParametersRow_literal() {
+        assertEquals("none", ScriptUtils.NO_PARAMETERS_ROW);
+    }
+
     @Test void reconcile_noParamsEitherSide_isOk() {
         // return-only row on a genuinely void function — nothing to preserve
         assertEquals(ScriptUtils.ParamReconciliation.OK,
@@ -456,5 +533,86 @@ class ScriptUtilsTest {
     @Test void reconcile_definedSome_detectedZero_warns() {
         assertEquals(ScriptUtils.ParamReconciliation.WARN_MISMATCH,
                 ScriptUtils.reconcileParams(3, 0));
+    }
+
+    // ── stack parameter layout (CM550: 2-byte slots, PR #53 round 86) ─────────
+
+    private static int[] pack2(int... lengths) { return ScriptUtils.packStackParameters(lengths, 4, 2); }
+
+    @Test void pack_oneWord_atFour() { assertArrayEquals(new int[]{4}, pack2(2)); }          // cm550_busyWaitDelayLoop
+    @Test void pack_oneByte_atTheOddHalf() { assertArrayEquals(new int[]{5}, pack2(1)); }
+    @Test void pack_wordThenLong_longNotAligned() {                                          // cm550_signedFirstOrderFilter
+        assertArrayEquals(new int[]{4, 6}, pack2(2, 4));
+    }
+    @Test void pack_longThenWord() { assertArrayEquals(new int[]{4, 8}, pack2(4, 2)); }
+    @Test void pack_longLongWordWord() { assertArrayEquals(new int[]{4, 8, 12, 14}, pack2(4, 4, 2, 2)); }
+    @Test void pack_longWordLongLong() { assertArrayEquals(new int[]{4, 8, 10, 14}, pack2(4, 2, 4, 4)); }
+    @Test void pack_threeBytesThenWord() { assertArrayEquals(new int[]{5, 7, 9, 10}, pack2(1, 1, 1, 2)); }
+    @Test void pack_eightBytesThenWord() { assertArrayEquals(new int[]{4, 12}, pack2(8, 2)); }
+    @Test void pack_fourByteSlots_isTheCspecLayout() {
+        assertArrayEquals(new int[]{6, 10, 12, 19}, ScriptUtils.packStackParameters(new int[]{2, 2, 4, 1}, 4, 4));
+    }
+    @Test void pack_noLength_throws() {
+        assertThrows(IllegalArgumentException.class, () -> pack2(2, 0));
+    }
+
+    @Test void layout_parsesTheThreeSettings() {
+        ScriptUtils.StackParameterLayout layout = ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value,comment", "# a note", "language,68000:BE:32:CPU32,x",
+                "first_stack_offset,4,y", "slot_size,2,z"));
+        assertEquals("68000:BE:32:CPU32", layout.language);
+        assertEquals(4, layout.firstOffset);
+        assertEquals(2, layout.slotSize);
+    }
+    @Test void layout_unknownSetting_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "first_stack_offset,4", "slot_size,2", "slotsize,2")));
+    }
+    @Test void layout_missingSetting_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "slot_size,2")));
+    }
+    @Test void layout_slotThree_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "first_stack_offset,4", "slot_size,3")));
+    }
+    @Test void layout_oddFirstOffset_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "first_stack_offset,5", "slot_size,2")));
+    }
+
+    // ── imageFromDumpWithGaps ────────────────────────────────────────────────
+
+    private static byte[] bytes(int... values) {
+        byte[] b = new byte[values.length];
+        for (int i = 0; i < values.length; i++) b[i] = (byte) values[i];
+        return b;
+    }
+
+    @Test void dumpImage_gapInTheMiddle_putsLaterBytesBack() {
+        // CM848 cm848_ram.bin: the chunk at 0x40c200 was skipped, so dump byte 4 belongs at image offset 6
+        assertArrayEquals(bytes(1, 2, 3, 4, 0, 0, 5, 6),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2, 3, 4, 5, 6), 0, 8, new int[][]{{4, 2}}, (byte) 0));
+    }
+
+    @Test void dumpImage_droppedPrefixAndGapAtTheStart() {
+        // CM550 extended RAM: drop the dump's uncertain first bytes, leave the uncertain start of the image unknown
+        assertArrayEquals(bytes(0xff, 0xff, 0xff, 0xff, 3, 4, 5),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2, 3, 4, 5), 2, 7, new int[][]{{0, 4}}, (byte) 0xff));
+    }
+
+    @Test void dumpImage_shortDumpLeavesTheTailFilled() {
+        assertArrayEquals(bytes(1, 2, 0, 0),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2), 0, 4, new int[][]{}, (byte) 0));
+    }
+
+    @Test void dumpImage_longDumpIsCutAndGapsAreClipped() {
+        assertArrayEquals(bytes(1, 0, 0),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2, 3, 4), 0, 3, new int[][]{{1, 9}}, (byte) 0));
+    }
+
+    @Test void dumpImage_badGapThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> ScriptUtils.imageFromDumpWithGaps(bytes(1), 0, 1, new int[][]{{0}}, (byte) 0));
     }
 }

@@ -1,0 +1,92 @@
+=== cm848_applyAlternatorFieldDuty (lines 37642-37739, 91 non-blank)
+// Function: cm848_applyAlternatorFieldDuty @ 0x00037c74
+//
+/* Alternator field output stage (output channel assignment table entry 27 - the ECM's C1-7 K20
+   Generator Field Control pin - this calibration: TPU-B 10 with MDASM14 read-back), only while
+   engine_feature_enable_flags_cal bit 0x1 is set: alternator_field_duty_target with overrides
+   (P0562 system voltage low -> alternator_field_system_voltage_low_target /
+   alternator_field_cut_test_active_flag -> 0 / alternator_field_target_override) / 25600 - target
+   unless alternator_field_duty_not_inverted_flag / the protection-voltage and mode-b override
+   duties / snaps to full on above 95 % and full off below 5 % / the read-back retest / then the
+   duty and 1000000 / alternator_field_pwm_frequency_hz us to alternator_field_output_channel_cal's
+   record. Was cm848_applyProtectionOutputDemand */
+void cm848_applyAlternatorFieldDuty(void)
+{
+  word wVar2;
+  dword dVar1;
+  if ((engine_feature_enable_flags_cal & 1) != 0) {
+    if ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 4) != 0) {
+      alternator_field_duty_target = alternator_field_system_voltage_low_target;
+    }
+    if (alternator_field_cut_test_active_flag != 0) {
+      alternator_field_duty_target = 0;
+    }
+    if (alternator_field_target_override_enable != 0) {
+      alternator_field_duty_target = alternator_field_target_override;
+    }
+    wVar2 = alternator_field_duty_target;
+    if (alternator_field_duty_not_inverted_flag == 0) {
+      wVar2 = 0x6400 - alternator_field_duty_target;
+    }
+    if ((protection_voltage_active_flag != 0) &&
+       ((engine_state == ENGINE_STATE_STOPPED ||
+        (alternator_field_protection_voltage_duty_always_flag == 1)))) {
+      wVar2 = alternator_field_protection_voltage_duty;
+    }
+    if (protection_mode_b_override_flag == 1) {
+      wVar2 = alternator_field_mode_b_override_duty;
+    }
+    if (alternator_field_duty_full_on_threshold < wVar2) {
+      wVar2 = alternator_field_duty_full_on;
+    }
+    if (wVar2 < alternator_field_duty_full_off_threshold) {
+      wVar2 = alternator_field_duty_full_off;
+    }
+    if (alternator_field_read_back_retest_active_flag != 0) {
+      alternator_field_retest_pass_count = alternator_field_retest_pass_count + 1;
+      if ((uint)alternator_field_retest_pass_count < (uint)alternator_field_retest_off_passes) {
+        wVar2 = 0;
+      }
+      else if ((uint)alternator_field_retest_pass_count <
+               (uint)alternator_field_retest_off_passes +
+               (uint)alternator_field_retest_fault_confirm_passes * 2) {
+        wVar2 = 0x6400;
+      }
+      else {
+        alternator_field_retest_pass_count = 0;
+        alternator_field_read_back_retest_active_flag = 0;
+      }
+      if (output_read_back_fault_bits.alternator_field == 0) {
+        alternator_field_retest_fault_count = 0;
+      }
+      else if (alternator_field_retest_fault_count < alternator_field_retest_fault_confirm_passes) {
+        alternator_field_retest_fault_count = alternator_field_retest_fault_count + 1;
+      }
+      else {
+        alternator_field_retest_pass_count = 0;
+        alternator_field_read_back_retest_active_flag = 1;
+        alternator_field_retest_fault_count = 0;
+      }
+    }
+    if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33))
+    {
+      alternator_field_duty_command = wVar2;
+      (**(code **)(&output_channel_driver_table_set_duty +
+                  (uint)alternator_field_output_channel_cal * 0x10))();
+    }
+    if (alternator_field_pwm_frequency_hz == 0) {
+      dVar1 = 0xffffffff;
+    }
+    else {
+      dVar1 = 1000000 / alternator_field_pwm_frequency_hz;
+    }
+    if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33))
+    {
+      alternator_field_period_microseconds = dVar1;
+      (**(code **)(&output_channel_driver_table_set_period +
+                  (uint)alternator_field_output_channel_cal * 0x10))();
+    }
+  }
+  return;
+}
+//

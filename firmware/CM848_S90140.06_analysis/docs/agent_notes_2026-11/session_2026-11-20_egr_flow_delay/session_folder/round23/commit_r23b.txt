@@ -1,0 +1,18 @@
+cm848: round 23 stage B - SENSOR_VALUE_SOURCE on ten more source words (types)
+
+Round 19's lead: other *_source words might use the same 0 / 1 / 2 coding. source_scan.py checks every *_source word
+typed word. For each it reads the e2m record through the parameter ID table, the record's value list, and every
+literal the code stores or compares (round 19's source_values.py). Ten qualify:
+- the ambient air temperature and compressor inlet pressure sources (1921 +8 / +C);
+- the compressor inlet temperature source (1A0C +2);
+- the compressor outlet temperature source;
+- the EGR orifice, EGR valve and engine delta pressure sources;
+- the EGR delta pressure sensor and turbocharger speed sources, whose lists only differ in order (DEFAULT first);
+- egr_flow_source, whose record lists PRIMARY / BACKUP only and whose code stores only 0.
+The fan and fuel metering "sources" use other value sets (0-5, 0-15) and stay words.
+
+Proof: check_enum_proof3.py (SENSOR_VALUE_SOURCE) shows 0 functions differing beyond the enum substitutions; the
+enum's member uses go 90 -> 153 and the piece count stays 464 -> 464. Headers regenerated (0 g++ errors),
+lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

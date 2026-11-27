@@ -1,0 +1,2 @@
+address,name,old_label,kind,dims
+0x003028a6,eeprom_block_tracking.key_off_duration_ticks,eeprom_block_tracking.watchdog_counter,global,1

@@ -1,0 +1,198 @@
+0x000104e8: 1 token changes:  => , ( msg -> header ) . data_length , msg -> data_pointer , msg -> status_pointer
+0x0001192a: 9 token changes: char cVar1 ; =>  | bVar2 => bVar1 | cVar1 => bVar1 | cVar1 => bVar1 | ' \ =>  | ' =>  | bVar2 => bVar1 | bVar2 => bVar1 | bVar2 => bVar1
+0x00011a74: 19 token changes: char cVar1 => byte bVar1 |  => word eeprom_address ; | undefined => byte | puVar4 => source | puVar4 => eeprom_address = 0 ; source | puVar4 => source | undefined => byte | puVar4 => source | undefined => byte | puVar4 => source | cVar1 => bVar1 | ( short ) ( ( uint ) puVar4 >> 0x10 ) => eeprom_address , source | cVar1 => bVar1 | ' \ =>  | ' =>  | puVar4 => eeprom_address | puVar4 => uVar2 + eeprom_address ; source = source | puVar4 => source | undefined => byte
+0x00011b36: 8 token changes:  => J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS , cm550_requestClearInactiveFaults |  => J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE , exitDevelopmentMode |  => J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE , enterDevelopmentMode |  => J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE , forceExitDevelopmentMode |  => J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN , commandEngineShutdown |  => J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM , handleJ1939RestartService |  => J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN , inhibitKeyOffShutdown |  => J1939_DIAGNOSTIC_SERVICE_CO
+0x00015f8e: 23 token changes: byte bVar1 ; =>  | uVar2 => uVar1 | cVar3 => cVar2 ; byte bVar4 | wVar4 => wVar3 | cVar5 => bVar4 | cVar5 => bVar4 | ' \ =>  | ' =>  | wVar4 => wVar3 | wVar4 => wVar3 | bVar1 => bVar4 | cVar3 => cVar2 | bVar1 => bVar4 | cVar3 => cVar2 | uVar2 => uVar1 | cVar3 => cVar2 | uVar2 => uVar1 | wVar4 => wVar3 | bVar1 => bVar4 | wVar4 => wVar3 | bVar1 => bVar4 | wVar4 => wVar3 | wVar4 => wVar3
+0x00016c2c: 3 token changes: uint => byte | uint in_D0 ; =>  | in_D0 & 0xffffff00 => 0
+0x00016c3c: 20 token changes: uint => byte | dest_address => mirror_address | source_ptr => source | uint uVar1 ; =>  | ( dest_address - 0x803b08 ) - 2 => mirror_address + 0xc4f6 | uVar1 = CONCAT22 ( ( short ) ( dest_address - 0x803b08 >> 0x10 ) , eeprom_write_queue_last_request_offset ) ; * ( word * ) ( ( uint ) => eeprom_write_queue_addresses [ | * 2 + 0x80bda8 ) => ] | * ( byte * ) ( => eeprom_write_queue_data_bytes [ | + 0x80c7a8 ) => ] | source_ptr => source | * ( short * ) ( ( uint ) => eeprom_write_queue_addresses [ | * 2 + 0x80bda8 ) => ] | dest_address => mirror_address | - 0x3b0a => 0xc4f6 | uVar1 = 0 ; =>  | des
+0x00018cb6: 7 token changes: state_offset => channel_state_record | state_offset => channel_state_record | state_offset => channel_state_record |  => ( word ) uVar3 , channel_state_record , config_ptr | state_offset => channel_state_record | state_offset => channel_state_record | short => word
+0x0001e52e: 1 token changes: & CAN_CS4_CONTROL => 0xffd800 , ( byte ) j1939_transmit_message_object_number , ( byte * ) can_transmit_buffer_write_pointer
+0x000200c6: 6 token changes: undefined2 uVar1 ; undefined2 uVar2 ; undefined2 uVar3 ; uVar3 = 0xffd2 ; =>  | 1 ) ; uVar2 = 0xffd2 ; uVar1 = 0x10 ; registerJ1939DiagnosticService ( 1 => J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 | uVar3 => & LAB_0001ffd2 | 2 => J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 | uVar1 , uVar2 => & LAB_0001ffd2 |  => J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST , cm550_j1939TorqueControlModeClear ) ; registerJ1939DiagnosticService ( J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST , cm550_j1939TorqueControlModeSet
+0x0002148a: 6 token changes: cVar4 => bVar2 | short => word | ( ( uint ) => address , | >> 0x10 ) =>  | cVar4 => bVar2 | ' \ x01 ' => 1
+0x0002167e: 6 token changes: int => dword | byte => uint local_a ; word | [ 2 ] =>  |  => ( byte * ) & |  => local_a = ( uint ) * ( byte * ) ( * ( int * ) ( param_1 + 6 ) + 3 ) ; |  => , local_6 , 0 , local_a
+0x000216c6: 8 token changes: int => dword | byte => dword | [ 4 ] =>  | byte => word | [ 2 ] =>  |  => ( byte * ) & |  => ( byte * ) & |  => , local_6 , 0 , local_a
+0x00021714: 6 token changes: int => dword | byte => uint local_e ; uint local_a ; word | [ 2 ] =>  |  => ( byte * ) & |  => local_a = ( uint ) CONCAT11 ( * ( undefined1 * ) ( * ( int * ) ( param_1 + 6 ) + 3 ) , * ( undefined1 * ) ( * ( int * ) ( param_1 + 6 ) + 4 ) ) ; local_e = ( uint ) * ( byte * ) ( * ( int * ) ( param_1 + 6 ) + 5 ) ; |  => , local_6 , local_a , local_e
+0x00021778: 11 token changes: int => dword | byte => dword | [ 4 ] =>  | byte => dword | [ 4 ] =>  | byte => word | [ 2 ] =>  |  => ( byte * ) & |  => ( byte * ) & |  => ( byte * ) & |  => , local_6 , local_a , local_e
+0x00021872: 6 token changes:  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID , handleJ1939WriteByParameterIdService |  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH , handleJ1939WriteByParameterIdLongLengthService |  => J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY , handleJ1939WriteMemoryService |  => J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH , handleJ1939WriteMemoryLongLengthService |  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET , handleJ1939WriteByParameterIdShortOffsetService |  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET , handleJ1939WriteByParameterIdLongOffset
+0x00021ef6: 6 token changes:  => 0xe000 , receivePgn57344CabMessage1 |  => 0xf001 , receivePgn61441ElectronicBrakeController1Message |  => 0xf003 , receivePgn61443ElectronicEngineController2Message |  => 0xfee4 , receivePgn65252ShutdownMessage |  => 0xfef0 , receivePgn65264PowerTakeoffInformationMessage |  => 0xfef1 , receivePgn65265CruiseControlVehicleSpeedMessage
+0x000222b4: 5 token changes: undefined1 => byte |  => byte bStack_13 ; | undefined1 => byte | ( short ) ( ( uint ) => 7 , | >> 0x10 ) => , & bStack_13
+0x00022370: 1 token changes:  => DIAG_ADDR_RESOLVER , cm550_canDiagnosticResponseSender
+0x000226da: 5 token changes:  => MEM_READ_2B_PARAM_4B_OFFSET , handleJ1939ReadByParameterIdLongLengthService |  => MEM_READ_4B_ADDR_1B_LEN , handleJ1939ReadMemoryService |  => MEM_READ_4B_ADDR_4B_LEN , handleJ1939ReadMemoryLongLengthService |  => MEM_READ_2B_PARAM_ONLY , handleJ1939ReadByParameterIdShortOffsetService |  => SERVICE_48 , handleJ1939ReadByParameterIdLongOffsetService
+0x00022726: 40 token changes: * pbVar3 => bVar3 |  => ushort uVar5 ; | bVar5 => * pbVar6 | ushort uVar6 ; undefined1 => byte | puVar7 => pbVar7 | undefined1 => byte | undefined1 uStack_7 => byte bStack_7 | puVar1 => pbVar6 | pbVar3 => pbVar7 | bVar4 => bVar3 | pbVar3 => pbVar7 | bVar5 => bVar4 | pbVar3 => pbVar7 | bVar4 => bVar3 | bVar4 => bVar3 | puVar7 => pbVar7 | uVar6 => uVar5 | uStack_7 => bStack_7 | undefined1 => byte | puVar7 => pbVar7 | uStack_7 => bStack_7 | undefined1 => byte | uVar6 => uVar5 | puVar1 => pbVar6 | puVar1 => pbVar6 | puVar1 => pbVar6 | puVar1 => pbVar6 | puVar1 => pbVar6 | bVar4 => bVar3 | puVar1 =
+0x000229ea: 8 token changes: undefined1 uStack_1c => byte bStack_1c | 9 => 8 |  => ; byte bStack_13 | undefined2 => word | undefined1 => byte | uStack_1c => bStack_1c | uStack_1c => bStack_1c |  => , local_e , local_c , & bStack_13
+0x00022a58: 6 token changes: undefined1 uStack_1c => byte bStack_1c |  => byte bStack_13 ; | undefined1 => byte | uStack_1c => bStack_1c | uStack_1c => bStack_1c |  => , 8 , local_c , & bStack_13
+0x00022ad8: 5 token changes: undefined1 uStack_1c => byte bStack_1c | undefined1 => byte | uStack_1c => bStack_1c | uStack_1c => bStack_1c |  => , 8 , local_c , & local_13
+0x00022ece: 2 token changes: undefined4 => dword |  => , * ( word * ) ( & DAT_00801260 + iVar3 ) , * ( byte * * ) ( & DAT_00801262 + iVar3 ) , & DAT_00801251 + iVar3
+0x00022fae: 2 token changes: ushort => word |  => , _DAT_008012b2 , _multiframe_tx_buffer_ptr , ( byte * ) & DAT_008012a1
+0x00023186: 2 token changes:  => 0xec00 , vp44CanMessageDispatcher |  => 0xeb00 , vp44MultiFrameResponseHandler
+0x000266da: 4 token changes: * ( word * ) ( => eeprom_write_queue_addresses [ | * 2 + 0x80bda8 ) => ] | * ( byte * ) ( => eeprom_write_queue_data_bytes [ | + 0x80c7a8 ) => ]
+0x00027c20: 37 token changes:  => uint uVar1 ; | bVar1 ; uint uVar2 ; char cVar3 => bVar2 | uVar4 => uVar3 | uVar5 => uVar4 | source_ptr => source | uVar5 => uVar4 | source_ptr => source | source_ptr => source | source_ptr => source | uVar2 => uVar1 | source_ptr => source | source_ptr => source | uVar2 => uVar1 | source_ptr => source | uVar2 => uVar1 | cVar3 => bVar2 | source_ptr => source | source_ptr => source | cVar3 => bVar2 | ' \ =>  | ' =>  | source_ptr => source | source_ptr => source | uVar4 => uVar3 | uVar4 => uVar3 | cVar3 => bVar2 | cVar3 => bVar2 | ' \ =>  | ' =>  | uVar4 => uVar3 | uVar4 => uVar3 | bVar1 => bV
+0x00027f9c: 23 token changes: char cVar3 => byte bVar3 | byte bVar11 => char cVar11 | source_ptr => source | cVar3 => bVar3 | cVar3 => bVar3 | ' \ =>  | ' =>  | cVar3 => cVar11 | bVar11 => bVar3 | cVar3 => cVar11 | bVar11 => bVar3 | bVar11 => bVar3 | bVar11 => bVar3 | cVar3 => cVar11 | bVar11 => bVar3 | source_ptr => source | source_ptr => source | source_ptr => source | bVar11 => bVar3 | bVar11 => bVar3 | bVar11 => bVar3 | bVar11 => bVar3 | bVar11 => bVar3
+0x0002d216: 77 token changes: undefined1 uVar1 => byte bVar1 | * pbVar2 ; byte bVar3 => bVar2 | cVar4 => cVar3 | wVar6 => wVar5 ; byte bVar6 ; uint uVar4 | ; uint uVar5 =>  | bVar9 => * pbVar9 | undefined1 => uint | ; uint * puVar12 =>  | puVar12 => puVar11 | puVar11 => puVar10 | puVar12 => puVar11 | cVar4 => cVar3 | uVar5 => uVar4 | puVar11 => puVar10 | pbVar2 => pbVar9 | puVar12 => puVar11 | uVar5 => uVar4 | uVar5 => uVar4 | uVar5 => uVar4 | puVar12 => puVar11 | puVar11 => puVar10 | cVar4 => cVar3 | uVar5 => uVar4 | pbVar2 => pbVar9 | uVar5 => uVar4 | pbVar2 => pbVar9 | wVar6 => wVar5 | wVar6 => wVar5 | bVar9 => bVar8 | 
+0x0002ef08: 1 token changes:  => 0xef00 , cm550_diagnosticServiceDispatcher
+0x0002efbc: 1 token changes:  => 0xe300 , cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage
+0x0002f114: 1 token changes:  => 0xf002 , cm550_receivePgn61442ElectronicTransmissionController1Message
+0x0002f538: 1 token changes:  => 0xea00 , cm550_dispatchJ1939PgnRequest
+0x0002fbb2: 1 token changes:  => 0 , dispatchTsc1ByDestinationAddress
+0x0002fcdc: 2 token changes:  => bool all_keys_match ; | ; bool all_keys_match => 
+---- census of distinct changes
+  19 source_ptr => source
+  14 undefined1 => byte
+  14 uVar5 => uVar4
+  12 puVar10 => pbVar9
+  10 bVar11 => bVar3
+   9 puVar12 => puVar11
+   8 bVar8 => bVar6
+   7 wVar4 => wVar3
+   7  => ( byte * ) &
+   7 puVar1 => pbVar6
+   6 ' \ => 
+   6 ' => 
+   6 uVar2 => uVar1
+   6 uStack_1c => bStack_1c
+   5 puVar4 => source
+   5 state_offset => channel_state_record
+   5 bVar4 => bVar3
+   5 uVar4 => uVar3
+   4 bVar2 => bVar1
+   4 cVar1 => bVar1
+   4 undefined => byte
+   4 bVar1 => bVar4
+   4 dest_address => mirror_address
+   4 int => dword
+   4 [ 2 ] => 
+   4 uStack_7 => bStack_7
+   4 cVar3 => bVar2
+   4 bVar9 => bVar8
+   4 uVar1 => bVar1
+   3 cVar3 => cVar2
+   3 * 2 + 0x80bda8 ) => ]
+   3 short => word
+   3 byte => dword
+   3 [ 4 ] => 
+   3 puVar7 => pbVar7
+   3 pbVar3 => pbVar7
+   3 bVar5 => bVar4
+   3 undefined1 uStack_1c => byte bStack_1c
+   3 cVar3 => cVar11
+   3 cVar4 => cVar3
+   3 puVar11 => puVar10
+   3 pbVar2 => pbVar9
+   3 bVar3 => bVar2
+   2 cVar5 => bVar4
+   2 uint => byte
+   2 * ( byte * ) ( => eeprom_write_queue_data_bytes [
+   2 + 0x80c7a8 ) => ]
+   2 cVar4 => bVar2
+   2 ' \ x01 ' => 1
+   2  => , local_6 , 0 , local_a
+   2 byte => word
+   2  => , local_6 , local_a , local_e
+   2  => byte bStack_13 ;
+   2 uVar6 => uVar5
+   2  => , _DAT_008012b2 , _multiframe_tx_buffer_ptr , ( byte * ) & DAT_008012a1
+   2 undefined4 => dword
+   2 bVar1 => bVar2
+   2 cVar3 => bVar3
+   2 wVar6 => wVar5
+   1  => , ( msg -> header ) . data_length , msg -> data_pointer , msg -> status_pointer
+   1 char cVar1 ; => 
+   1 char cVar1 => byte bVar1
+   1  => word eeprom_address ;
+   1 puVar4 => eeprom_address = 0 ; source
+   1 ( short ) ( ( uint ) puVar4 >> 0x10 ) => eeprom_address , source
+   1 puVar4 => eeprom_address
+   1 puVar4 => uVar2 + eeprom_address ; source = source
+   1  => J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS , cm550_requestClearInactiveFaults
+   1  => J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE , exitDevelopmentMode
+   1  => J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE , enterDevelopmentMode
+   1  => J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE , forceExitDevelopmentMode
+   1  => J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN , commandEngineShutdown
+   1  => J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM , handleJ1939RestartService
+   1  => J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN , inhibitKeyOffShutdown
+   1  => J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR , cm550_commitEepromMirrorToEeprom
+   1 byte bVar1 ; => 
+   1 cVar3 => cVar2 ; byte bVar4
+   1 uint in_D0 ; => 
+   1 in_D0 & 0xffffff00 => 0
+   1 uint uVar1 ; => 
+   1 ( dest_address - 0x803b08 ) - 2 => mirror_address + 0xc4f6
+   1 uVar1 = CONCAT22 ( ( short ) ( dest_address - 0x803b08 >> 0x10 ) , eeprom_write_queue_last_request_offset ) ; * ( word * ) ( ( uint ) => eeprom_write_queue_addresses [
+   1 * ( short * ) ( ( uint ) => eeprom_write_queue_addresses [
+   1 - 0x3b0a => 0xc4f6
+   1 uVar1 = 0 ; => 
+   1 uVar1 & 0xffffff00 => 0
+   1  => ( word ) uVar3 , channel_state_record , config_ptr
+   1 & CAN_CS4_CONTROL => 0xffd800 , ( byte ) j1939_transmit_message_object_number , ( byte * ) can_transmit_buffer_write_pointer
+   1 undefined2 uVar1 ; undefined2 uVar2 ; undefined2 uVar3 ; uVar3 = 0xffd2 ; => 
+   1 1 ) ; uVar2 = 0xffd2 ; uVar1 = 0x10 ; registerJ1939DiagnosticService ( 1 => J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15
+   1 uVar3 => & LAB_0001ffd2
+   1 2 => J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16
+   1 uVar1 , uVar2 => & LAB_0001ffd2
+   1  => J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST , cm550_j1939TorqueControlModeClear ) ; registerJ1939DiagnosticService ( J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST , cm550_j1939TorqueControlModeSet
+   1 ( ( uint ) => address ,
+   1 >> 0x10 ) => 
+   1 byte => uint local_a ; word
+   1  => local_a = ( uint ) * ( byte * ) ( * ( int * ) ( param_1 + 6 ) + 3 ) ;
+   1 byte => uint local_e ; uint local_a ; word
+   1  => local_a = ( uint ) CONCAT11 ( * ( undefined1 * ) ( * ( int * ) ( param_1 + 6 ) + 3 ) , * ( undefined1 * ) ( * ( int * ) ( param_1 + 6 ) + 4 ) ) ; local_e = ( uint ) * ( byte * ) ( * ( int * ) ( pa
+   1  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID , handleJ1939WriteByParameterIdService
+   1  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH , handleJ1939WriteByParameterIdLongLengthService
+   1  => J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY , handleJ1939WriteMemoryService
+   1  => J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH , handleJ1939WriteMemoryLongLengthService
+   1  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET , handleJ1939WriteByParameterIdShortOffsetService
+   1  => J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET , handleJ1939WriteByParameterIdLongOffsetService
+   1  => 0xe000 , receivePgn57344CabMessage1
+   1  => 0xf001 , receivePgn61441ElectronicBrakeController1Message
+   1  => 0xf003 , receivePgn61443ElectronicEngineController2Message
+   1  => 0xfee4 , receivePgn65252ShutdownMessage
+   1  => 0xfef0 , receivePgn65264PowerTakeoffInformationMessage
+   1  => 0xfef1 , receivePgn65265CruiseControlVehicleSpeedMessage
+   1 ( short ) ( ( uint ) => 7 ,
+   1 >> 0x10 ) => , & bStack_13
+   1  => DIAG_ADDR_RESOLVER , cm550_canDiagnosticResponseSender
+   1  => MEM_READ_2B_PARAM_4B_OFFSET , handleJ1939ReadByParameterIdLongLengthService
+   1  => MEM_READ_4B_ADDR_1B_LEN , handleJ1939ReadMemoryService
+   1  => MEM_READ_4B_ADDR_4B_LEN , handleJ1939ReadMemoryLongLengthService
+   1  => MEM_READ_2B_PARAM_ONLY , handleJ1939ReadByParameterIdShortOffsetService
+   1  => SERVICE_48 , handleJ1939ReadByParameterIdLongOffsetService
+   1 * pbVar3 => bVar3
+   1  => ushort uVar5 ;
+   1 bVar5 => * pbVar6
+   1 ushort uVar6 ; undefined1 => byte
+   1 undefined1 uStack_7 => byte bStack_7
+   1  => ) , * ( word * ) ( pcVar8 + 0x16 ) , * ( byte * * ) ( pcVar8 + 0x18 ) , ( byte * ) ( pcVar8 + 7
+   1 9 => 8
+   1  => ; byte bStack_13
+   1 undefined2 => word
+   1  => , local_e , local_c , & bStack_13
+   1  => , 8 , local_c , & bStack_13
+   1  => , 8 , local_c , & local_13
+   1  => , * ( word * ) ( & DAT_00801260 + iVar3 ) , * ( byte * * ) ( & DAT_00801262 + iVar3 ) , & DAT_00801251 + iVar3
+   1 ushort => word
+   1  => 0xec00 , vp44CanMessageDispatcher
+   1  => 0xeb00 , vp44MultiFrameResponseHandler
+   1 * ( word * ) ( => eeprom_write_queue_addresses [
+   1  => uint uVar1 ;
+   1 bVar1 ; uint uVar2 ; char cVar3 => bVar2
+   1 char cVar3 => byte bVar3
+   1 byte bVar11 => char cVar11
+   1 undefined1 uVar1 => byte bVar1
+   1 * pbVar2 ; byte bVar3 => bVar2
+   1 wVar6 => wVar5 ; byte bVar6 ; uint uVar4
+   1 ; uint uVar5 => 
+   1 bVar9 => * pbVar9
+   1 undefined1 => uint
+   1 ; uint * puVar12 => 
+   1 cVar7 => bVar6
+   1  => pbVar9 , _scratch_pad_write_pointer ,
+   1 ( uint => ushort
+   1 _scratch_pad_write_pointer >> 0x10 => bVar2
+   1 bVar3 ) , cVar7 => bVar6
+   1  => 0xef00 , cm550_diagnosticServiceDispatcher
+   1  => 0xe300 , cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage
+   1  => 0xf002 , cm550_receivePgn61442ElectronicTransmissionController1Message
+   1  => 0xea00 , cm550_dispatchJ1939PgnRequest
+   1  => 0 , dispatchTsc1ByDestinationAddress
+   1  => bool all_keys_match ;
+   1 ; bool all_keys_match => 

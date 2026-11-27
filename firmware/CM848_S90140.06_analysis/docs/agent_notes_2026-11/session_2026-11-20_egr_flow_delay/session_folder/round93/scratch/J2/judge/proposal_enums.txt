@@ -1,0 +1,54 @@
+====================================================================================================
+firmware: CM550
+enum_name: J1939_DIAGNOSTIC_SERVICE
+value: 68
+current_member: SERVICE_44
+proposed_member: J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID
+comment: Service 0x44 (CM848's member name): handleJ1939WriteByParameterIdService (0x2167e) - the ID (2 bytes) and a length (1) then the data
+evidence: 0x2187a pea (0x2167e) / 0x21880 move.w #0x44 / jsr ...
+confidence: high
+====================================================================================================
+firmware: CM550
+enum_name: J1939_DIAGNOSTIC_SERVICE
+value: 69
+current_member: SERVICE_45
+proposed_member: J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH
+comment: Service 0x45 (CM848's member name): handleJ1939WriteByParameterIdLongLengthService (0x216c6) - the ID (2 bytes) and a length (4) then the data
+evidence: 0x21886 pea (0x216c6) / 0x2188c move.w #0x45 ...
+confidence: high
+====================================================================================================
+firmware: CM550
+enum_name: J1939_DIAGNOSTIC_SERVICE
+value: 71
+current_member: SERVICE_47
+proposed_member: J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET
+comment: Service 0x47 (CM848's member name): handleJ1939WriteByParameterIdShortOffsetService (0x21714) - the ID (2 bytes) / an offset (2) / a length (1) then the data
+evidence: 0x218aa pea (0x21714) / 0x218b0 move.w #0x47 ...
+confidence: high
+====================================================================================================
+firmware: CM550
+enum_name: J1939_DIAGNOSTIC_SERVICE
+value: 73
+current_member: SERVICE_49
+proposed_member: J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET
+comment: Service 0x49 (CM848's member name): handleJ1939WriteByParameterIdLongOffsetService (0x21778) - the ID (2 bytes) / an offset (4) / a length (4) then the data
+evidence: 0x218b6 pea (0x21778) / 0x218bc move.w #0x49 ...
+confidence: high
+====================================================================================================
+firmware: CM550
+enum_name: J1939_DIAGNOSTIC_SERVICE
+value: 75
+current_member: SERVICE_4B
+proposed_member: J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY
+comment: Service 0x4b (CM848's member name): handleJ1939WriteMemoryService (0x217de) - an address (4 bytes) and a length (1) then the data
+evidence: 0x21892 pea (0x217de) / 0x21898 move.w #0x4b ...
+confidence: high
+====================================================================================================
+firmware: CM550
+enum_name: J1939_DIAGNOSTIC_SERVICE
+value: 77
+current_member: SERVICE_4D
+proposed_member: J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH
+comment: Service 0x4d (CM848's member name): handleJ1939WriteMemoryLongLengthService (0x21826) - an address (4 bytes) and a length (4) then the data
+evidence: 0x2189e pea (0x21826) / 0x218a4 move.w #0x4d ...
+confidence: high

@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x0000c760,mc68k_configureCanCs5MessageObjects,mc68k_tpuTimerInitializer,function,1
+0x0001e1d0,mc68k_canCs5InterruptHandler,mc68k_serialPort2IsrHandler,function,1

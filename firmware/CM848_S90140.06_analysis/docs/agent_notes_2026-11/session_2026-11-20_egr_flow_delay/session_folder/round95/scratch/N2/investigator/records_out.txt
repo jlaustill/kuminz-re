@@ -1,0 +1,296 @@
+=== record 0x80004a: offset 2 x_axis_pointer 0x6009e input 0 values_pointer 0x600b2 no_interpolation_flag 0
+  rows inside: 0x800052 timing_table_1_ptr (undefined)
+  axis 0x6009e: not dumped
+     e2m: 10A6 +0000 NZFLLMXA [RPM] -> 0x06009e (no name) (no row); ENGINE SPEED AXIS USED BY ANC TO DETERMINE TABLE LOOK-UP T~0,56 - 8000
+     rows at pointer: none
+  values 0x600b2: not dumped
+     e2m: 10A7 +0000 NZFLLMYA [MM3S] -> 0x0600b2 (no name) (no row); ANC FUELING LIMIT TABLE (1 X 9 VALUES)~0 - 100
+     rows at pointer: none
+=== record 0x800058: offset 2 x_axis_pointer 0x600c6 input 0 values_pointer 0x600da no_interpolation_flag 0
+  rows inside: 0x800058 timing_table_2_base (undefined); 0x80005a timing_table_2_ptr (undefined); 0x800060 timing_table_3_ptr (undefined)
+  axis 0x600c6: not dumped
+     e2m: 10A8 +0000 NZTALMXA [RPM] -> 0x0600c6 (no name) (no row); ENGINE SPEED AXIS USED BY ANC TO DETERMINE TIMING ADVANCE ~0,56 - 3000
+     rows at pointer: none
+  values 0x600da: not dumped
+     e2m: 10A9 +0000 NZTALMYA [DADV] -> 0x0600da (no name) (no row); ANC TIMING ADVANCE LIMIT TABLE (1 X 9 VALUES)~0 - 120
+     rows at pointer: none
+=== record 0x800102: offset 2 x_axis_pointer 0x807acc input 0 values_pointer 0x807ad8 no_interpolation_flag 0
+  rows inside: 0x800102 fuel_blend_table_3_ptr (undefined); 0x800106 fuel_blend_lookup_input_2 (undefined); 0x800108 fuel_blend_table_4_base (word); 0x80010a fuel_blend_table_4_ptr (undefined); 0x80010e fuel_blend_table_3_limit (undefined)
+  axis 0x807acc: byte count 10 -> 5 points [0, 4000, 6000, 8000, 9600]
+     e2m: 1326 +0000 ASTHPFXA [RPM] -> 0x807acc (no name) (no row); ASG THROTTLE PREFILTER COEF. CALCULATION TABLE (X-AXIS)~0 - 8000
+     rows at pointer: none
+  values 0x807ad8: byte count 10 -> 5 points [15073, 15073, 13763, 11469, 11469]
+     e2m: 1327 +0000 ASTHPFYA [NONE] -> 0x807ad8 (no name) (no row); ASG THROTTLE PREFILTER COEF. CALCULATION TABLE (Y-AXIS)~0 - 1
+     rows at pointer: none
+=== record 0x800118: offset 2 x_axis_pointer 0x807230 input 5200 values_pointer 0x807242 no_interpolation_flag 0
+  rows inside: 0x80011a io_control_fuel_rpm_input (undefined); 0x80011c retarder_lookup_table_ptr (undefined); 0x800120 io_control_fuel_table_2_lookup_arg (undefined); 0x800122 retarder_lookup_table_pointer (undefined)
+  axis 0x807230: byte count 16 -> 8 points [6400, 9100, 11800, 14500, 17200, 19900, 22600, 28000]
+     e2m: 1321 +0000 ASNLFLXA [RPM] -> 0x807230 (no name) (no row); ASG NO LOAD FUEL BREAKPOINT TABLE~0 - 8000
+     rows at pointer: none
+  values 0x807242: byte count 16 -> 8 points [88, 103, 125, 140, 162, 184, 221, 368]
+     e2m: 1323 +0000 ASNLFLYA [MM3S] -> 0x807242 (no name) (no row); ASG NO LOAD FUEL BASED ON SELECTED (ASG REF) ENGINE SPEED~0 - 100
+     rows at pointer: none
+=== record 0x800126: offset 18 x_axis_pointer 0x807254 input 32640 values_pointer 0x807268 no_interpolation_flag 0
+  rows inside: 0x800126 io_control_fuel_table_param (undefined); 0x800128 io_control_fuel_calculator_ptr (undefined); 0x80012c throttle_validation_state (undefined); 0x800130 throttle_position_raw_value (undefined)
+  axis 0x807254: byte count 18 -> 9 points [6400, 8960, 11520, 14080, 16640, 19200, 21760, 26880, 29440]
+     e2m: 1324 +0000 ASCLNLXA [DEGF] -> 0x807254 (no name) (no row); ASG - COOLANT TEMP ADJUST BREAKPOINT TABLE FOR NO LOAD FUEL~-50 - 293
+     rows at pointer: none
+  values 0x807268: byte count 18 -> 9 points [318, 285, 236, 169, 101, 69, 34, 7, 0]
+     e2m: 1325 +0000 ASCLNLYA [MM3S] -> 0x807268 retarder_input_threshold_for_state undefined; ASG - COOLANT TEMP BASED FUEL ADJUSTMENT TO NO LOAD FUEL~0 - 100
+     rows at pointer: 0x807268 retarder_input_threshold_for_state (undefined)
+=== record 0x800136: offset 2 x_axis_pointer 0x60462 input 0 values_pointer 0x60472 no_interpolation_flag 0
+  rows inside: 0x800138 throttle_buffer_validation_value (undefined); 0x80013c throttle_buffer_decreasing_value (word); 0x800140 throttle_position_validation_buffer (undefined)
+  axis 0x60462: not dumped
+     e2m: 116C +0000 ASALDPXA [RPM] -> 0x060462 (no name) (no row); ASG ALTERNATE DROOP TABLE INPUT AXIS~0 - 4500
+     rows at pointer: none
+  values 0x60472: not dumped
+     e2m: 116D +0000 ASALDPYA [R/%F] -> 0x060472 (no name) (no row); ASG ALTERNATE DROOP TABLE OUTPUT AXIS (F(REFERENCE SPEED))~0 - 30
+     rows at pointer: none
+=== record 0x800144: offset 2 x_axis_pointer 0x60482 input 0 values_pointer 0x60492 no_interpolation_flag 0
+  rows inside: 0x800144 derate_fault_counter_1 (undefined); 0x800146 derate_fault_counter_2 (undefined); 0x800148 derate_fault_counter_3 (undefined); 0x80014a derate_target_snapshot (word); 0x80014c derate_lower_limit (undefined); 0x80014e derate_upper_limit (undefined); 0x800150 current_derate_target (undefined)
+  axis 0x60482: not dumped
+     e2m: 116E +0000 ASDPTBXA [RPM] -> 0x060482 (no name) (no row); ASG DROOP TABLE INPUT AXIS (F(REFERENCE SPEED))~0 - 4500
+     rows at pointer: none
+  values 0x60492: not dumped
+     e2m: 116F +0000 ASDPTBYA [R/%F] -> 0x060492 (no name) (no row); ASG DROOP TABLE OUTPUT AXIS (F(REFERENCE SPEED)~0 - 30
+     rows at pointer: none
+=== record 0x800184: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x60566 no_interpolation_flag 0
+  rows inside: 0x800184 anc_altitude_table_1_size (undefined); 0x800186 anc_duty_cycle_ptr (undefined); 0x80018a cold_start_rpm_snapshot_2 (undefined); 0x80018c anc_min_active_time_ptr (undefined); 0x800190 anc_disable_duration_table_size (undefined)
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x60566: not dumped
+     e2m: 13D5 +0000 JC6CTQYA [N-M] -> 0x060566 (no name) (no row); JCOMM BRAKE MAP 6 AXIS DEP. AXIS THAT DEFINES 6 CYL. BRAKING TO~0-3000
+     rows at pointer: none
+=== record 0x800192: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x60566 no_interpolation_flag 0
+  rows inside: 0x800192 anc_disable_duration_ptr (undefined); 0x800196 cold_start_rpm_snapshot_3 (undefined); 0x800198 anc_altitude_table_1_base (word); 0x80019a anc_altitude_table_1_ptr (dword); 0x80019e cold_start_sensor_sum_saved (undefined)
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x60566: not dumped
+     e2m: 13D5 +0000 JC6CTQYA [N-M] -> 0x060566 (no name) (no row); JCOMM BRAKE MAP 6 AXIS DEP. AXIS THAT DEFINES 6 CYL. BRAKING TO~0-3000
+     rows at pointer: none
+=== record 0x8001ea: offset 2 x_axis_pointer 0x60596 input 0 values_pointer 0x605b2 no_interpolation_flag 0
+  rows inside: 0x8001ea hour_meter_table_3_size (undefined); 0x8001ec hour_meter_table_3_ptr (dword); 0x8001f0 engine_rpm_histogram_threshold_select (word); 0x8001f2 hour_meter_table_4_base (undefined); 0x8001f4 hour_meter_table_4_ptr (undefined)
+  axis 0x60596: not dumped
+     e2m: 108B +0000 CPCS01XA [RPM] -> 0x060596 (no name) (no row); REF. AXIS FOR RATIO OF CYL. PRESS. TO COMPRESSION PRESS. PER ~0 - 4500
+     rows at pointer: none
+  values 0x605b2: not dumped
+     e2m: 108C +0000 CPCS01YA [/DEG] -> 0x0605b2 (no name) (no row); DATA AXIS FOR RATIO OF CYL. PRESS. TO COMPRESSION PRESS. PER ~0 - 0.10
+     rows at pointer: none
+=== record 0x80020e: offset 2 x_axis_pointer 0x60640 input 0 values_pointer 0x6065c no_interpolation_flag 0
+  rows inside: 0x80020e manifold_temp_table_1_z_ptr (undefined); 0x800212 manifold_temp_table_2_type (undefined); 0x800214 manifold_temp_table_2_x_ptr (word); 0x800218 speed_based_parameter_lookup_result (undefined); 0x80021a manifold_temp_table_2_z_ptr (undefined)
+  axis 0x60640: not dumped
+     e2m: 108D +0000 CPCS03XA [RPM] -> 0x060640 (no name) (no row); REFERENCE AXIS FOR RATIO OF DEG. F TO DEG. TVC TABLE~0 - 4500
+     rows at pointer: none
+  values 0x6065c: not dumped
+     e2m: 108E +0000 CPCS03YA [C/F] -> 0x06065c (no name) (no row); DATA AXIS FOR RATIO OF DEG. F TO DEG. TVC TABLE~0 - 0.2
+     rows at pointer: none
+=== record 0x80024e: offset 2 x_axis_pointer 0x8072f4 input 0 values_pointer 0x807316 no_interpolation_flag 0
+  rows inside: none
+  axis 0x8072f4: byte count 32 -> 16 points [3200, 4000, 4800, 5600, 6408, 7200, 8000, 8800, 9600, 10400, 11200, 12000, 12800, 13600, 14400, 15200]
+     e2m: 8226 +0000 CBDTT1 [RPM] -> 0x8072f4 rpm_breakpoint_table undefined; CYLINDER BALANCING THRESHOLD SPEED VECTOR~0-5000
+     rows at pointer: 0x8072f4 rpm_breakpoint_table (undefined)
+  values 0x807316: byte count 32 -> 16 points [1000, 800, 600, 400, 300, 250, 200, 175, 150, 125, 100, 75, 65, 50, 40, 30]
+     e2m: 8227 +0000 CBDTT2 [N] -> 0x807316 (no name) (no row); CYLINDER BALANCING THRESHOLD TABLE~0-15000
+     rows at pointer: none
+=== record 0x80025c: offset 2 x_axis_pointer 0x8072f4 input 0 values_pointer 0x809e9e no_interpolation_flag 0
+  rows inside: 0x800268 vp44_third_array_1 (undefined)
+  axis 0x8072f4: byte count 32 -> 16 points [3200, 4000, 4800, 5600, 6408, 7200, 8000, 8800, 9600, 10400, 11200, 12000, 12800, 13600, 14400, 15200]
+     e2m: 8226 +0000 CBDTT1 [RPM] -> 0x8072f4 rpm_breakpoint_table undefined; CYLINDER BALANCING THRESHOLD SPEED VECTOR~0-5000
+     rows at pointer: 0x8072f4 rpm_breakpoint_table (undefined)
+  values 0x809e9e: byte count 10000 -> 5000 points []
+     e2m: 823E +0000 CBDDCT [NONE] -> 0x809e9e (no name) (no row); CYLINDER BALANCING DYNAMICS COMPENSATION TABLE~-10000-10000
+     rows at pointer: none
+=== record 0x80026a: offset 2 x_axis_pointer 0x8072f4 input 0 values_pointer 0x809ebe no_interpolation_flag 0
+  rows inside: 0x80026c vp44_third_array_2 (dword); 0x800270 vp44_third_array_3 (word)
+  axis 0x8072f4: byte count 32 -> 16 points [3200, 4000, 4800, 5600, 6408, 7200, 8000, 8800, 9600, 10400, 11200, 12000, 12800, 13600, 14400, 15200]
+     e2m: 8226 +0000 CBDTT1 [RPM] -> 0x8072f4 rpm_breakpoint_table undefined; CYLINDER BALANCING THRESHOLD SPEED VECTOR~0-5000
+     rows at pointer: 0x8072f4 rpm_breakpoint_table (undefined)
+  values 0x809ebe: byte count 10000 -> 5000 points []
+     e2m: 823F +0000 CBDI2DCT [NONE] -> 0x809ebe (no name) (no row); CYLINDER BALANCING IMAG_2 DYNAMICS COMPENSATION TABLE~-10000-10000
+     rows at pointer: none
+=== record 0x80058e: offset 2 x_axis_pointer 0x60846 input 0 values_pointer 0x6085a no_interpolation_flag 0
+  rows inside: none
+  axis 0x60846: not dumped
+     e2m: 11EF +0000 WPCQXA [DEGF] -> 0x060846 (no name) (no row); X-AXIS OF ENGINE WARMUP PROTECTION FOR COOLANT_TEMPERATURE~0 - 255
+     rows at pointer: none
+  values 0x6085a: not dumped
+     e2m: 11EE +0000 WPDYTMYA [SEC] -> 0x06085a (no name) (no row); Y-AXIS OF ENGINE WARMUP PROTECTION FOR RIFLE TO TURBO DELAY TI~0 - 100
+     rows at pointer: none
+=== record 0x80059c: offset 2 x_axis_pointer 0x607f2 input 0 values_pointer 0x6081c no_interpolation_flag 0
+  rows inside: none
+  axis 0x607f2: not dumped
+     e2m: 11ED +0000 WPESXA [RPM] -> 0x0607f2 (no name) (no row); X-AXIS OF ENGINE WARUP PROTECTION FUEL DERATE TABLE~0 - 2500
+     rows at pointer: none
+  values 0x6081c: not dumped
+     e2m: 11EC +0000 WPFLDQYA [MM3S] -> 0x06081c (no name) (no row); FUELING DERATE VALUES FOR ENGINE WARMUP PROTECTION ALGORITHM~0 - 600
+     rows at pointer: none
+=== record 0x8005fe: offset 2 x_axis_pointer 0x807176 input 0 values_pointer 0x8071a8 no_interpolation_flag 0
+  rows inside: 0x800604 epf_fuel_limit_table_x_input (undefined)
+  axis 0x807176: byte count 48 -> 24 points [0, 1200, 2400, 4000, 4400, 4800, 5200, 6800, 8000, 8800, 10400, 12000, 13200, 14000, 14800, 16000, 17200, 18000, 18800, 20000, 21200, 22000, 22800, 24000]
+     e2m: 10BA +0000 EPFLVSAI [RPM] -> 0x807176 load_breakpoint_table undefined; AXIS FOR DETERMINING FUEL DERATE.~0, 48 - 3000
+     rows at pointer: 0x807176 load_breakpoint_table (undefined)
+  values 0x8071a8: byte count 48 -> 24 points [1884, 1884, 1884, 1884, 1884, 1884, 1884, 1884, 1560, 1236, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913]
+     e2m: 10BB +0000 EPFLTB [%FU] -> 0x8071a8 (no name) (no row); EPS TABLE FOR MAX FUELING DERATE AS A FUNCTION OF RPM (SIZE = ~0 - 100
+     rows at pointer: none
+=== record 0x800632: offset 2 x_axis_pointer 0x807176 input 0 values_pointer 0x8071a8 no_interpolation_flag 0
+  rows inside: 0x800638 arbitrated_fuel_previous (word); 0x80063a governor_rpm_error_previous (undefined)
+  axis 0x807176: byte count 48 -> 24 points [0, 1200, 2400, 4000, 4400, 4800, 5200, 6800, 8000, 8800, 10400, 12000, 13200, 14000, 14800, 16000, 17200, 18000, 18800, 20000, 21200, 22000, 22800, 24000]
+     e2m: 10BA +0000 EPFLVSAI [RPM] -> 0x807176 load_breakpoint_table undefined; AXIS FOR DETERMINING FUEL DERATE.~0, 48 - 3000
+     rows at pointer: 0x807176 load_breakpoint_table (undefined)
+  values 0x8071a8: byte count 48 -> 24 points [1884, 1884, 1884, 1884, 1884, 1884, 1884, 1884, 1560, 1236, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913, 913]
+     e2m: 10BB +0000 EPFLTB [%FU] -> 0x8071a8 (no name) (no row); EPS TABLE FOR MAX FUELING DERATE AS A FUNCTION OF RPM (SIZE = ~0 - 100
+     rows at pointer: none
+=== record 0x8006aa: offset 2 x_axis_pointer 0x607d6 input 0 values_pointer 0x607e4 no_interpolation_flag 0
+  rows inside: none
+  axis 0x607d6: not dumped
+     e2m: 1084 +0000 DPFPTB [MM3S] -> 0x0607d6 (no name) (no row); 1 BY 6 TABLE OF FPW VALUES FOR TVO/FPW MAPPING~0 - 690
+     rows at pointer: none
+  values 0x607e4: not dumped
+     e2m: 1085 +0000 DPTVOTB [%FU] -> 0x0607e4 (no name) (no row); 1 BY 6 TABLE OF TVO VALUES FOR TVO/FPW MAPPING~0 - 690
+     rows at pointer: none
+=== record 0x80071e: offset 2 x_axis_pointer 0x808068 input 0 values_pointer 0x808084 no_interpolation_flag 0
+  rows inside: none
+  axis 0x808068: byte count 26 -> 13 points [0, 8, 16, 24, 32, 40, 80, 160, 240, 320, 400, 800, 8000]
+     e2m: 12E1 +0000 HSDVCFXA [RPM] -> 0x808068 (no name) (no row); SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG DERIVATIVE GAIN~0 - 4500
+     rows at pointer: none
+  values 0x808084: byte count 26 -> 13 points [256, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 3840, 3840]
+     e2m: 12E2 +0000 HSDVCFYA [NONE] -> 0x808084 high_speed_governor_derivative_gain_adjustment_multiplier_values word[14]; COEFFICIENT TABLE FOR HSG DERIVATIVE GAIN ADJUSTMENT.~0 - 8
+     rows at pointer: 0x808084 high_speed_governor_derivative_gain_adjustment_multiplier_values (word[14])
+=== record 0x80072c: offset 2 x_axis_pointer 0x8080a0 input 0 values_pointer 0x8080bc no_interpolation_flag 0
+  rows inside: none
+  axis 0x8080a0: byte count 26 -> 13 points [0, 8, 16, 24, 32, 40, 80, 160, 240, 320, 400, 800, 8000]
+     e2m: 12E3 +0000 HSPPCFXA [RPM] -> 0x8080a0 (no name) (no row); SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG DERIVATIVE GAIN~0 - 4500
+     rows at pointer: none
+  values 0x8080bc: byte count 26 -> 13 points [256, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 3840, 3840]
+     e2m: 12E4 +0000 HSPPCFYA [NONE] -> 0x8080bc high_speed_governor_proportional_gain_adjustment_multiplier_values word[14]; COEFFICIENT FOR HSG PROPORTIONAL GAIN ADJUSTMENT.~0 - 8
+     rows at pointer: 0x8080bc high_speed_governor_proportional_gain_adjustment_multiplier_values (word[14])
+=== record 0x80073a: offset 2 x_axis_pointer 0x8080d8 input 0 values_pointer 0x8080f4 no_interpolation_flag 0
+  rows inside: none
+  axis 0x8080d8: byte count 26 -> 13 points [0, 8, 16, 24, 32, 40, 80, 160, 240, 320, 400, 800, 8000]
+     e2m: 12E5 +0000 HSITCFXA [RPM] -> 0x8080d8 (no name) (no row); SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG INTEGRAL GAIN A~0 - 4500
+     rows at pointer: none
+  values 0x8080f4: byte count 26 -> 13 points [256, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 3840, 3840]
+     e2m: 12E6 +0000 HSITCFYA [NONE] -> 0x8080f4 high_speed_governor_integral_gain_adjustment_multiplier_values word[14]; COEFFICIENT FOR HSG INTEGRAL GAIN ADJUSTMENT.~0 - 8
+     rows at pointer: 0x8080f4 high_speed_governor_integral_gain_adjustment_multiplier_values (word[14])
+=== record 0x801a3e: offset 2 x_axis_pointer 0x611d0 input 0 values_pointer 0x611de no_interpolation_flag 0
+  rows inside: 0x801a42 retarder_mode1_threshold_table (undefined); 0x801a44 retarder_mode1_data_ptr (undefined); 0x801a48 retarder_mode1_rpm_input (undefined); 0x801a4a retarder_mode1_output_ptr (undefined)
+  axis 0x611d0: not dumped
+     e2m: 10BC +0000 EPO2VSAI [RPM] -> 0x0611d0 (no name) (no row); LOW_ & VERY_LOW_OIL_PRESSURE_TABLES INPUT VARIABLE BREAKPOINT~0 - 3000
+     rows at pointer: none
+  values 0x611de: not dumped
+     e2m: 10BD +0000 EPO2LOTB [PSIG] -> 0x0611de (no name) (no row); 2X6 TABLEDEFINING LOW OIL PRESSURE AS A FUNCTION OF RPM.~0 - 100
+     rows at pointer: none
+=== record 0x801a4c: offset 2 x_axis_pointer 0x611d0 input 0 values_pointer 0x611ec no_interpolation_flag 0
+  rows inside: 0x801a4e retarder_mode2_threshold_table (undefined); 0x801a50 retarder_mode2_data_ptr (undefined); 0x801a54 retarder_mode2_rpm_input (undefined); 0x801a56 retarder_mode2_output_ptr (undefined)
+  axis 0x611d0: not dumped
+     e2m: 10BC +0000 EPO2VSAI [RPM] -> 0x0611d0 (no name) (no row); LOW_ & VERY_LOW_OIL_PRESSURE_TABLES INPUT VARIABLE BREAKPOINT~0 - 3000
+     rows at pointer: none
+  values 0x611ec: not dumped
+     e2m: 10BE +0000 EPO2VLTB [PSIG] -> 0x0611ec (no name) (no row); 2X6 TABLEDEFINING VERY LOW OIL PRESSURE AS A FUNCTION OF RPM.~0-100
+     rows at pointer: none
+=== record 0x801c0e: offset 2 x_axis_pointer 0x808958 input 0 values_pointer 0x80896e no_interpolation_flag 0
+  rows inside: none
+  axis 0x808958: byte count 20 -> 10 points [0, 4000, 8000, 12000, 16000, 20000, 24000, 28000, 32000, 36000]
+     e2m: 13B2 +0000 PTSPAX [RPM] -> 0x808958 retarder_torque_point_3_value undefined; SPEED AXIS TO PTO_GAIN_ADJUST_TABLE~0 - 4500
+     rows at pointer: 0x808958 retarder_torque_point_3_value (undefined)
+  values 0x80896e: byte count 20 -> 10 points [1638, 1638, 2294, 3277, 4424, 5571, 6554, 7700, 8684, 9830]
+     e2m: 13B3 +0000 PTGNTB [NONE] -> 0x80896e (no name) (no row); GAIN ADJUSTMENT IN FUNCTION OF RPM~0.032 - 1.95
+     rows at pointer: none
+=== record 0x801c1c: offset 2 x_axis_pointer 0x8088b0 input 0 values_pointer 0x8088cc no_interpolation_flag 0
+  rows inside: none
+  axis 0x8088b0: byte count 26 -> 13 points [8000, 15200, 15600, 15760, 15880, 15920, 16000, 16080, 16120, 16240, 16400, 16800, 24000]
+     e2m: 13AC +0000 PTERQDAX [RPM] -> 0x8088b0 pwm_output_frequency_divisor undefined; DROOP COMP. ERROR AXIS TO PTO_QD_GAIN_ADJUST_TABLE~-1000 - 1000
+     rows at pointer: 0x8088b0 pwm_output_frequency_divisor (undefined)
+  values 0x8088cc: byte count 26 -> 13 points [640, 512, 384, 256, 166, 140, 128, 128, 166, 256, 384, 512, 640]
+     e2m: 13AD +0000 PTGNQDTB [NONE] -> 0x8088cc power_take_off_governor_derivative_gain_adjustment_values word[14]; QUADRATIC DERIVATIVE GAIN ADJUSTMENT IN FUNCTION OF DROOP COMP. ~0 - 5
+     rows at pointer: 0x8088cc power_take_off_governor_derivative_gain_adjustment_values (word[14])
+=== record 0x801c2a: offset 2 x_axis_pointer 0x8088e8 input 0 values_pointer 0x808904 no_interpolation_flag 0
+  rows inside: none
+  axis 0x8088e8: byte count 26 -> 13 points [8000, 15200, 15600, 15760, 15880, 15920, 16000, 16080, 16120, 16240, 16400, 16800, 24000]
+     e2m: 13AE +0000 PTERQIAX [RPM] -> 0x8088e8 (no name) (no row); DROOP COMP. ERROR AXIS TO PTO_QI_GAIN_ADJUST_TABLE~-1000 - 1000
+     rows at pointer: none
+  values 0x808904: byte count 26 -> 13 points [640, 512, 384, 256, 166, 140, 128, 128, 166, 256, 384, 512, 640]
+     e2m: 13AF +0000 PTGNQITB [NONE] -> 0x808904 power_take_off_governor_integral_gain_adjustment_values word[14]; QUADRATIC INTEGRAL GAIN ADJUSTMENT IN FUNCTION OF DROOP COMP. ER~0 - 5
+     rows at pointer: 0x808904 power_take_off_governor_integral_gain_adjustment_values (word[14])
+=== record 0x801c38: offset 2 x_axis_pointer 0x808920 input 0 values_pointer 0x80893c no_interpolation_flag 0
+  rows inside: none
+  axis 0x808920: byte count 26 -> 13 points [8000, 15200, 15600, 15760, 15880, 15920, 16000, 16080, 16120, 16240, 16400, 16800, 24000]
+     e2m: 13B0 +0000 PTERQPAX [RPM] -> 0x808920 oil_pressure_protection_threshold undefined; DROOP COMP. ERROR AXIS TO PTO_QP_GAIN_ADJUST_TABLE~-1000 - 1000
+     rows at pointer: 0x808920 oil_pressure_protection_threshold (undefined)
+  values 0x80893c: byte count 26 -> 13 points [640, 512, 384, 256, 166, 140, 128, 128, 166, 256, 384, 512, 640]
+     e2m: 13B1 +0000 PTGNQPTB [NONE] -> 0x80893c power_take_off_governor_proportional_gain_adjustment_values word[14]; QUADRATIC PROPORTIONAL GAIN ADJUSTMENT IN FUNCTION OF DROOP COMP~0 - 5
+     rows at pointer: 0x80893c power_take_off_governor_proportional_gain_adjustment_values (word[14])
+=== record 0x801e30: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x60534 no_interpolation_flag 0
+  rows inside: none
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x60534: not dumped
+     e2m: 13D0 +0000 JC1CTQYA [N-M] -> 0x060534 (no name) (no row); JCOMM BRAKE MAP AXIS DEP. AXIS THAT DEFINES 1 CYL. BRAKING TORQ~0-3000
+     rows at pointer: none
+=== record 0x801e3e: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x6053e no_interpolation_flag 0
+  rows inside: none
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x6053e: not dumped
+     e2m: 13D1 +0000 JC2CTQYA [N-M] -> 0x06053e (no name) (no row); JCOMM RAKE MAP 2 AXIS DEP. AXIS THAT DEFINES 2 CYL. BRAKING TOR~0-3000
+     rows at pointer: none
+=== record 0x801e4c: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x60548 no_interpolation_flag 0
+  rows inside: none
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x60548: not dumped
+     e2m: 13D2 +0000 JC3CTQYA [N-M] -> 0x060548 (no name) (no row); JCOMM BRAKE MAP 3 AXIS DEP. AXIS THAT DEFINES 3 CYL. BRAKING TO~0-3000
+     rows at pointer: none
+=== record 0x801e5a: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x60552 no_interpolation_flag 0
+  rows inside: none
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x60552: not dumped
+     e2m: 13D3 +0000 JC4CTQYA [N-M] -> 0x060552 (no name) (no row); JCOMM BRAKE MAP 4 AXIS DEP. AXIS THAT DEFINES 4 CYL. BRAKING TO~0-3000
+     rows at pointer: none
+=== record 0x801e68: offset 2 x_axis_pointer 0x6052a input 0 values_pointer 0x6055c no_interpolation_flag 0
+  rows inside: none
+  axis 0x6052a: not dumped
+     e2m: 13D6 +0000 JCBCRPXA [RPM] -> 0x06052a (no name) (no row); JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP~0-3000
+     rows at pointer: none
+  values 0x6055c: not dumped
+     e2m: 13D4 +0000 JC5CTQYA [N-M] -> 0x06055c (no name) (no row); JCOMM BRAKE MAP 5 AXIS DEP. AXIS THAT DEFINES 5 CYL. BRAKING TO~0-3000
+     rows at pointer: none
+=== record 0x8036c6: offset 18 x_axis_pointer 0x8071e0 input 21120 values_pointer 0x8071f6 no_interpolation_flag 0
+  rows inside: none
+  axis 0x8071e0: byte count 20 -> 10 points [6400, 8960, 10240, 11520, 12160, 15360, 16640, 17920, 19200, 39040]
+     e2m: 1075 +0000 WSIMAI [DEGF] -> 0x8071e0 vp44_fault_timer_threshold undefined; REPRESENTS TEMPERATURE ON "X" AXIS FOR WET_STACK_TIMING_TAB~-50 TO 293
+     rows at pointer: 0x8071e0 vp44_fault_timer_threshold (undefined)
+  values 0x8071f6: byte count 20 -> 10 points [597, 597, 597, 597, 597, 597, 597, 444, 444, 444]
+     e2m: 1076 +0000 WSTATB [DADV] -> 0x8071f6 (no name) (no row); 2 DIM TABLE OF 10 BREAKPOINTS. INTAKE MANIFOLD TEMPERATURE IS T~0 - 75
+     rows at pointer: none
+=== record 0x8036d4: offset 12 x_axis_pointer 0x80720c input 32640 values_pointer 0x80721e no_interpolation_flag 0
+  rows inside: none
+  axis 0x80720c: byte count 16 -> 8 points [3840, 14080, 19200, 21760, 25600, 26880, 38400, 39040]
+     e2m: 12CB +0000 WSCLAI [DEGF] -> 0x80720c (no name) (no row); REPRESENTS COOLANT TEMPERATURE ON "X" AXIS FOR WET_STACK_COOL~20 - 255
+     rows at pointer: none
+  values 0x80721e: byte count 16 -> 8 points [631, 631, 631, 580, 512, 427, 427, 427]
+     e2m: 12CC +0000 WSCLTATB [DADV] -> 0x80721e wet_stack_timing_by_coolant_temperature_values word[9]; 2 DIM. TABLE OF 8 BREAKPOINTS. COOLANT TEMPERATURE IS THE INPUT~0 - 75
+     rows at pointer: 0x80721e wet_stack_timing_by_coolant_temperature_values (word[9])
+=== record 0x80db20: offset 2 x_axis_pointer 0x611fa input 0 values_pointer 0x6120e no_interpolation_flag 0
+  rows inside: 0x80db20 no_load_fueling_curve_descriptor (undefined); 0x80db26 no_load_fueling_curve_rpm_input (word)
+  axis 0x611fa: not dumped
+     e2m: 1098 +0000 NLFCFLXA [RPM] -> 0x0611fa (no name) (no row); NO LOAD FUEL BREAKPOINT TABLE~0 - 4500
+     rows at pointer: none
+  values 0x6120e: not dumped
+     e2m: 1099 +0000 NLFCFLYA [MM3S] -> 0x06120e (no name) (no row); ESTIMATED NO LOAD FUEL BASED ON ENGINE SPEED~0 - 100
+     rows at pointer: none
+=== record 0x80db2e: offset 16 x_axis_pointer 0x61222 input 32640 values_pointer 0x61236 no_interpolation_flag 0
+  rows inside: none
+  axis 0x61222: not dumped
+     e2m: 109A +0000 ADCLFLBP [DEGF] -> 0x061222 (no name) (no row); COOLANT TEMPERATURE ADJUSTMENT BREAKPOINT TABLE FOR NO LOAD~-50 TO 293
+     rows at pointer: none
+  values 0x61236: not dumped
+     e2m: 109B +0000 NLCLFLYA [MM3S] -> 0x061236 (no name) (no row); COOLANT TEMPERATURE BASED FUEL ADJUSTMENT TO NO LOAD FUEL~0 - 100
+     rows at pointer: none

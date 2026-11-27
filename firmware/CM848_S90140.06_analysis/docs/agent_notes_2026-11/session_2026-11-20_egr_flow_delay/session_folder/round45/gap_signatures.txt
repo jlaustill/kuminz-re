@@ -1,0 +1,105 @@
+gap 0x000010a +2   after 12A9 before 0002 (0 rows): no perfect match (37 size candidates)
+gap 0x00592a2 +16  after 0009 before 101D (1 rows): no perfect match (4087 size candidates)
+gap 0x00592d6 +16  after 101C before 138E (1 rows): no perfect match (4087 size candidates)
+gap 0x0059336 +16  after 138D before 1027 (1 rows): no perfect match (4087 size candidates)
+gap 0x005936a +16  after 1026 before 1016 (1 rows): no perfect match (4087 size candidates)
+gap 0x00593de +16  after 17DE before 1014 (1 rows): no perfect match (4087 size candidates)
+gap 0x0059596 +16  after 1019 before 1018 (1 rows): no perfect match (4087 size candidates)
+gap 0x00595ca +16  after 1017 before 1023 (1 rows): no perfect match (4087 size candidates)
+gap 0x0059692 +64  after 182F before 1294 (3 rows): no perfect match (421 size candidates)
+gap 0x005c30e +2   after 1052 before 1034 (0 rows): no perfect match (37 size candidates)
+gap 0x005c4ae +8   after 10EB before 8A51 (4 rows): no perfect match (2781 size candidates)
+gap 0x005c4da +24  after 8A52 before 8A3E (2 rows): no perfect match (3454 size candidates)
+gap 0x005c964 +18  after 1298 before 80C5 (8 rows): no perfect match (4605 size candidates)
+gap 0x005f172 +24  after 8045 before 8046 (1 rows): no perfect match (3454 size candidates)
+gap 0x0062d08 +18  after 8070 before 8071 (1 rows): no perfect match (4605 size candidates)
+gap 0x00642ce +20  after 1631 before 164A (1 rows): no perfect match (4954 size candidates)
+gap 0x006456e +4   after 162E before 119A (0 rows): no perfect match (1374 size candidates)
+gap 0x03fd4c8 +4   after 1405 before 1296 (0 rows): no perfect match (1374 size candidates)
+gap 0x03fede2 +24  after 1A3B before 8CE5 (7 rows): no perfect match (3454 size candidates)
+gap 0x03fee4e +42  after 8D1B before 1191 (10 rows): no perfect match (762 size candidates)
+gap 0x03fee7e +26  after 132C before 8C61 (6 rows): no perfect match (2702 size candidates)
+gap 0x03fee9a +12  after 8C61 before 1930 (3 rows): no perfect match (3327 size candidates)
+gap 0x03feec2 +8   after 12A6 before 122D (0 rows): no perfect match (2781 size candidates)
+gap 0x03ff6ca +6   after 107D before 107B (3 rows): 2167 PERFECT -> 15B1@0 | 8D6F@0 | 14EB@0 | 8C2D@0 | 8D3B@0 | 8C30@0
+gap 0x04070ee +64  after 10EC before 8C76 (31 rows): no perfect match (421 size candidates)
+gap 0x0407132 +44  after 8C76 before 8C51 (2 rows): no perfect match (1011 size candidates)
+gap 0x04086c8 +10  after 8A2A before 8C49 (2 rows): no perfect match (2894 size candidates)
+gap 0x0408986 +14  after 8D37 before 8C68 (5 rows): no perfect match (4143 size candidates)
+gap 0x0408a66 +40  after 8C5F before 8C55 (18 rows): 1 PERFECT -> 8B4E@0+8BAC@12
+gap 0x0408d38 +62  after 8A57 before 8D79 (28 rows): no perfect match (363 size candidates)
+gap 0x0408dd8 +10  after 8C5E before 1210 (1 rows): no perfect match (2894 size candidates)
+gap 0x0408e96 +4   after 118F before 1071 (2 rows): 1290 PERFECT -> 1CC6@0 | 8B38@0 | 1CC7@0 | 8B1E@0 | 8A85@0 | 8B94@0
+gap 0x040913a +36  after 8000 before 8001 (18 rows): 145 PERFECT -> 8B3C@0 | 1560@0+8A8B@14 | 8A7E@0+8A8B@14 | 8B2D@0+8A8C@10 | 8B89@0+8A8C@10 | 8A7B@0+8A8C@10
+gap 0x040954a +6   after 801A before 806B (5 rows): no perfect match (3122 size candidates)
+gap 0x0409a8a +8   after 8022 before 8114 (4 rows): 1392 PERFECT -> 1569@0 | 158D@0 | 8B04@0 | 8A87@0 | 8A9E@0 | 8B8A@0
+gap 0x0409ec6 +28  after 17C3 before 1D8D (13 rows): 1 PERFECT -> 8A89@0+1D41@12
+gap 0x0409fb8 +22  after 1901 before 18F1 (3 rows): no perfect match (3245 size candidates)
+gap 0x040a062 +48  after 176A before 17DC (4 rows): no perfect match (764 size candidates)
+gap 0x040a09e +12  after 17DC before 1852 (1 rows): no perfect match (3327 size candidates)
+gap 0x040a0e6 +60  after 1814 before 1808 (5 rows): no perfect match (447 size candidates)
+gap 0x040a13a +24  after 182D before 1045 (2 rows): no perfect match (3454 size candidates)
+gap 0x040a264 +4   after 107A before 117D (3 rows): 1 PERFECT -> 8D04@0
+gap 0x040a32e +2   after 1063 before 120C (1 rows): 36 PERFECT -> 1CC4@0 | 8B32@0 | 8B13@0 | 8B1F@0 | 8D65@0 | 90C6@0
+gap 0x040a347 +5   after 0010 before 19BA (0 rows): no perfect match (43 size candidates)
+gap 0x040a622 +2   after 19C2 before 1A19 (1 rows): 36 PERFECT -> 1CC4@0 | 8B32@0 | 8B13@0 | 8B1F@0 | 8D65@0 | 90C6@0
+gap 0x040a7d8 +59  after 1A5D before 1092 (2 rows): no perfect match (45 size candidates)
+gap 0x040a8a1 +8   after 105A before 1A42 (2 rows): no perfect match (2781 size candidates)
+gap 0x040aaa4 +2   after 1103 before 12F7 (1 rows): 36 PERFECT -> 1CC4@0 | 8B32@0 | 8B13@0 | 8B1F@0 | 8D65@0 | 90C6@0
+gap 0x040ad5e +2   after 10E6 before 10E5 (1 rows): 36 PERFECT -> 1CC4@0 | 8B32@0 | 8B13@0 | 8B1F@0 | 8D65@0 | 90C6@0
+gap 0x040ad68 +4   after 10E5 before 11D7 (2 rows): 1290 PERFECT -> 1CC6@0 | 8B38@0 | 1CC7@0 | 8B1E@0 | 8A85@0 | 8B94@0
+gap 0x040ad80 +2   after 11D7 before 1227 (1 rows): 36 PERFECT -> 1CC4@0 | 8B32@0 | 8B13@0 | 8B1F@0 | 8D65@0 | 90C6@0
+gap 0x040ad86 +4   after 1227 before 1102 (0 rows): no perfect match (1374 size candidates)
+gap 0x040add6 +24  after 1102 before 102E (4 rows): no perfect match (3454 size candidates)
+gap 0x040adf0 +2   after 102E before 1199 (0 rows): no perfect match (37 size candidates)
+gap 0x040ae20 +54  after 10E8 before 1080 (21 rows): no perfect match (496 size candidates)
+gap 0x040ae8c +8   after 10ED before 1065 (2 rows): 8 PERFECT -> 160F@0 | 8AD2@0 | 0018@0+8C31@4 | 0018@0+8B59@4 | 8C31@0+0018@4 | 8C31@0+8B59@4
+gap 0x040aeb2 +34  after 1065 before 8C77 (16 rows): no perfect match (1234 size candidates)
+gap 0x040aed6 +18  after 8C77 before 8A3D (7 rows): no perfect match (4605 size candidates)
+gap 0x040aef8 +6   after 109C before 1226 (2 rows): no perfect match (3122 size candidates)
+gap 0x040af5e +8   after 1265 before 000D (3 rows): no perfect match (2781 size candidates)
+gap 0x040af67 +1   after 000D before 1982 (0 rows): no perfect match (1 size candidates)
+gap 0x040af7c +8   after 1982 before 175E (4 rows): no perfect match (2781 size candidates)
+gap 0x040b0a6 +2   after 19D2 before 8D8E (0 rows): no perfect match (37 size candidates)
+gap 0x040b17a +12  after 8A17 before 8A1B (1 rows): no perfect match (3327 size candidates)
+gap 0x040b1aa +64  after 8A06 before 8A26 (8 rows): no perfect match (421 size candidates)
+gap 0x040b1ee +12  after 8A26 before 8C54 (6 rows): 1774 PERFECT -> 1609@0 | 8A7C@0 | 8C2A@0 | 8B41@0 | 1CC6@0+1569@4 | 1CC6@0+158D@4
+gap 0x040b1fc +8   after 8C54 before 8A0F (4 rows): 43 PERFECT -> 1CC4@0+8A86@2 | 8B32@0+8A86@2 | 8B13@0+8A86@2 | 8B1F@0+8A86@2 | 8D65@0+8A86@2 | 90C6@0+8A86@2
+gap 0x040b34e +64  after 8A38 before 8A11 (15 rows): no perfect match (421 size candidates)
+gap 0x040b3c8 +13  after 8A11 before 8A12 (1 rows): no perfect match (53 size candidates)
+gap 0x040b440 +15  after 8A12 before 8A13 (3 rows): no perfect match (62 size candidates)
+gap 0x040b4ff +45  after 8A13 before 8D38 (22 rows): no perfect match (19 size candidates)
+gap 0x040b532 +10  after 8D38 before 8C69 (5 rows): 1725 PERFECT -> 8B2D@0 | 8B89@0 | 8A7B@0 | 8A6F@0 | 8A7F@0 | 8BB1@0
+gap 0x040b54a +16  after 8C60 before 8C56 (10 rows): 36 PERFECT -> 1CC4@0+8BAD@2 | 8B32@0+8BAD@2 | 8B13@0+8BAD@2 | 8B1F@0+8BAD@2 | 8D65@0+8BAD@2 | 90C6@0+8BAD@2
+gap 0x040b592 +52  after 8C34 before 1269 (17 rows): no perfect match (663 size candidates)
+gap 0x040b620 +40  after 8A58 before 8D7A (14 rows): no perfect match (1057 size candidates)
+gap 0x040b64e +26  after 8D7A before 8C75 (10 rows): 1 PERFECT -> 8C2F@0
+gap 0x040b66c +6   after 8C75 before 11A4 (2 rows): no perfect match (3122 size candidates)
+gap 0x040b67e +12  after 11A4 before 1181 (1 rows): no perfect match (3327 size candidates)
+gap 0x040b6c0 +4   after 1187 before 118A (1 rows): 3 PERFECT -> 0018@0 | 8C31@0 | 8B59@0
+gap 0x040b6e8 +12  after 1190 before 106C (3 rows): no perfect match (3327 size candidates)
+gap 0x040b702 +4   after 106C before 13AB (2 rows): 1290 PERFECT -> 1CC6@0 | 8B38@0 | 1CC7@0 | 8B1E@0 | 8A85@0 | 8B94@0
+gap 0x040b720 +2   after 1008 before 81CB (1 rows): 36 PERFECT -> 1CC4@0 | 8B32@0 | 8B13@0 | 8B1F@0 | 8D65@0 | 90C6@0
+gap 0x040b89b +1   after 8019 before 801D (0 rows): no perfect match (1 size candidates)
+gap 0x040b8a9 +1   after 801D before 812F (0 rows): no perfect match (1 size candidates)
+gap 0x040b8ad +1   after 812F before 8021 (0 rows): no perfect match (1 size candidates)
+gap 0x040b9a4 +4   after 1632 before 1AEA (2 rows): 1290 PERFECT -> 1CC6@0 | 8B38@0 | 1CC7@0 | 8B1E@0 | 8A85@0 | 8B94@0
+gap 0x040b9b8 +12  after 1629 before 1B2D (7 rows): 55 PERFECT -> 15B0@0 | 8D04@0+1569@4 | 8D04@0+158D@4 | 8D04@0+8B04@4 | 8D04@0+8A87@4 | 8D04@0+8A9E@4
+gap 0x040b9d2 +6   after 1B2D before 1627 (1 rows): no perfect match (3122 size candidates)
+gap 0x040ba1a +4   after 1651 before 1902 (1 rows): 3 PERFECT -> 0018@0 | 8C31@0 | 8B59@0
+gap 0x040ba4e +20  after 1902 before 18F0 (9 rows): no perfect match (4954 size candidates)
+gap 0x040ba7c +44  after 1B2F before 191B (0 rows): no perfect match (1011 size candidates)
+gap 0x040c077 +29  after 12A8 before 12A7 (9 rows): no perfect match (100 size candidates)
+gap 0x040c266 +8   after 116B before 1093 (0 rows): no perfect match (2781 size candidates)
+gap 0x1000010 +32  after 0001 before 0027 (0 rows): no perfect match (2086 size candidates)
+gap 0x1000034 +2   after 0027 before 0000 (1 rows): 1 PERFECT -> 8B06@0
+gap 0x1000042 +4   after 0048 before 1291 (0 rows): no perfect match (1374 size candidates)
+gap 0x100004a +14  after 1291 before 0049 (5 rows): no perfect match (4143 size candidates)
+gap 0x100005c +36  after 0049 before 0003 (0 rows): no perfect match (1337 size candidates)
+gap 0x100036a +4   after 198F before 1771 (0 rows): no perfect match (1374 size candidates)
+gap 0x10003b4 +4   after 12E8 before 1254 (0 rows): no perfect match (1374 size candidates)
+gap 0x1000400 +2   after 1254 before 11B4 (0 rows): no perfect match (37 size candidates)
+gap 0x100042e +4   after 1AB0 before 125F (0 rows): no perfect match (1374 size candidates)
+gap 0x1000466 +32  after 8A10 before 12CF (0 rows): no perfect match (2086 size candidates)
+gap 0x1001a16 +2   after 81AF before 1981 (0 rows): no perfect match (37 size candidates)
+gap 0x1001a1a +28  after 1981 before 191A (0 rows): no perfect match (3109 size candidates)

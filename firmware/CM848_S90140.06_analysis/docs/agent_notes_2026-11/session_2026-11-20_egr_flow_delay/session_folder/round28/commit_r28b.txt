@@ -1,0 +1,25 @@
+cm848: round 28 stage B - the CAN ring's full flags, full prototypes for the transmit mailbox writers (types)
+
+- can_ring_state_t._pad16 (a "Reserved" dword at +0x10) is split into transmit_ring_full_flag (byte),
+  receive_ring_full_flag (byte) and reserved_18 (word). The code reads and writes only its bytes 0 and 1, as 0 / 1
+  flags. mpc555_canTransmitQueuePush / mpc555_processCanReceiveBuffer set them when the write pointer reaches the
+  read pointer; mpc555_manageCan1TransmitBuffer / mpc555_dispatchCanMessageHandlers clear them. They rendered as
+  boot_can_ring_state._pad16._0_1_ / ._1_1_.
+- cm848_writeBootKernelCanTxMailbox and cm848_writeCanControllerTxMailbox get full prototypes:
+  (can_module, mailbox_number, frame_words: word *).
+  - Before, the kernel's mpc555_manageCan1TransmitBuffer and the application's mpc555_processJ1939TxBufferSend
+    rendered their calls with two arguments. They now show the frame they send, the transmit ring's read pointer:
+    cm848_writeBootKernelCanTxMailbox(&toucan_a, wVar4 & 0xff, frame_words).
+  - The writers read frame_words[i] in place of (param_3 + -2) arithmetic.
+- firmware/CLAUDE.md: the stuck-underscore table row now says _pad16 is named.
+
+Proof (prove_tokens.py): the two flag renders normalized to tokens, pieces 1423 -> 1413, and 9 functions differ:
+- mpc555_diagService25_executeFunction / mpc555_processCanReceiveBuffer: only a temp's type (char -> byte);
+- mpc555_canTransmitQueuePush / mpc555_dispatchCanMessageHandlers: the same statements with the temps renumbered;
+- mpc555_manageCan1TransmitBuffer / mpc555_processJ1939TxBufferSend / mpc555_sendJ1939SingleFrame: plus the call's
+  frame argument (or a (word *) cast);
+- the two writers: the same loop and stores through the typed parameters.
+Checked with diff_flag_users_r28b.py. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the
+four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

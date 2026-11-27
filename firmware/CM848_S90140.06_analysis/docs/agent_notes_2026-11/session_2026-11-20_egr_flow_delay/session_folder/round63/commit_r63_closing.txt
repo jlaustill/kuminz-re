@@ -1,0 +1,19 @@
+cm848: round 63 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 63". It records:
+  - the three stages (eba8399d / f7d68431 / d9933bac) and their proofs;
+  - the two factual firmware/CLAUDE.md edits.
+  It lists the leads:
+  - the clip-core 0x43 / 0x46 bench check;
+  - the two unnamed j1939_tx_msg_t transmit records;
+  - DIAG_RESPONSE's missing result codes;
+  - the dispatcher's split temp;
+  - DAT_003fba10;
+  - 38 unprefixed functions.
+- work/todo.md: the round 63 line.
+- The session README: the round 63 section.
+- session_folder/round63/: the round's scripts, maps, predictions, commit messages and proof notes.
+- session_folder_large_files.tar.xz: the round's 5 verify logs (283 entries).
+- pr_body.md: refreshed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

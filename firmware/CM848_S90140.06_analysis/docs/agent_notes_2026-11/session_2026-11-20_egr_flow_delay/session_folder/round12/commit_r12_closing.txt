@@ -1,0 +1,15 @@
+cm848: round 12 closing - docs, the fuel metering plate, the logs, verify
+
+- **work/tasks/046:** the round 12 section (stages A / B, leads: the fault status records over time-shared RAM, the
+  other HPCR_* tables).
+- **Docs:** the session README (the round 12 scripts) and work/todo.md.
+- **cm848_calculateFuelMeteringCommand plate:** it no longer calls its names older guesses still to re-domain (the
+  .cpp carries the plate change).
+- **Archive:** the large-files tarball adds the round 12 build logs and verify_round12.log.
+- **Checks:**
+  - ./analyze.sh verify: two byte-identical builds; the .cpp differs from 3588241 only in the plate and the timestamp.
+  - lookup_tables.py (0 sizing problems), test_lookup_tables.py / test_disasm_tools.py / test_e2m_block_addresses.py /
+    test_rename_waves.py pass.
+- **No new firmware/CLAUDE.md rules** (a relayed round); the rename refresh updated one present-tense reference.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

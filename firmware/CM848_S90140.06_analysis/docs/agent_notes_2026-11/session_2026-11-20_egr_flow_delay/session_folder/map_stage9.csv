@@ -1,0 +1,2 @@
+address,name,old_label,kind
+0x0040a60a,ambient_air_temperature_selected_source,compressor_inlet_temperature_source,global

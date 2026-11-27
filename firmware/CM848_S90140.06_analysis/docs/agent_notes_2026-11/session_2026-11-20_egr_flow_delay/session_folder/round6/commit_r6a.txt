@@ -1,0 +1,40 @@
+cm848 + cm550: round 6 stage A - the TSC1 / ETC1 vocabulary (label-only)
+
+Read in full: the TSC1 handler (0x22d60), the ETC1 handler (0x22870), cm848_runTsc1LostManagement, the mode
+transition / timer function (0x2715c), the source lookup (0x27cc4) and the TSC1 dispatcher (0x23b38). The ETC1
+counters take their names from the e2m 10E7 ("Jcomm") cals they load.
+- **The handler pair:** the dispatcher routes PGN 0 by destination address.
+  - torqueControlModeHandler -> processEngineTsc1Request: DA = the engine's own address. CM550's 0x2f128 is the same
+    handler and is renamed too, so the name stays shared.
+  - cm848_j1939DispatchAddressHandler -> cm848_dispatchTsc1ByDestinationAddress.
+  - cm848_governorSpeedControl -> cm848_findTsc1SourceConfiguration (data link + source address lookup, 10 entries).
+  - cm848_processGovernorModeTransition -> cm848_runJ1939PowertrainControlTimeouts.
+- **Types:**
+  - etc1_governor_state_t / j1939_tsc1_override_state -> j1939_powertrain_control_state_t /
+    j1939_powertrain_control_state;
+  - etc1_message_t / j1939_tsc1_received -> j1939_powertrain_messages_received_t /
+    j1939_powertrain_messages_received (ETC1 + ETC2 + TSC1 bytes);
+  - etc1_config_entry_t -> tsc1_source_configuration_t at tsc1_source_configuration_table (0x5c3b4).
+- **Fields that held something else:**
+  - governor_mode = the TSC1 override control mode (SPN 695);
+  - etc1_speed_setpoint = the requested percent torque x 256;
+  - etc1_torque_limit_value = the mode 3 speed limit;
+  - etc1_active_state = the controlling data link (1 = J1939; else the timeout counts as a J1708 link fault);
+  - etc1_disable_control = e2m Jcomm_Out_of_Gear;
+  - torque_limit_mode_select = the high idle override (SPN 606; selectEngineSpeedLimit applies
+    Jcomm_High_Idle_Override_Speed);
+  - speed_control_target = the time limited node status bits;
+  - etc1_spn1482_source_address = the TSC1 sender's address (not SPN 1482).
+- **The remaining fields and globals:**
+  - the timers are named for the cal they load (out of gear, out of gear data, torque converter lockup, output shaft
+    speed, progressive shift disable, the high idle override time limit / timeout / recovery = e2m
+    Jcomm_Recovery_Time);
+  - the TSC1 request timeout / time limit and their retarder twins;
+  - cold_start_state_flag_a / _b = the J1939 / J1708 link fault clear requests;
+  - the previous-value copies;
+  - 0x5c38c = j1939_time_limited_node_recovery_time (Bank 2, so no _cal).
+- **The rest:** the label accept_tsc1_command; the 47 dotted per-field alias rows of global_variables.csv follow
+  the fields; the untyped artifact row 0x5c3b6 is deleted.
+- **Proof:** label-only on both firmwares (reverse_names.py EQUIVALENT, comment-stripped diff 0 functions).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

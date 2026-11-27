@@ -1,0 +1,100 @@
+=== cm848_cruiseControlPeriodicUpdate (lines 74049-74154, 99 non-blank)
+// Function: cm848_cruiseControlPeriodicUpdate @ 0x00512ff4
+//
+/* Periodic cruise control task - debounces the switch request - runs the rpm-ratio and speed-error
+   filters - computes cruise_control_state and the denied status and the CCVS1 SPN 527 field - no
+   engine protection despite the old name (was cm848_periodicProtectionControl) |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+    */
+void cm848_cruiseControlPeriodicUpdate(void)
+{
+  int iVar1;
+  CRUISE_CONTROL_STATE CVar2;
+  short sVar3;
+  word wVar4;
+  CRUISE_SWITCH_REQUEST CVar5;
+  CRUISE_CONTROL_STATE *pCVar6;
+  governor_cruise_rpmRatio_ema();
+  cm848_integrateCruiseRpmRatioChange();
+  cruise_switch_request = cm848_debounceCruiseSwitchRequest();
+  CVar5 = cruise_switch_request;
+  iVar1 = governor_cruise_engage_check();
+  if (iVar1 != 0) {
+    cruise_control_switches_learned_flag = 1;
+  }
+  cruise_control_on_toggle_state = cm848_updateCruiseControlOnOffToggle();
+  cruise_control_on_flag = (word)(cruise_control_on_toggle_state != 0);
+  pCVar6 = &cruise_control_state;
+  wVar4 = cruise_control_on_toggle_state;
+  CVar2 = governor_cruise_baseState_get();
+  *pCVar6 = CVar2;
+  sVar3 = cm848_updateCruiseControlDeniedStatus();
+  if (sVar3 == 0) {
+    if (cruise_control_engaged_flag == 0) {
+      cruise_control_denied_status = 0;
+    }
+    else {
+      cruise_control_denied_status = 0xd;
+    }
+    if (CVar5 == CRUISE_SWITCH_RESUME) {
+      CVar2 = governor_cruise_resumeButton_handler();
+      goto LAB_005130dc;
+    }
+    if (CVar5 == CRUISE_SWITCH_SET) {
+      CVar2 = governor_cruise_setButton_handler();
+      goto LAB_005130dc;
+    }
+    if (CVar5 == CRUISE_SWITCH_COAST) {
+      CVar2 = governor_cruise_coastButton_handler();
+      goto LAB_005130dc;
+    }
+  }
+  else {
+    CVar2 = governor_cruise_standbyState_get();
+LAB_005130dc:
+    *pCVar6 = CVar2;
+  }
+  switch(*pCVar6) {
+  case CRUISE_OFF:
+    break;
+  case CRUISE_SET:
+    ccvs1_cruise_control_state = 5;
+    goto LAB_00513168;
+  case CRUISE_RESUME:
+    goto LAB_00513154;
+  case CRUISE_DECELERATE:
+    goto LAB_00513134;
+  case CRUISE_ACCELERATE:
+    goto LAB_0051313c;
+  case CRUISE_DECELERATE_2:
+LAB_00513134:
+    ccvs1_cruise_control_state = 3;
+    goto LAB_00513168;
+  case CRUISE_ACCELERATE_2:
+LAB_0051313c:
+    ccvs1_cruise_control_state = 2;
+    goto LAB_00513168;
+  case CRUISE_ACTIVE_HOLD:
+    if (cruise_resume_active_flag == 0) {
+      ccvs1_cruise_control_state = 1;
+      goto LAB_00513168;
+    }
+LAB_00513154:
+    ccvs1_cruise_control_state = 4;
+    goto LAB_00513168;
+  case CRUISE_STANDBY:
+  }
+  ccvs1_cruise_control_state = 0;
+LAB_00513168:
+  if (((ccvs1_cruise_control_state != 0) && (cruise_fuel_demand_hold < all_speed_governor_fueling))
+     && (adjusted_user_fueling_state != FUELING_STATE_CRUISE_CONTROL)) {
+    ccvs1_cruise_control_state = 6;
+  }
+  cruise_switch_request_raw_previous = cruise_switch_request_raw;
+  cruise_control_on_toggle_state_previous = wVar4;
+  cruise_switch_request_working_previous = CVar5;
+  cruise_rpm_prev_sample = engine_speed_state.filtered_engine_speed;
+  cruise_rpm_ratio_ema_prev = cruise_rpm_ratio_ema;
+  return;
+}
+//

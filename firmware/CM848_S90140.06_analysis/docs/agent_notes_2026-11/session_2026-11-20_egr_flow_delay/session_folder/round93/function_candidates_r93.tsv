@@ -1,0 +1,197 @@
+address	name	lines	enable_bits	enum_members	named_callees	callees	named_callers	callers	dat	idents	enable	enums	callers_named
+0x0000ac3c	cm550_FUN_0000ac3c	158	1	1	1	1	1	2	1	33	duty_cycle_monitor_enable	ENGINE_STATE_STOPPED	cm550_slowCycle8Coordinator
+0x0000af70	cm550_FUN_0000af70	59	0	0	0	0	1	1	8	19			mc68k_applicationMain
+0x0000b3d0	cm550_FUN_0000b3d0	73	1	0	1	1	1	2	2	21	acceleration_noise_control_timing_limit_enable		cm550_slowCycle20Coordinator
+0x0000c2ee	cm550_FUN_0000c2ee	22	0	0	0	0	0	1	0	4			
+0x0000c87c	cm550_FUN_0000c87c	10	0	0	0	0	4	4	0	0			mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3
+0x0000c87e	cm550_FUN_0000c87e	10	0	0	0	0	1	3	0	0			mc68k_dutyCycleMonitorIsrHandler
+0x0000c880	cm550_FUN_0000c880	14	0	0	0	0	1	1	1	2			mc68k_applicationMain
+0x0000d3b2	cm550_FUN_0000d3b2	16	0	0	0	0	1	1	4	2			mc68k_applicationMain
+0x0000d4ae	cm550_FUN_0000d4ae	42	1	2	1	1	1	1	2	19	switched_throttle_control_governor_select	FUELING_STATE_NOT_SELECTED FUELING_STATE_VARIABLE_SPEED_GOVERNOR	cm550_engine_protection_coordinator
+0x0000e998	cm550_FUN_0000e998	86	1	1	0	0	0	1	1	19	boost_pressure_in_range_diagnostic_enable	ENGINE_STATE_RUNNING	
+0x0000f716	cm550_FUN_0000f716	32	0	0	0	0	1	1	1	7			cm550_paramSystemModeController
+0x0000f99a	cm550_FUN_0000f99a	10	0	0	0	0	1	1	0	0			vp44_cumminsProprietaryDM_983_Builder
+0x0000f99c	cm550_FUN_0000f99c	30	0	0	1	1	1	1	0	5			vp44_configParamCanBuilder
+0x0000fa68	vp44_FUN_0000fa68	23	0	0	1	1	2	2	0	6			vp44_fuelLimitExceedanceStatisticsAccumulator vp44_fuelSourceOilPressureConditionChecker
+0x0000ff48	cm550_FUN_0000ff48	16	1	0	0	0	1	1	1	5	programmable_power_enable		initializePgn65251EngineConfiguration1Buffer
+0x00010e06	cm550_FUN_00010e06	12	0	0	0	0	1	1	1	1			mc68k_applicationMain
+0x00012484	cm550_FUN_00012484	27	0	0	0	0	0	1	1	4			
+0x0001266e	mc68k_FUN_0001266e	76	0	0	0	0	4	4	4	9			mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3
+0x000127c2	vp44_FUN_000127c2	441	0	1	3	3	1	1	90	50		ENGINE_STATE_RUNNING	executiveFrameInterruptHandler
+0x000133fc	cm550_FUN_000133fc	10	0	0	0	0	1	1	0	0			executiveFrameInterruptHandler
+0x000133fe	vp44_FUN_000133fe	64	0	0	0	0	1	1	18	22			mc68k_applicationMain
+0x00013616	vp44_communication_state_machine	146	0	0	1	1	5	5	7	16			mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3
+0x000142d4	cm550_FUN_000142d4	21	0	0	3	3	1	1	2	7			cm550_multiSpeedParameterInterpolation
+0x00014348	cm550_FUN_00014348	26	0	0	1	1	1	2	0	13			cm550_multiSpeedParameterInterpolation
+0x00014812	cm550_FUN_00014812	25	0	0	1	1	1	1	0	7			cm550_faultFlagScannerAndProcessor
+0x00017120	cm550_FUN_00017120	16	0	2	0	0	0	1	0	5		ENGINE_STATE_RUNNING FUELING_STATE_UNIDENTIFIED_33	
+0x00017baa	cm550_FUN_00017baa	53	0	0	0	0	1	1	0	12			cm550_engineModeTransitionHandler
+0x000183cc	cm550_FUN_000183cc	59	0	0	1	1	0	1	2	14			
+0x000184c6	cm550_FUN_000184c6	59	1	0	0	1	1	1	5	18	low_speed_governor_droop_enable		buildPgn65251EngineConfiguration1Payload
+0x000185f0	cm550_FUN_000185f0	15	0	0	0	0	1	1	4	2			initializePgn65251EngineConfiguration1Buffer
+0x000192e0	cm550_FUN_000192e0	13	0	0	0	0	1	1	1	2			vp44_engineProtectionSystemInit
+0x00019702	cm550_FUN_00019702	114	1	0	3	3	1	1	1	22	oil_pressure_fueling_limiting_enable		cm550_engineProtectionMultiStateSlowCycle40Coordinator
+0x00019caa	mc68k_FUN_00019caa	68	0	0	0	0	1	1	1	14			cm550_canControllerConfigInit
+0x00019e8e	cm550_FUN_00019e8e	10	0	0	0	0	2	2	0	0			cm550_canControllerConfigInit cm550_derateProtectionSlowCycle20Coordinator
+0x0001a298	cm550_FUN_0001a298	54	0	0	0	0	0	0	1	13			
+0x0001a350	mc68k_FUN_0001a350	69	0	0	0	0	1	1	1	13			cm550_canControllerConfigInit
+0x0001a47c	mc68k_FUN_0001a47c	45	0	0	1	1	1	1	1	3			cm550_canControllerConfigInit
+0x0001a52a	cm550_FUN_0001a52a	10	0	0	0	0	1	1	0	0			cm550_canControllerConfigInit
+0x0001a89a	cm550_FUN_0001a89a	11	0	0	1	1	2	2	0	0			cm550_can1PwmTimerInit cm550_canControllerConfigInit
+0x0001a8a2	cm550_FUN_0001a8a2	10	0	0	0	0	2	2	0	0			cm550_can1PwmTimerInit cm550_canControllerConfigInit
+0x0001b1ea	mc68k_FUN_0001b1ea	72	0	0	0	0	1	1	2	10			cm550_canRpmModeConfigInit
+0x0001b30a	mc68k_FUN_0001b30a	38	0	0	1	2	0	0	0	11			
+0x0001b4b2	mc68k_FUN_0001b4b2	18	0	0	1	2	0	0	0	2			
+0x0001b668	cm550_FUN_0001b668	10	0	0	0	0	1	1	0	0			executiveFrameInterruptHandler
+0x0001b66a	cm550_FUN_0001b66a	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b678	cm550_FUN_0001b678	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b686	cm550_FUN_0001b686	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b694	cm550_FUN_0001b694	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b6a2	cm550_FUN_0001b6a2	11	0	0	0	0	1	1	0	1			executiveFrameInterruptHandler
+0x0001b6aa	cm550_FUN_0001b6aa	11	0	0	0	0	1	1	0	1			executiveFrameInterruptHandler
+0x0001b6b2	cm550_FUN_0001b6b2	10	0	0	0	0	1	1	0	0			executiveFrameInterruptHandler
+0x0001b6b4	cm550_FUN_0001b6b4	13	0	0	2	2	1	1	0	2			executiveFrameInterruptHandler
+0x0001b6c8	cm550_FUN_0001b6c8	12	0	0	1	2	1	1	0	0			executiveFrameInterruptHandler
+0x0001b6d6	cm550_FUN_0001b6d6	12	0	0	2	2	1	1	0	0			executiveFrameInterruptHandler
+0x0001b6e4	cm550_FUN_0001b6e4	12	0	0	2	2	1	1	0	0			executiveFrameInterruptHandler
+0x0001b6f2	cm550_FUN_0001b6f2	14	0	0	1	1	1	1	0	3			executiveFrameInterruptHandler
+0x0001b732	cm550_FUN_0001b732	11	0	0	1	1	1	1	0	0			executiveFrameInterruptHandler
+0x0001b73a	cm550_FUN_0001b73a	14	0	0	1	1	1	1	0	3			executiveFrameInterruptHandler
+0x0001b754	cm550_FUN_0001b754	13	0	0	0	1	1	1	0	2			executiveFrameInterruptHandler
+0x0001b768	cm550_FUN_0001b768	15	0	0	0	0	1	1	0	5			executiveFrameInterruptHandler
+0x0001b788	cm550_FUN_0001b788	14	0	0	1	3	1	1	0	1			executiveFrameInterruptHandler
+0x0001b7b0	cm550_FUN_0001b7b0	14	0	0	0	1	1	1	0	3			executiveFrameInterruptHandler
+0x0001b7d2	cm550_FUN_0001b7d2	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b7e0	cm550_FUN_0001b7e0	10	0	0	0	0	1	1	0	0			executiveFrameInterruptHandler
+0x0001b7e2	cm550_FUN_0001b7e2	11	0	0	1	1	1	1	0	0			executiveFrameInterruptHandler
+0x0001b7ea	cm550_FUN_0001b7ea	11	0	0	1	1	1	1	0	0			executiveFrameInterruptHandler
+0x0001b7f2	vp44_FUN_0001b7f2	14	0	0	1	1	1	1	0	3			executiveFrameInterruptHandler
+0x0001b80c	cm550_FUN_0001b80c	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b81a	cm550_FUN_0001b81a	12	0	0	0	0	1	1	0	2			executiveFrameInterruptHandler
+0x0001b828	cm550_FUN_0001b828	12	0	0	0	1	1	1	0	1			executiveFrameInterruptHandler
+0x0001b836	cm550_FUN_0001b836	11	0	0	0	0	1	1	0	1			executiveFrameInterruptHandler
+0x0001b83e	cm550_FUN_0001b83e	11	0	0	0	0	1	1	0	1			executiveFrameInterruptHandler
+0x0001b846	cm550_FUN_0001b846	13	0	0	0	0	1	1	0	3			executiveFrameInterruptHandler
+0x0001b862	cm550_FUN_0001b862	13	0	0	0	1	1	1	0	2			executiveFrameInterruptHandler
+0x0001c0d4	cm550_FUN_0001c0d4	31	0	0	1	1	1	1	0	7			fuelTimingOilPressureModeController
+0x0001c308	cm550_FUN_0001c308	13	0	0	0	0	1	1	0	2			mc68k_applicationMain
+0x0001c7a8	cm550_FUN_0001c7a8	24	0	0	0	0	1	1	13	0			mc68k_applicationMain
+0x0001c824	cm550_FUN_0001c824	31	0	0	0	0	0	1	4	10			
+0x0001c8a0	cm550_FUN_0001c8a0	76	1	0	1	2	0	1	1	16	programmable_power_enable		
+0x0001cad6	vp44_FUN_0001cad6	31	3	0	0	1	1	1	0	11	engine_protection_enable fuel_temperature_fueling_limiting_enable fuel_temperature_rpm_limiting_enable		executiveFrameInterruptHandler
+0x0001cb3c	vp44_FUN_0001cb3c	12	0	0	0	0	1	1	0	3			mc68k_applicationMain
+0x0001cb48	cm550_FUN_0001cb48	11	0	0	0	0	0	1	0	0			
+0x0001cc72	cm550_FUN_0001cc72	69	3	0	3	3	4	4	5	19	electronic_smart_power_enable full_fueling_coolant_temperature_adjustment_enable programmable_power_enable		cm550_slowCycle20ExtendedCoordinator vp44ExtendedFaultDetectionCoordinator vp44_engine_control_cycle vp44_periodicTaskSet_governorProtection
+0x0001cdf8	cm550_FUN_0001cdf8	22	0	0	0	0	1	1	11	0			cm550_masterSubsystemInit
+0x0001ce58	cm550_FUN_0001ce58	16	0	2	0	0	0	1	0	5		FUELING_STATE_MAXIMUM_THROTTLE FUELING_STATE_NO_DERATE	
+0x0001d9b4	vp44SensorStatusMonitor	119	4	1	0	0	0	1	6	19	idle_shutdown_enable idle_shutdown_override_enable idle_shutdown_temperature_enable integrated_idle_management_enable	ENGINE_STATE_CRANKING	
+0x0001db8a	vp44_FUN_0001db8a	23	0	0	0	0	1	1	2	9			mc68k_applicationMain
+0x0001dbd8	cm550_FUN_0001dbd8	13	0	0	0	0	1	1	2	1			mc68k_applicationMain
+0x0001ddb4	cm550_FUN_0001ddb4	28	0	0	0	1	1	1	13	3			mc68k_applicationMain
+0x0001de58	cm550_FUN_0001de58	99	1	0	2	2	1	1	4	18	programmable_power_enable		cm550_diagnostic_parameter_handler
+0x0001e04c	cm550_FUN_0001e04c	12	0	0	0	0	1	1	0	1			mc68k_applicationMain
+0x0001f4e8	cm550_FUN_0001f4e8	184	0	0	3	3	1	1	1	38			mc68k_dispatchJ1708ReceivedMessages
+0x0001fdc0	cm550_j1939MessageTypeCounter	39	1	0	0	0	2	2	6	7	j1922_monitor_enable		cm550_fuelArbitratorResetHandler cm550_fuelDemandLimitOrchestrator
+0x0001ff38	cm550_engineRunTimeHistogramAccumulator	44	1	0	0	0	1	1	4	5	j1939_communication_enable		cm550_oddPhaseSchedulerTaskSet
+0x000201d6	cm550_FUN_000201d6	11	0	0	0	0	1	7	0	1			cm550_outputControlState1Handler
+0x00020210	cm550_FUN_00020210	11	0	0	0	0	1	3	0	1			cm550_outputControlState1Handler
+0x0002024a	cm550_FUN_0002024a	11	0	0	0	0	1	7	0	1			cm550_outputControlState1Handler
+0x00020284	cm550_FUN_00020284	18	0	0	0	0	0	2	1	0			
+0x000202a0	cm550_FUN_000202a0	18	0	0	0	0	0	1	1	0			
+0x000202bc	cm550_FUN_000202bc	18	0	0	0	0	0	2	1	0			
+0x00020310	cm550_FUN_00020310	11	0	0	0	0	1	3	0	1			cm550_outputControlState1Handler
+0x00020348	cm550_FUN_00020348	11	0	0	0	0	1	7	0	1			cm550_outputControlState1Handler
+0x00020380	cm550_FUN_00020380	37	1	0	1	4	0	1	0	9	engine_retarder_switch_level_override		
+0x0002041c	cm550_FUN_0002041c	40	1	0	1	4	0	1	0	9	manual_fan_level_override		
+0x000205c4	cm550_FUN_000205c4	56	1	0	0	0	0	1	2	10	j1939_multiplex_limp_home_on_analog_throttle_enable		
+0x000206a8	cm550_FUN_000206a8	36	0	0	0	0	0	1	0	6			
+0x00020784	cm550_FUN_00020784	50	2	0	1	6	0	1	0	13	remote_throttle_enable remote_throttle_switch_override_enable		
+0x00020890	cm550_FUN_00020890	128	0	0	1	4	0	1	0	12			
+0x00020c98	cm550_FUN_00020c98	71	2	0	1	4	0	1	0	17	idle_switch_override_enable sampled_throttle_override_enable		
+0x00020e14	cm550_FUN_00020e14	94	2	0	1	4	0	1	0	16	idle_switch_override_enable sampled_throttle_override_enable		
+0x00020fac	cm550_FUN_00020fac	41	0	0	1	4	0	1	1	7			
+0x00021070	cm550_FUN_00021070	45	0	0	0	6	2	2	0	3			cm550_boostPressureControlInit cm550_diagnosticMonitoringCoordinator
+0x00021146	cm550_FUN_00021146	44	0	0	1	8	2	2	0	3			cm550_rpmBasedFuelLimiterCoordinator cm550_sensorStatusHistorySlowCycle20Coordinator
+0x000211f4	cm550_FUN_000211f4	12	0	0	0	0	0	0	1	0			
+0x000212b2	mc68k_FUN_000212b2	79	1	0	0	0	0	0	2	18	j1939_communication_enable		
+0x0002142c	cm550_FUN_0002142c	27	1	0	0	0	1	1	1	10	j1939_retarder_shift_assist_enable		cm550_oddPhaseSchedulerTaskSet
+0x000216c6	cm550_FUN_000216c6	16	0	0	2	2	0	0	0	4			
+0x00021778	cm550_FUN_00021778	18	0	0	2	2	0	0	0	5			
+0x00021872	cm550_FUN_00021872	16	0	0	1	1	1	1	0	0			mc68k_initializeJ1939Datalink
+0x00021920	cm550_FUN_00021920	25	0	0	0	0	2	2	0	1			cm550_previousDtcListBuilder j1939HandlePgn65226Dm1ActiveDtc
+0x00022070	cm550_memoryRegisterController	95	1	0	2	2	0	0	18	11	j1939_monitor_enable		
+0x00022530	cm550_FUN_00022530	16	0	0	1	1	0	0	0	4			
+0x0002257c	cm550_FUN_0002257c	14	0	0	1	1	0	0	0	3			
+0x000225e0	cm550_FUN_000225e0	18	0	0	1	1	0	0	0	5			
+0x00022646	cm550_FUN_00022646	16	0	0	2	2	0	0	0	4			
+0x0002268e	cm550_FUN_0002268e	16	0	0	2	2	0	0	0	4			
+0x000226da	cm550_FUN_000226da	15	0	0	1	1	1	1	0	0			mc68k_initializeJ1939Datalink
+0x00023216	cm550_FUN_00023216	18	0	0	0	0	1	1	1	6			cm550_fuelDemandLimitOrchestrator
+0x00024804	cm550_FUN_00024804	12	0	0	2	2	1	1	0	0			cm550_rpmBasedFuelLimiterCoordinator
+0x00024c5a	cm550_FUN_00024c5a	30	0	0	0	0	1	1	0	5			cm550_faultCodeDisplayController
+0x00024cd2	cm550_FUN_00024cd2	30	0	0	0	0	1	1	0	5			cm550_faultCodeDisplayController
+0x000253b0	cm550_FUN_000253b0	39	0	0	0	0	0	1	1	2			
+0x000254b6	cm550_FUN_000254b6	42	0	1	6	7	1	1	8	4		ENGINE_STATE_RUNNING	cm550_dzgTimingAndPressureSlowCycle10Coordinator
+0x00025806	cm550_FUN_00025806	32	1	2	1	1	1	1	1	8	sampled_throttle_override_enable	FUELING_STATE_ACCELERATOR_PEDAL_FAULT FUELING_STATE_NOT_SELECTED	cm550_engine_protection_coordinator
+0x00025a34	vp44_FUN_00025a34	41	1	0	1	1	1	1	2	16	low_speed_governor_no_load_fuel_enable		cm550_runLowSpeedGovernor
+0x00026616	cm550_FUN_00026616	52	1	3	0	0	1	1	1	12	low_speed_governor_cold_idle_override_enable	ENGINE_STATE_CRANKING ENGINE_STATE_RUNNING ENGINE_STATE_STOPPED	cm550_auxiliarySystemControlWrapper
+0x00026834	mc68k_FUN_00026834	20	0	0	1	1	0	0	0	2			
+0x00026852	cm550_FUN_00026852	10	0	0	0	0	0	1	0	0			
+0x00026854	mc68k_FUN_00026854	83	0	1	1	2	1	1	1	7		RAM_REFRESH_ENABLED	mc68k_applicationMain
+0x000269f2	cm550_FUN_000269f2	18	0	0	1	1	3	3	0	6			cm550_slowCycle10Coordinator vp44ControlSystemCoordinator vp44_engine_management_system
+0x00026a2e	cm550_FUN_00026a2e	21	0	0	0	0	1	1	0	5			mc68k_applicationMain
+0x00026af0	cm550_FUN_00026af0	24	1	0	0	0	0	1	0	7	misfire_timing_limit_enable		
+0x00026b3a	cm550_FUN_00026b3a	19	0	0	1	1	1	1	2	7			vp44DiagnosticFaultMonitoringSlowCycle20Coordinator
+0x00026b82	cm550_FUN_00026b82	10	0	0	0	0	1	1	0	0			mc68k_applicationMain
+0x00026e2c	cm550_FUN_00026e2c	20	0	0	0	0	2	3	0	4			cm550_engineParameterAndBoostControlWrapper cm550_slowCycle8Coordinator
+0x00026e86	cm550_FUN_00026e86	11	0	0	0	1	1	1	0	0			mc68k_applicationMain
+0x00026e8e	cm550_FUN_00026e8e	29	0	0	0	0	1	2	1	7			vp44_engine_management_system
+0x000277e6	cm550_FUN_000277e6	105	0	0	3	3	1	1	2	9			insiteCommandByteDispatcher
+0x00027c20	vp44_FUN_00027c20	61	0	0	5	5	1	1	1	2			mc68k_runPowerDownSequence
+0x0002cf52	cm550_FUN_0002cf52	18	0	0	0	0	0	0	1	1			
+0x0002cf7e	cm550_FUN_0002cf7e	61	0	0	0	0	1	1	1	8			cm550_diagnosticMemoryWriteHandler
+0x0002d9a8	cm550_FUN_0002d9a8	15	0	0	0	0	0	1	1	3			
+0x0002ddbc	cm550_FUN_0002ddbc	14	0	0	0	0	1	1	0	3			mc68k_applicationMain
+0x0002ec50	cm550_FUN_0002ec50	67	2	0	0	0	2	2	1	12	remote_throttle_enable remote_throttle_transition_verification_enable		vp44ControlSystemCoordinator vp44_engine_management_system
+0x0002ed62	cm550_FUN_0002ed62	12	0	0	0	0	1	1	0	1			mc68k_applicationMain
+0x0002ef4a	cm550_FUN_0002ef4a	21	0	0	2	2	0	0	1	3			
+0x0002f4be	cm550_FUN_0002f4be	27	0	0	1	1	0	0	2	3			
+0x0002f606	cm550_FUN_0002f606	16	0	0	0	0	1	1	0	1			cm550_retarderControlModeHandler
+0x0002faa4	cm550_FUN_0002faa4	36	0	0	0	0	1	1	16	9			mc68k_initializeJ1939Datalink
+0x0002fbb2	cm550_FUN_0002fbb2	11	0	0	1	1	1	1	0	0			mc68k_initializeJ1939Datalink
+0x0002fd90	cm550_FUN_0002fd90	24	0	0	0	0	1	1	0	2			cm550_resetFaultStatus
+0x00030498	cm550_FUN_00030498	28	0	0	0	0	0	1	2	2			
+0x000306ca	cm550_FUN_000306ca	165	1	1	5	6	0	1	22	29	trip_information_enable	FUELING_STATE_LOW_SPEED_GOVERNOR	
+0x00030a5e	cm550_FUN_00030a5e	28	1	0	0	0	1	1	0	6	trip_information_enable		mc68k_runPowerDownSequence
+0x00030ade	cm550_FUN_00030ade	15	0	0	0	0	1	1	4	3			mc68k_applicationMain
+0x00030b0e	cm550_FUN_00030b0e	10	0	0	0	0	1	1	0	0			mc68k_applicationMain
+0x00030b34	cm550_FUN_00030b34	18	0	0	3	7	1	1	0	1			vp44InjectionSystemStateController
+0x00030c3c	cm550_FUN_00030c3c	21	0	0	6	9	1	1	0	2			fuelTimingOilPressureModeController
+0x00031496	cm550_FUN_00031496	65	1	1	0	0	0	1	10	15	trending_enable	ENGINE_STATE_STOPPED	
+0x000315be	cm550_FUN_000315be	154	1	1	0	0	1	1	12	25	trending_enable	ENGINE_STATE_STOPPED	executiveFrameInterruptHandler
+0x00031a68	cm550_FUN_00031a68	25	1	0	0	0	1	1	3	12	trending_enable		mc68k_applicationMain
+0x00031bce	cm550_FUN_00031bce	14	0	0	1	1	0	0	1	4			
+0x00031ed2	cm550_FUN_00031ed2	19	0	0	0	0	1	1	1	7			mc68k_initializeJ1939Datalink
+0x00032052	cm550_FUN_00032052	42	0	0	1	1	0	0	8	2			
+0x00032c22	vp44_FUN_00032c22	19	0	0	0	0	1	1	1	8			mc68k_initializeJ1939Datalink
+0x00033164	vp44_FUN_00033164	14	0	0	1	1	0	0	1	4			
+0x000333d6	cm550_FUN_000333d6	33	0	0	0	0	0	1	0	2			
+0x00033460	cm550_FUN_00033460	37	0	0	0	0	0	1	0	2			
+0x000334ec	cm550_FUN_000334ec	75	0	0	1	4	0	0	31	12			
+0x0003366a	cm550_FUN_0003366a	17	0	0	2	2	0	1	1	2			
+0x00033716	cm550_FUN_00033716	16	0	0	3	3	0	0	2	3			
+0x00033754	cm550_FUN_00033754	22	0	0	0	0	1	1	6	6			cm550_diagnosticDataDump
+0x000337c4	cm550_FUN_000337c4	43	0	0	1	1	0	0	4	3			
+0x00033a1e	cm550_FUN_00033a1e	17	0	0	0	0	1	1	2	6			mc68k_initializeJ1939Datalink
+0x00033a62	cm550_FUN_00033a62	20	0	0	3	3	0	0	4	2			
+0x00033e58	cm550_FUN_00033e58	29	0	0	2	2	0	0	2	5			
+0x00033f5a	cm550_FUN_00033f5a	34	0	0	2	2	0	0	4	6			
+0x000341e6	cm550_FUN_000341e6	18	0	0	0	0	1	1	3	6			mc68k_initializeJ1939Datalink
+0x00034232	cm550_FUN_00034232	18	0	0	3	3	0	0	4	3			
+0x00034394	cm550_FUN_00034394	16	0	0	3	3	0	0	2	3			
+0x00034440	cm550_FUN_00034440	18	0	0	0	0	1	1	2	6			cm550_diagnosticDataDump
+0x000344ce	vp44_FUN_000344ce	17	0	0	0	0	1	1	2	6			mc68k_initializeJ1939Datalink
+0x00034512	cm550_FUN_00034512	16	0	1	0	0	1	1	0	3		ENGINE_STATE_STOPPED	executiveFrameInterruptHandler
+0x0003452a	cm550_FUN_0003452a	13	0	0	0	0	1	1	0	4			mc68k_applicationMain
+0x00034d52	vp44_FUN_00034d52	25	0	0	0	0	1	1	1	5			periodicTaskSet_fuelDemand
+0x00034dba	cm550_FUN_00034dba	16	0	0	0	0	0	1	1	4			

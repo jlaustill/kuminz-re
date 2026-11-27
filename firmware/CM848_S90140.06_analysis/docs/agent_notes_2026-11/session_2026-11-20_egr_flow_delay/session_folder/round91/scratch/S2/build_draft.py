@@ -1,0 +1,500 @@
+#!/usr/bin/env python3
+"""Build the S2 draft answer (JSON) from the evidence gathered; reads the CM550 CSV only for exact interior row names."""
+import json
+
+GV = "/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/CM550_J90350.00_analysis/output/global_variables.csv"
+OUT = "/home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S2/draft.json"
+FW = "CM550"
+R = "PR #53 round 91"
+
+rows = {}
+for line in open(GV, errors="replace"):
+    if line.startswith("#") or not line.startswith("0x"):
+        continue
+    p = line.split(",", 3)
+    rows[int(p[0], 16)] = p[1]
+
+# ---------------------------------------------------------------- structs
+structs = [
+    {
+        "firmware": FW, "struct_name": "datalogger_trigger_t", "size": 16,
+        "evidence": (
+            "Type-only template (empty address). 16-byte stride: lsl.l #4 of the index at 0x13ef6 (cm550_FUN_00013ed8), "
+            "moveq #16 / add.l d0,d3 (d2 in 0x13dbe) at 0x13986 / 0x13d10 / 0x13dfe / 0x13ec4; count 4: cmpi.b #4 at 0x13e06 / 0x13ecc, "
+            "cmpi.w #4 at 0x13d1a, the 0-2 loop plus the separate trigger 4 (tst.b $803d95, move.w #3,-(sp)) in 0x138b6; "
+            "the ROM region table (8-byte {address, length} entries at 0x8062 + 8 x e2m region) gives region 0x1F5 = "
+            "{0x0100025a, 64} = 4 x 16; the dump's UDADSZ (0x803dc2) = 0x5e = 94 = 64 + 30. Every field width is from the "
+            "machine code (Ghidra 12.2 CPU32 listing). e2m 1282 holds 32 records: UD0nTR.. at hex +0x10*(n-1) + "
+            "BY 0 / DB 1 / FU 2 / MD 4 / NM 6 / OF 8 / TD 0xA / TY 0xE; widths 1 / 1 / 2 / 2 / 2 / 2 / 4 / 2 match. "
+            "EEPROM 0x25a-0x299 equals the RAM mirror 0x803d64-0x803da3 byte for byte."),
+        "fields": [
+            {"offset": 0, "name": "value_length", "type": "byte", "size": 1,
+             "comment": "+0 (e2m UD0nTRBY 'DATALOGGER TRIGGER LENGTH' 0-4): the width in bytes of the value the trigger compares: 1 = byte / 2 = word / any other value = dword (move.b (0;a0;d0.w*8);d0b at 0x13f30 then cmp.b #1 / #2 / #4); 2 in all four dump records"},
+            {"offset": 1, "name": "disable_flag", "type": "byte", "size": 1,
+             "comment": "+1 (UD0nTRDB 'DISABLES DATALOGGER TRIGGER INPUT'): nonzero = not evaluated; the trigger task then stores 1 (satisfied) for triggers 1-3 so the AND condition ignores them and 0 for trigger 4 (tst.b (0;a0;d3.w) at 0x1396c with a0 = 0x803d65 / tst.b $803d95 at 0x13994); 1 in all four dump records"},
+            {"offset": 2, "name": "fault_code_flag", "type": "word", "size": 2,
+             "comment": "+2 (UD0nTRFU 'SET TRIGGER INPUT TO A FAULT CODE'): 1 = the trigger watches a fault code's status in the fault count table / 0 = it compares a parameter with threshold. The address is resolved only for 0 (tst.w at 0x13dd2) and the fault is looked up only for 1 (cmpi.w #1 at 0x13cf4 / 0x13e78); the evaluation takes the fault path for any nonzero value (tst.w at 0x13f00); 0 in the dump"},
+            {"offset": 4, "name": "above_threshold_or_fault_active_flag", "type": "word", "size": 2,
+             "comment": "+4 (UD0nTRMD 'TRIGGER => THRESHOLD OR < THRESHOLD'): parameter trigger: nonzero = satisfied while the value is above threshold / 0 = while it is below; both strict (bls / bcc / ble / bge after cmp; tst.w at 0x13f0e). Fault trigger: nonzero = satisfied on the pass the fault status turns from inactive (0 or 2) to active (1 or 3) / 0 = on the pass it turns from active to inactive (tst.w at 0x1419c); 1 in the dump"},
+            {"offset": 6, "name": "parameter_id_or_fault_code", "type": "word", "size": 2,
+             "comment": "+6 (UD0nTRNM 'NAME TABLE NAME'): with fault_code_flag 0 the parameter ID passed to cm550_lookupParameterIdAddress (move.w (0;a0;d2.w);-(sp) at 0x13de0); with 1 the fault code matched against the code word of the 125 six-byte fault definitions at 0x8067c4 (cmp.w (a2);d0w at 0x13ea0); dump 0x100c / 0x1004 / 0x1051 / 0x1047"},
+            {"offset": 8, "name": "parameter_offset", "type": "word", "size": 2,
+             "comment": "+8 (UD0nTROF 'NAME TABLE OFFSET'): byte offset added zero-extended to the parameter ID's address (move.w (0;a0;d2.w);d0w / andi.l #0xffff / add.l d0;(a2) at 0x13df2-0x13dfc); dump 2 / 0x76 / 0 / 0"},
+            {"offset": 10, "name": "threshold", "type": "dword", "size": 4,
+             "comment": "+10 = +0xA (UD0nTRTD 'TRIGGER THRESHOLD' 0-FFFFFFFF): read as one dword (move.l (0;a0;d2.w)) and compared through its low byte for value_length 1 (andi.l #0xff - also in signed mode so a 1-byte threshold is 0-255) / its low word for 2 / the whole dword otherwise; dump 0x18fc / 0 / 0 / 0x4f"},
+            {"offset": 14, "name": "signed_value_flag", "type": "word", "size": 2,
+             "comment": "+14 = +0xE (UD0nTRTY 'DATA TYPE (SET: SIGNED; CLEAR: UNSIGNED)'): nonzero = signed compares (extb.l / ble / bge) / 0 = unsigned (bls / bcc) (tst.w at 0x13f1c and 0x1405c with a0 = 0x803d72); 0 in the dump"},
+        ],
+    },
+    {
+        "firmware": FW, "struct_name": "datalogger_data_parameter_t", "size": 6,
+        "evidence": (
+            "Type-only template. 6-byte stride: addq.l #6,d4 at 0x13ad0 / addq.l #6,d2 at 0x13e48 / the index x 6 at "
+            "0x13b5c-0x13b64 (d4 = 2 x (2 x i + i)); count 5: the loops run to the word at 0x803dc8 (UDPRCU 0-5, dump 5), "
+            "the resolved address table at 0x800508 has room for 5 dwords before 0x80051c, the ROM region table gives "
+            "region 0x1F6 = {0x0100029a, 30} = 5 x 6, UDADSZ = 94 = 64 + 30 and e2m has UD01-UD05. e2m 1283 holds 15 "
+            "records: UD0nDX.. at hex +6*(n-1) + BY 0 / NM 2 / OF 4, all 2 bytes. EEPROM 0x29a-0x2b7 equals the RAM mirror."),
+        "fields": [
+            {"offset": 0, "name": "value_length", "type": "word", "size": 2,
+             "comment": "+0 (e2m 1283 UD0nDXBY 'DATALOGGER DATA LENGTH' 0-10): bytes copied from the parameter's address into the ring buffer at each sample (move.w (0;a0;d4.w);d0w at 0x13bb2); the set-up counts the parameters whose running byte total stays at or below 10 (move.w at 0x13abe / add.b d0b;d2b / cmpi.b #10 at 0x13ac4); 2 in all five dump records"},
+            {"offset": 2, "name": "parameter_id", "type": "word", "size": 2,
+             "comment": "+2 (UD0nDXNM 'NAME TABLE NAME'): the parameter ID passed to cm550_lookupParameterIdAddress (move.w (0;a0;d2.w);-(sp) at 0x13e2a); dump 0x100c / 0x1004 / 0x1051 / 0x1047 / 0x1004"},
+            {"offset": 4, "name": "parameter_offset", "type": "word", "size": 2,
+             "comment": "+4 (UD0nDXOF 'NAME TABLE OFFSET'): byte offset added zero-extended to that address (move.w at 0x13e3c / andi.l #0xffff / add.l d0;(a2) at 0x13e46); dump 2 / 0x76 / 0 / 0 / 0x8c"},
+        ],
+    },
+    {
+        "firmware": FW, "struct_name": "datalogger_trigger_information_t", "size": 8,
+        "evidence": (
+            "SECONDARY (outside the asked scope; separable). Type-only template for the 8-byte record cm550_FUN_00013a5c "
+            "builds at 0x800522 when an event starts (0x13b12-0x13b2c: word / dword / byte / byte) and copies field by field "
+            "to 0x8052ea (event 1) or 0x8052f2 (event 2) when it is saved (0x13c16-0x13c34 / 0x13c52-0x13c70). e2m 1287 +0 "
+            "UDTRMK 'CONTAINS DATALOGGER TRIGGER INFORMATION' is 16 bytes = 2 x 8 (the parameter ID table maps block 1287 "
+            "to RAM 0x8052ea). Dump: event 1 = {0x0050, 0x000003d3, 1, 0}, event 2 = {0x00aa, 0x0d8d364a, 1, 0}; the dump's "
+            "key_on_hour_meter is 0x0d8f9c69."),
+        "fields": [
+            {"offset": 0, "name": "ring_buffer_trigger_offset", "type": "word", "size": 2,
+             "comment": "+0: the ring buffer write pointer minus the ring buffer start (0x800374) when the event began (move.l $800504;d0 / subi.l #0x800374;d0 / move.w d0w;$800522 at 0x13b06-0x13b12): where the first post-trigger byte sits in the saved 400-byte copy"},
+            {"offset": 2, "name": "trigger_key_on_hour_meter", "type": "dword", "size": 4,
+             "comment": "+2: key_on_hour_meter when the event began (move.l $80bda4;$800524 at 0x13b18)"},
+            {"offset": 6, "name": "and_inputs_trigger_flag", "type": "byte", "size": 1,
+             "comment": "+6: the low byte of the AND trigger flag word 0x80bac6 (e2m 1285 +2 UDADTR; move.b $80bac7;$800528 at 0x13b22): 1 when triggers 1-3 together started the event"},
+            {"offset": 7, "name": "or_input_trigger_flag", "type": "byte", "size": 1,
+             "comment": "+7: the low byte of the OR trigger flag word 0x80bac8 (e2m 1285 +4 UDORTR; move.b $80bac9;$800529 at 0x13b2c): 1 when trigger 4 started the event"},
+        ],
+    },
+]
+
+# ---------------------------------------------------------------- globals
+def g(addr, current, name, typ, comment, evidence):
+    comment = comment.replace("; SECONDARY; ", "; ").replace("(SECONDARY; ", "(")
+    assert "SECONDARY" not in comment, comment
+    out = {"firmware": FW, "address": "0x%08x" % addr}
+    if current:
+        out["current_name"] = current
+    else:
+        evidence = "New row. " + evidence
+    out.update({"proposed_name": name, "proposed_type": typ, "comment": comment, "evidence": evidence})
+    return out
+
+globals_ = [
+    g(0x803d64, None, "datalogger_triggers_cal", "datalogger_trigger_t[4]",
+      "The four datalogger trigger records (e2m 1282 +0x00 to +0x3F, all 32 records: UD0nTR.. at +0x10 x (n - 1) with "
+      "BY +0 value_length / DB +1 disable_flag / FU +2 fault_code_flag / MD +4 above_threshold_or_fault_active_flag / "
+      "NM +6 parameter_id_or_fault_code / OF +8 parameter_offset / TD +0xA threshold / TY +0xE signed_value_flag; "
+      "EEPROM 0x25a-0x299, ROM region table entry 0x1F5 = {0x0100025a, 64 bytes}). Triggers 1-3 form the AND condition "
+      "and trigger 4 the OR input of cm550_updateDataloggerTriggers (automatic mode, 0x803dc6 = 1); "
+      "cm550_resolveDataloggerTriggerAddresses / cm550_findDataloggerTriggerFaultIndexes / cm550_initializeDatalogger "
+      "walk all four with a 16-byte stride and cm550_evaluateDataloggerTrigger takes the index 0-3 (lsl.l #4). Dump (= "
+      "EEPROM): all four disabled, parameter triggers above 0x18fc / 0 / 0 / 0x4f on 0x100c +2 (engine speed ESCMES) / "
+      "0x1004 +0x76 (boost pressure) / 0x1051 +0 (final fueling FSFNFL) / 0x1047 +0 (THROTTLE), 2 bytes each. EEPROM "
+      "mirror, so _cal. (were datalogger_trigger_1_disable_cal / datalogger_trigger_1_fault_code_flag_cal / "
+      "datalogger_trigger_1_parameter_id_or_fault_code_cal at +1 / +2 / +6 and datalogger_trigger_4_disable_cal at +0x31; "
+      + R + ")",
+      "At the array base (no row there now). Absolute-operand scan of the dumped 256 KB ROM (0x0-0x3ffff; code above "
+      "0x40000 is not dumped): all 40 references to 0x803d60-0x803dcb sit in 0x13922-0x14186, in eight of the nine "
+      "datalogger functions (0x14292 has none). Other code reaches the block only generically: through the mirror base "
+      "0x803b0a (cm550_commitEepromMirrorToEeprom; cm550_diagnosticMemoryReadHandler; "
+      "cm550_diagMemoryReadResponseBuilder; cm550_memoryPatchingSystem; mc68k_FUN_00026854, a whole-mirror write through "
+      "the serial EEPROM queue with data pointer 0x803b0a and length 0x64c) and through the parameter ID table "
+      "(block 1282 -> 0x0100025a at ROM 0x367ac). Rendering after the build is unverified."),
+    g(0x803da4, "datalogger_data_1_length_cal", "datalogger_data_parameters_cal", "datalogger_data_parameter_t[5]",
+      "The five datalogger data parameter records (e2m 1283 +0x00 to +0x1D, all 15 records: UD0nDX.. at +6 x (n - 1) with "
+      "BY +0 value_length / NM +2 parameter_id / OF +4 parameter_offset; EEPROM 0x29a-0x2b7, ROM region table entry "
+      "0x1F6 = {0x0100029a, 30 bytes}). cm550_resolveDataloggerDataParameterAddresses resolves the first "
+      "N of them (N = the word at 0x803dc8, e2m 1284 +6 UDPRCU) into the dwords at 0x800508 and cm550_recordDataloggerSamples "
+      "copies value_length bytes of each into the 400-byte ring buffer at every sample (6-byte stride: addq.l #6 / i x 6). "
+      "Dump (= EEPROM): 2 bytes each of 0x100c +2 (engine speed) / 0x1004 +0x76 (boost pressure) / 0x1051 +0 (final "
+      "fueling) / 0x1047 +0 (throttle) / 0x1004 +0x8c (coolant temperature ADCLTPFT); the resolved dwords at 0x800508 "
+      "are 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336. EEPROM mirror, so _cal. (were "
+      "datalogger_data_1_length_cal at +0 and datalogger_data_1_parameter_id_cal at +2; " + R + ")",
+      "Rename + retype of the existing row at the array base: keep this row (do NOT also delete it). The block is e2m 1283, "
+      "not 1282."),
+    # ---- SECONDARY: block 1284 settings (EEPROM 0x2b8-0x2bf)
+    g(0x803dc4, None, "datalogger_sample_rate_code_cal", "word",
+      "Datalogger sample rate code (e2m 1284 +2 UDSART 'DATALOGGER SAMPLE RATE PARAMETER' 0-5; dump 1, EEPROM 0x2ba): "
+      "cm550_selectDataloggerSamplePeriod maps 0 / 1 / 2 / 3 / 4 / 5 to a sample every 5 / 10 / 20 / 40 / 80 / 160 passes "
+      "of the trigger task (any other value -> 5) and, in automatic trigger mode, rewrites a code of 3 or more as 2 "
+      "(cmpi.w #3,$803dc4 / blt / move.w #2,$803dc4 at 0x13d52-0x13d5c). Word (move.w $803dc4,d0w at 0x13d64). EEPROM "
+      "mirror, so _cal. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now (renders _DAT_00803dc4). Only users: cm550_FUN_00013d42 (3 absolute operands)."),
+    g(0x803dc6, None, "datalogger_trigger_mode_cal", "word",
+      "Datalogger trigger mode (e2m 1284 +4 UDTRMD 'SETS THE DATALOGGER TO TRIGGER MANUALLY, AUTOMATICALLY' 0-2; dump 1, "
+      "EEPROM 0x2bc): 1 = automatic, triggers 1-4 of datalogger_triggers_cal are evaluated (cmpi.w #1,$803dc6 at 0x1391e / "
+      "0x1394a in cm550_updateDataloggerTriggers and 0x13d48 in cm550_selectDataloggerSamplePeriod); any other value = "
+      "manual, a rising edge of bit 6 of the byte at 0x80bcd0 triggers. Word. EEPROM mirror, so _cal. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now (renders _DAT_00803dc6). Only users: cm550_FUN_000138b6 / cm550_FUN_00013d42."),
+    g(0x803dc8, None, "datalogger_data_parameter_count_cal", "word",
+      "Number of datalogger data parameters (e2m 1284 +6 UDPRCU 'NUMBER OF DATALOGGER PARAMETERS TO LOG PER SAMPLE "
+      "INTERVAL' 0-5; dump 5, EEPROM 0x2be): the loop bound of cm550_resolveDataloggerDataParameterAddresses and of the "
+      "set-up count in cm550_recordDataloggerSamples (move.w $803dc8,d1w / cmp.l d1,d0 at 0x13e54 / 0x13ada). Word. "
+      "EEPROM mirror, so _cal. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now (renders _DAT_00803dc8). Only users: cm550_FUN_00013a5c / cm550_FUN_00013e12."),
+    # ---- SECONDARY: block 1285 status words (RAM)
+    g(0x80bac4, rows.get(0x80bac4), "datalogger_event_logging_active_flag", "word",
+      "Datalogger triggered-event logging status (e2m 1285 +0 UDSS 'STATUS OF TRIGGERED EVENT LOGGING (ACTIVE: LOGGING; "
+      "INACTIVE)'): cm550_recordDataloggerSamples sets it on the sample pass that finds a detected trigger (move.w #1,(a4) at "
+      "0x13b02) and clears it once the 200 post-trigger bytes are saved (clr.w (a4) at 0x13c8c); while it is set "
+      "cm550_updateDataloggerTriggers clears the trigger flags and both set-ups wait. Word (tst.w / cmpi.w #1 / move.w / "
+      "clr.w). (was snapshot_capture_active_flag; SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_000138b6 / cm550_FUN_00013a5c only (plus the parameter ID table entry at ROM 0x367c4)."),
+    g(0x80bac6, None, "datalogger_and_inputs_trigger_flag", "word",
+      "Datalogger AND trigger flag (e2m 1285 +2 UDADTR 'INDICATES THAT DATALOGGER TRIGGER WAS FROM THE AND INPUTS'): "
+      "cm550_updateDataloggerTriggers sets it when triggers 1-3 are all satisfied (move.w #1,$80bac6 at 0x139ca) and "
+      "clears it while the datalogger is disabled, the engine is stopped or an event is being logged; its low byte "
+      "(0x80bac7) goes into the event's trigger information +6. Word. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_000138b6 (word) and cm550_FUN_00013a5c (byte read of 0x80bac7)."),
+    g(0x80bac8, None, "datalogger_or_input_trigger_flag", "word",
+      "Datalogger OR trigger flag (e2m 1285 +4 UDORTR 'INDICATES THAT DATALOGGER TRIGGER WAS FROM THE OR INPUT'): "
+      "cm550_updateDataloggerTriggers sets it when trigger 4 is satisfied (a5 = 0x80bac8: move.w #1,(a5) at 0x139d8 / "
+      "0x139ec) and clears it with the AND flag; its low byte (0x80bac9) goes into the trigger information +7. Word. "
+      "(SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_000138b6 (word) and cm550_FUN_00013a5c (byte read of 0x80bac9)."),
+    g(0x80baca, rows.get(0x80baca), "datalogger_trigger_detected_flag", "word",
+      "Datalogger trigger detected flag (e2m 1285 +6 UDTRSE 'INDICATES WHEN A TRIGGER HAS OCCURRED'): set by "
+      "cm550_updateDataloggerTriggers (a4 = 0x80baca: move.w #1,(a4) at 0x139c6 / 0x139e8 / 0x13a08) for the AND "
+      "condition, the OR input or the manual switch edge; cm550_recordDataloggerSamples starts an event when it finds it "
+      "set at a sample (tst.w $80baca at 0x13afa). Word. (was trending_trigger_detected_flag; SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_000138b6 / cm550_FUN_00013a5c only."),
+    # ---- SECONDARY: RAM working set 0x800352-0x80052a
+    g(0x800352, None, "datalogger_setup_complete_flag", "byte",
+      "0 until the datalogger has been set up: then cm550_updateDataloggerTriggers reloads the sample period and (automatic "
+      "mode) the trigger addresses and fault indexes, and cm550_recordDataloggerSamples sets it (move.b #1,$800352 at "
+      "0x13a9c) and then resolves the data parameter addresses, counts the logged parameters and resets the write pointer; "
+      "cleared while the datalogger enable bit is clear (clr.b at 0x13a50). Byte (tst.b). (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_000138b6 / cm550_FUN_00013a5c only (4 absolute operands)."),
+    g(0x800353, rows.get(0x800353), "datalogger_sample_period_passes", "byte",
+      "Datalogger sample period in trigger-task passes (5 / 10 / 20 / 40 / 80 / 160 from datalogger_sample_rate_code_cal; "
+      "dump 10): cm550_selectDataloggerSamplePeriod stores it (move.b #imm,(a0)) and returns it, cm550_updateDataloggerTriggers "
+      "stores the return again (move.b d0b,$800353 at 0x13918) and raises the sample due flag when the counter reaches it "
+      "(move.b $800353,d1b / cmp.l / blt at 0x138dc). Byte. (was trending_sample_rate_divisor; SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_000138b6 / cm550_FUN_00013d42 only."),
+    g(0x800354, rows.get(0x800354), "datalogger_sample_due_flag", "byte",
+      "1 on the pass the sample period counter reaches datalogger_sample_period_passes (move.b #1,$800354 at 0x138e6): "
+      "cm550_updateDataloggerTriggers evaluates the automatic triggers and cm550_recordDataloggerSamples takes a sample "
+      "and clears it (tst.b / clr.b at 0x13aea / 0x13af4); also cleared by cm550_initializeDatalogger and "
+      "cm550_selectDataloggerSamplePeriod. Byte. (was scheduler_phase_execution_time; SECONDARY; " + R + ")",
+      "SECONDARY. Users: 0x138b6 / 0x13a5c / 0x13cc8 / 0x13d42 only."),
+    g(0x800356, rows.get(0x800356), "datalogger_trigger_parameter_addresses", "dword[4]",
+      "The resolved address of each trigger's parameter: cm550_resolveDataloggerTriggerAddresses writes "
+      "cm550_lookupParameterIdAddress(parameter_id_or_fault_code) + parameter_offset for each parameter trigger (a2 = "
+      "0x800356 / addq.l #4,a2) and cm550_evaluateDataloggerTrigger reads the value there (movea.l (0,a2,d0.l*4),a0). "
+      "Dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82. dword[4] like the lookup's uint * parameter. (was "
+      "scheduler_reserved_padding; SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_00013dbe / cm550_FUN_00013ed8 only. Its bytes hold five junk rows (see rows_to_remove)."),
+    g(0x800366, rows.get(0x800366), "datalogger_trigger_fault_indexes", "byte[4]",
+      "For each fault-code trigger, the index (0-124) of its fault definition (0x8067c4 + 6 x index) and fault count table "
+      "record (0x805a1c + 10 x index): written by cm550_findDataloggerTriggerFaultIndexes (move.b d2b,(a3) at 0x13ea4), "
+      "read by cm550_initializeDatalogger and cm550_evaluateDataloggerTrigger (move.b (0,a1,d0.l),d0b). Byte. (was "
+      "flash_write_data_pointer; SECONDARY; " + R + ")",
+      "SECONDARY. Users: 0x13cc8 / 0x13e64 / 0x13ed8 only."),
+    g(0x80036a, rows.get(0x80036a), "datalogger_trigger_satisfied_flags", "byte[4]",
+      "cm550_updateDataloggerTriggers' result for triggers 1-4 (a3 = 0x80036a: move.b d0b,(a2) / move.b #1,(a2) for a "
+      "disabled trigger 1-3 / clr.b (3,a3) for a disabled trigger 4 / move.b d0b,(3,a3)); bytes 0-2 all nonzero = the AND "
+      "condition, byte 3 = the OR input. Byte. (was flash_write_end_address; SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_000138b6 only."),
+    g(0x80036e, rows.get(0x80036e), "datalogger_trigger_previous_fault_status", "byte[4]",
+      "For each fault-code trigger, the fault count table status (0-3) it saw last: loaded by cm550_initializeDatalogger "
+      "and cm550_findDataloggerTriggerFaultIndexes, compared and then rewritten by cm550_evaluateDataloggerTrigger (move.b "
+      "d0b,(0,a3,d1.l) at 0x14286) so a fault trigger fires once per status edge. Byte. (was fuel_demand_rating_table_size; "
+      "SECONDARY; " + R + ")",
+      "SECONDARY. Users: 0x13cc8 / 0x13e64 / 0x13ed8 only. Holds the junk row 0x800370."),
+    g(0x800372, None, "datalogger_ring_buffer_cleared_flag", "byte",
+      "1 after the ring buffer has been zeroed (cm550_initializeDatalogger at 0x13d34; cm550_recordDataloggerSamples at "
+      "0x13cb6 while the datalogger is disabled, so it zeroes the buffer once); cleared after every sample (clr.b at "
+      "0x13be6). Byte (tst.b). (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: 0x13a5c / 0x13cc8 only."),
+    g(0x800374, rows.get(0x800374), "datalogger_sample_ring_buffer", "byte[400]",
+      "The datalogger's 400-byte sample ring: zeroed with cmpi.w #0x190 loops (0x13ca6 / 0x13d24), filled through "
+      "datalogger_ring_buffer_write_pointer with value_length bytes of each logged parameter per sample, wrapping at "
+      "0x800504 (cmpa.l (a5),a3 with a3 = 0x800504 at 0x13b78), and copied whole into event 1's or 2's buffer when an "
+      "event is saved. The dump holds 10-byte samples (engine speed / boost / fueling / throttle / coolant). (was "
+      "fuel_demand_blend_input; SECONDARY; " + R + ")",
+      "SECONDARY. Users: 0x13a5c / 0x13cc8 only (dumped ROM). The dump's 400 bytes are 40 identical 10-byte samples "
+      "(00 00 00 00 00 00 00 00 7f 80), so nothing else writes there at run time. Its bytes hold 51 junk rows "
+      "0x800376-0x800418 (see rows_to_remove)."),
+    g(0x800504, rows.get(0x800504), "datalogger_ring_buffer_write_pointer", "byte *",
+      "Next free byte of datalogger_sample_ring_buffer (move.l #0x800374,(a5) / movea.l (a5),a0 / move.b d0b,(a0) / addq.l "
+      "#1,(a5) in cm550_recordDataloggerSamples; move.l a1,$800504 in cm550_initializeDatalogger); minus 0x800374 it is "
+      "the trigger information's ring offset. Dump 0x80041e (offset 170). (was data_record_buffer_write_ptr; SECONDARY; "
+      + R + ")",
+      "SECONDARY. Users: 0x13a5c / 0x13cc8 only."),
+    g(0x800508, None, "datalogger_data_parameter_addresses", "dword[5]",
+      "The resolved address of each data parameter: cm550_resolveDataloggerDataParameterAddresses writes "
+      "cm550_lookupParameterIdAddress(parameter_id) + parameter_offset (a2 = 0x800508 / addq.l #4,a2) and "
+      "cm550_recordDataloggerSamples reads byte j of each (add.l (a2),d0 / movea.l d0,a0 / move.b (a0),d0b at 0x13b6c). "
+      "Dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now (renders DAT_00800508). Users: 0x13a5c / 0x13e12 only."),
+    g(0x80051c, rows.get(0x80051c), "datalogger_post_trigger_byte_count", "byte",
+      "Bytes stored since the event's trigger: cleared when an event starts (clr.b at 0x13b36), +1 per stored byte while "
+      "logging (addq.b at 0x13b88); at 200 (cmpi.b #-0x38) the capture is complete. Byte. (was data_record_byte_counter; "
+      "SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_00013a5c only."),
+    g(0x80051e, rows.get(0x80051e), "datalogger_sample_period_counter", "word",
+      "Trigger-task passes since the last sample: +1 per pass (addq.w #1,$80051e at 0x138cc), cleared when it reaches "
+      "datalogger_sample_period_passes and by cm550_initializeDatalogger / cm550_selectDataloggerSamplePeriod. Word "
+      "(addq.w / move.w / clr.w). (was trending_sample_counter; SECONDARY; " + R + ")",
+      "SECONDARY. Users: 0x138b6 / 0x13cc8 / 0x13d42 only."),
+    g(0x800520, None, "datalogger_manual_trigger_switch_latch", "byte",
+      "Manual trigger mode (datalogger_trigger_mode_cal not 1): set with the trigger detected flag when bit 6 of 0x80bcd0 is "
+      "set and it is 0 (move.b #1,$800520 at 0x13a0c), cleared when the bit is clear (clr.b at 0x13a1a) - one trigger per "
+      "switch press. Byte. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_000138b6 only."),
+    g(0x800521, rows.get(0x800521), "datalogger_logged_parameter_count", "byte",
+      "How many of the first datalogger_data_parameter_count_cal data parameters are logged: those whose running byte total "
+      "stays at or below 10 (add.b d0b,d2b / cmpi.b #10 / bhi / addq.b #1,$800521 at 0x13ac2-0x13aca); the sample loop's "
+      "bound (cmp.b $800521,d3b at 0x13bdc). Dump 5. Byte. (was trending_valid_channel_count; SECONDARY; " + R + ")",
+      "SECONDARY. Users: cm550_FUN_00013a5c only."),
+    g(0x800522, None, "datalogger_pending_trigger_information", "datalogger_trigger_information_t",
+      "The trigger information of the event being logged (ring offset / key_on_hour_meter / AND and OR flag bytes), built "
+      "when the event starts (0x13b12-0x13b2c) and copied into datalogger_event_trigger_information[0] or [1] when it is "
+      "saved. (SECONDARY; " + R + ")",
+      "SECONDARY. No rows in 0x800522-0x800529 now. Users: cm550_FUN_00013a5c only."),
+    g(0x80052a, None, "datalogger_event_capture_complete_flag", "byte",
+      "Set when the 200th post-trigger byte is stored (move.b #1,$80052a at 0x13ba2); makes cm550_recordDataloggerSamples "
+      "save the event and is cleared after it (clr.b at 0x13c8e). Byte. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_00013a5c only."),
+    # ---- SECONDARY: event storage (RAM; e2m 1286-1288)
+    g(0x804fca, None, "datalogger_event_sample_buffers", "byte[800]",
+      "e2m 1286 +0 UDDXTB 'CONTAINS DATA FOR UP TO TWO DATALOGGER TRIGGERED EVENTS' (800 bytes; the parameter ID table maps "
+      "block 1286 to RAM 0x804fca): event 1's copy of the 400-byte ring at +0 (0x804fca) and event 2's at +400 "
+      "(0x80515a), written by cm550_copyDataloggerSampleBuffer. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Code users: the two movea.l #imm in cm550_FUN_00013a5c (0x13c0c / 0x13c48). Holds the junk row "
+      "0x804fcd."),
+    g(0x8052ea, None, "datalogger_event_trigger_information", "datalogger_trigger_information_t[2]",
+      "e2m 1287 +0 UDTRMK 'CONTAINS DATALOGGER TRIGGER INFORMATION' (16 bytes, RAM): event 1's trigger information at +0 "
+      "and event 2's at +8, copied from datalogger_pending_trigger_information when an event is saved. Dump: {0x50, "
+      "0x3d3, 1, 0} / {0xaa, 0x0d8d364a, 1, 0}. (SECONDARY; " + R + ")",
+      "SECONDARY. No rows in 0x8052ea-0x8052f9 now. Users: cm550_FUN_00013a5c only."),
+    g(0x8052fa, None, "datalogger_event_1_logged_flag", "word",
+      "e2m 1288 +0 UDEV01 'INDICATES IF FIRST TRIGGERED EVENT OCCURRED AND WAS LOGGED': 0 sends the next saved event to "
+      "event 1 (tst.w $8052fa at 0x13c04), which then sets it (move.w #1 at 0x13c3e); once it is set every later event "
+      "overwrites event 2. Dump 1. Word. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_00013a5c only."),
+    g(0x8052fc, None, "datalogger_event_2_logged_flag", "word",
+      "e2m 1288 +2 UDEV02 'INDICATES IF TRIGGERED EVENT LATER THAN THE FIRST HAS OCCURRED': set when an event is saved into "
+      "event 2 (move.w #1,$8052fc at 0x13c7a). Dump 1. Word. (SECONDARY; " + R + ")",
+      "SECONDARY. No row now. Users: cm550_FUN_00013a5c only."),
+]
+
+# ---------------------------------------------------------------- functions
+def f(addr, current, name, plate, evidence):
+    return {"firmware": FW, "address": "0x%08x" % addr, "current_name": current, "proposed_name": name,
+            "relation": "standalone", "plate_comment": plate, "evidence": evidence}
+
+functions = [
+    f(0x138b6, "cm550_FUN_000138b6", "cm550_updateDataloggerTriggers",
+      "The datalogger's trigger task (e2m UD*; run from the scheduler slot cm550_FUN_0001b6d6 after "
+      "cm550_j1939TimeoutDataClearHandler). Every pass it counts the sample period counter (0x80051e) up to the sample "
+      "period (0x800353) and then raises the sample due flag (0x800354). With the datalogger enable bit clear (0x20 of "
+      "feature_enable_flags_word, e2m 106B +0x26 UDEN 'BIT 5') it clears the trigger detected / AND / OR flags (0x80baca / "
+      "0x80bac6 / 0x80bac8) and the set-up flag (0x800352). Otherwise: before the set-up and with no event being logged "
+      "(0x80bac4) it reloads the sample period (cm550_selectDataloggerSamplePeriod) and in automatic mode (0x803dc6 = 1) "
+      "resolves the trigger parameters (cm550_resolveDataloggerTriggerAddresses) and fault codes "
+      "(cm550_findDataloggerTriggerFaultIndexes); with the engine stopped (engine_state STOPPED) or an event being logged "
+      "it clears the three flags; in automatic mode on a sample-due pass it evaluates triggers 1-3 of "
+      "datalogger_triggers_cal (a disabled one counts as satisfied) and trigger 4 (a disabled one does not) with "
+      "cm550_evaluateDataloggerTrigger into the result bytes at 0x80036a: triggers 1-3 all satisfied set the trigger "
+      "detected flag and the AND flag, trigger 4 sets the trigger detected flag and the OR flag. In any other mode a "
+      "rising edge of bit 6 of the byte at 0x80bcd0 (latch 0x800520) sets the trigger detected flag. No caller reads D0. "
+      "(was cm550_FUN_000138b6; " + R + ")",
+      "Listing 0x138b6-0x13a5a: addq.w #1,$80051e / cmp.l with $800353 / move.b #1,$800354; andi.w #0x20 of $803cb8; "
+      "jsr 0x13d42 / 0x13dbe / 0x13e64; cmpi.w #1,$80d0c8; cmpi.w #1,$803dc6; the 0-2 loop over 0x803d65 with a 16-byte "
+      "stride calling 0x13ed8, then tst.b $803d95 / move.w #3,-(sp) / jsr 0x13ed8; btst.b #6,$80bcd0. Only caller: "
+      "cm550_FUN_0001b6d6 (a statement call followed by return). CM848 has no datalogger (no UD records in its e2m; the "
+      "six callers of cm848_lookupParameterIdAddress are PCI / J1939 parameter-ID services and the calibrated monitor "
+      "disable conditions), so standalone with cm550_."),
+    f(0x13a5c, "cm550_FUN_00013a5c", "cm550_recordDataloggerSamples",
+      "The datalogger's sample task (run from the scheduler slot cm550_FUN_0001b6e4 after vp44_hourMeterEventLogger). "
+      "While the datalogger is disabled with no trigger detected and no event being logged it zeroes the 400-byte ring "
+      "buffer at 0x800374 once (flag 0x800372). Otherwise: at the set-up (0x800352 = 0, no event being logged) it "
+      "sets 0x800352, resolves the data parameters (cm550_resolveDataloggerDataParameterAddresses), counts into 0x800521 "
+      "the first 0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal whose running byte total stays at or below "
+      "10 and points the write pointer (0x800504) at the ring. On each sample-due pass (0x800354, cleared here): a "
+      "detected trigger (0x80baca) starts an event - logging active (0x80bac4 = 1), the trigger information at 0x800522 "
+      "(ring offset of the write pointer / key_on_hour_meter / the low bytes of the AND and OR flags) and the post-trigger "
+      "byte count (0x80051c) = 0; then value_length bytes of each counted parameter are copied from its resolved address "
+      "(0x800508 + 4 x n) into the ring, wrapping at 0x800504. While logging, the 200th byte after the trigger ends the "
+      "sample and sets 0x80052a; the event is then saved: the trigger information and a copy of the ring "
+      "(cm550_copyDataloggerSampleBuffer) go to event 1 (0x8052ea / 0x804fca; e2m UDTRMK / UDDXTB) while UDEV01 "
+      "(0x8052fa) is 0 and to event 2 (0x8052f2 / 0x80515a) otherwise, UDEV01 / UDEV02 (0x8052fc) are set and logging "
+      "stops - an event holds the 200 bytes before and the 200 after its trigger. No caller reads D0. (was "
+      "cm550_FUN_00013a5c; " + R + ")",
+      "Listing 0x13a5c-0x13cc6: jsr 0x13e12; the 6-byte-stride count loop over 0x803da4 bounded by $803dc8; move.l "
+      "#0x800374,(a5) with a5 = 0x800504; subi.l #0x800374 / move.w d0w,$800522 / move.l $80bda4,$800524; the copy loop "
+      "through (a5) with the wrap cmpa.l (a5),a3; cmpi.b #-0x38,$80051c; tst.w $8052fa; jsr 0x14292 with 0x804fca or "
+      "0x80515a. Only caller: cm550_FUN_0001b6e4."),
+    f(0x13cc8, "cm550_FUN_00013cc8", "cm550_initializeDatalogger",
+      "Start-up set-up of the datalogger (called once by mc68k_applicationMain after cm550_initLoadTrendingSystem). It "
+      "clears the sample period counter (0x80051e) and the sample due flag (0x800354); for each record of "
+      "datalogger_triggers_cal with fault_code_flag 1 it copies the fault count table status (0x805a24 + 10 x the trigger's "
+      "fault index byte at 0x800366 + n) into its previous fault status byte (0x80036e + n); then it zeroes the 400-byte "
+      "ring buffer (0x800374), points the write pointer (0x800504) at it and sets the buffer cleared flag (0x800372). (was "
+      "cm550_FUN_00013cc8; " + R + ")",
+      "Listing 0x13cc8-0x13d40: cmpi.w #1,(0,a0,d3.w) with a0 = 0x803d66 and a 16-byte stride for 4 records; move.b "
+      "(0,a0,d0.w*2),(a3) with a0 = 0x805a24; the cmpi.w #0x190 clear loop; move.l a1,$800504; move.b #1,$800372. Only "
+      "caller: mc68k_applicationMain."),
+    f(0x13d42, "cm550_FUN_00013d42", "cm550_selectDataloggerSamplePeriod",
+      "Turns the sample rate code (0x803dc4, e2m 1284 +2 UDSART 0-5) into the datalogger's sample period in trigger-task "
+      "passes: 0 / 1 / 2 / 3 / 4 / 5 -> 5 / 10 / 20 / 40 / 80 / 160 (jump table at 0x13d7a; any other code -> 5), stored at "
+      "0x800353 and returned in D0's low byte. In automatic trigger mode (0x803dc6 = 1) a code of 3 or more is first "
+      "rewritten as 2 in the EEPROM mirror. It also clears the sample due flag (0x800354) and the period counter "
+      "(0x80051e). Called by cm550_updateDataloggerTriggers at the set-up. (was cm550_FUN_00013d42; " + R + ")",
+      "Listing 0x13d42-0x13dbc: cmpi.w #1,$803dc6 / cmpi.w #3,$803dc4 / blt / move.w #2,$803dc4; move.w (0x13d7a,pc,d0*2) "
+      "/ jmp; case bodies move.b #5 / #10 / #20 / #40 / #80 / #160,(a0) with a0 = 0x800353 (raw bytes 0x13d86-0x13da9); "
+      "clr.b $800354 / clr.w $80051e / move.b (a0),d0b."),
+    f(0x13dbe, "cm550_FUN_00013dbe", "cm550_resolveDataloggerTriggerAddresses",
+      "For each of the four records of datalogger_triggers_cal whose fault_code_flag is 0 it resolves "
+      "parameter_id_or_fault_code with cm550_lookupParameterIdAddress into the trigger's address dword (0x800356 + 4 x n) "
+      "and adds parameter_offset (zero-extended). Called by cm550_updateDataloggerTriggers at the set-up in automatic "
+      "mode. Dump: 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 = the parameter ID table addresses of 0x100c / 0x1004 / "
+      "0x1051 / 0x1047 plus 2 / 0x76 / 0 / 0. (was cm550_FUN_00013dbe; " + R + ")",
+      "Listing 0x13dbe-0x13e10: tst.w (0,a0,d2.w) with a0 = 0x803d66; move.l a2,-(sp) / move.w (0,a0,d2.w),-(sp) with a0 "
+      "= 0x803d6a / jsr 0x10e16; move.w (0,a0,d2.w),d0w with a0 = 0x803d6c / andi.l #0xffff / add.l d0,(a2); moveq #16 / "
+      "add.l d0,d2 / addq.l #4,a2 / cmpi.b #4,d3b."),
+    f(0x13e12, "cm550_FUN_00013e12", "cm550_resolveDataloggerDataParameterAddresses",
+      "For the first 0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal it resolves parameter_id with "
+      "cm550_lookupParameterIdAddress into the dword at 0x800508 + 4 x n and adds parameter_offset (zero-extended); "
+      "cm550_recordDataloggerSamples samples from these addresses. Dump: 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / "
+      "0x80a336 (engine speed / boost pressure / final fueling / throttle / coolant temperature). Called by "
+      "cm550_recordDataloggerSamples at the set-up. (was cm550_FUN_00013e12; " + R + ")",
+      "Listing 0x13e12-0x13e62: move.w (0,a0,d2.w),-(sp) with a0 = 0x803da6 / jsr 0x10e16; move.w (0,a0,d2.w),d0w with a0 "
+      "= 0x803da8 / add.l d0,(a2); addq.l #6,d2 / addq.l #4,a2; bound move.w $803dc8,d1w."),
+    f(0x13e64, "cm550_FUN_00013e64", "cm550_findDataloggerTriggerFaultIndexes",
+      "For each record of datalogger_triggers_cal whose fault_code_flag is 1 it scans the 125 six-byte fault definitions "
+      "at 0x8067c4 for the code word equal to parameter_id_or_fault_code; at each match (the loop does not stop, so the "
+      "last match wins) it stores the definition index in the trigger's fault index byte (0x800366 + n) and that fault's "
+      "current status (fault count table byte 0x805a24 + 10 x index) in its previous fault status byte (0x80036e + n). "
+      "Called by cm550_updateDataloggerTriggers at the set-up in automatic mode. (was cm550_FUN_00013e64; " + R + ")",
+      "Listing 0x13e64-0x13ed6: cmpi.w #1,(0,a0,d3.w) with a0 = 0x803d66; move.w (0,a0,d3.w),d0w with a0 = 0x803d6a / "
+      "cmp.w (a2),d0w with a2 from 0x8067c4 / addq.l #6,a2 / cmpi.b #0x7d,d2b; move.b d2b,(a3) with a3 = 0x800366 + n; "
+      "move.b (0,a0,d0.w*2),(a1) with a0 = 0x805a24 and a1 = 0x80036e + n; 4 records."),
+    f(0x13ed8, "cm550_FUN_00013ed8", "cm550_evaluateDataloggerTrigger",
+      "Returns 1 when datalogger trigger trigger_index (0-3) of datalogger_triggers_cal is satisfied, else 0. Parameter "
+      "trigger (fault_code_flag 0): it reads value_length bytes (1 = byte / 2 = word / any other value = dword) at the "
+      "trigger's resolved address (dword 0x800356 + 4 x index) and compares them with threshold (its low byte / low word / "
+      "the whole dword), unsigned or signed by signed_value_flag, strictly above (above_threshold_or_fault_active_flag "
+      "nonzero) or below (0). Fault trigger (fault_code_flag nonzero): the fault count table status byte (0x805a24 + 10 x "
+      "the fault index at 0x800366 + index) against the status it saw last (0x80036e + index): a nonzero flag fires when "
+      "the status went from inactive (0 / 2) to active (1 / 3), 0 when it went from active to inactive; it then saves the "
+      "status. Status bit 0 = active: cm550_FUN_00014872 stores 3 when a fault turns active and 2 when it turns inactive, "
+      "cm550_diagnosticCodeRegistrar stores 0 / 1 when it gives an inactive / active fault's snapshot slot to another fault and "
+      "cm550_diagnosticTableEntryClear stores 0. Called by cm550_updateDataloggerTriggers with 0-2 and 3. (was "
+      "cm550_FUN_00013ed8; " + R + ")",
+      "Listing 0x13ed8-0x14290: move.w (0x14,sp),d3w; lsl.l #4; tst.w at 0x803d66 / 0x803d68 / 0x803d72 + offset; move.b "
+      "(0,a0,d0.w*8) with a0 = 0x803d64; move.l (0,a0,d2.w) with a0 = 0x803d6e and andi.l #0xff / cmp.w / cmp.l; movea.l "
+      "(0,a2,d0.l*4),a0 with a2 = 0x800356; the fault path 0x1419c-0x14286 on 0x805a24 / 0x800366 / 0x80036e. Its two "
+      "function_definitions.csv rows are keyed by the old name (see notes)."),
+    f(0x14292, "cm550_FUN_00014292", "cm550_copyDataloggerSampleBuffer",
+      "Copies the 400 bytes at source (the long at +4: the ring buffer 0x800374) to destination (the long at +8: event 1's "
+      "buffer 0x804fca or event 2's 0x80515a). Only caller: cm550_recordDataloggerSamples when it saves an event. (was "
+      "cm550_FUN_00014292; " + R + ")",
+      "Listing 0x14292-0x142a6: movea.l (8,sp),a1 / movea.l (4,sp),a0 / move.b (a0)+,(a1)+ / cmpi.w #0x190,d0w; the "
+      "caller pushes the destination (move.l a2,-(sp)) then the ring (move.l a3,-(sp)) at 0x13c82."),
+]
+
+# ---------------------------------------------------------------- rows to remove
+remove = [
+    {"firmware": FW, "address": "0x00803d65", "name": "datalogger_trigger_1_disable_cal",
+     "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[0].disable_flag (+1)."},
+    {"firmware": FW, "address": "0x00803d66", "name": "datalogger_trigger_1_fault_code_flag_cal",
+     "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[0].fault_code_flag (+2)."},
+    {"firmware": FW, "address": "0x00803d6a", "name": "datalogger_trigger_1_parameter_id_or_fault_code_cal",
+     "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[0].parameter_id_or_fault_code (+6)."},
+    {"firmware": FW, "address": "0x00803d95", "name": "datalogger_trigger_4_disable_cal",
+     "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[3].disable_flag (+0x31)."},
+    {"firmware": FW, "address": "0x00803da6", "name": "datalogger_data_1_parameter_id_cal",
+     "reason": "Inside datalogger_data_parameters_cal: becomes datalogger_data_parameters_cal[0].parameter_id (+2)."},
+]
+
+def junk(lo, hi, inst):
+    for a in sorted(rows):
+        if lo < a <= hi:
+            remove.append({"firmware": FW, "address": "0x%08x" % a, "name": rows[a],
+                           "reason": "SECONDARY: inside %s; see notes JUNK ROWS." % inst})
+
+junk(0x800356, 0x800365, "datalogger_trigger_parameter_addresses")
+junk(0x80036e, 0x800371, "datalogger_trigger_previous_fault_status")
+junk(0x800374, 0x800503, "datalogger_sample_ring_buffer")
+junk(0x804fca, 0x8052e9, "datalogger_event_sample_buffers")
+
+SUMMARY = (
+    "CM550's user datalogger keeps its settings in the EEPROM mirror. e2m block 1282 holds four 16-byte trigger records "
+    "at 0x803d64 (EEPROM 0x25a). Block 1283 (not 1282) holds five 6-byte data parameter records at 0x803da4 (EEPROM "
+    "0x29a). The machine code (16- and 6-byte strides, loop counts 4 and UDPRCU), the ROM region table (64 / 30 bytes) "
+    "and the dump (UDADSZ = 94 = 64 + 30; resolved addresses = table[id] + offset) agree. The nine functions at "
+    "0x138b6-0x14292 are all the datalogger code in the dumped 256 KB ROM: trigger task, sample task, start-up, sample period, the two address "
+    "resolvers, the fault-code lookup, the trigger evaluator and the 400-byte copy. Core proposal: the "
+    "datalogger_trigger_t[4] / datalogger_data_parameter_t[5] instances (replacing six scalar rows) and nine standalone "
+    "cm550_ function names. The block 1284 / 1285 words, the RAM working set and the event storage are secondary and "
+    "separable.")
+
+NOTES = """CORE vs SECONDARY: the core is structs datalogger_trigger_t + datalogger_data_parameter_t, the globals 0x803d64 / 0x803da4, the 5 rows_to_remove 0x803d65 / 0x803d66 / 0x803d6a / 0x803d95 / 0x803da6 and the 9 functions. Everything marked SECONDARY (struct datalogger_trigger_information_t, globals 0x803dc4-0x803dc8 / 0x80bac4-0x80baca / 0x800352-0x80052a / 0x804fca-0x8052fc and the 58 junk-row removals) can be dropped as a unit; the plate comments cite addresses so they read right either way. Struct offsets are decimal; e2m offsets are hex.
+
+BLOCKS: the triggers are e2m 1282 (32 records) and the data parameters e2m 1283 (15 records); the task text says 1282 for both. Block 1284 (0x803dc2-0x803dc9, EEPROM 0x2b8) = UDADSZ +0 / UDSART +2 / UDTRMD +4 / UDPRCU +6. Block 1285 (RAM 0x80bac4-0x80bacb) = UDSS +0 / UDADTR +2 / UDORTR +4 / UDTRSE +6. 1286 UDDXTB = RAM 0x804fca (800 bytes), 1287 UDTRMK = 0x8052ea (16), 1288 UDEV01 / UDEV02 = 0x8052fa / 0x8052fc. The e2m length column is decimal bytes.
+e2m 1282 -> datalogger_triggers_cal[n-1] (n = 1-4, base +0x10*(n-1)): UD0nTRBY +0 value_length (1 byte) | UD0nTRDB +1 disable_flag (1) | UD0nTRFU +2 fault_code_flag (2) | UD0nTRMD +4 above_threshold_or_fault_active_flag (2) | UD0nTRNM +6 parameter_id_or_fault_code (2) | UD0nTROF +8 parameter_offset (2) | UD0nTRTD +0xA threshold (4) | UD0nTRTY +0xE signed_value_flag (2). All 32 records land on a field; the e2m widths match the machine code.
+e2m 1283 -> datalogger_data_parameters_cal[n-1] (n = 1-5, base +6*(n-1)): UD0nDXBY +0 value_length | UD0nDXNM +2 parameter_id | UD0nDXOF +4 parameter_offset (all 2 bytes).
+e2m quirks: UD04TRTY's text says 'TRIGGER ONE' (it is +0x3E, record 4's +0xE); UD03TRBY's unit is NONE where the others say LGTH; MD's 'TRIGGER => THRESHOLD' is a strict > in the code.
+
+COUNTS: trigger count 4 comes from the loops (cmpi.b #4 / cmpi.w #4, the 0-2 loop plus trigger 4) and region 0x1F5 = {0x0100025a, 64}. The data count 5 is NOT bounded by the code itself (the loops run to the word UDPRCU at 0x803dc8, e2m range 0-5). It rests on: region 0x1F6 = {0x0100029a, 30} = 5 x 6, room for 5 dwords at 0x800508 before 0x80051c, the dump's UDADSZ = 0x5e = 94 = 64 + 30, and e2m UD01-UD05. The region table is the 8-byte {address, length} list at ROM 0x8062 + 8 x (the e2m 'region' column). Against the parameter ID table, 188 blocks match the address exactly (CAL_DATE region 0xA = {0x01000080, 6}, DAT_PLAT 0xD = {0x010002c0, 332}). 303 more sit at a constant RAM - region offset of 0x7a51d4 (the RAM-copied calibration lists its flash source) and 47 at 0x800f96. That 47 includes the datalogger event regions: 0x1F8 / 0x1F9 / 0x1FA = {0x4034, 800} / {0x4354, 16} / {0x4364, 4} for RAM 0x804fca / 0x8052ea / 0x8052fa. Only 2 blocks fit none of the three.
+
+READERS: an absolute-operand scan of the dumped 256 KB ROM (0x0-0x3ffff) finds 40 references to 0x803d60-0x803dcb, all in 0x13922-0x14186, in eight of the nine datalogger functions (0x14292 has none). CM550 also has call targets above 0x40000 that were never dumped (for example func_0x00042ad4 in mc68k_applicationMain), so every 'no other user' claim here is limited to the dumped ROM. Apart from those eight functions the block is reached only generically: through the EEPROM mirror base 0x803b0a (cm550_commitEepromMirrorToEeprom, cm550_diagnosticMemoryReadHandler, cm550_diagMemoryReadResponseBuilder, cm550_memoryPatchingSystem, and mc68k_FUN_00026854, a whole-mirror write through the serial EEPROM queue with data pointer 0x803b0a and length 0x64c) and the parameter ID table (blocks 1282 / 1283 / 1284 -> 0x0100025a / 0x0100029a / 0x010002b8 at ROM 0x367ac-0x367c0). The listed 0x144bc / 0x1452e / 0x146b4 / 0x14872 / 0x2fddc do NOT touch the records. They maintain the fault count table (e2m 1031, 125 x 10 bytes at 0x805a1c; status byte +8 = 0x805a24) that the fault-code triggers watch:
+- status 3: cm550_FUN_00014872 stores it when a fault turns active;
+- status 2: the same function stores it when the fault turns inactive;
+- status 1 / 0: cm550_diagnosticCodeRegistrar (0x14720) stores them when it reuses the snapshot slot of an active (3 -> 1) / inactive (2 -> 0) fault;
+- status 0: cm550_diagnosticTableEntryClear (0x2fddc).
+cm550_diagnosticCodeDebounceHandler (0x144bc) tests bit 0 as 'active' ((status & 1) == 0 means inactive). So a fault trigger with +4 set fires on the pass the status goes 0/2 -> 1/3, and with +4 clear on the pass it goes 1/3 -> 0/2. The fault code (+6) is matched against the code word of the 125 six-byte definitions at 0x8067c4 (cm550_FUN_00014872 copies that word as the Cummins fault code).
+
+CODE QUIRKS (documented in the comments): parameter compares are strict; a 1-byte threshold is masked to 0-255 even in signed mode; value_length other than 1 / 2 compares a dword. fault_code_flag 2 or more takes the fault path in the evaluator, but no fault index or address is ever set for it (those need exactly 1 / 0). A disabled trigger 1-3 counts as satisfied, so with all three disabled the AND condition is always true in automatic mode. The dump has exactly that (all four triggers disabled, mode 1), and both logged events carry AND flag 1 / OR flag 0. The 400-byte ring holds about 200 bytes before and 200 after a trigger. Event 1 is written once (UDEV01), and every later event overwrites event 2.
+
+NO CM848 TWIN: the CM848 e2m (CHR_CC_11.45.01.07) has no UD / DATALOGGER records. CM848's six cm848_lookupParameterIdAddress calls (name-only grep: 16 mentions, 6 calls) are cm848_processPciDiagnosticRequest x2, cm848_evaluateCalibratedMonitorDisableConditions (12-byte monitor-disable records with comparison types 1-8 and monitor masks, a different feature), and the three J1939 parameter-ID services. So all nine functions are standalone with cm550_.
+
+FUNCTION_DEFINITIONS.CSV (apply with the renames):
+(1) 0x00013ed8 has two rows keyed by the old name cm550_FUN_00013ed8. Change function_name to cm550_evaluateDataloggerTrigger and param 0's name condition_record_index -> trigger_index (ushort, unchanged). Its comment should say: the low byte is the index 0-3 into datalogger_triggers_cal; it also indexes the address dwords at 0x800356, the fault index bytes at 0x800366 and the previous status bytes at 0x80036e; the caller passes 0-2 from its loop counter and then 3. In the return row, 'condition' -> 'trigger'.
+(2) Optional, a full new prototype for 0x00014292 cm550_copyDataloggerSampleBuffer: return void / 0 source byte* (the long at +4) / 1 destination byte* (the long at +8). The caller pushes the destination first, so the arguments are in order. With byte* parameters the immediates 0x804fca / 0x80515a should render as datalogger_event_sample_buffers / + 400.
+(3) Optional, return-only void rows for 0x000138b6 and 0x00013a5c (no parameters). Their decompiled uint / undefined * returns are leftover D0: the only callers, cm550_FUN_0001b6d6 / cm550_FUN_0001b6e4, call them as statements and return. These rows remove the uVar1 / puVar1 return noise.
+
+UNVERIFIED RENDERING (read-only item, no build): after the build these greps on J90350.00.ghidra.cpp should be empty inside 0x138b6-0x14292: '(int)&datalogger', '0x803d6', '0x803d7', 'DAT_00803d6c', 'DAT_00803da8', '_DAT_00803dc'. The 11 '(int)&name + offset' lines are now at 8538 / 8635 / 8659 / 8671 / 8732 / 8817 / 8819 / 8849 / 8877 / 8881 / 8916. The byte-offset loops (offset register + 16 / + 6) may render as (&datalogger_triggers_cal[0].disable_flag)[offset] rather than [i].disable_flag, which is still field-named. 0x13ed8's index x 16 path should render datalogger_triggers_cal[trigger_index & 0xff].field. With the SECONDARY rows these names should disappear from the nine functions: flash_write_data_pointer, flash_write_end_address, fuel_demand_rating_table_size, fuel_demand_blend_input, scheduler_reserved_padding, scheduler_phase_execution_time. The byte reads of 0x80bac7 / 0x80bac9 will render as pieces of the two flag words; that is expected.
+
+JUNK ROWS (SECONDARY removals, 58): 5 inside the trigger address dwords (0x800358-0x800362), 1 inside the previous fault status bytes (0x800370), 51 inside the ring buffer (0x800376-0x800418) and 1 inside the event buffers (0x804fcd). All have type 'undefined', no comment, no absolute operand in the dumped ROM and zero .cpp references. Runtime evidence for the ring buffer: the dump's 400 bytes at 0x800374 are 40 identical 10-byte samples (00 00 00 00 00 00 00 00 7f 80 = engine speed / boost / fueling / throttle / coolant), and both 400-byte event copies at 0x804fca / 0x80515a hold the same 10-byte sample shape, so nothing else writes there. The three 4-byte matches of 0x800400 are at odd offsets inside data tables (0x8e2b / 0x3654d / 0x36551), so they are not code. No parameter ID resolves into 0x800340-0x800540. Build and diff before deleting.
+
+STALE REFERENCES: after applying, grep the other rows' comments and plates (both firmwares' CSVs and docs) for the nine old function names (cm550_FUN_000138b6 ... cm550_FUN_00014292), the six removed scalar names (datalogger_trigger_1_* / datalogger_trigger_4_disable_cal / datalogger_data_1_*) and every renamed secondary global, and update them.
+
+AFTER APPLYING: regenerate the headers (generate_headers.py functions, both firmwares per the repo rule) and output/parameter_id_lookup_table.csv (e2m_block_addresses.py --firmware cm550 --write-table): its firmware_variable column shows datalogger_data_1_length_cal for block 1283.
+
+NOT PROPOSED: UDADSZ (0x803dc2, e2m 1284 +0, dump 94) has no code reader. No local_rows: the struct typing will renumber temporaries, so name locals after a build. Lead for another item: bit 6 of the byte at 0x80bcd0 is the datalogger's manual trigger switch (the row there is debounced_value_for_rear_axle_ratio_switch_on_off; 0x807d5e is user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert). The scheduler slot wrappers 0x1b6d6 / 0x1b6e4 also run other subsystems and stay unnamed here.
+
+Evidence files (scratch): /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S2/listing2.txt (the Ghidra 12.2 CPU32 listing of every function), build_draft.py, cm550_table.csv."""
+
+answer = {
+    "item": "S2",
+    "summary": SUMMARY,
+    "structs": structs,
+    "globals": globals_,
+    "functions": functions,
+    "local_rows": [],
+    "rows_to_remove": remove,
+    "notes": NOTES,
+}
+json.dump(answer, open(OUT, "w"), indent=1)
+print(len(structs), "structs", len(globals_), "globals", len(functions), "functions", len(remove), "removals")

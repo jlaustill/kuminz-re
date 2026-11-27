@@ -1,0 +1,14 @@
+cm848: round 8 stage C - the gear ratio table as word[6], the inertia default, the shift logic initializer; docs
+
+- transmission_gear_ratio_table (0x40786a) is typed word[6]. Its one reader indexes it from that base (addi
+  r31,r31,30826 / lhzx @ 0x320f8), and the next word is the following table's length header. The torque model now
+  reads transmission_gear_ratio_table[param_1] (was *(ushort *)(&... + param_1 * 2)).
+- 0x40781c = transmission_vehicle_inertia_default (e2m 8BBC +10 RE_Inertia_Default, 53; lhz @ 0x331d4).
+- mpc555_initProtectionFilterVariables -> cm848_initializeTransmissionShiftLogic: it sets the inertia default, clears
+  the anti-hunt / low range flags and sets every governor pressure table lookup cache to 2.
+- Docs: task 046 (round 8: the method, the stages, thin evidence, leads), firmware/CLAUDE.md (round 8), work/todo.md
+  046, the session README, the PR body.
+- Checks: the stage diff is only the intended render; one function moved a declaration. lookup_tables.py reports 0
+  sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,35 @@
+cm848: round 53 stage A - eleven more e2m blocks record for record; the sensor-fault substitutes named by their fault
+
+semantic_record_matches.py is round 52's matcher, ranked by a token-overlap meaning score (semantic_score.py: e2m
+abbreviations expanded, the record name and description against the row name). Each block's best base was then read
+by meaning:
+- 8B20 (RAM 0x40b2f4): the fan speed sensor words, the fan's twin of the transmission's 8BB4.
+- 160A / 1609 (RAM 0x40b9c8 / ROM 0x64302): the PTO-disengaged and battery-voltage-in-range flags and their
+  calibrations.
+- 8B03 / 8B04 (0x40868a / RAM 0x40b14e): the sensor-fault substitutes and the in-use values.
+  - The eight substitutes are now named by the fault that selects them, as the e2m's High_Default / Low_Default are.
+  - cm848_selectSensorValuesInUse uses coolant_temperature_low_substitute on the HIGH fault, so the coolant and intake
+    temperature pair went by value while the pressure and pedal pair went by fault. All eight are now
+    <sensor>_high_fault_substitute / _low_fault_substitute.
+- 8BB1 (0x408706): the learned output-speed-to-vehicle-speed ratio limits.
+- 8B8A (0x408b78): the road speed governor's rail-leak limit, and a new row drivetrain_gear_ratio_detection_margin
+  (Fractional_GR_Difference, the margin cm848_updateDrivetrainRatio adds to the top-gear and gear-down ratios).
+- 8A7D (RAM 0x40b4ff): the J1850 PCI received data.
+  - pci_receive_message_13_state_2_flag -> pci_four_wheel_drive_status_flag (J1850_4WD_Status).
+  - The middle of the block holds the immobilizer words this build adds.
+- 8A86 (RAM 0x3fcd88): the brake switch pair counters.
+- 8ADA (RAM 0x40b5a8): the vehicle speed words. That is the semantic anchor round 51's 0x40b5a8 lead needed.
+- 8ADB (EEPROM mirror 0x3fd8f0): the vehicle speed sensor calibrations.
+- 8B0B (0x408d1c): the transfer case switch learning.
+- Records with no access get no row: 8A7D +05 / +1A and 8ADB +0E, each listed on its block's first row.
+- None of the renamed names exist in CM550.
+- The matcher's top hit 8B7C (AFR) exists only in older layouts and its meanings disagree with the rows, so it was
+  not applied.
+
+Proof (prove_r53.sh: the casts and two char literals folded, then prove_caches.py):
+- 0 of 1968 functions differ once the old labels map to the new; no old name is left in the .cpp.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

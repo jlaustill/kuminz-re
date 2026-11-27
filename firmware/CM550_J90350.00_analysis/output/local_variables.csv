@@ -13,72 +13,47 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 # Security Authentication Functions (FIXED - have old Ghidra names)
 # -----------------------------------------------------------------------------
 
-# bitPackingAlgorithm @ 0x2fbd8 - Core bit manipulation for security auth
+# unscrambleSecurityKey @ 0x2fbd8 - Core bit manipulation for security auth
 # Algorithm: Mask table separates bits into forward/backward streams, XOR phase, reorder phase
-0x0002fbd8,bitPackingAlgorithm,local_10,working_buffer,byte[10],Intermediate buffer for bit manipulation
-0x0002fbd8,bitPackingAlgorithm,local_6,input_byte_index,char,Current input byte being processed 0-9
-0x0002fbd8,bitPackingAlgorithm,current_mask,current_mask,byte,Current mask byte from MASK_TABLE (already named)
-0x0002fbd8,bitPackingAlgorithm,cVar2,loop_counter,char,Generic loop counter for buffer operations
-0x0002fbd8,bitPackingAlgorithm,cVar6,backward_byte_index,char,Backward write byte position 9->0
-0x0002fbd8,bitPackingAlgorithm,forward_byte_index,forward_byte_index,char,Forward write byte position 0->9 (already named)
-0x0002fbd8,bitPackingAlgorithm,bVar5,bit_position,byte,Current bit position within byte 0-7
-0x0002fbd8,bitPackingAlgorithm,bVar4,backward_bit_counter,byte,Backward bit position 0-7 resets each byte
-0x0002fbd8,bitPackingAlgorithm,bVar3,input_bit_value,byte,Extracted input bit shifted to MSB position
-0x0002fbd8,bitPackingAlgorithm,pcVar7,mask_table_ptr,char*,Pointer to MASK_TABLE lookup
-0x0002fbd8,bitPackingAlgorithm,pbVar8,forward_write_ptr,byte*,Pointer for forward direction writes
-0x0002fbd8,bitPackingAlgorithm,pbVar9,backward_write_ptr,byte*,Pointer for backward direction writes
-0x0002fbd8,bitPackingAlgorithm,iVar1,cached_input_offset,int,Cached input_buffer + input_byte_index
+0x0000b7bc,mc68k_processAnalogSensorChannels,filter_state,channel_record,sensor_state_t*,The A/D channel record this pass works on (0x80a2aa + 22 x channel; one per channel up to 0x80a4d0): its filter at +0 goes to cm550_exponentialMovingAverage (PR #53 round 88)
+0x0000b7bc,mc68k_processAnalogSensorChannels,psVar7,channel_configuration,sensor_configuration_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel; stepped with channel_record) (PR #53 round 89)
 
-# hourMeterSecurityValidator @ 0x2fcdc - Validates auth payload against security key + hour meter
+# validateSecurityKey @ 0x2fcdc - Validates auth payload against security key + hour meter
 # Returns 0 on success, 1 on failure. Lockout after 17 (0x11) failed attempts.
-0x0002fcdc,hourMeterSecurityValidator,bVar1,all_keys_match,bool,True if all 6 key bytes match stored key
-0x0002fcdc,hourMeterSecurityValidator,uVar2,validation_result,byte,Return value 0=success 1=failure
-0x0002fcdc,hourMeterSecurityValidator,key_matches,copy_counter,bool,Reused as byte copy loop counter 0-4
-0x0002fcdc,hourMeterSecurityValidator,cVar3,key_byte_index,char,Loop counter 0-5 for key comparison
-0x0002fcdc,hourMeterSecurityValidator,puVar4,hour_meter_dest_ptr,uint*,Destination for hour meter copy
-0x0002fcdc,hourMeterSecurityValidator,pbVar5,key_compare_ptr,byte*,Pointer walking through extracted_key
-0x0002fcdc,hourMeterSecurityValidator,puVar6,hour_meter_src_ptr,byte*,Source for hour meter copy
-0x0002fcdc,hourMeterSecurityValidator,extracted_hour_meter,extracted_hour_meter,uint,Hour meter from auth (already named)
-0x0002fcdc,hourMeterSecurityValidator,abStack_e,extracted_key,byte[6],6-byte key from auth payload
-0x0002fcdc,hourMeterSecurityValidator,auStack_8,hour_meter_bytes,byte[4],4-byte hour meter from auth payload
+0x0002fcdc,validateSecurityKey,bVar1,all_keys_match,bool,True while every key byte so far matches security_master_password_cal
+0x0002fcdc,validateSecurityKey,uVar2,validation_result,byte,Return value 0 = accepted / 1 = refused
+0x0002fcdc,validateSecurityKey,bVar3,hour_meter_byte_count,byte,Counts the hour meter bytes copied into extracted_hour_meter (1-3) (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,cVar4,key_byte_index,char,Loop counter 0-5 for the key comparison (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,puVar5,hour_meter_copy_destination,uint*,Walks extracted_hour_meter byte by byte (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,local_12,extracted_hour_meter,uint,The hour meter from the auth payload: its top three bytes are compared with key_on_hour_meter's (a difference below 26 is accepted) (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,abStack_e,extracted_key,byte[6],6-byte key from auth payload
+0x0002fcdc,validateSecurityKey,auStack_8,hour_meter_bytes,byte[4],4-byte hour meter from auth payload
 
 # diagnosticServiceSecurityValidator @ 0x21982 - Checks if service requires auth
 # Returns 0xFF on success, 0x02 for length error, 0x03 for auth failure
-0x00021982,diagnosticServiceSecurityValidator,bVar2,service_id,byte,Diagnostic service ID from message
-0x00021982,diagnosticServiceSecurityValidator,uVar1,msg_length,short,Message length from param_1+4 (Ghidra 12.2 auto-name before renames; was sVar1 on the 12.0 DEV build)
-0x00021982,diagnosticServiceSecurityValidator,iVar4,required_param_len,int32_t,Required param length 1/3/5 by service (Ghidra 12.2 auto-name before renames - the 4th local; was uVar4 ushort on the 12.0 DEV build - 12.2 infers int and a ushort type splits the variable)
-0x00021982,diagnosticServiceSecurityValidator,cVar3,auth_result,char,Result from hourMeterSecurityValidator
+0x00021982,cm550_validateJ1939DiagnosticRequest,bVar2,service_id,byte,Diagnostic service ID from message
+0x00021982,cm550_validateJ1939DiagnosticRequest,uVar1,message_length,short,Message length from param_1+4 (Ghidra 12.2 auto-name before renames; was sVar1 on the 12.0 DEV build)
+0x00021982,cm550_validateJ1939DiagnosticRequest,iVar4,required_parameter_length,int32_t,Required param length 1/3/5 by service (Ghidra 12.2 auto-name before renames - the 4th local; was uVar4 ushort on the 12.0 DEV build - 12.2 infers int and a ushort type splits the variable)
+0x00021982,cm550_validateJ1939DiagnosticRequest,cVar3,authentication_result,char,Result from validateSecurityKey
 
 # j1708DiagnosticCommandDispatcher @ 0x15f8e - J1708 diagnostic command processor
-0x00015f8e,j1708DiagnosticCommandDispatcher,wVar3,currentTimerCount,word,Timer count at function entry for timeout calculation
-0x00015f8e,j1708DiagnosticCommandDispatcher,wVar4,elapsedTimerCount,word,Timer count for elapsed time comparison
+0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,wVar3,currentTimerCount,word,Timer count at function entry for timeout calculation (the auto-name moved from wVar3 when the J1708 pointer record was typed: PR #53 round 95) | the auto-name moved back to wVar3 when the EEPROM write queue functions got byte returns (PR #53 round 96)
 
-# memoryOperationDispatcher @ 0x2148a - Routes memory read/write operations
+# writeJ1939DiagnosticMemory @ 0x2148a - Routes memory read/write operations
 # Service 0x4B handler - processes memory write requests with authentication
 # Returns: 0=success, 2=invalid_length, 3=auth_failed, 7=logging_error, 10=write_denied, 0x1a=auth_missing
-0x0002148a,memoryOperationDispatcher,uVar1,calculated_msg_length,ushort,Calculated message length = operation_flags + addr_offset
-0x0002148a,memoryOperationDispatcher,bVar2,has_auth_payload,bool,True if 10-byte auth payload is included in message
-0x0002148a,memoryOperationDispatcher,dVar3,region_type_copy,dword,Copy of region type for switch statement
-0x0002148a,memoryOperationDispatcher,cVar5,auth_validation_result,char,Result from hourMeterSecurityValidator (0=pass)
-0x0002148a,memoryOperationDispatcher,uVar4,memcpy_return,uint,Return value from memcpy operation
 
-# addressRangeValidator @ 0x3460e - Validates memory address against range table
+# lookupApplicationMemoryRegionType @ 0x3460e (was addressRangeValidator; PR #53 round 72) - the region type lookup
 # Returns region type: 0=direct, 3=secured, 4=denied, 5=logging, 9=invalid
-0x0003460e,addressRangeValidator,uVar1,high_bytes_result,undefined3,High 3 bytes of return value (unused)
-0x0003460e,addressRangeValidator,bVar2,table_index,byte,Current entry index in address_range_validator_table (0-4)
-0x0003460e,addressRangeValidator,uVar3,end_address,uint,Calculated end address = start + length - 1
-0x0003460e,addressRangeValidator,puVar4,table_entry_ptr,uint*,Pointer to current 10-byte table entry
 
-# memoryOperationFromMessageExtended @ 0x217de - Wrapper that extracts params from J1939 message
-# Extracts address (4 bytes) and flags from message then calls memoryOperationDispatcher
-0x000217de,memoryOperationFromMessageExtended,local_c,operation_flags,uint,Extracted operation flags from message byte 5
-0x000217de,memoryOperationFromMessageExtended,local_8,address_buffer,byte[2],Buffer for address extraction
-0x000217de,memoryOperationFromMessageExtended,wStack_6,operation_size,word,Operation size extracted from message
+# handleJ1939WriteMemoryService @ 0x217de - Wrapper that extracts params from J1939 message
+# Extracts address (4 bytes) and flags from message then calls writeJ1939DiagnosticMemory
+0x000217de,handleJ1939WriteMemoryService,local_c,length,uint,The byte count - request byte 5 (was operation_flags; PR #53 round 72)
+0x000217de,handleJ1939WriteMemoryService,local_8,address,dword,The address - request bytes 1-4 (was address_buffer byte[2] - with wStack_6 'operation_size' it held the address as two halves; PR #53 round 72)
 
-# memoryOperationFromMessage8Byte @ 0x21826 - 8-byte variant of message handler
-0x00021826,memoryOperationFromMessage8Byte,local_c,operation_flags,dword,Extracted 4-byte operation flags
-0x00021826,memoryOperationFromMessage8Byte,local_8,address_buffer,byte[2],Buffer for address extraction
-0x00021826,memoryOperationFromMessage8Byte,wStack_6,operation_size,word,Operation size for dispatcher
+# handleJ1939WriteMemoryLongLengthService @ 0x21826 (was memoryOperationFromMessage8Byte; PR #53 round 72) - service 0x4d: the 4-byte length variant
+0x00021826,handleJ1939WriteMemoryLongLengthService,local_c,length,dword,The byte count - request bytes 5-8 (was operation_flags; PR #53 round 72)
+0x00021826,handleJ1939WriteMemoryLongLengthService,local_8,address,dword,The address - request bytes 1-4 (was address_buffer byte[2] - with wStack_6 'operation_size' it held the address as two halves; PR #53 round 72)
 
 # -----------------------------------------------------------------------------
 # OTHER FUNCTIONS (need old Ghidra names discovered via decompilation)
@@ -93,4 +68,93 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 # 0x0002238e,diagMemoryReadResponseBuilder,TODO,first_byte,char,First byte of data pointer
 
 # ... (other functions need old names discovered)
-
+0x00003836,cm550_huffmanDecompressMain,local_c0a,tree_nodes,huffman_tree_node_t[513],The tree node array: cleared here (513 nodes) - then built by cm550_huffmanTreeBuilder and walked by cm550_huffmanDecompress (PR #53 round 85)
+# PR #53 round 94: rows re-targeted at each body's own auto-names (a build without them showed the names)
+0x0002e9ac,clearWorkingRam,psVar2,working_ram_pointer,dword*,The next dword to clear (clr.l (a2)+) from 0x800000 up to 0x80def4 (PR #53 round 94)
+0x0002e9ac,clearWorkingRam,psVar1,chunk_end,dword*,The end of this pass: 256 bytes on or 0x80def4; the loop runs while working_ram_pointer <= chunk_end - inclusive (the CM848 twin's quirk) (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,local_10,working_buffer,byte[10],The 10-byte work buffer: the key's bits are sorted into it from both ends (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,local_6,input_byte_index,char,The input byte being sorted (0-9) (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,iVar2,input_byte_offset,int32_t,input_byte_index widened to index input_buffer (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,bVar1,input_bit,byte,The input bit at input_bit_position moved to bit 7 (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,bVar6,input_bit_position,byte,The bit of the input byte being sorted (0-7) (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,bVar5,output_bit,byte,The bit written: 1 << (7 - the front bit count) at the front / 1 << backward_bit_count at the back (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,bVar7,backward_bit_count,byte,The next bit of the back byte (0-7; the back fills from bit 0) (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,cVar8,forward_byte_index,char,The front byte being filled (0 up) (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,cVar4,backward_byte_index,char,The back byte being filled (9 down) (PR #53 round 94)
+0x0002fbd8,unscrambleSecurityKey,pbVar11,forward_write_pointer,byte*,working_buffer + forward_byte_index (PR #53 round 94)
+# PR #53 round 98: the PGN 61184 request chain's stack copies; pass-through results and table walkers
+0x00011908,handleJ1939RestartService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x000200a4,handleJ1939DisableBroadcastService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x000200b4,handleJ1939EnableBroadcastService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,cVar1,lookup_result,char,cm550_lookupParameterIdAddress's result: 0 = the ID resolved (PR #53 round 98)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,bVar2,service_result,byte,writeJ1939DiagnosticMemory's result; or 8 when the ID does not resolve (PR #53 round 98)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,local_8,parameter_address,dword,The address cm550_lookupParameterIdAddress stored for the ID (PR #53 round 98)
+0x0002167e,handleJ1939WriteByParameterIdService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x0002167e,handleJ1939WriteByParameterIdService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x0002167e,handleJ1939WriteByParameterIdService,local_a,length,uint,The byte count: request data byte 3 (PR #53 round 98)
+0x000216c6,handleJ1939WriteByParameterIdLongLengthService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x000216c6,handleJ1939WriteByParameterIdLongLengthService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x000216c6,handleJ1939WriteByParameterIdLongLengthService,local_a,length,dword,The byte count: 4 bytes copied from request data + 3 (PR #53 round 98)
+0x00021714,handleJ1939WriteByParameterIdShortOffsetService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x00021714,handleJ1939WriteByParameterIdShortOffsetService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x00021714,handleJ1939WriteByParameterIdShortOffsetService,local_a,offset,uint,The offset into the parameter: request data bytes 3-4 (PR #53 round 98)
+0x00021714,handleJ1939WriteByParameterIdShortOffsetService,local_e,length,uint,The byte count: request data byte 5 (PR #53 round 98)
+0x00021778,handleJ1939WriteByParameterIdLongOffsetService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x00021778,handleJ1939WriteByParameterIdLongOffsetService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x00021778,handleJ1939WriteByParameterIdLongOffsetService,local_a,offset,dword,The offset into the parameter: 4 bytes copied from request data + 3 (PR #53 round 98)
+0x00021778,handleJ1939WriteByParameterIdLongOffsetService,local_e,length,dword,The byte count: 4 bytes copied from request data + 7 (PR #53 round 98)
+0x000217de,handleJ1939WriteMemoryService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x00021826,handleJ1939WriteMemoryLongLengthService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x000224f4,readJ1939DiagnosticMemoryByParameterId,cVar1,lookup_result,char,cm550_lookupParameterIdAddress's result: 0 = the ID resolved (PR #53 round 98)
+0x000224f4,readJ1939DiagnosticMemoryByParameterId,bVar2,service_result,byte,readJ1939DiagnosticMemoryAndRespond's result; or 8 when the ID does not resolve (PR #53 round 98)
+0x000224f4,readJ1939DiagnosticMemoryByParameterId,local_8,parameter_address,dword,The address cm550_lookupParameterIdAddress stored for the ID (PR #53 round 98)
+0x00022530,handleJ1939ReadByParameterIdLongLengthService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x00022530,handleJ1939ReadByParameterIdLongLengthService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x00022530,handleJ1939ReadByParameterIdLongLengthService,local_a,length,dword,The byte count: 4 bytes copied from request data + 3 (PR #53 round 98)
+0x0002257c,handleJ1939ReadByParameterIdShortOffsetService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x0002257c,handleJ1939ReadByParameterIdShortOffsetService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x0002257c,handleJ1939ReadByParameterIdShortOffsetService,local_a,offset,uint,The offset into the parameter: request data bytes 3-4 (PR #53 round 98)
+0x0002257c,handleJ1939ReadByParameterIdShortOffsetService,local_e,length,uint,The byte count: request data byte 5 (PR #53 round 98)
+0x000225e0,handleJ1939ReadByParameterIdLongOffsetService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x000225e0,handleJ1939ReadByParameterIdLongOffsetService,local_6,parameter_id,ushort,The e2m block ID: 2 bytes copied from request data + 1 (PR #53 round 98)
+0x000225e0,handleJ1939ReadByParameterIdLongOffsetService,local_a,offset,dword,The offset into the parameter: 4 bytes copied from request data + 3 (PR #53 round 98)
+0x000225e0,handleJ1939ReadByParameterIdLongOffsetService,local_e,length,dword,The byte count: 4 bytes copied from request data + 7 (PR #53 round 98)
+0x00022646,handleJ1939ReadMemoryService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x00022646,handleJ1939ReadMemoryService,local_8,address,dword,The address to read: 4 bytes copied from request data + 1 (PR #53 round 98)
+0x00022646,handleJ1939ReadMemoryService,local_c,length,uint,The byte count: request data byte 5 (PR #53 round 98)
+0x0002268e,handleJ1939ReadMemoryLongLengthService,bVar1,service_result,byte,The worker's result; returned unchanged (PR #53 round 98)
+0x0002268e,handleJ1939ReadMemoryLongLengthService,local_8,address,dword,The address to read: 4 bytes copied from request data + 1 (PR #53 round 98)
+0x0002268e,handleJ1939ReadMemoryLongLengthService,local_c,length,dword,The byte count: 4 bytes copied from request data + 5 (PR #53 round 98)
+0x0002f4be,cm550_dispatchJ1939PgnRequest,bVar1,entry_index,byte,The index of the table entry under test; equal to the count when no entry matched (PR #53 round 98)
+0x0002f4be,cm550_dispatchJ1939PgnRequest,pjVar2,entry,j1939_pgn_handler_entry_t*,The j1939_pgn_dispatch_table entry under test (PR #53 round 98)
+0x0002eea2,cm550_dispatchJ1939DiagnosticServiceRequest,result_code,result_code,byte,0x18 (no such service) until a table entry matches; then the validator's result and; when that is 0xff; the handler's. Anything but 0xff is answered with sendJ1939DiagnosticServiceResponse (PR #53 round 98)
+0x0002eea2,cm550_dispatchJ1939DiagnosticServiceRequest,bVar1,entry_index,byte,The index of the table entry under test (PR #53 round 98)
+0x0002eea2,cm550_dispatchJ1939DiagnosticServiceRequest,pjVar2,entry,j1939_diagnostic_service_entry_t*,The j1939_diagnostic_service_table entry under test (PR #53 round 98)
+0x00018fcc,cm550_updateEngineProtectionShutdown,pcVar7,state,cm550_engine_protection_channel_state_t*,The state record of the channel in work (engine_protection_channel_state_table + 46 x channel): stepped with configuration in the channel loop and alone in the disabled branch's clearing loop (PR #53 round 98)
+0x00018fcc,cm550_updateEngineProtectionShutdown,uVar2,channel_index,uint,The channel number of the loop (0-8); compared with engine_protection_shutdown_active_channel (PR #53 round 98)
+0x00018fcc,cm550_updateEngineProtectionShutdown,EVar3,channel,ENGINE_PROTECTION_CHANNEL,channel_index as the ENGINE_PROTECTION_CHANNEL value stored in engine_protection_shutdown_active_channel with the shutdown command (S1's row was keyed sVar3 as channel_index_word: the copy is enum-typed since the global is; PR #53 round 98)
+0x00018fcc,cm550_updateEngineProtectionShutdown,uVar5,shutdown_enable_bit_index,uint,The table bit of the channel's shutdown enable in the algorithm enable words: 114 + 4 x channel (word = index >> 4 from algorithm_enable_flags_0_cal; bit = index & 15) (PR #53 round 98)
+0x00018fcc,cm550_updateEngineProtectionShutdown,sVar6,history_record_offset,short,The byte offset of the channel's record in engine_protection_channel_history_table (30 x channel) (PR #53 round 98)
+0x00018fcc,cm550_updateEngineProtectionShutdown,wVar1,input_past_shutdown_threshold,word,1 when cm550_isEngineProtectionInputPastThreshold finds the input past the channel's shutdown severity threshold (threshold select 3): the fueling one; then the engine speed one (PR #53 round 98)
+0x0001e956,cm550_processJ1587ReceivedMessage,bVar1,message_length,byte,The record's length byte (the MID plus the parameter bytes): above 20 the message is dropped; the walk ends when consumed_byte_count reaches it (PR #53 round 98)
+0x0001e956,cm550_processJ1587ReceivedMessage,cVar2,sender_message_id,char,The MID of the sender; the record's second byte: searched in j1587_diagnostic_data_request_allowed_message_ids for a PID 195 request (PR #53 round 98)
+0x0001e956,cm550_processJ1587ReceivedMessage,bVar7,consumed_byte_count,byte,Bytes of the message handled so far: 1 for the MID; plus each parameter's length (PR #53 round 98)
+0x0001e956,cm550_processJ1587ReceivedMessage,cVar3,addressed_message_id,char,The MID a PID 128 or PID 195 request is addressed to: only 0x80 (MID 128; the engine) is served (PR #53 round 98)
+0x0001e956,cm550_processJ1587ReceivedMessage,pcVar8,allowed_message_id_pointer,char*,Walks j1587_diagnostic_data_request_allowed_message_ids (at most 10 entries; 0 ends it) (PR #53 round 98)
+0x0001e956,cm550_processJ1587ReceivedMessage,sVar4,parameter_id_byte_index,short,The requested PID >> 3: the byte of the supported and faulted PID maps (PR #53 round 98)
+0x000229ea,sendJ1939TransportAbort,local_12,frame_can_id,dword,The abort frame's CAN identifier: 0x18EC; the destination; the engine node source address (PR #53 round 98)
+0x000229ea,sendJ1939TransportAbort,local_e,frame_data_length,word,8 (PR #53 round 98)
+0x000229ea,sendJ1939TransportAbort,local_c,frame_data_pointer,byte*,Points at the 8 frame bytes on the stack (PR #53 round 98)
+0x000229ea,sendJ1939TransportAbort,bStack_13,frame_queue_status,byte,The status cm550_sendCanSingleFrame writes; not read here (PR #53 round 98)
+0x00022a58,sendJ1939TransportEndOfMessageAcknowledge,local_12,frame_can_id,dword,The frame's CAN identifier: 0x18EC; the destination; the engine node source address (PR #53 round 98)
+0x00022a58,sendJ1939TransportEndOfMessageAcknowledge,local_e,frame_data_length,word,8 (PR #53 round 98)
+0x00022a58,sendJ1939TransportEndOfMessageAcknowledge,local_c,frame_data_pointer,byte*,Points at the 8 frame bytes on the stack (PR #53 round 98)
+0x00022a58,sendJ1939TransportEndOfMessageAcknowledge,bStack_13,frame_queue_status,byte,The status cm550_sendCanSingleFrame writes; not read here (PR #53 round 98)
+0x00022ad8,sendJ1939TransportClearToSend,local_12,frame_can_id,dword,The frame's CAN identifier: 0x18EC; the destination; the engine node source address (PR #53 round 98)
+0x00022ad8,sendJ1939TransportClearToSend,local_e,frame_data_length,word,8 (PR #53 round 98)
+0x00022ad8,sendJ1939TransportClearToSend,local_c,frame_data_pointer,byte*,Points at the 8 frame bytes on the stack (PR #53 round 98)
+0x00022ad8,sendJ1939TransportClearToSend,local_13,frame_queue_status,byte,The status cm550_sendCanSingleFrame writes: the function's return value (PR #53 round 98)
+0x0000d23c,cm550_calculateAllSpeedGovernorNoLoadFuel,wVar1,coolant_fuel_adjustment,word,Result of the coolant temperature adjustment lookup (PR #53 round 98)
+0x0000d23c,cm550_calculateAllSpeedGovernorNoLoadFuel,wVar2,friction_fuel,word,Result of the friction fuel lookup at the selected reference speed (PR #53 round 98)
+0x0000d3e6,cm550_calculateAllSpeedGovernorThrottleDroopGains,uVar1,droop_times_integral_gains,uint,u = selected droop slope x (integral gain 1 + integral gain 2); the gain is 1024 x (K - u) / (K + u) (PR #53 round 98)
+0x0000faa6,cm550_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,uVar1,droop_line_speed,uint,Reference speed before droop plus the droop term; before the cap at 40000 (PR #53 round 98)

@@ -1,0 +1,41 @@
+cm848: round 45 stage A - the table gap sweep: six more e2m blocks past the dumped table, one rename, four names
+
+Round 44's tiling is now systematic:
+- sweep_table_gaps.py sizes every dumped parameter ID table block from its default e2m records and lists the gaps
+  between consecutive blocks.
+- match_gap_signatures.py keeps the absent CHR_CC blocks (one, or an ordered pair) whose record widths land on the
+  CM848 rows' asm-verified widths and cover every row in the gap.
+- The sweep finds round 44's 8B4E + 8BAC independently as the only perfect match for its 40-byte gap. It agrees with
+  the earlier offset alignments of 8B3C, 1496, 14EF and 8C2F.
+
+Placed, from the default CHR_CC_11.45.01.07 (each block has one layout across the releases):
+- 8A88 (tiled): the injector diagnostic debounce limits (HPCR_*_Debounce_Counts), 4 rows cited.
+- 8A89 + 1D41 (tiled; the only width match for the gap between 17C3 and 1D8D):
+  - 8A89 is the fuel level rationality monitor: the 4 fuel_level_low_distance_* calibrations.
+  - 1D41 is the fuel pressure idle rationality test: the 9 fuel_pressure_sensor_plausibility_* rows.
+  - fuel_pressure_sensor_plausibility_maximum_governor_output -> fuel_pressure_sensor_plausibility_maximum_throttle
+    (FP_Idle_Throttle_Limit, %THROTTLE; the code compares all_speed_governor_equivalent_throttle).
+- 15C7 (tiled, ROM): the P0500 vehicle speed sensor monitor, 8 rows cited.
+  - +4 VSS_Stopped_RPM gets a documentation row, vehicle_speed_sensor_stopped_engine_speed; no direct access found.
+- 8A7E (tiled): the oil pressure gauge and the low oil switch.
+  - Two rows gain names: engine_oil_pressure_filter_coefficient (+4 OPG_Pressure_Filter_Constant), and its EMA state
+    at 0x3fceb4, engine_oil_pressure_filter_state.
+  - Two new rows, both read by cm848_processEngineOilPressure: low_oil_switch_chime_enable (+8) and
+    engine_oil_pressure_default (+C).
+  - This truck runs the switch-only path, so the sensor-path threshold is unused.
+  - The stuck and running count limits keep their names; the code matches their records.
+- 14EB (anchored at the start, by field match): the J1939 DM13 state. Its rows already quoted the bracket codes.
+- 8B3C (round 12): its three uncited rows gain citations.
+
+Rejected:
+- 8D04: its widths fit 0x40a264, but its throttle valve actuator records land on J1939 anti-theft rows.
+- 8B06: EEPROM 0x34 is eeprom_version_marker.
+
+Proof:
+- prove_caches.py: 1967 of 1968 functions match. The other, mpc555_tickTransferTimeoutAndRuntimeCounter, differs
+  only in the order of its local declarations, as in round 44.
+- verify is byte-identical; thunks 18 / 14.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,32 @@
+Skeptic notes, batch W2 (CM550 106B words 7 / 8 / 9 / 11 / 12 / 13 / 14) - working file, not a report.
+
+EVIDENCE GATHERED (all from scratch; scripts in this folder)
+- absrefs.py: every 32-bit operand 0x803ca2-0x803cb1 in J90350.00.rom.bin at any byte offset = 30 hits, all even:
+  29 x 3039 (move.w (abs).l,d0) + andi.w (0240) / andi.l (0280) with one bit, 1 x 23fc (move.l #0x803cae,(0x80054c).l at 0x15dd2).
+  w7 1 (0x1983e 0x1000) | w8 2 (0x1caec 0x1000 l, 0x1cafa 0x2000 l) | w9 0 | w10 0 | w11 7 (0xebac 4, 0xebe0 2, 0x15fe8 1,
+  0x16396 2, 0x163be 4, 0x1ff4e 8, 0x212c0 8; all andi.w) | w12 12 (0xc19c 8 w, 0xc3ea 0x10 l, 0xfa1c 0x40 l, 0x1850e 0x40 l,
+  0x1abcc 0x10 w, 0x1ad52 0x20 l, 0x1ca9a 2 l, 0x1cd96 0x10 l + sne, 0x26546 1 w, 0x265a0 1 w, 0x26646 0x4000 w, 0x34c3e 4 w)
+  | w13 6 (0x15830 0x2000 w, 0x15850 0x4000 w, 0x204e6 0x80 w, 0x20cbe 0x80 l, 0x20e5a 0x80 l, 0x32ed4 0x80 w) | w14 1 (0x207d0 8 l).
+  No EEPROM-form operand (0x01000198-0x010001a7), no (d16,An) use off the mirror base, no other register loaded with a block address.
+- 15 x movea.l #0x803c94,a0 + move.w (0,a0,dn.w*2): m68k.py (own disassembler) read all five protection functions:
+  0x19702 k0 (moveq #112), 0x18e0c k1 (moveq #113), 0x18fcc k2 (moveq #114), 0x18ac4 and 0x18cb6 k2 + k3 (+2 / +3 with divsl
+  remainder), loops over 9 x 36-byte configs 0x807032-0x807176; history bit move.w #0x1a0. 0x206a8 (switch pair copier,
+  args 54/1 54/4 33/6 32/0 54/2 -> words 15 / 16 only) and 0x20890 (descriptor table 0x20108, 17 entries of 10 bytes).
+- Channel inputs are set by ROM code (vp44_engineProtectionSystemInit 0x1873e), not only seen in the dump:
+  0 0x8091e6 EPCVSWLO / 1 0x80a336 ADCLTPFT / 2 0x80a26a EPIMTPFT / 3 0x80a30a ADOLPRFT / 4 0x80a46a ADWFFT /
+  5 0x80a320 ADFTBSPR / 6 0x80a2f4 ADSYFPFT (ADSYFPCA = ENGINE_SYNC_FUEL_PRESSURE_CHANNEL_ADDRESS) / 7 0x80a254 EPFLTP /
+  8 0x80a3ba ADAAPRFT. e2m 10B3 +0 EPSOAE: 'NO = 255, C. LEV. = 0, C. TEMP. = 1, IMT = 2, OIL PRESS. = 3'.
+- Dumps: w7 0xffff, w8 0, w9 0, w10 0, w11 0x000b, w12 0xbb87, w13 0, w14 0 (EEPROM = RAM). CM848: w9 0, w11 0x000b, w14 0.
+- Switch layer: sample bit s -> status 0x80bcce + s/8; mask bytes [1] [0] [3] [2] of 0x80054c over status bytes 0 1 2 3;
+  user values 0x80bcd8 + s/8; priority 0x80bd4a + s (e2m 12A8 +s); defaults 12FC bit s; inversion 1234 bit s; all four
+  blocks + 106B masks agree on the function of every switch the proposal names.
+
+AMENDMENTS FOUND (comment level unless noted)
+- word 7: type name judgment (no bit differs from CM848 -> unprefixed algorithm_enable_flags_7_t by the twin rule);
+  row comment 'oil pressure start-up inhibit' -> start-up fueling derate (EPFLSRTM; CM848 label Fueling_Startup_Derate_Time).
+- word 7 bit 14: of the restart checks only cm550_protectionState1DiagnosticValidator reads it (the evaluator skips channel 3).
+- word 9 bits 4-11: EPOE* / EPOS* are in 18 other files, not 20.
+- word 11 bit 4: JCRWDXEN S mask 0x10 in 13 other files, not 14.
+- word 12 bit 10: DGOBFUHN S mask 0x400 in 21 other files (16 CHR + 5 ISB), N without a bit in 4 more; not 26.
+- word 12 bit 14: '- BIT 14' in 9 other files, not 13.
+- notes only: EPWF / EPBS / EPFP / EPAA are in 27 files (not 33); 0x1cd96 is andi.l + sne (no branch); AD25OD in 5 files.

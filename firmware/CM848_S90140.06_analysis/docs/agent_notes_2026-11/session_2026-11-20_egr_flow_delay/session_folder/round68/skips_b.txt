@@ -1,0 +1,8 @@
+ng: Variable 'bVar2' not found in cm848_validateWriteAuth (GhidraScript)  
+ng: Variable 'iVar2' not found in mpc555_keyOnStateMachine (GhidraScript)  
+ng: Variable 'puVar1' not found in cm848_copyBootKernelToRam (GhidraScript)  
+ng: Variable 'puVar2' not found in cm848_copyBootKernelToRam (GhidraScript)  
+ng: Variable 'seed_high_byte' not found in mpc555_generateSerialChallenge (GhidraScript)  
+ng: Variable 'seed_value' not found in mpc555_generateSerialChallenge (GhidraScript)  
+ng: Variable 'uVar1' not found in mpc555_keyOnStateMachine (GhidraScript)  
+ng: Variable 'wVar3' not found in mpc555_keyOnStateMachine (GhidraScript)  

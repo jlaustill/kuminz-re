@@ -1,0 +1,15 @@
+cm848: round 9 closing - docs, resolved-name notes, the round 9 logs, verify
+
+- **Docs:**
+  - task 046: the round 9 section (the column-5 method, stages A-D, leads), and the round 8 leads are marked
+    resolved. The note corrects round 8's guess for 8BBB (0x4077f6, not 0x4077cc).
+  - firmware/CLAUDE.md: the round 9 bullet (e2m column 5 = the ROM calibration layout, the walk, where 11.46
+    differs).
+  - work/todo.md 046, the session README (round 9) and the PR body.
+- **Resolved-name notes:** tasks 025 / 027 / 044 get a "Resolved by PR #53 round 9" section (close_r9.py). The
+  old-name sweep (grep_old_r9.txt) leaves only history: wrapped "(was ...)" plates and "renamed from" sentences, the
+  wave 11 lesson's old field names in firmware/CLAUDE.md, and a test comment (test_lookup_tables.py passes).
+- **Verify:** ./analyze.sh verify, the two builds are byte-identical. The large-files tarball gets the round 9 build
+  and verify logs.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,1123 @@
+enum_name,value,member_name,comment,size
+# J1939 PGN Numbers (lower 16 bits) - transferred from CM550 analysis
+J1939_PGN_LOWER,0xfef1,PGN_65265_CRUISE_VEHICLE_SPEED,Cruise Control/Vehicle Speed (CCVS),2
+J1939_PGN_LOWER,0xfecc,PGN_65228_DM3_CLEAR_DIAG,Diagnostic Message 3 - Clear Diagnostics,2
+J1939_PGN_LOWER,0xfeca,PGN_65226_DM1_ACTIVE_DTC,Diagnostic Message 1 - Active DTCs,2
+J1939_PGN_LOWER,0xfecb,PGN_65227_DM2_PREVIOUS_DTC,Diagnostic Message 2 - Previous DTCs,2
+J1939_PGN_LOWER,0xfecd,PGN_65229_DM4_FREEZE_FRAME,Diagnostic Message 4 - Freeze Frame,2
+J1939_PGN_LOWER,0xfece,PGN_65230_DM5_READINESS,Diagnostic Message 5 - Readiness,2
+J1939_PGN_LOWER,0xfed2,PGN_65234_DM11_CLEAR_ACTIVE,Diagnostic Message 11 - Clear Active,2
+J1939_PGN_LOWER,0xfeed,PGN_65261_CRUISE_CONTROL_SETUP,Cruise Control/Vehicle Speed Setup (CCSS),2
+J1939_PGN_LOWER,0xfeef,PGN_65263_FLUID_LEVEL_PRESSURE,Engine Fluid Level/Pressure,2
+J1939_PGN_LOWER,0xfef0,PGN_65264_PTO,Power Takeoff Information,2
+J1939_PGN_LOWER,0xfef5,PGN_65269_AMBIENT_CONDITIONS,Ambient Conditions,2
+J1939_PGN_LOWER,0xfef6,PGN_65270_INLET_EXHAUST_CONDITIONS,Inlet/Exhaust Conditions 1 (IC1),2
+J1939_PGN_LOWER,0xfef7,PGN_65271_VEHICLE_ELECTRICAL,Vehicle Electrical Power,2
+J1939_PGN_LOWER,0xffe0,PGN_65504_PROPRIETARY_A,Proprietary A Message,2
+J1939_PGN_LOWER,0xfeeb,PGN_65259_COMPONENT_ID,Component Identification,2
+J1939_PGN_LOWER,0xfeee,PGN_65262_ENGINE_TEMP,Engine Temperature,2
+J1939_PGN_LOWER,0xfeda,PGN_65242_SOFTWARE_ID,Software Identification,2
+J1939_PGN_LOWER,0xfee0,PGN_65248_VEHICLE_DISTANCE,Vehicle Distance,2
+J1939_PGN_LOWER,0xfeec,PGN_65260_VEHICLE_ID,Vehicle Identification,2
+J1939_PGN_LOWER,0xf003,PGN_61443_EEC2,Electronic Engine Controller 2,2
+# ECM_STATUS - e2m 000B +0 ECM_Status (EEPROM word 0) 'Indicator as to the calibration status of the ECM': the boot ROM's reflash state on eeprom_header_t.ecm_status (was EEPROM_MAGIC - applied nowhere; PR #53 round 67)
+ECM_STATUS,0x600d,ECM_STATUS_CALIBRATION_VALID,The downloaded calibration was verified: with the boot mode strap pins low mpc555_hardwareInitialization jumps to flash_operational_code_entry_pointer - written by mpc555_verifyDownloadedCalibration (was VALID_MARKER),2
+ECM_STATUS,0x1d0a,ECM_STATUS_REFLASH_IN_PROGRESS,Written by cm848_sciCommand49Callback (the application's serial reflash request - its image still intact) and by mpc555_beginReflash before the erase: keeps the boot kernel resident (mpc555_systemInitialization runs cm848_runBootKernelLoop) and mpc555_sciHandleDownloadStart requires it (was FLASH_MODE_MARKER),2
+ECM_STATUS,0x2b16,ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED,Written by cm848_finishSerialReflash after a serial download (no J1939 writer found in the firmware - the write memory services can reach EEPROM 0x0): mpc555_verifyDownloadedCalibration checks the image then writes CALIBRATION_VALID (was NEEDS_PROGRAMMING),2
+# Diagnostic Protocol Service IDs (CalTerm/Insite) - same as CM550
+DIAG_SERVICE_ID,3,SECURED_WRITE,Secured write operations (requires security check),1
+DIAG_SERVICE_ID,4,SYSTEM_CONTROL,System control operations,1
+DIAG_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations,1
+DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions,1
+# Filter Coefficient Init Value
+FILTER_INIT,2,COEFFICIENT_INIT,Standard filter coefficient initialization value,2
+# Protection System State Machine (_protection_system_state values)
+PROTECTION_STATE,0,PROTECTION_IDLE,Protection system inactive/normal operation,2
+PROTECTION_STATE,1,PROTECTION_LEVEL_1,First protection threshold level (warning),2
+PROTECTION_STATE,2,PROTECTION_LEVEL_2,Second protection threshold level (derate),2
+PROTECTION_STATE,3,PROTECTION_SHUTDOWN,Shutdown protection level,2
+PROTECTION_STATE,4,PROTECTION_RECOVERY,Protection condition cleared - returning to normal,2
+# Protection Status Codes (_protection_status_code values)
+PROTECTION_STATUS_CODE,0x05,STATUS_SENSOR_FAULT,Sensor fault condition detected,1
+PROTECTION_STATUS_CODE,0x0B,STATUS_TEMP_DERATE,Temperature derate active,1
+PROTECTION_STATUS_CODE,0x10,STATUS_SHUTDOWN,Shutdown level reached,1
+PROTECTION_STATUS_CODE,0x11,STATUS_LEVEL_2_ACTIVE,Level 2 protection active,1
+PROTECTION_STATUS_CODE,0x12,STATUS_LEVEL_1_ACTIVE,Level 1 protection active,1
+# Protection Flag Bits (protection_flags bitmap)
+PROTECTION_FLAGS,0x80,FLAG_STATE1_EXCEEDED,State 1 threshold exceeded,1
+PROTECTION_FLAGS,0x40,FLAG_STATE2_EXCEEDED,State 2 threshold exceeded,1
+PROTECTION_FLAGS,0x20,FLAG_WARNING_THRESHOLD,Warning threshold crossed,1
+PROTECTION_FLAGS,0x10,FLAG_DERATE_ACTIVE,Derate condition active,1
+PROTECTION_FLAGS,0x08,FLAG_CONDITION_CHECK,Condition check flag,1
+# Transmission selected gear (PR #53 round 25): the J1939 SPN 524 coding of transmission_selected_gear and its copies - one gear per bit with a -125 offset, 251 = park. Replaces PROTECTION_OVERRIDE, which no variable used and whose members were named after the ASCII glyphs of 0x7e / 0x7f
+TRANSMISSION_SELECTED_GEAR,0x7c,TRANSMISSION_SELECTED_GEAR_REVERSE,"-1: reverse (shift lever position 2, cm848_updateSelectedGearFromShiftLever)",1
+TRANSMISSION_SELECTED_GEAR,0x7d,TRANSMISSION_SELECTED_GEAR_NEUTRAL,0: neutral (lever position 3),1
+TRANSMISSION_SELECTED_GEAR,0x7e,TRANSMISSION_SELECTED_GEAR_FIRST,1st gear,1
+TRANSMISSION_SELECTED_GEAR,0x7f,TRANSMISSION_SELECTED_GEAR_SECOND,2nd gear,1
+TRANSMISSION_SELECTED_GEAR,0x80,TRANSMISSION_SELECTED_GEAR_THIRD,3rd gear (drive while overdrive is off),1
+TRANSMISSION_SELECTED_GEAR,0x81,TRANSMISSION_SELECTED_GEAR_FOURTH,4th gear (drive with overdrive),1
+TRANSMISSION_SELECTED_GEAR,0x82,TRANSMISSION_SELECTED_GEAR_FIFTH,5th gear,1
+TRANSMISSION_SELECTED_GEAR,0xfb,TRANSMISSION_SELECTED_GEAR_PARK,251: park (lever position 1; J1939 SPN 524 special value),1
+TRANSMISSION_SELECTED_GEAR,0xfe,TRANSMISSION_SELECTED_GEAR_ERROR,254: J1939 error indicator,1
+TRANSMISSION_SELECTED_GEAR,0xff,TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE,"255: not available (the PCI 0x37 message is invalid, or no ETC2 arrived)",1
+# Fueling State (renamed 2026-11-19 from ENGINE_OPERATING_MODE): the code of the algorithm in control of the fuel - one numbering for every fueling stage. The labelled Chrysler calibration e2m-analysis/CHR/CHR_CC_11.45.01.07.e2m lists Cummins' labels with HEX keys (User_Fueling_State / Fueling_Control_State 00-3D; each member comment gives its label). Carriers: engine_operating_mode (the user stage) -> operating_mode_governor_output.mode_code (power take-off selection adds 4) -> governor_fuel_demand_working_mode (cruise adds 9) -> adjusted_user_fueling_state (the governed stage adds 10 / 11 / 12) -> requested_fueling_state / fuel_demand_arbitrated_state (cm848_arbitrateRequestedFueling: the governed fuel against torque_derate_fuel_source_code - the derate stage - and fuel_demand_minimum_tracked_state) -> injection_quantity_combustion_gross_source_code / _reference_source_code (the combustion stage 52-58) -> final_fueling_state (the engine-state overrides 22-41). 62 is newer than the label list. FUELING_STATE_UNIDENTIFIED_<n> (49 50) are codes stored or only compared whose algorithm is not proved yet: without an exact member Ghidra prints such a code as an OR of other members
+FUELING_STATE,0,FUELING_STATE_NOT_SELECTED,Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) - e2m label NOT_SET (CHR_CC_11.45.01.07 0x00),2
+FUELING_STATE,1,FUELING_STATE_TSC1_TORQUE_CONTROL,cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is tsc1_torque_control_fueling - e2m label JCOMTORQ (CHR_CC_11.45.01.07 0x01),2
+FUELING_STATE,2,FUELING_STATE_TSC1_SPEED_CONTROL,cm848_selectTsc1SpeedControlMode: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on tsc1_requested_speed_capped with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02),2
+FUELING_STATE,4,FUELING_STATE_POWER_TAKE_OFF,operating_mode_governor_output.mode_code only (cm848_selectPowerTakeOffOrUserFueling): power_take_off_governor_fuel_demand replaces the user fueling while power_take_off_governor_active_flag is 1 and algorithm_enable_flags_3_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and algorithm_enable_flags_2_cal bit 0x2000 lets the throttle override). Code-proven: the governor's state goes out as J1939 SPN 976 (CCVS1) and OBD-II PID 0x1E - e2m label PTO (CHR_CC_11.45.01.07 0x04),2
+FUELING_STATE,5,FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND,cm848_selectUserCommandedFueling: bit 0 of algorithm_enable_flags_4_cal (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05),2
+FUELING_STATE,6,FUELING_STATE_ACCELERATOR_PEDAL_FAULT,cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06),2
+FUELING_STATE,7,FUELING_STATE_VARIABLE_SPEED_GOVERNOR,cm848_selectVariableSpeedGovernorMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07),2
+FUELING_STATE,8,FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE,cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08),2
+FUELING_STATE,9,FUELING_STATE_CRUISE_CONTROL,governor_fuel_demand_working_mode only (cm848_selectCruiseOrUserFueling): cruise control is engaged and the cruise PID fuel cruise_control_fueling replaces the user fueling; cm848_selectCruiseGovernorGainSet and cm848_presetCruiseAndRoadSpeedGovernor run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 - e2m label CRUISE (CHR_CC_11.45.01.07 0x09),2
+FUELING_STATE,10,FUELING_STATE_ROAD_SPEED_GOVERNOR,adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): the road speed governor fuel road_speed_governor_fueling (cm848_calculateRoadSpeedGovernorFueling: vehicle_speed_rise_limited - the vehicle speed - against road_speed_governor_reference_speed; no limit while algorithm_enable_flags_3_cal bit 0x80 is clear) is the smallest demand; cm848_presetCruiseAndRoadSpeedGovernor runs the limit-minus-speed error in 10 - e2m label RSG (CHR_CC_11.45.01.07 0x0A) (was FUELING_STATE_VEHICLE_SPEED_LIMIT),2
+FUELING_STATE,11,FUELING_STATE_LOW_SPEED_GOVERNOR,adjusted_user_fueling_state (cm848_arbitrateGovernedFueling and the initial value of cm848_initFuelFilterCoefficients): at or below the governor speed the low speed governor asks for more fuel than the selected demand (a max select); only in 11 does cm848_runLowSpeedGovernor write its fuel into adjusted_user_fueling (e2m FSGVFL: fueling as limited by limiting governors LSG / HSG) and low_speed_governor_active_flag latch. RAM dump: 11 - e2m label LSG (CHR_CC_11.45.01.07 0x0B),2
+FUELING_STATE,12,FUELING_STATE_HIGH_SPEED_GOVERNOR,adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): high_speed_governor_fueling is the smallest demand and becomes adjusted_user_fueling; runHighSpeedGovernorPid resets its integrator in 12 (the same compare as CM550 0x1ce7c on FSGVFLST) - e2m label HSG (CHR_CC_11.45.01.07 0x0C),2
+FUELING_STATE,13,FUELING_STATE_TORQUE_DERATE_OVERRIDE,torque_derate_fuel_source_code (cm848_arbitrateRequestedFueling): while algorithm_enable_flags_1_cal bit 0x10 is set the EEPROM limit torque_derate_override_fuel_quantity_cal (EEPROM 0x380) replaces the whole derate chain. Off in the dump: the flags are 0x1020 and the limit is 5888 - e2m label TRQDROVR (CHR_CC_11.45.01.07 0x0D),2
+FUELING_STATE,15,FUELING_STATE_ALTITUDE_DERATE,torque_derate_fuel_source_code (applyAltitudeDerateFuelLimit): altitude_derate_fuel_limit - the engine speed x barometric pressure grids for cool / hot ambient air blended by ambient air temperature (or the air handling fault grid while an enabled boost / intake manifold pressure / barometric / intake air or ambient air temperature / wastegate fault is set); cm848_calculateAltitudeDerateFuelLimit - e2m label ALTDERAT (CHR_CC_11.45.01.07 0x0F),2
+FUELING_STATE,16,FUELING_STATE_AIR_FUEL_CONTROL_DERATE,fuel_demand_minimum_tracked_state (applyAirFuelControlFuelLimit): air_fuel_control_fuel_limit - the engine speed x boost pressure grid air_fuel_control_fuel_limit_grid blended toward air_fuel_control_low_boost_fuel_limit_grid (cm848_calculateAirFuelControlFuelLimit). RAM dump: 16 (no boost at key on) - e2m label AFCDERAT (CHR_CC_11.45.01.07 0x10),2
+FUELING_STATE,19,FUELING_STATE_MAXIMUM_THROTTLE,torque_derate_fuel_source_code starting value (initializeFuelLimitChains): throttle_100_fueling - cm848_calculateMaximumFuelCurve(engine speed / 400) is the fuel at full accelerator (400 = 100 %) - before any derate source takes over - e2m label MAXTHROT (CHR_CC_11.45.01.07 0x13),2
+FUELING_STATE,20,FUELING_STATE_TSC1_TORQUE_LIMIT,torque_derate_fuel_source_code (applyTsc1TorqueLimit): J1939 TSC1 override control mode 3 with tsc1_torque_limit_fueling below the running derate - e2m label JCTRQDER (CHR_CC_11.45.01.07 0x14),2
+FUELING_STATE,22,FUELING_STATE_CRANKING,final_fueling_state (cm848_selectFinalFueling): engine_state CRANKING / JUMP_START (or REENTRY with the command below it) - the fuel is crank_fuel - e2m label CRANK (CHR_CC_11.45.01.07 0x16),2
+FUELING_STATE,23,FUELING_STATE_FUEL_OVERRIDE,final_fueling_state while algorithm_enable_flags_1_cal bit 2 is set (user_override_fueling_cal) and injection_quantity_combustion_reference_source_code while algorithm_enable_flags_5_cal bit 9 is set (injection_quantity_combustion_reference_override_value) - e2m label OVERRIDE (CHR_CC_11.45.01.07 0x17),2
+FUELING_STATE,24,FUELING_STATE_ENGINE_BRAKE,final_fueling_state (cm848_selectFinalFueling): engine_state ENGINE_BRAKE - the fuel is the ROM word 0x5c308 (0 here) - e2m label ENGBRAKE (CHR_CC_11.45.01.07 0x18),2
+FUELING_STATE,25,FUELING_STATE_OVERSPEED,final_fueling_state (cm848_selectFinalFueling): engine_state OVERSPEED - the fuel is the ROM word 0x5c30a (0 here) - e2m label OVERSPED (CHR_CC_11.45.01.07 0x19),2
+FUELING_STATE,26,FUELING_STATE_ENGINE_STOPPED,final_fueling_state (cm848_selectFinalFueling): engine_state 1 - the final fuel is 0. RAM dump (key on / engine stopped): 26 with engine_state 1 - e2m label STOP (CHR_CC_11.45.01.07 0x1A),2
+FUELING_STATE,27,FUELING_STATE_SHUTDOWN,final_fueling_state (cm848_selectFinalFueling): engine_state SHUTDOWN - the fuel is fuel_demand_minimum (0 here) - e2m label SHUTDOWN (CHR_CC_11.45.01.07 0x1B),2
+FUELING_STATE,28,FUELING_STATE_FUEL_SYSTEM_DERATE,torque_derate_fuel_source_code (applyFuelSystemDerateFuelLimit): fuel_pressure_fault_fuel_limit_working from cm848_applyFuelLimitsForFuelPressureFaults (rail pressure faults) - e2m block 105D +4 FSAPLMFL fuel system specific fuel derate - e2m label FSSDERAT (CHR_CC_11.45.01.07 0x1C),2
+FUELING_STATE,29,FUELING_STATE_FAULT_DERATE,torque_derate_fuel_source_code (applyFaultDerateFuelLimit): fault_derate_fuel_limit from cm848_calculateFaultDerateFuelLimit - e2m label EPFDERAT (CHR_CC_11.45.01.07 0x1D),2
+FUELING_STATE,30,FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION,cm848_selectAllSpeedGovernorApplicationMode: all_speed_governor_application_override_mode nonzero; loads the application-specific record 0x40a216-0x40a246 (e2m 1170 +C..+3C ASG_*_As; never set in this build and RAM is zeroed at every start) - e2m label ASG_APPL (CHR_CC_11.45.01.07 0x1E) (was FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE),2
+FUELING_STATE,32,FUELING_STATE_MASTER_SLAVE_OVERRIDE,final_fueling_state / fuel_demand_arbitrated_state: master_slave_override_enable_flag set without master_slave_control_flag - the fuel is master_slave_final_override_fueling. e2m MSOVRIDE with [MSODEN] Enable overriding slave Final_Fueling / Final_Timing: one ECM overrides another's final fueling. Nothing stores either word (both only lhz; 0 in the RAM dump): not fitted on this single-ECM truck - e2m label MSOVRIDE (CHR_CC_11.45.01.07 0x20),2
+FUELING_STATE,34,FUELING_STATE_POWER_TAKE_OFF_DERATE,torque_derate_torque_limit_state (applyPowerTakeOffTorqueLimit): power_take_off_maximum_torque_cal lowers torque_derate_torque_limit while power_take_off_governor_active_flag is 1 - e2m label PTODERAT (CHR_CC_11.45.01.07 0x22),2
+FUELING_STATE,37,FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL,"only compared - never stored in either firmware. A speed control state of the Top2 transmission feature: CM848's all-speed governor runs while engine_operating_mode is 7 / 2 / 30 / 37, and 37 is tested with 38 beside the TSC1 states 1 / 2 in the power take-off - cruise - governed fueling and driver demand selection; both EEC1 torque mode tables put 37 with the accelerator pedal states. e2m group TOP208 'TOP2 CALIBRATIONS AND DATA' holds the T2* records (T2HGSXDR 'TOP2 SPICER TRANSMISSION HIGH GEAR DRIVER SOLENOID') - Calterm FSFNFLST 25=T2SPD (was FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL) - e2m label T2SPD (CHR_CC_11.45.01.07 0x25) (was FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL; PR #53 round 94)",2
+FUELING_STATE,38,FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL,"only compared - never stored in either firmware. The torque control state of the Top2 transmission feature: CM848 tests it with 37 beside the TSC1 states 1 / 2 (power take-off - cruise - governed fueling - driver demand selection) but its all-speed governor does not run in 38 - as it does not in TSC1 torque control (1). CM550 has it only in the EEC1 torque mode table, in the torque limiting group - Calterm FSFNFLST 26=T2TORQ (was FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL) - e2m label T2TORQ (CHR_CC_11.45.01.07 0x26) (was FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL; PR #53 round 94)",2
+FUELING_STATE,40,FUELING_STATE_NO_DERATE,torque_derate_torque_limit_state default (cm848_arbitrateRequestedFueling) and the starting value of fuel_demand_minimum_tracked_state (initializeFuelLimitChains) - e2m label NODERAT (CHR_CC_11.45.01.07 0x28),2
+FUELING_STATE,41,FUELING_STATE_IMMOBILIZER_FUEL_DISABLE,final_fueling_state (cm848_selectFinalFueling): immobilizer_fuel_disable_flag is 1 - the final fuel is 0 - e2m label ATDERAT (CHR_CC_11.45.01.07 0x29),2
+FUELING_STATE,42,FUELING_STATE_FUEL_LIMIT_BY_RPM_AND_DEMAND,torque_derate_fuel_source_code (cm848_applyFuelLimitByRpmAndDemand): fuel_limit_by_rpm_and_demand - the alpha / chi blend of the engine speed x accelerator demand grids - computed only in the variable speed governor (engine_operating_mode 7) while algorithm_enable_flags_31_cal bit 0 is set - e2m label PTTHLM (CHR_CC_11.45.01.07 0x2A),2
+FUELING_STATE,45,FUELING_STATE_TORQUE_MANAGEMENT,torque_derate_fuel_source_code (cm848_applyTorqueManagementFuelLimit): torque_management_fuel_limit - e2m label TORQMGMT (CHR_CC_11.45.01.07 0x2D),2
+FUELING_STATE,46,FUELING_STATE_COOLANT_OVERHEAT_DERATE,torque_derate_fuel_source_code (cm848_applyCoolantOverheatFuelDerate): coolant_overheat_fuel_derate - the ramped smaller of the PI limit on the coolant temperature error and the engine speed limit of the coolant temperature buckets (cm848_runCoolantOverheatFuelDerate; enabled by algorithm_enable_flags_40_cal bit 1) - e2m label CTDERAT (CHR_CC_11.45.01.07 0x2E),2
+FUELING_STATE,47,FUELING_STATE_FREE_ACCELERATION,only compared (final_fueling_state) - never stored in this build - e2m label FREEACCL (CHR_CC_11.45.01.07 0x2F),2
+FUELING_STATE,49,FUELING_STATE_UNIDENTIFIED_49,only compared (final_fueling_state) - never stored in this build. OFC is the combustion reference's oxygen-fuel control (e2m CBR_OFC_*; code 58 OFCDERAT is its derate) - e2m label OFCSTATE (CHR_CC_11.45.01.07 0x31),2
+FUELING_STATE,50,FUELING_STATE_UNIDENTIFIED_50,only compared (final_fueling_state) - never stored in this build. AFR is the air-fuel ratio (e2m CBO_Air_Fuel_Ratio_Ref / CBP_Air_Fuel_Ratio) - e2m label AFRSTATE (CHR_CC_11.45.01.07 0x32),2
+FUELING_STATE,52,FUELING_STATE_COMBUSTION_DENSITY_MAXIMUM,injection_quantity_combustion_gross_source_code (cm848_calculateCombustionGrossFuel): the density maximum (engine speed x compressor_inlet_density) limits the gross fuel - e2m label AIRDENLM (CHR_CC_11.45.01.07 0x34),2
+FUELING_STATE,53,FUELING_STATE_COMBUSTION_CHI_MAXIMUM,injection_quantity_combustion_gross_source_code (cm848_calculateCombustionGrossFuel): the chi maximum fuel limits the gross fuel - e2m label CHIFULLM (CHR_CC_11.45.01.07 0x35),2
+FUELING_STATE,54,FUELING_STATE_COMBUSTION_TEMPERATURE_HEADROOM,injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_temperature_headroom_cap - e2m label TFCDERAT (CHR_CC_11.45.01.07 0x36),2
+FUELING_STATE,55,FUELING_STATE_COMBUSTION_GROSS_FUEL_OVERRIDE,injection_quantity_combustion_gross_source_code: algorithm_enable_flags_5_cal bit 10 - injection_quantity_combustion_gross_override_value - e2m label GROSSOVR (CHR_CC_11.45.01.07 0x37),2
+FUELING_STATE,58,FUELING_STATE_COMBUSTION_OXYGEN_LIMIT,injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_oxygen_limit - e2m label OFCDERAT (CHR_CC_11.45.01.07 0x3A),2
+FUELING_STATE,59,FUELING_STATE_NET_TORQUE,fuel_demand_minimum_tracked_state (cm848_applyNetTorqueFuelLimit): net_torque_fuel_limit - a rate-limited engine speed fuel curve from the alpha / chi map blend of net_torque_fuel_limit_grid (cm848_calculateNetTorqueFuelLimit) while algorithm_enable_flags_13_cal bit 2 is set - e2m label NETTORQ (CHR_CC_11.45.01.07 0x3B),2
+FUELING_STATE,61,FUELING_STATE_RAIL_PRESSURE_SHORTFALL_LIMIT,torque_derate_fuel_source_code (cm848_limitFuelQuantityOnRailPressureShortfall) - e2m label LOFPRDER (CHR_CC_11.45.01.07 0x3D),2
+FUELING_STATE,62,FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND,torque_derate_fuel_source_code (cm848_applyFuelPressureGovernorFaultBlend while fuel_pressure_governor_fault_blend_enable is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62,2
+# J1939 SPN (Suspect Parameter Number) Reference
+J1939_SPN,51,SPN_51_THROTTLE_PLATE,Throttle Plate Position Sensor,2
+J1939_SPN,84,SPN_84_VEHICLE_SPEED,Vehicle Speed Signal,2
+J1939_SPN,89,SPN_89_PTO_SPEED,PTO Speed Switch,2
+J1939_SPN,91,SPN_91_ACCEL_PEDAL,Accelerator Pedal Position,2
+J1939_SPN,93,SPN_93_TORQUE_CURVE,Torque Curve Switch,2
+J1939_SPN,95,SPN_95_FUEL_FILTER,Fuel Filter Restriction Switch,2
+J1939_SPN,100,SPN_100_OIL_PRESSURE,Engine Oil Pressure,2
+J1939_SPN,101,SPN_101_BLOWBY,Engine Blowby,2
+J1939_SPN,102,SPN_102_BOOST_PRESSURE,Boost Pressure,2
+J1939_SPN,105,SPN_105_INTAKE_TEMP,Intake Manifold Temperature,2
+J1939_SPN,108,SPN_108_AMBIENT_PRESS,Barometric/Ambient Air Pressure,2
+J1939_SPN,109,SPN_109_COOLANT_PRESS,Engine Coolant Pressure,2
+J1939_SPN,110,SPN_110_COOLANT_TEMP,Engine Coolant Temperature,2
+J1939_SPN,111,SPN_111_COOLANT_LEVEL,Engine Coolant Level,2
+J1939_SPN,113,SPN_113_DROOP_SWITCH,Alternate Droop Switch,2
+J1939_SPN,121,SPN_121_ENGINE_BRAKE,Engine Brake Circuit,2
+J1939_SPN,157,SPN_157_FUEL_PRESS,Fuel Pressure,2
+J1939_SPN,168,SPN_168_BATTERY_VOLT,Battery Voltage,2
+J1939_SPN,174,SPN_174_FUEL_TEMP,Fuel Temperature Sensor,2
+J1939_SPN,175,SPN_175_OIL_TEMP,Engine Oil Temperature,2
+J1939_SPN,177,SPN_177_TRANS_TEMP,Transmission Temperature,2
+J1939_SPN,183,SPN_183_GAS_MASS,Gas Mass Sensor,2
+J1939_SPN,190,SPN_190_ENGINE_SPEED,Engine Speed,2
+J1939_SPN,608,SPN_608_J1587,J1587 Protocol,2
+J1939_SPN,609,SPN_609_MODULE_ID,Module ID,2
+J1939_SPN,620,SPN_620_SENSOR_SUPPLY,Sensor Supply Voltage,2
+J1939_SPN,627,SPN_627_POWER_OFF,Power Off Without Ignition,2
+J1939_SPN,629,SPN_629_ECM_INTERNAL,ECM Internal,2
+J1939_SPN,630,SPN_630_CHECKSUM,ECM Checksum,2
+J1939_SPN,632,SPN_632_FUEL_SHUTOFF,Fuel Shutoff Valve,2
+J1939_SPN,633,SPN_633_FUEL_CONTROL,Fuel Control Valve,2
+J1939_SPN,639,SPN_639_J1939,J1939 Network,2
+J1939_SPN,646,SPN_646_WASTEGATE,Wastegate Control Valve,2
+J1939_SPN,735,SPN_735_CYL2_CIRCUIT,Cylinder 2 Circuit,2
+J1939_SPN,737,SPN_737_CYL4_CIRCUIT,Cylinder 4 Circuit,2
+J1939_SPN,738,SPN_738_CYL5_CIRCUIT,Cylinder 5 Circuit,2
+J1939_SPN,1195,SPN_1195_ANTI_THEFT,Anti-Theft System,2
+J1939_FAULT_CODE,111,FAULT_0111_SPN_629,ECM Internal Failure, Mission Disabling, Hardware (RED),2
+J1939_FAULT_CODE,115,FAULT_0115_SPN_190,BOTH ENGINE SPEED AND OR POSITION SIGNALS LOST (RED),2
+J1939_FAULT_CODE,121,FAULT_0121_SPN_190,ONE ENGINE SPEED AND OR POSIION SIGNAL LOST. INTERMITTENT (YELLOW),2
+J1939_FAULT_CODE,122,FAULT_0122_SPN_102,BOOST PRESS, LEFT BANK SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,123,FAULT_0123_SPN_102,BOOST PRESS, LEFT BANK SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,125,FAULT_0125_SPN_102,BOOST PRESS, LEFT BANK DATA BELOW NORMAL RANG (YELLOW),2
+J1939_FAULT_CODE,131,FAULT_0131_SPN_91,ACCELERATOR PEDAL POSITIONS SHORTED HIGH (RED),2
+J1939_FAULT_CODE,132,FAULT_0132_SPN_91,ACCELERATOR PEDAL POSITIONS SHORTED LOW (RED),2
+J1939_FAULT_CODE,133,FAULT_0133_SPN_91,REMOTE THROTTLE SHORTED HIGH (RED),2
+J1939_FAULT_CODE,134,FAULT_0134_SPN_91,REMOTE THROTTLE SHORTED LOW (RED),2
+J1939_FAULT_CODE,135,FAULT_0135_SPN_100,OIL PRESSURE SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,141,FAULT_0141_SPN_100,OIL PRESSURE SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,143,FAULT_0143_SPN_100,OIL PRESSURE DATA BELOW NORMAL RANGE (PROTECTION),2
+J1939_FAULT_CODE,144,FAULT_0144_SPN_110,ENGINE COOLANT TEMPERATURE SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,145,FAULT_0145_SPN_110,ENGINE COOLANT TEMPERATURE SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,147,FAULT_0147_SPN_091,Frequency Throttle Signal Low OOR (RED),2
+J1939_FAULT_CODE,148,FAULT_0148_SPN_091,Frequency Throttle Signal High OOR (RED),2
+J1939_FAULT_CODE,151,FAULT_0151_SPN_110,ENGINE COOLANT TEMPERATURE DATA ABOVE NORMAL RANGE (PROTECTION),2
+J1939_FAULT_CODE,152,FAULT_0152_SPN_110,ENGINE COOLANT TEMPERATURE DATA BELOW NORMAL RANGE (PROTECTION),2
+J1939_FAULT_CODE,153,FAULT_0153_SPN_105,INTAKE MANIFOLD TEMP, LBF SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,154,FAULT_0154_SPN_105,INTAKE MANIFOLD TEMP, LBF SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,155,FAULT_0155_SPN_105,INTAKE MANIFOLD TEMP, LBF DATA ABOVE NORMAL RANGE (PROTECTION),2
+J1939_FAULT_CODE,184,FAULT_0184_SPN_609,Module ID Input State Error for Master/Slave (RED),2
+J1939_FAULT_CODE,185,FAULT_0185_SPN_639,Engine Controller Communication Lost Error for Master/Slave (YELLOW),2
+J1939_FAULT_CODE,212,FAULT_0212_SPN_175,OIL TEMPERATURE SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,213,FAULT_0213_SPN_175,OIL TEMPERATURE SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,214,FAULT_0214_SPN_175,OIL TEMPERATURE DATA ABOVE NORMAL RANGE (PROTECTION),2
+J1939_FAULT_CODE,221,FAULT_0221_SPN_108,AMBIENT AIR PRESSURE SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,222,FAULT_0222_SPN_108,AMBIENT AIR PRESSURE SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,231,FAULT_0231_SPN_109,ENGINE COOLANT PRESSURE SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,232,FAULT_0232_SPN_109,ENGINE COOLANT PRESSURE SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,234,FAULT_0234_SPN_190,ENGINE SPEED DATA ABOVE NORMAL RANGE (RED),2
+J1939_FAULT_CODE,235,FAULT_0235_SPN_111,ENGINE COOLANT LEVEL DATA BELOW NORMAL RANGE (PROTECTION),2
+J1939_FAULT_CODE,241,FAULT_0241_SPN_084,VEHICLE SPEED SIGNAL LOST (YELLOW),2
+J1939_FAULT_CODE,242,FAULT_0242_SPN_084,VEHICLE SPEED SIGNAL INTERMITTENT TAMPERING (YELLOW),2
+J1939_FAULT_CODE,243,FAULT_0243_SPN_121,ENGINE BRAKE CIRCUIT FAILURE (YELLOW),2
+J1939_FAULT_CODE,254,FAULT_0254_SPN_632,FUEL SHUTOFF VALVE SHORTED LOW (RED),2
+J1939_FAULT_CODE,263,FAULT_0263_SPN_174,FUEL TEMP SENSOR - COMPONENT SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,265,FAULT_0265_SPN_174,Fuel Temperature - Component Shorted Low (YELLOW),2
+J1939_FAULT_CODE,269,FAULT_0269_SPN_1195,ANTI_THEFT START ATTEMPT WHILE LOCKED (INFO),2
+J1939_FAULT_CODE,312,FAULT_0312_SPN_738,CYL 5 CIRCUIT - CURRENT ABOVE NORMAL (YELLOW),2
+J1939_FAULT_CODE,315,FAULT_0315_SPN_735,CYL 2 CIRCUIT - CURRENT ABOVE NORMAL (YELLOW),2
+J1939_FAULT_CODE,331,FAULT_0331_SPN_735,CYL 2 CIRCUIT - LOW CURRENT OR OPEN CIRCUIT (YELLOW),2
+J1939_FAULT_CODE,332,FAULT_0332_SPN_737,CYL 4 CIRCUIT - LOW CURRENT OR OPEN CIRCUIT (YELLOW),2
+J1939_FAULT_CODE,333,FAULT_0333_SPN_629,NO VOLTAGE ON ONE OR MORE OF INJECTOR SUPPLY (YELLOW),2
+J1939_FAULT_CODE,334,FAULT_0334_SPN_110,ENGINE COOLANT TEMPERATURE IN RANGE FAILURE (YELLOW),2
+J1939_FAULT_CODE,343,FAULT_0343_SPN_629,ECM HARDWARE FAILURE, WARNING NON MISSION DISABLING (YELLOW),2
+J1939_FAULT_CODE,345,FAULT_0345_SPN_095,FUEL FILTER RESTRICTION SWITCH INVALID (YELLOW),2
+J1939_FAULT_CODE,346,FAULT_0346_SPN_630,ECM SOFTWARE - READ/WRITE CHECKSUM NONMISSION DISABLING (YELLOW),2
+J1939_FAULT_CODE,351,FAULT_0351_SPN_629,INJECTOR POWER SUPPLY BAD DEVICE (YELLOW),2
+J1939_FAULT_CODE,352,FAULT_0352_SPN_620,SENSOR SUPPLY VOLTAGE BELOW NORMAL (YELLOW),2
+J1939_FAULT_CODE,412,FAULT_0412_SPN_608,J1587 DATA LINK CANNOT TRANSMIT (YELLOW),2
+J1939_FAULT_CODE,414,FAULT_0414_SPN_608,J1587 DATA LINK NOT FAST ENOUGH (YELLOW),2
+J1939_FAULT_CODE,415,FAULT_0415_SPN_100,Very Low Oil Pressure Fault (PROTECTION),2
+J1939_FAULT_CODE,421,FAULT_0421_SPN_175,OIL TEMPERATURE ABOVE NORMAL ENGINE RANG (YELLOW),2
+J1939_FAULT_CODE,422,FAULT_0422_SPN_111,ENGINE COOLANT LEVEL SIGNAL DATA INVALID (YELLOW),2
+J1939_FAULT_CODE,425,FAULT_0425_SPN_175,OIL TEMPERATURE IN RANGE FAILURE (YELLOW),2
+J1939_FAULT_CODE,426,FAULT_0426_SPN_639,DATALINK (J1939) CANNOT TRANSMIT (YELLOW),2
+J1939_FAULT_CODE,427,FAULT_0427_SPN_639,DATALINK (J1939) NOT FAST ENOUGH (YELLOW),2
+J1939_FAULT_CODE,431,FAULT_0431_SPN_91,ACCELERATOR PEDAL IDLE VALIDATION INVALID (YELLOW),2
+J1939_FAULT_CODE,432,FAULT_0432_SPN_91,ACCELERATOR PEDAL IDLE VALIDATION - SWITCH DOES NOT AGREE WITH POT (RED),2
+J1939_FAULT_CODE,433,FAULT_0433_SPN_102,BOOST PRESS, LEFT BANK FRONT IN RANGE FAILURE (YELLOW),2
+J1939_FAULT_CODE,434,FAULT_0434_SPN_627,Power Off Without Ignition Off (YELLOW),2
+J1939_FAULT_CODE,435,FAULT_0435_SPN_100,OIL PRESSURE IN RANGE FAILURE (YELLOW),2
+J1939_FAULT_CODE,441,FAULT_0441_SPN_168,BATTERY VOLTAGE DATA BELOW NORMAL RANGE (YELLOW),2
+J1939_FAULT_CODE,442,FAULT_0442_SPN_168,BATTERY VOLTAGE DATA ABOVE NORMAL ENGINE RANGE (YELLOW),2
+J1939_FAULT_CODE,443,FAULT_0443_SPN_629,ACCELERATOR PEDAL SENSOR SUPPLY VOLTAGE DATA BELOW NORMAL (YELLOW),2
+J1939_FAULT_CODE,444,FAULT_0444_SPN_629,OEM SENSOR SUPPLLY VOLTAGE DATA BELOW NORMAL RANGE (YELLOW),2
+J1939_FAULT_CODE,445,FAULT_0445_SPN_629,OEM SWITCH SUPPLY SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,451,FAULT_0451_SPN_157,Fuel pressure component shorted high (RED),2
+J1939_FAULT_CODE,452,FAULT_0452_SPN_157,Fuel pressure component shorted low (RED),2
+J1939_FAULT_CODE,453,FAULT_0453_SPN_183,GAS MASS SENSOR SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,454,FAULT_0454_SPN_183,GAS MASS SENSOR SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,455,FAULT_0455_SPN_633,Fuel control valve -- component shorted high or open (RED),2
+J1939_FAULT_CODE,511,FAULT_0511_SPN_633,Fuel control valve component shorted low (INFO),2
+J1939_FAULT_CODE,512,FAULT_0512_SPN_051,THROTTLE PLATE POSITION SENSOR SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,513,FAULT_0513_SPN_051,THROTTLE PLATE POSITION SENSOR SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,514,FAULT_0514_SPN_633,Fuel control valve mechanically stuck open (RED),2
+J1939_FAULT_CODE,521,FAULT_0521_SPN_177,AUX (TRANSMISSION) TEMPERATURE SHORTED HIGH (YELLOW),2
+J1939_FAULT_CODE,522,FAULT_0522_SPN_177,AUX (TRANSMISSION) TEMPERATURE SHORTED LOW (YELLOW),2
+J1939_FAULT_CODE,523,FAULT_0523_SPN_089,OEM - INTERMEDIATE (PTO) SPEED SWITCH VALIDATION FAULT (YELLOW),2
+J1939_FAULT_CODE,524,FAULT_0524_SPN_113,OEM - Alternate droop switch validation fault (YELLOW),2
+J1939_FAULT_CODE,528,FAULT_0528_SPN_93,OEM Torque Curve Switch Validation Fault (YELLOW),2
+J1939_FAULT_CODE,545,FAULT_0545_SPN_646,WASTEGATE CONTROL VALVE MECH. STUCK OPEN (RED),2
+J1939_FAULT_CODE,551,FAULT_0551_SPN_91,ACCELERATOR PEDAL IDLE VALIDATION BOTH SHORTED LOW (RED),2
+J1939_FAULT_CODE,553,FAULT_0553_SPN_157,Engine fueling pressure exceeded - data above normal range (RED),2
+J1939_FAULT_CODE,554,FAULT_0554_SPN_157,Fuel rail pressure in range error (YELLOW),2
+J1939_FAULT_CODE,555,FAULT_0555_SPN_101,ENGINE BLOWBY DATA ABOVE NORMAL ENGINE RANGE (PROTECTION),2
+J1939_FAULT_CODE,753,FAULT_0753_SPN_190,CAM SHAFT GEAR OUT OF SYNCH (YELLOW),2
+
+# J1939 Handler Registration Codes (passed to registerJ1939MessageHandler thunk)
+J1939_HANDLER_TYPE,0xdd00,HANDLER_DIAGNOSTIC_CALLBACK,Diagnostic callback handler,2
+J1939_HANDLER_TYPE,0xdf00,HANDLER_GOVERNOR_CONTROL,Governor control message (proprietary),2
+J1939_HANDLER_TYPE,0xe300,HANDLER_DM1_REQUEST,DM1 active fault request handler,2
+J1939_HANDLER_TYPE,0xef00,HANDLER_DIAGNOSTIC_SERVICE,Diagnostic service handler (DM14),2
+J1939_HANDLER_TYPE,0xf002,HANDLER_ETC1,Electronic Transmission Controller 1 (ETC1 PGN 61442),2
+J1939_HANDLER_TYPE,0xf005,HANDLER_ENGINE_CONTROLLER,Engine Controller message,2
+
+# Protection Event Codes (passed to triggerProtectionEvent)
+PROTECTION_EVENT,0x0b,EVENT_FUEL_EFFICIENCY_DERATE,Fuel efficiency protection derate,1
+PROTECTION_EVENT,0x0c,EVENT_TEMP_TRIM_RESET_C,Temperature trim reset state C (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0d,EVENT_TEMP_TRIM_RESET_D,Temperature trim reset state D (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0e,EVENT_TEMP_TRIM_RESET_E,Temperature trim reset state E (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0f,EVENT_TEMP_TRIM_RESET_F,Temperature trim reset state F (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x10,EVENT_SHUTDOWN,Shutdown protection event,1
+PROTECTION_EVENT,0x12,EVENT_LEVEL1_ACTIVE,Level 1 protection triggered,1
+PROTECTION_EVENT,0x13,EVENT_LOAD_DERATE_PHASE_A,Engine load derate phase A - duty cycle based on protection timer counter,1
+PROTECTION_EVENT,0x14,EVENT_LOAD_DERATE_PHASE_B,Engine load derate phase B - duty cycle based on protection timer counter,1
+PROTECTION_EVENT,0x15,EVENT_LOAD_DERATE_FULL,Engine load full derate - triggered when protection_derate_factor = -25600 (-100%),1
+PROTECTION_EVENT,0x3f,EVENT_LEVEL2_ACTIVE,Level 2 protection triggered - checkProtectionModeFlags when mode_flags bit 2 clear,1
+PROTECTION_EVENT,0x43,EVENT_SENSOR_FAULT_ACTIVE,Sensor fault condition active - updateFaultConditionState debounced sensor_fault_detect_flags,1
+PROTECTION_EVENT,0x48,EVENT_DIAG_CONDITION_ACTIVE,Diagnostic condition active - processFaultConditionFlags based on diagnostic_condition_flags,1
+
+# Fuel Timing Mode State Machine (_pressure_fuel_adjustment values)
+# Controls fuel timing and oil pressure-based adjustments in temperatureSensorProcessing @ 0x0000ea00
+# Cross-referenced from CM550 cm550_selectFinalFueling (the CM848 function at 0x0000ea00 is now cm848_runOperatingModeSpeedGovernor)
+FUEL_TIMING_MODE,0x01,MODE_IDLE,Idle/inactive mode,1
+FUEL_TIMING_MODE,0x02,MODE_PROTECTION_ACTIVE,Protection system active,1
+FUEL_TIMING_MODE,0x0b,MODE_FUEL_RATE_1,Fuel rate calculation mode 1,1
+FUEL_TIMING_MODE,0x0c,MODE_PROTECTION_WITH_LIMIT,Protection with limit source active,1
+FUEL_TIMING_MODE,0x10,MODE_OIL_PRESSURE_TIMING,Oil pressure timing adjustment active,1
+FUEL_TIMING_MODE,0x13,MODE_EXTENDED_PROTECTION,Extended protection mode,1
+FUEL_TIMING_MODE,0x14,MODE_CRANK_INITIAL,Initial cranking mode,1
+FUEL_TIMING_MODE,0x16,MODE_CRANK_START,Crank/start fuel mode,1
+FUEL_TIMING_MODE,0x17,MODE_FUEL_CONTROL_ENABLED,Fuel control system enabled,1
+FUEL_TIMING_MODE,0x18,MODE_FUEL_DEMAND_STATE_4,Fuel demand accumulator state 4,1
+FUEL_TIMING_MODE,0x19,MODE_FUEL_DEMAND_STATE_5,Fuel demand accumulator state 5,1
+FUEL_TIMING_MODE,0x1a,MODE_FUEL_DEMAND_STATE_1,Fuel demand accumulator state 1,1
+FUEL_TIMING_MODE,0x1b,MODE_FUEL_DEMAND_STATE_8,Fuel demand accumulator state 8,1
+FUEL_TIMING_MODE,0x20,MODE_OVERRIDE,Diagnostic override mode,1
+FUEL_TIMING_MODE,0x29,MODE_FUEL_CONTROL_BITS,Fuel control bits active,1
+FUEL_TIMING_MODE,0x2d,MODE_PROTECTION_2,Protection mode variant 2,1
+FUEL_TIMING_MODE,0x31,MODE_EXTENDED_TIMING,Extended timing adjustment mode,1
+FUEL_TIMING_MODE,0x3a,MODE_PROTECTION_3,Protection mode variant 3,1
+
+# Engine RPM Limits - Ported from CM550 (generic across ECU families)
+ENGINE_RPM_LIMITS,125,CRANKING_RPM_LIMIT,Cold crank sync determination limit,2
+ENGINE_RPM_LIMITS,300,RUNNING_RPM_THRESHOLD,Engine considered running threshold,2
+ENGINE_RPM_LIMITS,700,PTO_MIN_RPM,PTO minimum RPM setpoint,2
+ENGINE_RPM_LIMITS,3000,PTO_MAX_RPM,PTO maximum RPM setpoint,2
+ENGINE_RPM_LIMITS,3000,ASG_MAX_RPM,ASG maximum allowed speed,2
+
+# Derate Status Bits - Ported from CM550 (Insite status reporting)
+DERATE_STATUS_BITS,0x80,DERATE_ACTIVE,Derate condition is active,1
+DERATE_STATUS_BITS,0x40,DERATE_BIT6,Derate status bit 6 - maps to INSITE bit 0x40,1
+DERATE_STATUS_BITS,0x20,DERATE_BIT5,Derate status bit 5 - maps to INSITE bit 0x20,1
+DERATE_STATUS_BITS,0x08,DERATE_STATUS_BIT3,Derate status bit 3 - maps to INSITE status 0x20,1
+DERATE_STATUS_BITS,0x04,DERATE_STATUS_BIT2,Derate status bit 2 - maps to INSITE status 0x40,1
+
+# DIAG_RESPONSE_CODE (ported from CM550) was merged into J1939_DIAGNOSTIC_RESULT in PR #53 round 64
+
+# Fuel Arbitrator Modes - Ported from CM550 (diagnostic fuel control)
+FUEL_ARB_MODE,0,RESET_MODE,Reset/clear arbitrator state,1
+FUEL_ARB_MODE,1,RPM_TARGET_MODE,Set RPM target mode,1
+FUEL_ARB_MODE,2,THROTTLE_PCT_MODE,Throttle percentage control mode,1
+FUEL_ARB_MODE,3,FUEL_LIMIT_MODE,Fuel limit control mode,1
+
+# (MEMORY_ACCESS_FLAG - ported from CM550 - removed in PR #53 round 72: MEMORY_REGION_TYPE holds these codes; it rendered nowhere)
+
+# Diagnostic Enable Flags - Ported from CM550 (service activation)
+DIAG_ENABLE_FLAGS,0x01,CORE_SERVICES,Enable core diagnostic services (secured memory ops),1
+DIAG_ENABLE_FLAGS,0x02,INSITE_LIVE,Enable Insite live data monitoring,1
+DIAG_ENABLE_FLAGS,0x04,EXTENDED_SERVICES,Enable extended diagnostic services,1
+DIAG_ENABLE_FLAGS,0x08,SPECIAL_MODE,Special diagnostic mode enabled,1
+
+# INSITE Parameter Command Codes - Ported from CM550 (common subset)
+# DTC/Diagnostic codes (0x02-0x03)
+INSITE_PARAM_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
+INSITE_PARAM_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
+# Engine protection status (0x47-0x53)
+INSITE_PARAM_CODE,0x47,IDLE_SHUTDOWN_TIMER_STATUS,J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94),1
+INSITE_PARAM_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
+INSITE_PARAM_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
+# Single-byte scaled values (0x54-0x58)
+INSITE_PARAM_CODE,0x54,THROTTLE_POSITION,Throttle position value (scaled >>7),1
+INSITE_PARAM_CODE,0x55,INSITE_STATUS_BYTE,Combined status byte with sensor/derate flags,1
+INSITE_PARAM_CODE,0x56,BOOST_PRESSURE_BASE,Target boost pressure base (scaled >>7),1
+INSITE_PARAM_CODE,0x57,FUEL_TIMING_LIMIT,Fuel timing transition limit (scaled >>7),1
+INSITE_PARAM_CODE,0x58,FUEL_TIMING_DISPLAY,INSITE fuel timing display (scaled >>7),1
+# Additional values (0x59-0x79)
+INSITE_PARAM_CODE,0x59,OIL_PRESSURE_STATUS,Oil pressure protection status byte,1
+INSITE_PARAM_CODE,0x5B,ACTIVE_DERATE_VALUE,Active derate value (scaled *250/400),1
+INSITE_PARAM_CODE,0x64,PARAM_DISPLAY_VALUE,INSITE parameter display value (scaled >>6),1
+INSITE_PARAM_CODE,0x66,DIAGNOSTIC_SENSOR,Diagnostic sensor reading (scaled >>4 max 0xFF),1
+INSITE_PARAM_CODE,0x69,INTAKE_MANIFOLD_TEMP,Intake manifold temp (offset 0x1900 scaled >>7),1
+INSITE_PARAM_CODE,0x6C,DIAGNOSTIC_READING,INSITE diagnostic reading (scaled >>3),1
+INSITE_PARAM_CODE,0x79,RETARDER_MODE_STATUS,Retarder mode threshold status,1
+# Special response builders (0xC1-0xF3)
+INSITE_PARAM_CODE,0xC1,ACTIVE_FAULT_LIST,Active fault list builder,1
+INSITE_PARAM_CODE,0xC2,FAULT_DETAIL,Fault detail builder,1
+INSITE_PARAM_CODE,0xEA,ECU_ID_RESPONSE,ECU ID response builder,1
+INSITE_PARAM_CODE,0xED,CAPACITY_RESPONSE,Capacity response builder,1
+INSITE_PARAM_CODE,0xF3,VERSION_INFO,Version info builder,1
+
+# ============================================================================
+# CLIP/Diagnostic Protocol Enums - Ported from CM550 (common across Cummins ECUs)
+# ============================================================================
+
+# CLIP Protocol Instructions - Cummins diagnostic protocol commands
+CLIP_INSTRUCTION,0x00,QUERY_INITIALIZE,Initialize query session,1
+CLIP_INSTRUCTION,0x01,QUERY_TERMINATE,Terminate query session,1
+CLIP_INSTRUCTION,0x10,GET_PARAMETERS_BY_ID,Read parameters by ID,1
+CLIP_INSTRUCTION,0x11,SET_PARAMETERS_BY_ID,Write parameters by ID,1
+CLIP_INSTRUCTION,0x12,EXECUTE_OPERATION,Execute ECU operation,1
+CLIP_INSTRUCTION,0x13,GET_DATA_BY_ADDRESS,Read memory by address,1
+CLIP_INSTRUCTION,0x14,SET_DATA_BY_ADDRESS,Write memory by address,1
+CLIP_INSTRUCTION,0x15,GET_ADDRESS_BY_PARAMETER_ID,Get parameter address from ID,1
+
+# Cummins Module Family IDs - ECU identification
+CUMMINS_MODULE_IDS,0x454E,MODULE_EN,Cummins EN module family (CM550 VP44 ECUs),2
+CUMMINS_MODULE_IDS,0x4841,MODULE_HA,Cummins HA module family (CM848 HPCR ECUs),2
+CUMMINS_MODULE_IDS,0x4E41,MODULE_AN,Cummins AN module family,2
+
+# Diagnostic Service 3 Secured Subfunctions
+DIAG_SECURED_SUBFUNC,0x40,WATER_IN_FUEL_CLEAR,Clear water-in-fuel fault,1
+DIAG_SECURED_SUBFUNC,0x41,WATER_IN_FUEL_VALIDATE,Validate water-in-fuel condition,1
+DIAG_SECURED_SUBFUNC,0x42,HIGH_RPM_SHUTDOWN_ACTIVATE,Activate high RPM shutdown flag,1
+DIAG_SECURED_SUBFUNC,0x43,SYSTEM_RESET_TRIGGER,Trigger diagnostic system reset,1
+DIAG_SECURED_SUBFUNC,0x50,NOP_ACK,No operation - returns success (0),1
+DIAG_SECURED_SUBFUNC,0x51,MEMORY_PATCH,RAM patching system,1
+DIAG_SECURED_SUBFUNC,0x52,SECURED_SHUTDOWN_REQUEST,Request secured shutdown,1
+DIAG_SECURED_SUBFUNC,0x53,UNSUPPORTED_ERROR,Unsupported operation - returns error 4,1
+DIAG_SECURED_SUBFUNC,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger,1
+
+# Diagnostic Service 4 Control Subfunctions
+DIAG_CONTROL_SUBFUNC,0x64,SYSTEM_CONTROL_100,System control function 100,1
+DIAG_CONTROL_SUBFUNC,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner,1
+DIAG_CONTROL_SUBFUNC,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0,1
+DIAG_CONTROL_SUBFUNC,0x69,WATER_IN_FUEL_INIT,Water in fuel detection init,1
+DIAG_CONTROL_SUBFUNC,0x70,RESERVED_112,Reserved - returns error code 4,1
+DIAG_CONTROL_SUBFUNC,0x71,SET_COMMAND_STATE_BIT0,Set bit 0 of diagnostic_command_state,1
+DIAG_CONTROL_SUBFUNC,0x72,RESERVED_114,Reserved - returns error code 4,1
+DIAG_CONTROL_SUBFUNC,0x73,SET_COMMAND_STATE_BIT1,Set bit 1 of diagnostic_command_state,1
+DIAG_CONTROL_SUBFUNC,0x74,SYSTEM_CONTROL_116,System control function 116,1
+DIAG_CONTROL_SUBFUNC,0x75,SYSTEM_CONTROL_117,System control function 117,1
+DIAG_CONTROL_SUBFUNC,0x76,RESERVED_118,Reserved - returns error code 4,1
+
+# Diagnostic Service 5 Memory Operations
+DIAG_MEMORY_OP,0x60,READ_3BYTE_ADDR,Memory read with 3-byte addressing,1
+DIAG_MEMORY_OP,0x80,WRITE_4BYTE_ADDR,Memory write with 4-byte addressing,1
+DIAG_MEMORY_OP,0xA0,WRITE_2BYTE_ADDR,Memory write with 2-byte addressing,1
+DIAG_MEMORY_OP,0xB0,MULTI_PKT_RECEIVE,Multi-packet data receive,1
+DIAG_MEMORY_OP,0xC0,READ_2BYTE_ADDR,Memory read with 2-byte addressing,1
+DIAG_MEMORY_OP,0xE0,READ_1BYTE_ADDR,Memory read with 1-byte addressing,1
+DIAG_MEMORY_OP,0xF0,MULTI_PKT_TRANSMIT,Multi-packet data transmit,1
+
+# Diagnostic Extended Service Handlers (Service 5 sub-modes)
+DIAG_EXTENDED_SVC,0x43,MEM_READ_2BYTE_4BYTE,Memory read: 2-byte param + 4-byte offset,1
+DIAG_EXTENDED_SVC,0x46,MEM_READ_2BYTE_ONLY,Memory read: 2-byte param only,1
+DIAG_EXTENDED_SVC,0x48,MEM_READ_2BYTE_4BYTE_4BYTE,Memory read: 2-byte + 4-byte + 4-byte params,1
+DIAG_EXTENDED_SVC,0x4A,MEM_READ_4BYTE_1BYTE,Memory read: 4-byte address + 1-byte length,1
+DIAG_EXTENDED_SVC,0x4C,MEM_READ_4BYTE_4BYTE,Memory read: 4-byte address + 4-byte length,1
+DIAG_EXTENDED_SVC,0x4F,EXTENDED_4F,Extended diagnostic service 0x4F,1
+DIAG_EXTENDED_SVC,0x51,EXTENDED_51,Extended diagnostic service 0x51,1
+
+# CAN Multi-packet Response Codes
+CAN_MULTIPACKET_RESPONSE,0x0C,SUCCESS_RESPONSE,Operation successful - no error code follows,1
+CAN_MULTIPACKET_RESPONSE,0x0D,STATUS_RESPONSE,Error/status response - error code follows in byte 1,1
+
+# Diagnostic Source Codes - identifies trigger source for diagnostic mode
+DIAGNOSTIC_SOURCE_CODE,0,NONE,No active diagnostic source,2
+DIAGNOSTIC_SOURCE_CODE,1,FUEL_ARBITRATOR,Fuel arbitrator triggered (rpm_target == 2),2
+DIAGNOSTIC_SOURCE_CODE,2,DIAG_STATUS_2,Diagnostic status 2 condition,2
+DIAGNOSTIC_SOURCE_CODE,5,ENGINE_FLAGS,Engine control flags triggered,2
+DIAGNOSTIC_SOURCE_CODE,6,EPS_FAULT,Electronic Position Sensor fault,2
+DIAGNOSTIC_SOURCE_CODE,7,DIAG_STATUS_7,Diagnostic status 7 condition,2
+DIAGNOSTIC_SOURCE_CODE,30,DIAG_STATUS_30,Diagnostic status 30 condition,2
+
+# Diagnostic Fuel Control Mode - active fuel control diagnostic mode
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0A,FUEL_MODE_INSITE_DISPLAY,INSITE live data display mode,1
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0B,FUEL_MODE_RPM_THRESHOLD,RPM threshold protection mode,1
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0C,FUEL_MODE_FUEL_DELIVERY,Fuel delivery control mode,1
+
+# Fuel Control Mode Select (fuel_control_mode_select values) - selects fuel demand source
+FUEL_CONTROL_MODE_SELECT,0,FUELMODE_NORMAL,PID governor controls fuel (engine running),2
+FUEL_CONTROL_MODE_SELECT,1,FUELMODE_IDLE,Engine at zero RPM (base idle fueling),2
+FUEL_CONTROL_MODE_SELECT,2,FUELMODE_CALIBRATION_LIMIT,Calibration table fuel limit override,2
+FUEL_CONTROL_MODE_SELECT,3,FUELMODE_FAULT_LIMIT,Fault threshold fuel derate,2
+FUEL_CONTROL_MODE_SELECT,4,FUELMODE_PROTECTION_LIMIT,Protection override fuel limit,2
+FUEL_CONTROL_MODE_SELECT,5,FUELMODE_DISABLED,Fuel control bypassed (mode flags off),2
+
+# Diagnostic Status - overall diagnostic system state
+DIAGNOSTIC_STATUS,0,NORMAL_OPERATION,No diagnostic mode active - normal operation,2
+DIAGNOSTIC_STATUS,1,FUEL_ARBITRATOR_SOURCE,Fuel arbitrator rpm_target==2 active,2
+
+# Derate Event State Machine - protection derate progression
+DERATE_EVENT_STATE,0,NO_DERATE,No derate condition active,2
+DERATE_EVENT_STATE,1,TIMING_ACTIVE,Derate timing accumulator active,2
+DERATE_EVENT_STATE,2,EVENT_COUNTED,Event counted - counter incremented,2
+
+# Diagnostic Error Source Codes - identifies where error originated
+DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,Security validator - message length mismatch,1
+DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,Security validator - security check returned non-zero,1
+DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,Memory operation - system_logging_state check failed,1
+DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,Memory resolver - initial address lookup failed,1
+DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,Address validator - address not in validation table,1
+DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,Address validator - access blocked in normal mode,1
+DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,Memory operation - circular buffer write error,1
+DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,Response builder - memory patch count exceeded,1
+DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,Service dispatcher - service ID not in dispatch table,1
+
+# Diagnostic Service 3 Command Codes (Secured Operations)
+DIAG_SERVICE_3_CMD,0x40,ENABLE_SPECIAL_MODE,Enable special diagnostic mode for high memory access,1
+DIAG_SERVICE_3_CMD,0x41,VALIDATE_SPECIAL_MODE,Validate special mode state transition,1
+DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,Trigger high RPM shutdown,1
+DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,Diagnostic system reset,1
+DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success,1
+DIAG_SERVICE_3_CMD,0x51,SERVICE_3_MEMORY_PATCH,Apply queued memory patches,1
+DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,Request secured engine shutdown,1
+DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
+DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,Log CAN message buffer,1
+
+# Diagnostic Service 4 Command Codes (Control Operations)
+DIAG_SERVICE_4_CMD,0x64,CONTROL_64,System control function 64,1
+DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,Enable fault flag scanning,1
+DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
+DIAG_SERVICE_4_CMD,0x69,DISABLE_SPECIAL_MODE,Disable special diagnostic mode,1
+DIAG_SERVICE_4_CMD,0x70,RESERVED_70,Reserved - returns error 0x04,1
+DIAG_SERVICE_4_CMD,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
+DIAG_SERVICE_4_CMD,0x72,RESERVED_72,Reserved - returns error 0x04,1
+DIAG_SERVICE_4_CMD,0x73,STATE_BIT1,Set diagnostic_command_state bit 1,1
+DIAG_SERVICE_4_CMD,0x74,CONTROL_74,System control function 74,1
+DIAG_SERVICE_4_CMD,0x75,CONTROL_75,System control function 75,1
+DIAG_SERVICE_4_CMD,0x76,RESERVED_76,Reserved - returns error 0x04,1
+
+# Diagnostic Service 5 Mode Codes (Memory Operations)
+DIAG_SERVICE_5_MODE,0x60,MEM_READ_MODE3,Memory read mode 3 - standard read,1
+DIAG_SERVICE_5_MODE,0x80,MEM_WRITE_MODE4,Memory write mode 4 - 4-byte address,1
+DIAG_SERVICE_5_MODE,0xA0,MEM_WRITE_MODE2,Memory write mode 2 - 2-byte address,1
+DIAG_SERVICE_5_MODE,0xB0,MULTI_PKT_RX,Multi-packet receive handler,1
+DIAG_SERVICE_5_MODE,0xC0,MEM_READ_MODE2,Memory read mode 2 - compact read,1
+DIAG_SERVICE_5_MODE,0xE0,MEM_READ_MODE1,Memory read mode 1 - extended read,1
+DIAG_SERVICE_5_MODE,0xF0,MULTI_PKT_TX,Multi-packet transmit handler,1
+
+# DPA Protocol Frame Types - Cummins DPA diagnostic protocol
+DPA_FRAME_TYPE,0xC0,ASYNC,Asynchronous frame - no immediate response expected,1
+DPA_FRAME_TYPE,0x80,SYNC,Synchronous frame - wait for response,1
+
+# DPA Protocol Instructions
+DPA_INSTRUCTION,0x49,TRANSMIT,Send data to ECU (TX instruction),1
+DPA_INSTRUCTION,0x48,RECEIVE,Receive data from ECU (RX instruction),1
+
+# EEPROM Memory Block IDs
+EEPROM_MEMORY_BLOCKS,0,DATA_PLATE_BLOCK,Data plate identifier block,1
+EEPROM_MEMORY_BLOCKS,9,PRIMARY_BLOCK,Main parameter memory block,1
+
+# J1939_DIAGNOSTIC_SERVICE - the PGN 61184 diagnostic service byte: the first data byte of a request or a response (was EF00_SERVICE_ID - EF00 is the PGN in hex; PR #53 round 63). Members: the services the application registers with registerJ1939DiagnosticService (j1939_diagnostic_service_table) and the two responses cm848_sendJ1939ResponseFrame sends
+# Replies: 0x41 answers with 0x42 (the ID and its 4-byte address). A memory read answers with the matching write layout carrying the data (j1939_memory_read_reply_services): 0x43 -> 0x45 (0x44 under 256 bytes) / 0x46 -> 0x47 / 0x48 -> 0x49 / 0x4a -> 0x4b / 0x4c -> 0x4d
+# The boot kernel keeps its own table (cm848_registerDiagnosticService: 2 / 7 / 0x0b / 0x10 / 0x18 / 0x19 / 0x41 / 0x43-0x45 / 0x4a-0x4d) and its 7 downloads a calibration - so this enum is for the application only (the boot kernel's is BOOT_DIAGNOSTIC_SERVICE)
+# Corrected here: 0x15 was GET_ADDRESS_BY_PARAM_ID but commits the EEPROM mirror (0x41 gets the address) - 0x43 was MEM_READ_2B_PARAM_4B_OFFSET but its 4-byte field is the length - 0x46 was MEM_READ_2B_PARAM_ONLY and noted NOT REGISTERED but the application registers it with an offset and a length - 0x49 was J1939_DATA_COPY but writes by parameter ID
+# Open: clip-core (ECUReader::readParameterService43 / 46) sends 0x43's 4 bytes as an offset and 0x46 with zeros after the ID - on CM848 those bytes are a length (0x43) and an offset and a length (0x46); a bench check is a task 046 lead
+J1939_DIAGNOSTIC_SERVICE,0x01,J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,cm848_requestClearInactiveFaults: sets the CLEAR_INACTIVE bit of diagnostic_clear_request_state as DM3 does (was SERVICE_QUERY_TERMINATE),1
+J1939_DIAGNOSTIC_SERVICE,0x04,J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,cm848_handleJ1939DisableBroadcastService: cm848_updateJ1939BroadcastEnableMask with enable 0 (was SYSTEM_SERVICE_04),1
+J1939_DIAGNOSTIC_SERVICE,0x05,J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,cm848_handleJ1939EnableBroadcastService: cm848_updateJ1939BroadcastEnableMask with enable 1 (was SYSTEM_SERVICE_05),1
+J1939_DIAGNOSTIC_SERVICE,0x06,J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,commandEngineShutdown: sets engine_shutdown_command_flag (was SYSTEM_SERVICE_06),1
+J1939_DIAGNOSTIC_SERVICE,0x07,J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode (was SYSTEM_SERVICE_07),1
+J1939_DIAGNOSTIC_SERVICE,0x0a,J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,enterDevelopmentMode (was SYSTEM_SERVICE_0A),1
+J1939_DIAGNOSTIC_SERVICE,0x0b,J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,handleJ1939RestartService: restartThroughBootRom (was SYSTEM_SERVICE_0B),1
+J1939_DIAGNOSTIC_SERVICE,0x0c,J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one,1
+J1939_DIAGNOSTIC_SERVICE,0x0d,J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one,1
+J1939_DIAGNOSTIC_SERVICE,0x0f,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT),1
+J1939_DIAGNOSTIC_SERVICE,0x10,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID),1
+J1939_DIAGNOSTIC_SERVICE,0x15,J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm848_commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID),1
+J1939_DIAGNOSTIC_SERVICE,0x16,J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,forceExitDevelopmentMode (was SYSTEM_SERVICE_16),1
+J1939_DIAGNOSTIC_SERVICE,0x18,J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,inhibitKeyOffShutdown (was SYSTEM_SERVICE_18),1
+J1939_DIAGNOSTIC_SERVICE,0x41,J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_handleJ1939GetAddressByParameterIdService: the ID (2 bytes); answered with 0x42 - the ID and its 4-byte address (was DIAG_ADDR_RESOLVER),1
+J1939_DIAGNOSTIC_SERVICE,0x43,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,cm848_handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET),1
+J1939_DIAGNOSTIC_SERVICE,0x44,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,handleJ1939WriteByParameterIdService: the ID (2 bytes) and a length (1) then the data (was SERVICE_44),1
+J1939_DIAGNOSTIC_SERVICE,0x45,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,handleJ1939WriteByParameterIdLongLengthService: the ID (2 bytes) and a length (4) then the data (was SERVICE_45),1
+J1939_DIAGNOSTIC_SERVICE,0x46,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,cm848_handleJ1939ReadByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) (was MEM_READ_2B_PARAM_ONLY),1
+J1939_DIAGNOSTIC_SERVICE,0x47,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,handleJ1939WriteByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) then the data (was SERVICE_47),1
+J1939_DIAGNOSTIC_SERVICE,0x48,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,cm848_handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48),1
+J1939_DIAGNOSTIC_SERVICE,0x49,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,handleJ1939WriteByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) then the data (was J1939_DATA_COPY),1
+J1939_DIAGNOSTIC_SERVICE,0x4a,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN),1
+J1939_DIAGNOSTIC_SERVICE,0x4b,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B),1
+J1939_DIAGNOSTIC_SERVICE,0x4c,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN),1
+J1939_DIAGNOSTIC_SERVICE,0x4d,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D),1
+# BOOT_DIAGNOSTIC_SERVICE - the PGN 61184 service byte as the boot kernel reads it (PR #53 round 63): the services it registers with cm848_registerDiagnosticService (diagnostic_service_dispatch_table) and the two responses cm848_sendDiagServiceResponse sends. Its 7 downloads a calibration where the application's 7 exits development mode - so it is its own enum (the application's is J1939_DIAGNOSTIC_SERVICE)
+# The memory services keep the application's layouts and reply pairs (0x43 -> 0x45 or 0x44 under 256 bytes / 0x4a -> 0x4b / 0x4c -> 0x4d through the table at boot_kernel_rom_end); the writes run from the reflash kernel's RAM copy
+BOOT_DIAGNOSTIC_SERVICE,0x02,BOOT_DIAGNOSTIC_SERVICE_BEGIN_REFLASH,cm848_handleBootBeginReflashService: response pending 0x96 then mpc555_beginReflash(J1939) - ECM_Status REFLASH_IN_PROGRESS / the erase / the download tracking reset (was INITIALIZE_EEPROM_TRANSFER),1
+BOOT_DIAGNOSTIC_SERVICE,0x07,BOOT_DIAGNOSTIC_SERVICE_VERIFY_DOWNLOADED_CALIBRATION,cm848_handleBootVerifyDownloadedCalibrationService: mpc555_verifyDownloadedCalibration(request / J1939) (was DOWNLOAD_CALIBRATION),1
+BOOT_DIAGNOSTIC_SERVICE,0x0b,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
+BOOT_DIAGNOSTIC_SERVICE,0x0c,BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendDiagServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one,1
+BOOT_DIAGNOSTIC_SERVICE,0x0d,BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendDiagServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one,1
+BOOT_DIAGNOSTIC_SERVICE,0x10,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_16,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
+BOOT_DIAGNOSTIC_SERVICE,0x18,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_24,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
+BOOT_DIAGNOSTIC_SERVICE,0x19,BOOT_DIAGNOSTIC_SERVICE_EXECUTE_AT_ADDRESS,cm848_handleBootExecuteAtAddressService: calls the request's 4-byte address once the positive response has left the CAN transmit ring,1
+BOOT_DIAGNOSTIC_SERVICE,0x41,BOOT_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_handleBootGetAddressByParameterIdService: the ID (2 bytes); answered with 0x42,1
+BOOT_DIAGNOSTIC_SERVICE,0x43,BOOT_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,cm848_handleBootReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4),1
+BOOT_DIAGNOSTIC_SERVICE,0x44,BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,cm848_handleBootWriteByParameterIdService (RAM copy 0x3fb368): the ID (2 bytes) and a length (1) then the data,1
+BOOT_DIAGNOSTIC_SERVICE,0x45,BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,cm848_handleBootWriteByParameterIdLongLengthService (RAM copy 0x3fb3d8): the ID (2 bytes) and a length (4) then the data,1
+BOOT_DIAGNOSTIC_SERVICE,0x4a,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleBootReadMemoryService: an address (4 bytes) and a length (1),1
+BOOT_DIAGNOSTIC_SERVICE,0x4b,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY,cm848_handleBootWriteMemoryService (RAM copy 0x3fb440): an address (4 bytes) and a length (1) then the data,1
+BOOT_DIAGNOSTIC_SERVICE,0x4c,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleBootReadMemoryLongLengthService: an address (4 bytes) and a length (4),1
+BOOT_DIAGNOSTIC_SERVICE,0x4d,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,cm848_handleBootWriteMemoryLongLengthService (RAM copy 0x3fb4b8): an address (4 bytes) and a length (4) then the data,1
+# BOOT_DIAGNOSTIC_RESULT - the result code of a boot kernel PGN 61184 request (PR #53 round 66): the twin of J1939_DIAGNOSTIC_RESULT with the boot kernel's own 5 / 0x0a / 0x10 / 0x11 / 0x14 / 0x15 / 0x17 / 0xfe. cm848_dispatchDiagnosticService takes it from cm848_validateDiagnosticRequestLengthAndAuthorization or the handler; cm848_sendDiagServiceResponse answers ACCEPTED with 0x0c and the rest with 0x0d + the code. 0xff (nothing to send) is no member: the dispatcher masks each result with 0xff and a member of that value names the mask. The read and write workers pass region types and cm848_trackDownloadBlock codes straight through
+BOOT_DIAGNOSTIC_RESULT,0x00,BOOT_DIAGNOSTIC_RESULT_ACCEPTED,Done - cm848_sendDiagServiceResponse answers with 0x0c,4
+BOOT_DIAGNOSTIC_RESULT,0x02,BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH,The request length does not fit the service (the validator) or a memory length is over 1764 (the read and write workers),4
+BOOT_DIAGNOSTIC_RESULT,0x03,BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED,cm848_validateBootSecurityKey refused the request's token,4
+BOOT_DIAGNOSTIC_RESULT,0x04,BOOT_DIAGNOSTIC_RESULT_CANNOT_COMPLY,No response buffer is free (cm848_allocateDiagnosticResponseBuffer returned 0),4
+BOOT_DIAGNOSTIC_RESULT,0x05,BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE,No handler is registered for the service byte (cm848_dispatchDiagnosticService - the application answers this with 0x18),4
+BOOT_DIAGNOSTIC_RESULT,0x08,BOOT_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID,cm848_lookupBootParameterIdAddress does not know the ID,4
+BOOT_DIAGNOSTIC_RESULT,0x09,BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED,No region accepts the address range - none holds it or it is Bank 2 flash while flash2_writes_enabled is 0 (cm848_lookupBootMemoryRegionType) - or cm848_trackDownloadBlock refuses it (out of sequence or past the block length) (382fa677 named it UNMAPPED_ADDRESS),4
+BOOT_DIAGNOSTIC_RESULT,0x0a,BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED,The dispatcher refuses a handler in ROM (at or below 0x6fffe) while the low nibble of eeprom_service_mode_flags is set - only RAM handlers run then; no boot region has type 10 (382fa677 named it REGION_REFUSED) - though the boot read handler still tests 10: the code it shares with the application, where 10 is MEMORY_REGION_TYPE_REFUSED (PR #53 round 71),4
+BOOT_DIAGNOSTIC_RESULT,0x10,BOOT_DIAGNOSTIC_RESULT_NO_DOWNLOAD_BLOCK,cm848_trackDownloadBlock: a write while eeprom_xfer_state.block_length is 0 - no download block announced,4
+BOOT_DIAGNOSTIC_RESULT,0x11,BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED,cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed,4
+BOOT_DIAGNOSTIC_RESULT,0x14,BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH,cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's J1939_DIAGNOSTIC_RESULT gives 0x14 - c48cc435 said DIAG_RESPONSE_CODE),4
+BOOT_DIAGNOSTIC_RESULT,0x15,BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_INVALID,The download does not form a valid calibration: cm848_finishDownloadBlock finds download_block_list full - or mpc555_verifyDownloadedCalibration (service 7) finds a region sum unlike checksum_region_table or the block layout unlike block_data_structure (round 69) or ECM_Status neither CALIBRATION_VALID nor CALIBRATION_DOWNLOADED_NOT_VERIFIED (c48cc435 named it DOWNLOAD_BLOCK_LIST_FULL),4
+BOOT_DIAGNOSTIC_RESULT,0x17,BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED,Service 2: the flash erase in mpc555_beginReflash (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED),4
+BOOT_DIAGNOSTIC_RESULT,0x1a,BOOT_DIAGNOSTIC_RESULT_KEY_MISSING,The service needs the token but the request carries none,4
+BOOT_DIAGNOSTIC_RESULT,0xfe,BOOT_DIAGNOSTIC_RESULT_RESPONSE_PENDING,cm848_sendDiagResponsePending: cm848_sendDiagServiceResponse answers it with service 0x0e and the wait time - the real result follows later (round 66 said 0xfe had no producer),4
+# BOOT_REQUEST_CHANNEL - which link a boot kernel reflash request came over: the channel argument of mpc555_beginReflash / mpc555_verifyDownloadedCalibration / cm848_sendBootResultToJ1939Requester / cm848_trackDownloadBlock / cm848_updateDownloadCrc (PR #53 round 67). The code also tests 1 - no caller passes it
+BOOT_REQUEST_CHANNEL,0x02,BOOT_REQUEST_CHANNEL_J1939,The PGN 61184 services: only this channel gets cm848_sendBootResultToJ1939Requester's answer / the CAN transmit runs while the verifier waits / cm848_finishDownloadBlock checks a block's trailing CRC,4
+BOOT_REQUEST_CHANNEL,0x03,BOOT_REQUEST_CHANNEL_SERIAL,The serial reflash services: mpc555_runPacedSerialService runs while waiting / the verifier counts and flags the reflash in EEPROM / mpc555_diagServiceTransferBlock ends a block against the CRC in its own request,4
+# MEMORY_REGION_TYPE - the type byte of a memory region map entry: boot_memory_region_table (0x3f9830) and application_memory_region_table (0x53a33a) - read by cm848_lookupBootMemoryRegionType / lookupApplicationMemoryRegionType (PR #53 round 71). 9 and 10 double as the service result.
+MEMORY_REGION_TYPE,0x00,MEMORY_REGION_TYPE_RAM,Written by a plain copy: boot 0x302000-0x3fffff (the first match - so the TPU / TouCAN registers from 0x304000 resolve here too) / application 0x40c26e-0x43ffff,1
+MEMORY_REGION_TYPE,0x02,MEMORY_REGION_TYPE_BANK_2_FLASH,Bank 2 flash from 0x500000: the boot worker writes it through eeprom_xfer_state.flash2_write_callback (the boot lookup answers UNMAPPED instead while flash2_writes_enabled is 0); the application writer passes the code back - which J1939_DIAGNOSTIC_RESULT reads as 0x02 WRONG_LENGTH (the codes coincide),1
+MEMORY_REGION_TYPE,0x03,MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED,Written after the write authorization (cm848_validateBootSecurityKey / validateSecurityKey): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges,1
+MEMORY_REGION_TYPE,0x04,MEMORY_REGION_TYPE_MAIN_FLASH,Main flash 0x0-0x6ffff: the boot worker programs it (cm848_dataTransferBufferWrite); the application writer refuses it (J1939_DIAGNOSTIC_RESULT_REGION_REFUSED),1
+MEMORY_REGION_TYPE,0x05,MEMORY_REGION_TYPE_EEPROM,EEPROM from 0x1000000: written after the write authorization (boot eeprom_xfer_state.eeprom_write_callback / application cm848_queueEepromByteWrites),1
+MEMORY_REGION_TYPE,0x09,MEMORY_REGION_TYPE_UNMAPPED,No entry holds the range - the application map leaves out the dual-port TPU RAM 0x302000-0x3037ff that emulation mode takes from the CPU - or Bank 2 in the boot kernel while flash2_writes_enabled is 0; the readers and writers pass it back as the result (J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS / BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED),1
+MEMORY_REGION_TYPE,0x0a,MEMORY_REGION_TYPE_REFUSED,The application's register ranges while development mode is off (development_mode_off_region_type); passed back as J1939_DIAGNOSTIC_RESULT_REGION_REFUSED - the boot read handler tests it too,1
+
+# CAN Timer Init Modes
+CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1
+CAN_TIMER_INIT_MODE,1,ALT_TRANSMIT,Alt timer + message transmit init,1
+CAN_TIMER_INIT_MODE,2,DIVIDED_TRANSMIT,Divided timer + message transmit init,1
+CAN_TIMER_INIT_MODE,3,CONDITIONAL_DELAY,Conditional timer + watchdog delay,1
+
+# CAN Buffer Offsets
+CAN_BUFFER_OFFSETS,0x36,CAN_STATUS_BYTE,CAN message status byte offset,1
+CAN_BUFFER_OFFSETS,0x37,PARAM_BYTE_1,First parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x38,PARAM_BYTE_2,Second parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x39,PARAM_BYTE_3,Third parameter byte offset,1
+
+# Interpolation Scaling Factors
+INTERPOLATION_FACTORS,3,SCALE_FACTOR,Base interpolation scaling,1
+INTERPOLATION_FACTORS,8,SHIFT_BITS,Bit shift amount for scaling,1
+INTERPOLATION_FACTORS,256,WORD_MULTIPLIER,Word-size multiplication factor,2
+
+# ============================================================================
+# Fuel/Protection/Sensor Enums - Ported from CM550
+# ============================================================================
+
+# J1939 Cruise Control Enable Flags
+J1939_CRUISE_CONTROL_ENABLE,1,CRUISE_RECEIVE_ENABLE,CCVS message reception filter,1
+J1939_CRUISE_CONTROL_ENABLE,2,CRUISE_MESSAGE_ENABLE,Enable cruise control/vehicle speed message processing,1
+J1939_CRUISE_CONTROL_ENABLE,3,SPEED_CONTROL_STATUS,Speed control status (1=SPEED_CONTROL 0=NORMAL),1
+J1939_CRUISE_CONTROL_ENABLE,4,SPEED_BRAKE_INTERACTION,Enable speed control/engine braking interaction,1
+
+# J1939 Throttle Enable Flags
+J1939_THROTTLE_ENABLE,1,ETC1_RECEIVE_ENABLE,ETC1(PGN 61442) message reception enable,1
+J1939_THROTTLE_ENABLE,2,J1939_MESSAGE_FLAGS,J1939 message enable flags table,1
+J1939_THROTTLE_ENABLE,3,ASG_THROTTLE_COEFF_1,ASG throttle mode compensation filter coef 1,1
+J1939_THROTTLE_ENABLE,4,ASG_THROTTLE_COEFF_2,ASG throttle mode compensation filter coef 2,1
+J1939_THROTTLE_ENABLE,5,ASG_THROTTLE_COEFF_3,ASG throttle mode compensation filter coef 3,1
+
+# ETC1_SPN560_DRIVELINE_STATE - SPN 560: Transmission Driveline Engaged (ETC1 byte 1 bits 1-2)
+# 0=not defined 1=disengaged 2=engaged 3=N/A
+ETC1_SPN560_DRIVELINE_STATE,0,DRIVELINE_NOT_DEFINED,Driveline state not defined/not supported,1
+ETC1_SPN560_DRIVELINE_STATE,1,DRIVELINE_DISENGAGED,Transmission driveline disengaged,1
+ETC1_SPN560_DRIVELINE_STATE,2,DRIVELINE_ENGAGED,Transmission driveline engaged,1
+ETC1_SPN560_DRIVELINE_STATE,3,DRIVELINE_NA,Driveline state not available,1
+
+# ETC1_SPN573_TC_LOCKUP_STATE - SPN 573: Torque Converter Lockup Engaged (ETC1 byte 1 bits 3-4)
+# 0=disengaged 1=engaging 2=engaged 3=N/A
+ETC1_SPN573_TC_LOCKUP_STATE,0,TC_LOCKUP_DISENGAGED,Torque converter lockup disengaged,1
+ETC1_SPN573_TC_LOCKUP_STATE,1,TC_LOCKUP_ENGAGING,Torque converter lockup engaging (in progress),1
+ETC1_SPN573_TC_LOCKUP_STATE,2,TC_LOCKUP_ENGAGED,Torque converter lockup fully engaged,1
+ETC1_SPN573_TC_LOCKUP_STATE,3,TC_LOCKUP_NA,Torque converter lockup state not available,1
+
+# ETC1_SPN574_SHIFT_STATE - SPN 574: Transmission Shift In Process (ETC1 byte 1 bits 5-6)
+# 0=no shift 1=shift in process 2=reserved 3=N/A
+ETC1_SPN574_SHIFT_STATE,0,NO_SHIFT_IN_PROCESS,No transmission shift in progress,1
+ETC1_SPN574_SHIFT_STATE,1,SHIFT_IN_PROCESS,Transmission shift currently in process,1
+ETC1_SPN574_SHIFT_STATE,2,SHIFT_RESERVED,Reserved (not used),1
+ETC1_SPN574_SHIFT_STATE,3,SHIFT_NA,Shift state not available,1
+
+# ETC1_SPN606_OVERSPEED_ENABLE - SPN 606: Engine Momentary Overspeed Enable (ETC1 byte 5 bits 1-2)
+# Transmission requests engine speed boost up to maximum governed speed
+ETC1_SPN606_OVERSPEED_ENABLE,0,OVERSPEED_DISABLED,Engine momentary overspeed not requested,1
+ETC1_SPN606_OVERSPEED_ENABLE,1,OVERSPEED_ENABLED,Engine momentary overspeed requested by transmission,1
+ETC1_SPN606_OVERSPEED_ENABLE,2,OVERSPEED_RESERVED,Reserved,1
+ETC1_SPN606_OVERSPEED_ENABLE,3,OVERSPEED_NA,Overspeed enable state not available,1
+
+# ETC1_SPN607_PROGRESSIVE_SHIFT - SPN 607: Progressive Shift Disable (ETC1 byte 5 bits 3-4)
+# Transmission commands engine to disable progressive shift (fuel ramp during shifts)
+ETC1_SPN607_PROGRESSIVE_SHIFT,0,PROGRESSIVE_SHIFT_ALLOW,Progressive shift allowed by transmission,1
+ETC1_SPN607_PROGRESSIVE_SHIFT,1,PROGRESSIVE_SHIFT_DISABLE,Progressive shift disabled - transmission controlling torque,1
+ETC1_SPN607_PROGRESSIVE_SHIFT,2,PROGRESSIVE_SHIFT_RESERVED,Reserved,1
+ETC1_SPN607_PROGRESSIVE_SHIFT,3,PROGRESSIVE_SHIFT_NA,Progressive shift state not available,1
+
+# Vehicle speed sensor type (vehicle_speed_sensor_type_cal @ 0x003fdda6 = e2m 117F +3A RSC_Sensor_Type [VSRSSNTY]; was drivetrain_type / DRIVETRAIN_TYPE - round 5)
+# Calibration constant set at build time; controls J1939/VSS/TPU interface mode
+VEHICLE_SPEED_SENSOR_TYPE,0,VEHICLE_SPEED_SENSOR_NONE,e2m VSRSSNTY 0 = none: no vehicle speed sensor (the CCVS1 builder sends no speed; the HSG compensator runs) (was DRIVETRAIN_STANDALONE),2
+VEHICLE_SPEED_SENSOR_TYPE,1,VEHICLE_SPEED_SENSOR_INDUCTIVE,1 = inductive (the magnetic vehicle speed sensor on TPU-B channel 2; this truck's EEPROM holds 1) (was DRIVETRAIN_MANUAL_VSS),2
+VEHICLE_SPEED_SENSOR_TYPE,2,VEHICLE_SPEED_SENSOR_MINIGEN,2 = minigen (a mini generator speed sensor); no code compares with it,2
+VEHICLE_SPEED_SENSOR_TYPE,3,VEHICLE_SPEED_SENSOR_TACHOGRAPH,3 = tach: the speed comes from a tachograph signal; cm848_initVehicleSpeedSensorChannel and the sensor interrupt handle the TPU-B channel 2 input differently (was DRIVETRAIN_MANUAL_TPU),2
+VEHICLE_SPEED_SENSOR_TYPE,4,VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO,4 = dlw/GR&OOG: data link with gear ratio and out-of-gear - the vehicle speed from the J1939 ETC1 output shaft speed (cm848_calculateVehicleSpeedFromOutputShaft) and the ETC2 gear ratio (was DRIVETRAIN_AUTO_J1939_FULL),2
+VEHICLE_SPEED_SENSOR_TYPE,5,VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO,5 = dlw/o GR&OOG: data link without gear ratio and out-of-gear - ETC1 only (was DRIVETRAIN_AUTO_J1939_ETC1),2
+
+
+# J1939 Diagnostic Protocol Modes
+J1939_DIAGNOSTIC_PROTOCOL,1,CALTERM_COMMUNICATION,CalTerm parameter read/write via J1939,1
+J1939_DIAGNOSTIC_PROTOCOL,2,INSITE_COMMUNICATION,Insite live data monitoring via J1939,1
+J1939_DIAGNOSTIC_PROTOCOL,3,DIAG_MESSAGE_DISPATCHER,Routes diagnostic requests by message type,1
+J1939_DIAGNOSTIC_PROTOCOL,4,PARAM_REQUEST_HANDLER,Processes EEPROM parameter read requests,1
+J1939_DIAGNOSTIC_PROTOCOL,5,PARAM_RESPONSE_BUILDER,Formats parameter values for J1939 response,1
+
+# Insite Command Codes
+INSITE_CMD,0x00,PARAM_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
+INSITE_CMD,0x80,PARAM_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
+INSITE_CMD,0xC1,INSITE_COMMAND_ACTIVE_FAULT_LIST,Active DTC list builder,1
+INSITE_CMD,0xC2,INSITE_COMMAND_FAULT_DETAIL,Detailed fault information builder,1
+INSITE_CMD,0xC3,PID_DTC_REQUEST,PID/DTC handler request,1
+INSITE_CMD,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
+INSITE_CMD,0xEA,CAPACITY_INFO,Capacity response builder - 24 bytes,1
+INSITE_CMD,0xED,ECU_ID,ECU identification builder,1
+INSITE_CMD,0xF3,INSITE_COMMAND_VERSION_INFO,Version info builder - 31 bytes,1
+
+# Insite Status Output Bits - maps internal status to Insite display
+INSITE_STATUS_OUTPUT,0x80,PROTECTION_ENABLED,Protection system enable flag is set,1
+INSITE_STATUS_OUTPUT,0x40,DERATE_BIT2_SET,Derate status byte bit 2 is set,1
+INSITE_STATUS_OUTPUT,0x20,DERATE_BIT3_SET,Derate status byte bit 3 is set,1
+INSITE_STATUS_OUTPUT,0x10,SENSOR_BIT1_SET,Sensor status register bit 1 is set,1
+INSITE_STATUS_OUTPUT,0x08,SENSOR_BIT0_SET,Sensor status register bit 0 is set,1
+INSITE_STATUS_OUTPUT,0x04,SENSOR_BIT3_SET,Sensor status register bit 3 is set,1
+INSITE_STATUS_OUTPUT,0x02,SENSOR_BIT2_SET,Sensor status register bit 2 is set,1
+INSITE_STATUS_OUTPUT,0x01,SENSOR_BIT4_SET,Sensor status register bit 4 is set,1
+
+# Memory Operation Result Codes
+MEMORY_OP_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully,1
+MEMORY_OP_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch,1
+MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,Security check returned non-zero,1
+MEMORY_OP_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - logging state check failed,1
+MEMORY_OP_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,ROM/Flash region - write not permitted,1
+MEMORY_OP_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,Circular buffer write error during EEPROM logging,1
+MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write requires auth but not provided,1
+
+# Security Result Codes
+SECURITY_RESULT,0x00,AUTH_SUCCESS,Security check passed - operation authorized,1
+SECURITY_RESULT,0x02,SECURITY_INVALID_LENGTH,Invalid message length for service,1
+SECURITY_RESULT,0x03,AUTH_FAILED,Security check failed - access denied,1
+SECURITY_RESULT,0x07,SECURITY_CONDITION_NOT_MET,Pre-condition not satisfied,1
+SECURITY_RESULT,0x0A,INVALID_ADDR,Invalid memory address range,1
+SECURITY_RESULT,0x0B,SECURITY_BUFFER_WRITE_FAIL,Circular buffer write failed,1
+SECURITY_RESULT,0xFF,PROCEED_TO_HANDLER,Proceed to handler (auth passed or not required),1
+
+# Security Bypass Values
+SECURITY_BYPASS,0xB522,BYPASS_ENABLED,Magic value to bypass security checks,2
+SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value,1
+SECURITY_BYPASS_FLAG,0xFF,BYPASS_FLAG_ENABLED,Security checks completely bypassed,1
+SECURITY_BYPASS_FLAG,0x00,SECURITY_ACTIVE,Normal security - checks enforced,1
+
+# Sensor Status Bits
+SENSOR_STATUS_BITS,0x10,SENSOR_STATUS_BIT4,Sensor status bit 4 - maps to INSITE output 0x01,1
+SENSOR_STATUS_BITS,0x08,SENSOR_STATUS_BIT3,Sensor status bit 3 - maps to INSITE output 0x04,1
+SENSOR_STATUS_BITS,0x04,SENSOR_STATUS_BIT2,Sensor status bit 2 - maps to INSITE output 0x02,1
+SENSOR_STATUS_BITS,0x02,SENSOR_STATUS_BIT1,Sensor status bit 1 - maps to INSITE output 0x10,1
+SENSOR_STATUS_BITS,0x01,SENSOR_STATUS_BIT0,Sensor status bit 0 - maps to INSITE output 0x08,1
+
+# Sensor History State Machine
+SENSOR_HISTORY_STATE,0,SENSOR_IDLE,Initial monitoring state,2
+SENSOR_HISTORY_STATE,1,SENSOR_ACTIVE,Sensor actively being monitored,2
+SENSOR_HISTORY_STATE,2,SENSOR_FAULT_DETECTED,Fault condition detected,2
+SENSOR_HISTORY_STATE,3,RECOVERY,Recovery countdown state,2
+
+# Engine Sync State
+SYNC_STATE,0,NO_SYNC,No synchronization established,1
+SYNC_STATE,1,HAVE_SYNC,Synchronization established and maintained,1
+SYNC_STATE,2,LOST_SYNC,Synchronization was established but lost,1
+
+# Fuel Demand Source IDs
+FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALC,Table interpolation blend calculation result,2
+FUEL_DEMAND_SOURCE,1,RPM_BASED_LIMIT,RPM-based fuel demand limit,2
+FUEL_DEMAND_SOURCE,2,BLEND_PARAM_FALLBACK,Blend parameter 2 fallback value,2
+FUEL_DEMAND_SOURCE,3,HIGH_RPM_FUEL_LIMIT,High RPM fuel limit,2
+FUEL_DEMAND_SOURCE,4,FUEL_LIMIT_FLOOR,Fuel limit floor value,2
+FUEL_DEMAND_SOURCE,5,ENGINE_MODE_TRANSITION,Engine mode transition timing,2
+
+# Fuel Demand Limit Sources
+FUEL_DEMAND_LIMIT,0,NO_LIMIT_ACTIVE,No fuel limit active / cleared state,2
+FUEL_DEMAND_LIMIT,1,OVERRIDE_STATE_ACTIVE,Override state active from fuel_demand_override_state,2
+FUEL_DEMAND_LIMIT,5,PROTECTION_OVERRIDE_LIMIT,Protection/override state - init and fault recovery,2
+
+# Fuel Arbitrator Flags
+FUEL_ARB_FLAGS,0x04,THROTTLE_OVERRIDE,Override throttle control when set,1
+FUEL_ARB_FLAGS,0x08,SPEED_LIMIT_ACTIVE,Activate speed limiter when set,1
+FUEL_ARB_FLAGS,0x10,FUEL_LIMIT_ACTIVE,Activate fuel limiter when set,1
+
+# Shutdown Selector Sources
+SHUTDOWN_SELECTOR_SOURCE,13,FUEL_DEMAND_MODE_OVERRIDE,Fuel demand mode selector override,2
+SHUTDOWN_SELECTOR_SOURCE,15,SHUTDOWN_PROTECTION_LIMIT,Shutdown protection fuel limit,2
+SHUTDOWN_SELECTOR_SOURCE,16,DIAGNOSTIC_MODE_BUFFER,Diagnostic mode buffer limit,2
+SHUTDOWN_SELECTOR_SOURCE,17,FUEL_LIMIT_SHUTDOWN,Fuel limit from shutdown calc,2
+SHUTDOWN_SELECTOR_SOURCE,19,CALCULATED_FUEL_TIMING,Calculated fuel timing value,2
+SHUTDOWN_SELECTOR_SOURCE,20,FUEL_ARBITRATOR_DIAG,Fuel arbitrator diagnostic mode,2
+SHUTDOWN_SELECTOR_SOURCE,21,SHUTDOWN_LIMIT_SELECTOR,Shutdown limit selector value,2
+SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INIT,Shutdown minimum init value,2
+SHUTDOWN_SELECTOR_SOURCE,29,PROTECTION_SHUTDOWN_LIMIT,Protection shutdown fuel limit,2
+SHUTDOWN_SELECTOR_SOURCE,34,OIL_PRESSURE_PROTECTION,Oil pressure protection limit,2
+
+
+# I/O Control State
+IO_CONTROL_STATE,0,OFF_INACTIVE,Output off/inactive - waiting for condition,1
+IO_CONTROL_STATE,1,TRANSITIONING,Transition state - checking conditions,1
+IO_CONTROL_STATE,2,ON_ACTIVE,Output on/active - condition met,1
+
+# Output Control Timer State
+OUTPUT_CONTROL_TIMER_STATE,0,OUTPUT_TIMER_IDLE,Output timer idle state,1
+OUTPUT_CONTROL_TIMER_STATE,1,OUTPUT_TIMER_STATE_1,Output timer state 1,1
+OUTPUT_CONTROL_TIMER_STATE,2,OUTPUT_TIMER_STATE_2,Output timer state 2,1
+OUTPUT_CONTROL_TIMER_STATE,3,OUTPUT_TIMER_STATE_3,Output timer state 3,1
+OUTPUT_CONTROL_TIMER_STATE,4,OUTPUT_TIMER_STATE_4,Output timer state 4,1
+OUTPUT_CONTROL_TIMER_STATE,5,OUTPUT_TIMER_STATE_5,Output timer state 5,1
+
+# Output Control Timing State
+OUTPUT_CONTROL_TIMING_STATE,0x01,TIMING_MODE_A,PWM output timing mode A,1
+OUTPUT_CONTROL_TIMING_STATE,0x02,TIMING_MODE_B,PWM output timing mode B,1
+
+# Proprietary Diagnostic Status
+PROP_DIAG_STATUS,0xF0,STATUS_NORMAL,Normal operation - load below threshold,1
+PROP_DIAG_STATUS,0xF1,PROP_DIAG_STATUS_F1,Status F1 - specific condition,1
+PROP_DIAG_STATUS,0xF4,STATUS_LOAD_HIGH,Load above threshold,1
+PROP_DIAG_STATUS,0xF8,STATUS_FAULT_ACTIVE,Critical fault active,1
+PROP_DIAG_STATUS,0x01,STATUS_BIT0_LOAD_INACTIVE,Bit 0 set when load calculation inactive,1
+
+# Parameter Validation Limits
+PARAM_VALIDATION,32000,SAFETY_LIMIT,Maximum allowed parameter value,2
+PARAM_VALIDATION,65535,BLOCK_LIMIT,Block validation limit,2
+
+# Event Timer Channels - used with cancelEventTimer/tickEventTimer
+# Timer variables at 0x003fcf3a-0x003fcf54 (DAT_003fcf36 = active count)
+EVENT_TIMER_CHANNEL,0x04,TIMER_CHANNEL_04,Timer channel 4 (DAT_003fcf42),1
+EVENT_TIMER_CHANNEL,0x0b,TIMER_CHANNEL_11,Timer channel 11 (DAT_003fcf44),1
+EVENT_TIMER_CHANNEL,0x10,TIMER_CHANNEL_16,Timer channel 16 (DAT_003fcf54),1
+EVENT_TIMER_CHANNEL,0x11,TIMER_CHANNEL_17,Timer channel 17 (DAT_003fcf4c),1
+EVENT_TIMER_CHANNEL,0x12,TIMER_CHANNEL_18,Timer channel 18 (DAT_003fcf4a),1
+EVENT_TIMER_CHANNEL,0x13,TIMER_CHANNEL_19,Timer channel 19 (DAT_003fcf4e),1
+EVENT_TIMER_CHANNEL,0x14,TIMER_CHANNEL_20,Timer channel 20 (DAT_003fcf50),1
+EVENT_TIMER_CHANNEL,0x15,TIMER_CHANNEL_21,Timer channel 21 (DAT_003fcf52),1
+EVENT_TIMER_CHANNEL,0x26,TIMER_CHANNEL_38,Timer channel 38 (DAT_003fcf3a),1
+EVENT_TIMER_CHANNEL,0x2b,TIMER_CHANNEL_43,Timer channel 43 (sci_output_test_active_count),1
+EVENT_TIMER_CHANNEL,0x2c,TIMER_CHANNEL_44,Timer channel 44 (sci_output_test_phase_countdown),1
+EVENT_TIMER_CHANNEL,0x35,TIMER_CHANNEL_53,Timer channel 53 (sci_output_test_timers),1
+# Prior boot fault state - set at keyoff: 1 if engine didn't complete a normal run cycle
+# (engine_state != 1 at keyoff = crashed or shut down mid cold-start sequence)
+# Blocks diagnostic session access on next boot until the condition is resolved
+PRIOR_BOOT_STATE,0,PRIOR_BOOT_NORMAL,Previous boot completed a normal run cycle; diagnostics permitted,1
+PRIOR_BOOT_STATE,1,PRIOR_BOOT_FAULTED,Previous boot faulted or shut down mid cold-start; diagnostics locked out,1
+# Diagnostic session state machine - three-state, not a boolean flag
+RAM_REFRESH_STATE,0,RAM_REFRESH_DISABLED,RAM refresh off (development mode); the refresh pass and the EEPROM mirror reload do nothing; stored by the reset service and temporarily by cm848_runCylinderContributionTest,2
+RAM_REFRESH_STATE,1,RAM_REFRESH_ENABLED,RAM refresh on (the normal state); stored at start-up and power-down and by the activate services,2
+# J1939 standby state - controls whether ECU is armed for session activation or session is running
+DEVELOPMENT_MODE_STATE,0,DEVELOPMENT_MODE_OFF,Normal operation; stored by the activate services and the power-down sequence; the register address ranges of the diagnostic memory services are refused,2
+DEVELOPMENT_MODE_STATE,1,DEVELOPMENT_MODE_ON,Development mode; stored only by the reset service together with the RAM refresh disabled; the activate service needs it and the register address ranges of the diagnostic memory services open,2
+RUN_LOCATION,0xea,RUN_LOCATION_DEVELOPMENT,Development: set by cm848_resetDiagnosticSession together with development_mode on and the RAM refresh off,1
+RUN_LOCATION,0xee,RUN_LOCATION_NORMAL,Normal: set at boot / power-down and by the activate services; the only value for which cm848_lookupParameterIdAddress gives raw EEPROM addresses,1
+# J1939_DIAGNOSTIC_RESULT - the result code of a PGN 61184 request (PR #53 round 64). 0xff - nothing to send: the validator passed the request / the handler answered itself / a response came in - is no member: the dispatcher masks each result with 0xff and a member of that value names the mask: was DIAG_RESPONSE (0 / 4 / 7) merged with DIAG_RESPONSE_CODE (ported from CM550 - its 0x14 CHECKSUM_MISMATCH has no CM848 producer found). cm848_j1939DiagnosticServiceHandler takes it from cm848_validateJ1939DiagnosticRequest or the handler; cm848_sendJ1939ResponseFrame answers ACCEPTED with 0x0c and the rest with 0x0d + the code
+# The memory workers pass a region type from lookupApplicationMemoryRegionType straight through: 9 (no region) / 10 (refused) - and a write to Bank 2 flash returns its type 2 (the value of WRONG_LENGTH). The boot kernel's dispatcher answers an unknown service with 5 and a refused ROM handler with 10
+J1939_DIAGNOSTIC_RESULT,0x00,J1939_DIAGNOSTIC_RESULT_ACCEPTED,Done - cm848_sendJ1939ResponseFrame answers with 0x0c (was DIAG_ACK / SUCCESS),4
+J1939_DIAGNOSTIC_RESULT,0x02,J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH,The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH),4
+J1939_DIAGNOSTIC_RESULT,0x03,J1939_DIAGNOSTIC_RESULT_KEY_REFUSED,validateSecurityKey refused the request's key (was SECURITY_FAILED),4
+J1939_DIAGNOSTIC_RESULT,0x04,J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY,Not now or not this: development mode is not on (exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (cm848_updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW),4
+J1939_DIAGNOSTIC_RESULT,0x07,J1939_DIAGNOSTIC_RESULT_NOT_SAFE,Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED),4
+J1939_DIAGNOSTIC_RESULT,0x08,J1939_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID,cm848_lookupParameterIdAddress does not know the ID (was ADDR_VALIDATION_FAIL),4
+J1939_DIAGNOSTIC_RESULT,0x09,J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS,No memory region holds the address range (was INVALID_ADDR_RANGE),4
+J1939_DIAGNOSTIC_RESULT,0x0a,J1939_DIAGNOSTIC_RESULT_REGION_REFUSED,The region refuses the access: ROM for a write / the registers outside development mode / the EEPROM mirror RAM while the RAM refresh is on (was INVALID_ADDR_ALT),4
+J1939_DIAGNOSTIC_RESULT,0x0b,J1939_DIAGNOSTIC_RESULT_EEPROM_WRITE_QUEUE_FULL,cm848_queueEepromByteWrites would overflow its 64-entry queue,4
+J1939_DIAGNOSTIC_RESULT,0x18,J1939_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE,No handler is registered for the service byte (was UNKNOWN_SUBFUNC),4
+J1939_DIAGNOSTIC_RESULT,0x1a,J1939_DIAGNOSTIC_RESULT_KEY_MISSING,The service needs the key but the request carries none,4
+# EEPROM diagnostic handler state machine (eeprom_diag_state at 0x003fecf1)
+# Dispatches diagnostic requests during EEPROM operations in mpc555_processDiagnosticAndEepromRequests
+EEPROM_DIAG_STATE,0x03,EEPROM_DIAG_HANDLE_RESPONSE,Handle EEPROM diagnostic response,1
+EEPROM_DIAG_STATE,0x10,EEPROM_DIAG_DATA_TRANSFER,Process EEPROM data transfer,1
+EEPROM_DIAG_STATE,0x11,EEPROM_DIAG_SEND_VERSION,Send EEPROM version response,1
+EEPROM_DIAG_STATE,0x12,EEPROM_DIAG_TRANSFER_BLOCK,Transfer data block service,1
+EEPROM_DIAG_STATE,0x20,EEPROM_DIAG_WRITE_DISPATCH,Dispatch EEPROM write request,1
+# Calibration write mode - gates whether parameter writes go to volatile RAM or persistent EEPROM
+# Mirrors Cummins CILCALDATASERVERLib.tagCICacheMode: dataVolatile vs readWrite
+CAL_WRITE_MODE,0xea,CAL_VOLATILE,Writes land in RAM only; lost on power cycle,1
+CAL_WRITE_MODE,0xee,CAL_PERSISTENT,Writes go through to EEPROM; survive power cycle,1
+# TSC1 Override Control Mode (J1939 SPN 695) - bits 0-1 of TSC1 byte 1
+# Used as local 'control_mode' in processEngineTsc1Request and stored in
+#   j1939_powertrain_control_state.tsc1_override_control_mode
+TSC1_OVERRIDE_MODE,0,TSC1_OVERRIDE_OFF,SPN 695 00 = override disabled (e2m Jcomm_Engine_Control_Mode / Jcomm_Retarder_Control_Mode 0 = disable),2
+TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,SPN 695 01 = speed control: the engine governs to the requested speed (e2m 1 = speed),2
+TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,SPN 695 10 = torque control (e2m 2 = torque),2
+TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,SPN 695 11 = speed and torque limit control (e2m 3 = limit),2
+# J1939 control device (e2m 10E8 +2 Jcomm_Engine_Control_Device_Indicator / 10E6 +2 the retarder's): lookupJ1939ControlDevice
+J1939_CONTROL_DEVICE,0,J1939_CONTROL_DEVICE_NONE,e2m Jcomm_Engine_Control_Device_Indicator 0 = NONE,2
+J1939_CONTROL_DEVICE,1,J1939_CONTROL_DEVICE_TRANSMISSION,1 = TRANS: the sender is j1939_transmission_source_address,2
+J1939_CONTROL_DEVICE,2,J1939_CONTROL_DEVICE_ANTI_LOCK_BRAKES,2 = ABS: j1939_anti_lock_brake_source_address,2
+J1939_CONTROL_DEVICE,3,J1939_CONTROL_DEVICE_ANTI_SLIP_REGULATION,3 = ASR: j1939_anti_slip_regulation_source_address,2
+J1939_CONTROL_DEVICE,4,J1939_CONTROL_DEVICE_UNKNOWN,4 = UNKNOWN: any other source address,2
+# Control network (e2m 10E8 +1A Jcomm_Engine_Control_Network_Type / +1C Jcomm_Out_of_Gear_Network_Type)
+CONTROL_NETWORK,0,CONTROL_NETWORK_J1922,e2m Jcomm_Engine_Control_Network_Type 0 = J1922 (on the J1708 link),2
+CONTROL_NETWORK,1,CONTROL_NETWORK_J1939,1 = J1939,2
+
+# Engine State (Cummins FSEGST Engine_State; e2m block 1068 +0 - its labels in CHR_CC_11.45.01.07.e2m: 1 STOP 2 CRANK 3 RUN 4 ENGBRAKE 5 OVERSPED 6 JUMPSTRT 7 REENTRY 8 SHUTDOWN): engine_state (0x40a7c0) set by cm848_updateEngineState. Block 1068 lines up 7/7 (+2 Start_Power_Down = power_down_start_flag / +4 ECM_Powerdown_Timer = ecm_power_down_timer / +6 / +A crank / run time / +E / +F Engine_Is_Active / _Starting). Renamed 2026-11-19 from ENGINE_STATE / engine_state: the old names and comments disagreed for 1 / 4 / 5 / 8
+ENGINE_STATE,0,ENGINE_STATE_UNINITIALIZED,Zeroed RAM: cm848_updateEngineState turns 0 (or anything above 8) into STOPPED,2
+ENGINE_STATE,1,ENGINE_STATE_STOPPED,e2m STOP: engine speed at or below engine_stopped_speed - the final fuel is 0 (FUELING_STATE_ENGINE_STOPPED). RAM dump (key on / engine stopped): 1,2
+ENGINE_STATE,2,ENGINE_STATE_CRANKING,e2m CRANK: above engine_stopped_speed until crank_exit_speed - the fuel is crank_fuel (FUELING_STATE_CRANKING),2
+ENGINE_STATE,3,ENGINE_STATE_RUNNING,e2m RUN: at or above crank_exit_speed; no final-fuel override; engine_is_active_flag is 1,2
+ENGINE_STATE,4,ENGINE_STATE_ENGINE_BRAKE,e2m ENGBRAKE: from RUN while engine_retarder_active_flag is 1 (and engine_brake_driveline_brake_type_cal 0) until it clears - the fuel is the ROM word 0x5c308 (FUELING_STATE_ENGINE_BRAKE),2
+ENGINE_STATE,5,ENGINE_STATE_OVERSPEED,e2m OVERSPED: while engine_overspeed_active_flag is 1 (P0219) - the fuel is the ROM word 0x5c30a (FUELING_STATE_OVERSPEED),2
+ENGINE_STATE,6,ENGINE_STATE_JUMP_START,e2m JUMPSTRT: from CRANK after the crank pass count passes its limit; the consumers treat it like CRANK,2
+ENGINE_STATE,7,ENGINE_STATE_REENTRY,e2m REENTRY: from RUN when engine speed drops to crank_reentry_speed - the crank fuel is a floor (FUELING_STATE_CRANKING),2
+ENGINE_STATE,8,ENGINE_STATE_SHUTDOWN,e2m SHUTDOWN: the key line (mios_mdasm30.SCR bit 15) is off without key_off_shutdown_inhibit_flag - or engine_shutdown_command_flag is 1; ecm_power_down_timer runs - the fuel is fuel_demand_minimum (FUELING_STATE_SHUTDOWN),2
+
+# J1939-21 ACKM control byte (PGN 0xE800 byte 1)
+# Used as j1939_acknowledgement_payload_t.control_byte and as ack_type parameter in sendAcknowledgeMessage/sendNegativeAck
+J1939_ACK_TYPE,0,J1939_ACK,Positive acknowledgment - request fulfilled,1
+J1939_ACK_TYPE,1,J1939_NACK,Negative acknowledgment - cannot comply with request,1
+J1939_ACK_TYPE,2,J1939_ACCESS_DENIED,Access denied - not authorized for requested action,1
+J1939_ACK_TYPE,3,J1939_CANNOT_RESPOND,Cannot respond - busy or resource unavailable,1
+# Cruise control action state (cruise_control_state @ 0x0040b68e, e2m 1184 +2 Cruise_Command_Mode) - selects the action in cm848_cruiseSpeedCommandStateMachine; its values are the e2m list off / set / resume / coast / accel / bump down / bump up / hold / cancel, not the J1939 SPN 527 states (ccvs1_cruise_control_state carries those)
+CRUISE_CONTROL_STATE,0,CRUISE_OFF,"Off: clears engaged, resume and the resume speed valid flag (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: Cruise off/disabled - clears override and fuel-enable",2
+CRUISE_CONTROL_STATE,1,CRUISE_SET,Set: cruise_speed_command = the road speed (at most the cruise maximum); engaged (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: SET pressed - latch current speed as cruise_speed_command (J1939 SET),2
+CRUISE_CONTROL_STATE,2,CRUISE_RESUME,Resume: cruise_speed_command = cruise_resume_speed; an external reset of the governor (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: RESUME - restore cruise_resume_speed (J1939 RESUME),2
+CRUISE_CONTROL_STATE,3,CRUISE_COAST,Coast: cruise_speed_command falls by cruise_coast_ramp per pass (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') (was CRUISE_DECELERATE) | earlier note: Decelerate/coast via fuel-rate step (J1939 DECELERATE),2
+CRUISE_CONTROL_STATE,4,CRUISE_ACCELERATE,Accelerate: cruise_speed_command rises by cruise_accelerate_ramp per pass (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: Accelerate via fuel-rate ramp (J1939 ACCELERATE),2
+CRUISE_CONTROL_STATE,5,CRUISE_BUMP_DOWN,Bump down: cruise_speed_command falls by cruise_bump_down_step (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') (was CRUISE_DECELERATE_2) | earlier note: Decelerate alternate fuel-rate step (J1939 DECELERATE),2
+CRUISE_CONTROL_STATE,6,CRUISE_BUMP_UP,Bump up: cruise_speed_command rises by cruise_bump_up_step while below the road speed plus one step (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') (was CRUISE_ACCELERATE_2) | earlier note: Accelerate alternate fuel-rate ramp (J1939 ACCELERATE),2
+CRUISE_CONTROL_STATE,7,CRUISE_HOLD,Hold: cruise_resume_speed follows cruise_speed_command (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') (was CRUISE_ACTIVE_HOLD) | earlier note: Override active - holding setpoint (J1939 HOLD),2
+CRUISE_CONTROL_STATE,8,CRUISE_CANCEL,Cancel: clears engaged and resume but keeps the resume speed (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') (was CRUISE_STANDBY) | earlier note: Armed/enabled - driver in control not overriding,2
+# Cruise switch request state (governor_speed_request_state @ 0x003fafe6 + _b/_prev) - which cruise switch action is requested. Values 3/4/5 PROVEN via the override-handler dispatch in cm848_periodicProtectionControl; 0/1/2 still need the cruise_switch button-code table decode.
+CRUISE_SWITCH_REQUEST,0,CRUISE_SWITCH_ON_OFF,ON/OFF master button - arms cruise (engage check wants state_b 0 with prev 5). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,1,CRUISE_SWITCH_CANCEL,CANCEL button. Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (cm848_selectCruiseStateForCoastSwitch returns CRUISE_COAST). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
+VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,0,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_NORMAL,engine-load protection not derating,2
+VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,8,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_ERROR,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
+# FUEL_PRESSURE_GOVERNOR_MODE - fuel_pressure_governor_state_t.fuel_pressure_governor_mode (cm848_calculateFuelMeteringCommand)
+FUEL_PRESSURE_GOVERNOR_MODE,1,FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START,Open-loop start command (two tables blended by the input fuel_metering_outer_loop_preset_temperature_source picks); the mode the others fall back to,1
+FUEL_PRESSURE_GOVERNOR_MODE,2,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START,PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions),1
+FUEL_PRESSURE_GOVERNOR_MODE,4,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP,PID after the start revolutions,1
+FUEL_PRESSURE_GOVERNOR_MODE,8,FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED,Timed fixed command when the pressure is low inside an rpm window (impossible in this calibration: threshold 0 and an empty rpm window),1
+FUEL_PRESSURE_GOVERNOR_MODE,0x10,FUEL_PRESSURE_GOVERNOR_KEY_OFF,Fixed command while the ignition key switch is off and no shutdown is running,1
+FUEL_PRESSURE_GOVERNOR_MODE,0x20,FUEL_PRESSURE_GOVERNOR_DISABLED,Fixed command while fuel_pressure_governor_disable is set,1
+FUEL_PRESSURE_GOVERNOR_MODE,0x40,FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT,Fixed command (2865 here) while P0193 / P0192 / P0653 / P0652 are set (faults 304 / 305 / 377 / 378) - the open-loop fallback,1
+
+# EGR valve control state (egr_valve_control_state 0x40a6ca / _previous 0x3fa78e; every store is in cm848_selectEgrValveControlState)
+EGR_VALVE_CONTROL_STATE,0,EGR_VALVE_CLOSED_LOOP,PID position control: cm848_selectEgrValveDutyByControlState takes egr_valve_pid_duty,2
+EGR_VALVE_CONTROL_STATE,1,EGR_VALVE_CLOSED_HOLD,Open-loop closed-hold duty: egr_valve_closed_hold_flag is set,2
+EGR_VALVE_CONTROL_STATE,2,EGR_VALVE_USER_DUTY_OVERRIDE,Fixed duty override: bit 1 of egr_valve_user_override_flags_cal is set,2
+EGR_VALVE_CONTROL_STATE,3,EGR_VALVE_AUTOZERO_DRIVE,Position autozero drive: the autozero holding duty is output (the dump is permanently here),2
+EGR_VALVE_CONTROL_STATE,4,EGR_VALVE_DISABLED,Output disabled: logical output request 67 (the PWM enable) is clear; the duty is 0,2
+# Combustion chi source (combustion_chi_source_code 0x40a4a4 / combustion_base_chi_source_code 0x40a4e4; the values assigned in cm848_selectChiAndAlpha and cm848_determineBaseChi)
+COMBUSTION_CHI_SOURCE,1,COMBUSTION_CHI_SOURCE_AMBIENT_AIR_DENSITY,Base chi from the ambient air density protective chi table (the density chi is not smaller),2
+COMBUSTION_CHI_SOURCE,3,COMBUSTION_CHI_SOURCE_COOLANT_TEMPERATURE,Base chi from the coolant temperature protective chi table (the density chi is smaller),2
+COMBUSTION_CHI_SOURCE,10,COMBUSTION_CHI_SOURCE_EGR_OFF,Fixed EGR-off chi and level while EGR is requested off and no combustion status flag 0x08 / 0x10 / 0x200 is set; the normal state on this truck (dump: 10),2
+COMBUSTION_CHI_SOURCE,12,COMBUSTION_CHI_SOURCE_FULL_USER_OVERRIDE,Calibrated override of chi and both map numbers (override mask 0x80 and 0x40 set),2
+COMBUSTION_CHI_SOURCE,13,COMBUSTION_CHI_SOURCE_SINGLE_USER_OVERRIDE,Calibrated override with one whole chi that sets both map numbers (mask 0x80 set and 0x40 clear),2
+COMBUSTION_CHI_SOURCE,14,COMBUSTION_CHI_SOURCE_STATUS_FLAG_FIXED_VALUE,Fixed chi and level selected when a combustion status flag 0x08 / 0x10 / 0x200 is set,2
+# Injection timing intermediate source (injection_timing_intermediate_source_code 0x40a2f2 / injection_timing_source_code_before_combustion_limits 0x40a476; e2m SOI_State; every value proven by a store)
+INJECTION_TIMING_INTERMEDIATE_SOURCE,0,INJECTION_TIMING_INTERMEDIATE_SOURCE_FOUR_DIMENSIONAL_TIMING,e2m 103B value label 00 FOUR_D: the 4D timing maps (was INJECTION_TIMING_INTERMEDIATE_SOURCE_OFFSET_MAPS) | earlier note: cm848_calculateFourDimensionalInjectionTiming: the timing offset comes from the two engine speed x fuel demand maps blended by the combustion alpha (algorithm_enable_flags_4_cal bit 8 clear),2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,2,INJECTION_TIMING_INTERMEDIATE_SOURCE_USER_COMMANDED_TIMING,e2m 103B value label 02 USERCOMD: user_commanded_injection_timing_cal (algorithm_enable_flags_4_cal bit 8) (was INJECTION_TIMING_INTERMEDIATE_SOURCE_FIXED_OFFSET_CALIBRATION) | earlier note: cm848_calculateFourDimensionalInjectionTiming: the fixed user_commanded_injection_timing_cal while algorithm_enable_flags_4_cal bit 8 is set,2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,25,INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE,e2m 103B value label 19 CBR_SOI: cm848_passCompensatedTimingToCombustionLimits copies the off-nominal compensated reference (1711 +8 CBO_SOI_Ref) into ANC_SOI (10A4 +14) (was INJECTION_TIMING_INTERMEDIATE_SOURCE_PREVIOUS_VALUES_STORED) | earlier note: cm848_passCompensatedTimingToCombustionLimits: one of the last tasks of every pass stores the compensated reference as the previous value,2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,27,INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MAXIMUM_LIMIT,cm848_applyCombustionTimingLimits: the timing reached the combustion maximum limit (cm848_calculateMainInjectionTiming turns it into 29),2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,28,INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MINIMUM_LIMIT,cm848_applyCombustionTimingLimits: the timing with the user increment is at or below the combustion minimum limit (becomes 30),2
+# Main injection timing source (main_injection_timing_source_code 0x40a2f6; every value proven by a store)
+MAIN_INJECTION_TIMING_SOURCE,5,MAIN_INJECTION_TIMING_SOURCE_CRANK,e2m 103B value label 05 CRANK: the cranking timing map (engine state CRANKING / JUMP_START / REENTRY) (was MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP) | earlier note: cm848_calculateMainInjectionTiming: the cold start engine speed x coolant temperature map while engine_state is ENGINE_STATE_CRANKING / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY,2
+MAIN_INJECTION_TIMING_SOURCE,7,MAIN_INJECTION_TIMING_SOURCE_USER_OVERRIDE,e2m 103B value label 07 USEROVRD: main_injection_timing_selection 2 takes user_commanded_injection_timing_cal (was MAIN_INJECTION_TIMING_SOURCE_FIXED_OFFSET_CALIBRATION) | earlier note: cm848_selectMainInjectionTiming: main_injection_timing_selection 2 uses the fixed user_commanded_injection_timing_cal,2
+MAIN_INJECTION_TIMING_SOURCE,8,MAIN_INJECTION_TIMING_SOURCE_POWER_UP,"The power-up value (cm848_initTimingFilterStates), the only store of 8; the e2m 103B value label is 08 STOP, but the dump with the engine stopped reads 20 (coolant) (was MAIN_INJECTION_TIMING_SOURCE_INITIAL, then _ENGINE_STOPPED)",2
+MAIN_INJECTION_TIMING_SOURCE,11,MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT,e2m 103B value label 0B MISFIRE: injection_timing_main_misfire_limit (e2m 8A3D Misfire_Timing_Limit) raised the timing (was MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR) | earlier note: cm848_calculateMainInjectionTiming: the demand was raised to injection_timing_main_misfire_limit,2
+MAIN_INJECTION_TIMING_SOURCE,18,MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER,e2m 103B value label 12 COMB_MGR: injection_timing_main_base_command (e2m 171B +8 CBL_SOI_Cmd) won or the sum includes it (was MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND) | earlier note: cm848_calculateMainInjectionTiming: the sum of the base command and the components (combination mode 0) or the base command won the highest / lowest comparison,2
+MAIN_INJECTION_TIMING_SOURCE,19,MAIN_INJECTION_TIMING_SOURCE_INTAKE_TEMPERATURE_COMPONENT,cm848_calculateMainInjectionTiming: the intake temperature component won (combination mode 1 / other),2
+MAIN_INJECTION_TIMING_SOURCE,20,MAIN_INJECTION_TIMING_SOURCE_COOLANT_COMPONENT,cm848_calculateMainInjectionTiming: the coolant component won,2
+MAIN_INJECTION_TIMING_SOURCE,21,MAIN_INJECTION_TIMING_SOURCE_BAROMETRIC_PRESSURE_COMPONENT,cm848_calculateMainInjectionTiming: the barometric pressure component won,2
+MAIN_INJECTION_TIMING_SOURCE,22,MAIN_INJECTION_TIMING_SOURCE_BOOST_COMPONENT,cm848_calculateMainInjectionTiming: the boost component won,2
+MAIN_INJECTION_TIMING_SOURCE,23,MAIN_INJECTION_TIMING_SOURCE_EXTENDED_IDLE,e2m 103B value label 17 EX_IDLE: injection_timing_main_extended_idle_minimum raised the timing during extended idle (was MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM) | earlier note: cm848_calculateMainInjectionTiming: raised to injection_timing_main_extended_idle_minimum while low_speed_governor_extended_idle_active_flag is set,2
+MAIN_INJECTION_TIMING_SOURCE,24,MAIN_INJECTION_TIMING_SOURCE_COOLANT_OVERHEAT_DERATE,e2m 103B value label 18 CTDRATE: coolant_overheat_derate_minimum_injection_timing raised the timing (was MAIN_INJECTION_TIMING_SOURCE_WORKING_MINIMUM) | earlier note: cm848_calculateMainInjectionTiming: raised to coolant_overheat_derate_minimum_injection_timing,2
+MAIN_INJECTION_TIMING_SOURCE,29,MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MAXIMUM_LIMIT,cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 27,2
+MAIN_INJECTION_TIMING_SOURCE,30,MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MINIMUM_LIMIT,cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 28,2
+MAIN_INJECTION_TIMING_SOURCE,31,MAIN_INJECTION_TIMING_SOURCE_FUEL_PRESSURE_LIMP_HOME_COMPONENT,cm848_calculateMainInjectionTiming: injection_timing_main_fuel_pressure_limp_home_component won,2
+
+# Power take-off governor state (power_take_off_governor_state 0x40af50; e2m PTST 0=REMOTE_COUNT 1=REMOTE_RUN 2=WAIT 3=NORMAL in CHR_CC_11.45.01.07 - the transitions of cm848_runPowerTakeOffGovernorStateMachine agree)
+POWER_TAKE_OFF_GOVERNOR_STATE,0,POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT,Counting presses of the remote switch (feature_selection_bits_cal bit 1) - the count picks a preset speed,2
+POWER_TAKE_OFF_GOVERNOR_STATE,1,POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_RUN,Running at the remote preset speed until the switch opens or a cancel condition,2
+POWER_TAKE_OFF_GOVERNOR_STATE,2,POWER_TAKE_OFF_GOVERNOR_STATE_WAIT,Waiting: vehicle speed / engine speed window / faults / engine stopped / brake or clutch cancel. RAM dump: 2,2
+POWER_TAKE_OFF_GOVERNOR_STATE,3,POWER_TAKE_OFF_GOVERNOR_STATE_NORMAL,Running under cab control from the set / resume speeds (feature_selection_bits_cal bit 0),2
+
+# Power take-off governor J1939 state (power_take_off_governor_j1939_state 0x40af52): SAE J1939-71 SPN 976 PTO Governor State (CCVS1 byte 7 bits 1-5). Stored here: 0 1 2 6 8 9 10-17
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,0,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_OFF_OR_DISABLED,SPN 976 value 0,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,1,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_HOLD,SPN 976 value 1,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,2,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_REMOTE_HOLD,SPN 976 value 2,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,3,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_STANDBY,SPN 976 value 3 - not stored,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,4,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_REMOTE_STANDBY,SPN 976 value 4 - not stored,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,5,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_SET,SPN 976 value 5 - not stored,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,6,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_DECELERATE_OR_COAST,SPN 976 value 6,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,7,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_RESUME,SPN 976 value 7 - not stored,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,8,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_ACCELERATE,SPN 976 value 8,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,9,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_ACCELERATOR_OVERRIDE,SPN 976 value 9,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,10,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_1,SPN 976 value 10,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,11,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_2,SPN 976 value 11,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,12,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_3,SPN 976 value 12,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,13,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_4,SPN 976 value 13,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,14,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_5,SPN 976 value 14,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,15,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_6,SPN 976 value 15,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,16,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_7,SPN 976 value 16,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,17,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_8,SPN 976 value 17,2
+POWER_TAKE_OFF_GOVERNOR_J1939_STATE,31,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_NOT_AVAILABLE,SPN 976 value 31 - sent as 0x1F while the power take-off feature is off,2
+# Intake air heater phase (e2m 8A35 +2 IAH_Phase: 0=key_on/1=setup/2=preheat/3=crank/4=postheat/5=off; round 5): intake_air_heater_control_state and its previous value
+INTAKE_AIR_HEATER_PHASE,0,INTAKE_AIR_HEATER_PHASE_KEY_ON,e2m IAH_Phase 0 = key on,2
+INTAKE_AIR_HEATER_PHASE,1,INTAKE_AIR_HEATER_PHASE_SETUP,e2m IAH_Phase 1 = setup,2
+INTAKE_AIR_HEATER_PHASE,2,INTAKE_AIR_HEATER_PHASE_PREHEAT,e2m IAH_Phase 2 = preheat,2
+INTAKE_AIR_HEATER_PHASE,3,INTAKE_AIR_HEATER_PHASE_CRANK,e2m IAH_Phase 3 = crank,2
+INTAKE_AIR_HEATER_PHASE,4,INTAKE_AIR_HEATER_PHASE_POSTHEAT,e2m IAH_Phase 4 = postheat,2
+INTAKE_AIR_HEATER_PHASE,5,INTAKE_AIR_HEATER_PHASE_OFF,e2m IAH_Phase 5 = off,2
+
+# Drivetrain gear range (drivetrain_gear_range; cm848_updateDrivetrainRatio): the gear-down protection ranges
+DRIVETRAIN_GEAR_RANGE,1,DRIVETRAIN_GEAR_RANGE_TOP_GEAR,drivetrain_ratio below top_gear_ratio_threshold,2
+DRIVETRAIN_GEAR_RANGE,2,DRIVETRAIN_GEAR_RANGE_ONE_GEAR_DOWN,below gear_down_ratio_threshold but not top gear,2
+DRIVETRAIN_GEAR_RANGE,3,DRIVETRAIN_GEAR_RANGE_LOWER,at or above gear_down_ratio_threshold,2
+# TRANSMISSION_PRESSURE_STATE: e2m 8C53 +0 RE_Trans_Pressure_State; the governor pressure mode that set governor_pressure_target (PR #53 round 9, every value proved by its store)
+TRANSMISSION_PRESSURE_STATE,1,TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE,governor_pressure_base_curve (e2m RE_Normal_Curve 'Gov press vs OSS for normal operating conditions'): cm848_selectGovernorPressureBaseCurve; cm848_selectGovernorPressureAntiHunt after a shift,2
+TRANSMISSION_PRESSURE_STATE,2,TRANSMISSION_PRESSURE_STATE_FUEL_ECONOMY_CURVE,governor_pressure_fuel_economy_curve (RE_Fuel_Economy_Curve) below governor_pressure_fuel_economy_maximum_throttle: cm848_selectGovernorPressureBaseCurve,2
+TRANSMISSION_PRESSURE_STATE,3,TRANSMISSION_PRESSURE_STATE_CRUISE_CURVE,governor_pressure_cruise_curve (RE_Cruise_Curve): cm848_selectGovernorPressureCruise,2
+TRANSMISSION_PRESSURE_STATE,4,TRANSMISSION_PRESSURE_STATE_COLD_CURVE,governor_pressure_cold_curve (RE_Cold_Curve): cm848_selectGovernorPressureCold,2
+TRANSMISSION_PRESSURE_STATE,5,TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE,"governor_pressure_wide_open_throttle_curve (RE_WOT_Curve): the WOT / detent mode (cm848_selectGovernorPressureWideOpenThrottle / _Normal, cm848_runTransmissionControl)",2
+TRANSMISSION_PRESSURE_STATE,6,TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_COLD_CURVE,governor_pressure_wide_open_throttle_cold_curve (RE_WOT_Cold_Curve): cm848_selectGovernorPressureCold,2
+TRANSMISSION_PRESSURE_STATE,7,TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_HOLD,governor_pressure_wide_open_throttle_1_2_hold_pressure (RE_WOT_Hold_Pressure_1_2): holds 1st until the upshift point (or while the anti-hang timer runs),2
+TRANSMISSION_PRESSURE_STATE,8,TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST,governor_pressure_wide_open_throttle_1_2_boost_pressure (RE_WOT_Boost_Pressure_1_2): forces the 1-2 upshift,2
+TRANSMISSION_PRESSURE_STATE,9,TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_HOLD,governor_pressure_wide_open_throttle_2_3_hold_pressure (RE_WOT_Hold_Pressure_2_3),2
+TRANSMISSION_PRESSURE_STATE,10,TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST,governor_pressure_wide_open_throttle_2_3_boost_pressure (RE_WOT_Boost_Pressure_2_3),2
+TRANSMISSION_PRESSURE_STATE,11,TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE,"governor_pressure_low_range_curve (RE_Low_Range_Curve): cm848_selectGovernorPressureLowRange, cm848_runTransmissionControl",2
+TRANSMISSION_PRESSURE_STATE,12,TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_HOLD,transmission_low_range_1_2_hold_pressure (RE_Low_Range_Hold_Pressure_1_2),2
+TRANSMISSION_PRESSURE_STATE,13,TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_BOOST,transmission_low_range_1_2_boost_pressure (RE_Low_Range_Boost_Pressure_1_2),2
+TRANSMISSION_PRESSURE_STATE,14,TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_HOLD,transmission_low_range_2_3_hold_pressure (RE_Low_Range_Hold_Pressure_2_3),2
+TRANSMISSION_PRESSURE_STATE,15,TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_BOOST,transmission_low_range_2_3_boost_pressure (RE_Low_Range_Boost_Pressure_2_3),2
+TRANSMISSION_PRESSURE_STATE,16,TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST,"governor_pressure_lockup_boost (RE_Lockup_Boost 'Gov pressure target during lockup, to prevent downshift'): cm848_selectGovernorPressureLockupBoost, cm848_runTransmissionControl",2
+TRANSMISSION_PRESSURE_STATE,17,TRANSMISSION_PRESSURE_STATE_2ND_GEAR_LOCKUP_BOOST,governor_pressure_2nd_gear_lockup_boost (RE_Lockup_Boost_2nd): cm848_runTransmissionControl; cm848_determineCurrentGearAndLockupInhibit compares with it,2
+TRANSMISSION_PRESSURE_STATE,18,TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST,transmission_anti_hunt_1_2_boost_pressure (RE_AH_Boost_Curve_1_2): forces the 1-2 upshift (cm848_selectGovernorPressureAntiHunt / _Normal),2
+TRANSMISSION_PRESSURE_STATE,19,TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST,transmission_anti_hunt_2_3_boost_pressure (RE_AH_Boost_Curve_2_3),2
+TRANSMISSION_PRESSURE_STATE,20,TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_HOLD,transmission_anti_hunt_1_2_hold_pressure (RE_Hold_Curve_1): prevents the 1-2 upshift,2
+TRANSMISSION_PRESSURE_STATE,21,TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_HOLD,transmission_anti_hunt_2_3_hold_pressure (RE_Hold_Curve_2),2
+TRANSMISSION_PRESSURE_STATE,22,TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE,governor_pressure_manual_2nd_curve (RE_Manual_2nd_Curve) with the lever in 1 or 2,2
+TRANSMISSION_PRESSURE_STATE,23,TRANSMISSION_PRESSURE_STATE_OVERRIDE,governor_pressure_override_value (RE_Governor_Set_Override_Value) while governor_pressure_override_enable is set: cm848_selectGovernorPressureLockupBoost,2
+TRANSMISSION_PRESSURE_STATE,24,TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE,"governor_pressure_exhaust_brake_curve with the exhaust brake switch (12) on at light throttle (cm848_selectGovernorPressureBaseCurve); cm848_applyConverterLockupSchedule, cm848_applyConverterUnlockConditions and cm848_determineCurrentGearAndLockupInhibit compare with it",2
+DIAGNOSTIC_MONITOR_STATE,0,DIAGNOSTIC_MONITOR_STATE_NOT_RUN,"e2m NORUN: the monitor has not run (initializers store 0)",2
+DIAGNOSTIC_MONITOR_STATE,1,DIAGNOSTIC_MONITOR_STATE_RUNNING,"e2m RUN: the enable conditions hold and the test is running",2
+DIAGNOSTIC_MONITOR_STATE,2,DIAGNOSTIC_MONITOR_STATE_PASSED,"e2m CMPPS (complete, passed): the monitor cleared its fault",2
+DIAGNOSTIC_MONITOR_STATE,3,DIAGNOSTIC_MONITOR_STATE_FAILED,"e2m CMPFL (complete, failed): the monitor set its fault",2
+DIAGNOSTIC_MONITOR_STATE,4,DIAGNOSTIC_MONITOR_STATE_ABORTED,"e2m ABORT: a related fault or condition stopped the monitor",2
+LIFT_PUMP_RUN_REASON,1,LIFT_PUMP_RUN_REASON_KEY_ON,"Key on without starting (cm848_initializeLiftPumpControl): the pump stops after lift_pump_run_time_after_key_on",2
+LIFT_PUMP_RUN_REASON,2,LIFT_PUMP_RUN_REASON_ENGINE_RUNNING,"The engine ran (RUNNING or ENGINE_BRAKE): after it stops the pump runs lift_pump_run_time_after_running",2
+LIFT_PUMP_RUN_REASON,3,LIFT_PUMP_RUN_REASON_ENGINE_CRANKING,"The engine cranked (CRANKING / REENTRY / JUMP_START): after it stops the pump runs lift_pump_run_time_after_cranking",2
+# SERVICE_TOOL_TEST_STATE: e2m 8C74 +9 Cylinder_Performance_Test / 8C77 +1 HPSV_Test_Active '(0=NOT_RUN,1=RUN,2=ABORT)': the state of a SCI command 0x25 service tool test (PR #53 round 13)
+SERVICE_TOOL_TEST_STATE,0,SERVICE_TOOL_TEST_NOT_RUN,e2m NOT_RUN: no service tool request (SCI command 0x25),1
+SERVICE_TOOL_TEST_STATE,1,SERVICE_TOOL_TEST_RUNNING,e2m RUN: requested and every condition holds,1
+SERVICE_TOOL_TEST_STATE,2,SERVICE_TOOL_TEST_ABORTED,e2m ABORT: requested but a condition fails; cm848_expireSciCommand37Tests then ends the request,1
+# END_OF_LINE_TEST_STEP: the step of cm848_runEndOfLineTestSequence; each step function returns the next (PR #53 round 13)
+END_OF_LINE_TEST_STEP,0,END_OF_LINE_TEST_STEP_START,cm848_runEndOfLineTestStartStep: clears the flags of disabled tests and picks the first pending step,2
+END_OF_LINE_TEST_STEP,1,END_OF_LINE_TEST_STEP_OUTPUT_TESTS,cm848_runEndOfLineOutputTestStep: lift pump / lamp and relay / intake air heaters,2
+END_OF_LINE_TEST_STEP,2,END_OF_LINE_TEST_STEP_INTAKE_AIR_HEATER_RESULT,cm848_runEndOfLineIntakeAirHeaterResultStep: the two heater voltage drops,2
+END_OF_LINE_TEST_STEP,3,END_OF_LINE_TEST_STEP_ALTERNATOR_TEST,cm848_runEndOfLineAlternatorTestStep: cuts the field and checks the voltage falls,2
+END_OF_LINE_TEST_STEP,4,END_OF_LINE_TEST_STEP_RADIATOR_FAN_SPEED_NOISE,cm848_checkRadiatorFanSpeedSignalNoise,2
+END_OF_LINE_TEST_STEP,5,END_OF_LINE_TEST_STEP_MISFIRE_TEST,cm848_runEndOfLineMisfireTestStep,2
+END_OF_LINE_TEST_STEP,6,END_OF_LINE_TEST_STEP_FINAL_RESULT,cm848_runEndOfLineFinalResultStep: the plant tester's verdict on the MIL,2
+END_OF_LINE_TEST_STEP,7,END_OF_LINE_TEST_STEP_DONE,no step runs,2
+# END_OF_LINE_OUTPUT_TEST_STATE: the state of cm848_runEndOfLineOutputTestStep (PR #53 round 13)
+END_OF_LINE_OUTPUT_TEST_STATE,0,END_OF_LINE_OUTPUT_TEST_IDLE,a case that does nothing; no code stores 0,1
+END_OF_LINE_OUTPUT_TEST_STATE,1,END_OF_LINE_OUTPUT_TEST_START,starts the fuel control / alternator field / cooling fan actuator tests and turns the MIL on,1
+END_OF_LINE_OUTPUT_TEST_STATE,2,END_OF_LINE_OUTPUT_TEST_LIFT_PUMP,output 53 for end_of_line_test_lift_pump_on_time; passes without P0629 / P0628,1
+END_OF_LINE_OUTPUT_TEST_STATE,3,END_OF_LINE_OUTPUT_TEST_RELAYS,the wait-to-start lamp (output 4) and the A/C clutch relay (output 38) for end_of_line_test_relay_on_time,1
+END_OF_LINE_OUTPUT_TEST_STATE,4,END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_1,"end_of_line_test_relay_off_time, then heater 1 (output 43) on",1
+END_OF_LINE_OUTPUT_TEST_STATE,5,END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_1_ON,heater 1 on for end_of_line_test_relay_on_time,1
+END_OF_LINE_OUTPUT_TEST_STATE,6,END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_2,"end_of_line_test_relay_off_time, then heater 2 (output 44) on",1
+END_OF_LINE_OUTPUT_TEST_STATE,7,END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_2_ON,"heater 2 on, then the output test verdict (no DTC stored)",1
+END_OF_LINE_OUTPUT_TEST_STATE,8,END_OF_LINE_OUTPUT_TEST_DONE,"done, or left early (engine not stopped / nothing pending)",1
+# LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE: e2m 1496 +14 LSG_Reference_Speed_State 'Indication of which logic is controlling LSG idle speed' (its own value labels; PR #53 round 14)
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,0,LOW_SPEED_GOVERNOR_REFERENCE_COOLANT,e2m COOLANT: low_speed_governor_coolant_temperature_speed_request,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,1,LOW_SPEED_GOVERNOR_REFERENCE_PARK_NEUTRAL,e2m PARK_NEU: low_speed_governor_park_or_drive_speed_request,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,2,LOW_SPEED_GOVERNOR_REFERENCE_EXTENDED_IDLE,e2m EXTENDED: low_speed_governor_extended_idle_speed_request,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,3,LOW_SPEED_GOVERNOR_REFERENCE_AIR_CONDITIONING,e2m AC: low_speed_governor_air_conditioning_speed_request (switch 13),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,4,LOW_SPEED_GOVERNOR_REFERENCE_J1850,e2m J1850: low_speed_governor_j1850_speed_request (the PCI idle speed request),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,5,LOW_SPEED_GOVERNOR_REFERENCE_BASE,e2m BASE: low_speed_governor_base_reference_speed_cal; also whenever it differs from its boot copy,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,6,LOW_SPEED_GOVERNOR_REFERENCE_J1939,e2m JCOMM: a J1939 TSC1 override with low_speed_governor_j1939_override_enable (the minimum idle speed),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,7,LOW_SPEED_GOVERNOR_REFERENCE_MINIMUM,e2m MIN: the slew clamped the reference to low_speed_governor_minimum_idle_speed,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,8,LOW_SPEED_GOVERNOR_REFERENCE_MAXIMUM,e2m MAX: the slew clamped the reference to low_speed_governor_maximum_idle_speed,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,9,LOW_SPEED_GOVERNOR_REFERENCE_ALTITUDE,e2m ALTITUDE: the altitude speed (low_speed_governor_reference.altitude_speed),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,10,LOW_SPEED_GOVERNOR_REFERENCE_SHIFT_IN_PROCESS,e2m SIP: a shift in process holds the desired speed (low_speed_governor_shift_in_process_timer),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,11,LOW_SPEED_GOVERNOR_REFERENCE_TOOL,e2m TOOL: low_speed_governor_tool_speed_request (SCI SET RPM or the high pressure safety valve test),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,12,LOW_SPEED_GOVERNOR_REFERENCE_MOVING,e2m MOVING: low_speed_governor_moving_speed_request,2
+# ENGINE_RETARDER_COMMAND_SOURCE: the source of an engine retarder command (PR #53 round 17) - e2m 117D +8
+# E_Brake_Command_Source value labels (1070 +2 EB_Override_Command_Source and +16 EB_Non_Override_Command_Source list
+# 1-6 the same); on engine_retarder_override_command_source / _non_override_command_source / engine_retarder_command_source
+ENGINE_RETARDER_COMMAND_SOURCE,0,ENGINE_RETARDER_COMMAND_SOURCE_NONE,No command (e2m NONE / NOT_COMM): cm848_selectEngineRetarderCommand with the allowed state NONE or no override in OVERRIDE_ONLY,2
+ENGINE_RETARDER_COMMAND_SOURCE,1,ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE,A TSC1 torque control request (e2m JCOMMOVD / JC_OVRD): the override command,2
+ENGINE_RETARDER_COMMAND_SOURCE,2,ENGINE_RETARDER_COMMAND_SOURCE_CRUISE,The cruise permission (e2m CRUISE): cm848_limitEngineRetarderPercentToCruisePermission,2
+ENGINE_RETARDER_COMMAND_SOURCE,3,ENGINE_RETARDER_COMMAND_SOURCE_SWITCH,The operator selection (e2m SWITCH): cm848_limitEngineRetarderPercentToOperatorSelection,2
+ENGINE_RETARDER_COMMAND_SOURCE,4,ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT,A TSC1 torque limit (e2m JCOMMLMT / JC_LIM): cm848_applyEngineRetarderTsc1Request,2
+ENGINE_RETARDER_COMMAND_SOURCE,5,ENGINE_RETARDER_COMMAND_SOURCE_NOT_SET,Not set (e2m NOT_SET): the power-up value of the override and command sources,2
+ENGINE_RETARDER_COMMAND_SOURCE,6,ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE,No override (e2m NOOVERDE / NO_OVRD): the override source without a TSC1 torque control request,2
+# ENGINE_RETARDER_ALLOWED_STATE: which commands may brake (PR #53 round 17) - e2m 1070 +14 EB_Allowed_State
+# '0=NONE / 1=OVERRIDE / 2=OVER_OR_NON'; set by cm848_updateEngineRetarderAllowedState on engine_retarder_allowed_state
+ENGINE_RETARDER_ALLOWED_STATE,0,ENGINE_RETARDER_ALLOWED_NONE,No command may brake: the brake is not wanted or an exit condition holds,2
+ENGINE_RETARDER_ALLOWED_STATE,1,ENGINE_RETARDER_ALLOWED_OVERRIDE_ONLY,Only the override command (TSC1) may brake: the driver conditions (pedal / clutch / service brake) hold the rest off,2
+ENGINE_RETARDER_ALLOWED_STATE,2,ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE,The override or the non-override command may brake (the non-override command restarts at 101),2
+# MAIN_INJECTION_TIMING_SELECTION: how main_injection_timing is produced (PR #53 round 18) - e2m 8085 +0
+# Main_SOI_Selection_Switch value labels; cm848_selectMainInjectionTiming
+MAIN_INJECTION_TIMING_SELECTION,0,MAIN_INJECTION_TIMING_SELECTION_NO_ADJUSTMENT,No change to main_injection_timing (e2m NOADJUST),2
+MAIN_INJECTION_TIMING_SELECTION,1,MAIN_INJECTION_TIMING_SELECTION_CALCULATED,cm848_calculateMainInjectionTiming (e2m HPCRTMNG: the fuel system's timing); this truck,2
+MAIN_INJECTION_TIMING_SELECTION,2,MAIN_INJECTION_TIMING_SELECTION_USER_OVERRIDE,user_commanded_injection_timing_cal (e2m USEROVRD),2
+MAIN_INJECTION_TIMING_SELECTION,3,MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT,The calculated timing plus user_commanded_injection_timing_cal and the top dead center offset (e2m HPCRINCR),2
+# INJECTION_TIMING_COMBINATION_MODE: how cm848_calculateMainInjectionTiming combines its components (PR #53 round 18) -
+# e2m 8085 +2 Main_Cold_Advance_Select
+INJECTION_TIMING_COMBINATION_MODE,0,INJECTION_TIMING_COMBINATION_SUM,The sum of the components clamped to +-1024 (e2m 'add coolant and intake adv'),2
+INJECTION_TIMING_COMBINATION_MODE,1,INJECTION_TIMING_COMBINATION_MAXIMUM,The largest component wins (e2m MAX WINS); this truck,2
+INJECTION_TIMING_COMBINATION_MODE,2,INJECTION_TIMING_COMBINATION_MINIMUM,The smallest component wins (e2m MIN WINS),2
+# SENSOR_VALUE_SOURCE: where a selected sensor value came from (PR #53 round 19) - the e2m value list
+# '0=PRIMARY, 1=BACKUP, 2=DEFAULT' shared by eleven *_Source records (1A11 +2, 1921 +4 / +12, 19BA +2, 1A2D +2, 18D9 +A,
+# 19C2 +2, 19CA +2, 179D +8, 1A5D +2, 19D2 +2)
+SENSOR_VALUE_SOURCE,0,SENSOR_VALUE_SOURCE_PRIMARY,e2m PRIMARY,2
+SENSOR_VALUE_SOURCE,1,SENSOR_VALUE_SOURCE_BACKUP,e2m BACKUP,2
+SENSOR_VALUE_SOURCE,2,SENSOR_VALUE_SOURCE_DEFAULT,e2m DEFAULT,2
+# SENSOR_VALUE_SOURCE also types (PR #53 round 23) the ambient air temperature / compressor inlet pressure / compressor inlet and outlet temperature / EGR orifice, valve and engine delta pressure / EGR delta pressure sensor / turbocharger speed / EGR flow sources, and the exhaust temperature source and the charge flow estimate's charge flow and fresh air flow sources (struct fields)
+# TRANSMISSION_TEMPERATURE_RATIONALITY_STATE: transmission_temperature_rationality_state, the P0711 check's states (PR #53 round 51)
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,0,TRANSMISSION_TEMPERATURE_RATIONALITY_NOT_RUN,"e2m 8C2D +4 label NORUN: cm848_checkTransmissionTemperatureSensorPerformance qualifies the start conditions and takes the start snapshot (PR #53 round 51)",2
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,1,TRANSMISSION_TEMPERATURE_RATIONALITY_RUNNING,"e2m label RUN: the check tracks the temperature swing while driving above 30 mph (PR #53 round 51)",2
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,2,TRANSMISSION_TEMPERATURE_RATIONALITY_PASSED,"e2m label CMPPS (complete / passed): cm848_completeTransmissionTemperatureMonitorReport reports state 5 as this (PR #53 round 51)",2
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,3,TRANSMISSION_TEMPERATURE_RATIONALITY_FAILED,"e2m label CMPFL (complete / failed): cm848_completeTransmissionTemperatureMonitorReport reports every other verdict as this (PR #53 round 51)",2
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,4,TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED,"e2m label ABORT: no verdict this key cycle (the check is disabled / a related fault / the soak was not qualified) (PR #53 round 51)",2
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,5,TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT,"no e2m label: cm848_checkTransmissionTemperatureSensorPerformance sets it once the swing reaches transmission_temperature_rationality_minimum_swing; cm848_completeTransmissionTemperatureMonitorReport turns it into PASSED (PR #53 round 51)",2
+TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,6,TRANSMISSION_TEMPERATURE_RATIONALITY_FAIL_VERDICT,"no e2m label: cm848_updateTransmissionTemperatureSensorPerformanceFault sets it while a result flag is set; cm848_completeTransmissionTemperatureMonitorReport turns it into FAILED (PR #53 round 51)",2
+# COOLING_FAN_COOLANT_REQUEST_STATE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+COOLING_FAN_COOLANT_REQUEST_STATE,0,COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP,"e2m IDLE: coolant under cooling_fan_coolant_ramp_start_temperature (cooling_fan_coolant_speed_minimum) (PR #53 round 52)",2
+COOLING_FAN_COOLANT_REQUEST_STATE,1,COOLING_FAN_COOLANT_REQUEST_RAMP,"e2m RAMP: the linear ramp from cooling_fan_coolant_ramp_base_speed (PR #53 round 52)",2
+COOLING_FAN_COOLANT_REQUEST_STATE,2,COOLING_FAN_COOLANT_REQUEST_PI_CONTROL,"e2m PI_CNTRL: the PI loop above cooling_fan_coolant_temperature_setpoint (PR #53 round 52)",2
+COOLING_FAN_COOLANT_REQUEST_STATE,3,COOLING_FAN_COOLANT_REQUEST_FULL_SPEED,"e2m COOL_MAX: cooling_fan_coolant_speed_maximum (also on a coolant sensor fault) (PR #53 round 52)",2
+# COOLING_FAN_SPEED_TARGET_SOURCE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+COOLING_FAN_SPEED_TARGET_SOURCE,0,COOLING_FAN_TARGET_BASE_SPEED,"e2m MIN_DEM: cm848_selectCoolingFanSpeedTarget starts from cooling_fan_base_speed (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,1,COOLING_FAN_TARGET_COOLANT,"e2m COOLANT: cooling_fan_coolant_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,2,COOLING_FAN_TARGET_AIR_CONDITIONING,"e2m AC: cooling_fan_air_conditioning_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,3,COOLING_FAN_TARGET_INTAKE,"e2m IMT: cooling_fan_intake_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,4,COOLING_FAN_TARGET_TRANSMISSION,"e2m TOT: cooling_fan_transmission_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,5,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_TARGET,"e2m HIGHSLIP: cooling_fan_high_engine_rpm_ramp_up_target (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,6,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_FLOOR,"e2m LOW_SLIP: cooling_fan_high_engine_rpm_ramp_down_floor (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,7,COOLING_FAN_TARGET_ENGINE_DRIVEN_LIMIT,"e2m MAX_RPM: cooling_fan_engine_driven_speed_limit (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,8,COOLING_FAN_TARGET_CEILING,"e2m MAX_DEM: cooling_fan_speed_ceiling (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,9,COOLING_FAN_TARGET_OVERRIDE,"e2m OVERRIDE: cooling_fan_speed_target_override (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,10,COOLING_FAN_TARGET_THERMOSTAT_MONITOR,"e2m TSTAT: the thermostat monitor holds cooling_fan_base_speed (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,11,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_DOWN,"e2m LOWRMPDN: cooling_fan_ramp_down_speed stepping down to the floor (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,12,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_UP,"e2m RAMPUP: cooling_fan_ramp_up_speed stepping up to the ramp-up target (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,13,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_AT_TARGET,"e2m SLIPTMR: held at the ramp-up target for cooling_fan_ramp_at_target_passes (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,14,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_RESUME,"e2m RAMPDN: cooling_fan_ramp_down_resume_speed stepping down (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,15,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_RESUME,"e2m EXLOWSLP: cooling_fan_ramp_up_resume_speed stepping up out of the floor (PR #53 round 52)",2
+# COOLING_FAN_DUTY_SOURCE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+COOLING_FAN_DUTY_SOURCE,0,COOLING_FAN_DUTY_CLAMPED_MINIMUM,"e2m MIN_PWM: cm848_applyCoolingFanDuty clamps the request to cooling_fan_duty_minimum (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,1,COOLING_FAN_DUTY_FIXED,"e2m OVERRIDE: cm848_selectCoolingFanDutySource uses cooling_fan_fixed_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,2,COOLING_FAN_DUTY_LOW_ENGINE_RPM,"e2m STOP: under cooling_fan_low_engine_rpm (cooling_fan_low_engine_rpm_duty) (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,3,COOLING_FAN_DUTY_ENGAGEMENT,"e2m KICKON: cooling_fan_engagement_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,4,COOLING_FAN_DUTY_BASE_SPEED_TARGET,"e2m MIN_SPD: the target is cooling_fan_base_speed (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,5,COOLING_FAN_DUTY_CEILING_TARGET,"e2m MAX_SPD: the target is cooling_fan_speed_ceiling off idle (cooling_fan_duty_maximum) (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,6,COOLING_FAN_DUTY_IDLE_LIMITED,"e2m IDLE_ON: cooling_fan_idle_limited_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,7,COOLING_FAN_DUTY_IDLE_MINIMUM,"e2m IDLE_OFF: cooling_fan_duty_minimum at idle (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,8,COOLING_FAN_DUTY_SPEED_CONTROL,"e2m CONTROL: cm848_runCoolingFanSpeedPid (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,9,COOLING_FAN_DUTY_ACTUATOR_TEST,"e2m TOOL: cooling_fan_actuator_test_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,10,COOLING_FAN_DUTY_CLAMPED_MAXIMUM,"e2m MAX_PWM: cm848_applyCoolingFanDuty clamps the request to cooling_fan_duty_maximum (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,11,COOLING_FAN_DUTY_HOLD,"e2m PWMDELAY: cm848_applyCoolingFanDuty holds cooling_fan_hold_duty for cooling_fan_hold_passes (PR #53 round 52)",2
+# ALTERNATOR_FIELD_REGULATOR_STATE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+ALTERNATOR_FIELD_REGULATOR_STATE,0,ALTERNATOR_FIELD_REGULATOR_INACTIVE,"e2m 8A60 +10 EVR_Mode 0=INACTIVE (PR #53 round 52)",2
+ALTERNATOR_FIELD_REGULATOR_STATE,1,ALTERNATOR_FIELD_REGULATOR_STARTUP,"e2m 1=STARTUP (PR #53 round 52)",2
+ALTERNATOR_FIELD_REGULATOR_STATE,2,ALTERNATOR_FIELD_REGULATOR_STEADY_STATE,"e2m 2=SS (PR #53 round 52)",2
+ALTERNATOR_FIELD_REGULATOR_STATE,3,ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE,"e2m 3=TRANS: the transient mode (alternator_field_load_response_*) (PR #53 round 52)",2
+# ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE,0,ALTERNATOR_FIELD_LOAD_RESPONSE_NONE,"e2m 8A60 +16 EVR_Transient_Phase 0=NONE (outside the load response) (PR #53 round 52)",2
+ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE,1,ALTERNATOR_FIELD_LOAD_RESPONSE_HOLD,"e2m 1=HOLD (PR #53 round 52)",2
+ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE,2,ALTERNATOR_FIELD_LOAD_RESPONSE_RECOVERY,"e2m 2=RECOVERY (PR #53 round 52)",2
+
+# J1939_PERIODIC_TRANSMIT_QUEUE: a new enum of batch N3 (PR #53 round 95)
+J1939_PERIODIC_TRANSMIT_QUEUE,0,J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,"Queue 0, the engine node's periodic broadcasts: 20 entries of j1939_periodic_transmit_entry_t (CM550 j1939_periodic_queue0_entries 0x80096e / CM848 0x3fd2e2), run while datalink_broadcast_enable_flags bit 2 (e2m JCEGBCEA, J1939-71 engine broadcast) is set (CM848 also needs j1939_dm13_broadcast_enable_flags bit 2). 17 of the 19 start-up calls of scheduleJ1939PeriodicMessage in each firmware use it (PGN 65265 / 61444 / 61443 ...). The type of its queue_index parameter (4 bytes). (PR #53 round 95) (PR #53 round 95)",4
+J1939_PERIODIC_TRANSMIT_QUEUE,1,J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER,"Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration. (PR #53 round 95)",4

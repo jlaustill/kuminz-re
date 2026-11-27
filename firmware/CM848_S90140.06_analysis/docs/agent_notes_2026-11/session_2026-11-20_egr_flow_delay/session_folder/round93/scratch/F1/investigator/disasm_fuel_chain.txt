@@ -1,0 +1,116 @@
+=== initializeChains 1ce58-1ce90
+01ce58: 207c0080d368             movea.l #0x80d368,a0
+01ce5e: 33d00080dec8             move.w (a0),(0x80dec8).l
+01ce64: 33fc00130080deca         move.w #0x13,(0x80deca).l
+01ce6c: 33d00080dece             move.w (a0),(0x80dece).l
+01ce72: 33fc00280080ded0         move.w #0x28,(0x80ded0).l
+01ce7a: 4e75                     rts
+01ce7c: 48e7203c                 movem.l a5/a4/a3/a2/d2,-(a7)
+01ce80: 247c0080d626             movea.l #0x80d626,a2
+01ce86: 267c00800716             movea.l #0x800716,a3
+01ce8c: 287c0080d63e             movea.l #0x80d63e,a4
+=== pto 2d9a8-2d9e0
+02d9a8: 207c0080d338             movea.l #0x80d338,a0
+02d9ae: 0c7900010080dc26         cmpi.w #0x1,(0x80dc26).l
+02d9b6: 6618                     bne.s 0x2d9d0
+02d9b8: 30390080400e             move.w (0x80400e).l,d0
+02d9be: b050                     cmp.w (a0),d0
+02d9c0: 640e                     bcc.s 0x2d9d0
+02d9c2: 30b90080400e             move.w (0x80400e).l,(a0)
+02d9c8: 33fc00220080d33a         move.w #0x22,(0x80d33a).l
+02d9d0: 4e75                     rts
+02d9d2: 4e56fffc                 link a6,#-4
+02d9d6: 48e7203c                 movem.l a5/a4/a3/a2/d2,-(a7)
+02d9da: 45eefffc                 lea (-0x4,a6),a2
+02d9de: 47eefffc                 lea (-0x4,a6),a3
+=== anc b3b2-b3d0
+00b3b2: 227c0080dec8             movea.l #0x80dec8,a1
+00b3b8: 207c0080a28c             movea.l #0x80a28c,a0
+00b3be: 3010                     move.w (a0),d0
+00b3c0: b051                     cmp.w (a1),d0
+00b3c2: 640a                     bcc.s 0xb3ce
+00b3c4: 3290                     move.w (a0),(a1)
+00b3c6: 33fc00110080deca         move.w #0x11,(0x80deca).l
+00b3ce: 4e75                     rts
+=== afc c2a0-c2c4
+00c2a0: 227c0080dece             movea.l #0x80dece,a1
+00c2a6: 207c0080a8f6             movea.l #0x80a8f6,a0
+00c2ac: 3010                     move.w (a0),d0
+00c2ae: b051                     cmp.w (a1),d0
+00c2b0: 640a                     bcc.s 0xc2bc
+00c2b2: 3290                     move.w (a0),(a1)
+00c2b4: 33fc00100080ded0         move.w #0x10,(0x80ded0).l
+00c2bc: 4e75                     rts
+00c2be: 227c008000d6             movea.l #0x8000d6,a1
+=== alt c742-c764
+00c742: 227c0080dec8             movea.l #0x80dec8,a1
+00c748: 207c0080a922             movea.l #0x80a922,a0
+00c74e: 3010                     move.w (a0),d0
+00c750: b051                     cmp.w (a1),d0
+00c752: 640a                     bcc.s 0xc75e
+00c754: 3290                     move.w (a0),(a1)
+00c756: 33fc000f0080deca         move.w #0xf,(0x80deca).l
+00c75e: 4e75                     rts
+00c760: 227c008000f0             movea.l #0x8000f0,a1
+=== epf 196e4-19706
+0196e4: 227c0080dec8             movea.l #0x80dec8,a1
+0196ea: 207c0080d284             movea.l #0x80d284,a0
+0196f0: 3010                     move.w (a0),d0
+0196f2: b051                     cmp.w (a1),d0
+0196f4: 640a                     bcc.s 0x19700
+0196f6: 3290                     move.w (a0),(a1)
+0196f8: 33fc001d0080deca         move.w #0x1d,(0x80deca).l
+019700: 4e75                     rts
+019702: 48e73e3c                 movem.l a5/a4/a3/a2/d6/d5/d4/d3/d2,-(a7)
+=== tsc1 30c14-30c3c
+030c14: 227c0080dec8             movea.l #0x80dec8,a1
+030c1a: 207c0080da62             movea.l #0x80da62,a0
+030c20: 0c7900030080da50         cmpi.w #0x3,(0x80da50).l
+030c28: 6610                     bne.s 0x30c3a
+030c2a: 3010                     move.w (a0),d0
+030c2c: b051                     cmp.w (a1),d0
+030c2e: 640a                     bcc.s 0x30c3a
+030c30: 3290                     move.w (a0),(a1)
+030c32: 33fc00140080deca         move.w #0x14,(0x80deca).l
+030c3a: 4e75                     rts
+=== fss 30bf6-30c14
+030bf6: 227c0080dec8             movea.l #0x80dec8,a1
+030bfc: 207c0080decc             movea.l #0x80decc,a0
+030c02: 3010                     move.w (a0),d0
+030c04: b051                     cmp.w (a1),d0
+030c06: 640a                     bcc.s 0x30c12
+030c08: 3290                     move.w (a0),(a1)
+030c0a: 33fc001c0080deca         move.w #0x1c,(0x80deca).l
+030c12: 4e75                     rts
+=== warmup 17120-1715c
+017120: 227c0080dec8             movea.l #0x80dec8,a1
+017126: 207c0080ccc6             movea.l #0x80ccc6,a0
+01712c: 0c7900030080d0c8         cmpi.w #0x3,(0x80d0c8).l
+017134: 6618                     bne.s 0x1714e
+017136: 4a790080ccb2             tst.w (0x80ccb2).l
+01713c: 6710                     beq.s 0x1714e
+01713e: 3010                     move.w (a0),d0
+017140: b051                     cmp.w (a1),d0
+017142: 640a                     bcc.s 0x1714e
+017144: 3290                     move.w (a0),(a1)
+017146: 33fc00210080deca         move.w #0x21,(0x80deca).l
+01714e: 4e75                     rts
+017150: 7000                     moveq #0,d0
+017152: 103900807e9d             move.b (0x807e9d).l,d0
+017158: 7203                     moveq #3,d1
+01715a: b081                     cmp.l d1,d0
+=== runner 30c3c-30c80
+030c3c: 4eb90001ce58             jsr (0x1ce58).l
+030c42: 4eb90002d9a8             jsr (0x2d9a8).l
+030c48: 4eb90000b3b2             jsr (0xb3b2).l
+030c4e: 4eb90000c2a0             jsr (0xc2a0).l
+030c54: 4eb90000c742             jsr (0xc742).l
+030c5a: 4eb9000196e4             jsr (0x196e4).l
+030c60: 61b2                     bsr.s 0x30c14
+030c62: 6192                     bsr.s 0x30bf6
+030c64: 4eb900017120             jsr (0x17120).l
+030c6a: 4eb900045252             jsr (0x45252).l
+030c70: 4eb9000455c8             jsr (0x455c8).l
+030c76: 4e75                     rts
+030c78: 4eb90000c714             jsr (0xc714).l
+030c7e: 4eb90000c246             jsr (0xc246).l

@@ -1,0 +1,18 @@
+=== cm848_initializeLowSpeedGovernorParameters (lines 27537-27559, 17 non-blank)
+// Function: cm848_initializeLowSpeedGovernorParameters @ 0x00028618
+//
+/* Initializes the LSG: the aggressive gain logic, the three gain adjustments = 0x80 (1.0), the
+   fueling clamp maximum = 0x1700 and the alternator load filter (was
+   cm848_initSpeedProtectionParameters) */
+void cm848_initializeLowSpeedGovernorParameters(void)
+{
+  cm848_initializeLowSpeedGovernorGainSelection();
+  low_speed_governor_derivative_gain_adjustment = 0x80;
+  low_speed_governor_integral_gain_adjustment = 0x80;
+  low_speed_governor_proportional_gain_adjustment = 0x80;
+  low_speed_governor_fueling_clamp_maximum = 0x1700;
+  low_speed_governor_alternator_load_filter.coefficient =
+       &low_speed_governor_alternator_load_filter_coefficient;
+  return;
+}
+//

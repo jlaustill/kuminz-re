@@ -1,0 +1,2 @@
+fuel_blend_correction_inhibit_flag
+j1939_ccvs1_switch_logic_option_cal

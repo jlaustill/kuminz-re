@@ -1,0 +1,6214 @@
+[
+ {
+  "address": "0x0040a895",
+  "block": "1033",
+  "offset": "0002",
+  "record": "Fuel_Delivery_Rate_Per_Min",
+  "unit": "LB/MIN",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "400",
+  "description": "Mass flow rate of burned fuel as determined for use in A/F ratio calculations",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_mass_flow",
+  "references": 6,
+  "dump_raw": "1",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateOffNominalOxygenFractionAdjustment: if ((fuel_mass_flow < 2) ||",
+   "cm848_calculateOffNominalOxygenFractionAdjustment: ((ulonglong)fuel_mass_flow << 6)), 0xc7ff < uVar1)) {",
+   "fuelDemandProportionalCalculationSlowCycle40Coordinator: fuel_mass_flow = (word)(((uVar2 & 0xffff) << 7) / 600);",
+   "cm848_calculateAirFuelRatioAndIntakeOxygenFraction: (charge_flow_estimate_terms_t.fresh_air_mass_flow_filtered) by the fuel flow (fuel_mass_flow)"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Delivery_Rate",
+    "fuel_mass_flow_raw",
+    "0.33"
+   ],
+   [
+    "0002",
+    "Fuel_Delivery_Rate_Per_Min",
+    "fuel_mass_flow",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: fuelDemandProportionalCalculationSlowCycle40Coordinator writes engine speed x (total_injection_quantity_for_air_handling - fuel_delivery_rate_offset) x 100 / (fuel_delivery_rate_scale x 471) (cap 32000) x 128 / 600, i.e. fuel quantity x speed (a flow); fuel_delivery_rate_scale = 7520 and fuel_delivery_rate_offset = 0 in the ROM give lb/min within 1.5 percent, in the 1/128 lb/min unit of the mass charge flow. It is the divisor of ... (was fuel_rate_rpm_factor)"
+ },
+ {
+  "address": "0x0005c29a",
+  "block": "1048",
+  "offset": "000C",
+  "record": "Throttle_Fault_Delay",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "100.0",
+  "min": "0",
+  "max": "2000",
+  "description": "[CTTHFTDY] time fault conditions must exist before logging a throttle fault",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_rate_limit_debounce_low_cal",
+  "references": 1,
+  "dump_raw": "8",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandSmoothingController: uVar1 = fuel_demand_rate_limit_debounce_low_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Maximum_Confidence_Count",
+    "accelerator_pedal_minimum_learning_confidence_count_limit",
+    "0.67"
+   ],
+   [
+    "000A",
+    "Confidence_Band",
+    "accelerator_pedal_minimum_learning_confidence_band",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Test_Cell_Auto_Zero",
+    "accelerator_pedal_test_cell_autozero",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Throttle_Transition_Range",
+    "accelerator_pedal_above_idle_transition_range",
+    "0.67"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TPS_AZ_Update_Limit",
+    "accelerator_pedal_autozero_update_count_limit",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Debounce count for the fuel-demand rate limiter when accelerator_pedal_autozero_cal <= accelerator_pedal_sensor_counts; when the per-mode increment reaches it a protection safety bit latches"
+ },
+ {
+  "address": "0x0005c2a0",
+  "block": "1048",
+  "offset": "0012",
+  "record": "Throttle_Diagnostic_MPH_Threshold",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390629983",
+  "min": "0",
+  "max": "255",
+  "description": "[CTDGRZTD] MPH above which Throttle faults can be logged for uncalibrated pedal",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "idle_validation_fault_minimum_vehicle_speed",
+  "references": 1,
+  "dump_raw": "2560",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandSmoothingController: (vehicle_speed <= idle_validation_fault_minimum_vehicle_speed)))) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Maximum_Confidence_Count",
+    "accelerator_pedal_minimum_learning_confidence_count_limit",
+    "0.67"
+   ],
+   [
+    "000A",
+    "Confidence_Band",
+    "accelerator_pedal_minimum_learning_confidence_band",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Test_Cell_Auto_Zero",
+    "accelerator_pedal_test_cell_autozero",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Throttle_Transition_Range",
+    "accelerator_pedal_above_idle_transition_range",
+    "0.67"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TPS_AZ_Update_Limit",
+    "accelerator_pedal_autozero_update_count_limit",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "vehicle_speed must exceed this (2560 = 10 mph) for the idle validation fault debounce (P2121 / P2127 / P2128) to advance while the idle position accelerator_pedal_autozero_cal is above fuel_demand_cal_offset + 116 - ROM constant so no _cal (was fuel_demand_smoothing_temp_threshold_cal)"
+ },
+ {
+  "address": "0x0040a16e",
+  "block": "104A",
+  "offset": "0006",
+  "record": "Alpha_AFC",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[APAFSS] result of AFC algorithm",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pressure_fuel_delay_b_status",
+  "references": 4,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "calculateAlphaAirFuelControlResult: is stored in pressure_fuel_delay_b_status (0x40a16e) and a 1 lets alpha_base ramp toward 1.0.",
+   "calculateAlphaBase: pressure_fuel_delay_b_status, 0x1000 calculateAlphaFuelRateResult (fuel rate) into",
+   "calculateAlphaBase: pressure_fuel_delay_b_status = calculateAlphaAirFuelControlResult();",
+   "calculateAlphaBase: uVar2 = uVar2 | pressure_fuel_delay_b_status;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Alpha",
+    "combustion_alpha_input",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Alpha_Base",
+    "alpha_base",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Alpha_State",
+    "alpha_state",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Alpha_AFC",
+    "pressure_fuel_delay_b_status",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Alpha_Fuel_Rate",
+    "alpha_fuel_rate_result",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Alpha_Governor",
+    "fuel_rate_condition_status",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Alpha_LSG",
+    "pressure_fuel_delay_a_status",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Fueling_AFC_State_Detected",
+    "alpha_air_fuel_control_state_detected_flag",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Fueling_LSG_State_Detected",
+    "alpha_low_speed_governor_state_detected_flag",
+    "0.83"
+   ],
+   [
+    "0012",
+    "Alpha_Low_Ambient_Air_Pressure",
+    "alpha_low_ambient_air_pressure_result",
+    "1.00"
+   ],
+   [
+    "0014",
+    "Filtered_Fuel_Delivery_Rate",
+    "alpha_filtered_fuel_delivery_rate",
+    "1.00"
+   ],
+   [
+    "0016",
+    "Alpha_LSG_Timer",
+    "alpha_low_speed_governor_timer",
+    "1.00"
+   ],
+   [
+    "0018",
+    "Alpha_AFC_Timer",
+    "alpha_air_fuel_control_timer",
+    "0.67"
+   ],
+   [
+    "001A",
+    "Alpha_Altitude_Derate_Timer",
+    "alpha_altitude_derate_timer",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"104A\", \"offset\": \"0006\", \"record\": \"Alpha_AFC\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"65535\", \"address\": \"0x0040a16e\", \"status\": \"named\", \"row_na"
+  ]
+ },
+ {
+  "address": "0x0040a172",
+  "block": "104A",
+  "offset": "000A",
+  "record": "Alpha_Governor",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[APGVAP] result of On Governor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_rate_condition_status",
+  "references": 4,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "calculateAlphaOnGovernorResult: is set; the result is stored in fuel_rate_condition_status (0x40a172) and a 1 lets alpha_base",
+   "calculateAlphaBase: fuel_rate_condition_status and 0x8000 calculateAlphaLowAmbientAirPressureResult (low ambient air",
+   "calculateAlphaBase: fuel_rate_condition_status = calculateAlphaOnGovernorResult();",
+   "calculateAlphaBase: uVar2 = uVar2 | fuel_rate_condition_status;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Alpha",
+    "combustion_alpha_input",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Alpha_Base",
+    "alpha_base",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Alpha_State",
+    "alpha_state",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Alpha_AFC",
+    "pressure_fuel_delay_b_status",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Alpha_Fuel_Rate",
+    "alpha_fuel_rate_result",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Alpha_Governor",
+    "fuel_rate_condition_status",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Alpha_LSG",
+    "pressure_fuel_delay_a_status",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Fueling_AFC_State_Detected",
+    "alpha_air_fuel_control_state_detected_flag",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Fueling_LSG_State_Detected",
+    "alpha_low_speed_governor_state_detected_flag",
+    "0.83"
+   ],
+   [
+    "0012",
+    "Alpha_Low_Ambient_Air_Pressure",
+    "alpha_low_ambient_air_pressure_result",
+    "1.00"
+   ],
+   [
+    "0014",
+    "Filtered_Fuel_Delivery_Rate",
+    "alpha_filtered_fuel_delivery_rate",
+    "1.00"
+   ],
+   [
+    "0016",
+    "Alpha_LSG_Timer",
+    "alpha_low_speed_governor_timer",
+    "1.00"
+   ],
+   [
+    "0018",
+    "Alpha_AFC_Timer",
+    "alpha_air_fuel_control_timer",
+    "0.67"
+   ],
+   [
+    "001A",
+    "Alpha_Altitude_Derate_Timer",
+    "alpha_altitude_derate_timer",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"104A\", \"offset\": \"000A\", \"record\": \"Alpha_Governor\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"65535\", \"address\": \"0x0040a172\", \"status\": \"named\", \"r"
+  ]
+ },
+ {
+  "address": "0x0040a174",
+  "block": "104A",
+  "offset": "000C",
+  "record": "Alpha_LSG",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[APLSAP] result of LSG algorithm",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pressure_fuel_delay_a_status",
+  "references": 4,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "calculateAlphaLowSpeedGovernorResult: (algorithm enable flags word 0) is set; the result is stored in pressure_fuel_delay_a_status",
+   "calculateAlphaBase: pressure_fuel_delay_a_status, 0x800 calculateAlphaAirFuelControlResult (air fuel control) into",
+   "calculateAlphaBase: pressure_fuel_delay_a_status = calculateAlphaLowSpeedGovernorResult();",
+   "calculateAlphaBase: uVar2 = pressure_fuel_delay_a_status;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Alpha",
+    "combustion_alpha_input",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Alpha_Base",
+    "alpha_base",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Alpha_State",
+    "alpha_state",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Alpha_AFC",
+    "pressure_fuel_delay_b_status",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Alpha_Fuel_Rate",
+    "alpha_fuel_rate_result",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Alpha_Governor",
+    "fuel_rate_condition_status",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Alpha_LSG",
+    "pressure_fuel_delay_a_status",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Fueling_AFC_State_Detected",
+    "alpha_air_fuel_control_state_detected_flag",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Fueling_LSG_State_Detected",
+    "alpha_low_speed_governor_state_detected_flag",
+    "0.83"
+   ],
+   [
+    "0012",
+    "Alpha_Low_Ambient_Air_Pressure",
+    "alpha_low_ambient_air_pressure_result",
+    "1.00"
+   ],
+   [
+    "0014",
+    "Filtered_Fuel_Delivery_Rate",
+    "alpha_filtered_fuel_delivery_rate",
+    "1.00"
+   ],
+   [
+    "0016",
+    "Alpha_LSG_Timer",
+    "alpha_low_speed_governor_timer",
+    "1.00"
+   ],
+   [
+    "0018",
+    "Alpha_AFC_Timer",
+    "alpha_air_fuel_control_timer",
+    "0.67"
+   ],
+   [
+    "001A",
+    "Alpha_Altitude_Derate_Timer",
+    "alpha_altitude_derate_timer",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"104A\", \"offset\": \"000C\", \"record\": \"Alpha_LSG\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"65535\", \"address\": \"0x0040a174\", \"status\": \"named\", \"row_na"
+  ]
+ },
+ {
+  "address": "0x0040a302",
+  "block": "1063",
+  "offset": "000A",
+  "record": "HSG_Active_Breakpoint",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "1400",
+  "max": "4500",
+  "description": "[HSBKRFAE] HSG base reference speed currently in use (ESP may select high HP if active)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_reference",
+  "references": 15,
+  "dump_raw": "25600",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "buildPgn65251EngineConfiguration1Payload: engine_speed_limit_reference, 0xfaff < local_28)) {",
+   "cm848_calculateThrottle100Fuelings: engine_speed_limit_reference; each gets fuel_demand_offset_correction added when mask 0x1000 of",
+   "cm848_calculateThrottle100Fuelings: sVar1 = cm848_lookupChiMaximumFuelAtSpeed(engine_speed_limit_reference);",
+   "selectEngineSpeedLimit: engine_speed_limit_reference, 7 fuel_pressure_fault_engine_speed_limit_working, 8 the TSC1"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "selectEngineSpeedLimit (cpp 19764+): source 6 of the arbitration: the stored reference clamped to the two bounds, engine speed x 8 (dump 25600 = 3200 rpm), not a fuel value; the droop slope numerator is (engine_speed_limit_droop_no_load_speed - this) x 4369. (was torque_limit_fuel_reference)"
+ },
+ {
+  "address": "0x0040a30c",
+  "block": "1063",
+  "offset": "0014",
+  "record": "HSG_Ref_Speed_To_Gain_Sched",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "[HSRFTOGS] Reference speed before droop sent hsg ref -> hsg gain sched",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_arbitrated",
+  "references": 12,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "buildPgn65251EngineConfiguration1Payload: (local_28 = (engine_speed_limit_arbitrated + engine_speed_limit_droop_no_load_speed) -",
+   "selectHighSpeedGovernorGainSet: if (engine_speed_limit_arbitrated < high_speed_governor_low_reference_speed_threshold) {",
+   "selectHighSpeedGovernorGainSet: else if (high_speed_governor_high_reference_speed_threshold < engine_speed_limit_arbitrated)",
+   "selectHighSpeedGovernorGainSet: if (engine_speed_limit_arbitrated < high_speed_governor_low_reference_speed_threshold) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Written once at the end of selectEngineSpeedLimit with the arbitrated minimum (the field it comes from is then reset to the default); read in 5 functions (grep): selectHighSpeedGovernorGainSet (4 lines, picks the filter coefficient set by comparing it with the DAT_0005c318 / DAT_0005c322 thresholds), buildPgn65251EngineConfiguration1Payload, cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling, cm848_updateJ1939EngineConfigurationTorqueCurve and ... (was torque_limit_load_working)"
+ },
+ {
+  "address": "0x0040a312",
+  "block": "1063",
+  "offset": "001A",
+  "record": "HSG_Active_Isochronous_Speed_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "[HSISSTAE] Indicator of which alg. is setting HSISRFAE",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_droop_cap_source_code",
+  "references": 5,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "code": [
+   "selectEngineSpeedLimit: engine_speed_limit_droop_cap_source_code = 2;",
+   "selectEngineSpeedLimit: engine_speed_limit_droop_cap_source_code_snapshot = engine_speed_limit_droop_cap_source_code;",
+   "selectEngineSpeedLimit: engine_speed_limit_droop_cap_source_code = 0;",
+   "cm848_applySwitchSelectedEngineSpeedLimit: engine_speed_limit_droop_cap_source_code. First task of cm848_periodicTaskSet_auxiliaryControl;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "selectEngineSpeedLimit (cpp 19764+): set to 1 by cm848_applySwitchSelectedEngineSpeedLimit and 2 by the source 2 branch, copied to engine_speed_limit_droop_cap_source_code_snapshot and reset to 0 at the end of the pass: the source code of the cap, not a state machine (xref_addr.py: 1 read / 3 writes). (was torque_limit_state_machine)"
+ },
+ {
+  "address": "0x0040a31e",
+  "block": "1063",
+  "offset": "0026",
+  "record": "HSG_Intermediate_Desired_Active_Breakpoint",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1250",
+  "min": "1000",
+  "max": "4500",
+  "description": "[HSIRDSBK] HSG Breakpoint manipulated by many algorithms",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_reference_stored",
+  "references": 4,
+  "dump_raw": "25600",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "selectEngineSpeedLimit: engine_speed_limit_reference = engine_speed_limit_reference_stored;",
+   "selectEngineSpeedLimit: if (engine_speed_limit_reference_stored < engine_speed_limit_reference_lower_bound) {",
+   "selectEngineSpeedLimit: else if (engine_speed_limit_reference_upper_bound < engine_speed_limit_reference_stored) {",
+   "initializeEngineSpeedLimitDefaults: engine_speed_limit_reference_stored = engine_speed_limit_reference_default_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "selectEngineSpeedLimit (cpp 19764+): read once as the input of the clamp; initializeEngineSpeedLimitDefaults writes it with engine_speed_limit_reference_default_cal and xref_addr.py (name-based) finds no other writer (1 read / 1 write); dump 25600. (was torque_limit_fuel_reference_stored)"
+ },
+ {
+  "address": "0x0040a320",
+  "block": "1063",
+  "offset": "0028",
+  "record": "HSG_Intermediate_Max_Active_Breakpoint",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1250",
+  "min": "1000",
+  "max": "4500",
+  "description": "[HSIRMXBK] HSG Max Breakpoint manipulated by many algorithms",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_reference_upper_bound",
+  "references": 5,
+  "dump_raw": "30000",
+  "token_overlap": 0.14,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "selectEngineSpeedLimit: engine_speed_limit_reference_upper_bound_snapshot = engine_speed_limit_reference_upper_bound;",
+   "selectEngineSpeedLimit: else if (engine_speed_limit_reference_upper_bound < engine_speed_limit_reference_stored) {",
+   "selectEngineSpeedLimit: engine_speed_limit_reference = engine_speed_limit_reference_upper_bound;",
+   "selectEngineSpeedLimit: engine_speed_limit_reference_upper_bound = engine_speed_limit_default_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "selectEngineSpeedLimit (cpp 19764+): maximum bound of the stored reference (see engine_speed_limit_reference_lower_bound); dump 30000 = engine_speed_limit_default_cal. xref_addr.py: 1 read / 1 write, this function only. (was torque_limit_fuel_floor)"
+ },
+ {
+  "address": "0x0040a324",
+  "block": "1063",
+  "offset": "002C",
+  "record": "HSG_Max_Active_Breakpoint",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1250",
+  "min": "1000",
+  "max": "4500",
+  "description": "[HSMXBKRF] HSG Max Breakpoint",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_reference_upper_bound_snapshot",
+  "references": 1,
+  "dump_raw": "30000",
+  "token_overlap": 0.17,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "selectEngineSpeedLimit: engine_speed_limit_reference_upper_bound_snapshot = engine_speed_limit_reference_upper_bound;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "selectEngineSpeedLimit (cpp 19764+): copy of the upper bound taken at the start of every pass and never read (xref_addr.py: 0 reads / 1 write). (was torque_limit_fuel_floor_working)"
+ },
+ {
+  "address": "0x0040a32c",
+  "block": "1063",
+  "offset": "0034",
+  "record": "TC_Rock_Cycle_Derate_RPM",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "Engine speed limit during rock cycle maneuvers",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_park_neutral_exit",
+  "references": 9,
+  "dump_raw": "30000",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1, 'sth': 3} -> 2 byte",
+  "code": [
+   "selectEngineSpeedLimit: engine_speed_limit_pedal_fault_mode, 15 engine_speed_limit_park_neutral_exit, 16",
+   "selectEngineSpeedLimit: if (engine_speed_limit_park_neutral_exit <=",
+   "selectEngineSpeedLimit: engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_park_neutral_exit;",
+   "cm848_calculateParkNeutralExitEngineSpeedLimit: engine_speed_limit_park_neutral_exit = engine_speed_limit_default_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Ref_Speed_State",
+    "engine_speed_limit_arbitration",
+    "0.20"
+   ],
+   [
+    "0002",
+    "HSG_Reference_Speed",
+    "engine_speed_limit_arbitration.applied_speed_limit",
+    "0.25"
+   ],
+   [
+    "0004",
+    "HSG_Ref_Speed_Before_Droop",
+    "engine_speed_limit_arbitration.lowest_source_speed_limit",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Droop_Speed",
+    "engine_speed_limit_after_droop",
+    "0.50"
+   ],
+   [
+    "0008",
+    "FSS_RPM_Derate",
+    "fuel_pressure_fault_engine_speed_limit_working",
+    "0.50"
+   ],
+   [
+    "000A",
+    "HSG_Active_Breakpoint",
+    "engine_speed_limit_reference",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HSG_Active_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "HSG_Active_Slope",
+    "engine_speed_limit_droop_slope",
+    "0.40"
+   ],
+   [
+    "0010",
+    "HSG_Before_Droop_Speed",
+    "engine_speed_limit_ramped",
+    "0.20"
+   ],
+   [
+    "0012",
+    "HSG_Droop_Flag",
+    "engine_speed_limit_droop_active_flag",
+    "0.60"
+   ],
+   [
+    "0014",
+    "HSG_Ref_Speed_To_Gain_Sched",
+    "engine_speed_limit_arbitrated",
+    "0.17"
+   ],
+   [
+    "0016",
+    "HSG_Active_Isochronous_Speed",
+    "engine_speed_limit_droop_cap",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TSG_Derate_RPM",
+    "engine_speed_limit_source_10",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HSG_Active_Isochronous_Speed_State",
+    "engine_speed_limit_droop_cap_source_code",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Source 15 of the arbitration: held at park_neutral_exit_engine_speed_limit (6800 = 850 rpm) during the park/neutral exit window and ramped back up to the default by cm848_calculateParkNeutralExitEngineSpeedLimit (its 3 writes), reset by cm848_initializeParkNeutralExitEngineSpeedLimit. xref_addr.py: 2 reads / 4 writes, word, 3 functions, no user below 0x7F60. (was torque_limit_fuel_ramp)"
+ },
+ {
+  "address": "0x003ff68e",
+  "block": "107D",
+  "offset": "0008",
+  "record": "ASG_Switch_Droop_Fueling_Offset",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "200.000000",
+  "description": "[ASSDFUOF] Offset added to NLFL and compared with FSFNFL for throttle gov. switch",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_speed_deadband_cal",
+  "references": 3,
+  "dump_raw": "736",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_blendGovernorTuningSets: (uint)fuel_demand_speed_deadband_cal)) &&",
+   "cm848_updateVariableSpeedGovernorSelection: fuel_demand_base_offset + fuel_demand_speed_deadband_cal: governor_system_config_flags bit 3 (0",
+   "cm848_updateVariableSpeedGovernorSelection: if (((((uint)final_fueling <= (uint)fuel_demand_base_offset + (uint)fuel_demand_speed_deadband_cal"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003ff6a0",
+  "block": "107D",
+  "offset": "001A",
+  "record": "ASG_Delta_Offset",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "4000.000000",
+  "description": "ASG deadband delta reduced by this amount, to add back some deadband",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_integrator_offset_cal",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: (uint)all_speed_governor_delta) - (uint)fuel_demand_integrator_offset_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003ff6a2",
+  "block": "107D",
+  "offset": "001C",
+  "record": "ASG_Fuel_Slew_Dec_1",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793600000",
+  "min": "0.000000",
+  "max": "4000.000000",
+  "description": "Negative fuel slew limit when rail error is not large negative",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+  "references": 1,
+  "dump_raw": "4",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: wVar10 = fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Read once, in cm848_runOperatingModeSpeedGovernor (xref: word, 1 read / 0 writes); ROM copy at 0x3ff6xx, outside the EEPROM range, so no _cal, and not cam timing. Per pass, while all_speed_governor_fueling is at or below both fuel_demand_decaying_peak (new name of fuel_demand_decaying_peak, 0x3fa0fc) and its ceiling and the step is nonzero, the peak is limited to the ceiling (fuel_demand_base_offset mi (was cam_timing_correction_high_cal)"
+ },
+ {
+  "address": "0x003ff6a4",
+  "block": "107D",
+  "offset": "001E",
+  "record": "ASG_Fuel_Slew_Dec_2",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793600000",
+  "min": "0.000000",
+  "max": "4000.000000",
+  "description": "Negative fuel slew limit when rail error is large negative",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_decaying_peak_decrease_step_below_pressure_error_threshold",
+  "references": 1,
+  "dump_raw": "2",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: wVar10 = fuel_demand_decaying_peak_decrease_step_below_pressure_error_threshold;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Read once, in cm848_runOperatingModeSpeedGovernor (xref: word, 1 read / 0 writes); ROM copy at 0x3ff6xx, outside the EEPROM range, so no _cal, and not cam timing. Per pass, while all_speed_governor_fueling is at or below both fuel_demand_decaying_peak (new name of fuel_demand_decaying_peak, 0x3fa0fc) and its ceiling and the step is nonzero, the peak is limited to the ceiling (fuel_demand_base_offset mi (was cam_timing_correction_low_cal)"
+ },
+ {
+  "address": "0x003ff6b8",
+  "block": "107D",
+  "offset": "0032",
+  "record": "Target_RPM_Decel_Rate_Hi",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "ASG decel target at high engine speeds (>Decel_Limit_RPM_Threshold)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_rpm_delta_high_offset_cal",
+  "references": 1,
+  "dump_raw": "600",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: sVar12 = engine_rpm_delta - engine_rpm_delta_high_offset_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003ff6ba",
+  "block": "107D",
+  "offset": "0034",
+  "record": "Decel_Limit_Boost_Threshold",
+  "unit": "IN_HG",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0159064138077",
+  "min": "0",
+  "max": "120",
+  "description": "No decel limit enforced when boost press is below this threshold",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "rpm_drop_fuel_minimum_manifold_pressure",
+  "references": 1,
+  "dump_raw": "1257",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: if (sensor_readings_t_0040baf2.intake_manifold_pressure < rpm_drop_fuel_minimum_manifold_pressure)"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Absolute intake manifold pressure (slot 1) below which the governor rpm-drop fuel term (rpm_deceleration_limit_integral_term) is zeroed - 1257 = 67.7 kPa (below this truck's 88.7 kPa barometric) - ROM-initialized (ROM 0x652d4) (was oil_pressure_fuel_trim_threshold)"
+ },
+ {
+  "address": "0x003ff6c0",
+  "block": "107D",
+  "offset": "003A",
+  "record": "ASG_Fuel_Slew_Inc_1",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Pos ASG fuel inc limit in high gear @ less than threshold val",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_ramp_rate",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: ((fuel_demand_ramp_rate == 0 && (fuel_demand_ramp_step == 0)))) {",
+   "cm848_runOperatingModeSpeedGovernor: if (fuel_demand_ramp_rate != 0) {",
+   "cm848_runOperatingModeSpeedGovernor: fuel_demand_ramp_state = fuel_demand_ramp_state + fuel_demand_ramp_rate;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003ff6c2",
+  "block": "107D",
+  "offset": "003C",
+  "record": "ASG_Fuel_Slew_Inc_2",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Pos ASG fuel inc limit in high hear @ greater than threshold val",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_ramp_step",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: ((fuel_demand_ramp_rate == 0 && (fuel_demand_ramp_step == 0)))) {",
+   "cm848_runOperatingModeSpeedGovernor: if (fuel_demand_ramp_step != 0) {",
+   "cm848_runOperatingModeSpeedGovernor: fuel_demand_ramp_state = fuel_demand_ramp_state + fuel_demand_ramp_step;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003ff6c4",
+  "block": "107D",
+  "offset": "003E",
+  "record": "ASG_Fuel_Slew_Inc_Ratio_Thd",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000488281250",
+  "min": "0",
+  "max": "31.99",
+  "description": "Apply pos ASG fuel slew inc limits when ratio < this thd",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_temp_protection_threshold",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.12,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: if ((engine_temp_protection_threshold < drivetrain_ratio) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003ff6c8",
+  "block": "107D",
+  "offset": "0042",
+  "record": "ASG_Delta_Max_Limit",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "ASG_Delta maximum allowable value, start droop value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_integrator_upper_limit",
+  "references": 3,
+  "dump_raw": "442",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: if (fuel_demand_integrator_upper_limit < all_speed_governor_delta) {",
+   "cm848_runOperatingModeSpeedGovernor: all_speed_governor_delta = fuel_demand_integrator_upper_limit;",
+   "cm848_runOperatingModeSpeedGovernor: iVar13 = (uint)fuel_demand_integrator_upper_limit -"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Derivative_Dead_Band_Limit",
+    "governor_demand_rate_limit_window",
+    "0.29"
+   ],
+   [
+    "0002",
+    "ASG_Derivative_Filter_Coefficient",
+    "governor_pid_derivative_gain",
+    "0.33"
+   ],
+   [
+    "0004",
+    "ASG_Derivative_Limit",
+    "governor_demand_rate_limit_max",
+    "0.40"
+   ],
+   [
+    "0006",
+    "ASG_Throttle_Prefilter_Rate_Limit",
+    "speed_request_rate_limit_cal",
+    "0.43"
+   ],
+   [
+    "0008",
+    "ASG_Switch_Droop_Fueling_Offset",
+    "fuel_demand_speed_deadband_cal",
+    "0.14"
+   ],
+   [
+    "000C",
+    "ASG_Negative_Slew_Rate_1",
+    "all_speed_governor_reference_negative_slew_rate_above_threshold",
+    "0.86"
+   ],
+   [
+    "000E",
+    "ASG_Negative_Slew_Rate_2",
+    "all_speed_governor_reference_negative_slew_rate_below_threshold",
+    "0.86"
+   ],
+   [
+    "0010",
+    "ASG_Slew_Rate_Threshold",
+    "all_speed_governor_reference_slew_rate_threshold",
+    "1.00"
+   ],
+   [
+    "0012",
+    "ASG_Slew_Limit_VSS_Threshold",
+    "all_speed_governor_reference_slew_vehicle_speed_threshold",
+    "0.71"
+   ],
+   [
+    "0014",
+    "ASG_Slew_On_Brake_Inhibit_Flag",
+    "all_speed_governor_reference_slew_brake_inhibit_flag",
+    "1.00"
+   ],
+   [
+    "0016",
+    "ASG_Deadband_Compensation_Flag",
+    "fuel_demand_pilot_active_flag",
+    "0.17"
+   ],
+   [
+    "0018",
+    "ASG_Deadband_Delta_Decrement_Rate",
+    "fuel_demand_pilot_active_flag+2",
+    "0.00"
+   ],
+   [
+    "001A",
+    "ASG_Delta_Offset",
+    "fuel_demand_integrator_offset_cal",
+    "0.20"
+   ],
+   [
+    "001C",
+    "ASG_Fuel_Slew_Dec_1",
+    "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040ae56",
+  "block": "1080",
+  "offset": "0000",
+  "record": "Software_FLT2ERAS",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[FLT2ERAS] FAULT TO ERASE",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "emission_fault_overflow_flag",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_clearDiagnosticState: emission_fault_overflow_flag = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Software_FLT2ERAS",
+    "emission_fault_overflow_flag",
+    "0.00"
+   ],
+   [
+    "0002",
+    "DL_to_Fault_Handler_Command",
+    "diagnostic_clear_request_state",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040ad96",
+  "block": "1102",
+  "offset": "000C",
+  "record": "Jcomm_Ind_Torque_at_Point_3",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "125",
+  "description": "[JCINP3TQ] Jcomm Ind Torque at Point 3 available torque that engine can provide at pt 3",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_speed_ratio_c",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "buildPgn65251EngineConfiguration1Payload: local_1c = CONCAT31(CONCAT21(CONCAT11((char)(protection_speed_ratio_c >> 8) + '}',",
+   "cm848_updateJ1939EngineConfigurationTorqueCurve: j1939_indicated_percent_torque_at_idle_times_256, _point_2_, protection_speed_ratio_c,",
+   "cm848_updateJ1939EngineConfigurationTorqueCurve: protection_speed_ratio_c ="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Actual_Engine_Ind_Torque",
+    "actual_engine_percent_torque_times_256",
+    "0.75"
+   ],
+   [
+    "0002",
+    "Jcomm_Drivers_Demand_Ind_Torque",
+    "driver_demand_percent_torque_times_256",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Jcomm_Ind_Percent_Load",
+    "j1939_engine_percent_load_at_current_speed_times_256",
+    "0.67"
+   ],
+   [
+    "0006",
+    "Jcomm_Ind_Friction_Torque",
+    "j1939_nominal_friction_percent_torque_times_256",
+    "0.67"
+   ],
+   [
+    "0008",
+    "Jcomm_Ind_Torque_at_Idle",
+    "j1939_indicated_percent_torque_at_idle_times_256",
+    "0.75"
+   ],
+   [
+    "000A",
+    "Jcomm_Ind_Torque_at_Point_2",
+    "j1939_indicated_percent_torque_at_point_2_times_256",
+    "0.80"
+   ],
+   [
+    "000C",
+    "Jcomm_Ind_Torque_at_Point_3",
+    "protection_speed_ratio_c",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Jcomm_Ind_Torque_at_Point_4",
+    "protection_speed_ratio_d",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Ind_Torque_at_Point_5",
+    "j1939_indicated_percent_torque_at_point_5_times_256",
+    "0.80"
+   ],
+   [
+    "0012",
+    "Jcomm_Determined_RPM_Point_2",
+    "j1939_determined_engine_speed_at_point_2",
+    "1.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Determined_RPM_Point_5",
+    "j1939_determined_engine_speed_at_point_5",
+    "1.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Determined_RPM_Point_1",
+    "j1939_determined_engine_speed_at_point_1",
+    "1.00"
+   ],
+   [
+    "0018",
+    "Jcomm_Determined_RPM_Point_3",
+    "j1939_determined_engine_speed_at_point_3",
+    "1.00"
+   ],
+   [
+    "001A",
+    "Jcomm_Determined_RPM_Point_4",
+    "j1939_determined_engine_speed_at_point_4",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"1102\", \"offset\": \"000C\", \"record\": \"Jcomm_Ind_Torque_at_Point_3\", \"unit\": \"%\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.00390625\", \"min\": \"0\", \"max\": \"125\", \"address\": \"0x0040ad96\", \"status\""
+  ]
+ },
+ {
+  "address": "0x0040ad98",
+  "block": "1102",
+  "offset": "000E",
+  "record": "Jcomm_Ind_Torque_at_Point_4",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "125",
+  "description": "[JCINP4TQ] Jcomm Ind Torque at Point 4 available torque that engine can provide at pt 4",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_speed_ratio_d",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "buildPgn65251EngineConfiguration1Payload: (char)(protection_speed_ratio_d >> 8) + '}');",
+   "cm848_updateJ1939EngineConfigurationTorqueCurve: protection_speed_ratio_d and _point_5_ (+8 .. +10). It caches the determined speeds (+12 .. +1A)",
+   "cm848_updateJ1939EngineConfigurationTorqueCurve: protection_speed_ratio_d ="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Actual_Engine_Ind_Torque",
+    "actual_engine_percent_torque_times_256",
+    "0.75"
+   ],
+   [
+    "0002",
+    "Jcomm_Drivers_Demand_Ind_Torque",
+    "driver_demand_percent_torque_times_256",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Jcomm_Ind_Percent_Load",
+    "j1939_engine_percent_load_at_current_speed_times_256",
+    "0.67"
+   ],
+   [
+    "0006",
+    "Jcomm_Ind_Friction_Torque",
+    "j1939_nominal_friction_percent_torque_times_256",
+    "0.67"
+   ],
+   [
+    "0008",
+    "Jcomm_Ind_Torque_at_Idle",
+    "j1939_indicated_percent_torque_at_idle_times_256",
+    "0.75"
+   ],
+   [
+    "000A",
+    "Jcomm_Ind_Torque_at_Point_2",
+    "j1939_indicated_percent_torque_at_point_2_times_256",
+    "0.80"
+   ],
+   [
+    "000C",
+    "Jcomm_Ind_Torque_at_Point_3",
+    "protection_speed_ratio_c",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Jcomm_Ind_Torque_at_Point_4",
+    "protection_speed_ratio_d",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Ind_Torque_at_Point_5",
+    "j1939_indicated_percent_torque_at_point_5_times_256",
+    "0.80"
+   ],
+   [
+    "0012",
+    "Jcomm_Determined_RPM_Point_2",
+    "j1939_determined_engine_speed_at_point_2",
+    "1.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Determined_RPM_Point_5",
+    "j1939_determined_engine_speed_at_point_5",
+    "1.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Determined_RPM_Point_1",
+    "j1939_determined_engine_speed_at_point_1",
+    "1.00"
+   ],
+   [
+    "0018",
+    "Jcomm_Determined_RPM_Point_3",
+    "j1939_determined_engine_speed_at_point_3",
+    "1.00"
+   ],
+   [
+    "001A",
+    "Jcomm_Determined_RPM_Point_4",
+    "j1939_determined_engine_speed_at_point_4",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"1102\", \"offset\": \"000E\", \"record\": \"Jcomm_Ind_Torque_at_Point_4\", \"unit\": \"%\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.00390625\", \"min\": \"0\", \"max\": \"125\", \"address\": \"0x0040ad98\", \"status\""
+  ]
+ },
+ {
+  "address": "0x0040a216",
+  "block": "1170",
+  "offset": "000C",
+  "record": "ASG_As_Override_Mode",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[ASAPODMD] ASG application specific reference override mode",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_operating_mode_restore_valid_flag",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: (engine_operating_mode_restore_valid_flag != 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: gate of cm848_restoreEngineOperatingMode (engine_operating_mode 0 and this nonzero -> mode 30 and the copy). Only reader; no writer; zeroed at every start (dump 0). (was fuel_trim_save_valid_flag)"
+ },
+ {
+  "address": "0x0040a218",
+  "block": "1170",
+  "offset": "000E",
+  "record": "ASG_As_Reference_RPM",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "[ASAPRF] ASG application specific reference speed",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_operating_mode_restore_speed_request",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: speed_request_unfiltered = engine_operating_mode_restore_speed_request;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to speed_request_unfiltered (0x40a24e) by the restore (lhz 0xfb5c). Only reader; no writer. (was fuel_trim_saved_speed_request)"
+ },
+ {
+  "address": "0x0040a222",
+  "block": "1170",
+  "offset": "0018",
+  "record": "ASG_Lower_Fuel_Limit_As",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "200.000000",
+  "description": "[ASAPLOLM] ASG application specific fueling lower limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_operating_mode_restore_fuel_demand_tracking_floor",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.14,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: governor_fuel_demand_tracking_floor = engine_operating_mode_restore_fuel_demand_tracking_floor;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to governor_fuel_demand_tracking_floor (0x40a25c), which is the LOWER clamp of governor_fuel_demand_tracking (all_speed_governor_fueling = clamp(tracking, floor, limit), .cpp 9463-9475 in cm848_runOperatingModeSpeedGovernor), not a speed reference (calibration twin governor_fuel_demand_tracking_floor_throttle_mode = 0, TSC1 ROM word governor_fuel_demand_tracking_floor_j1939). Only reader; no writer. (was fuel_trim_saved_speed_reference)"
+ },
+ {
+  "address": "0x0040a226",
+  "block": "1170",
+  "offset": "001C",
+  "record": "ASG_State_X1_As",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.125",
+  "min": "-2000",
+  "max": "2000",
+  "description": "[ASAPSTX1] ASG application specific state X1 reset value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_operating_mode_restore_speed_error_previous",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: engine_operating_mode_restore_speed_error_previous;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "CODE: signed word (lha at 0xfc34); copied to all_speed_governor_reset_state_speed_error_previous (0x40a20a, lha in the governor), which the governor loads into iVar16. In the continuing path iVar16 is all_speed_governor_state_speed_error, the previous pass's reference speed minus engine speed clamped to +-32000 (.cpp 9079-9082), and it is the delayed error term iVar16 x (coefficient 2 + coefficient 3) of the compensator sum ... (was fuel_trim_saved_pid_error_accum)"
+ },
+ {
+  "address": "0x0040a228",
+  "block": "1170",
+  "offset": "001E",
+  "record": "ASG_State_X2_As",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "-400.000000",
+  "max": "400.000000",
+  "description": "[ASAPSTX2] ASG application specific state X2 reset value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_operating_mode_restore_integral_state",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: all_speed_governor_reset_state_integral = engine_operating_mode_restore_integral_state;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to all_speed_governor_reset_state_integral (0x40a20c) and then governor_pid_integral_state = value << 16 (high word of the governor integrator). Only reader; no writer. (was fuel_trim_saved_pid_integral)"
+ },
+ {
+  "address": "0x0040a22a",
+  "block": "1170",
+  "offset": "0020",
+  "record": "ASG_State_X3_As",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "[ASAPSTX3] ASG application specific state X3 reset value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_operating_mode_restore_engine_speed_previous",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: engine_operating_mode_restore_engine_speed_previous;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to all_speed_governor_reset_state_engine_speed_previous (0x40a20e) and then fuel_trim_pid_ema_snapshot, which the governor sets to governor_rpm_actual at the end of every pass and subtracts from it (engine speed change per pass). Only reader; no writer. (was fuel_trim_saved_ema_ref)"
+ },
+ {
+  "address": "0x0040a22c",
+  "block": "1170",
+  "offset": "0022",
+  "record": "ASG_State_X4_As",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "-400.000000",
+  "max": "400.000000",
+  "description": "[ASAPSTX4] ASG application specific state X4 reset value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_operating_mode_restore_pid_clamp_value",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: all_speed_governor_reset_state_pid_clamp_value = engine_operating_mode_restore_pid_clamp_value;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to all_speed_governor_reset_state_pid_clamp_value (0x40a210) which seeds iVar14 = the previous all_speed_governor_state_pid_clamp_value (the clamped proportional + derivative output). Only reader; no writer. (was fuel_trim_saved_clamp_value)"
+ },
+ {
+  "address": "0x0040a22e",
+  "block": "1170",
+  "offset": "0024",
+  "record": "ASG_State_X5_As",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "-400.000000",
+  "max": "400.000000",
+  "description": "[ASAPSTX5] ASG application specific state X5 reset value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_operating_mode_restore_pid_integral_clamped",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: engine_operating_mode_restore_pid_integral_clamped;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to all_speed_governor_reset_state_pid_integral_clamped (0x40a212) which seeds the previous all_speed_governor_state_pid_integral_clamped (integral + clamp value, clamped). Only reader; no writer. (was fuel_trim_saved_clamped)"
+ },
+ {
+  "address": "0x0040a230",
+  "block": "1170",
+  "offset": "0026",
+  "record": "ASG_State_X6_As",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "-400.000000",
+  "max": "400.000000",
+  "description": "[ASAPSTX6] ASG application specific state X6 reset value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_operating_mode_restore_fuel_demand_correction",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: engine_operating_mode_restore_fuel_demand_correction;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to all_speed_governor_reset_state_fuel_demand_correction (0x40a214) which seeds all_speed_governor_state_fuel_demand_correction. Only reader; no writer. (was fuel_trim_saved_correction)"
+ },
+ {
+  "address": "0x0040a244",
+  "block": "1170",
+  "offset": "003A",
+  "record": "ASG_As_Feedback_Speed",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "[ASAPFBES] Application specific feedback variable for ASG",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_operating_mode_restore_engine_speed",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_restoreEngineOperatingMode: governor_rpm_actual = engine_operating_mode_restore_engine_speed;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ASG_Reset_State_X1",
+    "all_speed_governor_reset_state_speed_error_previous",
+    "0.83"
+   ],
+   [
+    "0002",
+    "ASG_Reset_State_X2",
+    "all_speed_governor_reset_state_integral",
+    "0.83"
+   ],
+   [
+    "0004",
+    "ASG_Reset_State_X3",
+    "all_speed_governor_reset_state_engine_speed_previous",
+    "0.83"
+   ],
+   [
+    "0006",
+    "ASG_Reset_State_X4",
+    "all_speed_governor_reset_state_pid_clamp_value",
+    "0.83"
+   ],
+   [
+    "0008",
+    "ASG_Reset_State_X5",
+    "all_speed_governor_reset_state_pid_integral_clamped",
+    "0.83"
+   ],
+   [
+    "000A",
+    "ASG_Reset_State_X6",
+    "all_speed_governor_reset_state_fuel_demand_correction",
+    "0.83"
+   ],
+   [
+    "000C",
+    "ASG_As_Override_Mode",
+    "engine_operating_mode_restore_valid_flag",
+    "0.17"
+   ],
+   [
+    "000E",
+    "ASG_As_Reference_RPM",
+    "engine_operating_mode_restore_speed_request",
+    "0.20"
+   ],
+   [
+    "0010",
+    "ASG_Droop_Gain_1_As",
+    "engine_operating_mode_restore_droop_gain_1",
+    "0.43"
+   ],
+   [
+    "0012",
+    "ASG_Droop_Gain_2_As",
+    "engine_operating_mode_restore_droop_gain_2",
+    "0.43"
+   ],
+   [
+    "0014",
+    "ASG_Filter_Coef_As",
+    "engine_operating_mode_restore_speed_filter_coefficient",
+    "0.33"
+   ],
+   [
+    "0016",
+    "ASG_High_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_limit",
+    "0.29"
+   ],
+   [
+    "0018",
+    "ASG_Lower_Fuel_Limit_As",
+    "engine_operating_mode_restore_fuel_demand_tracking_floor",
+    "0.14"
+   ],
+   [
+    "001A",
+    "ASG_Reset_As",
+    "engine_operating_mode_restore_governor_reset_flag",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: copied to governor_rpm_actual (0x40a260). Only reader; no writer. (was fuel_trim_saved_rpm_actual)"
+ },
+ {
+  "address": "0x00408e5e",
+  "block": "1189",
+  "offset": "0012",
+  "record": "Cruise_RSG_Fueling_Clamp_Min",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "CC/RSG fueling clamp min.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_fuel_demand_floor",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: adjusted_user_fueling = cruise_fuel_demand_floor;",
+   "protectionOutputActuatorControl: cruise_fuel_demand_hold = cruise_fuel_demand_floor;",
+   "protectionOutputActuatorControl: if ((short)wStack_36 <= (short)cruise_fuel_demand_floor) goto LAB_00525db0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CC_Reference_Rate_Pos",
+    "cruise_ramp_target_speed_rate_limit_increase",
+    "0.50"
+   ],
+   [
+    "0002",
+    "CC_Reference_Rate_Neg",
+    "cruise_ramp_target_speed_rate_limit_decrease",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Derivative_Filter_C1",
+    "cruise_pid_derivative_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Derivative_Filter_C3",
+    "cruise_pid_derivative_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Diff_Path_Max",
+    "cruise_pid_differential_path_maximum",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Diff_Path_Min",
+    "cruise_pid_differential_path_minimum",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Driveline_Filter_C1",
+    "cruise_pid_driveline_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Driveline_Filter_C3",
+    "cruise_pid_driveline_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Fueling_Clamp_Max",
+    "cruise_fuel_demand_ceiling",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Gain_Mult",
+    "cruise_pid_rate_gain_scale_multiplier",
+    "0.50"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Integral_Adj_Gain",
+    "cruise_pid_integral_adjustment_gain",
+    "0.80"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "read-only ROM hard floor for cruise fuel demand output"
+ },
+ {
+  "address": "0x00408e6e",
+  "block": "1189",
+  "offset": "0022",
+  "record": "Cruise_RSG_Min_Fuel_Ramp_Rate",
+  "unit": "MM3S/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "3.39673913200",
+  "min": "0.000000",
+  "max": "20000.000000",
+  "description": "cc/rsg min fuel transition ramp rate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_corrected_step_cal",
+  "references": 2,
+  "dump_raw": "44",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_arbitrateGovernedFueling: else if (fuel_demand_corrected_step_cal < fuel_demand_corrected_working) {",
+   "cm848_arbitrateGovernedFueling: fuel_demand_corrected_working = fuel_demand_corrected_working - fuel_demand_corrected_step_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CC_Reference_Rate_Pos",
+    "cruise_ramp_target_speed_rate_limit_increase",
+    "0.50"
+   ],
+   [
+    "0002",
+    "CC_Reference_Rate_Neg",
+    "cruise_ramp_target_speed_rate_limit_decrease",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Derivative_Filter_C1",
+    "cruise_pid_derivative_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Derivative_Filter_C3",
+    "cruise_pid_derivative_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Diff_Path_Max",
+    "cruise_pid_differential_path_maximum",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Diff_Path_Min",
+    "cruise_pid_differential_path_minimum",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Driveline_Filter_C1",
+    "cruise_pid_driveline_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Driveline_Filter_C3",
+    "cruise_pid_driveline_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Fueling_Clamp_Max",
+    "cruise_fuel_demand_ceiling",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Gain_Mult",
+    "cruise_pid_rate_gain_scale_multiplier",
+    "0.50"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Integral_Adj_Gain",
+    "cruise_pid_integral_adjustment_gain",
+    "0.80"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x00408e74",
+  "block": "1189",
+  "offset": "0028",
+  "record": "Cruise_RSG_Preset_Fueling_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.04",
+  "min": "0",
+  "max": "20",
+  "description": "Time threshold used in cruise preset fueling calculation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_stable_speed_countdown_initial",
+  "references": 2,
+  "dump_raw": "50",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: cruise_stable_speed_countdown = cruise_stable_speed_countdown_initial;",
+   "protectionOutputActuatorControl: if (cruise_stable_speed_countdown_initial == cruise_stable_speed_countdown) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CC_Reference_Rate_Pos",
+    "cruise_ramp_target_speed_rate_limit_increase",
+    "0.50"
+   ],
+   [
+    "0002",
+    "CC_Reference_Rate_Neg",
+    "cruise_ramp_target_speed_rate_limit_decrease",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Derivative_Filter_C1",
+    "cruise_pid_derivative_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Derivative_Filter_C3",
+    "cruise_pid_derivative_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Diff_Path_Max",
+    "cruise_pid_differential_path_maximum",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Diff_Path_Min",
+    "cruise_pid_differential_path_minimum",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Driveline_Filter_C1",
+    "cruise_pid_driveline_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Driveline_Filter_C3",
+    "cruise_pid_driveline_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Fueling_Clamp_Max",
+    "cruise_fuel_demand_ceiling",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Gain_Mult",
+    "cruise_pid_rate_gain_scale_multiplier",
+    "0.50"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Integral_Adj_Gain",
+    "cruise_pid_integral_adjustment_gain",
+    "0.80"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM reload for cruise stable-speed countdown"
+ },
+ {
+  "address": "0x00408e78",
+  "block": "1189",
+  "offset": "002C",
+  "record": "Cruise_RSG_Sump_Prevent_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.04",
+  "min": "0",
+  "max": "100",
+  "description": "Prevents cruise sump from activating again for this time period",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_rate_correction_holdoff_initial",
+  "references": 2,
+  "dump_raw": "250",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "protectionRampRateControl: cruise_rate_correction_holdoff = cruise_rate_correction_holdoff_initial;",
+   "protectionOutputActuatorControl: cruise_rate_correction_holdoff = cruise_rate_correction_holdoff_initial;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CC_Reference_Rate_Pos",
+    "cruise_ramp_target_speed_rate_limit_increase",
+    "0.50"
+   ],
+   [
+    "0002",
+    "CC_Reference_Rate_Neg",
+    "cruise_ramp_target_speed_rate_limit_decrease",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Derivative_Filter_C1",
+    "cruise_pid_derivative_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Derivative_Filter_C3",
+    "cruise_pid_derivative_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Diff_Path_Max",
+    "cruise_pid_differential_path_maximum",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Diff_Path_Min",
+    "cruise_pid_differential_path_minimum",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Driveline_Filter_C1",
+    "cruise_pid_driveline_filter_coefficient_1",
+    "0.80"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Driveline_Filter_C3",
+    "cruise_pid_driveline_filter_coefficient_3",
+    "0.80"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Fueling_Clamp_Max",
+    "cruise_fuel_demand_ceiling",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Gain_Mult",
+    "cruise_pid_rate_gain_scale_multiplier",
+    "0.50"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Integral_Adj_Gain",
+    "cruise_pid_integral_adjustment_gain",
+    "0.80"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM reload for cruise rate-correction holdoff"
+ },
+ {
+  "address": "0x003fd920",
+  "block": "118B",
+  "offset": "0002",
+  "record": "Cruise_RSG_Feedback_Parameter",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "1=ROAD_SPEED, 0=PREDICTED_VEHICLE_SPEED USED IN FEEDBACK LOOP",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_flow_rpm_mode_flag",
+  "references": 1,
+  "dump_raw": "1",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateRiseLimitedVehicleSpeed: if (fuel_flow_rpm_mode_flag == 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Cruise_RSG_Feedback_Parameter",
+    "fuel_flow_rpm_mode_flag",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a885",
+  "block": "11D4",
+  "offset": "000A",
+  "record": "MS_Final_Override_Alpha",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "6.103515625E-5",
+  "min": "0",
+  "max": "1",
+  "description": "[MSFNAP] Alpha value used to override SLAVE ECM.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_startup_fuel_blend_coeff",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "calculateAlpha: (governor_startup_fuel_blend_coeff), 5 ESP (fuel_blend_coefficient_run_cal). In the engine states",
+   "calculateAlpha: combustion_alpha_input = governor_startup_fuel_blend_coeff;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "MS_Final_Override_Fueling",
+    "master_slave_final_override_fueling",
+    "0.75"
+   ],
+   [
+    "0002",
+    "MS_Override_Enable",
+    "master_slave_override_enable_flag",
+    "0.67"
+   ],
+   [
+    "000A",
+    "MS_Final_Override_Alpha",
+    "governor_startup_fuel_blend_coeff",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"11D4\", \"offset\": \"000A\", \"record\": \"MS_Final_Override_Alpha\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"6.103515625E-5\", \"min\": \"0\", \"max\": \"1\", \"address\": \"0x0040a885\", \"st"
+  ]
+ },
+ {
+  "address": "0x003fd51c",
+  "block": "1292",
+  "offset": "0000",
+  "record": "Application_Identifier",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[APPL_ID] Descriptor of the project or fuel system.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn_priority_cal",
+  "references": 2,
+  "dump_raw": "12336",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65242SoftwareIdHandler: local_10 = (undefined1)(j1939_pgn_priority_cal >> 8);",
+   "cm848_initPgn65242SoftwareIdHandler: uStack_f = (undefined1)j1939_pgn_priority_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Application_Identifier",
+    "j1939_pgn_priority_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040aac2",
+  "block": "12F7",
+  "offset": "001C",
+  "record": "EB_Switch_Level_User_Value",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "[ADUVEBLV] User value for Engine Brake",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_engine_retarder_selection_percent",
+  "references": 7,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1, 'sth': 3} -> 2 byte",
+  "code": [
+   "cm848_calculateEngineRetarderSelectionPercent: retarder selection j1939_engine_retarder_selection_percent when fault_feature_config_flags bit 0",
+   "cm848_calculateEngineRetarderSelectionPercent: engine_retarder_selection_percent = j1939_engine_retarder_selection_percent;",
+   "cm848_processJ1939EngineRetarderSelection: j1939_engine_retarder_selection_percent (raw x 4 / 10 = 1 %/bit); message lost or not available",
+   "cm848_processJ1939EngineRetarderSelection: j1939_engine_retarder_selection_percent = (word)((uVar1 << 2) / 10);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Mux_APS_Data_Error",
+    "j1939_accelerator_position_error_fallback_flag",
+    "0.67"
+   ],
+   [
+    "0001",
+    "J1939_Mux_IVS_Configuration_Error",
+    "j1939_accelerator_low_idle_switch_unavailable_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "J1939_Mux_APS_PGN_Timeout_Error",
+    "j1939_pedal_input_timeout_active_flag",
+    "0.43"
+   ],
+   [
+    "0003",
+    "J1939_Mux_Air_Conditioner_Pressure_Switch_Input",
+    "j1939_received_air_conditioner_high_pressure_fan_switch",
+    "0.75"
+   ],
+   [
+    "0004",
+    "J1939_Mux_Accelerator_Interlock_Switch",
+    "j1939_received_accelerator_interlock_switch",
+    "0.83"
+   ],
+   [
+    "0005",
+    "J1939_Mux_Auxiliary_Shutdown_Switch",
+    "j1939_received_engine_auxiliary_shutdown_switch",
+    "0.83"
+   ],
+   [
+    "0006",
+    "J1939_Mux_Brake_Switch",
+    "j1939_received_brake_switch",
+    "0.80"
+   ],
+   [
+    "0007",
+    "J1939_Mux_Clutch_Switch",
+    "j1939_received_clutch_switch",
+    "0.80"
+   ],
+   [
+    "0008",
+    "J1939_Mux_Commanded_Throttle",
+    "j1939_received_accelerator_pedal_position_1",
+    "0.40"
+   ],
+   [
+    "0009",
+    "J1939_Mux_Cruise_Control_On_Switch",
+    "j1939_received_cruise_control_enable_switch",
+    "0.83"
+   ],
+   [
+    "000A",
+    "J1939_Mux_Cruise_Control_Resume_Switch",
+    "j1939_received_cruise_control_resume_switch",
+    "0.86"
+   ],
+   [
+    "000B",
+    "J1939_Mux_Cruise_Control_Set_Switch",
+    "j1939_received_cruise_control_set_switch",
+    "0.86"
+   ],
+   [
+    "000C",
+    "J1939_Mux_Decrement_Switch",
+    "j1939_received_engine_idle_decrement_switch",
+    "0.80"
+   ],
+   [
+    "000D",
+    "J1939_Mux_EB_Switch_Level",
+    "j1939_received_engine_retarder_selection",
+    "0.43"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Engine retarder selection from EBC1 SPN 973 (1 %/bit) - read by cm848_calculateEngineRetarderSelectionPercent (was governor_load_percent_computed)"
+ },
+ {
+  "address": "0x0040aac4",
+  "block": "12F7",
+  "offset": "001E",
+  "record": "Manual_Fan_Level_User_Value",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "0",
+  "max": "100",
+  "description": "[ADUVMNFM] User Value for Manual Fan Level (Requested % fan Speed)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_engine_fan_requested_speed",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_processJ1939EngineFanRequestedSpeed: position per J1939-71) -> j1939_engine_fan_requested_speed (raw x 16 / 10 = 0.25 %/bit); message",
+   "cm848_processJ1939EngineFanRequestedSpeed: wVar1 = j1939_engine_fan_requested_speed;",
+   "cm848_processJ1939EngineFanRequestedSpeed: j1939_engine_fan_requested_speed = wVar1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Mux_APS_Data_Error",
+    "j1939_accelerator_position_error_fallback_flag",
+    "0.67"
+   ],
+   [
+    "0001",
+    "J1939_Mux_IVS_Configuration_Error",
+    "j1939_accelerator_low_idle_switch_unavailable_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "J1939_Mux_APS_PGN_Timeout_Error",
+    "j1939_pedal_input_timeout_active_flag",
+    "0.43"
+   ],
+   [
+    "0003",
+    "J1939_Mux_Air_Conditioner_Pressure_Switch_Input",
+    "j1939_received_air_conditioner_high_pressure_fan_switch",
+    "0.75"
+   ],
+   [
+    "0004",
+    "J1939_Mux_Accelerator_Interlock_Switch",
+    "j1939_received_accelerator_interlock_switch",
+    "0.83"
+   ],
+   [
+    "0005",
+    "J1939_Mux_Auxiliary_Shutdown_Switch",
+    "j1939_received_engine_auxiliary_shutdown_switch",
+    "0.83"
+   ],
+   [
+    "0006",
+    "J1939_Mux_Brake_Switch",
+    "j1939_received_brake_switch",
+    "0.80"
+   ],
+   [
+    "0007",
+    "J1939_Mux_Clutch_Switch",
+    "j1939_received_clutch_switch",
+    "0.80"
+   ],
+   [
+    "0008",
+    "J1939_Mux_Commanded_Throttle",
+    "j1939_received_accelerator_pedal_position_1",
+    "0.40"
+   ],
+   [
+    "0009",
+    "J1939_Mux_Cruise_Control_On_Switch",
+    "j1939_received_cruise_control_enable_switch",
+    "0.83"
+   ],
+   [
+    "000A",
+    "J1939_Mux_Cruise_Control_Resume_Switch",
+    "j1939_received_cruise_control_resume_switch",
+    "0.86"
+   ],
+   [
+    "000B",
+    "J1939_Mux_Cruise_Control_Set_Switch",
+    "j1939_received_cruise_control_set_switch",
+    "0.86"
+   ],
+   [
+    "000C",
+    "J1939_Mux_Decrement_Switch",
+    "j1939_received_engine_idle_decrement_switch",
+    "0.80"
+   ],
+   [
+    "000D",
+    "J1939_Mux_EB_Switch_Level",
+    "j1939_received_engine_retarder_selection",
+    "0.43"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Engine fan requested speed from CM1 SPN 986 (0.25 %/bit) - no reader in S90140.06"
+ },
+ {
+  "address": "0x0005c94c",
+  "block": "13B4",
+  "offset": "0004",
+  "record": "HSG_Comp_Transition_Coefficient",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00003051757813",
+  "min": "0",
+  "max": "1",
+  "description": "Filter coefficient used by HSG lead/lag compensator for no-filtering case",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_default_cal",
+  "references": 6,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateHighSpeedGovernorCompensatedEngineSpeed: cruise_speed_factor_b = cruise_speed_default_cal;",
+   "cm848_calculateHighSpeedGovernorCompensatedEngineSpeed: cruise_speed_offset = cruise_speed_default_cal;",
+   "cm848_initializeHighSpeedGovernorCompensatedEngineSpeed: cruise_speed_default_cal (was cm848_initEngineSpeedTracking). */",
+   "cm848_initializeHighSpeedGovernorCompensatedEngineSpeed: cruise_speed_factor_a = cruise_speed_default_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HSG_Comp_Filter_Coefficient_1",
+    "high_speed_governor_compensator_filter_coefficient_1",
+    "0.86"
+   ],
+   [
+    "0002",
+    "HSG_Comp_Filter_Coefficient_2",
+    "high_speed_governor_compensator_filter_coefficient_2",
+    "0.86"
+   ],
+   [
+    "0004",
+    "HSG_Comp_Transition_Coefficient",
+    "cruise_speed_default_cal",
+    "0.17"
+   ],
+   [
+    "0006",
+    "HSG_Comp_Gear_Ratio_Threshold",
+    "high_speed_governor_compensator_maximum_gear_ratio",
+    "0.71"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b9e4",
+  "block": "162B",
+  "offset": "0000",
+  "record": "IAH_Delta_Counts_Threshold",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "256",
+  "description": "Delta volts threshold within valid band",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "intake_air_heater_performance_test_minimum_voltage_change_adc",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorIntakeAirHeaterPerformance: uVar8 = (uint)intake_air_heater_performance_test_minimum_voltage_change_adc;",
+   "cm848_monitorIntakeAirHeaterPerformance: intake_air_heater_performance_test_minimum_voltage_change_adc ="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "IAH_Delta_Counts_Threshold",
+    "intake_air_heater_performance_test_minimum_voltage_change_adc",
+    "0.00"
+   ],
+   [
+    "0002",
+    "IAH_Grid_Off_Delta_Voltage_Counts",
+    "intake_air_heater_performance_test_recovery_voltage_rise_adc",
+    "0.17"
+   ],
+   [
+    "0004",
+    "IAH_Grid_On_Delta_Voltage_Counts",
+    "intake_air_heater_performance_test_turn_on_voltage_drop_adc",
+    "0.20"
+   ],
+   [
+    "0006",
+    "IAH_Preheat_Timer",
+    "intake_air_heater_preheat_remaining_ticks",
+    "0.33"
+   ],
+   [
+    "0008",
+    "IAH_Monitor_State",
+    "intake_air_heater_performance_test_state",
+    "0.33"
+   ],
+   [
+    "000A",
+    "IAH_Function_Timer",
+    "misfire_monitor_cylinder_attempt_counts",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Output of the intake_air_heater_performance_threshold_* lookup by intake_manifold_temperature_sensor_filtered (45 counts at 0 F ... 24 at 66 F), taken once on the state 0 -> 1 move; the test fails when both the turn-on drop and the turn-off recovery are below it. (was hpcr_pressure_diag_lookup_ref) | earlier note: HPCR pressure diag reference (table lookup)"
+ },
+ {
+  "address": "0x0040b9e6",
+  "block": "162B",
+  "offset": "0002",
+  "record": "IAH_Grid_Off_Delta_Voltage_Counts",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "1",
+  "min": "0",
+  "max": "256",
+  "description": "Delta volts counts when grids go off",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "intake_air_heater_performance_test_recovery_voltage_rise_adc",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorIntakeAirHeaterPerformance: intake_air_heater_performance_test_recovery_voltage_rise_adc = (sword)iVar7;",
+   "cm848_monitorIntakeAirHeaterPerformance: iVar9 = (int)intake_air_heater_performance_test_recovery_voltage_rise_adc;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "IAH_Delta_Counts_Threshold",
+    "intake_air_heater_performance_test_minimum_voltage_change_adc",
+    "0.00"
+   ],
+   [
+    "0002",
+    "IAH_Grid_Off_Delta_Voltage_Counts",
+    "intake_air_heater_performance_test_recovery_voltage_rise_adc",
+    "0.17"
+   ],
+   [
+    "0004",
+    "IAH_Grid_On_Delta_Voltage_Counts",
+    "intake_air_heater_performance_test_turn_on_voltage_drop_adc",
+    "0.20"
+   ],
+   [
+    "0006",
+    "IAH_Preheat_Timer",
+    "intake_air_heater_preheat_remaining_ticks",
+    "0.33"
+   ],
+   [
+    "0008",
+    "IAH_Monitor_State",
+    "intake_air_heater_performance_test_state",
+    "0.33"
+   ],
+   [
+    "000A",
+    "IAH_Function_Timer",
+    "misfire_monitor_cylinder_attempt_counts",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Written in state 3 of cm848_monitorIntakeAirHeaterPerformance as (recovered average - loaded average), the recovery after the heater turns off, and compared with the turn-on drop; store only (xref_addr.py: word, 0 reads / 1 write), typed word like its siblings. (new row 2026-11-16)"
+ },
+ {
+  "address": "0x0040b9e8",
+  "block": "162B",
+  "offset": "0004",
+  "record": "IAH_Grid_On_Delta_Voltage_Counts",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "1",
+  "min": "0",
+  "max": "256",
+  "description": "Delta volts counts when grids come on",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "intake_air_heater_performance_test_turn_on_voltage_drop_adc",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorIntakeAirHeaterPerformance: iVar11 = (int)intake_air_heater_performance_test_turn_on_voltage_drop_adc;",
+   "cm848_monitorIntakeAirHeaterPerformance: intake_air_heater_performance_test_turn_on_voltage_drop_adc ="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "IAH_Delta_Counts_Threshold",
+    "intake_air_heater_performance_test_minimum_voltage_change_adc",
+    "0.00"
+   ],
+   [
+    "0002",
+    "IAH_Grid_Off_Delta_Voltage_Counts",
+    "intake_air_heater_performance_test_recovery_voltage_rise_adc",
+    "0.17"
+   ],
+   [
+    "0004",
+    "IAH_Grid_On_Delta_Voltage_Counts",
+    "intake_air_heater_performance_test_turn_on_voltage_drop_adc",
+    "0.20"
+   ],
+   [
+    "0006",
+    "IAH_Preheat_Timer",
+    "intake_air_heater_preheat_remaining_ticks",
+    "0.33"
+   ],
+   [
+    "0008",
+    "IAH_Monitor_State",
+    "intake_air_heater_performance_test_state",
+    "0.33"
+   ],
+   [
+    "000A",
+    "IAH_Function_Timer",
+    "misfire_monitor_cylinder_attempt_counts",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "intake_air_heater_performance_test_baseline_battery_voltage_adc minus the loaded average (baseline minus loaded), taken in state 1; compared with the turn-off recovery and with the temperature threshold in state 3. (was hpcr_pressure_diag_delta_state1) | earlier note: HPCR pressure diag state-1 delta | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x000642b4",
+  "block": "1631",
+  "offset": "0000",
+  "record": "BIR_Boost_Decay_Time_Threshold",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.10",
+  "min": "0",
+  "max": "120",
+  "description": "[DGBSDCTR] Time required that low boost cond. exist before BIRH error check",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_sensor_high_reading_dwell_limit",
+  "references": 2,
+  "dump_raw": "110",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: boost_pressure_sensor_high_reading_dwell_limit) {",
+   "cm848_monitorBoostPressureSensorAndUnderboost: boost_pressure_sensor_high_reading_dwell_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 110: passes of the high-reading check conditions before its debounce vote starts (lhz @ 0x52db3c). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x000642ba",
+  "block": "1631",
+  "offset": "0006",
+  "record": "BIR_LSG_Ref_Speed_Offset",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "[DGLSRSOF] Offset added to LSG Ref Spd resulting in RPM limit for BIRH test",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_sensor_high_reading_target_speed_margin",
+  "references": 1,
+  "dump_raw": "15600",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: (uint)boost_pressure_sensor_high_reading_target_speed_margin <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 15600: target_rpm must not exceed the governor output word 0x40aec2 (governor_output_t.integrator integer part, 6000 = 750 rpm in the dump) plus this, 15600 x 0.125 = 1950 rpm (lhz @ 0x52db04). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x000642be",
+  "block": "1631",
+  "offset": "000A",
+  "record": "BIR_Startup_Threshold",
+  "unit": "IN_HG",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0159062501",
+  "min": "0",
+  "max": "150",
+  "description": "Boost threshold for BIR_Startup_Error",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_pre_start_check_maximum_manifold_pressure",
+  "references": 1,
+  "dump_raw": "2254",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: if (boost_pressure_pre_start_check_maximum_manifold_pressure < uVar2) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 2254: while engine_state is ENGINE_STATE_STOPPED (key on, before the engine starts), intake manifold pressure above this sets fault 64, 121.4 kPa (lhz @ 0x52d764). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x000642c0",
+  "block": "1631",
+  "offset": "000C",
+  "record": "BIR_Wait_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "20",
+  "description": "Delay after powerup after which BIR diagnostics at powerup can begin",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_pre_start_check_start_pass_count",
+  "references": 1,
+  "dump_raw": "25",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: boost_pressure_pre_start_check_start_pass_count <= boost_pressure_pre_start_check_pass_count))"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 25: passes after the initializer before the pre-start checks run (lhz @ 0x52d704). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x000642c2",
+  "block": "1631",
+  "offset": "000E",
+  "record": "BIR_Low_Stabilized_Time_Threshold",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "120",
+  "description": "Time required that high boost cond. exist before BIRL error check",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "underboost_dwell_limit",
+  "references": 2,
+  "dump_raw": "110",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: if (underboost_dwell_count < underboost_dwell_limit) {",
+   "cm848_monitorBoostPressureSensorAndUnderboost: if (underboost_dwell_count == underboost_dwell_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 110: passes of the underboost conditions before its debounce vote starts (lhz @ 0x52d958). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x000642c4",
+  "block": "1631",
+  "offset": "0010",
+  "record": "BIR_High_Engine_Speed_Threshold",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "RPM limit for BIRL test",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "underboost_minimum_target_speed",
+  "references": 1,
+  "dump_raw": "16000",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: (underboost_minimum_target_speed <= engine_speed_state.engine_speed)))))) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 16000: target_rpm (0.125 rpm) must be at least this, 2000 rpm (lhz @ 0x52d924). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x000642c6",
+  "block": "1631",
+  "offset": "0012",
+  "record": "BIR_Low_Time_Threshold",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "60",
+  "description": "Time needed for out of range low boost for setting BIRL error",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "underboost_debounce_limit",
+  "references": 2,
+  "dump_raw": "35",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorBoostPressureSensorAndUnderboost: if (underboost_debounce_count <= underboost_debounce_limit) {",
+   "cm848_monitorBoostPressureSensorAndUnderboost: if (underboost_debounce_limit < underboost_debounce_count) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "BIR_Boost_Decay_Time_Threshold",
+    "boost_pressure_sensor_high_reading_dwell_limit",
+    "0.20"
+   ],
+   [
+    "0002",
+    "BIR_Boost_High_Time_Threshold",
+    "boost_pressure_sensor_high_reading_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0004",
+    "BIR_Low_Load_Threshold",
+    "boost_pressure_sensor_high_reading_maximum_engine_load",
+    "0.25"
+   ],
+   [
+    "0006",
+    "BIR_LSG_Ref_Speed_Offset",
+    "boost_pressure_sensor_high_reading_target_speed_margin",
+    "0.17"
+   ],
+   [
+    "0008",
+    "BIR_Stabilized_Boost_Threshold",
+    "boost_pressure_sensor_high_reading_minimum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "000A",
+    "BIR_Startup_Threshold",
+    "boost_pressure_pre_start_check_maximum_manifold_pressure",
+    "0.00"
+   ],
+   [
+    "000C",
+    "BIR_Wait_Time",
+    "boost_pressure_pre_start_check_start_pass_count",
+    "0.00"
+   ],
+   [
+    "000E",
+    "BIR_Low_Stabilized_Time_Threshold",
+    "underboost_dwell_limit",
+    "0.00"
+   ],
+   [
+    "0010",
+    "BIR_High_Engine_Speed_Threshold",
+    "underboost_minimum_target_speed",
+    "0.20"
+   ],
+   [
+    "0012",
+    "BIR_Low_Time_Threshold",
+    "underboost_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "BIR_High_Load_Threshold",
+    "underboost_minimum_engine_load",
+    "0.25"
+   ],
+   [
+    "0016",
+    "BIR_Low_Boost_Threshold",
+    "underboost_maximum_boost_pressure",
+    "0.25"
+   ],
+   [
+    "0018",
+    "BIR_Keyon_Max_Pressure_Delta",
+    "manifold_barometric_pressure_correlation_maximum_difference",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM word = 35: the underboost debounce count must exceed this to set fault 729 (lhz @ 0x52d970). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x00407720",
+  "block": "1830",
+  "offset": "0006",
+  "record": "C_VGA_Der_Dtime_Cnst",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.525879E-05",
+  "min": "0",
+  "max": "1",
+  "description": "VGA derivative filter discrete time cnst",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "variable_geometry_turbocharger_derivative_filter_coefficient",
+  "references": 1,
+  "dump_raw": "32768",
+  "token_overlap": 0.0,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initializeVariableGeometryTurbochargerPositionControlLoop: &variable_geometry_turbocharger_derivative_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_VGA_Cmd_Override_Value",
+    "variable_geometry_turbocharger_position_command_override_value",
+    "0.75"
+   ],
+   [
+    "0002",
+    "C_VGA_D_Gain_Normal",
+    "variable_geometry_turbocharger_derivative_gain_normal",
+    "0.50"
+   ],
+   [
+    "0004",
+    "C_VGA_D_Gain_Open",
+    "variable_geometry_turbocharger_derivative_gain_open",
+    "0.50"
+   ],
+   [
+    "0006",
+    "C_VGA_Der_Dtime_Cnst",
+    "variable_geometry_turbocharger_derivative_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_VGA_Der_Noise_Band",
+    "variable_geometry_turbocharger_derivative_noise_band",
+    "0.50"
+   ],
+   [
+    "000A",
+    "C_VGA_I_Gain_Normal",
+    "variable_geometry_turbocharger_integral_gain_normal",
+    "0.50"
+   ],
+   [
+    "000C",
+    "C_VGA_I_Gain_Open",
+    "variable_geometry_turbocharger_integral_gain_open",
+    "0.50"
+   ],
+   [
+    "000E",
+    "C_VGA_I_Term_LLim_Normal",
+    "variable_geometry_turbocharger_integral_term_lower_limit_normal",
+    "0.50"
+   ],
+   [
+    "0010",
+    "C_VGA_I_Term_LLim_Open",
+    "variable_geometry_turbocharger_integral_term_lower_limit_open",
+    "0.50"
+   ],
+   [
+    "0012",
+    "C_VGA_I_Term_ULim",
+    "variable_geometry_turbocharger_integral_term_upper_limit",
+    "0.40"
+   ],
+   [
+    "0014",
+    "C_VGA_Load_Offset_Normal",
+    "variable_geometry_turbocharger_load_offset_normal",
+    "0.75"
+   ],
+   [
+    "0016",
+    "C_VGA_Load_Offset_Open",
+    "variable_geometry_turbocharger_load_offset_open",
+    "0.75"
+   ],
+   [
+    "0018",
+    "C_VGA_Motor_Direction_Reversal",
+    "variable_geometry_turbocharger_motor_direction_reversal",
+    "0.75"
+   ],
+   [
+    "001A",
+    "C_VGA_P_Gain_Normal",
+    "variable_geometry_turbocharger_proportional_gain_normal",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (32768 = 0.500 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was typed byte)"
+ },
+ {
+  "address": "0x00409e80",
+  "block": "193B",
+  "offset": "0000",
+  "record": "Ambient_Air_Pressure_High_Threshold",
+  "unit": "IN_HG",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0159064138077",
+  "min": "0",
+  "max": "100",
+  "description": "Max ambient air pressure not logging fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "barometric_pressure_sensor_maximum_pressure",
+  "references": 2,
+  "dump_raw": "2012",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_detectBarometricPressureSensorAboveMaximum: barometric_pressure_sensor_maximum_pressure (2012 = 108.4 kPa at 1/18.56 kPa per count) raises",
+   "cm848_detectBarometricPressureSensorAboveMaximum: if (barometric_pressure_sensor_maximum_pressure < sensor_readings_t_0040baf2.barometric_pressure)"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Ambient_Air_Pressure_High_Threshold",
+    "barometric_pressure_sensor_maximum_pressure",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Ambient_Air_Pressure_High_Time",
+    "barometric_pressure_sensor_above_maximum_debounce_limit",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "2012 counts = 108.4 kPa at 1/18.56 kPa per count: barometric pressure above it counts toward fault 340 (lhz @ 0x52d474). RAM word initialized from the ROM image at 0x6fa9a (the RAM dump holds the same value; barometric pressure reads 1647 = 88.7 kPa there). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x00409e82",
+  "block": "193B",
+  "offset": "0002",
+  "record": "Ambient_Air_Pressure_High_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "30",
+  "description": "Time threshold for ambient air pressure high",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "barometric_pressure_sensor_above_maximum_debounce_limit",
+  "references": 2,
+  "dump_raw": "20",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_detectBarometricPressureSensorAboveMaximum: if ((int)(uint)barometric_pressure_sensor_above_maximum_debounce_limit <=",
+   "cm848_detectBarometricPressureSensorAboveMaximum: if ((int)(uint)barometric_pressure_sensor_above_maximum_debounce_limit <="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Ambient_Air_Pressure_High_Threshold",
+    "barometric_pressure_sensor_maximum_pressure",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Ambient_Air_Pressure_High_Time",
+    "barometric_pressure_sensor_above_maximum_debounce_limit",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "lhz @ 0x52d458 = 20 (RAM word initialized from the ROM image at 0x6fa9a; no code ever stores to it): the upper end of the debounce count above. (was iat_protection_derate_integrator_max) | earlier note: ROM saturation max for IAT derate integrator"
+ },
+ {
+  "address": "0x003ff07a",
+  "block": "1977",
+  "offset": "0006",
+  "record": "C_AMB_Air_Flow_Fil_Cnst",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0000152587890",
+  "min": "0",
+  "max": "0.9999847",
+  "description": "First order filter constant used for Ambient Air flow",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_timing_filter_coefficient",
+  "references": 1,
+  "dump_raw": "64881",
+  "token_overlap": 0.0,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initialization_step_3: boost_pressure_timing_filter_state.coefficient = &boost_pressure_timing_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_AMB_Amb_Tmptr_Override_Value",
+    "ambient_air_temperature_override_value",
+    "1.00"
+   ],
+   [
+    "0006",
+    "C_AMB_Air_Flow_Fil_Cnst",
+    "boost_pressure_timing_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_AMB_Ambient_Air_Tmptr_Default",
+    "ambient_air_temperature_default_value",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_pressure_timing_filter_state.coefficient points here"
+ },
+ {
+  "address": "0x0040b84c",
+  "block": "80CE",
+  "offset": "001C",
+  "record": "Aux_SOI_Cool_Corr_Value",
+  "unit": "CRANK_DEG_BTDC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.1171875",
+  "min": "-120",
+  "max": "120",
+  "description": "Product of cool combustion factor and setpoint values",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "injection_timing_auxiliary_coolant_component",
+  "references": 4,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateAuxiliaryInjectionTiming: injection_timing_auxiliary_coolant_component = sStack_2e;",
+   "cm848_calculateAuxiliaryInjectionTiming: if (auxiliary_injection_timing_retard <= injection_timing_auxiliary_coolant_component)",
+   "cm848_calculateAuxiliaryInjectionTiming: if (injection_timing_auxiliary_coolant_component <= auxiliary_injection_timing_retard)",
+   "cm848_calculateAuxiliaryInjectionTiming: auxiliary_injection_timing_retard = injection_timing_auxiliary_coolant_component;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Aux_SOI",
+    "auxiliary_injection_timing",
+    "0.50"
+   ],
+   [
+    "0008",
+    "Aux_SOI_Base",
+    "injection_timing_auxiliary_map_blend",
+    "0.33"
+   ],
+   [
+    "0010",
+    "Aux_SOI_Penultimate_Dist",
+    "auxiliary_injection_timing_retard",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Main_SOI_to_Aux_SOI_Distance",
+    "main_to_auxiliary_injection_timing_distance",
+    "0.75"
+   ],
+   [
+    "0014",
+    "Aux_SOI_Ambient_Correction",
+    "injection_timing_auxiliary_ambient_component",
+    "0.50"
+   ],
+   [
+    "0018",
+    "Aux_SOI_Cool_Corr_Factor",
+    "injection_timing_auxiliary_coolant_factor",
+    "0.40"
+   ],
+   [
+    "001A",
+    "Aux_SOI_Cool_Setpoint",
+    "injection_timing_auxiliary_coolant_angle",
+    "0.25"
+   ],
+   [
+    "001C",
+    "Aux_SOI_Cool_Corr_Value",
+    "injection_timing_auxiliary_coolant_component",
+    "0.20"
+   ],
+   [
+    "001E",
+    "Aux_SOI_Boost_Factor",
+    "injection_timing_auxiliary_boost_factor",
+    "0.75"
+   ],
+   [
+    "0020",
+    "Aux_SOI_Boost_Precorr",
+    "injection_timing_auxiliary_boost_angle",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Aux_SOI_Boost_Correction",
+    "injection_timing_auxiliary_boost_component",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "(coolant angle x coolant factor) / 4096 clamped to +/-1024, the coolant candidate; it is combined with the other candidates by highest / lowest, so neither an additive correction nor a clamp on the output. (was injection_timing_aux_combined_clamp) | earlier note: (rpm x coolant)/0x1000 clamp on aux timing output | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x003fd8de",
+  "block": "8A10",
+  "offset": "0000",
+  "record": "J1850_Tx_Freeze_Enable",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "J1850 Transmit Default for Network activity Enable=1=Frozen",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "pci_normal_transmit_disabled_initial_cal",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "code": [
+   "cm848_clearCanMessageBuffers: pci_normal_transmit_disabled = pci_normal_transmit_disabled_initial_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1850_Tx_Freeze_Enable",
+    "pci_normal_transmit_disabled_initial_cal",
+    "0.00"
+   ],
+   [
+    "0001",
+    "J1850_Rx_Freeze_Enable",
+    "pci_receive_processing_disabled_initial_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled"
+ },
+ {
+  "address": "0x003fd8df",
+  "block": "8A10",
+  "offset": "0001",
+  "record": "J1850_Rx_Freeze_Enable",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "J1850 Receive Default for Network activity Enable=1=Frozen",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "pci_receive_processing_disabled_initial_cal",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "code": [
+   "cm848_clearCanMessageBuffers: pci_receive_processing_disabled = pci_receive_processing_disabled_initial_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1850_Tx_Freeze_Enable",
+    "pci_normal_transmit_disabled_initial_cal",
+    "0.00"
+   ],
+   [
+    "0001",
+    "J1850_Rx_Freeze_Enable",
+    "pci_receive_processing_disabled_initial_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled"
+ },
+ {
+  "address": "0x004086da",
+  "block": "8C49",
+  "offset": "0008",
+  "record": "RE_RCTM_Run_Mode_Time",
+  "unit": "MSEC",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "20.0",
+  "min": "0",
+  "max": "6553500",
+  "description": "Timer for engine on time that must expire for rock cycle speed derate to run.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "park_neutral_exit_engine_speed_limit_startup_delay",
+  "references": 2,
+  "dump_raw": "22",
+  "token_overlap": 0.0,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_updateParkNeutralExitEngineSpeedLimitWindow: park_neutral_exit_engine_speed_limit_startup_delay) {",
+   "cm848_updateParkNeutralExitEngineSpeedLimitWindow: if (park_neutral_exit_engine_speed_limit_startup_delay <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_RCTM_Min_TPS",
+    "park_neutral_exit_engine_speed_limit_minimum_throttle",
+    "0.25"
+   ],
+   [
+    "0002",
+    "RE_RCTM_Max_TPS",
+    "park_neutral_exit_engine_speed_limit_maximum_throttle",
+    "0.25"
+   ],
+   [
+    "0004",
+    "RE_RCTM_Min_OSS",
+    "park_neutral_exit_engine_speed_limit_minimum_output_shaft_speed",
+    "0.25"
+   ],
+   [
+    "0008",
+    "RE_RCTM_Run_Mode_Time",
+    "park_neutral_exit_engine_speed_limit_startup_delay",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Family rename with the park/neutral exit window function: the words of this family are used only by cm848_updateParkNeutralExitEngineSpeedLimitWindow, cm848_calculateParkNeutralExitEngineSpeedLimit and cm848_initializeParkNeutralExitEngineSpeedLimit (grep over the whole decompilation), and the window only gates the engine speed limit source 15 (held at 6800 = 850 rpm, normally 30000 = 3750 rpm), not any torque. (was park_neutral_exit_torque_limit_startup_delay) | earlier note: 22 passes: after start the counter 0x3fcd80 must exceed this before the park/neutral exit torque limit monitor (0x51193c) can arm - until then its state bit 1 (inhibit) stays set - read with lwz - no fuel temperature i"
+ },
+ {
+  "address": "0x003fee98",
+  "block": "8C61",
+  "offset": "0000",
+  "record": "FS_HW_Shutdown_Error_Count",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Saved number of powerdown fuel system hardware failures for valid test.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "tpu_init_retry_count",
+  "references": 9,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_tpu_interrupt_flag_init: tpu_init_restart_pending_flag, and counts the restart in tpu_init_retry_count (cap 255); once the",
+   "cm848_tpu_interrupt_flag_init: if ((fuel_system_hardware_shutdown_fail_count_threshold < tpu_init_retry_count) &&",
+   "cm848_tpu_interrupt_flag_init: if (tpu_init_retry_count < 0xff) {",
+   "cm848_tpu_interrupt_flag_init: tpu_init_retry_count = tpu_init_retry_count + 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "FS_HW_Shutdown_Error_Count",
+    "tpu_init_retry_count",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "TPU init retry count; gates diag fault flag"
+ }
+]

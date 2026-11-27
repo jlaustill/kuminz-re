@@ -1,0 +1,29 @@
+== target 0x1e4e8
+  bl at 0x1e610 in rom
+== target 0x1ea6c
+  bl at 0x54994 in rom
+== target 0x20b84
+  bl at 0x20c08 in rom
+  bl at 0x20e64 in rom
+  bl at 0x20ef0 in rom
+== target 0x20bfc
+  bl at 0x20ff4 in rom
+  bl at 0x21080 in rom
+== target 0x21c3c
+  bl at 0x21d4c in rom
+== target 0x23a9c
+  bl at 0x539278 in flash2
+== target 0x29e24
+  bl at 0x54a64 in rom
+== target 0x2c100
+  bl at 0x54a1c in rom
+== target 0x38a98
+  bl at 0x54d28 in rom
+== target 0x3eccc
+  bl at 0x3ee94 in rom
+== target 0x4280c
+  bl at 0x1e60c in rom
+== target 0x4eeb8
+  bl at 0x54930 in rom
+== target 0x50e000
+  bl at 0xbde8 in rom

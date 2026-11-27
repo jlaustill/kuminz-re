@@ -1,0 +1,114 @@
+0x0001266e: 36 token changes: int iVar2 => dword dVar2 | int => dword | piVar4 => pdVar4 | int => dword | piVar5 => pdVar5 | _load_trending_table_1_ptr => cylinder_balance_segment_index | _load_trending_table_1_ptr => cylinder_balance_segment_index | _load_trending_table_1_ptr => cylinder_balance_segment_index | piVar4 => pdVar4 | ( int * ) =>  | piVar5 => pdVar5 | ( int * ) & =>  | _oil_pressure_crank_exit_ptr => cylinder_balance_segment_periods [ 6 ] | iVar2 => dVar2 | piVar5 => pdVar5 | iVar2 => ( int ) dVar2 | iVar2 => ( int ) dVar2 | iVar2 => dVar2 | iVar2 => dVar2 | piVar4 => pdVar4 | iVar2 => dVar2 | piVar4 => pdVar
+0x000127c2: 337 token changes: wVar4 => wVar3 ; int iVar4 | int iVar3 => word wVar6 | uVar6 => uVar7 | puVar7 => puVar8 | dVar8 => dVar9 | sVar9 => sVar10 | piVar10 => piVar11 | pdVar11 => pdVar12 | pbVar12 ; word * pwVar13 => pbVar13 | undefined2 => word | puVar15 => pwVar15 | undefined2 => sword | puVar16 => psVar16 | short => dword | psVar17 => pdVar17 | sdword => word | psVar18 => pwVar18 |  => sdword * psVar20 ; | pwVar20 => pwVar21 ; short * psVar22 ; word * pwVar23 | uVar6 => uVar7 | pdVar11 => pdVar12 | piVar10 => pdVar17 | ( int * ) =>  | psVar18 => psVar20 | psVar18 => psVar20 | piVar10 => pdVar17 | pdVar11 => pdV
+0x000133fe: 26 token changes: undefined2 => word | puVar2 ; undefined2 * puVar3 => pwVar2 | pwVar4 => pwVar3 ; sword * psVar4 |  => ; word * pwVar6 | puVar2 => pwVar2 | ( undefined2 * ) & =>  | puVar3 => pwVar3 | ( undefined2 * ) & =>  | pwVar4 => pwVar5 | pwVar5 => pwVar6 | pwVar4 = 10000 ; * =>  | puVar2 => pwVar6 | puVar3 => pwVar2 = 10000 ; * pwVar3 | puVar2 => pwVar2 | puVar2 => pwVar2 | puVar3 => pwVar3 | puVar3 + 1 ; pwVar4 = pwVar4 => pwVar3 |  => + 1 ; pwVar6 = pwVar6 | puVar2 => psVar4 | ( undefined2 * ) & =>  | puVar2 => psVar4 | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ] | puVar2 => psVar4 | puVar2 => psV
+0x0001c824: 2 token changes: _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit | _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit
+0x0001c8a0: 5 token changes: _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit | _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit | _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit | _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit | _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit
+0x0001cad6: 4 token changes: _vp44_fuel_temperature_value => engine_protection_fuel_temperature | short => word | _vp44_fuel_temperature_value => engine_protection_fuel_temperature | _vp44_fuel_temperature_value => engine_protection_fuel_temperature
+0x0001cb3c: 1 token changes: _vp44_fuel_temperature_value => engine_protection_fuel_temperature
+---- census of distinct changes
+  77 uVar6 => uVar7
+  28 iVar3 => iVar4
+  20 puVar15 => psVar16
+  14 pwVar13 => pwVar15
+  13 psVar14 => psVar16
+  10 + => [
+  10 pdVar11 => pdVar12
+  10 _cyl_balance_gain_percent => cylinder_balance_active_trim_gain
+   9 _load_trending_table_1_ptr => cylinder_balance_segment_index
+   8 sVar9 => sVar10
+   8 ( short ) => 
+   7 ( undefined2 * ) & => 
+   7 uVar6 * 2 ) => uVar7 ]
+   7 _torque_curve_feature_bitmask => throttle_100_speed_points_request_bit
+   6 puVar7 => puVar8
+   6 piVar10 => piVar11
+   5 piVar4 => pdVar4
+   5 piVar5 => pdVar5
+   5 puVar15 => pwVar15
+   5 * ( undefined2 * ) ( & => 
+   4 iVar2 => dVar2
+   4 dVar8 => dVar9
+   4 piVar10 => pdVar17
+   4 psVar18 => psVar20
+   4 wVar4 => wVar5
+   4 ) ( short => 
+   4 * 2 ) => ]
+   4 puVar16 => pwVar18
+   4 pwVar13 => pwVar21
+   4 pwVar20 => pwVar23
+   4 _engine_mode_previous_1 => cylinder_balance_absolute_adjusted_imaginary_component_2
+   4 pbVar12 => pbVar13
+   4 puVar2 => psVar4
+   4 _vp44_fuel_temperature_value => engine_protection_fuel_temperature
+   3 ushort => word
+   3 * ( short * ) ( & => 
+   3 cylinder_balance_engine_speed_bin_index * 2 ) => 1 ]
+   3 ( short * ) => 
+   3 ( undefined2 * ) => 
+   3 puVar2 => pwVar2
+   2 int => dword
+   2 ( int * ) => 
+   2 _oil_pressure_crank_exit_ptr => cylinder_balance_segment_periods [ 6 ]
+   2 iVar2 => ( int ) dVar2
+   2 undefined2 => word
+   2 cylinder_balance_fourier_real_component_2 => iVar4
+   2 _DAT_00809208 => cylinder_balance_fourier_real_component_1 . _2_2_
+   2 _DAT_0080920c => cylinder_balance_fourier_imaginary_component_1 . _2_2_
+   2 * ( short * ) => 
+   2 + => ) [
+   2 puVar3 => pwVar3
+   1 int iVar2 => dword dVar2
+   1 ( int * ) & => 
+   1 _throttle_zero_position_counter => cylinder_balance_segment_periods [ 0 ]
+   1 * ( int * ) ( & => 
+   1 _load_trending_table_1_ptr * 4 ) => cylinder_balance_segment_index ]
+   1 wVar4 => wVar3 ; int iVar4
+   1 int iVar3 => word wVar6
+   1 pbVar12 ; word * pwVar13 => pbVar13
+   1 undefined2 => sword
+   1 puVar16 => psVar16
+   1 short => dword
+   1 psVar17 => pdVar17
+   1 sdword => word
+   1 psVar18 => pwVar18
+   1  => sdword * psVar20 ;
+   1 pwVar20 => pwVar21 ; short * psVar22 ; word * pwVar23
+   1 wVar5 => wVar6
+   1 - ( uint ) wVar4 ) ; if ( ( int ) puVar7 < 0x2711 ) { if ( ( int ) puVar7 < - 10000 ) { puVar7 = ( undefined * ) 0xffffd8f0 ; } } else { puVar7 = & DAT_00002710 ; } cylinder_balance_adjusted_real_comp
+   1 puVar7 => puVar8 = & DAT_00002710 ; } cylinder_balance_adjusted_real_component_2 = ( sword ) puVar8 ; puVar8 = & DAT_00002710 + ( cylinder_balance_fourier_imaginary_component_2 - ( uint ) wVar6 ) ; if
+   1 ushort => sword
+   1 * ( short * ) ( & protection_threshold_status_shifted => cylinder_balance_real_2_dynamics_compensation_previous_values [ cylinder_balance_engine_speed_bin_index
+   1 * ( short * ) ( & DAT_00800302 => cylinder_balance_imaginary_2_dynamics_compensation_previous_values [ cylinder_balance_engine_speed_bin_index
+   1  => 1 ] ; cylinder_balance_real_2_dynamics_compensation_previous_values [
+   1 * 2 ) ; * ( word * ) ( & cylinder_balance_real_2_dynamics_compensation_previous_values + cylinder_balance_engine_speed_bin_index * 2 ) => ]
+   1 * ( word * ) ( & protection_threshold_status_shifted => cylinder_balance_real_2_dynamics_compensation_previous_values [ cylinder_balance_engine_speed_bin_index
+   1 * ( word * ) ( & => 
+   1 * ( word * ) ( & DAT_00800302 => cylinder_balance_imaginary_2_dynamics_compensation_previous_values [ cylinder_balance_engine_speed_bin_index
+   1 _DAT_00809218 => cylinder_balance_fourier_real_component_3 . _2_2_
+   1 sVar9 => wVar6
+   1 sVar1 => wVar3
+   1 psVar17 => psVar19
+   1 psVar19 => psVar22
+   1 sVar1 + * psVar17 * sVar9 => wVar3
+   1 wVar4 => wVar6 + * psVar22 * wVar5
+   1 psVar17 = psVar17 + 1 ; => 
+   1 pwVar13 => psVar22
+   1 pwVar13 => psVar22 + 1 ; pwVar15 = pwVar15
+   1  => [ 0 ]
+   1 _cyl_balance_correction_array => cylinder_balance_fueling_trim_1
+   1 _DAT_0080a1ae => balanced_cylinder_fueling_offsets [ 1 ]
+   1 _DAT_0080a1b0 => balanced_cylinder_fueling_offsets [ 2 ]
+   1 _DAT_0080a1b2 => balanced_cylinder_fueling_offsets [ 3 ]
+   1 _DAT_0080a1b4 => balanced_cylinder_fueling_offsets [ 4 ]
+   1 _DAT_0080a1b6 => balanced_cylinder_fueling_offsets [ 5 ]
+   1 puVar2 ; undefined2 * puVar3 => pwVar2
+   1 pwVar4 => pwVar3 ; sword * psVar4
+   1  => ; word * pwVar6
+   1 pwVar4 => pwVar5
+   1 pwVar5 => pwVar6
+   1 pwVar4 = 10000 ; * => 
+   1 puVar2 => pwVar6
+   1 puVar3 => pwVar2 = 10000 ; * pwVar3
+   1 puVar3 + 1 ; pwVar4 = pwVar4 => pwVar3
+   1  => + 1 ; pwVar6 = pwVar6
+   1 short => word

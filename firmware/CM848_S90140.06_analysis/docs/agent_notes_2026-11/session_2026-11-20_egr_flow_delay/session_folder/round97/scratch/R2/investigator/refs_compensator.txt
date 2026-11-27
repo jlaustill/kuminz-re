@@ -1,0 +1,11 @@
+== 0x80d60a
+  0x1ceb8: prev words d6 46 72 00 32 39 | move.w (abs).l,<dst> (source) @0x1ceb6
+  0x370f4: prev words 81 46 00 80 81 46 | ?
+  0x370f8: prev words 81 46 00 80 d6 0a | ?
+== 0x80d60c
+== 0x80d608
+== 0x808100
+== 0x808108
+== 0x80810e
+== 0x80d600
+== 0x80d604

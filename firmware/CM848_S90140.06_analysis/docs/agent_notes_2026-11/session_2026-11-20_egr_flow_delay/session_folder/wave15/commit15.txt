@@ -1,0 +1,40 @@
+cm848: rename wave 15 - 200 misnamed e2m rows, 187 e2m keep notes, the ASG application record and its function
+
+Six read-only agents (Sonnet) reviewed the 378 named rows whose name shares at most 20 % of its words with
+the e2m record the ECU's own parameter ID table resolves to that address (1+ code references, dump in
+range, no earlier e2m note; wave 13's 15 drift rows left out). Verdicts: 185 rename, 187 keep, 5 drift,
+1 uncertain. Every rename carries one quoted .cpp line, checked against the .cpp with the old name; the
+main session read all 185 against their quotes. Label-only (reverse_names.py EQUIVALENT).
+
+Families:
+- low speed governor (1064 / 1065 / 10EC / 10EE / 1046): the governor_* names had the P / I / D / jerk
+  roles crossed; the four gain sets (default / aggressive / middle gear / high gear, selected by the gain
+  state) are named as sets, typed in a later stage;
+- all speed governor: the QI / QP adjustments (were pid_accum_hi / lo), the 107D delta and droop rows, the
+  equivalent throttle; e2m 1170 "ASG application specific": all 25 engine_operating_mode_restore_* rows
+  -> all_speed_governor_application_*, cm848_restoreEngineOperatingMode ->
+  cm848_selectAllSpeedGovernorApplicationMode and FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE -> _APPLICATION
+  (it loads an application set nothing writes; nothing is restored);
+- TPE: the charge temperature estimate (1A1A / 1A1B), the compressor inlet temperature reference maps,
+  the IMT lag / lead limits (18D6), the compressor map outputs (175F), the compressor inlet density slew
+  limits (18E8 +0 is Compressor_Inlet_Density);
+- J1939: 19 default priorities of e2m 1254 (8 were named source address bits; two PGNs were wrong:
+  0xffe000 is PGN 65504, the PDU1 header 0xdc2800 is PGN 56320 Anti-theft Status), the PGN 65249 retarder
+  configuration points (were j1939_protocol_mode_* / j1939_dtc_spn_cal_*), the anti-theft bits, trip
+  distance, new tires;
+- engine retarder, A/C clutch control (8A14, was protection_event26_*), converter clutch rationality
+  (8C33), cruise / road speed governor droop and N/V ratio integral, wastegate duty gains (16A1 / 16A2),
+  injector driver booster capacitors and reference levels (PWM 16-19), supervisor chip overspeed, fuel
+  pressure pre-start check, accelerator pedal faults, alpha results and overrides.
+
+Hand decisions in the main session: 0x5c380 = PGN 65249 byte 19 "percent torque at peak torque, point 5"
+(engine_retarder_configuration_peak_torque_percent); Cruise_RSG_* calibrations stay cruise_*; CM550's
+governor_integral_accumulator (0x800090) is an unrelated pointer, so 0x40b53e is renamed alone. Stale
+references fixed: two enum comments, rpm_governor_state.* and cm848_processFuelRateConfig in six old comments.
+
+Checks: the apply gate (bin coverage, old = current, name format, _cal = EEPROM mirror, no clash with a
+global / function / field / parameter / local / .cpp identifier, banned abbreviations) and the repo gate;
+quoted dump values (17 flags, all regex hits on scaled values; the negative control flags 92); width vs
+e2m (5 known rows, typed next); headers; the five script test suites; lookup tables 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

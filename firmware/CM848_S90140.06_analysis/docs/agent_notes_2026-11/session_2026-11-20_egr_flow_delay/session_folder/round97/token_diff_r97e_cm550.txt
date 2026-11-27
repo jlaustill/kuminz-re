@@ -1,0 +1,138 @@
+0x00003c20: 4 token changes: sdword => sword |  => ( sword * ) ( |  => ) | ( sdword * ) => 
+0x0000b2aa: 7 token changes: _duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20 => acceleration_noise_control_fuel_limit_inhibit_duration | + =>  | _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer | _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer | _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer | _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer | _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer
+0x0000b4f2: 6 token changes: + =>  | _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer | _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer | _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer | _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer | _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer
+0x0000c2ee: 1 token changes: ) ( short => 
+0x0000c326: 2 token changes: _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag | _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag
+0x0000c4b2: 3 token changes: _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag | _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag | _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag
+0x0000c504: 3 token changes: _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag | _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag | _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag
+0x0000d3e6: 5 token changes: _asg_throttle_droop_gain_1_0_1 => all_speed_governor_throttle_droop_gain_1 | ushort => word | _asg_throttle_droop_gain_1_0_1 => all_speed_governor_throttle_droop_gain_1 | _asg_throttle_droop_gain_1_0_1 => all_speed_governor_throttle_droop_gain_1 | _asg_throttle_droop_gain_1_0_1 => all_speed_governor_throttle_droop_gain_1
+0x0000faa6: 1 token changes:  => ) ( ushort
+0x0001011c: 1 token changes: _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer
+0x000101b8: 4 token changes: _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer | _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer | _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer | _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer
+0x0001025c: 18 token changes: & =>  | _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer | 4 => 1 | & =>  | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _anc_altitude_table_3_size => main_engine_position_sensor_sync_pulse_period_threshold | _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 => backup_engine_position_sensor_period | undefined => dword | & =>  | _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_poi
+0x00010394: 1 token changes: _anc_altitude_table_3_size => main_engine_position_sensor_sync_pulse_period_threshold
+0x000184c6: 1 token changes:  => ( ushort )
+0x0001999c: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 => 
+0x00019acc: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | ( dword * ) & => 
+0x00019caa: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 => 
+0x00019e90: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | ( dword * ) & => 
+0x0001a350: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 => 
+0x0001a52c: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | ( dword * ) & => 
+0x0001a746: 10 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 =>  | & => 
+0x0001a95a: 9 token changes: _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | ( dword * ) & =>  | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer | ( dword * ) & => 
+0x0001ae22: 12 token changes: _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer | ( dword * ) ( ( uint ) => pulse_period_table + | * 4 =>  | 0x80ceaa ) => 99 | ( dword * ) & =>  | _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer | _eps_control_mode_init_value_2 => pulse_period_table_backup_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 => 
+0x0001b1ea: 12 token changes: _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer | ( dword * ) ( ( uint ) => pulse_period_table + | * 4 =>  | 0x80ceaa ) => 99 | ( dword * ) & =>  | _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer | _eps_control_mode_init_value_2 => pulse_period_table_backup_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 => 
+0x0001b30a: 2 token changes: _pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 => pulse_period_table_backup [ 0 ] | _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 => backup_engine_position_sensor_period
+0x0001b39a: 12 token changes: _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer | ( dword * ) ( ( uint ) => pulse_period_table + | * 4 =>  | 0x80ceaa ) => 99 | ( dword * ) & =>  | _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer | _eps_control_mode_init_value_2 => pulse_period_table_backup_average_oldest_entry_pointer | & =>  | & =>  | & =>  | ( uint ) =>  | * 4 => 
+0x0001ce7c: 14 token changes: _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | int => sdword | _hsg_integrator_fuel_output => high_speed_governor_integrator | int => s
+0x0001d252: 14 token changes:  => ; int iVar2 | _hsg_integrator_fuel_output => iVar2 | _hsg_integrator_fuel_output => iVar2 | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => iVar2 | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | int => sdword | _hsg_integrator_fuel_output => high_speed_governor_integrator | _hsg_integrator_fuel_output => high_speed_governor_integrator | i
+0x0001d5a0: 3 token changes: ( short ) =>  | ( short ) =>  | ushort => word
+0x0001dcfc: 2 token changes: _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag | _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag
+0x00025b1c: 3 token changes:  => ( ushort ) | short => sword | _lsg_derivative_filter_coefficient_1_to_1 => low_speed_governor_derivative_filter_coefficient
+0x0002609c: 49 token changes: uint => void | undefined2 uVar1 ; uint uVar2 ; =>  | sVar3 => sVar1 | sVar3 => sVar1 | sVar3 => sVar1 | uVar2 = ( uint ) sVar3 ; =>  | uVar2 => sVar1 | _high_temp_idle_cooldown_timer => low_speed_governor_stopped_vehicle_settled_count | uVar2 = CONCAT22 ( sVar3 >> 0xf , sampled_road_speed_after_it_has_been_filtered_0_255_9961 ) ; =>  | uVar2 = CONCAT22 ( sVar3 >> 0xf , _high_temp_idle_cooldown_timer ) ; =>  | _high_temp_idle_cooldown_timer => low_speed_governor_stopped_vehicle_settled_count | _high_temp_idle_cooldown_timer => low_speed_governor_stopped_vehicle_settled_count | _high_temp_idle_c
+0x00026252: 1 token changes: _high_temp_idle_cooldown_timer => low_speed_governor_stopped_vehicle_settled_count
+0x00026272: 1 token changes: _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer
+0x0002629e: 6 token changes: 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT | _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer | _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer | * _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer -> proportional_gain | _lsg_gain_set_pointer [ 1 ] => low_speed_governor_gain_set_pointer -> integral_gain | _lsg_gain_set_pointer [ 2 ] => low_speed_governor_gain_set_pointer -> derivative_gain
+0x00026308: 5 token changes: 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT | _lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 => low_speed_governor_override_gain_set . proportional_gain |  => . proportional_gain | _DAT_00808316 => low_speed_governor_default_gain_set . integral_gain | _DAT_00808318 => low_speed_governor_default_gain_set . derivative_gain
+0x00026340: 10 token changes: 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT | _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer | _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer | _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer | _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer | 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT | 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT | _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer | 2 => LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEA
+0x00026462: 1 token changes: _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer
+0x00026474: 2 token changes: ' \ =>  | ' => 
+0x000265e6: 6 token changes: uint => word | uint in_D0 ; =>  | in_D0 = 0 , =>  | in_D0 & 0xffff0000 => 0 | 4 => LOW_SPEED_GOVERNOR_GAIN_STATE_J1939 | _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer
+0x00026cc8: 2 token changes: ( short ) =>  | ) ( short => 
+0x0002fcdc: 2 token changes: bool all_keys_match ; =>  |  => ; bool all_keys_match
+0x0003480e: 2 token changes: _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 => angle_pulse_output_high_duration_angle | _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 => angle_pulse_output_high_duration_angle
+0x0003494a: 2 token changes: _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 => angle_pulse_output_high_duration_angle | _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 => angle_pulse_output_high_duration_angle
+---- census of distinct changes
+  26 & => 
+  24 _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer
+  18 _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer
+  16 _hsg_integrator_fuel_output => high_speed_governor_integrator
+  15 ( dword * ) & => 
+  10 * 4 => 
+   9 _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer
+   8 _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer
+   8 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT
+   7 ( uint ) => 
+   7 _high_temp_idle_cooldown_timer => low_speed_governor_stopped_vehicle_settled_count
+   6 _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer
+   5 _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer
+   5 _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer
+   5 _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag
+   5 _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag
+   4 _asg_throttle_droop_gain_1_0_1 => all_speed_governor_throttle_droop_gain_1
+   4 int => sdword
+   4 1 => LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE
+   4 _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer
+   4 _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 => angle_pulse_output_high_duration_angle
+   3 _anc_altitude_table_3_size => main_engine_position_sensor_sync_pulse_period_threshold
+   3 ( dword * ) ( ( uint ) => pulse_period_table +
+   3 0x80ceaa ) => 99
+   3 _eps_control_mode_init_value_2 => pulse_period_table_backup_average_oldest_entry_pointer
+   3 _DAT_00800718 => high_speed_governor_integrator . _2_2_
+   3 _hsg_integrator_fuel_output => iVar2
+   3 ( short ) => 
+   3 sVar3 => sVar1
+   3 uVar2 => 
+   2 + => 
+   2 ) ( short => 
+   2 ushort => word
+   2 _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 => backup_engine_position_sensor_period
+   2 undefined => dword
+   2  => ( ushort )
+   2 uVar2 = CONCAT22 => if
+   2 uVar2 = => ( int ) (
+   2 , ( int => 
+   1 sdword => sword
+   1  => ( sword * ) (
+   1  => )
+   1 ( sdword * ) => 
+   1 _duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20 => acceleration_noise_control_fuel_limit_inhibit_duration
+   1  => ) ( ushort
+   1 4 => 1
+   1 _pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 => pulse_period_table_backup [ 0 ]
+   1 short => word
+   1  => ; int iVar2
+   1 short => sword
+   1 _lsg_derivative_filter_coefficient_1_to_1 => low_speed_governor_derivative_filter_coefficient
+   1 uint => void
+   1 undefined2 uVar1 ; uint uVar2 ; => 
+   1 uVar2 = ( uint ) sVar3 ; => 
+   1 uVar2 => sVar1
+   1 uVar2 = CONCAT22 ( sVar3 >> 0xf , sampled_road_speed_after_it_has_been_filtered_0_255_9961 ) ; => 
+   1 uVar2 = CONCAT22 ( sVar3 >> 0xf , _high_temp_idle_cooldown_timer ) ; => 
+   1 != => ==
+   1 short => ( low_speed_governor_aggressive_gains_used_flag == 1
+   1  => &&
+   1 uVar2 >> 0x10 => ( ( ( int
+   1 , _high_temp_idle_cooldown_timer => low_speed_governor_aggressive_gain_speed_offset_3 + ( int
+   1  => low_speed_governor_filtered_speed_error < 0 && ( ( debounced_switch_value_for_switch_16_on_off & 4 ) == 0 ) ) || ( ( low_speed_governor_aggressive_gain_low_vehicle_speed <= sampled_road_speed_afte
+   1  => } } else
+   1 goto LAB_0002617e ; } if ( low_speed_governor_aggressive_gains_used_flag == 1 ) { uVar2 = ( int ) low_speed_governor_aggressive_gain_speed_offset_3 + ( int ) low_speed_governor_filtered_speed_error ; 
+   1 ( short ) ( uVar2 >> 0x10 ) , algorithm_enable_flags_1_cal ) & 0xffff1000 ; if => 
+   1 { uVar1 = ( undefined2 ) ( uVar2 >> 0x10 ) ; uVar2 = CONCAT22 ( uVar1 , low_speed_governor_filtered_speed_error ) ; if => &&
+   1 ) => 
+   1 uVar2 = CONCAT22 ( uVar1 , low_speed_governor_filtered_speed_error ) , => 
+   1  => ) )
+   1 } => 
+   1 uVar2 = => ( int ) low_speed_governor_filtered_speed_error <
+   1 , ( int ) low_speed_governor_filtered_speed_error < ( int ) uVar2 => 
+   1 uVar2 = CONCAT22 ( ( short ) ( uVar2 >> 0x10 ) , low_speed_governor_filtered_speed_error ) , => 
+   1 0x808230 => & low_speed_governor_aggressive_gain_set
+   1 * _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer -> proportional_gain
+   1 _lsg_gain_set_pointer [ 1 ] => low_speed_governor_gain_set_pointer -> integral_gain
+   1 _lsg_gain_set_pointer [ 2 ] => low_speed_governor_gain_set_pointer -> derivative_gain
+   1 _lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 => low_speed_governor_override_gain_set . proportional_gain
+   1  => . proportional_gain
+   1 _DAT_00808316 => low_speed_governor_default_gain_set . integral_gain
+   1 _DAT_00808318 => low_speed_governor_default_gain_set . derivative_gain
+   1 2 => LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR
+   1 3 => LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR
+   1 ' \ => 
+   1 ' => 
+   1 uint => word
+   1 uint in_D0 ; => 
+   1 in_D0 = 0 , => 
+   1 in_D0 & 0xffff0000 => 0
+   1 4 => LOW_SPEED_GOVERNOR_GAIN_STATE_J1939
+   1 bool all_keys_match ; => 
+   1  => ; bool all_keys_match

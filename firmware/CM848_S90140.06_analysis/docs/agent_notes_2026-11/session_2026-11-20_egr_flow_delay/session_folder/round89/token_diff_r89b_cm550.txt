@@ -1,0 +1,43 @@
+0x0000b7bc: 72 token changes: word => sensor_config_t | pwVar7 => psVar7 | pwVar7 => psVar7 | . filter_coefficient =>  | * ( char * ) ( ( int ) pwVar7 + 0x17 ) => psVar7 -> sample_period | ' \ =>  | ' =>  | * ( byte * ) ( ( int ) pwVar7 + 0x17 ) => psVar7 -> sample_period | pwVar7 [ 8 ] => psVar7 -> qadc_result_register_index | pwVar7 [ 6 ] => psVar7 -> high_error_limit | * ( byte * ) ( ( int ) pwVar7 + 0x15 ) => psVar7 -> low_error_fault_number | * ( byte * ) ( ( int ) pwVar7 + 0x15 ) => psVar7 -> low_error_fault_number | * ( byte * ) ( ( int ) pwVar7 + 0x15 ) => psVar7 -> low_error_fault_number | * ( byte * ) ( ( int ) p
+0x0000bcf0: 33 token changes: word => sensor_config_t | pwVar2 => psVar2 | pwVar2 => psVar2 | . filter_coefficient =>  | pwVar2 => & psVar2 -> filter_coefficient | * ( byte * ) ( ( int ) pwVar2 + 0x17 ) => psVar2 -> sample_period | * ( byte * ) ( ( int ) pwVar2 + 0x15 ) => psVar2 -> low_error_fault_number | * ( byte * ) ( ( int ) pwVar2 + 0x15 ) => psVar2 -> low_error_fault_number | * ( byte * ) ( ( int ) pwVar2 + 0x15 ) => psVar2 -> low_error_fault_number | * ( byte * ) ( ( int ) pwVar2 + 0x15 ) => psVar2 -> low_error_fault_number | pwVar2 [ 5 ] => psVar2 -> fault_set_threshold | * ( byte * ) ( pwVar2 + 10 ) => psVar2 -> 
+0x0001cb3c: 1 token changes: _global_default_value_for_fuel_temperature_50_to_293 => fuel_temperature_sensor_config . default_value
+0x000205c4: 2 token changes: _sampled_throttle_channel_address_none => sampled_throttle_sensor_config . qadc_result_register_index | _sampled_throttle_channel_address_none => sampled_throttle_sensor_config . qadc_result_register_index
+0x00020784: 4 token changes: _global_default_value_for_remote_throttle_0_100 => remote_throttle_sensor_config . default_value | _global_default_value_for_remote_throttle_0_100 => remote_throttle_sensor_config . default_value | _global_default_value_for_remote_throttle_0_100 => remote_throttle_sensor_config . default_value | undefined2 => word
+0x00020c98: 4 token changes: _global_default_value_for_throttle_0_100 => sampled_throttle_sensor_config . default_value | _global_default_value_for_throttle_0_100 => sampled_throttle_sensor_config . default_value | undefined2 => word | _global_default_value_for_throttle_0_100 => sampled_throttle_sensor_config . default_value
+0x00021982: 2 token changes:  => byte service_id ; | ; byte service_id => 
+---- census of distinct changes
+  17 * ( byte * ) ( ( int ) pwVar7 + 0x15 ) => psVar7 -> low_error_fault_number
+  17 * ( byte * ) ( pwVar7 + 10 ) => psVar7 -> high_error_fault_number
+   9 * ( byte * ) ( pwVar7 + 0xb ) => psVar7 -> tri_state_error_fault_number
+   8 * ( byte * ) ( ( int ) pwVar2 + 0x15 ) => psVar2 -> low_error_fault_number
+   8 * ( byte * ) ( pwVar2 + 10 ) => psVar2 -> high_error_fault_number
+   7 pwVar2 => psVar2
+   4 pwVar7 => psVar7
+   4 pwVar7 [ 1 ] => psVar7 -> default_value
+   3 . filter_coefficient => 
+   3 0xc => 1
+   3 _global_default_value_for_remote_throttle_0_100 => remote_throttle_sensor_config . default_value
+   3 _global_default_value_for_throttle_0_100 => sampled_throttle_sensor_config . default_value
+   2 word => sensor_config_t
+   2 ' \ => 
+   2 ' => 
+   2 pwVar7 [ 4 ] => psVar7 -> debounce_counter_increment
+   2 ( short ) pwVar7 [ 5 ] => psVar7 -> fault_set_threshold
+   2 pwVar7 [ 5 ] => psVar7 -> fault_set_threshold
+   2 pwVar2 [ 5 ] => psVar2 -> fault_set_threshold
+   2 _sampled_throttle_channel_address_none => sampled_throttle_sensor_config . qadc_result_register_index
+   2 undefined2 => word
+   1 * ( char * ) ( ( int ) pwVar7 + 0x17 ) => psVar7 -> sample_period
+   1 * ( byte * ) ( ( int ) pwVar7 + 0x17 ) => psVar7 -> sample_period
+   1 pwVar7 [ 8 ] => psVar7 -> qadc_result_register_index
+   1 pwVar7 [ 6 ] => psVar7 -> high_error_limit
+   1 pwVar7 [ 7 ] => psVar7 -> low_error_limit
+   1 pwVar7 [ 3 ] => psVar7 -> debounce_counter_decrement
+   1 ( short ) pwVar7 [ 2 ] => psVar7 -> fault_clear_threshold
+   1 * ( char * ) ( ( int ) pwVar7 + 0x13 ) => psVar7 -> tri_state_error_enable
+   1 pwVar2 => & psVar2 -> filter_coefficient
+   1 * ( byte * ) ( ( int ) pwVar2 + 0x17 ) => psVar2 -> sample_period
+   1 word => short
+   1 _global_default_value_for_fuel_temperature_50_to_293 => fuel_temperature_sensor_config . default_value
+   1  => byte service_id ;
+   1 ; byte service_id => 

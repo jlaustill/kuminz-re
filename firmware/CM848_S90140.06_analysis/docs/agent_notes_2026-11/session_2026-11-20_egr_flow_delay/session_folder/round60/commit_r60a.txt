@@ -1,0 +1,41 @@
+cm848: round 60 stage A - the parameter ID tables and the SCI command dispatch table get their struct types
+
+- param_id_entry_t -> parameter_id_entry_t ({word parameter_id, dword address}, 6 bytes). Its own comments named its
+  home: the boot kernel's 20-entry table at ROM 0x3CDC / RAM 0x3F98AC (IDs 0x0-0x12A9). The application's flash2 table
+  has the same layout, so one type serves both:
+  - boot_parameter_id_table (was param_id_lookup_table, undefined2): parameter_id_entry_t[20] at 0x3f98ac.
+    cm848_lookupTableEntryByKey -> cm848_lookupBootParameterIdAddress, the boot twin of cm848_lookupParameterIdAddress;
+    it scans the table to 0x3f9924 for the boot diagnostic services. Its prototype row keeps the word parameter.
+  - parameter_id_table: parameter_id_entry_t[1441] at 0x53be38. The code bounds it at 0x53ea6c (1886 records), and
+    the flash2 dump ends after record 1440.
+  - parameter_id_table_bucket_start: word[1889] at 0x53af76, the hash index (bucket = ID mod 1889). The old
+    DAT_0053af78 was bucket_start[i + 1].
+  - address stays a dword; as a pointer it would add about 1460 references.
+- sci_command_dispatch_entry_t (new: byte command, byte pad, pointer handler) on sci_command_dispatch_table (flash2
+  0x53a9a0, 19 records). Every record's pad is 0 and every handler is a cm848_sciCommand<N> function.
+- Five type-only pointer rows inside the arrays are gone: 0x3f98ae / 0x3f98ba / 0x53be3a / 0x53a9a2 / 0x53a9a8.
+- j1939_ack_msg_t is deleted. Its 8 fields equal j1939_acknowledgement_payload_t's, and only an enums.csv comment
+  named it; the comment now names the live type.
+- ef00_dispatch_entry_t / diag_dispatch_entry_t are untouched. Their documented RAM homes (0x3FA8B2, and 0x3FDB30,
+  time-shared with the EEPROM mirror) are unverified.
+- Round 59 recorded wrong homes for the three kept types (0x53be38 / 0x539508 / 0x53a9a0). Their own comments name
+  the homes above, and 0x539508 is a run of bl calls inside cm848_j1939_system_init.
+
+Proof (a type stage):
+- prove_r60.sh: exactly the three expected functions differ (cm848_lookupParameterIdAddress,
+  cm848_lookupBootParameterIdAddress, cm848_dispatchSciCommand). No piece renders.
+- diff_function_r57.py, function by function:
+  - the dispatch reads sci_command_dispatch_table[i].command / (*(code *)[i].handler)(); its compared byte changes
+    from char to byte, and both are lbz.
+  - the boot lookup steps records and reads ->parameter_id / ->address; its inferred return becomes dword, and no
+    caller changed.
+  - the application lookup reads parameter_id_table + parameter_id_table_bucket_start[i], ->parameter_id and
+    ->address.
+- count_casts.py: 1 -> 0, 4 -> 4, 3 -> 1.
+- firmware_types.hpp: param_id_entry_t -> parameter_id_entry_t, + sci_command_dispatch_entry_t, - j1939_ack_msg_t.
+- verify is byte-identical; thunks 18 / 14 (the boot table in the ROM-to-RAM window changes nothing there); the 3
+  name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 218.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

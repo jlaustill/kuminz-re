@@ -1,0 +1,6 @@
+address,name,old_label,kind,dims
+0x003f98ac,boot_parameter_id_table,param_id_lookup_table,global,1
+0x0053af76,parameter_id_table_bucket_start,DAT_0053af76,global,1
+0x0053be38,parameter_id_table,DAT_0053be38,global,1
+0x0053a9a0,sci_command_dispatch_table,DAT_0053a9a0,global,1
+0x00003f70,cm848_lookupBootParameterIdAddress,cm848_lookupTableEntryByKey,function,1

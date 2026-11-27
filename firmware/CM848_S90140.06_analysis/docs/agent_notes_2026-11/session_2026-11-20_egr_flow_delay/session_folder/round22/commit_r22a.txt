@@ -1,0 +1,32 @@
+cm848: round 22 stage A - the engine protection resets, the override detector, the J1939 torque curve derate (label-only)
+
+Round 21's leads in the engine protection module. None is a CM550 twin.
+- The boot / restart resets (cm848_applicationMain, cm848_restartApplicationWithoutReset,
+  hpcr_initializeEngineProtection):
+  - cm848_completeEngineStartSequence -> cm848_resetEngineProtectionShutdownState: it clears the shutdown state and
+    records the shutdown channel at power-up. It is no part of an engine start.
+  - cm848_initSensorChannelDataStructures -> cm848_resetEngineProtectionPrecrankState: it clears the pre-crank
+    results and touches no sensor channel.
+  - exception_resetProtectionModeState -> cm848_resetEngineProtectionShutdownOverrideDetector.
+- The shutdown override detector's words, which are not J1939 state (the detector reads logical switch 31):
+  governor_derate_j1939_protection_active_prev -> engine_protection_override_switch_previous_state, and
+  governor_derate_j1939_trigger_pending -> engine_protection_shutdown_override_pending_flag.
+- The fault derate's J1939 torque curve (PGN 65251) adjustment:
+  - engine_protection_derateParam_priorityApply -> cm848_applyFaultDerateToJ1939TorqueCurveFuelings;
+  - governor_calculateIntegratorRpmOutput -> cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints;
+  - fault_initBitwiseTimerMask -> cm848_initializeFaultDerateJ1939TorqueCurvePriority;
+  - governor_faultDerate_channel_bit -> fault_derate_torque_curve_priority_bit (1 << e2m EPF_Torque_Curve_Priority);
+  - governor_faultDerate_lookup_interp_state -> fault_derate_torque_curve_points_cached_axis_offset.
+- New rows:
+  - engine_protection_power_up_shutdown_channel (0x3fbd3a, lha / sth): a new shutdown counts as a repeat only on
+    this channel;
+  - fault_derate_fuel_limit_by_engine_speed_cached_axis_offset (0x3fbd4e), the table's cache at the engine speed.
+- engine_protection_channel_configuration_t.configuration_flags is not a clean bitfield: most tests go through a whole
+  word copy, with combined masks 0x30 / 0x101 / 0x402 / 0x300 / 0xc00 / 0xc. So its comment now documents every bit
+  from the code that tests it.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (12 names, all rendered; 1
+function differs only in the order of its local declarations). Headers regenerated (0 g++ errors), lookup_tables.py
+0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

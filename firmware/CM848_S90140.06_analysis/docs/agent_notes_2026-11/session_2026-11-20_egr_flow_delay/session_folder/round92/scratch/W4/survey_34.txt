@@ -1,0 +1,84 @@
++0x34 N mask=    1 EBRTDFEN   n=10 IN-v64t6_s BIT 0 OF 0-15 - ENABLE BRAKE RATE LIMIT DEFEAT DURING ON/OFF TRANS~0,1
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 S mask=    1 EBRTDFEN   n=18            BIT 0 OF 0-15 - ENABLE BRAKE RATE LIMIT DEFEAT DURING O~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 N mask=    1 FCAK02EN   n=10 IN-v64t6_s AC SWITCH ENABLE, BIT 10 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCAKI2EN   n=10 IN-v64t6_s AC INPUT ENABLE, BIT 9 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCAKINEN   n=10 IN-v64t6_s AC INPUT ENABLE, BIT 6 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCCLI2EN   n=10 IN-v64t6_s CT INPUT ENABLE, BIT 11 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCCLINEN   n=10 IN-v64t6_s CT INPUT ENABLE, BIT 7 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCEBINEN   n=10 IN-v64t6_s FAN_CLUTCH_2_EB_ENABLE, BIT 12 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCIMI2EN   n=10 IN-v64t6_s IMT INPUT ENABLE, BIT 13 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCIMINEN   n=10 IN-v64t6_s IMT INPUT ENABLE, BIT 8 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 FCSW02EN   n=10 IN-v64t6_s FAN_CLUTCH_2_MANUAL_INPUT_ENABLE, BIT 14 OF WORD 19H~ENABLE, DISABLE
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 SREN       n=10 IN-v64t6_s SMART RSG ENABLE WORD 19H, BIT 5 OF 0 TO 15~0 - 1
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 TCEN       n=10 IN-v64t6_s POWERTRAIN PROTECTION ENABLE WORD 19H, BIT 1 OF 0 TO 15~0 - 1
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 N mask=    1 TCLDEN     n=10 IN-v64t6_s POWERTRAIN PROTECTION LUGBACK ENABLE WORD 19H, BIT 2 OF 0 TO 15~0 - 1
+        files: 63c5 63t5 64c6 64t4 64t6 Isbp600 v55t16_s v57t6_x v63t5_s v64t6_s
++0x34 S mask=    2 TCEN       n=18            POWERTRAIN PROTECTION ENABLE WORD 19H, BIT 1 OF 0 TO 15~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=    4 TCLDEN     n=18            POWERTRAIN PROTECTION LUGBACK ENABLE WORD 19H, BIT 2 OF~DISABLE/ENABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=    8 MXLPANEA   n=18            BIT 3 ENABLED INDICATES LIMPHOME VIA MUXING SHALL USE R~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=   10 ISTSRVEN   n=13            ENABLE TO FORCE THE RPM TO RAMP UP TO IS_TAS_PEAK_IDLE~enable, disable
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74te3rls 74te4rls 74te5rls 84t0 Isbp700
++0x34 S mask=   20 SREN       n=18            SMART RSG ENABLE WORD 19H, BIT 5 OF 0 TO 15~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=   40 FCAKINEN   n=18            AC INPUT ENABLE, BIT 6 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=   80 FCCLINEN   n=18            CT INPUT ENABLE, BIT 7 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 N mask=  1.0 EBRTDFEN   n= 4            BIT 0 OF 0-15 - ENABLE BRAKE RATE LIMIT DEFEAT DURING ON/OFF TRANS~0,1
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCAK02EN   n= 4            AC SWITCH ENABLE, BIT 10 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCAKI2EN   n= 4            AC INPUT ENABLE, BIT 9 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCAKINEN   n= 4            AC INPUT ENABLE, BIT 6 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCCLI2EN   n= 4            CT INPUT ENABLE, BIT 11 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCCLINEN   n= 4            CT INPUT ENABLE, BIT 7 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCEBINEN   n= 4            FAN_CLUTCH_2_EB_ENABLE, BIT 12 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCIMI2EN   n= 4            IMT INPUT ENABLE, BIT 13 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCIMINEN   n= 4            IMT INPUT ENABLE, BIT 8 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 FCSW02EN   n= 4            FAN_CLUTCH_2_MANUAL_INPUT_ENABLE, BIT 14 OF WORD 19H~Enable, Disable
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 SREN       n= 4            SMART RSG ENABLE WORD 19H, BIT 5 OF 0 TO 15~0 - 1
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 TCEN       n= 4            POWERTRAIN PROTECTION ENABLE WORD 19H, BIT 1 OF 0 TO 15~0 - 1
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 N mask=  1.0 TCLDEN     n= 4            POWERTRAIN PROTECTION LUGBACK ENABLE WORD 19H, BIT 2 OF 0 TO 15~0 - 1
+        files: 00V2 63t10r4 V59t8_t v59t5_t
++0x34 S mask=  100 FCIMINEN   n=18            IMT INPUT ENABLE, BIT 8 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=  200 FCAKI2EN   n=18            AC INPUT ENABLE, BIT 9 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=  400 FCAK02EN   n=18            AC SWITCH ENABLE, BIT 10 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask=  800 FCCLI2EN   n=18            CT INPUT ENABLE, BIT 11 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask= 1000 FCEBINEN   n=18            FAN_CLUTCH_2_EB_ENABLE, BIT 12 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask= 2000 FCIMI2EN   n=18            IMT INPUT ENABLE, BIT 13 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask= 4000 FCSW02EN   n=18            FAN_CLUTCH_2_MANUAL_INPUT_ENABLE, BIT 14 OF WORD 19H~ENABLE/DISABLE
+        files: 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp700 v74t3_t
++0x34 S mask= 8000 ADMNFMOD   n=32 IN-v64t6_s A/D OVERRIDE FOR MANUAL FAN LEVEL (REQUESTED % FAN SPEE~ENABLE/DISABLE
+        files: 00V2 63c5 63t10r4 63t5 64c6 64t4 64t6 74be62rls 74be73 74be73r1 74be77 74be81 74be84 74be84rl 74c0 74c5 74c6 74t5 74t6 74te3rls 74te4rls 74te5rls 84t0 Isbp600 Isbp700 V59t8_t v55t16_s v57t6_x v59t5_t v63t5_s v64t6_s v74t3_t

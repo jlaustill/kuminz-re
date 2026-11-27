@@ -1,0 +1,1847 @@
+{
+ "records": [
+  {
+   "address": "0x0080004a",
+   "name": "acceleration_noise_control_fuel_limit_lookup",
+   "axis_pointer": "0x6009e",
+   "values_pointer": "0x600b2",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800052 timing_table_1_ptr"
+   ]
+  },
+  {
+   "address": "0x00800058",
+   "name": "acceleration_noise_control_timing_limit_lookup",
+   "axis_pointer": "0x600c6",
+   "values_pointer": "0x600da",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "timing_table_2_base",
+   "inside": [
+    "0x80005a timing_table_2_ptr",
+    "0x800060 timing_table_3_ptr"
+   ]
+  },
+  {
+   "address": "0x00800102",
+   "name": "speed_request_blend_weight_by_speed_difference_lookup",
+   "axis_pointer": "0x807acc",
+   "values_pointer": "0x807ad8",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "fuel_blend_table_3_ptr",
+   "inside": [
+    "0x800106 fuel_blend_lookup_input_2",
+    "0x800108 fuel_blend_table_4_base",
+    "0x80010a fuel_blend_table_4_ptr",
+    "0x80010e fuel_blend_table_3_limit"
+   ]
+  },
+  {
+   "address": "0x00800118",
+   "name": "all_speed_governor_friction_fuel_lookup",
+   "axis_pointer": "0x807230",
+   "values_pointer": "0x807242",
+   "dump_offset": 2,
+   "dump_input": 5200,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x80011a io_control_fuel_rpm_input",
+    "0x80011c retarder_lookup_table_ptr",
+    "0x800120 io_control_fuel_table_2_lookup_arg",
+    "0x800122 retarder_lookup_table_pointer"
+   ]
+  },
+  {
+   "address": "0x00800126",
+   "name": "all_speed_governor_coolant_fuel_adjustment_lookup",
+   "axis_pointer": "0x807254",
+   "values_pointer": "0x807268",
+   "dump_offset": 18,
+   "dump_input": 32640,
+   "dump_flag": 0,
+   "current_row": "io_control_fuel_table_param",
+   "inside": [
+    "0x800128 io_control_fuel_calculator_ptr",
+    "0x80012c throttle_validation_state",
+    "0x800130 throttle_position_raw_value"
+   ]
+  },
+  {
+   "address": "0x00800136",
+   "name": "all_speed_governor_alternate_droop_lookup",
+   "axis_pointer": "0x60462",
+   "values_pointer": "0x60472",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800138 throttle_buffer_validation_value",
+    "0x80013c throttle_buffer_decreasing_value",
+    "0x800140 throttle_position_validation_buffer"
+   ]
+  },
+  {
+   "address": "0x00800144",
+   "name": "all_speed_governor_droop_lookup",
+   "axis_pointer": "0x60482",
+   "values_pointer": "0x60492",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "derate_fault_counter_1",
+   "inside": [
+    "0x800146 derate_fault_counter_2",
+    "0x800148 derate_fault_counter_3",
+    "0x80014a derate_target_snapshot",
+    "0x80014c derate_lower_limit",
+    "0x80014e derate_upper_limit",
+    "0x800150 current_derate_target"
+   ]
+  },
+  {
+   "address": "0x00800184",
+   "name": "engine_retarder_torque_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x60566",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "anc_altitude_table_1_size",
+   "inside": [
+    "0x800186 anc_duty_cycle_ptr",
+    "0x80018a cold_start_rpm_snapshot_2",
+    "0x80018c anc_min_active_time_ptr",
+    "0x800190 anc_disable_duration_table_size"
+   ]
+  },
+  {
+   "address": "0x00800192",
+   "name": "engine_retarder_reference_torque_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x60566",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "anc_disable_duration_ptr",
+   "inside": [
+    "0x800196 cold_start_rpm_snapshot_3",
+    "0x800198 anc_altitude_table_1_base",
+    "0x80019a anc_altitude_table_1_ptr",
+    "0x80019e cold_start_sensor_sum_saved"
+   ]
+  },
+  {
+   "address": "0x008001ea",
+   "name": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup",
+   "axis_pointer": "0x60596",
+   "values_pointer": "0x605b2",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "hour_meter_table_3_size",
+   "inside": [
+    "0x8001ec hour_meter_table_3_ptr",
+    "0x8001f0 engine_rpm_histogram_threshold_select",
+    "0x8001f2 hour_meter_table_4_base",
+    "0x8001f4 hour_meter_table_4_ptr"
+   ]
+  },
+  {
+   "address": "0x0080020e",
+   "name": "cylinder_pressure_maintenance_temperature_per_timing_degree_lookup",
+   "axis_pointer": "0x60640",
+   "values_pointer": "0x6065c",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "manifold_temp_table_1_z_ptr",
+   "inside": [
+    "0x800212 manifold_temp_table_2_type",
+    "0x800214 manifold_temp_table_2_x_ptr",
+    "0x800218 speed_based_parameter_lookup_result",
+    "0x80021a manifold_temp_table_2_z_ptr"
+   ]
+  },
+  {
+   "address": "0x0080024e",
+   "name": "cylinder_balance_threshold_lookup",
+   "axis_pointer": "0x8072f4",
+   "values_pointer": "0x807316",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080025c",
+   "name": "cylinder_balance_real_2_dynamics_compensation_lookup",
+   "axis_pointer": "0x8072f4",
+   "values_pointer": "0x809e9e",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800268 vp44_third_array_1"
+   ]
+  },
+  {
+   "address": "0x0080026a",
+   "name": "cylinder_balance_imaginary_2_dynamics_compensation_lookup",
+   "axis_pointer": "0x8072f4",
+   "values_pointer": "0x809ebe",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x80026c vp44_third_array_2",
+    "0x800270 vp44_third_array_3"
+   ]
+  },
+  {
+   "address": "0x00800278",
+   "name": "cylinder_balance_engine_speed_breakpoint_lookup",
+   "axis_pointer": "0x807360",
+   "values_pointer": "0x807370",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800280 engine_rpm_source_max_ptr",
+    "0x800284 engine_rpm_source_init_value"
+   ]
+  },
+  {
+   "address": "0x00800286",
+   "name": "cylinder_balance_delta_fueling_breakpoint_lookup",
+   "axis_pointer": "0x807380",
+   "values_pointer": "0x80738e",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800288 peak_torque_correction_applied_flag",
+    "0x80028a load_trending_table_1_size",
+    "0x80028c load_trending_kickdown_ptr",
+    "0x800290 fuel_timing_blend_throttle_input",
+    "0x800292 load_trending_accel_ptr"
+   ]
+  },
+  {
+   "address": "0x00800294",
+   "name": "cylinder_balance_filtered_fueling_breakpoint_lookup",
+   "axis_pointer": "0x80739c",
+   "values_pointer": "0x8073aa",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800296 load_trending_lower_limit_size",
+    "0x800298 load_trending_lower_limit_ptr",
+    "0x80029c fuel_timing_intake_temp_input",
+    "0x80029e load_trending_count_min_ptr"
+   ]
+  },
+  {
+   "address": "0x0080058e",
+   "name": "engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup",
+   "axis_pointer": "0x60846",
+   "values_pointer": "0x6085a",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080059c",
+   "name": "engine_warmup_protection_fuel_limit_lookup",
+   "axis_pointer": "0x607f2",
+   "values_pointer": "0x6081c",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008005b4",
+   "name": "crank_wet_stack_timing_by_intake_manifold_temperature_lookup",
+   "axis_pointer": "0x8071e0",
+   "values_pointer": "0x8071f6",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008005fe",
+   "name": "fault_derate_fuel_limit_at_torque_curve_points_lookup",
+   "axis_pointer": "0x807176",
+   "values_pointer": "0x8071a8",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800604 epf_fuel_limit_table_x_input"
+   ]
+  },
+  {
+   "address": "0x00800632",
+   "name": "fault_derate_fuel_limit_by_engine_speed_lookup",
+   "axis_pointer": "0x807176",
+   "values_pointer": "0x8071a8",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x800638 arbitrated_fuel_previous",
+    "0x80063a governor_rpm_error_previous"
+   ]
+  },
+  {
+   "address": "0x008006aa",
+   "name": "double_pulsing_fueling_mapping_lookup",
+   "axis_pointer": "0x607d6",
+   "values_pointer": "0x607e4",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080071e",
+   "name": "high_speed_governor_derivative_gain_adjustment_multiplier_lookup",
+   "axis_pointer": "0x808068",
+   "values_pointer": "0x808084",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080072c",
+   "name": "high_speed_governor_proportional_gain_adjustment_multiplier_lookup",
+   "axis_pointer": "0x8080a0",
+   "values_pointer": "0x8080bc",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080073a",
+   "name": "high_speed_governor_integral_gain_adjustment_multiplier_lookup",
+   "axis_pointer": "0x8080d8",
+   "values_pointer": "0x8080f4",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801a3e",
+   "name": "engine_protection_low_oil_pressure_limit_lookup",
+   "axis_pointer": "0x611d0",
+   "values_pointer": "0x611de",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x801a42 retarder_mode1_threshold_table",
+    "0x801a44 retarder_mode1_data_ptr",
+    "0x801a48 retarder_mode1_rpm_input",
+    "0x801a4a retarder_mode1_output_ptr"
+   ]
+  },
+  {
+   "address": "0x00801a4c",
+   "name": "engine_protection_very_low_oil_pressure_limit_lookup",
+   "axis_pointer": "0x611d0",
+   "values_pointer": "0x611ec",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": [
+    "0x801a4e retarder_mode2_threshold_table",
+    "0x801a50 retarder_mode2_data_ptr",
+    "0x801a54 retarder_mode2_rpm_input",
+    "0x801a56 retarder_mode2_output_ptr"
+   ]
+  },
+  {
+   "address": "0x00801c0e",
+   "name": "power_take_off_gain_adjustment_lookup",
+   "axis_pointer": "0x808958",
+   "values_pointer": "0x80896e",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801c1c",
+   "name": "power_take_off_governor_derivative_gain_adjustment_lookup",
+   "axis_pointer": "0x8088b0",
+   "values_pointer": "0x8088cc",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801c2a",
+   "name": "power_take_off_governor_integral_gain_adjustment_lookup",
+   "axis_pointer": "0x8088e8",
+   "values_pointer": "0x808904",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801c38",
+   "name": "power_take_off_governor_proportional_gain_adjustment_lookup",
+   "axis_pointer": "0x808920",
+   "values_pointer": "0x80893c",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801e30",
+   "name": "engine_retarder_torque_stage_1_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x60534",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801e3e",
+   "name": "engine_retarder_torque_stage_2_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x6053e",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801e4c",
+   "name": "engine_retarder_torque_stage_3_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x60548",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801e5a",
+   "name": "engine_retarder_torque_stage_4_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x60552",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00801e68",
+   "name": "engine_retarder_torque_stage_5_lookup",
+   "axis_pointer": "0x6052a",
+   "values_pointer": "0x6055c",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008036c6",
+   "name": "wet_stack_timing_by_intake_manifold_temperature_lookup",
+   "axis_pointer": "0x8071e0",
+   "values_pointer": "0x8071f6",
+   "dump_offset": 18,
+   "dump_input": 21120,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008036d4",
+   "name": "wet_stack_timing_by_coolant_temperature_lookup",
+   "axis_pointer": "0x80720c",
+   "values_pointer": "0x80721e",
+   "dump_offset": 12,
+   "dump_input": 32640,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080db20",
+   "name": "friction_fuel_by_engine_speed_lookup",
+   "axis_pointer": "0x611fa",
+   "values_pointer": "0x6120e",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "no_load_fueling_curve_descriptor",
+   "inside": [
+    "0x80db26 no_load_fueling_curve_rpm_input"
+   ]
+  },
+  {
+   "address": "0x0080db2e",
+   "name": "friction_fuel_correction_by_coolant_temperature_lookup",
+   "axis_pointer": "0x61222",
+   "values_pointer": "0x61236",
+   "dump_offset": 16,
+   "dump_input": 32640,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a792",
+   "name": "intake_manifold_temperature_linearization_lookup",
+   "axis_pointer": "0x806d3a",
+   "values_pointer": "0x806d6e",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7a0",
+   "name": "fuel_temperature_linearization_lookup",
+   "axis_pointer": "0x806da2",
+   "values_pointer": "0x806dce",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7ae",
+   "name": "coolant_level_linearization_lookup",
+   "axis_pointer": "0x806dfa",
+   "values_pointer": "0x806e0c",
+   "dump_offset": 16,
+   "dump_input": 1023,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7bc",
+   "name": "fuel_pressure_linearization_lookup",
+   "axis_pointer": "0x806e1e",
+   "values_pointer": "0x806e24",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7ca",
+   "name": "oil_pressure_linearization_lookup",
+   "axis_pointer": "0x806e2a",
+   "values_pointer": "0x806e36",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7d8",
+   "name": "boost_pressure_linearization_lookup",
+   "axis_pointer": "0x806e42",
+   "values_pointer": "0x806e4c",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7e6",
+   "name": "coolant_temperature_linearization_lookup",
+   "axis_pointer": "0x806e56",
+   "values_pointer": "0x806e8a",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a7f4",
+   "name": "ambient_air_temperature_linearization_lookup",
+   "axis_pointer": "0x806ebe",
+   "values_pointer": "0x806ed0",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a802",
+   "name": "power_steering_temperature_linearization_lookup",
+   "axis_pointer": "0x806ee2",
+   "values_pointer": "0x806ee8",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a810",
+   "name": "exhaust_pressure_linearization_lookup",
+   "axis_pointer": "0x806eee",
+   "values_pointer": "0x806ef4",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a81e",
+   "name": "sampled_throttle_linearization_lookup",
+   "axis_pointer": "0x806efa",
+   "values_pointer": "0x806f08",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a82c",
+   "name": "remote_throttle_linearization_lookup",
+   "axis_pointer": "0x806f16",
+   "values_pointer": "0x806f24",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a83a",
+   "name": "ambient_air_pressure_linearization_lookup",
+   "axis_pointer": "0x806f32",
+   "values_pointer": "0x806f3c",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a848",
+   "name": "battery_voltage_linearization_lookup",
+   "axis_pointer": "0x806f46",
+   "values_pointer": "0x806f4c",
+   "dump_offset": 2,
+   "dump_input": 355,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a856",
+   "name": "engine_speed_sensor_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x806f52",
+   "values_pointer": "0x806f58",
+   "dump_offset": 2,
+   "dump_input": 852,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a864",
+   "name": "throttle_position_sensor_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x806f5e",
+   "values_pointer": "0x806f64",
+   "dump_offset": 2,
+   "dump_input": 852,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a872",
+   "name": "vehicle_connector_sensor_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x806f6a",
+   "values_pointer": "0x806f70",
+   "dump_offset": 2,
+   "dump_input": 853,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a880",
+   "name": "engine_connector_sensor_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x806f76",
+   "values_pointer": "0x806f7c",
+   "dump_offset": 2,
+   "dump_input": 854,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a88e",
+   "name": "frequency_throttle_input_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x806f82",
+   "values_pointer": "0x806f88",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a89c",
+   "name": "cruise_control_switch_multiplexer_linearization_lookup",
+   "axis_pointer": "0x806f8e",
+   "values_pointer": "0x806fb4",
+   "dump_offset": 30,
+   "dump_input": 982,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a8aa",
+   "name": "water_in_fuel_linearization_lookup",
+   "axis_pointer": "0x806fda",
+   "values_pointer": "0x806fec",
+   "dump_offset": 16,
+   "dump_input": 1023,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a8b8",
+   "name": "egr_current_feedback_linearization_lookup",
+   "axis_pointer": "0x806ffe",
+   "values_pointer": "0x807006",
+   "dump_offset": 2,
+   "dump_input": 0,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a8c6",
+   "name": "programming_pulse_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x80700e",
+   "values_pointer": "0x807014",
+   "dump_offset": 2,
+   "dump_input": 1,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a8d4",
+   "name": "high_side_gate_bias_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x80701a",
+   "values_pointer": "0x807020",
+   "dump_offset": 2,
+   "dump_input": 463,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080a8e2",
+   "name": "operational_amplifier_and_comparator_supply_voltage_linearization_lookup",
+   "axis_pointer": "0x807026",
+   "values_pointer": "0x80702c",
+   "dump_offset": 2,
+   "dump_input": 726,
+   "dump_flag": 0,
+   "current_row": "",
+   "inside": []
+  }
+ ],
+ "tables": [
+  {
+   "address": "0x0006009e",
+   "name": "acceleration_noise_control_fuel_limit_axis",
+   "type": "word[10]",
+   "e2m": "10A6 NZFLLMXA",
+   "dump_count": null,
+   "record": "acceleration_noise_control_fuel_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000600b2",
+   "name": "acceleration_noise_control_fuel_limit_values",
+   "type": "word[10]",
+   "e2m": "10A7 NZFLLMYA",
+   "dump_count": null,
+   "record": "acceleration_noise_control_fuel_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000600c6",
+   "name": "acceleration_noise_control_timing_limit_axis",
+   "type": "word[10]",
+   "e2m": "10A8 NZTALMXA",
+   "dump_count": null,
+   "record": "acceleration_noise_control_timing_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000600da",
+   "name": "acceleration_noise_control_timing_limit_values",
+   "type": "word[10]",
+   "e2m": "10A9 NZTALMYA",
+   "dump_count": null,
+   "record": "acceleration_noise_control_timing_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807acc",
+   "name": "speed_request_blend_weight_by_speed_difference_axis",
+   "type": "word[6]",
+   "e2m": "1326 ASTHPFXA",
+   "dump_count": 10,
+   "record": "speed_request_blend_weight_by_speed_difference_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807ad8",
+   "name": "speed_request_blend_weight_by_speed_difference_values",
+   "type": "word[6]",
+   "e2m": "1327 ASTHPFYA",
+   "dump_count": 10,
+   "record": "speed_request_blend_weight_by_speed_difference_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807230",
+   "name": "all_speed_governor_friction_fuel_axis",
+   "type": "word[9]",
+   "e2m": "1321 ASNLFLXA",
+   "dump_count": 16,
+   "record": "all_speed_governor_friction_fuel_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807242",
+   "name": "all_speed_governor_friction_fuel_values",
+   "type": "word[9]",
+   "e2m": "1323 ASNLFLYA",
+   "dump_count": 16,
+   "record": "all_speed_governor_friction_fuel_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807254",
+   "name": "all_speed_governor_coolant_fuel_adjustment_axis",
+   "type": "word[10]",
+   "e2m": "1324 ASCLNLXA",
+   "dump_count": 18,
+   "record": "all_speed_governor_coolant_fuel_adjustment_lookup",
+   "current_row": "",
+   "inside": [
+    "0x80725a output_control_decrement_step",
+    "0x80725c diagnostic_fuel_override_param",
+    "0x80725e vp44_injection_timing_limit",
+    "0x807260 output_timing_interpolation_base_ptr",
+    "0x807262 output_control_fuel_threshold",
+    "0x807264 output_control_cycle_limit",
+    "0x807266 output_control_timing_reset_countdown"
+   ]
+  },
+  {
+   "address": "0x00807268",
+   "name": "all_speed_governor_coolant_fuel_adjustment_values",
+   "type": "word[10]",
+   "e2m": "1325 ASCLNLYA",
+   "dump_count": 18,
+   "record": "all_speed_governor_coolant_fuel_adjustment_lookup",
+   "current_row": "retarder_input_threshold_for_state (undefined)",
+   "inside": [
+    "0x80726c output_sequence_rpm_threshold",
+    "0x80726e output_sequence_rpm_hysteresis",
+    "0x807270 output_control_rpm_offset",
+    "0x807272 throttle_position_threshold_for_output",
+    "0x807274 output_control_throttle_limit",
+    "0x807276 output_control_rpm_limit"
+   ]
+  },
+  {
+   "address": "0x00060462",
+   "name": "all_speed_governor_alternate_droop_axis",
+   "type": "word[8]",
+   "e2m": "116C ASALDPXA",
+   "dump_count": null,
+   "record": "all_speed_governor_alternate_droop_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060472",
+   "name": "all_speed_governor_alternate_droop_values",
+   "type": "word[8]",
+   "e2m": "116D ASALDPYA",
+   "dump_count": null,
+   "record": "all_speed_governor_alternate_droop_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060482",
+   "name": "all_speed_governor_droop_axis",
+   "type": "word[8]",
+   "e2m": "116E ASDPTBXA",
+   "dump_count": null,
+   "record": "all_speed_governor_droop_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060492",
+   "name": "all_speed_governor_droop_values",
+   "type": "word[8]",
+   "e2m": "116F ASDPTBYA",
+   "dump_count": null,
+   "record": "all_speed_governor_droop_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006052a",
+   "name": "engine_retarder_torque_engine_speed_axis",
+   "type": "word[5]",
+   "e2m": "13D6 JCBCRPXA",
+   "dump_count": null,
+   "record": "engine_retarder_torque_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060566",
+   "name": "engine_retarder_torque_stage_6_values",
+   "type": "word[5]",
+   "e2m": "13D5 JC6CTQYA",
+   "dump_count": null,
+   "record": "engine_retarder_reference_torque_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060596",
+   "name": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis",
+   "type": "word[14]",
+   "e2m": "108B CPCS01XA",
+   "dump_count": null,
+   "record": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000605b2",
+   "name": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values",
+   "type": "word[14]",
+   "e2m": "108C CPCS01YA",
+   "dump_count": null,
+   "record": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060640",
+   "name": "cylinder_pressure_maintenance_temperature_per_timing_degree_axis",
+   "type": "word[14]",
+   "e2m": "108D CPCS03XA",
+   "dump_count": null,
+   "record": "cylinder_pressure_maintenance_temperature_per_timing_degree_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006065c",
+   "name": "cylinder_pressure_maintenance_temperature_per_timing_degree_values",
+   "type": "word[14]",
+   "e2m": "108E CPCS03YA",
+   "dump_count": null,
+   "record": "cylinder_pressure_maintenance_temperature_per_timing_degree_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008072f4",
+   "name": "cylinder_balance_threshold_axis",
+   "type": "word[17]",
+   "e2m": "8226 CBDTT1",
+   "dump_count": 32,
+   "record": "cylinder_balance_threshold_lookup",
+   "current_row": "rpm_breakpoint_table (undefined)",
+   "inside": []
+  },
+  {
+   "address": "0x00807316",
+   "name": "cylinder_balance_threshold_values",
+   "type": "word[17]",
+   "e2m": "8227 CBDTT2",
+   "dump_count": 32,
+   "record": "cylinder_balance_threshold_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00809e9e",
+   "name": "cylinder_balance_real_2_dynamics_compensation_values",
+   "type": "word[16]",
+   "e2m": "823E CBDDCT",
+   "dump_count": 10000,
+   "record": "cylinder_balance_real_2_dynamics_compensation_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00809ebe",
+   "name": "cylinder_balance_imaginary_2_dynamics_compensation_values",
+   "type": "word[16]",
+   "e2m": "823F CBDI2DCT",
+   "dump_count": 10000,
+   "record": "cylinder_balance_imaginary_2_dynamics_compensation_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807360",
+   "name": "cylinder_balance_engine_speed_breakpoint_axis",
+   "type": "word[8]",
+   "e2m": "822E CBDESBV",
+   "dump_count": 14,
+   "record": "cylinder_balance_engine_speed_breakpoint_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807370",
+   "name": "cylinder_balance_engine_speed_breakpoint_values",
+   "type": "word[8]",
+   "e2m": "822F CBDESBT",
+   "dump_count": 14,
+   "record": "cylinder_balance_engine_speed_breakpoint_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807380",
+   "name": "cylinder_balance_delta_fueling_breakpoint_axis",
+   "type": "word[7]",
+   "e2m": "8230 CBDDFBV",
+   "dump_count": 12,
+   "record": "cylinder_balance_delta_fueling_breakpoint_lookup",
+   "current_row": "",
+   "inside": [
+    "0x807386 rpm_derate_scale_factor",
+    "0x807388 rpm_derate_base_offset",
+    "0x80738a derate_rpm_adjustment_max",
+    "0x80738c derate_rpm_adjustment_min"
+   ]
+  },
+  {
+   "address": "0x0080738e",
+   "name": "cylinder_balance_delta_fueling_breakpoint_values",
+   "type": "word[7]",
+   "e2m": "8231 CBDDFBT",
+   "dump_count": 12,
+   "record": "cylinder_balance_delta_fueling_breakpoint_lookup",
+   "current_row": "rpm_derate_percent_upper (undefined)",
+   "inside": [
+    "0x807390 rpm_derate_percent_lower",
+    "0x807392 rpm_derate_lower_threshold",
+    "0x807394 rpm_derate_upper_threshold",
+    "0x807396 rpm_derate_calc_offset_1",
+    "0x807398 rpm_derate_calc_offset_2",
+    "0x80739a rpm_derate_calc_multiplier"
+   ]
+  },
+  {
+   "address": "0x0080739c",
+   "name": "cylinder_balance_filtered_fueling_breakpoint_axis",
+   "type": "word[7]",
+   "e2m": "8232 CBDFFBV",
+   "dump_count": 12,
+   "record": "cylinder_balance_filtered_fueling_breakpoint_lookup",
+   "current_row": "vp44_fso_fault_debounce_threshold (undefined)",
+   "inside": [
+    "0x80739e vp44_feedback_pulse_value",
+    "0x8073a0 vp44_can_200_response_byte_0",
+    "0x8073a1 vp44_can_200_response_byte_1",
+    "0x8073a2 derate_output_value",
+    "0x8073a8 lift_pump_fuel_scale_factor"
+   ]
+  },
+  {
+   "address": "0x008073aa",
+   "name": "cylinder_balance_filtered_fueling_breakpoint_values",
+   "type": "word[7]",
+   "e2m": "8233 CBDFFBT",
+   "dump_count": 12,
+   "record": "cylinder_balance_filtered_fueling_breakpoint_lookup",
+   "current_row": "lift_pump_fuel_base_offset (undefined)",
+   "inside": [
+    "0x8073ac lift_pump_timing_increase_limit",
+    "0x8073ae lift_pump_timing_decrease_limit",
+    "0x8073b0 vp44_can_msg_upper_threshold",
+    "0x8073b2 vp44_can_msg_lower_threshold",
+    "0x8073b4 vp44_fso_bit0_debounce_threshold",
+    "0x8073b5 fso_fault_debounce_threshold",
+    "0x8073b6 vp44_fso_bit0_fuel_threshold"
+   ]
+  },
+  {
+   "address": "0x00060846",
+   "name": "engine_warmup_protection_rifle_to_turbocharger_delay_time_axis",
+   "type": "word[10]",
+   "e2m": "11EF WPCQXA",
+   "dump_count": null,
+   "record": "engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006085a",
+   "name": "engine_warmup_protection_rifle_to_turbocharger_delay_time_values",
+   "type": "word[10]",
+   "e2m": "11EE WPDYTMYA",
+   "dump_count": null,
+   "record": "engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000607f2",
+   "name": "engine_warmup_protection_fuel_limit_axis",
+   "type": "word[21]",
+   "e2m": "11ED WPESXA",
+   "dump_count": null,
+   "record": "engine_warmup_protection_fuel_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006081c",
+   "name": "engine_warmup_protection_fuel_limit_values",
+   "type": "word[21]",
+   "e2m": "11EC WPFLDQYA",
+   "dump_count": null,
+   "record": "engine_warmup_protection_fuel_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807176",
+   "name": "fault_derate_fuel_limit_by_engine_speed_axis",
+   "type": "word[25]",
+   "e2m": "10BA EPFLVSAI",
+   "dump_count": 48,
+   "record": "fault_derate_fuel_limit_by_engine_speed_lookup",
+   "current_row": "load_breakpoint_table (undefined)",
+   "inside": [
+    "0x8071a6 shutdown_limit_selector_param"
+   ]
+  },
+  {
+   "address": "0x008071a8",
+   "name": "fault_derate_fuel_limit_by_engine_speed_values",
+   "type": "word[25]",
+   "e2m": "10BB EPFLTB",
+   "dump_count": 48,
+   "record": "fault_derate_fuel_limit_by_engine_speed_lookup",
+   "current_row": "",
+   "inside": [
+    "0x8071aa timer_capture_init_value",
+    "0x8071ac clutch_rpm_low_value",
+    "0x8071ae fuel_temp_throttle_threshold",
+    "0x8071b0 boost_pressure_offset_factor",
+    "0x8071b2 boost_pressure_interp_threshold",
+    "0x8071b4 boost_pressure_decrement_rate",
+    "0x8071b6 boost_pressure_stats_threshold_71b6",
+    "0x8071b8 boost_pressure_smoke_threshold",
+    "0x8071ba boost_pressure_state_6_threshold",
+    "0x8071bc boost_pressure_state_3_threshold",
+    "0x8071c6 derate_event_threshold_time",
+    "0x8071ca clutch_slip_threshold",
+    "0x8071ce fuel_temp_exceedance_threshold",
+    "0x8071d0 fuel_limit_near_threshold",
+    "0x8071d4 boost_pressure_stats_threshold_71d4",
+    "0x8071d6 vp44_derate_bit8_limit",
+    "0x8071d8 vp44_derate_bit4_limit"
+   ]
+  },
+  {
+   "address": "0x000607d6",
+   "name": "double_pulsing_fueling_mapping_axis",
+   "type": "word[7]",
+   "e2m": "1084 DPFPTB",
+   "dump_count": null,
+   "record": "double_pulsing_fueling_mapping_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000607e4",
+   "name": "double_pulsing_fueling_mapping_values",
+   "type": "word[7]",
+   "e2m": "1085 DPTVOTB",
+   "dump_count": null,
+   "record": "double_pulsing_fueling_mapping_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00808068",
+   "name": "high_speed_governor_derivative_gain_adjustment_error_axis",
+   "type": "word[14]",
+   "e2m": "12E1 HSDVCFXA",
+   "dump_count": 26,
+   "record": "high_speed_governor_derivative_gain_adjustment_multiplier_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008080a0",
+   "name": "high_speed_governor_proportional_gain_adjustment_error_axis",
+   "type": "word[14]",
+   "e2m": "12E3 HSPPCFXA",
+   "dump_count": 26,
+   "record": "high_speed_governor_proportional_gain_adjustment_multiplier_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008080d8",
+   "name": "high_speed_governor_integral_gain_adjustment_error_axis",
+   "type": "word[14]",
+   "e2m": "12E5 HSITCFXA",
+   "dump_count": 26,
+   "record": "high_speed_governor_integral_gain_adjustment_multiplier_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000611d0",
+   "name": "engine_protection_oil_pressure_limit_axis",
+   "type": "word[7]",
+   "e2m": "10BC EPO2VSAI",
+   "dump_count": null,
+   "record": "engine_protection_low_oil_pressure_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000611de",
+   "name": "engine_protection_low_oil_pressure_limit_values",
+   "type": "word[7]",
+   "e2m": "10BD EPO2LOTB",
+   "dump_count": null,
+   "record": "engine_protection_low_oil_pressure_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000611ec",
+   "name": "engine_protection_very_low_oil_pressure_limit_values",
+   "type": "word[7]",
+   "e2m": "10BE EPO2VLTB",
+   "dump_count": null,
+   "record": "engine_protection_very_low_oil_pressure_limit_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00808958",
+   "name": "power_take_off_gain_adjustment_axis",
+   "type": "word[11]",
+   "e2m": "13B2 PTSPAX",
+   "dump_count": 20,
+   "record": "power_take_off_gain_adjustment_lookup",
+   "current_row": "retarder_torque_point_3_value (undefined)",
+   "inside": [
+    "0x80895a retarder_torque_point_4_value",
+    "0x80895c retarder_torque_point_5_value",
+    "0x80895e vp44_sensor_value_2",
+    "0x808962 insite_parameter_table_start"
+   ]
+  },
+  {
+   "address": "0x0080896e",
+   "name": "power_take_off_gain_adjustment_values",
+   "type": "word[11]",
+   "e2m": "13B3 PTGNTB",
+   "dump_count": 20,
+   "record": "power_take_off_gain_adjustment_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008088b0",
+   "name": "power_take_off_governor_derivative_gain_adjustment_axis",
+   "type": "word[14]",
+   "e2m": "13AC PTERQDAX",
+   "dump_count": 26,
+   "record": "power_take_off_governor_derivative_gain_adjustment_lookup",
+   "current_row": "pwm_output_frequency_divisor (undefined)",
+   "inside": [
+    "0x8088b2 pwm_output_period_multiplier",
+    "0x8088b3 pwm_output_channel_select",
+    "0x8088b4 pwm_output_enable_flag",
+    "0x8088c0 redundant_sensor_compare_threshold",
+    "0x8088c3 can_controller_1_status_byte",
+    "0x8088c5 can_controller_1_filter_byte_1",
+    "0x8088c7 can_controller_1_filter_byte_2",
+    "0x8088c9 can_controller_1_filter_byte_3",
+    "0x8088ca can_controller_1_baud_byte_0",
+    "0x8088cb can_controller_1_baud_byte_1"
+   ]
+  },
+  {
+   "address": "0x008088e8",
+   "name": "power_take_off_governor_integral_gain_adjustment_axis",
+   "type": "word[14]",
+   "e2m": "13AE PTERQIAX",
+   "dump_count": 26,
+   "record": "power_take_off_governor_integral_gain_adjustment_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00808920",
+   "name": "power_take_off_governor_proportional_gain_adjustment_axis",
+   "type": "word[14]",
+   "e2m": "13B0 PTERQPAX",
+   "dump_count": 26,
+   "record": "power_take_off_governor_proportional_gain_adjustment_lookup",
+   "current_row": "oil_pressure_protection_threshold (undefined)",
+   "inside": [
+    "0x808924 oil_pressure_rpm_limit_step",
+    "0x808926 oil_pressure_rate_limit_step",
+    "0x80892a rpm_range_upper_limit",
+    "0x80892c rpm_range_lower_limit",
+    "0x808932 oil_pressure_validation_threshold",
+    "0x808934 pwm_output_scaling_factor",
+    "0x808936 pwm_output_2_scaling_factor",
+    "0x808938 pwm_output_3_scaling_factor",
+    "0x80893a pwm_output_4_scaling_factor"
+   ]
+  },
+  {
+   "address": "0x00060534",
+   "name": "engine_retarder_torque_stage_1_values",
+   "type": "word[5]",
+   "e2m": "13D0 JC1CTQYA",
+   "dump_count": null,
+   "record": "engine_retarder_torque_stage_1_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006053e",
+   "name": "engine_retarder_torque_stage_2_values",
+   "type": "word[5]",
+   "e2m": "13D1 JC2CTQYA",
+   "dump_count": null,
+   "record": "engine_retarder_torque_stage_2_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060548",
+   "name": "engine_retarder_torque_stage_3_values",
+   "type": "word[5]",
+   "e2m": "13D2 JC3CTQYA",
+   "dump_count": null,
+   "record": "engine_retarder_torque_stage_3_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00060552",
+   "name": "engine_retarder_torque_stage_4_values",
+   "type": "word[5]",
+   "e2m": "13D3 JC4CTQYA",
+   "dump_count": null,
+   "record": "engine_retarder_torque_stage_4_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006055c",
+   "name": "engine_retarder_torque_stage_5_values",
+   "type": "word[5]",
+   "e2m": "13D4 JC5CTQYA",
+   "dump_count": null,
+   "record": "engine_retarder_torque_stage_5_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x008071e0",
+   "name": "wet_stack_timing_by_intake_manifold_temperature_axis",
+   "type": "word[11]",
+   "e2m": "1075 WSIMAI",
+   "dump_count": 20,
+   "record": "wet_stack_timing_by_intake_manifold_temperature_lookup",
+   "current_row": "vp44_fault_timer_threshold (undefined)",
+   "inside": [
+    "0x8071e2 vp44_smoke_limiter_threshold",
+    "0x8071e4 vp44_fault_counter_threshold_1",
+    "0x8071e6 vp44_fuel_temp_delta_threshold",
+    "0x8071e8 vp44_fault_tolerance_factor",
+    "0x8071ea vp44_throttle_threshold",
+    "0x8071ee vp44_fault_counter_limit_1",
+    "0x8071f0 vp44_table_compare_threshold",
+    "0x8071f2 vp44_protection_recovery_threshold",
+    "0x8071f4 vp44_clutch_rpm_delta_threshold"
+   ]
+  },
+  {
+   "address": "0x008071f6",
+   "name": "wet_stack_timing_by_intake_manifold_temperature_values",
+   "type": "word[11]",
+   "e2m": "1076 WSTATB",
+   "dump_count": 20,
+   "record": "wet_stack_timing_by_intake_manifold_temperature_lookup",
+   "current_row": "",
+   "inside": [
+    "0x8071f8 vp44_fault_counter_limit_2",
+    "0x807204 oil_pressure_throttle_threshold",
+    "0x807206 oil_pressure_debounce_threshold"
+   ]
+  },
+  {
+   "address": "0x0080720c",
+   "name": "wet_stack_timing_by_coolant_temperature_axis",
+   "type": "word[9]",
+   "e2m": "12CB WSCLAI",
+   "dump_count": 16,
+   "record": "wet_stack_timing_by_coolant_temperature_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x000611fa",
+   "name": "friction_fuel_by_engine_speed_axis",
+   "type": "word[10]",
+   "e2m": "1098 NLFCFLXA",
+   "dump_count": null,
+   "record": "friction_fuel_by_engine_speed_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0006120e",
+   "name": "friction_fuel_by_engine_speed_values",
+   "type": "word[10]",
+   "e2m": "1099 NLFCFLYA",
+   "dump_count": null,
+   "record": "friction_fuel_by_engine_speed_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00061222",
+   "name": "friction_fuel_correction_by_coolant_temperature_axis",
+   "type": "word[10]",
+   "e2m": "109A ADCLFLBP",
+   "dump_count": null,
+   "record": "friction_fuel_correction_by_coolant_temperature_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00061236",
+   "name": "friction_fuel_correction_by_coolant_temperature_values",
+   "type": "word[10]",
+   "e2m": "109B NLCLFLYA",
+   "dump_count": null,
+   "record": "friction_fuel_correction_by_coolant_temperature_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806d3a",
+   "name": "intake_manifold_temperature_linearization_axis",
+   "type": "word[26]",
+   "e2m": "101B ADIMTPXA",
+   "dump_count": 50,
+   "record": "intake_manifold_temperature_linearization_lookup",
+   "current_row": "linearization_table_ch15_x_axis (undefined)",
+   "inside": [
+    "0x806d40 linearization_table_ch15_y_axis",
+    "0x806d46 linearization_table_ch16_x_axis",
+    "0x806d4c linearization_table_ch16_y_axis",
+    "0x806d52 linearization_table_ch17_x_axis",
+    "0x806d58 linearization_table_ch17_y_axis",
+    "0x806d5e linearization_table_ch18_x_axis",
+    "0x806d64 linearization_table_ch18_y_axis",
+    "0x806d6a linearization_table_ch19_x_axis"
+   ]
+  },
+  {
+   "address": "0x00806d6e",
+   "name": "intake_manifold_temperature_linearization_values",
+   "type": "word[26]",
+   "e2m": "1019 ADIMTPYA",
+   "dump_count": 50,
+   "record": "intake_manifold_temperature_linearization_lookup",
+   "current_row": "",
+   "inside": [
+    "0x806d70 linearization_table_ch19_y_axis",
+    "0x806d76 linearization_table_ch20_x_axis",
+    "0x806d9c linearization_table_ch20_y_axis"
+   ]
+  },
+  {
+   "address": "0x00806da2",
+   "name": "fuel_temperature_linearization_axis",
+   "type": "word[22]",
+   "e2m": "8008 ADFLTPXA",
+   "dump_count": 42,
+   "record": "fuel_temperature_linearization_lookup",
+   "current_row": "",
+   "inside": [
+    "0x806dc2 linearization_table_ch21_x_axis"
+   ]
+  },
+  {
+   "address": "0x00806dce",
+   "name": "fuel_temperature_linearization_values",
+   "type": "word[22]",
+   "e2m": "8009 ADFLTPYA",
+   "dump_count": 42,
+   "record": "fuel_temperature_linearization_lookup",
+   "current_row": "",
+   "inside": [
+    "0x806dd4 linearization_table_ch21_y_axis",
+    "0x806de6 linearization_table_ch22_x_axis",
+    "0x806dee linearization_table_ch22_y_axis",
+    "0x806df6 linearization_table_ch23_x_axis"
+   ]
+  },
+  {
+   "address": "0x00806dfa",
+   "name": "coolant_level_linearization_axis",
+   "type": "word[9]",
+   "e2m": "800A ADCVXA",
+   "dump_count": 16,
+   "record": "coolant_level_linearization_lookup",
+   "current_row": "",
+   "inside": [
+    "0x806dfc linearization_table_ch23_y_axis",
+    "0x806e02 linearization_table_ch24_x_axis",
+    "0x806e08 linearization_table_ch24_y_axis"
+   ]
+  },
+  {
+   "address": "0x00806e0c",
+   "name": "coolant_level_linearization_values",
+   "type": "word[9]",
+   "e2m": "800B ADCVYA",
+   "dump_count": 16,
+   "record": "coolant_level_linearization_lookup",
+   "current_row": "",
+   "inside": [
+    "0x806e0e linearization_table_ch25_x_axis",
+    "0x806e14 linearization_table_ch25_y_axis",
+    "0x806e1a fuel_limit_rpm_error_offset",
+    "0x806e1c diagnostic_exit_limit"
+   ]
+  },
+  {
+   "address": "0x00806e1e",
+   "name": "fuel_pressure_linearization_axis",
+   "type": "word[3]",
+   "e2m": "801F ADFPLZXA",
+   "dump_count": 4,
+   "record": "fuel_pressure_linearization_lookup",
+   "current_row": "diagnostic_transition_limit (undefined)",
+   "inside": []
+  },
+  {
+   "address": "0x00806e2a",
+   "name": "oil_pressure_linearization_axis",
+   "type": "word[6]",
+   "e2m": "1018 ADOLPRXA",
+   "dump_count": 10,
+   "record": "oil_pressure_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806e42",
+   "name": "boost_pressure_linearization_axis",
+   "type": "word[5]",
+   "e2m": "1016 ADBSPRXA",
+   "dump_count": 8,
+   "record": "boost_pressure_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806e56",
+   "name": "coolant_temperature_linearization_axis",
+   "type": "word[26]",
+   "e2m": "1014 ADCLTPXA",
+   "dump_count": 50,
+   "record": "coolant_temperature_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806ebe",
+   "name": "ambient_air_temperature_linearization_axis",
+   "type": "word[9]",
+   "e2m": "8021 ADAATXA",
+   "dump_count": 16,
+   "record": "ambient_air_temperature_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806ee2",
+   "name": "power_steering_temperature_linearization_axis",
+   "type": "word[3]",
+   "e2m": "8023 ADPOTPXA",
+   "dump_count": 4,
+   "record": "power_steering_temperature_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806eee",
+   "name": "exhaust_pressure_linearization_axis",
+   "type": "word[3]",
+   "e2m": "8025 ADEPLZXA",
+   "dump_count": 4,
+   "record": "exhaust_pressure_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806efa",
+   "name": "sampled_throttle_linearization_axis",
+   "type": "word[7]",
+   "e2m": "1012 ADSATHXA",
+   "dump_count": 12,
+   "record": "sampled_throttle_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f16",
+   "name": "remote_throttle_linearization_axis",
+   "type": "word[7]",
+   "e2m": "1023 ADROTHXA",
+   "dump_count": 12,
+   "record": "remote_throttle_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f32",
+   "name": "ambient_air_pressure_linearization_axis",
+   "type": "word[5]",
+   "e2m": "101D ADAAPRXA",
+   "dump_count": 8,
+   "record": "ambient_air_pressure_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f46",
+   "name": "battery_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "1027 ADBTVTXA",
+   "dump_count": 4,
+   "record": "battery_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f52",
+   "name": "engine_speed_sensor_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "800C ADESLZXA",
+   "dump_count": 4,
+   "record": "engine_speed_sensor_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f5e",
+   "name": "throttle_position_sensor_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "8029 ADTHLIXA",
+   "dump_count": 4,
+   "record": "throttle_position_sensor_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f6a",
+   "name": "vehicle_connector_sensor_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "802B ADVHLZXA",
+   "dump_count": 4,
+   "record": "vehicle_connector_sensor_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f76",
+   "name": "engine_connector_sensor_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "802D ADECLZXA",
+   "dump_count": 4,
+   "record": "engine_connector_sensor_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f82",
+   "name": "frequency_throttle_input_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "802F ADFTLZXA",
+   "dump_count": 4,
+   "record": "frequency_throttle_input_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806f8e",
+   "name": "cruise_control_switch_multiplexer_linearization_axis",
+   "type": "word[19]",
+   "e2m": "800E ADCRLZXA",
+   "dump_count": 36,
+   "record": "cruise_control_switch_multiplexer_linearization_lookup",
+   "current_row": "",
+   "inside": [
+    "0x806fa0 timing_protection_flags_param",
+    "0x806fa2 timing_protection_blend_base",
+    "0x806fa4 timing_protection_blend_increment",
+    "0x806fa6 fuel_mode_transition_timeout_value",
+    "0x806fa8 fuel_timing_mode_arbitration_1",
+    "0x806fac fuel_timing_mode_arbitration_2",
+    "0x806fae fuel_source_mode_11_timeout_value",
+    "0x806fb2 timing_blend_threshold"
+   ]
+  },
+  {
+   "address": "0x00806fda",
+   "name": "water_in_fuel_linearization_axis",
+   "type": "word[9]",
+   "e2m": "8027 ADWFLZXA",
+   "dump_count": 16,
+   "record": "water_in_fuel_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00806ffe",
+   "name": "egr_current_feedback_linearization_axis",
+   "type": "word[4]",
+   "e2m": "8010 ADEGLZXA",
+   "dump_count": 6,
+   "record": "egr_current_feedback_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080700e",
+   "name": "programming_pulse_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "8031 ADPSLIXA",
+   "dump_count": 4,
+   "record": "programming_pulse_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x0080701a",
+   "name": "high_side_gate_bias_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "8033 ADHBLZXA",
+   "dump_count": 4,
+   "record": "high_side_gate_bias_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  },
+  {
+   "address": "0x00807026",
+   "name": "operational_amplifier_and_comparator_supply_voltage_linearization_axis",
+   "type": "word[3]",
+   "e2m": "8035 ADOCLIXA",
+   "dump_count": 4,
+   "record": "operational_amplifier_and_comparator_supply_voltage_linearization_lookup",
+   "current_row": "",
+   "inside": []
+  }
+ ]
+}

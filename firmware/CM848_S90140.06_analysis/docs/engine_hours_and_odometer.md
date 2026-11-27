@@ -30,8 +30,8 @@ be re-verified on the bench before being trusted — see
 | **PGN 0xFEE5 (Engine Hours/Revs)**     | **Does not exist in firmware** | —                                 | Ruled out        |
 
 > **Update 2026-11-15 (PR #48): the two hour meters, their scale, and real engine hours.**
-> - **The task:** `cm848_advanceHourMeters` (flash2 0x506780, was `cm848_mainLoop_step_4`) runs in phase 0 of the
->   40-phase `main_loop`. `main_loop` runs one phase per PIT tick: it clears the PIT status flag on every pass, and
+> - **The task:** `advanceHourMeters` (flash2 0x506780, was `cm848_advanceHourMeters` / `cm848_mainLoop_step_4`) runs in phase 0 of the
+>   40-phase `executiveFrameInterruptHandler`. `executiveFrameInterruptHandler` runs one phase per PIT tick: it clears the PIT status flag on every pass, and
 >   `PITC` = 4999 gives a 5000-count period, which is 5 ms at the usual 1 MHz PIT clock (4 MHz crystal / 4). So each meter
 >   gains **1 count per 40 × 5 ms = 0.200 s**, and hours = counts / 18000.
 > - **The two meters:**
@@ -39,8 +39,8 @@ be re-verified on the bench before being trusted — see
 >     EEPROM copy at **0x30** (`key_on_hour_meter_cal`).
 >   - `engine_hour_meter` (RAM 0x40A794, was `protection_timer_config_a`): +1 only when `cold_start_phase` is not 1
 >     (engine stopped / cranking). It is **engine-running time**; EEPROM copy at **0x42** (`engine_hour_meter_cal`).
->   - Both are loaded at start (`cm848_loadHourMetersFromEeprom`) and saved at power-down (`cm848_runPowerDownSequence`)
->     and before a reflash restart (`cm848_restartThroughBootRom`).
+>   - Both are loaded at start (`loadHourMetersFromEeprom`) and saved at power-down (`cm848_runPowerDownSequence`)
+>     and before a reflash restart (`restartThroughBootRom`).
 > - **Proof that 0x42 is engine-running time** (the four EEPROM dumps):
 >
 >   | Dump | Key-on 0x30 | Engine-run 0x42 | Key-on delta | Engine-run delta |
@@ -60,7 +60,7 @@ be re-verified on the bench before being trusted — see
 >   last reset. It also survives HP Tuners.
 >
 > **Correction 2026-11-12 (PR #46, firmware + the four EEPROM dumps):** the ECM's own odometer is **not**
-> EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses` at **EEPROM 0x8ea** (u32,
+> EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses_cal` at **EEPROM 0x8ea** (u32,
 > speed-sensor pulses, 8000 per mile — the only source of PGN 0xFEE0 total distance), the trip copy at
 > **0x19a6**, and an every-8-miles record at **0x19ce** (4 × u16 = lifetime pulses / 64000, written by
 > `cm848_recordLifetimeDistanceEvery8Miles`). All three move together across the dumps and HP Tuners resets them
@@ -88,7 +88,7 @@ be re-verified on the bench before being trusted — see
 > - **The ECM already holds the dash odometer:** the cluster broadcasts it on PCI header 0x72 and the ECM stores it in
 >   RAM **0x0040B471** (`pci_receive_message_11_odometer`, u32 big-endian, 1/8000 mile — 0x8B633FCC = 292,317.2 mi in
 >   the RAM dump). `./kuminz-cli can0 --read-addr 40B471 4` should return it live (confirm against the dash). It
->   uses the same 8000-per-mile unit as `lifetime_distance_pulses`, so those 4 bytes are exactly the value to write to
+>   uses the same 8000-per-mile unit as `lifetime_distance_pulses_cal`, so those 4 bytes are exactly the value to write to
 >   EEPROM 0x8ea (and 0x19a6) for the ELD restore.
 
 ---
@@ -112,9 +112,9 @@ The real, live ECM run-time counter is `0x01000030` (rises across every dump).
 
 ### Firmware-traced `0x01000030` re-confirmed (static)
 
-`mpc555_eepromWriteWords(0x3fee2a,&eeprom_config_block,4)` and `eeprom_config_block`
-is at EEPROM `0x01000030` — consistent with the 2026-04-09 trace of
-`ecm_runtime_accumulator → 0x01000030`. Still bench-unverified.
+`mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_key_on_hour_meter_cal,4)` and `eeprom_key_on_hour_meter_cal`
+(was `eeprom_config_block`; PR #53 round 75) is at EEPROM `0x01000030` — consistent with the 2026-04-09 trace of
+`ecu_power_state_flags.runtime_counter → 0x01000030`. Still bench-unverified.
 
 ### Naming conflicts to reconcile on the next bench
 
@@ -126,7 +126,7 @@ the 1.5 Hz tick:
 |---------|------------------------------|------------------------|
 | `0x0040B150` | `accelerator_pedal_position_in_use` (was `protection_fuel_demand_snapshot`; written by the sensor-value copy; OBD-II PID 0x11) | `session_time_counter` (1.5 Hz) |
 | `0x0040B2C2` | `cold_start_injection_protection_flag` (bit7 protection cfg) | "copy of session_time_counter" |
-| `0x0040BDF6` | `sensor_channel102_value` | "scatter write pointer" |
+| `0x0040BDF6` | `governor_pressure_sensor_value` | "scatter write pointer" |
 
 If the bench re-confirms a 1.5 Hz tick at `0x0040B150`, the campaign name is wrong
 and the CSV should be corrected; if not, the bench address was approximate.
@@ -136,7 +136,7 @@ and the CSV should be corrected; if not, the bench address was approximate.
 ## J1939 PGN inventory (what this ECU actually speaks)
 
 From `cm848_rom.ghidra.cpp` lines 95932–95951 — the periodic TX registration
-table inside `cm848_initJ1939ProtocolHandlers` (0x232B4) calling
+table inside `cm848_registerJ1939PgnRequestHandlers` (0x232B4) calling
 `cm848_enqueueDataRecord(queue, tag, period_ms, offset, handler)`:
 
 | Tag    | Period | Handler              | J1939 PGN this produces |
@@ -155,7 +155,7 @@ table inside `cm848_initJ1939ProtocolHandlers` (0x232B4) calling
 | 0xFEF5 | 1000 ms| `0x24104`            | AMB                     |
 | 0xFEF6 | 500 ms | `0x26750`            | IC1                     |
 | 0xFEF7 | 1000 ms| `LAB_00026F68`       | VEP                     |
-| **0xFFE0** | **200 ms** | **`cm848_initPgn65248VehicleDistanceHandler`** | See note below |
+| **0xFFE0** | **200 ms** | **`initializePgn65248VehicleDistanceHandler`** | See note below |
 | 0xFECA | 1000 ms| `0x24FF0`            | DM1                     |
 | 0xFEBD | 1000 ms| `0x26694`            | BJM1                    |
 | 0xF001 | 100 ms | `0x258F4`            | ETC2                    |
@@ -167,14 +167,14 @@ could plausibly carry an odometer value as a distinct PGN.**
 ### The "0xFFE0 vehicle-distance" oddity
 
 The `0xFFE0` tag in the enqueue call does *not* mean the ECU broadcasts as
-Proprietary A. `cm848_initPgn65248VehicleDistanceHandler` @ 0x26C6C
+Proprietary A. `initializePgn65248VehicleDistanceHandler` @ 0x26C6C
 hard-codes the transmitted CAN ID:
 
 ```c
 _DAT_003faec8 = CONCAT13(((byte)PTR_DAT_003fd86a._0_2_ & 7) << 2, 0xfee000);
 // ...
 _DAT_003faec8 = CONCAT31(_DAT_003faec8, (char)j1939_source_address);
-cm848_j1939RegisterPgnHandler(0xe0, 0xb0, param_3);
+registerJ1939PgnRequestHandler(0xe0, 0xb0, param_3);
 ```
 
 The constructed ID puts PGN = **0xFEE0** (Vehicle Distance) with a priority
@@ -198,11 +198,11 @@ Four checks, all negative:
    `cm848_rom.ghidra.cpp` → **0 hits**. No code constructs the PGN.
 2. **TX registration:** FEE5 is absent from the `cm848_enqueueDataRecord`
    list (lines 95932–95951). Nothing schedules it for periodic broadcast.
-3. **RX registration:** FEE5 is absent from every `cm848_j1939RegisterPgnHandler`
+3. **RX registration:** FEE5 is absent from every `registerJ1939PgnRequestHandler`
    call site (greppable list in `cm848_rom.ghidra.cpp` — only 0xCA, 0xCB,
    0xCC, 0xCD, 0xCE, 0xD2, 0xDA, 0xE0, 0xEB, 0xEC, 0xED, 0xEE, 0xEF, 0xF0,
    0xF1, 0xF5, 0xF6, 0xF7, and 0x03 are registered). A `18EAFF00#E5FE00`
-   request walks the 32-entry table, falls through, and `cm848_sendJ1939NegativeAck`
+   request walks the 32-entry table, falls through, and `cm848_sendJ1939AcknowledgementOfRequestedPgn`
    fires.
 4. **Calibration byte:** `e2m_parameters.csv` lists
    `Jcomm_Engine_Hours_Message_Default_Priority (JCEGTMPZ)` at `0x0112543A`
@@ -256,22 +256,26 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
 `mpc555_tickTransferTimeoutAndRuntimeCounter` @ 0x7608 runs periodically. Every 40 ticks
 (`watchdog_tick_prescaler` reaches 0x28), it increments both:
-- `ecm_runtime_accumulator` @ 0x00302012 (lifetime counter)
-- `keyon_duration_counter` @ 0x003028a6 (session counter)
+- `ecu_power_state_flags.runtime_counter` @ 0x00302012 (lifetime counter)
+  (was the stale flat row `ecm_runtime_accumulator`, PR #53 round 70)
+- `eeprom_block_tracking.key_off_duration_ticks` @ 0x003028a6 (was `keyon_duration_counter`, then
+  `watchdog_counter`; PR #53 round 67: `mpc555_keyOnStateMachine` zeroes it while the key is on, so it
+  counts key-off time)
 
 `mpc555_keyOnStateMachine` @ 0x184 saves to EEPROM in two scenarios:
-1. **Periodic save:** `keyon_duration_counter > 0x2903` (10,499 ticks)
-2. **Key-off save:** `mios_mdasm30.SCRD` bit 15 set AND
-   `eeprom_version_marker.magic == 0x600d`
+1. **Periodic save:** `key_off_duration_ticks > 0x2903` (10,499 ticks)
+2. **Key-off save:** `mios_mdasm30.SCR` bit 15 set AND
+   `eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID` (0x600d; was `eeprom_version_marker.magic`)
    *(2026-11-13, PR #48: bit 15 = 1 means key ON — the reset code waits for it — so this branch is really the key-back-on save before the watchdog reset / restart, and scenario 1 runs while bit 15 reads 0 = key off.)*
 
-Save path: `ecm_runtime_accumulator` → `eeprom_runtime_write_staging`
-(0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
+Save path: `ecu_power_state_flags.runtime_counter` → `eeprom_runtime_write_staging`
+(0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, (word *)&eeprom_key_on_hour_meter_cal, 4)`
 → **EEPROM 0x01000030**.
 
 On boot, `mpc555_loadRuntimeCounterFromEepromShadow` @ 0x76B4 reloads
-`ecm_runtime_accumulator` from `eeprom_version_marker.config_dword`,
-which is read from EEPROM 0x01000034 (line 669).
+`ecu_power_state_flags.runtime_counter` from `eeprom_shadow_header.key_on_hour_meter`,
+which `cm848_loadVersionConfigurationFromEeprom` reads from EEPROM 0x01000030. (An older note here said 0x01000034: that
+word is the boot kernel's copy of the security key, which the boot service loop writes from EEPROM 0x8e; PR #53 round 75.)
 
 ```bash
 # Read EEPROM runtime counter (firmware-traced, needs truck verification)
@@ -284,7 +288,7 @@ which is read from EEPROM 0x01000034 (line 669).
 **Scale factor unknown.** The watchdog tick rate determines the time-per-count.
 Bench session showed `session_time_counter` at 0x0040B150 runs at 1.5 Hz
 with a different prescaler. The watchdog prescaler is 40 ticks, so if the
-watchdog runs at 60 Hz, each `ecm_runtime_accumulator` count = 40/60 = 0.667s
+watchdog runs at 60 Hz, each `ecu_power_state_flags.runtime_counter` count = 40/60 = 0.667s
 (matching the 1.5 Hz observation). **Needs truck verification to confirm.**
 
 ### 4. Engine run time (engine-running seconds) — **dead end via known services**
@@ -475,7 +479,7 @@ EEPROM 0x01000030 as the target. Remaining:
 - [ ] Update `docs/service_0x4a_protocol.md` to document the wider Service
       0x4A window (0x003Fxxxx is readable, not just 0x00408000+).
 - [X] ~~Trace the ECU shutdown path~~ — found `mpc555_keyOnStateMachine` @ 0x184
-      saves `ecm_runtime_accumulator` to EEPROM 0x01000030 (2026-04-09).
+      saves `ecu_power_state_flags.runtime_counter` to EEPROM 0x01000030 (2026-04-09).
 - [X] ~~Bench-verify `ECM_Run_Time` @ `0x01000400`~~ — confirmed NOT the
       hours counter (static value, never changes).
 - [X] ~~Implement `--resolve-param` / Service 0x15/0x16~~ — deleted, CM848
@@ -577,7 +581,7 @@ to EEPROM 0x01000030 on shutdown.
 
 ### Test 4: Scale Factor Calibration
 
-Purpose: Determine the exact time-per-count for `ecm_runtime_accumulator`.
+Purpose: Determine the exact time-per-count for `ecu_power_state_flags.runtime_counter`.
 
 ```bash
 # 4a. At key-on, immediately read EEPROM and note wall-clock time
@@ -602,7 +606,7 @@ Purpose: Determine the exact time-per-count for `ecm_runtime_accumulator`.
 
 ### Test 5: Keyon-Duration Threshold Check (optional)
 
-Purpose: Verify the 0x2903 (10,499) threshold on `keyon_duration_counter`.
+Purpose: Verify the 0x2903 (10,499) threshold on `key_off_duration_ticks` (was `keyon_duration_counter`).
 At 1.5 Hz, that's ~7000 seconds = ~117 minutes. This means a key-on session
 shorter than ~2 hours may NOT trigger a periodic save — only the key-off
 save would fire.
@@ -648,6 +652,6 @@ Add results to the [Bench Results](#bench-results-2026-04-08) section
 - `firmware/CM848_S90140.06_analysis/docs/service_0x4a_protocol.md`
 - `firmware/CM848_S90140.06_analysis/output/e2m_parameters.csv`
 - `firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp` — see
-  `cm848_initJ1939ProtocolHandlers` @ 0x232B4, TX enqueue list inside it,
-  and `cm848_initPgn65248VehicleDistanceHandler` @ 0x26C6C.
+  `cm848_registerJ1939PgnRequestHandlers` @ 0x232B4, TX enqueue list inside it,
+  and `initializePgn65248VehicleDistanceHandler` @ 0x26C6C.
 - `work/docs/clip-protocol-spec.md` — CLIP service reference.

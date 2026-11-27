@@ -14,10 +14,12 @@ RAM-address grep is blind):
 | Region (CM848) | Range | `_cal`? |
 |---|---|---|
 | EEPROM direct | 0x01000000–0x01000FFF | ✅ |
-| EEPROM shadow RAM | 0x003FEExx | ✅ |
-| ROM→RAM copy window | 0x003F9800–0x003FDB30 | ❌ |
+| EEPROM RAM mirror | 0x003FD482–0x003FEEC1 (RAM = 0x3FD482 + EEPROM offset) | ✅ |
+| ROM→RAM copy window (boot image) | 0x003F9800–0x003FD481 | ❌ |
 | Bank1 ROM / Bank2 flash | 0x0–0x6FFFF / 0x500000–0x53DFFF | ❌ |
 | Working / computed RAM | 0x0040xxxx, other 0x003Fxxxx | ❌ |
+
+The copy window's top (0x3FD482–0x3FDB2F) overlaps the mirror; the auditor classifies it as the mirror.
 
 CM550: EEPROM 0x01xxxxxx → `_cal`; ROM/RAM/ext-RAM → no.
 
@@ -34,13 +36,14 @@ Output groups every contradiction:
   reflash-calibration block; confirm against the e2m data-record region before stripping.
 - **MISSING** — an EEPROM-region name *without* `_cal` → probably should have it.
 
-## Known backlog — don't panic at the count
+## Current counts (CM848)
 
-CM848 currently reports **~1352 HARD** contradictions. These are **legacy** names minted during
-the 2026-02/05 bulk DAT-naming campaigns *before* the EEPROM-only rule crystallized — not new
-bugs. Treat the report as a cleanup backlog, not a blocker. Fix opportunistically: when you touch
-a function, strip `_cal` from the working-RAM globals it uses (edit `global_variables.csv`, then
-`build` — see [[editing-firmware-csvs]]).
+HARD and SOFT are **0** since PR #53 round 39 (2026-11-22). The ~1352 legacy `_cal` names that the
+2026-02/05 bulk DAT-naming campaigns minted before the EEPROM-only rule are all fixed. So a new HARD
+is a new mistake: fix it in the same change (edit `global_variables.csv`, then `build` — see
+[[editing-firmware-csvs]]). MISSING is 221 (PR #53 round 43): mostly documentation rows
+(`name[n]` / `name.field`) and rows at addresses the boot kernel shares. `firmware/CLAUDE.md` breaks
+it down; do not add `_cal` to those blindly.
 
 ## The mechanical limit (when to escalate to judgment)
 
@@ -55,6 +58,6 @@ strongest "this isn't a calibration" signal. For that per-symbol call, use
 
 - Stripping `_cal` from a Bank1-ROM constant *because the auditor flagged it SOFT* without checking
   it's outside the e2m calibration data-record block — verify first.
-- Adding `_cal` to a 0x0040xxxx value because neighbors have it — neighbors are the legacy backlog;
-  gate on the region, not the neighborhood.
-- Treating the HARD count as "1352 bugs to fix now" — it's debt, fix opportunistically.
+- Adding `_cal` to a 0x0040xxxx value because neighbors have it — gate on the region, not the
+  neighborhood.
+- Treating a new HARD as old debt — the legacy backlog is cleared, so any HARD is a fresh mistake.

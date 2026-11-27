@@ -1,0 +1,92 @@
+col5,block,type,e2m_name,address,words,row_name,row_type,description
+0B43,8BBE,X,RE_AH_Boost_Curve_1_2_OSS_Axis,0x407876,8,transmission_anti_hunt_1_2_boost_pressure_axis,word[8],Trans output shaft speed axis for AH_Boost_1_2 curve
+0B44,8BBF,Y,RE_AH_Boost_Curve_1_2,0x407886,8,transmission_anti_hunt_1_2_boost_pressure_values,word[8],Governor press vs oss to force 1-2 shift under anti-hunt conditions
+0B45,8BC0,X,RE_AH_Boost_Curve_2_3_OSS_Axis,0x407896,8,transmission_anti_hunt_2_3_boost_pressure_axis,word[8],Trans output shaft speed axis for AH_Boost_2_3 curve
+0B46,8BC1,Y,RE_AH_Boost_Curve_2_3,0x4078a6,8,transmission_anti_hunt_2_3_boost_pressure_values,word[8],Governor press vs oss to force 2-3 shift under anti-hunt conditions
+0B47,8BC2,X,RE_Cold_OSS_Axis,0x4078b6,13,protection_derate_l4_rpm_axis_cal,word[13],Trans output shaft speed axis for cold pressure curve
+0B48,8BC3,Y,RE_Cold_Curve,0x4078d0,13,protection_derate_l4_rpm_output_cal,word[13],Governor pressure vs OSS when cold (Trans temp < RE_T_Trans_Cold)
+0B49,8BC4,X,RE_Cruise_3_4_OSS_Axis,0x4078ea,9,protection_threshold_l2_axis_cal,word[9],Trans output shaft speed axis for cruise 3-4 shift curve
+0B4A,8BC5,Y,RE_Cruise_3_4,0x4078fc,9,protection_threshold_l2_output_cal,word[9],TPS vs OSS which defines 3-4 upshift point in cruise mode
+0B4B,8BC6,X,RE_Cruise_4_3_OSS_Axis,0x40790e,9,protection_threshold_l1_axis_cal,word[9],Trans output shaft speed axis for cruise 4-3 downshift curve
+0B4C,8BC7,Y,RE_Cruise_4_3,0x407920,9,protection_threshold_l1_output_cal,word[9],TPS vs OSS which defines the 4-3 downshift point in cruise mode
+0B4D,8BC8,X,RE_Cruise_OSS_Axis,0x407932,15,protection_derate_l3_rpm_axis_cal,word[15],Trans output shaft speed axis for cruise pressure curve
+0B4E,8BC9,Y,RE_Cruise_Curve,0x407950,15,protection_derate_l3_rpm_output_cal,word[15],Governor press vs OSS in cruise mode
+0B4F,8BCA,X,RE_ERPM_Low_Range_Target_Throttle_Axis,0x40796e,9,fuel_demand_ctrl_axis_cal,word[9],Throttle axis for lowrange erpm upshift table
+0B50,8BCB,Y,RE_ERPM_Low_Range_Target,0x407980,9,fuel_demand_ctrl_values_cal,word[9],Low range upshift target erpm as function of throttle
+0B51,8BCC,X,RE_Fuel_Economy_OSS_Axis,0x407992,13,protection_derate_l2_rpm_axis_a_cal,word[13],Trans output shaft speed axis for fuel economy curve
+0B52,8BCD,Y,RE_Fuel_Economy_Curve,0x4079ac,13,protection_derate_l2_rpm_output_a_cal,word[13],Governor Press vs OSS when TPS < RE_TPS_Fuel_Economy
+0B53,8BCE,X,RE_Hold_Curve_1_Throttle_Axis,0x4079c6,9,transmission_anti_hunt_1_2_hold_pressure_axis,word[9],TPS axis for hold_curve_1
+0B54,8BCF,Y,RE_Hold_Curve_1,0x4079d8,9,transmission_anti_hunt_1_2_hold_pressure_values,word[9],Governor Press vs TPS to prevent 1-2 upshift in anti-hunt conditions
+0B55,8BD0,X,RE_Hold_Curve_2_Throttle_Axis,0x4079ea,9,transmission_anti_hunt_2_3_hold_pressure_axis,word[9],TPS axis for hold_curve_2
+0B56,8BD1,Y,RE_Hold_Curve_2,0x4079fc,9,transmission_anti_hunt_2_3_hold_pressure_values,word[9],Governor Press vs TPS to prevent 2-3 upshift in anti-hunt conditions
+0B57,8BD2,X,RE_Lockup_Cltemp_3_Temp_Axis,0x407a0e,9,protection_overtemp_l3_coolant_axis_cal,word[9],Coolant temp axis for 3rd gear lockup cltemp curve
+0B58,8BD3,Y,RE_Lockup_Cltemp_3,0x407a20,9,protection_overtemp_l3_coolant_output_cal,word[9],Min OSS for lockup vs coolant temp in 3rd gear
+0B59,8BD4,X,RE_Lockup_Cltemp_4_Temp_Axis,0x407a32,9,protection_overtemp_coolant_axis_b_cal,word[9],Coolant temp axis for 4th gear lockup cltemp curve
+0B5A,8BD5,Y,RE_Lockup_Cltemp_4,0x407a44,9,protection_overtemp_coolant_output_b_cal,word[9],Min OSS for lockup vs coolant temp in 4th gear
+0B5B,8BD6,X,RE_Lockup_Curve_3_Low_Range_OSS_Axis,0x407a56,8,protection_fuel_threshold_l3_rpm_axis_cal,word[8],Trans output shaft speed axis for 3rd gear low-range lockup curve
+0B5C,8BD7,Y,RE_Lockup_Curve_3_Low_Range,0x407a66,8,protection_fuel_threshold_l3_rpm_output_cal,word[8],Max throttle for lockup in 3rd gear vs OSS in low range mode
+0B5D,8BD8,X,RE_Lockup_Curve_4_OSS_Axis,0x407a76,9,fourth_gear_tcc_lockup_output_speed_axis,word[9],Trans output shaft speed axis for 4th gear lockup curve
+0B5Ea,8CA3,X,RE_Lockup_Curve_4_Boost_Axis,0x407a88,5,fourth_gear_tcc_lockup_boost_axis,word[5],inline axis
+0B5E,8BD9,Z,RE_Lockup_Curve_4,0x407a92,32,fourth_gear_tcc_lockup_fuel_demand_thresholds,word[32],Max throttle for lockup in 4th gear vs OSS
+0B5F,8BDA,X,RE_Lockup_Curve_4_Low_Range_OSS_Axis,0x407ad2,9,protection_fuel_threshold_l4_rpm_axis_cal,word[9],Trans output shaft speed axis for 4th-gear low-range lockup curve
+0B60,8BDB,Y,RE_Lockup_Curve_4_Low_Range,0x407ae4,9,protection_fuel_threshold_l4_rpm_output_cal,word[9],Max throttle for lockup in 4th gear vs OSS in low-range mode
+0B61,8BDC,X,RE_Lockup_Curve_Cruise_OSS_Axis,0x407af6,9,fourth_gear_tcc_lockup_cruise_output_speed_axis,word[9],Trans output shaft speed axis for cruise lockup curve
+0B62a,8D07,X,RE_Lockup_Curve_Cruise_Boost_Axis,0x407b08,5,fourth_gear_tcc_lockup_cruise_boost_axis,word[5],inline axis
+0B62,8BDD,Z,RE_Lockup_Curve_Cruise,0x407b12,32,fourth_gear_tcc_lockup_cruise_fuel_demand_thresholds,word[32],Max throttle for lockup vs OSS in cruise mode
+0B63,8BDE,X,RE_Low_Range_3_4_OSS_Axis,0x407b52,9,protection_threshold_l2_axis_b_cal,word[9],Trans output shaft speed axis for low range 3-4 curve
+0B64,8BDF,Y,RE_Low_Range_3_4,0x407b64,9,protection_threshold_l2_output_b_cal,word[9],Max throttle for 3-4 upshift vs OSS in low range mode
+0B65,8BE0,X,RE_Low_Range_4_3_OSS_Axis,0x407b76,9,protection_threshold_l1_axis_b_cal,word[9],Trans output shaft speed axis for low range 4-3 curve
+0B66,8BE1,Y,RE_Low_Range_4_3,0x407b88,9,protection_threshold_l1_output_b_cal,word[9],Min throttle for 4-3 downshift vs OSS in low range mode
+0B67,8BE2,X,RE_Low_Range_Boost_Pressure_1_2_Throttle_Axis,0x407b9a,9,protection_derate_rpm_fuel_axis_cal,word[9],TPS axis for low range boost 1-2 curve
+0B68,8BE3,Y,RE_Low_Range_Boost_Pressure_1_2,0x407bac,9,protection_derate_rpm_values_cal,word[9],Gov press vs TPS to force 1-2 upshift in low range mode
+0B69,8BE4,X,RE_Low_Range_Boost_Pressure_2_3_Throttle_Axis,0x407bbe,9,protection_derate_l2_fuel_axis_b_cal,word[9],TPS axis for low range boost pressure 2-3 curve
+0B6A,8BE5,Y,RE_Low_Range_Boost_Pressure_2_3,0x407bd0,9,protection_derate_l2_fuel_output_b_cal,word[9],Gov press vs TPS to force 2-3 upshift in low range mode
+0B6B,8BE6,X,RE_Low_Range_OSS_Axis,0x407be2,9,protection_load_axis_b_cal,word[9],Trans output shaft speed axis for low range curve
+0B6C,8BE7,Y,RE_Low_Range_Curve,0x407bf4,9,protection_load_values_b_cal,word[9],Gov press vs OSS in low range mode
+0B6D,8BE8,X,RE_Low_Range_Hold_Pressure_1_2_Throttle_Axis,0x407c06,9,protection_derate_l1_fuel_axis_b_cal,word[9],TPS axis for low range hold pressure 1-2 curve
+0B6E,8BE9,Y,RE_Low_Range_Hold_Pressure_1_2,0x407c18,9,protection_derate_l1_fuel_output_b_cal,word[9],Gov press to prevent 1-2 upshift vs TPS in low range mode
+0B6F,8BEA,X,RE_Low_Range_Hold_Pressure_2_3_Throttle_Axis,0x407c2a,9,protection_derate_l1_fuel_axis_c_cal,word[9],TPS axis for low range hold pressure 2-3 curve
+0B70,8BEB,Y,RE_Low_Range_Hold_Pressure_2_3,0x407c3c,9,protection_derate_l1_fuel_output_c_cal,word[9],Gov press to prevent 2-3 upshift vs TPS in low range mode
+0B71,8BEC,X,RE_Normal_3_4_OSS_Axis,0x407c4e,9,protection_threshold_l3_axis_b_cal,word[9],Trans output shaft speed axis for normal 3-4 curve
+0B72,8BED,Y,RE_Normal_3_4,0x407c60,9,protection_threshold_l3_output_b_cal,word[9],TPS for 3-4 upshift vs OSS when not in cruise mode
+0B73,8BEE,X,RE_Normal_4_3_OSS_Axis,0x407c72,9,protection_threshold_l4_axis_b_cal,word[9],Trans output shaft speed axis for normal 4-3 curve
+0B74,8BEF,Y,RE_Normal_4_3,0x407c84,9,protection_threshold_l4_output_b_cal,word[9],TPS for 4-3 downshift vs OSS when not in cruise mode
+0B75,8BF0,X,RE_Normal_OSS_Axis,0x407c96,14,governor_pressure_base_curve_axis,word[14],Trans output shaft speed axis for normal pressure curve
+0B76,8BF1,Y,RE_Normal_Curve,0x407cb2,14,governor_pressure_base_curve_values,word[14],Gov press vs OSS for normal operating conditions
+0B77,8BF2,X,RE_PSA_Max_1_2_Throttle_Axis,0x407cce,7,transmission_1_2_upshift_minimum_post_shift_acceleration_axis,word[7],TPS axis for 1-2 post-shift accel table
+0B78,8BF3,Y,RE_PSA_Max_1_2,0x407cdc,7,transmission_1_2_upshift_minimum_post_shift_acceleration_values,word[7],Min acceptable post-shift accel vs TPS to allow 1-2 upshift
+0B79,8BF4,X,RE_PSA_Max_2_3_Throttle_Axis,0x407cea,7,transmission_2_3_upshift_minimum_post_shift_acceleration_axis,word[7],TPS axis for 2-3 post-shift accel table
+0B7A,8BF5,Y,RE_PSA_Max_2_3,0x407cf8,7,transmission_2_3_upshift_minimum_post_shift_acceleration_values,word[7],Min acceptable post-shift accel vs TPS to allow 2-3 upshift
+0B7B,8BF6,X,RE_PSA_Max_3_4_Throttle_Axis,0x407d06,7,transmission_3_4_upshift_minimum_post_shift_acceleration_axis,word[7],TPS axis for 3-4 post-shift accel curve
+0B7C,8BF7,Y,RE_PSA_Max_3_4,0x407d14,7,transmission_3_4_upshift_minimum_post_shift_acceleration_values,word[7],Min acceptable post-shift accel vs TPS to allow 3-4 upshift
+0B7D,8BF8,X,RE_TPS_Max_1_2_OSS_Axis,0x407d22,7,protection_load_rate_l1_axis_cal,word[7],Trans output shaft speed axis for TPS max 1-2 curve
+0B7E,8BF9,Y,RE_TPS_Max_1_2,0x407d30,7,protection_load_rate_l1_output_cal,word[7],Lower boundary TPS for 1-2 antihunt envelope vs OSS
+0B7F,8BFA,X,RE_TPS_Max_2_3_OSS_Axis,0x407d3e,7,protection_load_rate_l2_axis_cal,word[7],Trans output shaft speed axis for TPS max 2-3 curve
+0B80,8BFB,Y,RE_TPS_Max_2_3,0x407d4c,7,protection_load_rate_l2_output_cal,word[7],Lower boundary TPS for 2-3 antihunt envelope vs OSS
+0B81,8BFC,X,RE_TPS_Max_3_4_OSS_Axis,0x407d5a,7,protection_load_rate_l3_axis_cal,word[7],Trans output shaft speed axis for TPS max 3-4 curve
+0B82,8BFD,Y,RE_TPS_Max_3_4,0x407d68,7,protection_load_rate_l3_output_cal,word[7],Lower boundary TPS for 3-4 antihunt envelope vs OSS
+0B83,8BFE,X,RE_TPS_Min_1_2_OSS_Axis,0x407d76,7,protection_fuel_limit_l1_axis_cal,word[7],Trans output shaft speed axis for TPS min 1-2 curve
+0B84,8BFF,Y,RE_TPS_Min_1_2,0x407d84,7,protection_fuel_limit_l1_output_cal,word[7],Upper boundary TPS for 1-2 antihunt envelope vs OSS
+0B85,8C00,X,RE_TPS_Min_2_3_OSS_Axis,0x407d92,7,protection_fuel_limit_l2_axis_cal,word[7],Trans output shaft speed axis for TPS min 2-3 curve
+0B86,8C01,Y,RE_TPS_Min_2_3,0x407da0,7,protection_fuel_limit_l2_output_cal,word[7],Upper boundary TPS for 2-3 antihunt envelope vs OSS
+0B87,8C02,X,RE_TPS_Min_3_4_OSS_Axis,0x407dae,7,protection_fuel_limit_l3_axis_cal,word[7],Trans output shaft speed axis for TPS min 3-4 curve
+0B88,8C03,Y,RE_TPS_Min_3_4,0x407dbc,7,protection_fuel_limit_l3_output_cal,word[7],Upper boundary TPS for 3-4 antihunt envelope vs OSS
+0B89,8C04,X,RE_TPS_3DSCL_Throttle_Axis,0x407dca,18,transmission_throttle_prescale_axis,word[18],TPS axis for TPS torque calc pre-scale curve
+0B8A,8C05,Y,RE_TPS_3DSCL,0x407dee,18,transmission_throttle_prescale_values,word[18],Table to pre-scale TPS for use in trans turbine torque calc
+0B8B,8C06,X,RE_Turbine_3DSCL_Speed_Axis,0x407e12,10,transmission_turbine_speed_prescale_axis,word[10],Trans turbine speed axis for turbine spd pre-scale curve
+0B8C,8C07,Y,RE_Turbine_3DSCL,0x407e26,10,transmission_turbine_speed_prescale_values,word[10],Table to pre-scale turbine spd for use in trans turbine torque calc
+0B8D,8C08,X,RE_Unlock_Curve_3_Low_Range_OSS_Axis,0x407e3a,9,protection_fuel_threshold_l3_axis_cal,word[9],Trans output shaft speed axis for 3rd gear low range unlock curve
+0B8E,8C09,Y,RE_Unlock_Curve_3_Low_Range,0x407e4c,9,protection_fuel_threshold_l3_values_cal,word[9],Max TPS for unlock vs OSS while in 3rd gear low range
+0B8F,8C0A,X,RE_Unlock_Curve_4_OSS_Axis,0x407e5e,9,protection_fuel_load_rate_a_axis_cal,word[9],Trans output shaft speed axis for 4th gear unlock curve
+0B90,8C0B,Y,RE_Unlock_Curve_4,0x407e70,9,protection_fuel_load_rate_a_values_cal,word[9],Max TPS for unlock vs OSS in 4th gear
+0B91,8C0C,X,RE_Unlock_Curve_4_Low_Range_OSS_Axis,0x407e82,9,protection_fuel_threshold_l4_axis_cal,word[9],Trans output shaft speed axis for 4th gear low range unlock curve
+0B92,8C0D,Y,RE_Unlock_Curve_4_Low_Range,0x407e94,9,protection_fuel_threshold_l4_values_cal,word[9],Max TPS for unlock vs OSS in 4th gear low range
+0B93,8C0E,X,RE_Unlock_Curve_Cruise_OSS_Axis,0x407ea6,9,protection_fuel_load_rate_b_axis_cal,word[9],Trans output shaft speed axis for cruise unlock curve
+0B94,8C0F,Y,RE_Unlock_Curve_Cruise,0x407eb8,9,protection_fuel_load_rate_b_values_cal,word[9],Max TPS for unlock vs OSS in cruise mode
+0B95,8C10,X,RE_WOT_Cold_OSS_Axis,0x407eca,11,protection_derate_default_rpm_axis_cal,word[11],Trans output shaft speed axis for WOT cold curve
+0B96,8C11,Y,RE_WOT_Cold_Curve,0x407ee0,11,protection_derate_default_rpm_output_cal,word[11],Gov press vs OSS with WOT and cold temperatures
+0B97,8C12,X,RE_WOT_OSS_Axis,0x407ef6,11,protection_load_axis_c_cal,word[11],Trans output shaft speed axis for WOT curve
+0B98,8C13,Y,RE_WOT_Curve,0x407f0c,11,protection_load_values_c_cal,word[11],Gov press vs OSS with WOT and normal temperatures
+0B99,8C14,X,RE_Torque_Input_TPS_Axis,0x407f22,9,protection_load_axis_d_cal,word[9],Scaled TPS axis for trans turbine torque curve
+0B9A,8C15,Y,RE_Torque_Input_Turbine_Axis,0x407f34,9,protection_load_values_d_cal,word[9],Scaled turbine speed axis for trans turbine torque curve
+0B9B,8C16,Z,RE_Torque_Input,0x407f46,64,transmission_turbine_torque_x_axis,word[18],Table to estimate trans turbine torque vs scaled TPS and turbine spd

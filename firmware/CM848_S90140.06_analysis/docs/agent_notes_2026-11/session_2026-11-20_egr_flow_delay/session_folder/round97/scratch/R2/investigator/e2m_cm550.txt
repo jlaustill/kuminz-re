@@ -1,0 +1,130 @@
+0x00808040: 1060 +000A HSMXFTRF [RPM] -> 0x808040 hsg_maximum_filtered_engine_speed_error_0_1000 i16; HSG MAXIMUM FILTERED ENGINE SPEED ERROR~0 - 1000
+0x00808042: 1060 +000C HSMNFTRF [RPM] -> 0x808042 hsg_minimum_filtered_engine_speed_error_1000_0 i16; HSG MINIMUM FILTERED ENGINE SPEED ERROR~-1000 - 0
+0x00808044: 1060 +000E HSMXITFL [MM3S] -> 0x808044 hsg_maximum_integrator_fuel_output_0_100 i16; HSG MAXIMUM INTEGRATOR FUEL OUTPUT~0 - 100
+0x00808046: 1060 +0010 HSMNITFL [MM3S] -> 0x808046 hsg_minimum_integrator_fuel_output_0_69_44 i16; HSG MINIMUM INTEGRATOR FUEL OUTPUT~0 - 69.44
+0x00808048: 1060 +0012 HSCNRSFL [MM3S] -> 0x808048 hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8048 i16; HSG INTEGRATOR RESET VALUE USED TO ADJUST INTEGRATOR UNDER DEF~0 - 100
+0x0080804a: 1060 +0014 HSITRSES [RPM] -> 0x80804a engine_speed_below_which_the_hsg_integrator_is_reset_1000_1000 i16; ENGINE SPEED BELOW WHICH THE HSG INTEGRATOR IS RESET~-1000 - 1000
+0x0080804c: 1060 +0016 HSITRSFL [MM3S] -> 0x80804c engine_fueling_below_which_the_hsg_integrator_may_be_reset_0_100 word; ENGINE FUELING BELOW WHICH THE HSG INTEGRATOR MAY BE RESET~0 - 100
+0x0080804e: 1060 +0018 HSMNITPZ [MM3S] -> 0x80804e hsg_integrator_preset_minimum_0_100 i16; HSG INTEGRATOR PRESET MINIMUM~0 - 100
+0x00808050: 1060 +001A HSMXITPZ [MM3S] -> 0x808050 hsg_integrator_preset_maximum_0_100 i16; HSG INTEGRATOR PRESET MAXIMUM~0 - 100
+0x00808052: 1060 +001C HSMXFLLM [MM3S] -> 0x808052 hsg_fueling_clamp_max_0_100 word; HSG FUELING CLAMP MAX~0 - 100
+0x00808054: 1060 +001E HSMNFLLM [MM3S] -> 0x808054 hsg_fueling_clamp_min_0_100 word; HSG FUELING CLAMP MIN~0 - 100
+0x00808058: 1060 +0022 HSDVAJEN [HEX] -> 0x808058 flag_to_enable_disable_the_hsg_derivative_gain_adjustment_scheme_0_1 word; FLAG TO ENABLE/DISABLE THE HSG DERIVATIVE GAIN ADJUSTMENT SCHEME~0 - 1
+0x0080805a: 1060 +0024 HSPPAJEN [HEX] -> 0x80805a flag_to_enable_disable_the_hsg_proportional_gain_adjustment_sche_0_1 word; FLAG TO ENABLE/DISABLE THE HSG PROPORTIONAL GAIN ADJUSTMENT SCHE~0 - 1
+0x0080805c: 1060 +0026 HSITAJEN [HEX] -> 0x80805c flag_to_enable_disable_the_hsg_integral_gain_adjustment_scheme_0_1 word; FLAG TO ENABLE/DISABLE THE HSG INTEGRAL GAIN ADJUSTMENT SCHEME.~0 - 1
+0x0080805e: 1060 +0028 HSDVFLMX [MM3S] -> 0x80805e hsg_pid_derivative_fueling_contribution_upper_limit_260_260 i16; HSG PID DERIVATIVE FUELING CONTRIBUTION UPPER LIMIT~-260 - 260
+0x00808060: 1060 +002A HSDVFLMN [MM3S] -> 0x808060 hsg_pid_derivative_fueling_contribution_lower_limit_260_260 i16; HSG PID DERIVATIVE FUELING CONTRIBUTION LOWER LIMIT~-260 - 260
+0x00808062: 1060 +002C HSPPFLMX [MM3S] -> 0x808062 hsg_pid_proportional_fueling_contribution_upper_limit_160_160 i16; HSG PID PROPORTIONAL FUELING CONTRIBUTION UPPER LIMIT~-160 - 160
+0x00808064: 1060 +002E HSPPFLMN [MM3S] -> 0x808064 hsg_pid_proportional_fueling_contribution_lower_limit_160_160 i16; HSG PID PROPORTIONAL FUELING CONTRIBUTION LOWER LIMIT~-160 - 160
+0x00808066: 1060 +0030 HSITRSOF [%FU] -> 0x808066 hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066 i16; HSG INTEGRATOR RESET VALUE USED TO ADJUST INTEGRATOR UNDER DEF~0 - 100
+0x00808110: 13B4 +0000 HSDCFTC1 [NONE] -> 0x808110 filter_coefficient_1_from_hsg_lead_lag_dynamic_compensator_0_1 word; FILTER COEFFICIENT #1 FROM HSG LEAD/LAG DYNAMIC COMPENSATOR~0-1
+0x00808112: 13B4 +0002 HSDCFTC2 [NONE] -> 0x808112 filter_coefficient_2_from_hsg_lead_lag_dynamic_compensator_0_1 word; FILTER COEFFICIENT #2 FROM HSG LEAD/LAG DYNAMIC COMPENSATOR~0-1
+0x00808114: 13B4 +0004 HSDCTRCF [NONE] -> 0x808114 filter_coefficient_used_by_hsg_lead_lag_compensator_for_no_filteri_0_1 word; FILTER COEFFICIENT USED BY HSG LEAD/LAG COMPENSATOR FOR NO-FILTERI~0-1
+0x00808116: 13B4 +0006 HSDCGRTD [NONE] -> 0x808116 maximim_gear_ratio_value_for_permitting_hsg_lead_lag_comp_0_1_15_999 word; MAXIMIM GEAR RATIO VALUE FOR PERMITTING HSG LEAD/LAG COMP~0.1 - 15.999
+0x00808118: 1290 +0000 HSACRFBP [R/S] -> 0x808118 hsg_acceleration_rate_threshold_for_transient_conditions_0_2540 word; HSG ACCELERATION RATE THRESHOLD FOR TRANSIENT CONDITIONS~0-2540
+0x0080811a: 1290 +0002 HSACRFTM [SEC] -> 0x80811a hsg_acceleration_reference_time_for_transient_conditions_0_10 word; HSG ACCELERATION REFERENCE TIME FOR TRANSIENT CONDITIONS~0-10
+0x0080811c: 1290 +0004 HSHIRFTD [RPM] -> 0x80811c hsg_speed_threshold_for_high_reference_speed_region_1400_5000 word; HSG SPEED THRESHOLD FOR HIGH REFERENCE SPEED REGION~1400 - 5000
+0x00808120: 1290 +0008 HSHIFTTC [NONE] -> 0x808120 hsg_engine_speed_error_filter_time_constant_for_high_ref_speed_c_0_1 word; HSG ENGINE SPEED ERROR FILTER TIME CONSTANT FOR HIGH REF SPEED C~0 - 1
+0x00808126: 1290 +000E HSLORFTD [RPM] -> 0x808126 hsg_speed_threshold_for_low_reference_speed_region_1400_5000 word; HSG SPEED THRESHOLD FOR LOW REFERENCE SPEED REGION~1400 - 5000
+0x0080812a: 1290 +0012 HSLOFTTC [NONE] -> 0x80812a hsg_engine_speed_error_filter_time_constant_for_low_ref_speed_co_0_1 word; HSG ENGINE SPEED ERROR FILTER TIME CONSTANT FOR LOW REF SPEED CO~0 - 1
+0x00808132: 1290 +001A HSTZFTTC [NONE] -> 0x808132 hsg_engine_speed_error_filter_time_constant_for_transient_condit_0_1 word; HSG ENGINE SPEED ERROR FILTER TIME CONSTANT FOR TRANSIENT CONDIT~0 - 1
+0x00808138: 1062 +0000 HSRFRMRT [R/S] -> 0x808138 incremental_step_in_hsg_reference_used_when_reference_is_incre_0_300 word; INCREMENTAL STEP IN HSG REFERENCE USED WHEN REFERENCE IS INCRE~0 - 300
+0x0080813a: 1062 +0002 SWHSG_00 [HEX] -> 0x80813a blank_spot_in_hsg_calibration_0_0_1_0_813a word; BLANK SPOT IN HSG CALIBRATION~0.0 - 1.0
+0x0080813c: 1062 +0004 SWHSG_01 [HEX] -> 0x80813c blank_spot_in_hsg_calibration_0_0_1_0_813c word; BLANK SPOT IN HSG CALIBRATION~0.0 - 1.0
+0x0080813e: 1062 +0006 HSMXDPFL [MM3S] -> 0x80813e maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100 word; MAXIMUM ALLOWABLE FUEL THAT MAY BE USED TO DETERMINE HSG DROOP~0 - 100
+0x00808140: 1062 +0008 HSMNDPFL [MM3S] -> 0x808140 minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100 word; MINIMUM ALLOWABLE FUEL THAT MAY BE USED TO DETERMINE HSG DROOP~0 - 100
+0x00808506: 1281 +0000 HSGVSPOF [RPM] -> 0x808506 amount_added_to_hsg_governed_speed_to_equal_hsg_breakpoint_speed_0_50 word; AMOUNT ADDED TO HSG_GOVERNED_SPEED TO EQUAL HSG_BREAKPOINT_SPEED~0-50
+0x0080a932: 1170 +0000 ASRSSTX1 [RPM] -> 0x80a932 asg_reset_state_x1_2000_2000 i16; ASG RESET STATE X1~-2000 - 2000
+0x0080a934: 1170 +0002 ASRSSTX2 [%FU] -> 0x80a934 asg_reset_state_x2_0_100 i16; ASG RESET STATE X2~0 - 100
+0x0080a936: 1170 +0004 ASRSSTX3 [RPM] -> 0x80a936 asg_reset_state_x3_0_4500 word; ASG RESET STATE X3~0 - 4500
+0x0080a938: 1170 +0006 ASRSSTX4 [%FU] -> 0x80a938 asg_reset_state_x4_100_100 i16; ASG RESET STATE X4~-100 - 100
+0x0080a93a: 1170 +0008 ASRSSTX5 [%FU] -> 0x80a93a asg_reset_state_x5_0_100 i16; ASG RESET STATE X5~0 - 100
+0x0080a93e: 1170 +000C ASAPODMD [NONE] -> 0x80a93e asg_application_specific_reference_override_mode_true_false word; ASG APPLICATION SPECIFIC REFERENCE OVERRIDE MODE~TRUE / FALSE
+0x0080a940: 1170 +000E ASAPRF [RPM] -> 0x80a940 asg_application_specific_reference_speed_0_4500 word; ASG APPLICATION SPECIFIC REFERENCE SPEED~0 - 4500
+0x0080a942: 1170 +0010 ASAP01DP [NONE] -> 0x80a942 asg_application_specific_droop_gain_1_0_2 i16; ASG APPLICATION SPECIFIC DROOP GAIN 1~0 - 2
+0x0080a944: 1170 +0012 ASAP02DP [NONE] -> 0x80a944 asg_application_specific_droop_gain_2_0_2 word; ASG APPLICATION SPECIFIC DROOP GAIN 2~0 - 2
+0x0080a948: 1170 +0016 ASAPHILM [%FU] -> 0x80a948 asg_application_specific_fueling_high_limit_0_100 word; ASG APPLICATION SPECIFIC FUELING HIGH LIMIT~0 - 100
+0x0080a94a: 1170 +0018 ASAPLOLM [%FU] -> 0x80a94a asg_application_specific_fueling_lower_limit_0_50 word; ASG APPLICATION SPECIFIC FUELING LOWER LIMIT~0 - 50
+0x0080a94c: 1170 +001A ASAPRS [NONE] -> 0x80a94c asg_application_specific_reset_true_false word; ASG APPLICATION SPECIFIC RESET~TRUE / FALSE
+0x0080a94e: 1170 +001C ASAPSTX1 [RPM] -> 0x80a94e asg_application_specific_state_x1_reset_value_2000_2000 i16; ASG APPLICATION SPECIFIC STATE X1 RESET VALUE~-2000 - 2000
+0x0080a950: 1170 +001E ASAPSTX2 [%F] -> 0x80a950 asg_application_specific_state_x2_reset_value_0_100 i16; ASG APPLICATION SPECIFIC STATE X2 RESET VALUE~0 - 100
+0x0080a952: 1170 +0020 ASAPSTX3 [RPM] -> 0x80a952 asg_application_specific_state_x3_reset_value_0_4500 word; ASG APPLICATION SPECIFIC STATE X3 RESET VALUE~0 - 4500
+0x0080a954: 1170 +0022 ASAPSTX4 [%FU] -> 0x80a954 asg_application_specific_state_x4_reset_value_100_100 i16; ASG APPLICATION SPECIFIC STATE X4 RESET VALUE~-100 - 100
+0x0080a956: 1170 +0024 ASAPSTX5 [%F] -> 0x80a956 asg_application_specific_state_x5_reset_value_0_100 i16; ASG APPLICATION SPECIFIC STATE X5 RESET VALUE~0 - 100
+0x0080a96c: 107C +0000 ASDV [%FU] -> 0x80a96c asg_derivative_deadband_output i16; ASG DERIVATIVE TERM~-100 - 100
+0x0080a96e: 107C +0002 ASERDC [RPM] -> 0x80a96e asg_error_difference_2000_2000 i16; ASG ERROR DIFFERENCE~-2000 - 2000
+0x0080a970: 107C +0004 ASFBDC [RPM] -> 0x80a970 asg_feedback_difference_term_1000_1000 i16; ASG FEEDBACK DIFFERENCE TERM~-1000 - 1000
+0x0080a972: 107C +0006 ASFTRF [RPM] -> 0x80a972 asg_filtered_reference_speed_0_4500 word; ASG FILTERED REFERENCE SPEED~0 - 4500
+0x0080a978: 107C +000C ASSTX1 [RPM] -> 0x80a978 asg_state_x1_2000_2000 i16; ASG STATE X1~-2000 - 2000
+0x0080a97a: 107C +000E ASSTX2 [%FU] -> 0x80a97a asg_state_x2_100_100 i16; ASG STATE X2~-100 - 100
+0x0080a97c: 107C +0010 ASSTX4 [%FU] -> 0x80a97c asg_state_x4_100_100 i16; ASG STATE X4~-100 - 100
+0x0080a97e: 107C +0012 ASSTX5 [%FU] -> 0x80a97e asg_state_x5_100_100 i16; ASG STATE X5~-100 - 100
+0x0080a980: 107C +0014 ASSTX6 [%FU] -> 0x80a980 asg_state_x6_100_100 i16; ASG STATE X6~-100 - 100
+0x0080a990: 107A +0004 ASRF [RPM] -> 0x80a990 asg_reference_speed_working word; SELECTED INPUT REFERENCE SPEED USED AS INPUT TO THE ASG~0 - 4500
+0x0080a992: 107A +0006 ASDPGN01 [NONE] -> 0x80a992 qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 word; ASG DROOP GAIN 1~0 - 2
+0x0080a992: 107C +0026 ASQIDPER [RPM] -> 0x80a992 qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 word; QPID ADJUSTED ASG DROOP COMPENSATED ERROR-INTEGRAL~-2000 - 2000
+0x0080a994: 107A +0008 ASDPGN02 [NONE] -> 0x80a994 asg_droop_gain_2_0_2 word; ASG DROOP GAIN 2~0 - 2
+0x0080a996: 107C +002A ASQPAJ [%FU] -> 0x80a996 asg_throttle_droop_gain_1_0_1 undefined; ASG QUADRATIC PROPORTIONAL ADJUSTMENT~-500 - 500
+0x0080a996: 107A +000A ASTH01DP [NONE] -> 0x80a996 asg_throttle_droop_gain_1_0_1 undefined; ASG THROTTLE DROOP GAIN 1~0 - 1
+0x0080a998: 107A +000C ASTH02DP [NONE] -> 0x80a998 asg_throttle_droop_gain_2_0_5_1 word; ASG THROTTLE DROOP GAIN 2~0.5 - 1
+0x0080a99a: 107C +002E ASQPDPER [RPM] -> 0x80a99a asg_selected_droop_slope_0_30 word; QPID ADJUSTED ASG DROOP COMPENSATED ERROR-PROPORTIONAL~-2000 - 2000
+0x0080a99a: 107A +000E ASSLDP [R/%F] -> 0x80a99a asg_selected_droop_slope_0_30 word; ASG SELECTED DROOP SLOPE~0 - 30
+0x0080a99c: 107A +0010 ASFLHILM [%FU] -> 0x80a99c asg_fueling_high_limit_0_100 i16; ASG FUELING HIGH LIMIT~0 - 100
+0x0080a99e: 107A +0012 ASFLLOLM [%FU] -> 0x80a99e asg_fueling_lower_limit_0_50 i16; ASG FUELING LOWER LIMIT~0 - 50
+0x0080a9a0: 107A +0014 ASETRS [NONE] -> 0x80a9a0 asg_external_reset_flag_true_false word; ASG EXTERNAL RESET FLAG~TRUE / FALSE
+0x0080a9a2: 107A +0016 ASDPFG [NONE] -> 0x80a9a2 asg_throttle_source_selector word; ASG DROOP SELECTION FLAG; USED TO SELECT DROOP SOURCE~TRUE / FALSE
+0x0080a9a4: 107A +0018 ASMNRP [RPM] -> 0x80a9a4 asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 word; ASG REFERENCE SPEED FOR 0% THROTTLE INPUT -SHOULD BE LESS THA~0 - 4500
+0x0080a9a6: 107A +001A ASMXRP [RPM] -> 0x80a9a6 asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 word; ASG REFERENCE SPEED FOR 100% THROTTLE INPUT -SHOULD BE GREATE~0 - 4500
+0x0080bcdb: 000E +000D DS04SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 1 USER SUPPLIED VALUE FOR SWITCH 4~ON/OFF
+0x0080bcdb: 000E +000D DS04SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 1 USER SUPPLIED VALUE FOR SWITCH 4~ON/OFF
+0x0080bcdb: 000E +000D DS23SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 4 USER SUPPLIED VALUE FOR SWITCH 23~ON/OFF
+0x0080bcdb: 000E +000D DS23SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 4 USER SUPPLIED VALUE FOR SWITCH 23~ON/OFF
+0x0080bcdb: 000E +000D DS25SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 0 USER SUPPLIED VALUE FOR SWITCH 25~ON/OFF
+0x0080bcdb: 000E +000D DS25SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 0 USER SUPPLIED VALUE FOR SWITCH 25~ON/OFF
+0x0080bcdb: 000E +000D DS27SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 2 USER SUPPLIED VALUE FOR SWITCH 27~ON/OFF
+0x0080bcdb: 000E +000D DS27SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 2 USER SUPPLIED VALUE FOR SWITCH 27~ON/OFF
+0x0080bcdb: 000E +000D DS28SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 3 USER SUPPLIED VALUE FOR SWITCH 28~ON/OFF
+0x0080bcdb: 000E +000D DS28SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 3 USER SUPPLIED VALUE FOR SWITCH 28~ON/OFF
+0x0080bcdb: 000E +000D DS29SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 5 USER SUPPLIED VALUE FOR SWITCH 29~ON/OFF
+0x0080bcdb: 000E +000D DS29SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 5 USER SUPPLIED VALUE FOR SWITCH 29~ON/OFF
+0x0080bcdb: 000E +000D DS30SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 6 USER SUPPLIED VALUE FOR SWITCH 30~ON/OFF
+0x0080bcdb: 000E +000D DS30SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 6 USER SUPPLIED VALUE FOR SWITCH 30~ON/OFF
+0x0080bcdb: 000E +000D DS31SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 7 USER SUPPLIED VALUE FOR SWITCH 31~ON/OFF
+0x0080bcdb: 000E +000D DS31SWUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYT 3 BIT 7 USER SUPPLIED VALUE FOR SWITCH 31~ON/OFF
+0x0080bcdb: 000E +000D DSAKCYUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYTE 3,BIT 5 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+0x0080bcdb: 000E +000D DSAKCYUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYTE 3,BIT 5 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+0x0080bcdb: 000E +000D DSAKHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYTE 3,BIT 3 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+0x0080bcdb: 000E +000D DSAKHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; BYTE 3,BIT 3 OF BITS 0-7, USER INPUT OF OVERRIDDEN SWITCH~ON / OFF
+0x0080bcdb: 000E +000D DSAKONUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR AC_ON_OFF_SWITCH~ON / OFF
+0x0080bcdb: 000E +000D DSAKONUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR AC_ON_OFF_SWITCH~ON / OFF
+0x0080bcdb: 000E +000D DSCLHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR THE RADIATOR COOLANT LEVEL HIGH FLAG ~ON / OFF
+0x0080bcdb: 000E +000D DSCLHIUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR THE RADIATOR COOLANT LEVEL HIGH FLAG ~ON / OFF
+0x0080bcdb: 000E +000D DSTHILUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR THE ACCELERATOR INTERLOCK SWITCH~ON/OFF
+0x0080bcdb: 000E +000D DSTHILUC [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR THE ACCELERATOR INTERLOCK SWITCH~ON/OFF
+0x0080bcdb: 000E +000D DSUSCLHI [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR COOLANT LEVEL HIGH SWITCH INPUT~ON/OFF
+0x0080bcdb: 000E +000D DSUSCLHI [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SUPPLIED VALUE FOR COOLANT LEVEL HIGH SWITCH INPUT~ON/OFF
+0x0080bcdb: 000E +000D DSUSSTCN [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SELECTED VALUE FOR STCG ASG DROOP INPUT~ON/OFF
+0x0080bcdb: 000E +000D DSUSSTCN [NONE] -> 0x80bcdb user_selected_value_for_stcg_asg_droop_input_on_off byte; USER SELECTED VALUE FOR STCG ASG DROOP INPUT~ON/OFF
+0x0080d60e: 13AB +0004 HSDCFTC3 [NONE] -> 0x80d60e filter_coefficient_3_from_hsg_lead_lag_dynamic_compensator_0_1 word; FILTER COEFFICIENT #3 FROM HSG LEAD/LAG DYNAMIC COMPENSATOR~0-1
+0x0080d612: 128F +0002 HSAPFTTC [NONE] -> 0x80d612 application_specified_hsg_engine_speed_error_filter_time_constan_0_1 word; APPLICATION-SPECIFIED HSG ENGINE SPEED ERROR FILTER TIME CONSTAN~0 - 1
+0x0080d614: 128F +0004 HSAPSESL [NONE] -> 0x80d614 defines_hsg_application_specific_gain_set_that_has_been_chosen_0_15 word; DEFINES HSG APPLICATION-SPECIFIC GAIN SET THAT HAS BEEN CHOSEN~0-15
+0x0080d61a: 128F +000A HSGNSESL [NONE] -> 0x80d61a defines_hsg_gain_set_that_has_been_chosen_0_31 word; DEFINES HSG GAIN SET THAT HAS BEEN CHOSEN~0-31
+0x0080d622: 128F +0012 HSSSFTTC [NONE] -> 0x80d622 hsg_speed_dependant_engine_speed_error_filter_time_constant_0_1 word; HSG SPEED-DEPENDANT ENGINE SPEED ERROR FILTER TIME CONSTANT~0 - 1
+0x0080d626: 1061 +0002 HSER [RPM] -> 0x80d626 hsg_filtered_engine_speed_error i16; HSG ENGINE SPEED ERROR~-1000 - 1000
+0x0080d628: 1061 +0004 HSPPFL [MM3S] -> 0x80d628 hsg_pid_proportional_fueling_contribution i16; HSG PID PROPORTIONAL FUELING CONTRIBUTION~-160 - 160
+0x0080d62c: 1061 +0008 HSITFL [MM3S] -> 0x80d62c hsg_pid_fuel_output_previous word; HSG PID INTEGRATOR FUELING CONTRIBUTION~0 - 100
+0x0080d62e: 1061 +000A HSAEPPGN [M/R] -> 0x80d62e hsg_proportional_gain_base word; HSG PID PROPORTIONAL GAIN~0 - 7.5000
+0x0080d630: 1061 +000C HSAEITGN [M/RS] -> 0x80d630 hsg_integral_gain_base word; HSG PID INTEGRATOR GAIN~0 - 6.0000
+0x0080d632: 1061 +000E HSAEDVGN [MS/R] -> 0x80d632 hsg_derivative_gain_base word; HSG PID DERIVATIVE GAIN~0 - 5.120
+0x0080d63e: 1061 +001A HSPPAJGN [F/R] -> 0x80d63e hsg_adjusted_proportional_gain_0_7_5000 word; HSG ADJUSTED PROPORTIONAL GAIN.~0 - 7.5000
+0x0080d640: 1061 +001C HSDVAJGN [FS/R] -> 0x80d640 hsg_adjusted_derivative_gain_0_5_120 word; HSG ADJUSTED DERIVATIVE GAIN.~0 - 5.120
+0x0080d642: 1061 +001E HSITAJGN [F/RS] -> 0x80d642 hsg_adjusted_integral_gain_0_6_0000 word; HSG ADJUSTED INTEGRAL GAIN.~0 - 6.0000
+0x0080d644: 1063 +0000 HSRFST [NONE] -> 0x80d644 hsg_reference_speed_winning_source_indicator word; HSG REFERENCE SPEED STATE~1 - 6
+0x0080d646: 1063 +0002 HSRF [RPM] -> 0x80d646 hsg_reference_speed_after_droop word; CURRENT REFERENCE SPEED BEING USED BY THE HSG FEATURE~1400 - 5000
+0x0080d64e: 1063 +000A HSBKRFAE [RPM] -> 0x80d64e hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 word; HSG BASE REFERENCE SPEED CURRENTLY IN USE (ESP MAY SELECT ~1500 - 5000
+0x0080d650: 1063 +000C HSAENLRP [RPM] -> 0x80d650 point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 word; POINT AT WHICH THE HSG DROOP SLOPE LINE INTERSECTS THE NO ~1500 - 4500
+0x0080d652: 1063 +000E HSDPSLAE [RP/F] -> 0x80d652 slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 word; SLOPE OF LINE DEFINING DROOP FOR THE HSG REF CURRENTLY ACTIV~0 - 55.13
+0x0080d656: 1063 +0012 HSDPFG [NONE] -> 0x80d656 hsg_droop_active_flag word; TRUE - DROOP HSG; FALSE - ISOCHRONOUS HSG~0-1
+0x0080d658: 1063 +0014 HSRFTOGS [RPM] -> 0x80d658 reference_speed_before_droop_sent_hsg_ref_hsg_gain_sched_1400_3000 word; REFERENCE SPEED BEFORE DROOP SENT HSG REF -> HSG GAIN SCHED~1400-3000
+0x0080d65a: 1063 +0016 HSISRFAE [RPM] -> 0x80d65a hsg_isochronous_speed_currently_in_use_1500_3000 word; HSG ISOCHRONOUS SPEED CURRENTLY IN USE~1500-3000
+0x0080db1e: 109C +0002 FLAENLRP [MM3S] -> 0x80db1e no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 word; NO LOAD FUELING CURVE VALUE AT HSG_ACTIVE_NO_LOAD_RPM~0 - 100

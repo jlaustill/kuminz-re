@@ -1,0 +1,1340 @@
+{
+ "proposal": {
+  "batch": "W1",
+  "words": [
+   {
+    "word": -1,
+    "address": "0x803c92",
+    "current_name": "(no row)",
+    "proposed_name": "algorithm_enable_flags_table_length_cal",
+    "proposed_type": "word",
+    "row_comment": "Algorithm enable flags table length (e2m 106B +0 AENBLFLG 'LENGTH OF ALGORITHM_ENABLE_FLAGS'; a B record of 72 bytes; EEPROM 0x188): the first word of the 72-byte table EEPROM 0x188-0x1cf (this word + flag words 0-34 at 0x803c94-0x803cd9; the e2m describes words 0-33). 0x0046 (70) in the EEPROM and RAM dumps = the byte count of the 35 flag words after it. No reader in the dumped ROM (no absolute reference to 0x803c92); the ROM region list entry at 0x80e8 holds (0x01000188 / 0x48) with no identified consumer. CM848 twin algorithm_enable_flags_table_length_cal (0x3fd59a) holds the same 0x0046 although its table is 90 bytes",
+    "shared_with_cm848": false,
+    "differences_from_cm848": "Same e2m record (AENBLFLG) and the same row name and value (0x0046). In CM550 the value fits the table: 72 bytes (the e2m size) minus this word = 70. CM848's table is 90 bytes, so 70 does not fit there. Plain word in both.",
+    "code_tests": "none: no absolute-long reference to 0x803c92 or 0x803c93 in J90350.00.rom.bin; EEPROM form 0x01000188 only in the parameter ID table entry (0x356f4) and the ROM region list (0x80e8 with length 0x48)",
+    "writes": "no store in the dumped ROM; only the generic EEPROM mirror paths (tool memory writes / cm550_commitEepromMirrorToEeprom 0x11a74)"
+   },
+   {
+    "word": 0,
+    "address": "0x803c94",
+    "current_name": "calibration_feature_enable_flags_word_0",
+    "proposed_name": "algorithm_enable_flags_0_cal",
+    "proposed_type": "word",
+    "row_comment": "Algorithm enable flags word 0 (EEPROM 0x18a; e2m 106B +2) and the base of the table's indexed bit tests: movea.l #0x803c94 then move.w (0 a0 dn.w*2) at 15 sites in cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator / cm550_calculateFaultDerateEngineSpeedLimit / processDiagnosticLimitStatus / cm550_FUN_00019702 (bit 0x70 + 4 x channel + k and bit 0x1a0 + channel: words 7+ and 26+) and cm550_FUN_000206a8 / cm550_FUN_00020890 (bit 0xd0 + switch: word 13+); so it stays a plain word like CM848's. Bits (Calterm): 0x10 JCSBR1AO shadow RAM auto load; 0x20 PSAGEN progressive shift; 0x40 EBODEN fuel shutoff valve closes while the engine brake is active (0x1ca86); 0x80 VSBKEN vehicle speed sensor anti-tampering; 0x100 DCAGEN data collector (0x13630); 0x200 DPAGEN double pulse; 0x400 APLSEN / 0x800 APAFEN / 0x1000 APFLRTEN / 0x2000 APONGVEN / 0x8000 AATBPEN the alpha low speed governor / air fuel control / fuel rate / on governor / turbocharger protection sub-algorithms (calculateAlphaBase); 0x4000 APEGPNEN alpha engine protection override (calculateAlpha); bits 0-3 no record. 0x5c10 in the dumps (0x10 and 0x400 / 0x800 / 0x1000 / 0x4000). CM848 twin algorithm_enable_flags_0_cal also has 0x2 AFC_Low_Boost_Derate_Enable which CM550 lacks (was calibration_feature_enable_flags_word_0)",
+    "shared_with_cm848": false,
+    "differences_from_cm848": "Plain word in both, because both are the base of indexed bit tests. Bits 4-15 have the same mnemonics and positions. CM848 also defines bit 1 (AFC_Low_Boost_Derate_Enable, mask 0x2). CM550 has no record for bit 1 and no reader.",
+    "code_tests": "masked word reads: 0xc3ba andi 0x4000 (calculateAlpha 0xc326); 0xc5a0 0x400 / 0xc5b4 0x800 / 0xc5cc 0x1000 / 0xc5e4 0x2000 / 0xc5fc 0x8000 (calculateAlphaBase 0xc582); 0x13630 0x100 (vp44_communication_state_machine 0x13616 = the data collector sampler); 0x1ca86 andi.l 0x40 (shared body of cm550_fuelDemandLimitSelector11 0x1ca54 / vp44_canPinVp44StatusController 0x1ca5c). Indexed base loads movea.l #0x803c94 at 0x18b80 0x18bae 0x18d2e 0x18d5a 0x18e50 0x18e76 0x18eba 0x18eee 0x1906e 0x19746 0x1976c 0x197e0 0x19812 0x206e6 0x208ea; each is followed by a read move.w (0 a0 dn.w*2) and none reaches words 0-6",
+    "writes": "no store in the dumped ROM (all 23 references are reads or base loads)",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "reserved_bit_0",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "no CM550 e2m record (CM848's e2m has AFC_Low_Boost_Derate_Enable S mask 0x2 here); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 2,
+      "name": "reserved_bit_2",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 4,
+      "name": "shadow_ram_auto_load_enable",
+      "comment": "JCSBR1AO 'BIT 4 OF 0-15. IF TRUE LOAD SHADOW RAM DURING INITIALIZATION'; CM848 label Shadow_RAM_Auto_Load mask 0x10; no reader in the dumped ROM; set in the dumps"
+     },
+     {
+      "bit": 5,
+      "name": "progressive_shift_enable",
+      "comment": "PSAGEN 'BIT 5 OF 0-15. CUSTOMER TRIM FLAG TO ENABLE/DISABLE PR(OG. SHIFT)'; CM848 label Prog_Shift_Enable mask 0x20; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 6,
+      "name": "engine_retarder_fuel_shutoff_enable",
+      "comment": "EBODEN 'BIT 6 OF 0-15. CALIBRATION VALUE WHICH ENABLES FSO VALVE TO CLOSE ON BRAKE ACT(IVATION)'; CM848 label Engine_Brake_Override mask 0x40; andi.l 0x40 at 0x1ca86: with engine_retarder_active_flag set it clears fuel shutoff output bit 0x20 of fuel_system_output_driver_control; clear"
+     },
+     {
+      "bit": 7,
+      "name": "vehicle_speed_sensor_anti_tampering_enable",
+      "comment": "VSBKEN 'BIT 7 WORD 0. ENABLES VSS ANTI-TAMPERING DETECTION'; CM848 label VSS_Tamper_Enable mask 0x80; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 8,
+      "name": "data_collector_enable",
+      "comment": "DCAGEN 'BIT 8 OF 0-15. EEPROM INDICATOR SET BY TOOLS TO ENABLE DATA COLLE(CTOR)'; andi 0x100 at 0x13630 gates the data collector sampler (vp44_communication_state_machine 0x13616); clear"
+     },
+     {
+      "bit": 9,
+      "name": "double_pulse_enable",
+      "comment": "DPAGEN 'BIT 9 OF 0-15. ENABLE/DISABLE THE DOUBLE PULSING FEATURE'; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 10,
+      "name": "alpha_low_speed_governor_enable",
+      "comment": "APLSEN 'BIT A WORD 0. ENABLES ALPHA LSG SUB-ALGO'; andi 0x400 at 0xc5a0: calculateAlphaBase calls calculateAlphaLowSpeedGovernorResult; set"
+     },
+     {
+      "bit": 11,
+      "name": "alpha_air_fuel_control_enable",
+      "comment": "APAFEN 'BIT B WORD 0. ENABLES ALPHA AFC SUBALGORITHM'; andi 0x800 at 0xc5b4: calculateAlphaBase calls calculateAlphaAirFuelControlResult; set"
+     },
+     {
+      "bit": 12,
+      "name": "alpha_fuel_rate_enable",
+      "comment": "APFLRTEN 'BIT C WORD 0. ENABLES ALPHA FUEL RATE SUB-ALGO'; andi 0x1000 at 0xc5cc: calculateAlphaBase calls calculateAlphaFuelRateResult; set"
+     },
+     {
+      "bit": 13,
+      "name": "alpha_on_governor_enable",
+      "comment": "APONGVEN 'BIT D WORD 0. ENABLES ALPHA ON GOVERNOR SUB-ALGO'; andi 0x2000 at 0xc5e4: calculateAlphaBase calls calculateAlphaOnGovernorResult; clear"
+     },
+     {
+      "bit": 14,
+      "name": "alpha_engine_protection_override_enable",
+      "comment": "APEGPNEN 'BIT E WORD 0. ENABLES LOGIC TO USE ENGINE PROTECTIO(N ALPHA)'; andi 0x4000 at 0xc3ba: calculateAlpha takes alpha_state 3 while engine protection derates fueling; set"
+     },
+     {
+      "bit": 15,
+      "name": "alpha_turbocharger_protection_enable",
+      "comment": "AATBPEN 'BIT F WORD 0. ENABLE BIT FOR THE ALPHA AMBIENT AIR PRES(SURE TURBO PROTECTION)'; CM848 label Alpha_Turbo_Protection_Enable; andi 0x8000 at 0xc5fc: calculateAlphaBase calls calculateAlphaLowAmbientAirPressureResult; clear"
+     }
+    ]
+   },
+   {
+    "word": 1,
+    "address": "0x803c96",
+    "current_name": "calibration_feature_enable_flags_word_1",
+    "proposed_name": "algorithm_enable_flags_1_cal",
+    "proposed_type": "algorithm_enable_flags_1_t",
+    "row_comment": "Algorithm enable flags word 1 (EEPROM 0x18c; e2m 106B +4): CM848's algorithm_enable_flags_1_t layout bit for bit - 0x1 APUOAPEN alpha user override / 0x2 FSUOFLEN user override fueling / 0x4 CTTHSWOD test cell throttle switch override / 0x8 TSUOTAEN user override timing / 0x10 FSTQUOEN torque derate override / 0x20 ATAGEN altitude derate / 0x1000 0x2000 0x4000 0x8000 the low speed governor aggressive / high gear / middle gear / TSC1 gain sets; bits 6-11 have no record. 11 single-bit word reads and no store in the dumped ROM. 0x1000 in the EEPROM and RAM dumps (the aggressive gain set). CM848 twin algorithm_enable_flags_1_cal (0x3fd59e) (was calibration_feature_enable_flags_word_1)",
+    "shared_with_cm848": true,
+    "differences_from_cm848": "None. Every bit has the same position and meaning, and bits 6-11 are reserved in both. In CM848, bit 3 (user override timing) has no reader in its build. CM550 reads bit 3 at 0x30bc2.",
+    "code_tests": "0xc3a2 andi 0x1 (calculateAlpha); 0x1c204 0x2 and 0x1c16e 0x10 (fuelTimingOilPressureModeController 0x1c152); 0x10602 / 0x1084e andi.l 0x4 (vp44_rpmDerateCalculationController 0x10568 / vp44_derateThresholdMonitorAndFaultController 0x10822 = throttle processing); 0x30bc2 0x8 (vp44InjectionSystemStateController 0x30b62); 0xc686 0x20 (cm550_rpmHistogramAndProtectionStatisticsAccumulator 0xc66a = altitude derate fuel limit); 0x26188 0x1000 (cm550_epsAccelerationMonitor 0x2609c); 0x263e0 0x4000 and 0x26408 0x2000 (cm550_epsDiagnosticModeHandler 0x26340); 0x265ee 0x8000 (cm550_epsRpmTargetModeChecker 0x265e6)",
+    "writes": "no store in the dumped ROM",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "alpha_user_override_enable",
+      "comment": "APUOAPEN 'BIT 0 WORD 1. EEPROM INDICATOR SET BY ENGR APPLICATION(S TO CONTROL ALPHA)'; andi 0x1 at 0xc3a2: calculateAlpha takes alpha_state 1 with the user alpha 0x803d4c; clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "user_override_fueling_enable",
+      "comment": "FSUOFLEN 'BIT 1 WORD 1. ENABLE INDICATOR FOR ENGINEERING FUEL OV(ERRIDE)'; andi 0x2 at 0x1c204: fuelTimingOilPressureModeController takes the fuel limit from 0x803f2c (selection state 0x17); clear"
+     },
+     {
+      "bit": 2,
+      "name": "test_cell_throttle_switch_override_enable",
+      "comment": "CTTHSWOD 'DISABLES AUTOZERO & IDLE VALIDATION' (bit 2 of 0-15); andi.l 0x4 at 0x10602 / 0x1084e: the throttle processing skips its idle validation fault checks while set; clear"
+     },
+     {
+      "bit": 3,
+      "name": "user_override_timing_enable",
+      "comment": "TSUOTAEN 'BIT 3 WORD 1. INDICATOR OF WHICH ALGORITHM IS IN CONTR(OL OF THE OVERRIDE TIMING)'; andi 0x8 at 0x30bc2: vp44InjectionSystemStateController selects the override timing 0x804024 (timing state 7); clear"
+     },
+     {
+      "bit": 4,
+      "name": "torque_derate_override_enable",
+      "comment": "FSTQUOEN 'BIT 4 WORD 1. ENABLE INDICATOR FOR TORQUE DERATE FUEL (OVERRIDE)'; andi 0x10 at 0x1c16e: fuelTimingOilPressureModeController sets fuel_limit_shutdown_minimum from 0x803f2a (state 0xd); clear"
+     },
+     {
+      "bit": 5,
+      "name": "altitude_derate_enable",
+      "comment": "ATAGEN 'BIT 5 OF 0-15. CALIBRATION TRIM USED TO ENABLE THE ALTITUDE (DERATE)'; andi 0x20 at 0xc686: _altitude_derate_fuel_limit_0_100 comes from the ambient air pressure table only while set; clear"
+     },
+     {
+      "bit": 6,
+      "name": "reserved_bit_6",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 8,
+      "name": "reserved_bit_8",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 12,
+      "name": "low_speed_governor_aggressive_gain_set_enable",
+      "comment": "LSAGGNEN 'LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE' (no bit in the CM550 text; CM848 S mask 0x1000); andi 0x1000 at 0x26188: cm550_epsAccelerationMonitor selects LSG PID gain set 1; set in the dumps"
+     },
+     {
+      "bit": 13,
+      "name": "low_speed_governor_high_gear_gain_set_enable",
+      "comment": "LSHGGNEN 'ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS' (CM848 S mask 0x2000); andi.l 0x2000 at 0x26408: cm550_epsDiagnosticModeHandler selects gain set 3 (the high gear gains); clear"
+     },
+     {
+      "bit": 14,
+      "name": "low_speed_governor_middle_gear_gain_set_enable",
+      "comment": "LSMGGNEN 'ENABLE PARAMETER FOR LSG GAIN SET USED WHEN IN MIDDLE (GEARS)' (CM848 S mask 0x4000); andi.l 0x4000 at 0x263e0: cm550_epsDiagnosticModeHandler selects gain set 2 (the middle gear gains); clear"
+     },
+     {
+      "bit": 15,
+      "name": "low_speed_governor_tsc1_gain_set_enable",
+      "comment": "LSJCGNEN 'ENABLES/DISABLES THE LSG JCOMM PID GAINS' (CM848 S mask 0x8000); andi.l 0x8000 at 0x265ee: cm550_epsRpmTargetModeChecker selects gain set 4 while _datalink_speed_control_mode is set; clear"
+     }
+    ]
+   },
+   {
+    "word": 2,
+    "address": "0x803c98",
+    "current_name": "calibration_feature_enable_flags_word_2",
+    "proposed_name": "algorithm_enable_flags_2_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_2_t",
+    "row_comment": "Algorithm enable flags word 2 (EEPROM 0x18e; e2m 106B +6): engine protection shutdown 0x1 / enable 0x10 / restart 0x20; 0x8 ISRPEN idle shutdown during power take-off; 0x40 EBCHDBEN engine brake clutch deactivation; 0x80 / 0x100 the J1922 monitor and its clear (the code tests 0x100 although JC22CCSW's text says bit 1); 0x800 / 0x1000 the J1939 monitor and the retarder shift assist; 0x2000 power take-off throttle override; 0x4000 user timing increment; 0x8000 zero vehicle speed power take-off limit. 16 single-bit word reads and no store in the dumped ROM. 0x1870 in the dumps (0x10 0x20 0x40 0x800 0x1000). CM848 twin algorithm_enable_flags_2_cal (0x3fd5a0) has the same bits except 0x8 (no record there) so the type is CM550's own with CM848's field names (was calibration_feature_enable_flags_word_2)",
+    "shared_with_cm848": false,
+    "differences_from_cm848": "Only bit 3 differs. CM550 has ISRPEN there (S mask 0x8: idle shutdown during power take-off). CM848 has reserved_bit_3, with no record in its own e2m and no reader, so CM848 evidence cannot rename it. The other 15 bits have the same positions and meanings and use CM848's field names verbatim. CM848 reads bit 6 (cm848_updateEngineRetarderAllowedState) and bit 7; CM550 reads neither bit 6 in the dumped ROM nor... CM550 does read bit 7 (0x1fdc6). CM550 has no reader for bits 6 and 15.",
+    "code_tests": "0x18628 andi 0x10 (cm550_engineProtectionMultiStateSlowCycle40Coordinator 0x18620); 0x18ace 0x10 / 0x18ade 0x1 / 0x18aee 0x20 (cm550_diagnosticProtectionEvaluator 0x18ac4); 0x18cba 0x1 / 0x18cca 0x20 (cm550_protectionState1DiagnosticValidator 0x18cb6); 0x18fe6 0x1 (processDiagnosticLimitStatus 0x18fcc); 0x1cade 0x10 (vp44_FUN_0001cad6); 0x1c770 0x4000 (cm550_fuelDemandTableBlendCalculator 0x1c65e); 0x1fd6c 0x100 (cm550_j1939TimeoutDataClearHandler); 0x1fdc6 0x80 (cm550_j1939MessageTypeCounter 0x1fdc0); 0x22080 0x800 (cm550_memoryRegisterController 0x22070); 0x21432 0x1000 (cm550_FUN_0002142c); 0x2f850 0x1000 (cm550_retarderControlModeHandler 0x2f7e6); 0x33900 0x1000 (cm550_dutyCycleMonitorAltIsrHandler 0x338ea); 0x2dd34 0x2000 (cm550_oil_pressure_shutdown_controller 0x2dcb0)",
+    "writes": "no store in the dumped ROM",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "engine_protection_shutdown_enable",
+      "comment": "EPSOEN 'BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM'; andi 0x1 at 0x18ade / 0x18cba / 0x18fe6 (cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator / processDiagnosticLimitStatus); clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "no record belongs here: JC22CCSW's text says 'BIT 1 OF BITS 0:15' but the code tests that flag at 0x100 (bit 8); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 2,
+      "name": "reserved_bit_2",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 3,
+      "name": "idle_shutdown_during_power_take_off_enable",
+      "comment": "ISRPEN S mask 0x8 'BIT 3 WORD2. 1 - PTO WILL NOT OVERRIDE SHUTDOWN' (0 = power take-off overrides the idle shutdown; another e2m: Idle_Shutdown_PTO_Enable 0x8); no reader in the dumped ROM; CM848 has no record (reserved_bit_3); clear"
+     },
+     {
+      "bit": 4,
+      "name": "engine_protection_enable",
+      "comment": "EPEN 'BIT 4 OF 0-15. ENGINE PROTECTION FEATURES ENABLE'; andi 0x10 at 0x18628: cm550_engineProtectionMultiStateSlowCycle40Coordinator runs the protection phases only while set (else no derate); also 0x18ace / 0x1cade; set"
+     },
+     {
+      "bit": 5,
+      "name": "engine_protection_restart_enable",
+      "comment": "EPRYEN 'BIT 5 OF 0-15. ENABLE RESTART ALGORITHM'; andi.l 0x20 at 0x18aee / 0x18cca (the restart checks after a protection shutdown); set"
+     },
+     {
+      "bit": 6,
+      "name": "engine_retarder_clutch_deactivation_enable",
+      "comment": "EBCHDBEN 'BIT 6 OF 0-15. CALIBRATION INDICATOR USED TO ENABLE EN(GINE BRAKE DEACTIVATION)'; CM848 label EB_Clutch_Enable mask 0x40; no reader in the dumped ROM; set"
+     },
+     {
+      "bit": 7,
+      "name": "j1922_monitor_enable",
+      "comment": "JC22MRSW 'J1922 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x80); andi.l 0x80 at 0x1fdc6: cm550_j1939MessageTypeCounter counts the control sessions of modes 1 / 2 / 3 with key-on hour stamps; clear"
+     },
+     {
+      "bit": 8,
+      "name": "j1922_monitor_clear_enable",
+      "comment": "JC22CCSW 'J1922 MONITOR CLEAR ENABLE' (its text says bit 1; CM848 and other e2m S mask 0x100); andi.l 0x100 at 0x1fd6c: cm550_j1939TimeoutDataClearHandler clears those session counters once the J1922 clear occurrence time has passed; clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 11,
+      "name": "j1939_monitor_enable",
+      "comment": "JC39MREA 'J1939 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x800); andi.l 0x800 at 0x22080: cm550_memoryRegisterController records the J1939 speed control session history; set"
+     },
+     {
+      "bit": 12,
+      "name": "j1939_retarder_shift_assist_enable",
+      "comment": "JCRDTXEA 'ENABLE FOR SPEED CONTROL / ENGINE BRAKING INTERACTION' (CM848 S mask 0x1000); andi 0x1000 at 0x21432 (cm550_FUN_0002142c ends retarder mode 2 at or above the user fueling limit) / 0x2f850 (cm550_retarderControlModeHandler) / 0x33900 (cm550_dutyCycleMonitorAltIsrHandler status 0x40); set"
+     },
+     {
+      "bit": 13,
+      "name": "power_take_off_throttle_override_enable",
+      "comment": "PTTHOVEN 'BIT 13 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER (THROTTLE DEPRESSION DISABLES PTO)'; andi.l 0x2000 at 0x2dd34: cm550_oil_pressure_shutdown_controller lets throttle fueling override power take-off fueling; clear"
+     },
+     {
+      "bit": 14,
+      "name": "user_commanded_timing_increment_enable",
+      "comment": "TSUCICEN 'BIT 14 WORD 2. PARAMETER USED TO ENABLE THE USER TIMING (INCREMENT)'; andi 0x4000 at 0x1c770: cm550_fuelDemandTableBlendCalculator adds 0x803f3c to the 4D timing; clear"
+     },
+     {
+      "bit": 15,
+      "name": "zero_vehicle_speed_power_take_off_limit_enable",
+      "comment": "ZVPTLMEN 'BIT 15 WORD 2 - ENABLE ENGINE SPEED TO BE LIMITED (WHEN IN PTO MODE)'; no reader in the dumped ROM; clear"
+     }
+    ]
+   },
+   {
+    "word": 3,
+    "address": "0x803c9a",
+    "current_name": "calibration_feature_enable_flags_word_3",
+    "proposed_name": "algorithm_enable_flags_3_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_3_t",
+    "row_comment": "Algorithm enable flags word 3 (EEPROM 0x190; e2m 106B +8): 0x2 / 0x4 idle shutdown and its override; 0x8 idle speed adjust; 0x10 power take-off; 0x20 remote power take-off; 0x40 cruise control; 0x80 road speed governor; 0x100 gear down protection; 0x200 trip information; 0x400 cruise / road speed governor droop; 0x800 cylinder pressure maintenance; 0x1000 / 0x2000 / 0x4000 the acceleration noise control fuel / timing / engine speed limits; 0x8000 save the cruise set speed at power down. 13 single-bit word reads and no store in the dumped ROM; 0x20 0x40 0x80 0x100 0x400 0x8000 have no reader there (call targets at 0x40000+ are not dumped). 0x86e8 in the dumps (0x8 0x20 0x40 0x80 0x200 0x400 0x8000). CM848 twin algorithm_enable_flags_3_cal (0x3fd5a2) leaves 0x2 0x4 0x20 0x200 0x800 reserved so the type is CM550's own (was calibration_feature_enable_flags_word_3)",
+    "shared_with_cm848": false,
+    "differences_from_cm848": "CM550 names bits 1 and 2 (idle shutdown), 5 (remote PTO), 9 (trip information) and 11 (cylinder pressure maintenance). CM848 leaves those reserved, with no record in its own e2m and no reader. CM848 leaves bits 12-14 reserved although its own e2m names them; a rename is proposed. For bit 8, CM550's e2m says gear down protection (GRGDPNEN) and CM848 has road_speed_governor_without_droops_below_top_gear; a rename is proposed as a reviewer's call. Bits 3, 4, 6, 7, 10 and 15 match CM848's field names, and bit 0 is reserved in both.",
+    "code_tests": "0xb2c6 andi 0x1000 (cm550_rpm_system_state_controller 0xb2aa = ANC fuel limit); 0xb3ec 0x2000 (cm550_FUN_0000b3d0 = ANC timing limit); 0xb50e 0x4000 (cm550_engineStateFuelLimitInterpolator 0xb4f2 = ANC engine speed limit); 0xefbe 0x2 and 0xefd6 andi.l 0x4 (insiteCommandByteDispatcher 0xed64 parameter 0x47 = J1587 PID 71 idle shutdown timer status bits 0x08 / 0x04); 0x1d9ca 0x2 and 0x1dab0 0x4 (vp44SensorStatusMonitor 0x1d9b4 = the idle shutdown state machine); 0x33d80 0x2 (the PGN 65252 sender at 0x33d38 - not a Ghidra function - writes payload byte 0x8035f7 = 0x7f set / 0x3f clear then sends j1939_pgn65252_tx_message); 0x26490 0x8 (cm550_engineModeTimingAdjuster 0x26474 / vp44_rpm_derate_monitor 0x26484); 0x2dd0a 0x10 (cm550_oil_pressure_shutdown_controller 0x2dcb0); 0x306e0 0x200 (cm550_FUN_000306ca trip records); 0x30a64 0x200 (cm550_FUN_00030a5e / cm550_protectionFlagAccumulator 0x30a64); 0x11e74 0x800 (cm550_coldStartFuelControlSlowCycle40Coordinator 0x11e5e)",
+    "writes": "no store in the dumped ROM",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "reserved_bit_0",
+      "comment": "no e2m record; no reader in the dumped ROM; clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "idle_shutdown_enable",
+      "comment": "ISAGEN S mask 0x2 '1 - IDLE SHUTDOWN ENABLED' (word 3 bit 1); andi 0x2 at 0x1d9ca (vp44SensorStatusMonitor = the idle shutdown state machine) / 0xefbe (J1587 PID 71 status bit 0x08) / 0x33d80 (PGN 65252 payload byte 0x8035f7 = 0x7f or 0x3f); CM848 reserved_bit_1; clear"
+     },
+     {
+      "bit": 2,
+      "name": "idle_shutdown_override_enable",
+      "comment": "ISODEN S mask 0x4 '1 - ISOD IS ABLE TO BE SET' (ISOD = idle shutdown overridden until the vehicle moves); andi.l 0x4 at 0x1dab0 (vp44SensorStatusMonitor) / 0xefd6 (J1587 PID 71 status bit 0x04); CM848 reserved_bit_2; clear"
+     },
+     {
+      "bit": 3,
+      "name": "idle_speed_adjust_enable",
+      "comment": "LSISAJEN 'BIT 3 OF 0-15. ENABLE ALLOWS OPERATOR TO ADJUST SPEED'; andi.l 0x8 at 0x26490: the idle increment / decrement switches move the low speed governor reference only while set; set"
+     },
+     {
+      "bit": 4,
+      "name": "power_take_off_enable",
+      "comment": "PTAGEN S mask 0x10 'BIT 4 OF 0-15. PARAMETER USED TO ENABLE/DISABLE PTO'; andi.l 0x10 at 0x2dd0a: cm550_oil_pressure_shutdown_controller (the power take-off / user fueling selection) uses the closed-loop PTO fueling only while set; clear"
+     },
+     {
+      "bit": 5,
+      "name": "remote_power_take_off_enable",
+      "comment": "PTRXEN 'BIT 5 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER REMOTE PTO IS ALLO(WED)' (full text and S mask 0x20 from other e2m files); no reader in the dumped ROM; CM848 reserved_bit_5; set"
+     },
+     {
+      "bit": 6,
+      "name": "cruise_control_enable",
+      "comment": "CRAGEN 'BIT 6 OF 0-15. STATUS INDICATOR WHICH ENABLES/DISABL(ES CRUISE CONTROL)'; no reader in the dumped ROM; set"
+     },
+     {
+      "bit": 7,
+      "name": "road_speed_governor_enable",
+      "comment": "RSAGEN 'ENABLE/DISABLE ROAD SPEED GOVERNOR FOR ENGINEERING USE' (bit 7); no reader in the dumped ROM; set"
+     },
+     {
+      "bit": 8,
+      "name": "gear_down_protection_enable",
+      "comment": "GRGDPNEN 'GEAR DOWN PROTECTION ENABLE' (bit 8 of 0-15; another e2m: Gear_Down_Protection_Enable S mask 0x100); no reader in the dumped ROM; CM848 reads this bit below top gear as road_speed_governor_without_droops_below_top_gear; clear"
+     },
+     {
+      "bit": 9,
+      "name": "trip_information_enable",
+      "comment": "TIEN 'BIT 9 OF 0-15 IN WORD 3. TRIP INFO SYSTEM ENABLED = 1' (another e2m: Fuel_Log_Enable S mask 0x200); andi 0x200 at 0x306e0 (cm550_FUN_000306ca resets the trip records) / 0x30a64 (fuel statistics flags); CM848 reserved_bit_9; set"
+     },
+     {
+      "bit": 10,
+      "name": "cruise_governor_droop_enable",
+      "comment": "CRDPEN 'BIT 10 OF 0-15. BIT 10 IS CRUISE_RSG_DROOP_ENABLE'; no reader in the dumped ROM; set"
+     },
+     {
+      "bit": 11,
+      "name": "cylinder_pressure_maintenance_enable",
+      "comment": "CPAGEN 'BIT 11 OF 0-15. ENABLES AND DISABLES THE CYLINDER PRESSURE MAINTENANC(E)'; andi.l 0x800 at 0x11e74: cm550_coldStartFuelControlSlowCycle40Coordinator zeroes _cylinder_pressure_maintenance_status and its timing increment while clear; CM848 reserved_bit_11; clear"
+     },
+     {
+      "bit": 12,
+      "name": "acceleration_noise_control_fuel_limit_enable",
+      "comment": "NZFLAGEN 'ENABLE FOR FUEL LIMITING OF THE ACCELERATION NOISE C(ONTROL)' (no bit in the CM550 text; CM848 e2m ANC_Fuel_Algorithm_Enable S mask 0x1000); andi 0x1000 at 0xb2c6: cm550_rpm_system_state_controller computes _anc_fuel_limit_value; clear"
+     },
+     {
+      "bit": 13,
+      "name": "acceleration_noise_control_timing_limit_enable",
+      "comment": "NZTAAGEN 'ENABLE FOR TIMING ADVANCE OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Timing_Algorithm_Enable S mask 0x2000); andi 0x2000 at 0xb3ec: cm550_FUN_0000b3d0 = the ANC timing limit; clear"
+     },
+     {
+      "bit": 14,
+      "name": "acceleration_noise_control_engine_speed_limit_enable",
+      "comment": "NZESAGEN 'ENABLE FOR SPEED LIMITING OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Speed_Algorithm_Enable S mask 0x4000); andi 0x4000 at 0xb50e: cm550_engineStateFuelLimitInterpolator = the ANC engine speed limit; clear"
+     },
+     {
+      "bit": 15,
+      "name": "cruise_save_set_speed_at_power_down_enable",
+      "comment": "CRSVPWEN 'ENABLES/DISABLES SAVING CRUISE SET SP(EED)' (bit 15 of 0-15); no reader in the dumped ROM; set"
+     }
+    ]
+   },
+   {
+    "word": 4,
+    "address": "0x803c9c",
+    "current_name": "(no row; renders DAT_00803c9c)",
+    "proposed_name": "algorithm_enable_flags_4_cal",
+    "proposed_type": "algorithm_enable_flags_4_t",
+    "row_comment": "Algorithm enable flags word 4 (EEPROM 0x192; e2m 106B +A): 0x1 FSUCFLEN user commanded fueling (cm550_setDiagnosticSourceFromEngineFlags) / 0x100 TSUCTAEN and ADV_OVER user commanded timing (cm550_fuelDemandTableBlendCalculator); no other record. Two single-bit word reads and no store in the dumped ROM. 0x0000 in the dumps. CM848's algorithm_enable_flags_4_t bit for bit (twin algorithm_enable_flags_4_cal 0x3fd5a4)",
+    "shared_with_cm848": true,
+    "differences_from_cm848": "None. Bit 0 is user commanded fueling and bit 8 is user commanded timing in both firmwares, and the other bits have no record in either. CM550 also has a second record at bit 8, ADV_OVER, with the same text as TSUCTAEN.",
+    "code_tests": "0x1c67a andi 0x100 (cm550_fuelDemandTableBlendCalculator 0x1c65e); 0x3456e andi.l 0x1 (cm550_setDiagnosticSourceFromEngineFlags 0x34564)",
+    "writes": "no store in the dumped ROM",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "user_commanded_fueling_enable",
+      "comment": "FSUCFLEN 'BIT 0 WORD 4. ENABLES THE USE OF USER_COMMANDED_FUELING'; andi.l 0x1 at 0x3456e: cm550_setDiagnosticSourceFromEngineFlags sets user_fueling_state 5 with the fuel demand from 0x80404a; clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 2,
+      "name": "reserved_bit_2",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 4,
+      "name": "reserved_bit_4",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 5,
+      "name": "reserved_bit_5",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 6,
+      "name": "reserved_bit_6",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 8,
+      "name": "user_commanded_timing_enable",
+      "comment": "TSUCTAEN and ADV_OVER 'BIT 8 OF WORD 4. ENABLE INDICATOR FOR THE ENGINE(ERING COMMAND TIMING ADVANCE)'; andi 0x100 at 0x1c67a: cm550_fuelDemandTableBlendCalculator takes the 4D timing from 0x803f3e (intermediate timing state 2); clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "no e2m record; no reader in the dumped ROM; clear"
+     }
+    ]
+   },
+   {
+    "word": 5,
+    "address": "0x803c9e",
+    "current_name": "calibration_feature_enable_flags_word_5",
+    "proposed_name": "algorithm_enable_flags_5_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_5_t",
+    "row_comment": "Algorithm enable flags word 5 (EEPROM 0x194; e2m 106B +C): the A/D override enables of channels 0-15 - bit n set makes mc68k_processAnalogSensorChannels (word load at 0xb7d2) use analog_sensor_override_values[n] as channel n's filtered value (Calterm stem + OD: ADIMTPOD 0x1 to ADTHSVOD 0x8000); 0x400 (sampled throttle) and 0x800 (remote throttle) are also tested on their own by the throttle / J1939 accelerator pedal / EEC2 code. 0x0000 in the dumps. CM848's word 5 holds combustion overrides instead so the type is CM550's own (was calibration_feature_enable_flags_word_5)",
+    "shared_with_cm848": false,
+    "differences_from_cm848": "Entirely different. In CM550 the word holds the A/D channel 0-15 override enables. In CM848 it holds the combustion manager user overrides and the charge pressure, charge temperature and exhaust pressure estimate enables.",
+    "code_tests": "0xb7d2 move.w to D5 (mc68k_processAnalogSensorChannels 0xb7bc: walking mask 1 << channel for channels 0-15); single-bit: 0x10584 / 0x1083e andi.l 0x400 (vp44_rpmDerateCalculationController / vp44_derateThresholdMonitorAndFaultController throttle processing); 0x20cae / 0x20e4a andi.l 0x400 (cm550_FUN_00020c98 / cm550_FUN_00020e14 J1939 accelerator pedal into analog_sensor_override_values[10]); 0x2582e andi 0x400 (cm550_FUN_00025806); 0x32f78 andi 0x400 and 0x32fd8 andi.l 0x800 (j1939HandlePgn61443Eec2 0x32e4c)",
+    "writes": "no store in the dumped ROM",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "intake_manifold_temperature_override_enable",
+      "comment": "ADIMTPOD S mask 0x1 'INTAKE_MANIFOLD_TEMPERATURE_OVERRIDE'; channel 0 intake_manifold_temperature_sensor_state: mc68k_processAnalogSensorChannels (word load at 0xb7d2) takes analog_sensor_override_values[0] while set; clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "fuel_temperature_override_enable",
+      "comment": "ADFLTPOD S mask 0x2 'FUEL_TEMPERATURE_OVERRIDE'; channel 1 fuel_temperature_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 2,
+      "name": "coolant_level_override_enable",
+      "comment": "ADCVOD S mask 0x4 'COOLANT_LEVEL_OVERRIDE'; channel 2 coolant_level_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 3,
+      "name": "fuel_pressure_override_enable",
+      "comment": "ADSYFPOD S mask 0x8 'ALGORITHM_ENABLE_FLAGS WORD 5 BIT 3' (other e2m files: 'OVERRIDE FOR FUEL PRESSURE FILTERED VALUE'); channel 3 fuel_pressure_sensor_state (stem ADSYFP) via the channel loop; clear"
+     },
+     {
+      "bit": 4,
+      "name": "oil_pressure_override_enable",
+      "comment": "ADOLPROD S mask 0x10 'OIL_PRESSURE_OVERRIDE'; channel 4 oil_pressure_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 5,
+      "name": "boost_pressure_override_enable",
+      "comment": "ADBSPROD S mask 0x20 'BOOST_PRESSURE_OVERRIDE'; channel 5 boost_pressure_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 6,
+      "name": "coolant_temperature_override_enable",
+      "comment": "ADCLTPOD S mask 0x40 'COOLANT_TEMPERATURE_OVERRIDE'; channel 6 coolant_temperature_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 7,
+      "name": "ambient_air_temperature_override_enable",
+      "comment": "ADAATPOD S mask 0x80 'AMBIENT_AIR_TEMPERATURE_OVERRIDE'; channel 7 ambient_air_temperature_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 8,
+      "name": "power_steering_temperature_override_enable",
+      "comment": "ADPOTPOD S mask 0x100 'POWER_STEERING_TEMPERATURE_OVERRIDE'; channel 8 power_steering_temperature_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 9,
+      "name": "exhaust_pressure_override_enable",
+      "comment": "ADSYEPOD S mask 0x200 'SPARE_CHANNEL_1_OVERRIDE' (other e2m files: ADEXPROD 0x200 'OVERRIDE FOR EXHAUST PRESSURE FILTERED VALUE'); channel 9 exhaust_pressure_sensor_state (stem ADSYEP) via the channel loop; clear"
+     },
+     {
+      "bit": 10,
+      "name": "sampled_throttle_override_enable",
+      "comment": "ADSATHOD S mask 0x400 'SAMPLED_THROTTLE_OVERRIDE'; channel 10 sampled_throttle_sensor_state via the channel loop; also andi 0x400 at 0x10584 / 0x1083e (throttle processing skipped) / 0x20cae / 0x20e4a (a J1939 accelerator pedal fills analog_sensor_override_values[10]) / 0x2582e / 0x32f78 (EEC2 pedal position 0xff); clear"
+     },
+     {
+      "bit": 11,
+      "name": "remote_throttle_override_enable",
+      "comment": "ADROTHOD S mask 0x800 'REMOTE_THROTTLE_OVERRIDE'; channel 11 remote_throttle_sensor_state via the channel loop; also andi.l 0x800 at 0x32fd8 (j1939HandlePgn61443Eec2 sends the remote accelerator position as 0xff); clear"
+     },
+     {
+      "bit": 12,
+      "name": "ambient_air_pressure_override_enable",
+      "comment": "ADAAPROD S mask 0x1000 'AMBIENT_AIR_PRESSURE_OVERRIDE'; channel 12 ambient_air_pressure_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 13,
+      "name": "battery_voltage_override_enable",
+      "comment": "ADBTVTOD S mask 0x2000 'ALGORITHM_ENABLE_FLAGS WORD 5 BIT 13' (other e2m files: 'OVERRIDE FOR BATTERY VOLTAGE OVERRIDE FILTERED VALUE'); channel 13 battery_voltage_sensor_state (stem ADBTVT) via the channel loop; clear"
+     },
+     {
+      "bit": 14,
+      "name": "engine_speed_sensor_supply_voltage_override_enable",
+      "comment": "ADESSVOD S mask 0x4000 'ENGINE_SPEED_SENSOR_SV_OVERRIDE'; channel 14 engine_speed_sensor_supply_voltage_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 15,
+      "name": "throttle_position_sensor_supply_voltage_override_enable",
+      "comment": "ADTHSVOD S mask 0x8000 'THROTTLE_POSITION_SENSOR_SV_OVERRIDE'; channel 15 throttle_position_sensor_supply_voltage_sensor_state via the channel loop; clear"
+     }
+    ]
+   },
+   {
+    "word": 6,
+    "address": "0x803ca0",
+    "current_name": "(no row; renders _DAT_00803ca0)",
+    "proposed_name": "algorithm_enable_flags_6_cal",
+    "proposed_type": "word",
+    "row_comment": "Algorithm enable flags word 6 (EEPROM 0x196; e2m 106B +E): 0x1 to 0x100 the A/D override enables of channels 16-24 (mc68k_processAnalogSensorChannels loads the word at 0xbccc and tests bit n - 16 for channel n: vehicle connector / engine connector / frequency throttle input supply voltages / cruise control switch multiplexer / water in fuel / EGR current feedback / programming pulse / high side gate bias / operational amplifier and comparator supply voltages - Calterm ADVHSVOD to ADOCSVOD); 0x200 ISIMEN idle shutdown intake manifold temperature override (0 = the ambient air temperature); 0x400 FCAKAGEN fan air conditioning pressure / 0x800 FCAKVSEN fan air conditioning vehicle speed interaction / 0x1000 FC02EN fan clutch 2 / 0x2000 FCEBAGEN fan engine retarder / 0x4000 FCEN fan manual input / 0x8000 CREBEN cruise engine retarder (these six as CM848 names them; no reader in the dumped ROM). A plain word: its one reader is that whole-word load (no fixed-mask test). 0x0000 in the dumps",
+    "shared_with_cm848": false,
+    "differences_from_cm848": "Bits 0-9 differ. In CM550 they are the A/D channel 16-24 overrides plus the idle shutdown IMT override. In CM848 they are the turbocharger speed estimate, low fuel pressure derate, transmission control, second gear converter lockup, not-brake-switch diagnostic and enhanced diagnostics enables, with bits 6-9 reserved. Bits 10-15 (the fan bits and the cruise engine retarder) match CM848's field names. CM550 stays a plain word and CM848 is typed.",
+    "code_tests": "0xbccc move.w to D5 (mc68k_processAnalogSensorChannels 0xb7bc: from channel 16 the walking mask restarts at 1 so bit n - 16 = channel n up to channel 24); no single-bit test anywhere in the dumped ROM",
+    "writes": "no store in the dumped ROM",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "vehicle_connector_sensor_supply_voltage_override_enable",
+      "comment": "ADVHSVOD S mask 0x1 'VEHICLE_CONNECTOR_SENSORS_SV_OVERRIDE'; channel 16 vehicle_connector_sensor_supply_voltage_sensor_state via the channel loop (load at 0xbccc); clear in the dumps"
+     },
+     {
+      "bit": 1,
+      "name": "engine_connector_sensor_supply_voltage_override_enable",
+      "comment": "ADECSVOD S mask 0x2 'ENGINE SENSOR SV OVERRIDE'; channel 17 engine_connector_sensor_supply_voltage_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 2,
+      "name": "frequency_throttle_input_supply_voltage_override_enable",
+      "comment": "ADFTSVOD S mask 0x4 'FREQUENCY_THROTTLE_INPUT_SV_OVERRIDE'; channel 18 frequency_throttle_input_supply_voltage_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 3,
+      "name": "cruise_control_switch_multiplexer_override_enable",
+      "comment": "ADCROD S mask 0x8 'CRUISE_CONTROL_SWITCH_MUX_OVERRIDE'; channel 19 cruise_control_switch_multiplexer_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 4,
+      "name": "water_in_fuel_override_enable",
+      "comment": "ADWFOD S mask 0x10 'WATER_IN_FUEL_OVERRIDE'; channel 20 water_in_fuel_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 5,
+      "name": "egr_current_feedback_override_enable",
+      "comment": "ADEGCFOD S mask 0x20 'EGR_CURRENT_FEEDBACK_OVERRIDE'; channel 21 egr_current_feedback_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 6,
+      "name": "programming_pulse_supply_voltage_override_enable",
+      "comment": "ADPSSVOD S mask 0x40 'PROGRAMMING_PULSE_SV_OVERRIDE'; channel 22 programming_pulse_supply_voltage_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 7,
+      "name": "high_side_gate_bias_supply_voltage_override_enable",
+      "comment": "ADHBSVOD S mask 0x80 'HIGH_SIDE_GATE_BIAS_SV_OVERRIDE'; channel 23 high_side_gate_bias_supply_voltage_sensor_state via the channel loop; clear"
+     },
+     {
+      "bit": 8,
+      "name": "operational_amplifier_and_comparator_supply_voltage_override_enable",
+      "comment": "ADOCSVOD S mask 0x100 'OP_AMPS_AND_COMPARATORS_SV_OVERRIDE'; channel 24 operational_amplifier_and_comparator_supply_voltage_sensor_state via the channel loop (the last channel); clear"
+     },
+     {
+      "bit": 9,
+      "name": "idle_shutdown_intake_manifold_temperature_override_enable",
+      "comment": "ISIMEN S mask 0x200 'BIT 9 WORD 6. 1 - IMT OVERRIDE SHUTDOWN PROCESS; 0 - AMBIENT TEMP' (the idle shutdown temperature override uses the intake manifold temperature instead of the ambient air temperature); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 10,
+      "name": "fan_air_conditioning_pressure_enable",
+      "comment": "FCAKAGEN 'ALLOWS PRESSURE SWITCH FUNCTIONALITY' (bit 10 of 0-15; CM848 field name); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 11,
+      "name": "fan_air_conditioning_vehicle_speed_interaction_enable",
+      "comment": "FCAKVSEN 'ALLOWS SPECIAL AC PRESSURE SWITCH FUNCTIONALITY' (bit 11 of 0-15; CM848 field name); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 12,
+      "name": "fan_clutch_2_enable",
+      "comment": "FC02EN 'BIT 12 OF 0-15 ALLOWS BUS APPLICATIONS IMT FAN CONTROL' (CM848 field name); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 13,
+      "name": "fan_engine_retarder_enable",
+      "comment": "FCEBAGEN 'ALLOWS ENGINE BRAKE FUNCTIONALITY' (bit 13 of 0-15; CM848 field name); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 14,
+      "name": "fan_manual_input_enable",
+      "comment": "FCEN 'ALLOWS MANUAL SWITCH INPUT FUNCTIONALITY' (bit 14 of 0-15; CM848 field name); no reader in the dumped ROM; clear"
+     },
+     {
+      "bit": 15,
+      "name": "cruise_engine_retarder_enable",
+      "comment": "CREBEN 'TRIM PARAMETER ENABLES/DISABLES CC/EBRAKE BIT 15 OF 0(-15)' (CM848 field name; CM848 reads it); no reader in the dumped ROM; clear"
+     }
+    ]
+   }
+  ],
+  "cm848_field_renames": [
+   {
+    "type_name": "algorithm_enable_flags_3_t",
+    "bit": 12,
+    "current_field": "reserved_bit_12",
+    "proposed_field": "acceleration_noise_control_fuel_limit_enable",
+    "evidence": "CM848's own e2m (CHR_CC_11.45.01.07) names this bit: 106B +8 ANC_Fuel_Algorithm_Enable [NZFLAGEN], S mask 0x1000, 'Enable for fuel limiting of the acceleration noise control algorithm'. The CM848 struct comment already cites it, but the field stayed reserved because there is no reader (the ANC stage is compiled out). Other no-reader CM848 bits are named from their e2m records (idle_speed_adjust_enable, j1922_monitor_enable, the fan bits). CM550 tests the same mask at 0xb2c6 (cm550_rpm_system_state_controller computes _anc_fuel_limit_value)."
+   },
+   {
+    "type_name": "algorithm_enable_flags_3_t",
+    "bit": 13,
+    "current_field": "reserved_bit_13",
+    "proposed_field": "acceleration_noise_control_timing_limit_enable",
+    "evidence": "CM848's own e2m: 106B +8 ANC_Timing_Algorithm_Enable [NZTAAGEN], S mask 0x2000, 'Enable for timing advance of the acceleration noise control algorithm'. There is no CM848 reader. CM550 tests 0x2000 at 0xb3ec (cm550_FUN_0000b3d0, the ANC timing limit: _anc_timing_limit_disable_due_to_bare_engine_accel)."
+   },
+   {
+    "type_name": "algorithm_enable_flags_3_t",
+    "bit": 14,
+    "current_field": "reserved_bit_14",
+    "proposed_field": "acceleration_noise_control_engine_speed_limit_enable",
+    "evidence": "CM848's own e2m: 106B +8 ANC_Speed_Algorithm_Enable [NZESAGEN], S mask 0x4000, 'Enable for speed limiting of the acceleration noise control algorithm'. There is no CM848 reader. CM550 tests 0x4000 at 0xb50e (cm550_engineStateFuelLimitInterpolator, the ANC engine speed limit)."
+   },
+   {
+    "type_name": "algorithm_enable_flags_3_t",
+    "bit": 8,
+    "current_field": "road_speed_governor_without_droops_below_top_gear",
+    "proposed_field": "gear_down_protection_enable",
+    "evidence": "Reviewer's call: the current name is a code-derived description, not a reserved bit. CM848's own e2m has no record for 0x100. CM848's own code only acts on this bit outside the top gear range: cm848_calculateRoadSpeedGovernorFueling and cm848_selectCruiseGovernorGainSet test it together with drivetrain_gear_range != DRIVETRAIN_GEAR_RANGE_TOP_GEAR. CM848's drivetrain_gear_range row already calls it 'the gear-down feature (algorithm_enable_flags_3_cal bit 0x100)'. The same Cummins table names the bit in CM550's e2m (GRGDPNEN 'GEAR DOWN PROTECTION ENABLE, BIT 8 OF 0-15') and in another Chrysler e2m (CHR_B2_11.52.08.72 Gear_Down_Protection_Enable, S mask 0x100). CM550 has no reader for it in the dumped ROM."
+   }
+  ],
+  "notes": "Method: hits.py (scratch) scanned J90350.00.rom.bin for every absolute-long reference to 0x803c92-0x803ca1 and decoded each instruction. All 75 references are word reads: either move.w abs,Dn followed by andi.w/andi.l with a single-bit mask, or movea.l #0x803c94,A0 followed by move.w (0,A0,Dn.w*2). There is no store, no btst, no byte access, no access to any odd address, and no access to 0x803c92. A search of the 16-bit low halves found no other access form. The only other references are generic EEPROM-mirror code (cm550_commitEepromMirrorToEeprom, the memory read handlers, cm550_memoryPatchingSystem). Every mask tested is a single bit, so the bitfield types render without multi-bit pieces. I cite each test by its instruction address and mask. hits.py names the nearest preceding function start, and several hosts overlap or are misnamed: 0x1ca54/0x1ca5c, 0x26474/0x26484, 0x30a5e/0x30a64. The word 3 bit 1 test at 0x33d80 lies in an undefined function at 0x33d38, which sends j1939_pgn65252_tx_message (PGN 65252 SHUTDN) via cm550_sendCanMessage. Word 0 check: the claim holds. The indexed tests use word 0 (0x803c94) as their base and reach words 7+ (protection channels: bits 0x70-0x72 + 4n), 13+ (switches: 0xd0 + n) and 26+ (0x1a0 + n), never words 0-6. Word 0 therefore stays a plain word, like CM848's (the fault-word rule: a struct base would print as field_0x0 pieces). Its bit meanings are in the row comment, and its fields list is for that comment only. Word 6 is a plain word by judgment: its only reader is the whole-word load at 0xbccc, so a bitfield would give no named test and would turn that load into a piece. The alternative, cm550_algorithm_enable_flags_6_t, would take the listed fields unchanged. Word 5 is a bitfield trade-off: 7 named single-bit tests (0x400 six times, 0x800 once) against 1 piece (the whole-word load at 0xb7d2). Word 5 field names follow the channel record names (bit n = channel n; the loop restarts its mask at channel 16 on word 6), so bit 9 is exhaust_pressure even though v64t6_s's text says SPARE_CHANNEL_1. Pilot correction: pilot_bitfield_r92.py placed j1922_monitor_clear_enable at bit 1, following JC22CCSW's text 'BIT 1'. The code tests 0x100 for it at 0x1fd6c (the J1922 clear occurrence time), and CM848's S mask is 0x100, so it is bit 8 and bit 1 is reserved. The pilot's bit 6 name engine_brake_enable should be CM848's engine_retarder_clutch_deactivation_enable. Several N records in v64t6_s give no bit in their text (LSAGGNEN, LSHGGNEN, LSMGGNEN, LSJCGNEN, JC22MRSW, JC39MREA, JCRDTXEA, NZESAGEN, NZFLAGEN, NZTAAGEN). Each is placed by CM848's S mask, and the CM550 code tests the same mask. Text that v64t6_s truncates (PTRXEN 'REMOTE PTO IS ALLO(WED)', ISRPEN, ISIMEN, CPAGEN) and some S masks (PTRXEN 0x20, Gear_Down_Protection_Enable 0x100, Fuel_Log_Enable 0x200) come from other e2m files in e2m-analysis. 'No reader' always means no reader in the dumped ROM (0x0-0x3FFFF). Calls go to undumped targets at 0x40000+, and word 3 = 0x86e8 has cruise, road speed governor, remote PTO, droop and save-set-speed set with no reader. Dump values (EEPROM = RAM): length 0x0046; words 0-6 = 0x5c10, 0x1000, 0x1870, 0x86e8, 0x0000, 0x0000, 0x0000. The length row uses word: -1. shared_with_cm848 = true means the row takes CM848's bitfield type, as words 1 and 4 do; plain words are false. Each row comment ends with a (was ...) note where a row exists; words 4 and 6 and the length word have no row now. Asides (no rename proposed, outside this batch): vp44_communication_state_machine 0x13616 is the data collector sampler; vp44SensorStatusMonitor 0x1d9b4 is the idle shutdown state machine; cm550_oil_pressure_shutdown_controller 0x2dcb0 is the PTO / user fueling selection (CM848 twin cm848_selectPowerTakeOffOrUserFueling); insiteCommandByteDispatcher parameter 0x47 is J1587 PID 71, the idle shutdown timer status; the cm550_eps* functions at 0x2609c-0x265e6 are the low speed governor gain-set logic. The scratch scripts are /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W1/hits.py and longest_desc.py (with longest_desc.txt)."
+ },
+ "verdict": {
+  "batch": "W1",
+  "overall": "Re-checked from scratch. Method: scanned the ROM for every 32-bit value 0x803c92-0x803ca1 at any alignment (plus the EEPROM form 0x01000188-0x010001cf and the 16-bit low halves), wrote a small CPU32 disassembler (llvm-mc's m68k decoder rejects andi / tst and resynchronises silently) and read every site, read both dumps as words, pulled CM848's raw S masks, compared the CM848 twins, and matched each word 5 / 6 bit to its channel's own block 1003 records in v64t6_s. Result: no name, type or bit position moves - 118 CONFIRMED, 6 AMENDED, 0 REFUTED. All six amendments are comment or differences-text fixes: (1) length word: the region list entry is at 0x80ea, not 0x80e8; (2) word 2: the differences text says CM848 reads bit 7 - it does not (no reader for bits 7 and 8 there); (3) and (4) word 2 bits 7 and 11: the tests are andi.w (0240 0080 / 0240 0800), not andi.l; (5) and (6) word 6 row comment and bit 9: ISIMEN's '0 = the ambient air temperature' reading is a guess (the text is cut at '0 - AMBIENT TEMP = DO' in every e2m and the bit has no reader). For the orchestrator, from inside CONFIRMED rows: the ROM has 74 references to these words, not the 75 in the notes (23 + 11 + 16 + 13 + 2 + 8 + 1; the proposer's own hits.py prints 74), and two of them (0xb7d2, 0xbccc) are whole-word loads to d5, not single-bit tests; every other one is a word read followed by andi with one bit, or one of the 15 indexed base loads (bit numbers from 112 / 0xd0 / 0x1a0 up, never words 0-6); no store, no btst, no byte access, no based (d16,An) access. The shared claims for words 1 and 4 hold bit for bit. The word 5 bit 9 comment should cite CM550's own ADSYEPCA 'ENGINE_SYNC_EXHAUST_PRESSURE_CHANNEL_ADDRESS' rather than the other product's ADEXPROD. The four CM848 renames are supported (12-14 by CM848's own e2m S masks; 8 is optional convergence - the current name is not wrong); if bit 8 is renamed, update the algorithm_enable_flags_3_cal row comment ('bit 8 has no record (the road speed governor without droops below top gear)') and the CM550 word 3 bit 8 field comment. Scratch (read-only tools and the verdict file): /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W1/skeptic/ (m68k.py, site.py, based.py, channels.py, all_e2m_106b.py, build_verdicts.py, verdicts_W1.json).",
+  "verdicts": [
+   {
+    "element": "word -1",
+    "verdict": "AMENDED",
+    "reason": "Name, type and value hold: v64t6_s has one record at 106B +0 (AENBLFLG, type B, size 72, 'LENGTH OF ALGORITHM_ENABLE_FLAGS'); parameter_id_table entry 154 (0x356f4 / 0x356f8) = 0x01000188 -> mirror 0x803c92; EEPROM 0x188 and RAM 0x803c92 both read 0x0046 (70 = 35 flag words x 2; 72 bytes = this word + words 0-34, the highest e2m offset is 0x44 = word 33). A scan of the ROM for every 32-bit value 0x803c92-0x803ca1 at any alignment finds no reference to 0x803c92 / 0x803c93, so no reader and no store. CM848's EEPROM 0x118 also reads 0x0046 and its B record is 90 bytes. One address in the comment is wrong: the region list is 8-byte [address][length] pairs from 0x8082 (0x80e2 = 0x00060000 / 0x9e, 0x80ea = 0x01000188 / 0x48), so the entry is at 0x80ea, not 0x80e8.",
+    "amendment": "name algorithm_enable_flags_table_length_cal, type word unchanged; row comment (and code_tests): 'the ROM region list entry at 0x80ea holds (0x01000188 / 0x48)' instead of 0x80e8"
+   },
+   {
+    "element": "word 0",
+    "verdict": "CONFIRMED",
+    "reason": "0x803c94 = 106B +2 (EEPROM 0x18a). My own census gives 23 references: 8 move.w (0x803c94).l,d0 + andi with one bit (0xc3ba 0x4000; 0xc5a0 0x400; 0xc5b4 0x800; 0xc5cc 0x1000; 0xc5e4 0x2000; 0xc5fc 0x8000; 0x13630 0x100; 0x1ca86 andi.l 0x40) and 15 movea.l #0x803c94,a0 + move.w (0,a0,dn.w*2). I disassembled all 15: the bit numbers start at 112 / 113 / 114 (+4 per channel; +2 / +3 in cm550_diagnosticProtectionEvaluator and cm550_protectionState1DiagnosticValidator), 0x1a0 (+1 per channel) and 0xd0 + switch, so they reach words 7+, 13+ and 26+ only. No store, no byte or btst access. 0x5c10 in both dumps. CM848's word 0 is a plain word for the same reason and has the extra S record 0x2 (AFC_Low_Boost_Derate_Enable, which its code reads); CM550's e2m has 12 N records, bits 4-15. A plain word with the bits in the comment is right."
+   },
+   {
+    "element": "word 0 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x1 at 106B +2 in v64t6_s, no test of that mask on 0x803c94, clear in 0x5c10 (comment only: word 0 stays a word)."
+   },
+   {
+    "element": "word 0 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "No CM550 record for 0x2 and no test of it; CM848's e2m has AFC_Low_Boost_Derate_Enable S 0x2 and its code tests '& 2'; clear in 0x5c10 (comment only)."
+   },
+   {
+    "element": "word 0 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x4 at 106B +2 in v64t6_s, no test of that mask on 0x803c94, clear in 0x5c10 (comment only: word 0 stays a word)."
+   },
+   {
+    "element": "word 0 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x8 at 106B +2 in v64t6_s, no test of that mask on 0x803c94, clear in 0x5c10 (comment only: word 0 stays a word)."
+   },
+   {
+    "element": "word 0 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "JCSBR1AO N 'BIT 4 OF 0-15. IF TRUE LOAD SHADOW RAM DURING INITIALIZATI'; the e2m files with an S record give mask 0x10 (37 files). No test of 0x10; set in 0x5c10."
+   },
+   {
+    "element": "word 0 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "PSAGEN N 'BIT 5 OF 0-15. CUSTOMER TRIM FLAG TO ENABLE/DISABLE PR' (longer text: PROG. SHIFT FEATU; S mask 0x20 elsewhere). No test of 0x20; clear."
+   },
+   {
+    "element": "word 0 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "EBODEN N 'BIT 6 OF 0-15 ... ENABLES FSO VAL(VE TO CLOSE ON'; S 0x40 elsewhere). 0x1ca86 move.w, 0x1ca8c andi.l #0x40: reached only with 0x80a9c8 (engine_retarder_active_flag) non-zero, and a set bit takes the branch that clears bit 0x20 of fuel_system_output_driver_control. Clear in the dumps."
+   },
+   {
+    "element": "word 0 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "VSBKEN N 'BIT 7 WORD 0. ENABLES VSS ANTI-TAMPERING DETECTION' (S 0x80 elsewhere). No test of 0x80 on word 0; clear. The name spells the sensor out."
+   },
+   {
+    "element": "word 0 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "DCAGEN N 'BIT 8 OF 0-15. EEPROM INDICATOR SET BY TOOLS TO ENABLE DATA COLLE'. andi.w #0x100 at 0x13636 after the load at 0x13630: the whole data collector sampler body is inside that test. Clear."
+   },
+   {
+    "element": "word 0 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "DPAGEN N 'BIT 9 OF 0-15. ENABLE/DISABLE THE DOUBLE PULSING FEATURE' (S 0x200 elsewhere). No test of 0x200; clear."
+   },
+   {
+    "element": "word 0 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "APLSEN N 'BIT A WORD 0. ENABLES ALPHA LSG SUB-ALGO'. 0xc5a0 andi.w #0x400 -> bsr 0xc4b2 (tests final_fueling_state == LOW_SPEED_GOVERNOR and the LSG exit timer), result to 0x80a904. Set in 0x5c10."
+   },
+   {
+    "element": "word 0 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "APAFEN N 'BIT B WORD 0. ENABLES ALPHA AFC SUBALGORITHM'. 0xc5b4 andi.w #0x800 -> bsr 0xc504 (the AFC latch / exit timer), result to 0x80a8fe. Set."
+   },
+   {
+    "element": "word 0 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "APFLRTEN N 'BIT C WORD 0. ENABLES ALPHA FUEL RATE SUB-ALGO'. 0xc5cc andi.w #0x1000 -> bsr 0xc404 (the fuel rate filter against two thresholds), result to 0x80a900. Set."
+   },
+   {
+    "element": "word 0 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "APONGVEN N 'BIT D WORD 0. ENABLES ALPHA ON GOVERNOR SUB-ALGO'. 0xc5e4 andi.w #0x2000 -> bsr 0xc496 (road speed governor state or cruise active), result to 0x80a902. Clear."
+   },
+   {
+    "element": "word 0 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "APEGPNEN N 'BIT E WORD 0. ENABLES LOGIC TO USE ENGINE PROTECTIO(N ALPHA)'. 0xc3ba move.w, 0xc3c0 andi.w #0x4000: with 0x80d286 (engine protection fuel derate active) = 1 calculateAlpha stores alpha_state 3 and the alpha from 0x807aac. Set."
+   },
+   {
+    "element": "word 0 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "AATBPEN N 'BIT F WORD 0. ENABLE BIT FOR THE ALPHA AMBIENT AIR PRES' (CM848 label Alpha_Turbo_Protection_Enable, S 0x8000). 0xc5fc andi.w #0x8000 -> bsr 0xc556 (ambient air pressure against two thresholds), result to 0x80a90a. Clear."
+   },
+   {
+    "element": "word 1",
+    "verdict": "CONFIRMED",
+    "reason": "0x803c96 = 106B +4 (EEPROM 0x18c). 11 references, each move.w (0x803c96).l,d0 followed by andi with one bit (0x1, 0x2, 0x4 twice, 0x8, 0x10, 0x20, 0x1000, 0x2000, 0x4000, 0x8000); no store, no byte access. 0x1000 in both dumps. The 10 CM550 records are the same 10 mnemonics as CM848's word 1; the CM550 text bits (0-5) and CM848's S masks agree with the masks the CM550 code tests, and the CM848 twins do the same per bit (cm848_selectLowSpeedGovernorGearGainSet: 0x4000 -> state 2 middle gear set, 0x2000 -> state 3 high gear set; 0x8000 -> state 4). CM848's algorithm_enable_flags_1_t has exactly these 16 field names at these bits, 6-11 reserved in both, so the shared type is right."
+   },
+   {
+    "element": "word 1 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "APUOAPEN N 'BIT 0 WORD 1' (CM848 S 0x1). 0xc3a2 move.w, andi.w #1: calculateAlpha stores alpha_state 1 and the alpha from 0x803d4c. Clear."
+   },
+   {
+    "element": "word 1 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "FSUOFLEN N 'BIT 1 WORD 1' (CM848 S 0x2). 0x1c204 andi.w #2: fuel limit = 0x803f2c with final state 23 (0x17 FUEL_OVERRIDE). Clear."
+   },
+   {
+    "element": "word 1 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "CTTHSWOD N 'DISABLES AUTOZERO & IDLE VALIDATION, BIT 2 OF 0-15' (CM848 S 0x4). andi.l #4 at 0x10602 / 0x1084e: the throttle validation fault checks / the idle validation diagnostic run only while it is clear. CM848's twin tests the same bit for its test cell autozero. Clear."
+   },
+   {
+    "element": "word 1 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "TSUOTAEN N 'BIT 3 WORD 1' (CM848 S 0x8, no CM848 reader). 0x30bc2 andi.w #8: selected timing = 0x804024, timing state 7. Clear."
+   },
+   {
+    "element": "word 1 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "FSTQUOEN N 'BIT 4 WORD 1' (CM848 S 0x10). 0x1c16e andi.w #0x10: fuel_limit_shutdown_minimum = 0x803f2a with source 13 (0xd TORQUE_DERATE_OVERRIDE). Clear."
+   },
+   {
+    "element": "word 1 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "ATAGEN N 'BIT 5 OF 0-15 ... ENABLE THE ALTITUDE' (CM848 S 0x20). 0xc686 andi.w #0x20: clear (or engine not running) gives the peak fueling value, set gives the 2D lookup on ambient air pressure. Clear."
+   },
+   {
+    "element": "word 1 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x40 at 106B +4 in v64t6_s or in CM848's e2m, no test of that mask, clear in 0x1000; reserved in CM848's type too."
+   },
+   {
+    "element": "word 1 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x80 at 106B +4 in v64t6_s or in CM848's e2m, no test of that mask, clear in 0x1000; reserved in CM848's type too."
+   },
+   {
+    "element": "word 1 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x100 at 106B +4 in v64t6_s or in CM848's e2m, no test of that mask, clear in 0x1000; reserved in CM848's type too."
+   },
+   {
+    "element": "word 1 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x200 at 106B +4 in v64t6_s or in CM848's e2m, no test of that mask, clear in 0x1000; reserved in CM848's type too."
+   },
+   {
+    "element": "word 1 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x400 at 106B +4 in v64t6_s or in CM848's e2m, no test of that mask, clear in 0x1000; reserved in CM848's type too."
+   },
+   {
+    "element": "word 1 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x800 at 106B +4 in v64t6_s or in CM848's e2m, no test of that mask, clear in 0x1000; reserved in CM848's type too."
+   },
+   {
+    "element": "word 1 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "LSAGGNEN N (no bit in the text); CM848 S 0x1000 (the same mask in every e2m file with an S record). 0x26188 andi.w #0x1000: with the aggressive logic allowed and gain set 0 it selects gain set 1. Set in the dumps."
+   },
+   {
+    "element": "word 1 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "LSHGGNEN N (no bit); CM848 S 0x2000. 0x26408 andi.l #0x2000: when set (and below the mid/high breakpoint) gain set 3 with the pointer to the 'when in high gears' gains; CM848's twin has the same structure. Clear."
+   },
+   {
+    "element": "word 1 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "LSMGGNEN N (no bit); CM848 S 0x4000. 0x263e0 andi.l #0x4000: required for any gear gain set; gives gain set 2 with the pointer to the 'used when in middle gears' gains. Clear."
+   },
+   {
+    "element": "word 1 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "LSJCGNEN N 'ENABLES/DISABLES THE LSG JCOMM PID GAINS'; CM848 S 0x8000. 0x265ee andi.l #0x8000: with the datalink speed control mode non-zero it sets gain set 4 and its pointer. Clear. The field name is CM848's."
+   },
+   {
+    "element": "word 2",
+    "verdict": "AMENDED",
+    "reason": "Row name, type and row comment hold: 0x803c98 = 106B +6 (EEPROM 0x18e); 16 references, each a word read + andi with one bit (0x1 x3, 0x10 x3, 0x20 x2, 0x80, 0x100, 0x800, 0x1000 x3, 0x2000, 0x4000); no store; 0x1870 in both dumps. CM550's own e2m has ISRPEN as an S record with mask 0x8, CM848's e2m has no record at 0x8 and no reader, so the type cannot be shared: cm550_algorithm_enable_flags_2_t with CM848's other 15 field names is right. The differences_from_cm848 text is wrong on one fact and garbled: CM848 does not read bit 7 (its .cpp has no j1922_monitor_enable or j1922_monitor_clear_enable reference and its struct says 'no reader in this build'). Two field comments (bits 7 and 11) name the wrong instruction size.",
+    "amendment": "name algorithm_enable_flags_2_cal and type cm550_algorithm_enable_flags_2_t unchanged; differences_from_cm848: 'Only bit 3 differs (CM550 ISRPEN S mask 0x8; CM848 reserved_bit_3). CM848 reads bit 6 (cm848_updateEngineRetarderAllowedState) and has no reader for bits 7 and 8; CM550 reads bits 7 (0x1fdc6) and 8 (0x1fd6c) and has no reader for bits 3, 6 and 15.'"
+   },
+   {
+    "element": "word 2 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "EPSOEN N 'BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM' (CM848 S 0x1). andi.l #1 at 0x18ade / 0x18cba / 0x18fe6 (cm550_diagnosticProtectionEvaluator / cm550_protectionState1DiagnosticValidator / processDiagnosticLimitStatus), each time ahead of the per-channel shutdown enable bits. Clear in 0x1870."
+   },
+   {
+    "element": "word 2 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: JC22CCSW's text says 'BIT 1 OF BITS 0:15' but every e2m file with an S record for it gives 0x100 (the same text beside the mask), the CM550 code tests that flag at 0x100, and nothing tests 0x2. Clear."
+   },
+   {
+    "element": "word 2 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "No record for 0x4 at 106B +6, no test of 0x4, clear."
+   },
+   {
+    "element": "word 2 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "ISRPEN is an S record in CM550's own e2m: mask 08, 'BIT 3 WORD2. 1 - PTO WILL NOT OVERRIDE SHUTDOWN, 0 - P(TO WILL OVERRID)'; the labelled e2m files call it Idle_Shutdown_PTO_Enable, 0x8. No test of 0x8 on word 2; clear. CM848's e2m has no record there. The name states the set meaning."
+   },
+   {
+    "element": "word 2 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "EPEN N 'BIT 4 OF 0-15. ENGINE PROTECTION FEATURES ENABLE' (CM848 S 0x10). 0x18628 andi.w #0x10: clear = rated speed limit, peak fuel limit, no derate; set = the five protection phases. Also 0x18ace and 0x1cade. Set."
+   },
+   {
+    "element": "word 2 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "EPRYEN N 'BIT 5 OF 0-15. ENABLE RESTART ALGORITHM' (CM848 S 0x20). andi.l #0x20 at 0x18aee / 0x18cca, tested with bits 4 and 0 before the per-channel shutdown / restart enable bits. Set."
+   },
+   {
+    "element": "word 2 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "EBCHDBEN N 'BIT 6 OF 0-15 ... USED TO ENABLE EN(GINE BRAKE DEAC' (CM848 S 0x40, label EB_Clutch_Enable). No test of 0x40 on word 2 in the dumped ROM; set in 0x1870. CM848's field name."
+   },
+   {
+    "element": "word 2 bit 7",
+    "verdict": "AMENDED",
+    "reason": "Position and name hold: JC22MRSW 'J1922 MONITOR ENABLE' has S mask 0x80 in CM848's e2m and in every other file that gives one; the code at 0x1fdc6 counts control mode 1 / 2 / 3 sessions with key-on hour stamps only while 0x80 is set. Clear in the dumps. The comment's instruction is wrong: the bytes at 0x1fdcc are 0240 0080 = andi.w #0x80,d0.",
+    "amendment": "bit 7 j1922_monitor_enable unchanged; comment: 'andi.w 0x80 at 0x1fdc6' (not andi.l)"
+   },
+   {
+    "element": "word 2 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "JC22CCSW 'J1922 MONITOR CLEAR ENABLE' with S mask 0x100 in CM848's e2m and 30+ files. 0x1fd6c move.w, andi.l #0x100: when set and the last-control hour stamp plus the J1922 clear occurrence time has passed, it zeroes the eight session counter / hour stamp variables. Clear."
+   },
+   {
+    "element": "word 2 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "No record for 0x200, no test, clear."
+   },
+   {
+    "element": "word 2 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "No record for 0x400, no test, clear."
+   },
+   {
+    "element": "word 2 bit 11",
+    "verdict": "AMENDED",
+    "reason": "Position and name hold: JC39MREA 'J1939 MONITOR ENABLE' has S mask 0x800 in CM848's e2m; 0x22080 gates the function that records the datalink speed control and retarder session history. Set in 0x1870. The comment's instruction is wrong: the bytes at 0x22086 are 0240 0800 = andi.w #0x800,d0.",
+    "amendment": "bit 11 j1939_monitor_enable unchanged; comment: 'andi.w 0x800 at 0x22080' (not andi.l)"
+   },
+   {
+    "element": "word 2 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "JCRDTXEA 'ENABLE FOR SPEED CONTROL / ENGINE BRAKING INTERACTION', CM848 S 0x1000. Tests of 0x1000 at 0x21432 (ends retarder mode 2 when the selected fueling reaches the limit), 0x2f850 (retarder TSC1 handler) and 0x33900 (retarder status byte = 0x40 while set, else 0). Set."
+   },
+   {
+    "element": "word 2 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "PTTHOVEN N 'BIT 13 OF 0-15' (CM848 S 0x2000). 0x2dd34 andi.l #0x2000: with PTO active and the throttle fueling at or above the PTO fueling, the throttle fueling wins and the override flag is set. Clear."
+   },
+   {
+    "element": "word 2 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "TSUCICEN N 'BIT 14 WORD 2 ... USER TIMING' (CM848 S 0x4000). 0x1c770 andi.w #0x4000: adds 0x803f3c to the 4D timing and sets the increment flag. Clear."
+   },
+   {
+    "element": "word 2 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "ZVPTLMEN N 'BIT 15 WORD 2 - ENABLE ENGINE SPEED TO BE LIMITED' (CM848 S 0x8000, Zero_Vss_PTO_Limit_Enable). No test of 0x8000 on word 2; clear. CM848's field name."
+   },
+   {
+    "element": "word 3",
+    "verdict": "CONFIRMED",
+    "reason": "0x803c9a = 106B +8 (EEPROM 0x190). 13 references, each a word read + andi with one bit (0x2 x3, 0x4 x2, 0x8, 0x10, 0x200 x2, 0x800, 0x1000, 0x2000, 0x4000); no store; 0x86e8 in both dumps (bits 3 5 6 7 9 10 15). Fifteen CM550 records cover bits 1-15; CM848's own e2m has no record for 0x2 0x4 0x20 0x100 0x200 0x800 and its code reads none of them except 0x100, so the type must be CM550's own. The field names of bits 3 4 6 7 10 15 are CM848's verbatim."
+   },
+   {
+    "element": "word 3 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "No record for 0x1 at 106B +8, no test of 0x1, clear."
+   },
+   {
+    "element": "word 3 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "ISAGEN is an S record in CM550's own e2m, mask 02, 'WORD 3, BIT 1 OF 0-15. 1 - IDLE SHUTDOWN ENABLED'. Tests of 0x2 at 0x1d9ca (the state machine whose state word 0x80d674 is e2m 10CD ISST), 0xefbe (PID 71 status bit 0x08 = function enabled) and 0x33d80 (PGN 65252 payload byte 0x8035f7 = 0x7f set / 0x3f clear). Clear."
+   },
+   {
+    "element": "word 3 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "ISODEN S record, mask 04, 'WORD 3, BIT 2 OF 0-15. 1 - ISOD IS ABLE TO BE SET'; CM550's e2m 10CD +0 ISOD (0x80d672) = '1 - IDLE SHUTDOWN IS OVERRIDDEN UNTIL VEHICLE MOVES'. andi.l #4 at 0x1dab0 (warning state -> override state with ISODFG) and 0xefd6 (PID 71 bit 0x04 with ISOD). Clear."
+   },
+   {
+    "element": "word 3 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "LSISAJEN N 'BIT 3 OF 0-15. ENABLE ALLOWS OPERATOR TO ADJUST SPEED' (CM848 S 0x8). 0x26490 andi.l #8: clear zeroes the adjustment, set lets the two switch bits step it between the limits. Set in 0x86e8."
+   },
+   {
+    "element": "word 3 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "PTAGEN S record, mask 10, 'BIT 4 OF 0-15. PARAMETER USED TO ENABLE/DISABLE PTO'. 0x2dd0a andi.l #0x10: the PTO fueling / FUELING_STATE_POWER_TAKE_OFF branch is taken only while set. Clear."
+   },
+   {
+    "element": "word 3 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "PTRXEN N 'BIT 5 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER R' (longest text: REMOTE PTO IS ALLO; S mask 0x20 in the files that give one). No test of 0x20; set in 0x86e8. CM848's e2m has no record."
+   },
+   {
+    "element": "word 3 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "CRAGEN N 'BIT 6 OF 0-15. STATUS INDICATOR WHICH ENABLES/DISABL' (CM848 S 0x40 Cruise_Control_Enable). No test of 0x40 in the dumped ROM; set."
+   },
+   {
+    "element": "word 3 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "RSAGEN N 'BIT 7, ENABLE/DISABLE ROAD SPEED GOVERNOR' (CM848 S 0x80). No test of 0x80; set."
+   },
+   {
+    "element": "word 3 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "GRGDPNEN N 'GEAR DOWN PROTECTION ENABLE, BIT 8 OF 0-15' in CM550's own e2m (Gear_Down_Protection_Enable S 0x100 in the CHR_B2 files). No test of 0x100 in the dumped ROM; clear. If the CM848 rename below is applied, the comment should cite the new CM848 field name."
+   },
+   {
+    "element": "word 3 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "TIEN N 'BIT 9 OF 0-15 IN WORD 3. TRIP INFO SYSTEM ENABLED = 1' (S 0x200 elsewhere; Fuel_Log_Enable 0x200). andi.w #0x200 at 0x306e0 (the trip record reset and the trip statistics run only while set) and 0x30a64. Set."
+   },
+   {
+    "element": "word 3 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "CRDPEN N 'BIT 10 OF 0-15. BIT 10 IS CRUISE_RSG_DROOP_ENABLE' (CM848 S 0x400). No test of 0x400; set. CM848's field name."
+   },
+   {
+    "element": "word 3 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "CPAGEN N 'BIT 11 OF 0-15. ENABLES AND DISABLES THE CYLINDER PRES(SURE MAINTENANC'. 0x11e74 andi.l #0x800: clear zeroes the cylinder pressure maintenance status, its timing increment and the method. Clear."
+   },
+   {
+    "element": "word 3 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "NZFLAGEN N (no bit in the text), CM848 S 0x1000. 0xb2c6 andi.w #0x1000 gates the function that computes the ANC fuel limit value (its calibrations are the 'ANC may limit fueling' ones). Clear."
+   },
+   {
+    "element": "word 3 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "NZTAAGEN N 'ENABLE FOR TIMING ADVANCE OF THE ACCELERATION NOISE' (no bit), CM848 S 0x2000. 0xb3ec andi.w #0x2000 gates the function that computes the ANC timing limit, which 0xb4ce then applies as a ceiling on the timing advance (state 3); CM848's e2m names the output NZTALM 'Timing advance limit as determined by ANC'. timing_limit is what the code does. Clear."
+   },
+   {
+    "element": "word 3 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "NZESAGEN N 'ENABLE FOR SPEED LIMITING OF THE ACCELERATION NOISE' (no bit), CM848 S 0x4000. 0xb50e andi.w #0x4000 gates the ANC engine speed limit ramp. Clear."
+   },
+   {
+    "element": "word 3 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "CRSVPWEN N 'BIT 15 OF 0-15, ENABLES/DISABLES SAVING CRUISE SET SP' (CM848 S 0x8000). No test of 0x8000; set. CM848's field name."
+   },
+   {
+    "element": "word 4",
+    "verdict": "CONFIRMED",
+    "reason": "0x803c9c = 106B +A (EEPROM 0x192), no row today. Two references: 0x1c67a move.w + andi.w #0x100 and 0x3456e move.w + andi.l #1; no store; 0x0000 in both dumps. Records: FSUCFLEN 'BIT 0 WORD 4', TSUCTAEN and ADV_OVER 'BIT 8 OF WORD 4' (CM848 S 0x1 and 0x100). CM848's algorithm_enable_flags_4_t has user_commanded_fueling_enable at bit 0, user_commanded_timing_enable at bit 8 and reserved elsewhere, and its two readers do what the CM550 ones do, so the shared type is right."
+   },
+   {
+    "element": "word 4 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "FSUCFLEN N 'BIT 0 WORD 4. ENABLES THE USE OF USER_COMMANDED_FUELING'. 0x3456e andi.l #1: with no user fueling state selected it sets state 5 (Calterm USERCOMD) and the fuel demand from 0x80404a. Clear."
+   },
+   {
+    "element": "word 4 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x2 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x4 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x8 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x10 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x20 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x40 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x80 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "TSUCTAEN and ADV_OVER N 'BIT 8 OF WORD 4. ENABLE INDICATOR FOR THE ENGINE(ERING COMMAND TIMING'. 0x1c67a andi.w #0x100: set takes the 4D timing from 0x803f3e with intermediate timing state 2. Clear."
+   },
+   {
+    "element": "word 4 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x200 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x400 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x800 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x1000 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x2000 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x4000 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 4 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "No record for mask 0x8000 at 106B +A, no test, clear; reserved in CM848's type too."
+   },
+   {
+    "element": "word 5",
+    "verdict": "CONFIRMED",
+    "reason": "0x803c9e = 106B +C (EEPROM 0x194). 8 references: the whole-word load to d5 at 0xb7d2 and 7 single-bit reads (0x400 at 0x10584, 0x1083e, 0x20cae, 0x20e4a, 0x2582e, 0x32f78; 0x800 at 0x32fd8); no store; 0x0000 in the dumps. The loop disassembles as: d2 = 1, 'move.w d5,d0; and.w d2,d0' selects 0x80a72e[d3] (analog_sensor_override_values) as the filtered value, add.w d2,d2 per channel, and at d3 = 16 d2 = 1 again with d5 = word 6; it ends at 0x80a4d0 = 25 channels. So bit n = channel n. In CM550's own e2m the OD record with mask 1 << n has the stem of channel n's block 1003 record for all 16 (checked from the CA / HE / LE records). The word is tested and never written, so a bitfield suits it (7 named tests against one whole-word load). CM848's word 5 is a different set, so the type is CM550's own."
+   },
+   {
+    "element": "word 5 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "ADIMTPOD S mask 01 'INTAKE_MANIFOLD_TEMPERATURE_OVERRIDE'; channel 0 by the loop (mask 1 << 0), and the channel's own record is ADIMTPCA 'INTAKE_MANIFOLD_TEMPERATURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "ADFLTPOD S mask 02 'FUEL_TEMPERATURE_OVERRIDE'; channel 1 by the loop (mask 1 << 1), and the channel's own record is ADFLTPCA 'FUEL_TEMPERATURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "ADCVOD S mask 04 'COOLANT_LEVEL_OVERRIDE'; channel 2 by the loop (mask 1 << 2), and the channel's own record is ADCVCA 'COOLANT LEVEL CHANNEL ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "ADSYFPOD S mask 08 'ALGORITHM_ENABLE_FLAGS WORD 5 BIT 3'; channel 3 by the loop (mask 1 << 3), and the channel's own record is ADSYFPCA 'ENGINE_SYNC_FUEL_PRESSURE_CHANNEL_ADDRESS' (the meaning comes from the channel, the OD text gives only the bit). Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "ADOLPROD S mask 10 'OIL_PRESSURE_OVERRIDE'; channel 4 by the loop (mask 1 << 4), and the channel's own record is ADOLPRCA 'OIL_PRESSURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "ADBSPROD S mask 20 'BOOST_PRESSURE_OVERRIDE'; channel 5 by the loop (mask 1 << 5), and the channel's own record is ADBSPRCA 'BOOST_PRESSURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "ADCLTPOD S mask 40 'COOLANT_TEMPERATURE_OVERRIDE'; channel 6 by the loop (mask 1 << 6), and the channel's own record is ADCLTPCA 'COOLANT_TEMPERATURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "ADAATPOD S mask 80 'AMBIENT_AIR_TEMPERATURE_OVERRIDE'; channel 7 by the loop (mask 1 << 7), and the channel's own record is ADAATPCA 'AMBIENT AIR TEMPERATURE CHANNEL ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "ADPOTPOD S mask 100 'POWER_STEERING_TEMPERATURE_OVERRIDE'; channel 8 by the loop (mask 1 << 8), and the channel's own record is ADPOTPCA 'POWER_STEERING_TEMPERATURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "ADSYEPOD S mask 200 'SPARE_CHANNEL_1_OVERRIDE'. The loop proves bit 9 = channel 9, and CM550's own e2m names that channel: ADSYEPCA (1003 +E8 = 24 x 9 + 16) 'ENGINE_SYNC_EXHAUST_PRESSURE_CHANNEL_ADDRESS', ADSYEPHE / ADSYEPLE 'ENGINE_SYNC_EXHAUST_PRESSURE_HIGH / LOW_ERR'; only the override records (ADSYEPOD / PZ / PR / UR) say SPARE_CHANNEL_1. The field follows the channel's row name (exhaust_pressure_sensor_state), which is consistent; the comment would be stronger citing ADSYEPCA than the other product's ADEXPROD. Clear."
+   },
+   {
+    "element": "word 5 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "ADSATHOD S mask 400 'SAMPLED_THROTTLE_OVERRIDE'; channel 10 by the loop (mask 1 << 10), and the channel's own record is ADSATHCA 'SAMPLED_THROTTLE_CHANNEL_ADDRESS'. Also tested alone: andi.l #0x400 at 0x10584 / 0x1083e (throttle processing and idle validation skipped while set), 0x20cae / 0x20e4a (the J1939 pedal writes analog_sensor_override_values[10]), andi.w at 0x2582e (pedal fault selection) and 0x32f78 (EEC2 pedal byte 0xff). Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "ADROTHOD S mask 800 'REMOTE_THROTTLE_OVERRIDE'; channel 11 by the loop (mask 1 << 11), and the channel's own record is ADROTHCA 'REMOTE_THROTTLE_CHANNEL_ADDRESS'. Also tested alone: andi.l #0x800 at 0x32fd8 (EEC2 remote accelerator byte 0xff). Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "ADAAPROD S mask 1000 'AMBIENT_AIR_PRESSURE_OVERRIDE'; channel 12 by the loop (mask 1 << 12), and the channel's own record is ADAAPRCA 'AMBIENT_AIR_PRESSURE_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "ADBTVTOD S mask 2000 'ALGORITHM_ENABLE_FLAGS WORD 5 BIT 13'; channel 13 by the loop (mask 1 << 13), and the channel's own record is ADBTVTCA 'BATTERY_VOLTAGE_CHANNEL_ADDRESS' (the meaning comes from the channel, the OD text gives only the bit). Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "ADESSVOD S mask 4000 'ENGINE_SPEED_SENSOR_SV_OVERRIDE'; channel 14 by the loop (mask 1 << 14), and the channel's own record is ADESSVCA 'ENGINE_SPEED_SENSOR_SV_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 5 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "ADTHSVOD S mask 8000 'THROTTLE_POSITION_SENSOR_SV_OVERRIDE'; channel 15 by the loop (mask 1 << 15), and the channel's own record is ADTHSVCA 'THROTTLE_POSITION_SENSOR_SV_CHANNEL_ADDRESS'. Clear in the dumps."
+   },
+   {
+    "element": "word 6",
+    "verdict": "AMENDED",
+    "reason": "0x803ca0 = 106B +E (EEPROM 0x196), no row today. One reference: the whole-word load to d5 at 0xbccc, taken when the channel counter reaches 16 with the mask reset to 1; the loop ends after channel 24, so only bits 0-8 are ever tested and no fixed-mask test exists. No store; 0x0000 in the dumps. A plain word is right (nothing would render by name). Bits 0-8 match the OD records and the channel records of channels 16-24; bits 10-15 have the bit in their N text and CM848's field names. One gloss in the row comment is not proved: ISIMEN's text is cut at '0 - AMBIENT TEMP = DO' in every e2m file (the longest of them), and bit 9 has no reader, so '(0 = the ambient air temperature)' is a guess.",
+    "amendment": "name algorithm_enable_flags_6_cal, type word unchanged; row comment: '0x200 ISIMEN idle shutdown intake manifold temperature override (e2m: 1 - IMT OVERRIDE SHUTDOWN PROCESS; 0 - AMBIENT TEMP = DO..., cut in every e2m; what 0 selects is not proved)' instead of '(0 = the ambient air temperature)'"
+   },
+   {
+    "element": "word 6 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "ADVHSVOD S mask 01 'VEHICLE_CONNECTOR_SENSORS_SV_OVERRIDE'; channel 16 by the loop (mask restarts at 1 at channel 16), whose own record is ADVHSVCA 'VEHICLE_CONNECTOR_SENSORS_SV_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "ADECSVOD S mask 02 'ENGINE SENSOR SV OVERRIDE'; channel 17 by the loop (mask restarts at 1 at channel 16), whose own record is ADECSVCA 'ENGINE_CONN_SENSORS_SV_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "ADFTSVOD S mask 04 'FREQUENCY_THROTTLE_INPUT_SV_OVERRIDE'; channel 18 by the loop (mask restarts at 1 at channel 16), whose own record is ADFTSVCA 'FREQUENCY_THROTTLE_INPUT_SENSOR_SV_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "ADCROD S mask 08 'CRUISE_CONTROL_SWITCH_MUX_OVERRIDE'; channel 19 by the loop (mask restarts at 1 at channel 16), whose own record is ADCRCA 'CRUISE_CONTROL_SWITCH_MUX_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "ADWFOD S mask 10 'WATER_IN_FUEL_OVERRIDE'; channel 20 by the loop (mask restarts at 1 at channel 16), whose own record is ADWFCA 'WATER_IN_FUEL_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "ADEGCFOD S mask 20 'EGR_CURRENT_FEEDBACK_OVERRIDE'; channel 21 by the loop (mask restarts at 1 at channel 16), whose own record is ADEGCFCA 'EGR_CURRENT_FEEDBACK_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "ADPSSVOD S mask 40 'PROGRAMMING_PULSE_SV_OVERRIDE'; channel 22 by the loop (mask restarts at 1 at channel 16), whose own record is ADPSSVCA 'PROGRAMMING_PULSE_SV_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "ADHBSVOD S mask 80 'HIGH_SIDE_GATE_BIAS_SV_OVERRIDE'; channel 23 by the loop (mask restarts at 1 at channel 16), whose own record is ADHBSVCA 'HIGH_SIDE_GATE_BIAS_SV_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "ADOCSVOD S mask 100 'OP_AMPS_AND_COMPARATORS_SV_OVERRIDE'; channel 24 by the loop (mask restarts at 1 at channel 16), whose own record is ADOCSVCA 'OP_AMPS_AND_COMPARATORS_SV_CHANNEL_ADDRESS'. Clear. Comment only (word 6 stays a word)."
+   },
+   {
+    "element": "word 6 bit 9",
+    "verdict": "AMENDED",
+    "reason": "Position holds: ISIMEN is an S record in CM550's own e2m, mask 200, 'BIT 9 WORD 6. 1 - IMT OVERRIDE SHUTDOWN PROCESS; 0 - AM'; the name is a literal reading of that. No reader (the loop stops at bit 8), clear. The comment's '(the idle shutdown temperature override uses the intake manifold temperature instead of the ambient air temperature)' is not in any e2m: the longest text in the repo ends '0 - AMBIENT TEMP = DO'.",
+    "amendment": "bit 9 idle_shutdown_intake_manifold_temperature_override_enable unchanged; comment: quote '1 - IMT OVERRIDE SHUTDOWN PROCESS; 0 - AMBIENT TEMP = DO' (cut in every e2m) and mark the 'instead of the ambient air temperature' reading as a guess"
+   },
+   {
+    "element": "word 6 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "FCAKAGEN N 'BIT 10 OF 0-15, ALLOWS PRESSURE SWITCH FUNCTIONALITY'; CM848's S mask is 0x400 and its field at that bit is fan_air_conditioning_pressure_enable. No reader in the dumped ROM (the loop tests bits 0-8 only); clear. Comment only."
+   },
+   {
+    "element": "word 6 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "FCAKVSEN N 'BIT 11 OF 0-15, ALLOWS SPECIAL AC PRESSURE SWITCH FUNCTIONALITY'; CM848's S mask is 0x800 and its field at that bit is fan_air_conditioning_vehicle_speed_interaction_enable. No reader in the dumped ROM (the loop tests bits 0-8 only); clear. Comment only."
+   },
+   {
+    "element": "word 6 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "FC02EN N 'BIT 12 OF 0-15 ALLOWS BUS APPLICATIONS IMT FAN CONTROL'; CM848's S mask is 0x1000 and its field at that bit is fan_clutch_2_enable. No reader in the dumped ROM (the loop tests bits 0-8 only); clear. Comment only."
+   },
+   {
+    "element": "word 6 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "FCEBAGEN N 'BIT 13 OF 0-15, ALLOWS ENGINE BRAKE FUNCTIONALITY'; CM848's S mask is 0x2000 and its field at that bit is fan_engine_retarder_enable. No reader in the dumped ROM (the loop tests bits 0-8 only); clear. Comment only."
+   },
+   {
+    "element": "word 6 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "FCEN N 'BIT 14 OF 0-15, ALLOWS MANUAL SWITCH INPUT FUNCTIONALITY'; CM848's S mask is 0x4000 and its field at that bit is fan_manual_input_enable. No reader in the dumped ROM (the loop tests bits 0-8 only); clear. Comment only."
+   },
+   {
+    "element": "word 6 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "CREBEN N 'TRIM PARAMETER ENABLES/DISABLES CC/EBRAKE BIT 15 OF 0'; CM848's S mask is 0x8000 and its field at that bit is cruise_engine_retarder_enable. No reader in the dumped ROM (the loop tests bits 0-8 only); clear. Comment only."
+   },
+   {
+    "element": "cm848 algorithm_enable_flags_3_t bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "CM848's own e2m (CHR_CC_11.45.01.07): ANC_Fuel_Algorithm_Enable, 106B +8, S mask 1000, '[NZFLAGEN] Enable for fuel limiting of the acceleration noise control algorithm'. No reader in cm848_rom.ghidra.cpp, like idle_speed_adjust_enable and cruise_governor_droop_enable, which are named from their records. CM550 tests the same mask in its ANC fuel limit function."
+   },
+   {
+    "element": "cm848 algorithm_enable_flags_3_t bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "CM848's own e2m: ANC_Timing_Algorithm_Enable, S mask 2000, '[NZTAAGEN] Enable for timing advance of the acceleration noise control algorithm'; the same e2m names the algorithm's output NZTALM 'Timing advance limit as determined by ANC' and has ANC_Timing_Limit_Status / _Inhibit, so timing_limit is CM848's own wording too. No CM848 reader. CM550 tests 0x2000 in the function that computes the limit."
+   },
+   {
+    "element": "cm848 algorithm_enable_flags_3_t bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "CM848's own e2m: ANC_Speed_Algorithm_Enable, S mask 4000, '[NZESAGEN] Enable for speed limiting of the acceleration noise control algorithm'. No CM848 reader. CM550 tests 0x4000 in its ANC engine speed limit function."
+   },
+   {
+    "element": "cm848 algorithm_enable_flags_3_t bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "A judgment call, and the evidence supports it; the current name is not wrong (it describes the code), so the rename is optional convergence on the e2m label. CM848's own e2m has no record for 0x100 at 106B +8, but it does carry the feature (Gear_Down_Active, Gear_Down_Gear_Ratio 'gear down gear ratio, down from top gear'). The bit's two CM848 readers (cm848_calculateRoadSpeedGovernorFueling, cm848_selectCruiseGovernorGainSet) are the only readers of drivetrain_gear_range, the range built from that gear down ratio, and both act only when it is not top gear. The same table position is GRGDPNEN 'GEAR DOWN PROTECTION ENABLE, BIT 8 OF 0-15' in CM550's e2m and Gear_Down_Protection_Enable S 100 in the seven later Chrysler CHR_B2 files, so the label held before and after CM848. If it is applied: keep the behaviour text (no droops below top gear) in the field comment, and update the two texts that carry the old description - the algorithm_enable_flags_3_cal row comment ('bit 8 has no record (the road speed governor without droops below top gear)') and the CM550 word 3 bit 8 field comment, which quotes the old field name."
+   }
+  ]
+ }
+}

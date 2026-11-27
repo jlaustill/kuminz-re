@@ -1,0 +1,308 @@
+{
+ "global|CM550|0x0080da50": {
+  "name": "tsc1_override_control_mode",
+  "reason": "F1 proposed datalink_engine_control_mode and J2 tsc1_override_control_mode for e2m 10E8 +4 JCEGMD; CM848 keeps the same record as j1939_powertrain_control_state.tsc1_override_control_mode, so the shared name wins"
+ },
+ "function|0x0001b754": {
+  "drop": true,
+  "reason": "an executive frame task set, named by its schedule slot in round 93 (cm550_runEvery20FramesTaskSetPhase1)"
+ },
+ "function|0x0001b788": {
+  "drop": true,
+  "reason": "an executive frame task set, named by its schedule slot in round 93 (cm550_runEvery20FramesTaskSetPhase3)"
+ },
+ "function|0x0001b7f2": {
+  "drop": true,
+  "reason": "an executive frame task set, named by its schedule slot in round 93 (cm550_runEvery20FramesTaskSetPhase11)"
+ },
+ "global|CM550|0x008019bc": {
+  "type": "cm550_retarder_tsc1_ignored_request_t[5]",
+  "reason": "the 4-byte CM550 entry differs from CM848's 6-byte retarder entry: a cm550_ type"
+ },
+ "structs": {
+  "CM550": {
+   "j1939_periodic_transmit_entry_t": [
+    [
+     "pgn_key",
+     "word",
+     2,
+     "the PGN key of the periodic message (J2: the queue entry's +0)"
+    ],
+    [
+     "interval_ticks",
+     "word",
+     2,
+     "the transmit interval in 10 ms ticks"
+    ],
+    [
+     "next_tick",
+     "word",
+     2,
+     "the tick of the next transmission"
+    ],
+    [
+     "builder",
+     "pointer",
+     4,
+     "the address of the message's builder function"
+    ]
+   ],
+   "engine_tsc1_ignored_request_t": [
+    [
+     "data_link",
+     "word",
+     2,
+     "the network the request came on (the data link compared by findTsc1SourceConfiguration)"
+    ],
+    [
+     "source_address",
+     "byte",
+     1,
+     "the source address of the ignored TSC1 request"
+    ],
+    [
+     "reserved_3",
+     "byte",
+     1,
+     "no access"
+    ],
+    [
+     "control_mode",
+     "word",
+     2,
+     "the override control mode of the ignored request"
+    ],
+    [
+     "countdown",
+     "word",
+     2,
+     "counts down; the entry is removed at 0"
+    ]
+   ],
+   "cm550_retarder_tsc1_ignored_request_t": [
+    [
+     "source_address",
+     "byte",
+     1,
+     "the source address of the ignored retarder TSC1 request"
+    ],
+    [
+     "reserved_1",
+     "byte",
+     1,
+     "no access"
+    ],
+    [
+     "countdown",
+     "word",
+     2,
+     "counts down; the entry is removed at 0 (CM848's retarder entry is 6 bytes)"
+    ]
+   ],
+   "table_lookup_2d_arguments_t": [
+    [
+     "x_axis_offset",
+     "word",
+     2,
+     "the byte offset of the last x axis point found; cached, written back by cm550_tableLookup2D"
+    ],
+    [
+     "x_axis_pointer",
+     "word*",
+     4,
+     "the x axis table (its first word is the byte count)"
+    ],
+    [
+     "x_input",
+     "word",
+     2,
+     "the x input value"
+    ],
+    [
+     "y_axis_offset",
+     "word",
+     2,
+     "the byte offset of the last y axis point found; cached, written back"
+    ],
+    [
+     "y_axis_pointer",
+     "word*",
+     4,
+     "the y axis table (its first word is the byte count)"
+    ],
+    [
+     "y_input",
+     "word",
+     2,
+     "the y input value"
+    ],
+    [
+     "z_values_pointer",
+     "word*",
+     4,
+     "the grid of z values, one row of x points per y point"
+    ],
+    [
+     "no_interpolation_flag",
+     "word",
+     2,
+     "nonzero: the lookup returns the grid value without interpolating"
+    ]
+   ]
+  }
+ },
+ "struct_sizes": {
+  "CM550": {
+   "j1939_periodic_transmit_entry_t": 10,
+   "engine_tsc1_ignored_request_t": 8,
+   "cm550_retarder_tsc1_ignored_request_t": 4,
+   "table_lookup_2d_arguments_t": 22
+  }
+ },
+ "remove_globals": {
+  "CM550": {
+   "0x008041fc": "j1939_active_engine_control_session.override_control_mode_count",
+   "0x00804216": "j1939_active_retarder_control_session.override_control_mode_count",
+   "0x00801998": "engine_tsc1_ignored_request_entries[0].control_mode",
+   "0x0080199a": "engine_tsc1_ignored_request_entries[0].countdown",
+   "0x008019a2": "engine_tsc1_ignored_request_entries[1].countdown",
+   "0x008019a6": "engine_tsc1_ignored_request_entries[2].source_address",
+   "0x008019aa": "engine_tsc1_ignored_request_entries[2].countdown",
+   "0x008019ab": "",
+   "0x008019ac": "engine_tsc1_ignored_request_entries[3].data_link",
+   "0x008019ad": "",
+   "0x008019b2": "engine_tsc1_ignored_request_entries[3].countdown",
+   "0x008019b4": "engine_tsc1_ignored_request_entries[4].data_link",
+   "0x008019b6": "engine_tsc1_ignored_request_entries[4].source_address",
+   "0x008019b8": "engine_tsc1_ignored_request_entries[4].control_mode",
+   "0x00808159": "j1939_input_source_priority._1_1_",
+   "0x00807d60": "",
+   "0x00807d62": "switch_input_polarity_bits[1]",
+   "0x00807d64": "",
+   "0x00807d66": "switch_input_polarity_bits[2]",
+   "0x00807d6e": "",
+   "0x008000d7": "",
+   "0x0080bd4b": "switch_input_source_priority[1]",
+   "0x0080bd4c": "switch_input_source_priority[2]",
+   "0x0080bd4d": "switch_input_source_priority[3]",
+   "0x0080bd4e": "switch_input_source_priority[4]",
+   "0x0080bd4f": "switch_input_source_priority[5]",
+   "0x0080bd50": "switch_input_source_priority[6]",
+   "0x0080bd51": "switch_input_source_priority[7]",
+   "0x0080bd52": "switch_input_source_priority[8]",
+   "0x0080bd53": "switch_input_source_priority[9]",
+   "0x0080bd54": "switch_input_source_priority[10]",
+   "0x0080bd55": "switch_input_source_priority[11]",
+   "0x0080bd56": "switch_input_source_priority[12]",
+   "0x0080bd57": "switch_input_source_priority[13]",
+   "0x0080bd58": "switch_input_source_priority[14]",
+   "0x0080bd59": "switch_input_source_priority[15]",
+   "0x0080bd5a": "switch_input_source_priority[16]",
+   "0x0080bd5b": "switch_input_source_priority[17]",
+   "0x0080bd5c": "switch_input_source_priority[18]",
+   "0x0080bd5d": "switch_input_source_priority[19]",
+   "0x0080bd5e": "switch_input_source_priority[20]",
+   "0x0080bd5f": "switch_input_source_priority[21]",
+   "0x0080bd60": "switch_input_source_priority[22]",
+   "0x0080bd61": "switch_input_source_priority[23]",
+   "0x0080bd62": "switch_input_source_priority[24]",
+   "0x0080bd63": "switch_input_source_priority[25]",
+   "0x0080bd64": "switch_input_source_priority[26]",
+   "0x0080bd65": "switch_input_source_priority[27]",
+   "0x0080bd66": "switch_input_source_priority[28]",
+   "0x0080bd67": "switch_input_source_priority[29]",
+   "0x0080bd68": "switch_input_source_priority[30]",
+   "0x0080bd69": "switch_input_source_priority[31]",
+   "0x0080bd6a": "switch_input_source_priority[32]",
+   "0x0080bd6b": "switch_input_source_priority[33]",
+   "0x0080bd6c": "switch_input_source_priority[34]",
+   "0x0080bd6d": "switch_input_source_priority[35]",
+   "0x0080bd6e": "switch_input_source_priority[36]",
+   "0x0080bd6f": "switch_input_source_priority[37]",
+   "0x0080bd70": "switch_input_source_priority[38]",
+   "0x0080bd71": "switch_input_source_priority[39]",
+   "0x0080bd72": "switch_input_source_priority[40]",
+   "0x0080bd73": "switch_input_source_priority[41]",
+   "0x0080bd74": "switch_input_source_priority[42]",
+   "0x0080bd75": "switch_input_source_priority[43]",
+   "0x0080bd76": "switch_input_source_priority[44]",
+   "0x0080bd77": "switch_input_source_priority[45]",
+   "0x0080bd78": "switch_input_source_priority[46]",
+   "0x0080bd79": "switch_input_source_priority[47]",
+   "0x0080bd7a": "switch_input_source_priority[48]",
+   "0x0080bd7b": "switch_input_source_priority[49]",
+   "0x0080bd7c": "switch_input_source_priority[50]",
+   "0x0080bd7d": "switch_input_source_priority[51]",
+   "0x0080bd7e": "switch_input_source_priority[52]",
+   "0x0080bd7f": "switch_input_source_priority[53]",
+   "0x0080bd80": "switch_input_source_priority[54]",
+   "0x0080bd81": "switch_input_source_priority[55]",
+   "0x0080bd82": "switch_input_source_priority[56]",
+   "0x0080bd83": "switch_input_source_priority[57]",
+   "0x0080bd84": "switch_input_source_priority[58]",
+   "0x0080bd85": "switch_input_source_priority[59]",
+   "0x0080bd86": "switch_input_source_priority[60]",
+   "0x0080bd87": "switch_input_source_priority[61]",
+   "0x0080bd88": "switch_input_source_priority[62]",
+   "0x0080bd89": "switch_input_source_priority[63]",
+   "0x0080bd8a": "switch_input_source_priority[64]",
+   "0x0080bd8b": "switch_input_source_priority[65]",
+   "0x0080bd8c": "switch_input_source_priority[66]",
+   "0x0080bd8d": "switch_input_source_priority[67]",
+   "0x0080bd8e": "switch_input_source_priority[68]",
+   "0x0080bd8f": "switch_input_source_priority[69]",
+   "0x0080bd90": "switch_input_source_priority[70]",
+   "0x0080bd91": "switch_input_source_priority[71]",
+   "0x0080bd92": "switch_input_source_priority[72]",
+   "0x0080bd93": "switch_input_source_priority[73]",
+   "0x0080bd94": "switch_input_source_priority[74]",
+   "0x0080bd95": "switch_input_source_priority[75]",
+   "0x0080bd96": "switch_input_source_priority[76]",
+   "0x0080bd97": "switch_input_source_priority[77]",
+   "0x0080bd98": "switch_input_source_priority[78]",
+   "0x00800002": "duty_cycle_monitor_load_ratio._2_2_",
+   "0x00800008": "",
+   "0x00800012": "duty_cycle_monitor_steady_state_fueling_lookup.x_axis_pointer",
+   "0x00800014": "",
+   "0x00800016": "duty_cycle_monitor_steady_state_fueling_lookup.x_input",
+   "0x0080001a": "duty_cycle_monitor_steady_state_fueling_lookup.y_axis_pointer",
+   "0x0080001c": "",
+   "0x00800020": "duty_cycle_monitor_steady_state_fueling_lookup.z_values_pointer",
+   "0x00800022": "",
+   "0x0080002a": "",
+   "0x0080002e": "duty_cycle_monitor_transient_fueling_lookup.y_axis_offset",
+   "0x00800032": "",
+   "0x00800036": "duty_cycle_monitor_transient_fueling_lookup.z_values_pointer",
+   "0x00801a8c": "",
+   "0x00801a90": "",
+   "0x008054a6": "",
+   "0x008054a8": "",
+   "0x008054ac": "",
+   "0x008054ae": "",
+   "0x008054b2": "",
+   "0x008054b4": "",
+   "0x008054b8": "",
+   "0x008054ba": ""
+  }
+ },
+ "global|CM550|0x008000d6": {
+  "type": "word",
+  "reason": "F1's judge: every access is word wide; the unreferenced row 0x8000d7 inside it is removed"
+ },
+ "new_enums": {
+  "CM550": {
+   "IDLE_SHUTDOWN_STATE": 2,
+   "EEPROM_BYTE_WRITE_STATE": 4
+  }
+ },
+ "global|CM550|0x00800010": {
+  "type": "table_lookup_2d_arguments_t",
+  "force_type": true,
+  "reason": "D1's judge: the 22-byte argument record (pea 0x800010 at 0xad1c / 0xad52, filled at 0xaf80-0xafac); round 93's typing pass had made its first word a 'word'"
+ },
+ "global|CM550|0x00801a8a": {
+  "type": "EEPROM_BYTE_WRITE_STATE",
+  "force_type": true,
+  "reason": "D1's judge: the serial EEPROM driver's write state (clr.l at 0x2693a; the driver step switches on it), not a can_buffer_setup_t"
+ }
+}

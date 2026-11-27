@@ -1,0 +1,64 @@
+cm848 + scripts: round 95 stage B - the MPC555 register blocks follow the manual; the register stage runs again and a script exception fails the build
+
+Checked against the MPC555 User's Manual (NXP MPC555UM: Appendix A internal memory map, 13.12 QADC64, 15.10-15.11
+MIOS1, 17 TPU3).
+
+**The register stage had not run since 2026-05-23.** ApplyMPC555Registers.java creates the 0x300000-0x307FFF
+peripheral block when no block starts at 0x300000. The memory map has created 0x302000-0x307FFF since 2026-05-23, so the
+create threw MemoryConflictException in Phase 0, before any register applied, and analyzeHeadless still exited 0: every
+build printed "Hardware register naming complete". mpc555_registers.csv has had no effect on any one-shot build.
+- The script now leaves a partly mapped range alone, and it skips a register inside typed data (a struct, union or
+  array, or a typed item that starts before it), so it cannot split a struct instance. At the start of a primitive it
+  adds the name and keeps the type. A preview of the old rule showed that it would have split 28 instances (MDASM28-31,
+  the PWM submodules 0-3 / 16-19, MMCSM22, the QSPI SPCR3 / SPSR bytes, the PIT's PITR).
+- common.sh run_script: analyzeHeadless exits 0 when a script throws, so a "SCRIPT ERROR" in a stage's output now
+  stops the build. This was the only one: neither firmware's build logs another.
+- The 122 named rows inside typed spans go. firmware/CLAUDE.md said that the label rows inside the MIOS instances had
+  to stay, because without them the register stage would split the structs; the stage never ran, and it now skips typed
+  data anyway. Most of the rows had wrong names too: qadc_a_result_ch4 in the boot's DPTRAM EEPROM transfer state,
+  tpu_a_ch1_param0 at TPU-A channel 0 parameter 6, tpu_a_dscr / tpu_a_ticr ... shifted by two registers, the SCI rows
+  shifted by one, eeprom_status_register on QSPI SPCR2. None rendered. The documented oil change monitor alias at
+  0x3fee36 stays.
+
+**Register names:**
+- MIOS1: the manual puts SCRD (Status/Control Register Duplicated) at +4 and SCR at +6 in MDASM and MMCSM ("The
+  MDASMSCRD and the MDASMSCR are the same registers accessed at two different addresses", 15.11.1.3). mios_mdasm_t was
+  AR_BR / XR / SCRD and mios_mmcsm_b_t CNT / ML / _pad / SCRD; they are now ... / SCRD / SCR. All 57 .SCRD renders
+  (mios_mdasm30.SCR, the key line bit 15; channel_registers->SCR in the MDASM drivers) were +6 accesses, and the 38
+  current-state text references follow (history files keep theirs). The register map's *_SCRD (+6) / *_XR (+4) rows
+  are *_SCR / *_SCRD.
+- QADC64: qadc64_regs_t's CCW / RJURR / LJSRR / LJURR at +0xA-0x10 are QACR0 / QACR1 / QACR2 / QASR0 (the CCW table
+  and the result registers are at +0x200 / +0x280 / +0x300 / +0x380). The code writes 0x1f7 to QACR0 and 0x1100 to
+  QACR2: control values, not table entries. The register map's QADC64x_RESULTn at 0x304A00 / 0x304E00 are the CCW
+  tables (QADC64x_CCWn, the rows typed word; they were byte rows).
+- TPU3: the struct's _pad1-6 / R028 / R02A are TCR / DSCR / DSSR / LR / SGLR / DCNR / TPUMCR2 / TPUMCR3, so the start-up
+  code reads tpu_a.TPUMCR2 = 0x80.
+- Rendered globals with wrong names: USIU_INITCFG = SGPIOCR (USIU_SGPIOCR), USIU_EMCR = PDMCR (USIU_PDMCR; the row
+  named USIU_SGPIODT1 at 0x2fc030 is EMCR), qsmcm_sccr0 = QDSCI_IL (QSMCM_QDSCI_IL), mios1_ext_816 = MCPSMSCR
+  (MIOS_MCPSMSCR), mios1_sched_ctrl = MIOS1LVL0.
+- The SIU rows had been a copy of the map shifted by 12 bytes. The rows USIU_SGPIODT2 (0x2fc034), USIU_SGPIOCR
+  (0x2fc038) and USIU_PDMCR (0x2fc044) and their register-map rows go: the manual has no register at 0x2FC034 /
+  0x2FC038, and 0x2FC044 is in the reserved 0x2FC040-0x2FC0FC; no code touches them, and their names would have been
+  duplicates now.
+- The register map's other contradicted names (USIU_PADCFG_A/B, TBREFF*, RTCSK, PISCRK, PLPRCK, TPUx_R028/R02A,
+  QSMCM_TEST / IDSCI / IDSPI, QADC64x_CCW / RJURR / LJSRR / LJURR / SR) are the manual's.
+
+**Instances named after their block, not its first register:** usiu_memory_controller (was USIU_BR0, which read
+USIU_BR0.OR1), usiu_periodic_interrupt_timer, usiu_clocks_and_reset, tpu_a / tpu_b (were tpu_a_mcr / tpu_b_mcr, 1048
+renders), the TPU channel parameter blocks tpu_a_channel_N_parameters / tpu_b_channel_N_parameters (tpu_a_ch1_param2 was
+channel 1's block, tpu_channel_control channel 9's), qadc64_a / qadc64_b, qsmcm_sci1 (was qsmcm_sccr1), mios_mmcsm6.
+One type per module kind: tpu3_module_registers_t for both TPU3 modules and qadc64_regs_t for both QADC64 modules (the B
+copies become marker rows; type names do not render).
+
+Proof: CM848 built twice, deterministic, in a copy of the firmware folder (base = HEAD 98c5f90b). No
+SCRIPT ERROR in either pass; the register stage logs Applied 1 (USIU_RTCAL, unreferenced) / Skipped (already named) 251
+/ Skipped (inside typed data) 36 / Failed 0. The function set is unchanged (1968), statement counts are equal, no old
+name is left in the code, and every map name (39 globals, 7 fields) renders where its old name did. The token diff with
+the map leaves two changes, both one local declaration moving in the declaration list (cm848_checkPciMessageTimeouts,
+mpc555_miosSetChannelPwmDuty); four other functions changed only their line wrapping. The local declaration order
+follows unrelated CSV changes: the first stage B build moved two declarations in mpc555_areBootModeStrapPinsHigh
+instead, and removing the three reserved-address rows put them back. CM550 built twice (the run_script change),
+deterministic, byte-identical to HEAD apart from the Generated line, no SCRIPT ERROR. Headers regenerated (g++ 0 errors);
+the _cal audit (MISSING 206 -> 205: a removed row), the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

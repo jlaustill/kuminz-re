@@ -1,0 +1,18 @@
+== 0x103ba
+INFO  DecompileFunction.java> ERROR: Decompilation failed for cm550_sendCanSingleFrame (GhidraScript)  
+INFO  DecompileFunction.java> Reason: Low-level Error: Cannot properly adjust input varnodes (GhidraScript)  
+== 0x16cd8
+INFO  DecompileFunction.java> ERROR: Decompilation failed for cm550_circularBufferWrite (GhidraScript)  
+INFO  DecompileFunction.java> Reason: Low-level Error: Cannot properly adjust input varnodes (GhidraScript)  
+== 0x18dae
+INFO  DecompileFunction.java> ERROR: Decompilation failed for cm550_protectionUpdateHandler (GhidraScript)  
+INFO  DecompileFunction.java> Reason: Low-level Error: Cannot properly adjust input varnodes (GhidraScript)  
+== 0x1e0bc
+INFO  DecompileFunction.java> ERROR: Decompilation failed for cm550_canFrameDataCopy (GhidraScript)  
+INFO  DecompileFunction.java> Reason: Low-level Error: Cannot properly adjust input varnodes (GhidraScript)  
+== 0x21642
+INFO  DecompileFunction.java> ERROR: Decompilation failed for writeJ1939DiagnosticMemoryByParameterId (GhidraScript)  
+INFO  DecompileFunction.java> Reason: Low-level Error: Cannot properly adjust input varnodes (GhidraScript)  
+== 0x2ee62
+INFO  DecompileFunction.java> ERROR: Decompilation failed for registerJ1939DiagnosticService (GhidraScript)  
+INFO  DecompileFunction.java> Reason: Low-level Error: Cannot properly adjust input varnodes (GhidraScript)  

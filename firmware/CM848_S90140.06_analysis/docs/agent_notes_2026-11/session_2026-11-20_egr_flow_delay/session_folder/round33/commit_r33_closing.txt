@@ -1,0 +1,14 @@
+cm848: round 33 closing - task 046, the session archive, verify
+
+- task 046, the round 33 section: stages A and B and their proofs. The leads, starting with round 34's: the
+  application J1939 transport transmit session as a struct, with the two transport prototypes deferred from this
+  round; also j1939_diag_response_word_b at EFL/P1 bytes 5-6, the stale +1 rows at 0x3faeb0-0x3faeb3, and the
+  identification sources in the EEPROM mirror.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round33/: the status byte census, the coverage check, the apply and proof scripts, the maps,
+    the proof output and the commit messages. The .cpp copies are left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

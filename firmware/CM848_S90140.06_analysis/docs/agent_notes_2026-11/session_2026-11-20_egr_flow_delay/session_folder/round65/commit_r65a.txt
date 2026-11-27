@@ -1,0 +1,52 @@
+cm848: round 65 stage A - 37 of the 38 unprefixed CM848-only functions named from their code
+
+Round 63's lead: 38 CM848-only functions had no cm848_ prefix. 37 are renamed, most from what they do:
+- The application's J1939 transport (11):
+  - cm848_startJ1939TransportSession (was initiateJ1939TransportProtocol): a request-to-send session to one
+    destination, else a broadcast session;
+  - cm848_tickJ1939TransportReceiveTimeout (was j1939_transport_timeout_decrement): it times out only the receive
+    session;
+  - the 9 j1939_transport_* handlers and senders as cm848_<verb>J1939Transport<frame>.
+- The receive handlers (7), named with the PGN names from the local J1939 database:
+  - cm848_receivePgn56576AntiTheftRequestMessage;
+  - cm848_receivePgn57344CabMessage1;
+  - cm848_receivePgn61441ElectronicBrakeController1Message;
+  - cm848_receivePgn61443ElectronicEngineController2Message;
+  - cm848_receivePgn65252ShutdownMessage;
+  - cm848_receivePgn65264PowerTakeoffInformationMessage;
+  - cm848_receivePgn65265CruiseControlVehicleSpeedMessage.
+  The database names 65264 "SPN", a data error; J1939-71's PTO and the handler's PTO switches agree.
+- Their registrar: cm848_registerJ1939ReceiveHandler (was j1939_handlerInitializer). It appends (PGN key,
+  handler) to the receive table at 0x3fd414 that cm848_dispatchJ1939ReceivedMessages searches. Its count:
+  j1939_receive_handler_count (was j1939_data_log_handler_count).
+- cm848_runCoolingFanControl (was j1939_periodic_processing): it only runs the three cooling fan steps.
+- cm848_scheduleJ1939PeriodicMessage (was diag_record_queue_add_entry): (queue, PGN, period ms, first offset ms,
+  builder) into a periodic transmit queue.
+- cm848_sendJ1939Message (prefix only; the plate keeps the user's 2026-5-26 review note).
+- cm848_reverseByteOrder32 / 16 and cm848_buildJ1939LampStatusByte (the DM1 / DM2 lamp bits).
+- The injection angle cluster (10), e.g.:
+  - cm848_armTpuChannel10AtEndOfInjectionLimit (was engine_injectionAngle_tpuUpdate);
+  - cm848_loadInjectionStartAnglesOnTpuChannel6 (was engine_injectionAngle_computeLoadCh6, whose plate said no
+    caller was found: the channel 6 handler calls it).
+- cm848_updateSciServiceTimers (was phaseGroupB_ControlDispatchers): all four of its calls are SCI timers.
+  - Among them, cm848_countdown_timer_update becomes cm848_countDownSciClearDiagnosticsDelay: it is the delay SCI
+    command 0x17 starts when it clears all faults.
+  - Its two bytes are named: sci_clear_diagnostics_delay_count / sci_clear_diagnostics_done_flag.
+- cm848_getSensorChannelReferenceSupplyState (was sensorChannelConditionValidator): 2 supply fault / 1 reference
+  debouncing / 0.
+- Not renamed: initGovernorFlagsAux. It only clears the word at 0x3fcfba in the trip counter block, nothing else is
+  found reading it (scan_accesses_v2.py: the one sth), and "governor" has no evidence.
+
+firmware/CLAUDE.md: the reference refresh updated 5 renamed names on 4 lines (217 / 230 / 364 / 672):
+j1939_handlerInitializer / sendJ1939Message (twice) / the channel 6 and channel 10 handlers.
+
+Proof (prove_r65.sh with the 38 renames): 4 of 1968 functions differ.
+- The two SCI functions and the registrar differ by the newly named globals.
+- One local declaration-order move (cm848_checkPciMessageTimeouts).
+- No artifact count changed (against the rename-applied old file).
+verify is byte-identical; thunks 18 / 14. The reference refresh ran with the history-safe refresh_other_csvs_r64.py;
+history_corruption.py finds 0 rewritten notes; leftovers 0; every renamed row keeps its "(was ...)". Headers
+regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219. CM848-only unprefixed
+functions: 38 -> 1.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

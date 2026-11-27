@@ -1,0 +1,105 @@
++0x18 J1939_Communication_Enable types={'S': 7} masks={'8': 7} files=7 labels=['J1939_Communication_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR J1939 FEATURE
++0x18 JC22CZEA   types={'S': 50, 'N': 28} masks={'4': 50} files=54 labels=['J1922_Communication_Enable', 'JC22CZEA']
+      [35 files e.g. 42t9_rls.e2m] BIT 2 OF 0-15 INDICATES WHETHER J1922 COMMUNICATION IS ENABLED
+      [16 files e.g. 74be62rls.e2m] BIT 2 OF 0-15 INDICATES WHETHER J1922 COMMUNICATION IS
+      [ 6 files e.g. 00V2.e2m] BIT 2 OF 0-15 INDICATES WHETHER J1922 COMMUNICATI
++0x18 JC39CZEA   types={'S': 76, 'N': 45} masks={'8': 76} files=59 labels=['J1939_Communication_Enable', 'JC39CZEA']
+      [22 files e.g. 42t9_rls.e2m] BIT 3 OF 0-15 INDICATES WHETHER J1939 COMMUNICATION IS ENABLED
+      [21 files e.g. 74be62rls.e2m] BIT 3 OF 0-15 INDICATES WHETHER J1939 COMMUNICATION IS
+      [21 files e.g. 00V2.e2m] BIT 3 OF 0-15 INDICATES WHETHER J1939 COMMUNICATI
++0x18 JC87CZEA   types={'S': 76, 'N': 47} masks={'2': 76} files=59 labels=['J1587_Communication_Enable', 'JC87CZEA']
+      [36 files e.g. 42t9_rls.e2m] BIT 1 OF 0-15 INDICATES WHETHER J1587 COMMUNICATION IS ENABLED
+      [21 files e.g. 74be62rls.e2m] BIT 1 OF 0-15 INDICATES WHETHER J1587 COMMUNICATION IS
+      [ 7 files e.g. 00V2.e2m] BIT 1 OF 0-15 INDICATES WHETHER J1587 COMMUNICATI
++0x18 JCJPEA     types={'N': 82} masks={} files=43 labels=['JCJPEA']
+      [ 6 files e.g. 42t9_rls.e2m] PARAMETER INDICATING WHETHER DATALINK PROTOCOLS ARE "TURNED ON"
+      [39 files e.g. 00V2.e2m] PARAMETER INDICATING WHETHER DATALINK PROTOCOLS ARE "TURNED ON
++0x18 JCRWDXEN   types={'S': 28} masks={'10': 28} files=14 labels=['JCRWDXEN']
+      [14 files e.g. 74be62rls.e2m] J1587 TRANSPORT PROTOCOL ENABLE
++0x18 Proprietary_Communication_Enable types={'S': 16} masks={'1': 16} files=16 labels=['Proprietary_Communication_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] PARAMETER INDICATING WHETHER DATALINK PROTOCOLS ARE "TURNED ON"
++0x1a AFC_Override_Enable types={'S': 7} masks={'8': 7} files=7 labels=['AFC_Override_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR AFC_FUELING FEATURE
++0x1a AFENMAN    types={'S': 76, 'N': 45} masks={'8': 76} files=59 labels=['AFC_Override_Enable', 'AFENMAN']
+      [59 files e.g. 00V2.e2m] BIT 3 OF 0-15 IN WORD C
++0x1a ANEN       types={'S': 76, 'N': 45} masks={'80': 76} files=59 labels=['ANEN', 'Accelerator_Interlock_Enable']
+      [22 files e.g. 42t9_rls.e2m] BIT 7 OF 0-15 IN WORD C, ACCELERATOR INTERLOCK ENABLE BIT
+      [39 files e.g. 00V2.e2m] BIT 7 OF 0-15 IN WORD C, ACCELERATOR INTERLOCK ENABLE B
++0x1a Accelerator_Interlock_Enable types={'S': 7} masks={'80': 7} files=7 labels=['Accelerator_Interlock_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR ACCEL_INTERLOCK FEATURE
++0x1a DGOBFUHN   types={'S': 30, 'N': 5} masks={'400': 30} files=26 labels=['DGOBFUHN', 'OBD_Fault_Handler_Enable']
+      [26 files e.g. 00V2.e2m] INDICATES WHETHER OBDII FAULT HANDLER IS ENABLED
++0x1a EDEN       types={'N': 35} masks={} files=33 labels=['EDEN']
+      [33 files e.g. 63c5.e2m] BIT 15 OF 0 - 15; ENABLES/DISABLES EDF FEATURE.
++0x1a EDF_Enable types={'S': 6} masks={'8000': 6} files=6 labels=['EDF_Enable']
+      [ 6 files e.g. CHR_B2_11.61.08.05.e2m] ENABLE FOR SETTING TOTAL CUMMULATIVE NUMBER OF ENGINE REVS.
++0x1a EPOSFSO    types={'S': 76, 'N': 45} masks={'2': 76} files=59 labels=['EPOSFSO', 'Overspeed_FSO_Override']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] IF T, FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BIT 1 OF 0 - 15 OF WORD C
+      [ 6 files e.g. 42t9_rls.e2m] IF T, FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BIT 1 OF 0 - 15 O
+      [39 files e.g. 00V2.e2m] IF T, FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI
++0x1a ESP_Enable types={'S': 7} masks={'10': 7} files=7 labels=['ESP_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR FULL_THROTTLE_FUEL FEATURE
++0x1a HSGNSDEN   types={'N': 7} masks={} files=6 labels=['HSGNSDEN']
+      [ 6 files e.g. 00V2.e2m] BIT 0 OF 0-15 OF WORD 12H ENABLES HSG GAIN SCHEDULING
++0x1a Idle_Speed_Save_Enable types={'S': 7} masks={'1': 7} files=7 labels=['Idle_Speed_Save_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUTDOWN.
++0x1a LSCIIHEN   types={'N': 84} masks={} files=43 labels=['LSCIIHEN']
+      [ 6 files e.g. 42t9_rls.e2m] ENABLE FOR OVERRIDING THE COLD IDLE ADJUST IN THE LSG - BIT 14 OF 15 I
+      [ 7 files e.g. 00V2.e2m] ENABLE FOR OVERRIDING THE COLD IDLE ADJUST IN THE LSG - BIT 14 O
+      [34 files e.g. 63c5.e2m] ENABLE FOR OVERRIDING THE COLD IDLE ADJUST IN THE LSG
++0x1a LSDPEN     types={'S': 76, 'N': 45} masks={'40': 76} files=59 labels=['LSDPEN', 'LSG_Droop_Enable']
+      [59 files e.g. 00V2.e2m] LSG DROOP ENABLE BIT 6 OF 0 - 15 IN WORD C
++0x1a LSG_Droop_Enable types={'S': 7} masks={'40': 7} files=7 labels=['LSG_Droop_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR LSG FEATURE
++0x1a LSISSVEN   types={'S': 76, 'N': 45} masks={'1': 76} files=59 labels=['Idle_Speed_Save_Enable', 'LSISSVEN']
+      [22 files e.g. 42t9_rls.e2m] BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUTDOWN
+      [39 files e.g. 00V2.e2m] BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT
++0x1a OBD_Fault_Handler_Enable types={'S': 7} masks={'400': 7} files=7 labels=['OBD_Fault_Handler_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR FAULT_HANDLER FEATURE
++0x1a OCEA       types={'S': 94, 'N': 36} masks={'2000': 94} files=59 labels=['OCEA', 'OCM_Enable']
+      [22 files e.g. 42t9_rls.e2m] ENABLES OIL CHANGE MONITOR FEATURE, BIT 13 OF 0-15 OF WORD C
+      [39 files e.g. 00V2.e2m] ENABLES OIL CHANGE MONITOR FEATURE, BIT 13 OF 0-15 OF W
++0x1a OCM_Enable types={'S': 7} masks={'2000': 7} files=7 labels=['OCM_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR OIL_CHG_MONITOR FEATURE
++0x1a PTBRODEN   types={'S': 76, 'N': 45} masks={'800': 76} files=59 labels=['PTBRODEN', 'PTO_Brake_Override_Enable']
+      [22 files e.g. 42t9_rls.e2m] WHEN ENABLED, IT ALLOWS THE BRAKE TO CANCEL CAB PTO. WORD C BIT B
+      [21 files e.g. 00V2.e2m] WHEN ENABLED, IT ALLOWS THE BRAKE TO CANCEL CAB PTO. WORD C BIT
+      [21 files e.g. 74be62rls.e2m] WHEN ENABLED, IT ALLOWS THE BRAKE TO CANCEL CAB PTO.
++0x1a PTCHODEN   types={'S': 76, 'N': 45} masks={'1000': 76} files=59 labels=['PTCHODEN', 'PTO_Clutch_Override_Enable']
+      [22 files e.g. 42t9_rls.e2m] WHEN ENABLED, IT ALLOWS THE CLUTCH TO CANCEL CAB PTO. WORD C BIT C
+      [21 files e.g. 00V2.e2m] WHEN ENABLED, IT ALLOWS THE CLUTCH TO CANCEL CAB PTO. WORD C BIT
+      [21 files e.g. 74be62rls.e2m] WHEN ENABLED, IT ALLOWS THE CLUTCH TO CANCEL CAB PTO.
++0x1a PTO_Brake_Override_Enable types={'S': 7} masks={'800': 7} files=7 labels=['PTO_Brake_Override_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR PTO FEATURE
++0x1a PTO_Clutch_Override_Enable types={'S': 7} masks={'1000': 7} files=7 labels=['PTO_Clutch_Override_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR PTO FEATURE
++0x1a PTSRESEN   types={'N': 5} masks={} files=5 labels=['PTSRESEN']
+      [ 5 files e.g. 42t9_rls.e2m] ENABLES USE OF PTO SET/RESUME SPEED
++0x1a SPAGEN     types={'S': 76, 'N': 45} masks={'10': 76} files=59 labels=['ESP_Enable', 'SPAGEN']
+      [59 files e.g. 00V2.e2m] 0 - DISBALE, 1 - ENABLE ESP ALGORITHM, BIT 4 OF 0 - 15.
++0x1a SPLAAGEN   types={'N': 5} masks={} files=5 labels=['SPLAAGEN']
+      [ 5 files e.g. 42t9_rls.e2m] 0 - DISBALE, 1 - ENABLE ESP LAUNCH APPLICATION ALGORITHM, BIT 5 OF 0 -
++0x1a SPRVEN     types={'S': 58, 'N': 21} masks={'20': 58} files=54 labels=['Reverse_ESP_Enable', 'SPRVEN']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] 0 - DISBALE, 1 - ENABLE ESP LAUNCH APPLICATION ALGORITHM, BIT 5 OF 0 - 15.
+      [38 files e.g. 00V2.e2m] 0 - DISBALE, 1 - ENABLE ESP LAUNCH APPLICATION ALGORITH
++0x1a T_EGR_OFF_Torque_Derate_Enable types={'S': 6} masks={'20': 6} files=6 labels=['T_EGR_OFF_Torque_Derate_Enable']
+      [ 6 files e.g. CHR_B2_11.61.08.05.e2m] ENABLE FOR EGR_OFF_TORQUE_DERATE FEATURE
++0x1a T_O2_Sens_Diag_Monitor_Enable types={'S': 6} masks={'4000': 6} files=6 labels=['T_O2_Sens_Diag_Monitor_Enable']
+      [ 6 files e.g. CHR_B2_11.61.08.05.e2m] ENABLE FOR O2_SENSOR_DIAGNOSTICS_MONITOR FEATURE
++0x1a VSMVEN     types={'S': 76, 'N': 45} masks={'100': 76} files=59 labels=['VSMVEN', 'VSS_Moving_Enable']
+      [22 files e.g. 42t9_rls.e2m] BIT 8, WORD C. ENABLES VSS SENSOR LOST WHILE MOVING DETECTION
+      [21 files e.g. 74be62rls.e2m] BIT 8, WORD C. ENABLES VSS SENSOR LOST WHILE MOVING DET
+      [21 files e.g. 00V2.e2m] BIT 8, WORD C. ENABLES VSS SENSOR LOST WHILE MOVING
++0x1a VSSTEN     types={'S': 76, 'N': 45} masks={'200': 76} files=59 labels=['VSSTEN', 'VSS_Stopped_Enable']
+      [22 files e.g. 42t9_rls.e2m] BIT 9, WORD C. ENABLES VSS SENSOR LOST WHILE STOPPED DETECTION
+      [21 files e.g. 74be62rls.e2m] BIT 9, WORD C. ENABLES VSS SENSOR LOST WHILE STOPPED DE
+      [21 files e.g. 00V2.e2m] BIT 9, WORD C. ENABLES VSS SENSOR LOST WHILE STOPPE
++0x1a VSS_Moving_Enable types={'S': 7} masks={'100': 7} files=7 labels=['VSS_Moving_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR VSS_PROCESS FEATURE
++0x1a VSS_Stopped_Enable types={'S': 7} masks={'200': 7} files=7 labels=['VSS_Stopped_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR VSS_PROCESS FEATURE
++0x1a WFAGEN     types={'S': 58, 'N': 21} masks={'4': 58} files=54 labels=['WFAGEN', 'Water_In_Fuel_Enable']
+      [54 files e.g. 00V2.e2m] BIT 2, ENABLE FLAG USED FOR WATER_IN_FUEL ALGORITHM.
++0x1a Water_In_Fuel_Enable types={'S': 7} masks={'4': 7} files=7 labels=['Water_In_Fuel_Enable']
+      [ 7 files e.g. CHR_B2_11.52.08.72.e2m] ENABLE FOR WATER_IN_FUEL FEATURE

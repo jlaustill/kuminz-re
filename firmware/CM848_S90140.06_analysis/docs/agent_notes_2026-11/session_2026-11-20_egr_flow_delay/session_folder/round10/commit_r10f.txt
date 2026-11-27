@@ -1,0 +1,26 @@
+cm848: round 10 stage F - sci_output_test_timers_t, the SCI test helper prototypes, four widths
+
+- **sci_output_test_timers_t** (0x3fcf40, 14 words): one timer per SCI 0x13 actuator test, named by the DRB test it
+  serves. In order: air_conditioning_clutch_relay, intake_heater_1 / _2, fuel_transfer_pump, wait_to_start_lamp,
+  exhaust_brake, fuel_control, cooling_fan, converter_clutch_solenoid, overdrive_solenoid, cruise_vent_solenoid,
+  cruise_vacuum_solenoid, cruise_servo_supply and transmission_relay.
+  - It replaces DAT_003fcf40 .. DAT_003fcf5a and the two countdown rows at +0xc / +0xe (deleted; their notes are in
+    the field comments).
+  - The calls now read cm848_stopSciOutputTest(&sci_output_test_timers.intake_heater_1,0x2b).
+- **Prototypes:** cm848_stepSciOutputTest / cm848_stopSciOutputTest (word *timer, dword logical_output) and
+  cm848_sciStartTimedOutputTest (... , word duration).
+  - Ghidra had guessed the pointer as short *. Every timer load is lhz, and with that type mismatch the first build
+    printed the field addresses as raw constants (cm848_stopSciOutputTest(0x3fcf42,0x2b)).
+- **Widths:**
+  - 0x3fceee governor_pressure_mid_range_check_fault_reported_flag is a dword (lwz / stw only). The row no longer
+    renders with a '_' prefix, and the overlap WARNING leaves its two P1756 / P1757 functions (27 -> 25 in the
+    .cpp).
+  - Stage E's rows: 0x3fcef6 word, 0x3fcf08 word, 0x3fcf0e dword.
+- **Proof:** relabel_struct.py maps sci_output_test_timers.<field> back to the old labels, then cast_normalized_diff.py
+  runs. Seven functions changed:
+  - the '_' prefix leaving the two governor pressure functions;
+  - the three helpers' signatures (their bodies are otherwise identical, plus one local short -> word);
+  - one (ushort) -> (word) cast in cm848_monitorParkNeutralSwitch;
+  - one function's local declaration order.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

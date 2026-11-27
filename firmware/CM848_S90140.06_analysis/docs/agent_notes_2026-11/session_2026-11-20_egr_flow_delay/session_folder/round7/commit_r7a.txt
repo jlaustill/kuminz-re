@@ -1,0 +1,22 @@
+cm848: round 7 stage A - the J1939 monitor words, the engine retarder TSC1 reset / shift assist (label-only)
+
+- The J1939 monitor (j1939mon, e2m 1100). The control session's source words take the e2m names:
+  j1939_engine_control_source_cal / j1939_retarder_control_source_cal (J1939_*_Control_Source: 0 none / 1 trans / 2
+  ABS / 3 ASR / 4 unknown). j1939_history_table_next_entry_index_cal becomes
+  j1939_control_session_history_next_entry_cal. The tracker's retarder-half copies take the round 6 engine names
+  (j1939_monitor_retarder_override_control_mode_previous / ..._controlling_source_address_previous). The two
+  session functions' parameter is session_kind (0 = engine, else retarder; int32_t, since the importer maps int to
+  dword).
+- The engine retarder TSC1 handler, read in full:
+  - tsc1_rx_byte_0 / _3 -> engine_retarder_received_tsc1_control_byte / _torque_byte.
+  - retarder_tsc1_mode_transition_timer -> retarder_tsc1_zero_torque_request_timer. It is armed with the request
+    timeout only while the requested torque or limit is 0; why that is timed is noted as open.
+  - retarder_tsc1_speed_mode_flag -> retarder_tsc1_speed_control_flag. It is always 0, since the handler rejects
+    speed control; it is the twin of tsc1_speed_control_flag.
+- cm848_resetGovernorState -> cm848_resetEngineRetarderTsc1Request: it resets only the retarder request.
+- governor_resetModeStateOnCondition -> cm848_endRetarderShiftAssistAboveFuelDemandLimit: it ends the transmission's
+  retarder torque request while the transmission also holds engine speed control and fueling has reached
+  engine_retarder_shift_assist_fuel_demand_limit.
+Label-only: reverse_names.py EQUIVALENT (2 functions differ only in declaration order).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

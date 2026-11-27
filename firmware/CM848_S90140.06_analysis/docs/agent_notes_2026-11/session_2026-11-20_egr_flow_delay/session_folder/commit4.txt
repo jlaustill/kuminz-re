@@ -1,0 +1,19 @@
+cm848: review fixes for the EGR transport delay comments
+
+- Above a fraction of 1.0 it is the scaled fraction term (x 120 >> 10)
+  that becomes 0xffff, not the delay (the dump's 40959 ms is 0xffff x
+  1000 / 1600): fixed in the 0x128a0 plate and the
+  oxygen_flow_delay_volume_fraction row.
+- egr_oxygen_fraction_delay_line's comment names its boot call target
+  (0x3fa2f0, cm848_runFlashProgramStateMachine) like its twin does.
+- firmware/CLAUDE.md: the thunk stage now reads 19 thunks / 13 call
+  overrides (the sentence still said 21 / 11).
+- Task 046: the stale generated docs / snapshots that still cite the
+  old names (left as they are, like wave 14 did).
+- Session archive: the review script, the PR text and the last logs
+  (build5, verify).
+
+The .cpp changes only in the re-wrapped plate comment; the headers are
+unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

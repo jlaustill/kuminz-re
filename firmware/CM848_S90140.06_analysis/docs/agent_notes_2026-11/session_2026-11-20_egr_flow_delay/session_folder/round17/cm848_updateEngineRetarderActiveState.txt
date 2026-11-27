@@ -1,0 +1,129 @@
+=== cm848_updateEngineRetarderActiveState (lines 44768-44902, 128 non-blank)
+// Function: cm848_updateEngineRetarderActiveState @ 0x00041be4
+//
+/* Sets engine_retarder_active_flag (1 while an arbitrated request exists unless the road speed
+   limit is active, 0 when none), which the transmission lockup / overdrive logic, the wastegate
+   duty request and the cold start loop read. While the transmission reports shift in process (ETC1
+   SPN 574), engine_retarder_request_shift_hold_flag freezes the request percent and the active flag
+   for up to engine_retarder_shift_hold_passes passes; after the retarder output is released,
+   engine_retarder_release_pending_flag clears the active flag after engine_retarder_release_passes
+   passes. The engine speed dependent engage delay chain at the top writes the hold flag, but it is
+   cleared unconditionally before the shift block, so that chain has no effect (was
+   cm848_processTemperatureTrim). */
+void cm848_updateEngineRetarderActiveState(void)
+{
+  bool bVar1;
+  word wVar2;
+  wVar2 = engine_retarder_active_flag;
+  if ((((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x200) == 0) &&
+      ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x100) == 0)) &&
+     ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 1) == 0)) {
+    bVar1 = false;
+  }
+  else {
+    bVar1 = true;
+  }
+  if ((engine_retarder_arbitrated_request_percent == 0) ||
+     (engine_retarder_arbitrated_request_percent_previous != 0)) {
+    if (engine_retarder_request_age_counter != 0xffff) {
+      engine_retarder_request_age_counter = engine_retarder_request_age_counter + 1;
+    }
+  }
+  else {
+    engine_retarder_request_age_counter = 0;
+  }
+  if (engine_retarder_fuel_demand_threshold < final_fueling) {
+    engine_retarder_fueling_below_threshold_pass_counter = 0;
+  }
+  else if (engine_retarder_fueling_below_threshold_pass_counter != 0xffff) {
+    engine_retarder_fueling_below_threshold_pass_counter =
+         engine_retarder_fueling_below_threshold_pass_counter + 1;
+  }
+  if ((((governor_system_config_flags & 4) == 0) ||
+      (engine_retarder_arbitrated_request_percent == 0)) ||
+     ((engine_retarder_arbitrated_request_percent_previous != 0 || (bVar1)))) {
+    if ((((bVar1) && (engine_retarder_boost_sensor_fault_hold_passes != 0)) &&
+        (engine_retarder_arbitrated_request_percent != 0)) &&
+       (engine_retarder_arbitrated_request_percent_previous == 0)) {
+      engine_retarder_request_shift_hold_flag = 1;
+    }
+    else if ((((((engine_retarder_engage_delay_speed_boundary_high <
+                  engine_speed_state.filtered_engine_speed) &&
+                (engine_retarder_arbitrated_request_percent != 0)) &&
+               ((3 < engine_retarder_fueling_below_threshold_pass_counter && (!bVar1)))) ||
+              (((engine_retarder_engage_delay_speed_boundary_middle <
+                 engine_speed_state.filtered_engine_speed &&
+                (engine_speed_state.filtered_engine_speed <=
+                 engine_retarder_engage_delay_speed_boundary_high)) &&
+               ((engine_retarder_arbitrated_request_percent != 0 &&
+                ((4 < engine_retarder_fueling_below_threshold_pass_counter && (!bVar1)))))))) ||
+             ((engine_retarder_engage_delay_speed_boundary_low <
+               engine_speed_state.filtered_engine_speed &&
+              ((((engine_speed_state.filtered_engine_speed <=
+                  engine_retarder_engage_delay_speed_boundary_middle &&
+                 (engine_retarder_arbitrated_request_percent != 0)) &&
+                (5 < engine_retarder_fueling_below_threshold_pass_counter)) && (!bVar1)))))) ||
+            (((engine_speed_state.filtered_engine_speed <=
+               engine_retarder_engage_delay_speed_boundary_low &&
+              (engine_retarder_arbitrated_request_percent != 0)) &&
+             ((10 < engine_retarder_fueling_below_threshold_pass_counter && (!bVar1)))))) {
+      engine_retarder_request_shift_hold_flag = 0;
+    }
+    else if ((bVar1) &&
+            (engine_retarder_boost_sensor_fault_hold_passes < engine_retarder_request_age_counter))
+    {
+      engine_retarder_request_shift_hold_flag = 0;
+    }
+  }
+  else {
+    engine_retarder_request_shift_hold_flag = 1;
+  }
+  if (engine_retarder_arbitrated_request_percent != 0) {
+    if ((low_speed_governor_extended_idle_active_flag == 0) ||
+       (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
+      engine_retarder_active_flag = 1;
+    }
+    else {
+      engine_retarder_active_flag = 0;
+      engine_retarder_request_shift_hold_flag = 0;
+    }
+  }
+  if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
+    engine_retarder_shift_hold_counter = 0;
+  }
+  if (engine_retarder_request_shift_hold_flag != 0) {
+    engine_retarder_request_shift_hold_flag = 0;
+  }
+  if (engine_retarder_arbitrated_request_percent == 0) {
+    engine_retarder_active_flag = 0;
+  }
+  if (j1939_powertrain_control_state.etc1_spn574_shift_in_process != 0) {
+    if (engine_retarder_shift_hold_passes < engine_retarder_shift_hold_counter) {
+      engine_retarder_request_shift_hold_flag = 0;
+    }
+    else {
+      engine_retarder_request_shift_hold_flag = 1;
+      engine_retarder_shift_hold_counter = engine_retarder_shift_hold_counter + 1;
+      engine_retarder_active_flag = wVar2;
+    }
+  }
+  if ((((engine_retarder_request_percent == 0) && (engine_retarder_request_percent_previous != 0))
+      || ((logical_output_request_bits_8_to_15.engine_brake_driver_1_request == 0 &&
+          (engine_retarder_output_request_bit_previous != 0)))) &&
+     (engine_retarder_request_shift_hold_flag == 0)) {
+    engine_retarder_release_pending_flag = 1;
+    engine_retarder_release_counter = 0;
+  }
+  if (engine_retarder_release_pending_flag != 0) {
+    if (engine_retarder_release_passes <= engine_retarder_release_counter) {
+      engine_retarder_active_flag = 0;
+      engine_retarder_release_pending_flag = 0;
+    }
+    if (engine_retarder_release_counter != 0xffff) {
+      engine_retarder_release_counter = engine_retarder_release_counter + 1;
+    }
+  }
+  engine_retarder_output_request_bit_previous = (byte)logical_output_request_bits_8_to_15 & 8;
+  return;
+}
+//

@@ -1,0 +1,4 @@
+address,name,old_label,kind,dims
+0x00021918,cm848_commitEepromMirrorToEeprom,commitEepromMirrorToEeprom,symbol,1
+0x00057520,cm848_restoreRegisters26To31AndReturn,emptyStubFunction2,symbol,1
+0x0001806c,cm848_emptyStubFunction3,emptyStubFunction3,symbol,1

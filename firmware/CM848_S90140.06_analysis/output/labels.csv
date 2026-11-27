@@ -1,2 +1,2 @@
 address,label_name,comment
-0x00022f1c,accept_etc1_command,Accept and apply ETC1 (PGN 61442) driveline command after source address arbitration
+0x00022f1c,accept_tsc1_command,"Accept and apply the engine TSC1 (PGN 0) request after the source arbitration (was accept_etc1_command, described as an ETC1 (PGN 61442) driveline command)"

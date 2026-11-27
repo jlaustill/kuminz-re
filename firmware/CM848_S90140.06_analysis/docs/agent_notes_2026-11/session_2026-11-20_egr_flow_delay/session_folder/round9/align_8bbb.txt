@@ -1,0 +1,29 @@
++0000 0x4077f6 RE_Lockup_Delay_4_3_Max [MSEC U 10] = 120 | row: -  |  | Timer value used to delay lockup
++0002 0x4077f8 RE_OSS_Downshift_Limit [RPM U 0.125] = 24800 | row: overdrive_downshift_maximum_output_speed word | cm848_processOverdriveSwitchAndShift,cm848_protectionStateTransitionCheck | OSS < this value, set TCC and overdrive drivers to off
++0004 0x4077fa RE_Transition_3_4_Timer_Max [MSEC U 10] = 400 | row: -  |  | Timer value used to delay ratio calc after engaging overdrive
++0006 0x4077fc RE_Upshift_3_4_Inhibit_Timer_Max [MSEC U 10] = 25 | row: -  |  | Timer value used to delay OD upshifts
++0008 0x4077fe RE_OD_Delay [MSEC U 10] = 50 | row: protection_overtemp_entry_debounce_count_max word | cm848_processOverdriveSwitchAndShift | Poweron Delay Time used to test Transmission_Overdrive_Switch
++000A 0x407800 RE_Lockup_Delay_4_3_Max_OD_Off [MSEC U 10] = 120 | row: -  |  | Timer value used to delay lockup when using OD switch
++000C 0x407802 RE_Cruise_Resume_Downshift_Timer_Max [MSEC U 10.0] = 150 | row: -  |  | Time used to delay a 4-3 downshift in cruise resume mode
++000E 0x407804 RE_Cruise_Set_Speed_Difference_Downshift [MPH U 0.00390625] = 2560 | row: -  |  | road speed < cruise setpoint - this, 4-3 downshift
++0010 0x407806 RE_Cruise_Set_Speed_Difference_Upshift [MPH U 0.00390625] = 512 | row: -  |  | road speed > cruise setpoint - this, allow 3-4 upshift
++0012 0x407808 RE_Cruise_Set_Speed_RPM_Downshift [RPM U 0.125] = 15200 | row: -  |  | Target ENGRPM to allow 4-3 downshift during cruise resume
++0014 0x40780a RE_Cruise_Set_Speed_RPM_Upshift [RPM U 0.125] = 24000 | row: -  |  | Target ENGRPM to allow 3-4 upshift after cruise resume
++0016 0x40780c RE_Tow_Mode_3_4_Inhibit_Timer_Max [MSEC U 10] = 1 | row: transmission_3rd_gear_lockup_enable word | cm848_applyConverterLockupSchedule,cm848_processOverdriveSwitchAndShift | delay 3-4 upshift by this, after 4-3 downshift after tow mode is set
++0018 0x40780e RE_Brake_Delay_4_3_Timer_Max [MSEC U 10] = 11 | row: transmission_anti_hunt_boost_limit_time word | cm848_selectGovernorPressureAntiHunt | delay 4-3 downshift by this, after brake switch toggled on
++001A 0x407810 RE_Brake_4_3_Downshift_Limit [RPM U 0.125] = 60 | row: transmission_anti_hunt_delay_time word | cm848_selectGovernorPressureAntiHunt,cm848_selectGovernorPressureNormal | OSS < this value, allow 4-3 downshift, brake switch TRUE
++001C 0x407812 RE_Brake_3_4_Upshift_RPM_Limit [RPM U 0.125] = 100 | row: transmission_anti_hunt_1_2_boost_time word | cm848_selectGovernorPressureAntiHunt,cm848_selectGovernorPressureNormal | Target ENGRPM > this to allow 3-4 upshift after Brake 4-3 downshift
++001E 0x407814 RE_Brake_Upshift_Throttle_Limit [%THROTTLE U 0.25] = 200 | row: transmission_anti_hunt_2_3_boost_time word | cm848_selectGovernorPressureAntiHunt,cm848_selectGovernorPressureNormal | throttle > this value, allow 3-4, upshift after brake 4-3 downshift
++0020 0x407816 RE_OSS_Tow_Mode_Downshift_Limit [RPM U 0.125] = 0 | row: transmission_available_torque_minimum word | cm848_predictPostShiftAcceleration | OSS < this value, allow 4-3 downshift, if tow mode = true
++0022 0x407818 RE_Transmission_Tow_Overdrive_Switch_Mode [UNITLESS U 1.0] = 368 | row: transmission_3_4_unlock_engine_speed_drop word | cm848_applyConverterUnlockConditions | Configures OD toggle switch; 0=OD Control, 1=Tow Mode Control
++0023 0x407819 RE_Brake_4_3_Enabled [UNITLESS U 1.0] = 28672 | row: -  |  | if true then allow 3-4 downshift when brake switch TRUE
++0024 0x40781a RE_EB_4_3_Cmd_Enable [UNITLESS U 1] = 120 | row: transmission_vehicle_inertia_learning_minimum_throttle word | cm848_learnVehicleInertia | Enables 4_3_Cmd feature
++0026 0x40781c RE_EB_4_3_Cmd_OSS [RPM U 0.125] = 53 | row: transmission_vehicle_inertia_default word | cm848_initializeTransmissionShiftLogic | OSS must be less than this to trigger 4_3 Command mode
++0028 0x40781e RE_EB_4_3_Cmd_OSS_Clear [RPM U 0.125] = 221 | row: transmission_vehicle_inertia_maximum word | cm848_learnVehicleInertia | OSS must be less than this to clear 4_3 Command mode
++002A 0x407820 RE_EB_4_3_Cmd_Throttle [%THROTTLE U 0.25] = 47 | row: transmission_vehicle_inertia_minimum word | cm848_learnVehicleInertia | throttle must be less than this to trigger 4_3 command feature
++002C 0x407822 RE_EB_4_3_Cmd_Timer_Max_EB [MSEC U 10.0] = 0 | row: transmission_lockup_service_minimum_output_speed_3rd word | cm848_applyConverterLockupSchedule | Timer for Ebrake triggered 4_3_command feature
++002E 0x407824 RE_EB_4_3_Cmd_Timer_Max_Tow [MSEC U 10.0] = 0 | row: transmission_lockup_service_minimum_output_speed_4th word | cm848_applyConverterLockupSchedule | Timer for Tow Mode triggered 4_3_command feature
++0030 0x407826 RE_OD_Tow_Mode_Transition_Select [UNITLESS U 1.0] = 251 | row: transmission_low_range_1_2_boost_time word | cm848_selectGovernorPressureLowRange | Configures OD tow/mode switch sequence;0=OD,tow/mode; 1=tow/mode,OD
++0032 0x407828 RE_EB_Delay_4_3_Timer_Max [MSEC U 10.0] = 251 | row: transmission_low_range_2_3_boost_time word | cm848_selectGovernorPressureLowRange | Time 3-4 shift is delayed for ebrake
++0034 0x40782a RE_EB_Lockup_Delay_4_3_Max [MSEC U 10.0] = 160 | row: transmission_low_range_2nd_gear_boost_maximum_engine_acceleration word | cm848_selectGovernorPressureLowRange | Lockup delay after 4-3 shift when ebrakes are active
++0036 0x40782c Jcomm_Override_Disable_Control [UNITLESS U 1] = 64 | row: transmission_low_range_3rd_gear_boost_maximum_engine_acceleration word | cm848_selectGovernorPressureLowRange | Enables OVERRIDE_DISABLE logic for Jcomm Torque Mgmt Request Function

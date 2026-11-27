@@ -1,0 +1,1719 @@
+{
+ "batch": "Q4",
+ "proposal": {
+  "batch": "Q4",
+  "summary": "Batch Q4 is CM550's remaining placeholders in 0x0-0xffff and 0x20000-0x2dfff. They fall into a few groups: the J1939 engine data module (EEC2 empty step, friction percent torque, torque curve point 3, reference fueling and torque); the PGN 61184 memory read services and their registration; and the governors (ASG reference speed sets, droop fueling, the variable speed governor and pedal fault selectors of the user fueling state chain, the LSG integrator preset and the cold idle speed). The rest are no load fuel, the ANC timing limit, the engine position phase lag, J1708/J1587 (PID 243 reply, memory write records), the power-down EEPROM save, two empty speed-interrupt steps and small start-up steps. Ten are step-by-step twins of CM848 functions and take shared unprefixed names: the five read handlers and their registration, the EEC2 empty step, the torque curve point 3 setter, the reference fueling and torque initializer, and the PTO throttle override initializer. Ten are counterparts (same role, different code) and nine have no CM848 match. 0x2cf52 is skipped: nothing in the dumped ROM calls it or reads its destination. The vp44_ prefix was wrong on all three vp44_ rows: 0xfa68 is J1939 torque curve code, 0x25a34 the LSG integrator preset, 0x27c20 the power-down EEPROM save.",
+  "functions": [
+   {
+    "address": "0x0000b3d0",
+    "current_name": "cm550_FUN_0000b3d0",
+    "proposed_name": "cm550_calculateAccelerationNoiseControlTimingLimit",
+    "role": "Every 50 ms computes the acceleration noise control (ANC) timing advance limit NZTALM: a table lookup by engine speed while its conditions hold, else a ramp back up to 1024.",
+    "discriminator": "Of the three ANC siblings it is the timing one: it tests the timing enable bit 0x2000, uses a coolant temperature threshold where the fuel (0xb2aa) and speed (0xb4f2) siblings use engine speed, looks up the NZTALMXA/NZTALMYA table and ramps out to 1024 by the timing increment; cm550_applyAccelerationNoiseControlTimingLimit consumes its output.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Acceleration noise control (ANC) timing limit, every 50 ms from cm550_runEvery10FramesTaskSetPhase1 while algorithm_enable_flags_3_cal.acceleration_noise_control_timing_limit_enable is set. A first stage filtered acceleration (e2m 10A4 +8 ESFT01AC) above the timing threshold sets the inhibit NZTALMIH (10A4 +18) for NZTAIHTM passes (timer 0x800040). With ASANENF set, no inhibit, the coolant above its threshold, ESFT01AC at or below and ESFT02AC at or above their limits (or the override ASANODFG) the status NZTALMSS (10A4 +E) is held for a minimum time (timer 0x800044); while it is 1 NZTALM (10A4 +2) = the ANC timing table at current_engine_rpm_filtered, else NZTALM ramps up by the timing increment to 1024. cm550_applyAccelerationNoiseControlTimingLimit applies it; CM848 compiles this stage out (cm848_passCompensatedTimingToCombustionLimits).",
+    "evidence": "ROM 0xb3ec-0xb3f6 move.w 0x803c9a / andi.w #0x2000 / beq. 0xb3fa-0xb428: 0x80a294 (ESFT01AC) > 0x807a50 -> move.w #1,(0x80a2a4) and 0x807a4e (NZTAIHTM) -> 0x800040; else subq.w #1,0x800040 or clr.w (a5)=0x80a2a4. 0xb42a-0xb45e: tst.w 0x80a2a8, tst.w (a5), 0x80a336 vs 0x807a38 (bls), 0x80a294 vs 0x807a50 (bgt), 0x80a296 vs 0x807a3e (blt) -> move.w #1,(0x80a29a) and 0x807a3a -> (a4)=0x800044; 0xb46c tst.w 0x80a2a6 (override) same; 0xb480 subq.w (a4) / clr.w (a3). 0xb490 0x80ccf4 -> 0x80005e, jsr 0x34de0 (record 0x800058) -> 0x80a28e; 0xb4b0-0xb4c4 add.w 0x807a3c capped 0x400. Siblings: 0xb2aa uses acceleration_noise_control_fuel_limit_enable, an engine speed threshold and caps at fuel_demand_maximum; 0xb4f2 sets anc_speed_limit_ramp_value. Only caller cm550_runEvery10FramesTaskSetPhase1. CM848: e2m 10A4 is in CHR (ANC_Timing etc. at 0x40a04a, unread) and cm848_passCompensatedTimingToCombustionLimits 0x17b54 only copies the timing ('compiled out').",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000c87c",
+    "current_name": "cm550_FUN_0000c87c",
+    "proposed_name": "cm550_emptyPrimarySpeedInterruptStep",
+    "role": "Empty function (a single rts) called on every primary engine speed (TPU channel 10) interrupt.",
+    "discriminator": "Its only callers are the four modes of the TPU channel 10 primary speed interrupt handler, each at the same step (after cm550_rpmTimingDeltaComparatorWithReturn, before mc68k_FUN_0001266e). 0xc87e is the matching step of the backup input.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Empty function (a single rts). All four modes of the TPU channel 10 primary engine speed interrupt handler (mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 to Mode3) call it at the same step, after cm550_rpmTimingDeltaComparatorWithReturn and before mc68k_FUN_0001266e and vp44_communication_state_machine(1): a per-interrupt step compiled empty in this build. No CM848 empty stub sits in a speed interrupt handler.",
+    "evidence": "ROM 0xc87c = 4e75 (rts). Callers (one call each): mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 / Mode1 / Mode2 / Mode3, each 'cm550_rpmTimingDeltaComparatorWithReturn(); cm550_FUN_0000c87c(); mc68k_FUN_0001266e(); vp44_communication_state_machine(1);'. CM848 empty stubs are called only from cm848_applicationMain, cm848_runPciMessageHandlers, cm848_handleJ1939CanReceiveInterrupt, cm848_selectVariableSpeedGovernorMode and cm848_initPgn61443Eec2Handler, so none is a twin candidate.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0000c87e",
+    "current_name": "cm550_FUN_0000c87e",
+    "proposed_name": "cm550_emptyBackupSpeedInterruptStep",
+    "role": "Empty function (a single rts) called on every backup engine speed input (TPU channel 1) interrupt.",
+    "discriminator": "Its only callers are the three TPU channel 1 interrupt handlers (0x1af32, 0x1b30a, 0x1b4b2), each at the same step after mc68k_resetSpeedMeasurementMode0 and before clearing TPU_CISR bit 1. 0xc87c is the primary input's step.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Empty function (a single rts). The three TPU channel 1 (backup engine speed input) interrupt handlers 0x1af32 (mc68k_dutyCycleMonitorIsrHandler), 0x1b30a and 0x1b4b2 call it at the same step, after mc68k_resetSpeedMeasurementMode0 and before they clear TPU_CISR bit 1: a per-interrupt step compiled empty in this build.",
+    "evidence": "ROM 0xc87e = 4e75 (rts). Each caller ends 'mc68k_resetSpeedMeasurementMode0(); cm550_FUN_0000c87e(); TPU_CISR = TPU_CISR & 0xfffd;'. 0x1b30a also updates backup_lost_counter_timeout_counter_for_secondary_speed_inp, average_pulse_period_backup_time... and cam_cycle_reset_flag (e2m 11A8 +2 CMSYRSFG 'flag indicating occurrence of EPS pulse'), which places it on the backup speed input. No CM848 empty stub is called from a speed interrupt.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0000c880",
+    "current_name": "cm550_FUN_0000c880",
+    "proposed_name": "cm550_initializeSpeedRequestBlendWeightLookup",
+    "role": "Start-up set-up of the speed_request_blend_weight_by_speed_difference_lookup record: axis offset 2 and the ASTHPFXA / ASTHPFYA table pointers.",
+    "discriminator": "The only writer of that record's axis offset and pointers; its user at 0xc92c only writes x_input. CM848's counterpart presets only a cached axis offset.",
+    "relation": "counterpart",
+    "cm848_address": "0x0000e8cc",
+    "cm848_current_name": "cm848_initTemperatureTrimCoeff",
+    "plate_comment": "Start-up initializer (one call from mc68k_applicationMain): sets speed_request_blend_weight_by_speed_difference_lookup.x_axis_offset = 2, its x axis pointer to speed_request_blend_weight_by_speed_difference_axis (e2m 1326 ASTHPFXA) and its y values pointer to speed_request_blend_weight_by_speed_difference_values (1327 ASTHPFYA). The ASG reference speed blend at 0xc92c (cm550_dzgTimingAndPressureControlStateMachine) looks it up. Counterpart of CM848 0xe8cc, which only presets speed_request_blend_weight_by_speed_difference_cached_axis_offset to 2.",
+    "evidence": "ROM 0xc880 movea.l #0x800102,a0 / move.w #2,(0x800102) / move.l #0x807acc,(2,a0) / move.l #0x807ad8,(8,a0) / rts. Caller mc68k_applicationMain (between cm550_FUN_0001ddb4 and cm550_interpolationTableSetup). CM848 0xe8cc: li r11,2 / sth r11 to 0x3fa0f0 (speed_request_blend_weight_by_speed_difference_cached_axis_offset) / blr, one call from cm848_applicationMain; both firmwares' tables are the same e2m records (0x807acc / 0x5c272).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000d3b2",
+    "current_name": "cm550_FUN_0000d3b2",
+    "proposed_name": "cm550_initializeAllSpeedGovernorReferenceSpeedSets",
+    "role": "Start-up: points the four all speed governor reference speed pointers at the set 1 and set 2 reference speeds for 0 and 100 percent throttle, and presets the set selection from its default.",
+    "discriminator": "The only writer of the four pointers 0x80a9ac-0x80a9b8 (0xd2be only reads them) and the start-up preset of asg_throttle_source_selector (ASDPFG).",
+    "relation": "counterpart",
+    "cm848_address": "0x0002c100",
+    "cm848_current_name": "cm848_initializeAllSpeedGovernorTuningSetBlendWeight",
+    "plate_comment": "Start-up initializer of the all speed governor (ASG) reference speed sets (one call from mc68k_applicationMain). 0x80a9ac / 0x80a9b0 point at set 1 (e2m 0008 +20 ASMNRF and +22 ASMXRF, the reference speeds for 0 and 100 percent throttle) and 0x80a9b4 / 0x80a9b8 at set 2 (0008 +2E ASMNRF02 and +30 ASMXRF02). asg_throttle_source_selector (107A +16 ASDPFG) = default_throttle_source_selector (1387 +8 ASDPFGTN). 0xd2be then copies the selected set (0 = set 1, 1 = set 2) into ASMNRP / ASMXRP and interpolates the throttle reference. CM848 blends its two sets instead (cm848_blendAllSpeedGovernorReferenceSpeeds) and its start-up step cm848_initializeAllSpeedGovernorTuningSetBlendWeight only copies the same 1387 +8 default.",
+    "evidence": "ROM 0xd3b2-0xd3e0: move.l #0x803bbc/#0x803bbe/#0x803bca/#0x803bcc -> 0x80a9ac/0x80a9b0/0x80a9b4/0x80a9b8; move.w 0x803d5a -> 0x80a9a2. Readers in 0xd2be (0xd346-0xd38e): tst.w 0x80a9a2 -> movea.l 0x80a9ac / 0x80a9b0 (0) or 0x80a9b4 / 0x80a9b8 (1), move.w (a0) -> 0x80a9a4 / 0x80a9a6, then (max - min) x 0x80aa82 / 400 + min -> 0x80a98c. RAM dump: the four pointers = 0x803bbc / 0x803bbe / 0x803bca / 0x803bcc; set 1 = 5440 / 27600, set 2 = 5200 / 34304; selector 1; ASMNRP / ASMXRP = 5200 / 34304 (set 2). CM848 e2m 0008 +20 / +22 / +2E / +30 = all_speed_governor_minimum/maximum_reference_speed_1/2_cal; 1387 +8 = all_speed_governor_tuning_set_default_blend_weight_cal, copied by CM848 0x2c100 (one call from cm848_applicationMain).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000d4ae",
+    "current_name": "cm550_FUN_0000d4ae",
+    "proposed_name": "cm550_selectVariableSpeedGovernorMode",
+    "role": "Updates the selected throttle control flag STUOTHGV near no-load fueling. When no user fueling state is selected and the flag is 1, it selects FUELING_STATE_VARIABLE_SPEED_GOVERNOR and loads the throttle mode governor gains.",
+    "discriminator": "In the user fueling state chain 0x3458c it is the selector of state 7 (0x25806 selects state 6). It alone updates STUOTHGV, from FSTHGVOP, the switched throttle control governor bit and the interlock switch.",
+    "relation": "counterpart",
+    "cm848_address": "0x00010110",
+    "cm848_current_name": "cm848_selectVariableSpeedGovernorMode",
+    "plate_comment": "Variable speed governor selection, called by the user fueling state chain 0x3458c with the previous user fueling state. While final_fueling is below no_load_fuel_quantity + ASSDFUOF (e2m 107D +A) and the throttle is 0 it sets STUOTHGV (107C +16) = FSTHGVOP (0008 +54), inverted while algorithm_enable_flags_27_cal.switched_throttle_control_governor_select and the interlock switch bit are both set. If user_fueling_state is FUELING_STATE_NOT_SELECTED and STUOTHGV is 1 it selects FUELING_STATE_VARIABLE_SPEED_GOVERNOR and calls 0xd3e6. Unless the previous state was 7 or 3 it also loads the throttle mode gain set (107B), clears the external reset flag and loads the throttle mode fueling limits and the reference filter coefficient. CM848 splits this into cm848_updateVariableSpeedGovernorSelection (the flag) and cm848_selectVariableSpeedGovernorMode (the state).",
+    "evidence": "ROM 0xd4c2-0xd4de: NLFL 0x80db1c + ASSDFUOF 0x807ac8 compared with FSFNFL 0x80d32e (ble skips, so the update happens only while FSFNFL < the sum); 0xd4e0 tst.w 0x80aa82; 0xd4e8 0x803cca & 8; 0xd4f6 0x80bcd1 & 2; 0xd510-0xd52c STUOTHGV 0x80a982 = 0x803bf0 or its inverse. 0xd532-0xd53c: tst.w 0x80ded4, cmpi.w #1,(0x80a982), move.w #7 -> 0x80ded4; bsr 0xd3e6; 0xd544 / 0xd54a previous != 7 and != 3; 0xd550-0xd574 0x80a9a8 = #0x807be0, clr.w 0x80a9a0, 0x80a99e = 0x807bde, 0x80a99c = 0x807bdc, 0x80a984 = #0x807bda. Chain position matches CM848: cm848_resetEngineOperatingMode calls the pedal fault selector then cm848_selectVariableSpeedGovernorMode, as CM550 0x3458c calls 0x25806 then 0xd4ae. The code differs: CM848 0x2c6c4 tests final_fueling <= the sum (inclusive) and switch_input_state_bits.unwired_switch, and CM848 0x10110 also blends the sets, computes the throttle reference and compensator coefficients, loads 10 selected gains, and tests only previous != 7. Dump: FSTHGVOP 1, STUOTHGV 1.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000f716",
+    "current_name": "cm550_FUN_0000f716",
+    "proposed_name": "cm550_calculateAllSpeedGovernorDroopFueling",
+    "role": "Returns the all speed governor droop line fueling: the ASG no-load fuel + (ASG reference speed - engine speed) x 9813 / (8 x droop slope), limited to 0..0x1700.",
+    "discriminator": "The only function that refreshes the droop snapshot 0x800180 (from ASSLDP while ASRFST is 7) and turns the ASG speed error into droop line fueling. Only 0xf796, the J1939 driver's demand torque, uses it.",
+    "relation": "counterpart",
+    "cm848_address": "0x00020554",
+    "cm848_current_name": "cm848_calculateEffectiveFuelLimit",
+    "plate_comment": "All speed governor droop line fueling for the J1939 driver's demand torque. While all_speed_governor_reference_state (e2m 107A +2 ASRFST) is 7 it refreshes the droop snapshot 0x800180 from the selected droop slope (107A +E ASSLDP). With a zero snapshot it returns 0x1700 while the ASG reference speed (107A +0 ASTHRFES) is above engine_rpm_primary and 0 otherwise. Otherwise it returns (ASTHRFES - engine_rpm_primary) x 9813 / (snapshot x 8) + the ASG no-load fuel (1322 +0 ASNLFL), limited to 0..0x1700. Its caller 0xf796 uses it when FSTHGVOP (0008 +54) is 1. CM848 computes the same droop line inside cm848_calculateEffectiveFuelLimit, together with the speed limiter and the fuel limits.",
+    "evidence": "ROM 0xf718 movea.l #0x800180,a0; 0xf71e d2 = 0x80a98c - 0x80ccf6; 0xf72a cmpi.w #7,(0x80a98e) / move.w 0x80a99a,(a0); 0xf73a tst.w (a0): 0 or #0x1700 by the sign of d2; 0xf750-0xf766 ext.l / mulu.l #0x2655 / divs.l by (snapshot << 3); 0xf76e add 0x8091de; 0xf776-0xf790 clamp 0..0x1700. Caller cm550_paramSystemModeController 0xf796 (when _DAT_00803bf0 == 1), itself called by sendPgn61444ElectronicEngineController1Message. CM848 0x20554 refreshes all_speed_governor_droop_snapshot only in mode 7 and forms (reference - speed) x 9813 (li r10,9813) / (droop << 3) + all_speed_governor_no_load_fuel. It also has deadband and minimum-droop branches and applies six fuel limits and the speed limiter, so it is a counterpart, not a twin.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000f99a",
+    "current_name": "cm550_FUN_0000f99a",
+    "proposed_name": "emptyPgn61443ElectronicEngineController2InitializationStep",
+    "role": "Empty function (a single rts) called once by the PGN 61443 (EEC2) transmit record initializer, between the record set-up and the PGN registration.",
+    "discriminator": "Its only caller is the EEC2 transmit record initializer 0x33064, at the step between the status pointer store and the 0xf003 registration. CM848 0x20aec is the empty call at the same step of the twin initializer.",
+    "relation": "twin",
+    "cm848_address": "0x00020aec",
+    "cm848_current_name": "cm848_emptyStubFunction7",
+    "plate_comment": "Empty function (a single rts). Its only call is in the PGN 61443 (EEC2) transmit record initializer (CM550 0x33064, CM848 cm848_initPgn61443Eec2Handler), after the record's CAN ID, length 5 and data and status pointers and before the PGN 61443 request handler registration: an initialization step compiled empty. In both ROMs it sits right before the nominal friction percent torque calculation. Twin of CM848 0x20aec (one shared name).",
+    "evidence": "Bodies: CM550 0xf99a = 4e75 (rts), CM848 0x20aec = blr. The callers match step by step. CM550 0x33066-0x330b8: 0x8034b2 = #0xf00300; (0x803f64 & 7) << 2 into byte 0 (andi.b #0xe3 / or.b); SA byte 3 from 0x80da01; move.w #5 to +4; data #0x8034aa to +6; status #0x8034c0 to +10; jsr 0xf99a; pea 0x32e4c / move.w #0xf003 / jsr 0x2f47e. CM848 0x25d6c-0x25dd4: stw 0xf00300; rlwimi (0x3fd850 & 7) << 2 into byte 0; stb SA at +3; sth 5 at +4; stw data at +6; stw status at +10; bl 0x20aec; r3 = 61443, r4 = 0x25b10, bl 0x23188. Each stub has one call. Same ROM layout: CM550 0xf99a then 0xf99c (friction torque), CM848 0x20aec then 0x20af0 (cm848_calculateNominalFrictionPercentTorque).",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0000f99c",
+    "current_name": "cm550_FUN_0000f99c",
+    "proposed_name": "cm550_calculateNominalFrictionPercentTorque",
+    "role": "Computes the J1939 nominal friction percent torque x 256 (SPN 514, e2m 1102 +6 JCINFCTQ) for the EEC3 broadcast.",
+    "discriminator": "The only writer of JCINFCTQ 0x80da1c. It scales no_load_fuel_quantity (not final fueling or a torque curve point) against the determined peak fueling.",
+    "relation": "counterpart",
+    "cm848_address": "0x00020af0",
+    "cm848_current_name": "cm848_calculateNominalFrictionPercentTorque",
+    "plate_comment": "Nominal friction percent torque for EEC3 (PGN 65247 byte 1, SPN 514), called first by the EEC3 builder 0x330c4. JCINFCTQ (e2m 1102 +6, 0x80da1c, 1/256 percent) = (no_load_fuel_quantity - the maximum fueling that injects no fuel 0x808194) x 25600 / (determined_peak_engine_fueling_0_100 - 0x808194). It is 0 when either difference is not positive and capped at 32000 (125 percent). Counterpart of CM848 cm848_calculateNominalFrictionPercentTorque, whose floor tests compare with -32000 and store -32000 instead of 0.",
+    "evidence": "ROM 0xf9ae-0xf9be: d2 = 0x80db1c - 0x808194 (long); <= 0 -> clr.w 0x80da1c. 0xf9c6-0xf9d2: d3 = 0x80da32 - 0x808194; <= 0 -> clr. 0xf9da-0xf9e6: d2 x 25600 by shifts and adds; jsr 0x165f2 (divide); 0xf9f4 store; 0xf9f6 cmpi.w #0x7d00 / bls / move.w #0x7d00. Dump check: 88 x 25600 / 1619 = 1391 = 0x80da1c. CM848 0x20af0 has cmpwi r3,-32000 and ori 0x8300 (stores -32000) on both tests, then mulli 25600 / bl 0x563e8 / cap 32000: different constants. Caller vp44_configParamCanBuilder 0x330c4 (PGN 65247, j1939_pgn65247_tx_message) sends the high byte + 125, as cm848_buildPgn65247ElectronicEngineController3Message does.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000fa68",
+    "current_name": "vp44_FUN_0000fa68",
+    "proposed_name": "setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "role": "Sets torque curve point 1 (through 0xfa06), then point 3 of the J1939 engine configuration torque curve: point 1's speed and fueling when point 3's speed is below point 1's, else the calibrated point 3 speed and derated fueling.",
+    "discriminator": "Of the torque curve case helpers it alone sets point 3 after calling the point 1 helper. The torque curve builder 0xfb26 calls it only in cases 6 and 7.",
+    "relation": "twin",
+    "cm848_address": "0x00020bfc",
+    "cm848_current_name": "cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "plate_comment": "Runs the point 1 helper 0xfa06, then sets point 3 of the J1939 engine configuration (PGN 65251) torque curve. When the point 3 speed (e2m 1102 +26 JCTQRPP3) is below the point 1 speed (+22 JCTQRPP1), point 3 takes point 1's speed and fueling (+2C into +30). Otherwise speed = j1939_engine_speed_at_point_3 (1104 +4 JC39P3RP) and fueling = 1104 +C JCDQFLP3. The torque curve builder 0xfb26 calls it in its cases 6 and 7. Twin of CM848 0x20bfc (one shared name); it is not VP44 code.",
+    "evidence": "CM550 0xfa68-0xfaa4: a2/a3/a4 = 0x80da3c / 0x80da46 / 0x80da38; bsr 0xfa06; cmp.w (a2),d0=point1 / bhi -> move.w (a4),(a2) and 0x80da42 -> (a3); else 0x808162 -> (a2), 0x80816a -> (a3). CM848 0x20bfc-0x20c60: bl 0x20b84; lhz 0x40adac (point 1) and 0x40adb0 (point 3); cmpw / blt -> sth point 1 speed and 0x40adb6 -> 0x40adba; else ROM 0x5c34c / 0x5c354 (1104 +4 / +C). Same steps in the same order on the same e2m records (CM550 e2m: 0x80da38 1102 +22, 0x80da3c +26, 0x80da42 +2C, 0x80da46 +30, 0x808162 1104 +4, 0x80816a 1104 +C). CM550 compares unsigned (bhi) and CM848 uses cmpw on lhz zero-extended halfwords: same result. Call graph: CM550 0xfb26 switch cases 6 and 7; CM848 cm848_updateJ1939EngineConfigurationTorqueCurve cases 6 and 7. Same module layout (0xfa06 / 0x20b84 point 1, 0xfaa6 / 0x20c64, 0xfb26 / 0x20d10).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000ff48",
+    "current_name": "cm550_FUN_0000ff48",
+    "proposed_name": "initializeJ1939ReferenceEngineFuelingAndTorque",
+    "role": "Unless programmable power is enabled, copies the J1939 peak fueling and reference engine torque into the engine configuration reference values; called by the PGN 65251 buffer initializer.",
+    "discriminator": "The only writer of 1102 +1E (0x80da34) and the start-up writer of 1102 +1C, gated by programmable_power_enable (bit 0x200 of flags 18).",
+    "relation": "twin",
+    "cm848_address": "0x000212dc",
+    "cm848_current_name": "cm848_initializeJ1939ReferenceEngineFuelingAndTorque",
+    "plate_comment": "Called last by initializePgn65251EngineConfiguration1Buffer. While algorithm_enable_flags_18_cal.programmable_power_enable is 0 it copies the peak fueling (e2m 1104 +0 JCINPKFL) into determined_peak_engine_fueling_0_100 (1102 +1C JCRFEGFL) and the reference engine torque (1104 +2 JCRFEGTQ) into reference_engine_torque_working (1102 +1E JCRFTQ). Twin of CM848 0x212dc (one shared name).",
+    "evidence": "CM550 0xff48-0xff6a: move.w 0x803cb8 / andi.l #0x200 / bne -> rts; move.w 0x80815e -> 0x80da32; move.w 0x808160 -> 0x80da34. CM848 0x212dc-0x21310: lhz 0x3fd5c0 / rlwinm bit 22 (0x200) / bne -> blr; ROM 0x5c348 -> 0x40ada6 (1102 +1C); ROM 0x5c34a -> 0x40ada8 (1102 +1E). Same bit, same records, same order. Both are the last call of the shared twin initializePgn65251EngineConfiguration1Buffer. Dump: 0x803cb8 = 0x303a (bit clear); 0x80da32 = 0x80815e = 1619; 0x80da34 = 0x808160 = 705.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00022530",
+    "current_name": "cm550_FUN_00022530",
+    "proposed_name": "handleJ1939ReadByParameterIdLongLengthService",
+    "role": "PGN 61184 service 0x43: reads from a parameter ID's address with a 4-byte length.",
+    "discriminator": "Of the five read handlers it is the one that takes a parameter ID, offset 0 and a 4-byte length (request bytes 3-6).",
+    "relation": "twin",
+    "cm848_address": "0x0050c640",
+    "cm848_current_name": "cm848_handleJ1939ReadByParameterIdLongLengthService",
+    "plate_comment": "PGN 61184 service 0x43, registered by registerJ1939MemoryReadServices: request bytes 1-2 are the parameter ID and 3-6 the length. It reads from the ID's address (offset 0) through 0x224f4: cm550_lookupParameterIdAddress (8 for an unknown ID), then cm550_diagMemoryReadResponseBuilder. Twin of CM848 0x50c640 (one shared name).",
+    "evidence": "CM550 0x22536-0x22572: jsr 0x26a64 (memcpy) (-2, data+1, 2); memcpy (-6, data+3, 4); push the length, clr.l (offset 0), the id word and the request; bsr 0x224f4. CM848 0x50c650-0x50c68c: bl 0x56d58 (r1+8, data+1, 2); (r1+12, data+3, 4); r4 = id, r5 = 0, r6 = length; bl 0x50c5d0. Same steps and constants. 0x224f4 matches CM848 0x50c5d0: jsr 0x10e16 (lookup) -> moveq #8 when nonzero, else read at address + offset for length. Registered as service 0x43 by 0x226da, the twin of CM848 0x50c880.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002257c",
+    "current_name": "cm550_FUN_0002257c",
+    "proposed_name": "handleJ1939ReadByParameterIdShortOffsetService",
+    "role": "PGN 61184 service 0x46: reads from a parameter ID's address + a 2-byte offset with a 1-byte length.",
+    "discriminator": "The read handler with a parameter ID, a 2-byte offset (request bytes 3-4) and a 1-byte length (byte 5).",
+    "relation": "twin",
+    "cm848_address": "0x0050c6a8",
+    "cm848_current_name": "cm848_handleJ1939ReadByParameterIdShortOffsetService",
+    "plate_comment": "PGN 61184 service 0x46, registered by registerJ1939MemoryReadServices: request bytes 1-2 are the parameter ID, 3-4 the offset and 5 the length. It reads from the ID's address + offset through 0x224f4. Twin of CM848 0x50c6a8 (one shared name).",
+    "evidence": "CM550 0x22586-0x225d4: memcpy id (data+1, 2); clr.w (-6), move.b data[3] -> (-4), data[4] -> (-3) (offset 0x0000XXYY); clr.w (-10), clr.b (-8), data[5] -> (-7) (length); bsr 0x224f4(request, id, offset, length). CM848 0x50c6bc-0x50c718: memcpy id; sth 0 at 12, stb data[3] at 14, data[4] at 15; sth 0 at 16, stb 0 at 18, data[5] at 19; bl 0x50c5d0. Same byte-by-byte zero extension.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000225e0",
+    "current_name": "cm550_FUN_000225e0",
+    "proposed_name": "handleJ1939ReadByParameterIdLongOffsetService",
+    "role": "PGN 61184 service 0x48: reads from a parameter ID's address + a 4-byte offset with a 4-byte length.",
+    "discriminator": "The read handler with a parameter ID, a 4-byte offset (request bytes 3-6) and a 4-byte length (bytes 7-10).",
+    "relation": "twin",
+    "cm848_address": "0x0050c734",
+    "cm848_current_name": "cm848_handleJ1939ReadByParameterIdLongOffsetService",
+    "plate_comment": "PGN 61184 service 0x48, registered by registerJ1939MemoryReadServices: request bytes 1-2 are the parameter ID, 3-6 the offset and 7-10 the length. It reads from the ID's address + offset through 0x224f4. Twin of CM848 0x50c734 (one shared name).",
+    "evidence": "CM550 0x225ea-0x2263a: memcpy (2 from data+1), (4 from data+3), (4 from data+7); bsr 0x224f4(request, id, offset, length). CM848 0x50c748-0x50c794: the same three 0x56d58 copies (2 / 4 / 4 from +1 / +3 / +7); bl 0x50c5d0(request, id, offset, length).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00022646",
+    "current_name": "cm550_FUN_00022646",
+    "proposed_name": "handleJ1939ReadMemoryService",
+    "role": "PGN 61184 service 0x4a: reads memory at a 4-byte address with a 1-byte length.",
+    "discriminator": "The read handler with an absolute address (request bytes 1-4) and a 1-byte length (byte 5), sent straight to the read-and-respond routine with no parameter ID lookup.",
+    "relation": "twin",
+    "cm848_address": "0x0050c7b0",
+    "cm848_current_name": "cm848_handleJ1939ReadMemoryService",
+    "plate_comment": "PGN 61184 service 0x4a, registered by registerJ1939MemoryReadServices: request bytes 1-4 are the address and 5 the length; it reads through cm550_diagMemoryReadResponseBuilder. Twin of CM848 0x50c7b0 (one shared name).",
+    "evidence": "CM550 0x22650-0x22682: memcpy (-4, data+1, 4); clr.w (-8), clr.b (-6), move.b data[5] -> (-5); bsr 0x2238e(request, address, length). CM848 0x50c7c4-0x50c800: copy 4 from data+1; sth 0 at 8, stb 0 at 10, stb data[5] at 11; bl 0x50c42c(request, address, length).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002268e",
+    "current_name": "cm550_FUN_0002268e",
+    "proposed_name": "handleJ1939ReadMemoryLongLengthService",
+    "role": "PGN 61184 service 0x4c: reads memory at a 4-byte address with a 4-byte length.",
+    "discriminator": "The read handler with an absolute address (request bytes 1-4) and a 4-byte length (bytes 5-8).",
+    "relation": "twin",
+    "cm848_address": "0x0050c81c",
+    "cm848_current_name": "cm848_handleJ1939ReadMemoryLongLengthService",
+    "plate_comment": "PGN 61184 service 0x4c, registered by registerJ1939MemoryReadServices: request bytes 1-4 are the address and 5-8 the length; it reads through cm550_diagMemoryReadResponseBuilder. Twin of CM848 0x50c81c (one shared name).",
+    "evidence": "CM550 0x22698-0x226ce: memcpy (-4, data+1, 4); memcpy (-8, data+5, 4); bsr 0x2238e(request, address, length). CM848 0x50c830-0x50c864: copy 4 from data+1 and 4 from data+5; bl 0x50c42c.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000226da",
+    "current_name": "cm550_FUN_000226da",
+    "proposed_name": "registerJ1939MemoryReadServices",
+    "role": "Registers the five PGN 61184 memory read services 0x43 / 0x4a / 0x4c / 0x46 / 0x48 with registerJ1939DiagnosticService.",
+    "discriminator": "It registers only the read services (registerJ1939MemoryWriteServices registers the write services).",
+    "relation": "twin",
+    "cm848_address": "0x0050c880",
+    "cm848_current_name": "cm848_registerJ1939MemoryReadServices",
+    "plate_comment": "From mc68k_initializeJ1939Datalink: registers the PGN 61184 memory read services 0x43 / 0x4a / 0x4c / 0x46 / 0x48 (handlers 0x22530 / 0x22646 / 0x2268e / 0x2257c / 0x225e0) with registerJ1939DiagnosticService. Twin of CM848 0x50c880: the same five services in the same order (one shared name).",
+    "evidence": "CM550 0x226dc movea.l #0x2ee62 (registerJ1939DiagnosticService),a2, then five pea handler / move.w #service / jsr (a2): 0x22530/0x43, 0x22646/0x4a, 0x2268e/0x4c, 0x2257c/0x46, 0x225e0/0x48. CM848 0x50c88c-0x50c8d8: li r3 67 / 74 / 76 / 70 / 72 with r4 = 0x50c640 / 0x50c7b0 / 0x50c81c / 0x50c6a8 / 0x50c734, bl 0x220e4 (registerJ1939DiagnosticService). Same position in the call graph: both inits call it after their input handler registration (cm550_registerJ1939InputMessageHandlers / cm848_registerJ1939InputMessageHandlers) and one call before registerJ1939MemoryWriteServices and registerJ1939DiagnosticHandlers.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00024804",
+    "current_name": "cm550_FUN_00024804",
+    "proposed_name": "cm550_updateLampOutputsAndCheckLampDriverFaults",
+    "role": "50 ms task: applies the lamp requests to the lamp outputs, then checks the seven lamp drivers' output status against their feedback.",
+    "discriminator": "The only caller of both cm550_applyLampRequestsToOutputs and 0x23be8. CM848 has no such wrapper; its diagnosticMainStateProcessor is the fault scanner, run straight from a task set.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "50 ms task, first call of cm550_runEvery10FramesTaskSetPhase6. It runs cm550_applyLampRequestsToOutputs (lamp_driver_output_bitmask into the lamp output bits while each output's override priority is 0). Then it runs 0x23be8 (named diagnosticMainStateProcessor), which compares each of the seven lamp drivers' output status (e2m 000E +34 LCLP01FB to LCLP07FB) with io_driver_port_1_feedback and debounces their fault bits in system error status word 8. No CM848 counterpart: CM848's diagnosticMainStateProcessor is its fault scanner.",
+    "evidence": "ROM 0x24804: jsr cm550_applyLampRequestsToOutputs (0x23a90), jsr diagnosticMainStateProcessor (0x23be8), rts. Only caller cm550_runEvery10FramesTaskSetPhase6 (then cm550_processJ1939AcceleratorInputs). 0x23be8 body: gated by 0x80bcce bit 0 (000E +0 DS01SWSS); for bits 0, 1, 2, 6, 4, 5, 3 it compares 0x80bd02 (LCLP0nFB 'STATUS OF THE LAMP n DRIVER OUTPUT') with 0x80bd08 (io_driver_port_1_feedback), uses debounce limits 0x611c8 / 0x611ca, and sets or clears bits 0x10-0x100 of status word 8. e2m: LCLP01-07 EA (enable, 000E +28), FB (000E +34), MD (1094 'ON / OFF / SHORT'). CM848 0x1d9b8 diagnosticMainStateProcessor: fault_scan_index loop, cm848_processFaultScanGroup, cm848_clearDiagnosticState, OBD completed monitors; called from cm848_runEvery4FramesTaskSetPhase1.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00025806",
+    "current_name": "cm550_FUN_00025806",
+    "proposed_name": "cm550_selectPedalFaultMode",
+    "role": "Selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT (6) when the limp home algorithm is enabled, no user fueling state is selected and the pedal input has failed.",
+    "discriminator": "In the user fueling state chain it is the selector of state 6: the only function that tests LHFLEN and the pedal faults, and it calls presetPedalFaultModeFuelDemand when entering.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050daac",
+    "cm848_current_name": "cm848_transitionEngineOperatingMode",
+    "plate_comment": "Pedal fault mode selection, called by the user fueling state chain 0x3458c with the previous user fueling state. When the limp home enable LHFLEN (e2m 10CE +C, 0x80821a) is set and user_fueling_state is FUELING_STATE_NOT_SELECTED it selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT on either of two conditions. With algorithm_enable_flags_5_cal.sampled_throttle_override_enable (the J1939 pedal) set, the condition is j1939_accelerator_position_error_fallback_flag or j1939_pedal_input_timeout_active_flag. Otherwise it is status word 4 bit 0x2, 0x4 or 0x20 enabled in fault_processing_enable_flags[4]. Entering from another state it calls presetPedalFaultModeFuelDemand. Counterpart of CM848 cm848_transitionEngineOperatingMode, which uses other pedal fault tests.",
+    "evidence": "ROM 0x25820 tst.w 0x80821a / beq; 0x2582a tst.w 0x80ded4; 0x2582e 0x803c9e & 0x400; 0x2583a move.b 0x80d70c / or.b 0x80d70e; 0x2585e-0x25898 0x806008 & 2 / 4 / 0x20, each with 0x806ac4; 0x25848 / 0x2589a move.w #6 -> 0x80ded4, cmpi.w #6,d2, jsr 0x258b0 (presetPedalFaultModeFuelDemand, shared). Chain position matches CM848 cm848_resetEngineOperatingMode (pedal fault selector right before cm848_selectVariableSpeedGovernorMode). CM848 0x50daac tests pedal_fault_mode_enable_flag (the same 10CE +C record) and NOT_SELECTED, but picks the J1939 branch by sensor_channel_held_value_enable_bits_cal[0] & 0x2000, and its local branch tests accelerator_pedal_input_fault_flag or faults_0_to_15 0x400 / 0x800. Different tests, so a counterpart. Module order: CM550 0x2571e / 0x25806 / 0x258b0 / 0x258d6, CM848 0x50d864 / 0x50daac / 0x50da7c / 0x50db88. Dump: LHFLEN 1.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00025a34",
+    "current_name": "vp44_FUN_00025a34",
+    "proposed_name": "cm550_presetLowSpeedGovernorIntegrator",
+    "role": "When the low speed governor takes control, presets its integrator between LSMNITPZ and LSMXITPZ for a bumpless transfer and seeds its previous-pass values.",
+    "discriminator": "Called only on the LSG takeover (adjusted state LSG, final state not LSG). It is the only writer of LSMXITPZ and of the integrator preset; the LSG itself updates the integrator every pass.",
+    "relation": "counterpart",
+    "cm848_address": "0x00027e4c",
+    "cm848_current_name": "cm848_presetLowSpeedGovernorIntegrator",
+    "plate_comment": "Low speed governor integrator preset, called by cm550_runLowSpeedGovernor when adjusted_user_fueling_state is FUELING_STATE_LOW_SPEED_GOVERNOR and final_fueling_state is not. It refreshes the 100 percent throttle 4D fueling at the LSG adjusted reference speed (0x2595a, into 0x801a6e) and sets LSMXITPZ (e2m 1065 +E) = that + LSMXPZOF (1064 +4), limited to 0..0x1700. It presets the 16.16 integrator 0x801a6a to final_fueling - LSER x LSPPGN / 960 + engine_rpm_primary x LSPP02GN / 2226 (minus no_load_fuel_quantity with low_speed_governor_no_load_fuel_enable), limited to LSMNITPZ (1064 +6) .. LSMXITPZ. Then LSFL = final_fueling, LSDVFL = 0, and the engine speed and both proportional gains are stored as the previous-pass values. Counterpart of CM848 cm848_presetLowSpeedGovernorIntegrator, which has no engine speed term, an optional reuse of the previous integral and a park or neutral minimum.",
+    "evidence": "ROM 0x25a50 bsr 0x2595a; 0x25a54-0x25a76 0x80823a + 0x801a6e clamped 0..0x1700 -> 0x80daec; 0x25a78-0x25aae FSFNFL 0x80d32e - (0x80dae0 muls.w 0x80dac4) / 0x3c0 + (0x80ccf6 x 0x808268) / 0x8b2; 0x25ab0 0x803cd4 & 0x200 -> subtract 0x80db1c; 0x25ac6-0x25ae2 clamp to [0x80823c, 0x80daec]; 0x25ae6 lsl.l #16 -> 0x801a6a; 0x25af0 0x80d32e -> 0x80dade; clr.w 0x80dae4; 0x80ccf6 -> 0x801a70; 0x80dac4 -> 0x801a72; 0x808268 -> 0x801a74. Call site in cm550_runLowSpeedGovernor: if (adjusted_user_fueling_state == LSG && final_fueling_state != LSG). CM848 0x27e4c: cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity, error x P gain x P gain adjustment / 0x22c86, the previous-integral option, a park/neutral vs drive minimum, and it clears the P / D / jerk terms. Not VP44 code.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026616",
+    "current_name": "cm550_FUN_00026616",
+    "proposed_name": "cm550_calculateLowSpeedGovernorColdIdleSpeed",
+    "role": "Every 100 ms computes the cold idle LSG reference speed LSCIRF from the coolant temperature and a cold idle timer, ramps it out, and raises the operator adjusted LSG breakpoint speed to it.",
+    "discriminator": "The only writer of LSCIRF and of the cold idle timer, and the only user of the 1066 cold idle records.",
+    "relation": "counterpart",
+    "cm848_address": "0x00028d44",
+    "cm848_current_name": "cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed",
+    "plate_comment": "Cold idle speed of the low speed governor, every 100 ms (cm550_runEvery20FramesTaskSetPhase4). Cold means the coolant is below LSCICLTP (e2m 1066 +0). With the engine stopped the cold idle timer 0x801a84 is cleared and LSCIRF (1067 +2 'COLD IDLE LSG REFERENCE SPEED') = LSCIRFSR (1066 +2) when cold, else 0. After cranking the timer counts while cold up to LSCITMLM (1066 +4); while running, once the time is up or the engine is warm, LSCIRF ramps down by LSCIRMRT (1066 +6) to 0. LSDSRFRP (1049 +4, the operator adjusted LSG breakpoint speed) is raised to LSCIRF unless low_speed_governor_cold_idle_override_enable and LSCIOD (1049 +6) are both set. Counterpart of CM848 cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed (a coolant table, hot idle and park or neutral design with its records in e2m 14EE).",
+    "evidence": "ROM 0x26632 0x80a336 vs 0x80833a (bcc); 0x26646 0x803cac & 0x4000 and tst.w 0x80db08; 0x26664 cmpi.w #1,(0x80d0c8): clr.w 0x801a84, 0x80833c or 0 -> 0x80db04; 0x2667e cmpi.w #2 (cranking: skip); 0x26684-0x26694 addq.w #1 to the timer below 0x80833e; 0x26696 cmpi.w #3 (running); 0x266aa-0x266be subtract 0x808340 or clear; 0x266c0-0x266ca 0x80db06 < 0x80db04 and no override -> 0x80db06 = 0x80db04. Only caller cm550_runEvery20FramesTaskSetPhase4. CM848 has no 1049 / 1066 / 1067 records (CHR: Cold_Idle_Coolant_Temperature / Cold_Idle_Time in 14EE), and 0x28d44 is a different design.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026b3a",
+    "current_name": "cm550_FUN_00026b3a",
+    "proposed_name": "cm550_calculateNoLoadFuel",
+    "role": "Every 100 ms sets no_load_fuel_quantity (NLFL, e2m 109C +0) = friction fuel by engine speed + the coolant temperature correction.",
+    "discriminator": "The only writer of no_load_fuel_quantity; it sums two lookups where CM848 sums four terms.",
+    "relation": "counterpart",
+    "cm848_address": "0x0050dba8",
+    "cm848_current_name": "cm848_calculateNoLoadFuel",
+    "plate_comment": "No load fuel, every 100 ms (cm550_runEvery20FramesTaskSetPhase6): no_load_fuel_quantity (e2m 109C +0 NLFL 'fuel required to overcome friction') = friction_fuel_correction_by_coolant_temperature_lookup at the filtered coolant temperature (109A / 109B) + friction_fuel_by_engine_speed_lookup at engine_rpm_primary (1098 / 1099). Counterpart of CM848 cm848_calculateNoLoadFuel, which also adds A/C clutch and radiator fan terms and stores each term.",
+    "evidence": "ROM 0x26b4a move.w 0x80ccf6 -> (6,0x80db20); 0x26b52 move.w 0x80a336 -> (6,0x80db2e); two jsr 0x34de0; add.w; move.w -> 0x80db1c. The only store to 0x80db1c in the ROM (0x1445e only reads it). Only caller cm550_runEvery20FramesTaskSetPhase6. CM848 0x50dba8, called by cm848_runEvery20FramesTaskSetPhase6, sums friction_fueling + the coolant, air conditioning clutch and radiator fan adjustments and stores each one.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026b82",
+    "current_name": "cm550_FUN_00026b82",
+    "proposed_name": "cm550_emptyStubFunction12",
+    "role": "Empty function (a single rts) called once at start-up.",
+    "discriminator": "Nothing beyond its single start-up call site (after cm550_initializeLowSpeedGovernorIdleAdjustment); the body does nothing.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Empty function (a single rts). Its one call is a start-up step of mc68k_applicationMain (jsr at 0x287da), after cm550_initializeLowSpeedGovernorIdleAdjustment and before the undumped 0x4cf42. It sits among unreferenced rts stubs (0x26b7e-0x26b86) after cm550_calculateNoLoadFuel. No CM848 counterpart is proven: CM848's cm848_initInterpolationStateCounters, placed after cm848_calculateNoLoadFuel, presets lookup caches that CM550 sets up in 0x1ddb4, and the start-up orders differ.",
+    "evidence": "ROM 0x26b82 = 4e75; its only reference is jsr (0x26b82).l at 0x287da (preceded by jsr 0x2658c, followed by jsr 0x4cf42). 0x26b7e / 0x26b80 / 0x26b84 / 0x26b86 are rts with no absolute reference. The friction fuel lookup records 0x80db20 / 0x80db2e are set up by cm550_FUN_0001ddb4. Same convention as cm550_emptyStubFunction10 / 11 (rounds 94-95).",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x00026e86",
+    "current_name": "cm550_FUN_00026e86",
+    "proposed_name": "cm550_initializeEnginePositionPhaseLag",
+    "role": "Start-up: runs the engine position phase lag calculation once.",
+    "discriminator": "The start-up caller of 0x26e8e; the 20 ms task set is the other caller.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Start-up step (one call from mc68k_applicationMain, after cm550_canBusTimingInit and before cm550_initializeEnginePositionSignalInputs): runs cm550_calculateEnginePositionPhaseLag once, so the phase lags are set before the 20 ms task first runs it.",
+    "evidence": "ROM 0x26e86 jsr (0x26e8e).l / rts. Only caller mc68k_applicationMain.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00026e8e",
+    "current_name": "cm550_FUN_00026e8e",
+    "proposed_name": "cm550_calculateEnginePositionPhaseLag",
+    "role": "Every 20 ms computes the engine position phase lags (normal ESPG and pulse 0 ESPS00PG) as straight lines in the average engine speed, plus the cam wheel TDC adjustment.",
+    "discriminator": "The only writer of ESPG / ESPS00PG and the only reader of the 11A9 phase lag calibration records.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Engine position phase lag, every 20 ms (cm550_runEvery4FramesTaskSetPhase0) and once at start-up (0x26e86). ESPS00PG (e2m 11AA +2) = (ESPSPGIN (11A9 +4) + the average engine speed ESAVES (100C +0) x ESPSPGSL (11A9 +6) / 16 + ESCWAJ (11A9 +8, the one-time TDC adjustment for misaligned cam wheels)) / 16. ESPG (11AA +0) is the same with the normal line ESPGIN (11A9 +0) / ESPGSL (11A9 +2). No dumped code reads the two results. CM848 has no such records.",
+    "evidence": "ROM 0x26e8e-0x26ebc: move.w 0x80ccf2 / mulu.w 0x80847c / lsr.l #4 / + 0x80847a / + 0x80847e / bge / add 15 / asr.l #4 -> 0x80db66; 0x26ec2-0x26ee4 the same with 0x808478 / 0x808476 -> 0x80db64. abs_refs: 0x808476 / 0x808478 / 0x80847a / 0x80847c / 0x80847e / 0x80db66 are referenced only here; 0x80db64 also at 0x360ec (parameter_id_table data). The CHR e2m has no ESPGIN / ESCWAJ records. These are the engine position (ES) records next to the 11A8 cam / crank sync block, not VP44.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x000277e6",
+    "current_name": "cm550_FUN_000277e6",
+    "proposed_name": "cm550_buildJ1587Pid243ComponentIdentificationReply",
+    "role": "Builds the J1587 PID 243 (component identification) reply: MID 128, make, '*', model, '*', serial number, in one frame or as a multi-frame reply.",
+    "discriminator": "The Insite / J1587 dispatcher calls it only for PID 0xf3 (243). It is the J1587 path for the component identification fields, which the J1939 path cm550_buildPgn65259ComponentIdentificationMessage sends with the unit number added.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "J1587 PID 243 (component identification) reply, from insiteCommandByteDispatcher for insite_parameter_id 0xf3. Below 20 data bytes it writes [PID][size - 2][0x80 = MID 128][component_identification_make_cal (5)]['*'][component_identification_model_cal (17)]['*'][component_identification_serial_number_cal (4 raw bytes)] at insite_response_write_pointer and updates the response length and free space. Otherwise it builds the same bytes at 0x801ade and sends them through cm550_insiteMultiFrameResponseBuilder(0xe, 0xf) frame by frame (cm550_insiteMultiFrameContinuation, cm550_responseBufferFinalize at the last frame). CM848 has no J1708 / J1587 link.",
+    "evidence": "insiteCommandByteDispatcher 0xed64: 'if (insite_parameter_id == 0xf3) cm550_FUN_000277e6();'. Its other cases are J1587 PIDs (0x54 road speed, 0x55 cruise status from the cruise switch bits, 0x56, 0x59 PTO status from power_take_off_switch_state_bits, 0xed). The body copies 5 / 17 / 4 bytes with 0x2a ('*') between and the leading 0x80, in both branches. The round 95 rows of component_identification_make/model/serial_number_cal already call 0x277e6 'the J1587 reply'. CM848's only component identification is J1939 PGN 65259 (cm848_j1939HandlePgn65259ComponentId).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00027c20",
+    "current_name": "vp44_FUN_00027c20",
+    "proposed_name": "mc68k_saveEepromForPowerDown",
+    "role": "At power down queues the EEPROM image 0x804156-0x804f91 into the EEPROM write queue in 16-byte chunks, waiting for each, and restarts when the key line returns.",
+    "discriminator": "The only writer of the upper EEPROM image area (0x804156 up); cm550_commitEepromMirrorToEeprom writes 0x803b0a-0x804155 on a tool request. It alone polls the chip select 2 input bit 0 while waiting and calls restartOnKeyOnDuringPowerDown.",
+    "relation": "counterpart",
+    "cm848_address": "0x00539a78",
+    "cm848_current_name": "cm848_saveEepromForPowerDown",
+    "plate_comment": "Power-down EEPROM save, called by mc68k_runPowerDownSequence right after its 1000-pass queue drain. From 0x804156 it queues 16-byte chunks (the last partial chunk gets (0x804f92 - pointer) / 2 bytes) through cm550_parameterCircularBufferWrite; two refusals in a row end it. After each chunk it waits up to 16000 x 500 ticks (mc68k_delayTimeBaseTicksWithWatchdogService) for cm550_circularBufferEmptyCheck. If bit 0 of the chip select 2 device input 0xffd000 stays set for more than 80 waits it calls restartOnKeyOnDuringPowerDown. Counterpart of CM848 cm848_saveEepromForPowerDown (same place in the sequence, same 80-sample key test; a mirror save state machine and extra checksum and sequence writes there).",
+    "evidence": "ROM 0x27c26 a2 = #0x804156; 0x27c30-0x27c52 count 16 or (0x804f92 >> 1) - (a2 >> 1); 0x27c5a jsr 0x16c3c(a2, a2, count); 0x27c64 tst.b d0 -> a2 += 16, d4 = 0, else addq.w #1,d4; 0x27c72-0x27cb8 up to 0x3e80 passes of jsr 0x16d4c / jsr 0x34bba(0x1f4) / move.b 0xffd000 & 1 -> d3 + 1 or clr / cmpi.w #0x50,d3 / bls / jsr 0x27af0, ended by jsr 0x16c2c != 0; 0x27cba cmpa.l #0x804f92 / cmpi.w #2,d4. 0xffd000 is the CS2 device input register (mc68k_waitForChipSelect2InputBit0High, mc68k_sampleAndDebounceDiscreteInputs), hence mc68k_. CM848 cm848_runPowerDownSequence calls cm848_saveEepromForPowerDown at the same step (after the same 1000-pass queue drain). CM848 0x539a78 runs cm848_startEepromMirrorSave and waits while the key line (mios_mdasm30.SCR bit 15) count goes above 0x50, sets key_on_during_power_down_save_flag and restarts after the save, then writes the retry total, checksum and sequence number: different code. Not VP44.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002cf7e",
+    "current_name": "cm550_FUN_0002cf7e",
+    "proposed_name": "cm550_applyJ1708MemoryWriteRecords",
+    "role": "Applies the parsed J1708 memory write records: EEPROM and authorization-required records go into the secure write scratch pad (directory entry + data); other records are copied at once. It returns 14 when the scratch pad lacks room.",
+    "discriminator": "The only writer of the scratch pad directory and data from a J1708 write request. Its caller cm550_diagnosticMemoryWriteHandler only parses the request into the 0x80db68 records.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Second half of the J1708 memory write (called by cm550_diagnosticMemoryWriteHandler with the record count; the caller queues the result). The 10-byte records at 0x80db68 hold the address, a data pointer into the J1708 receive ring, the length and the MEMORY_REGION_TYPE. Records of type MEMORY_REGION_TYPE_EEPROM (5) or MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED (3) need scratch pad room: at most 10 directory entries (number_of_entries_in_the_scratch_pad_0_10) and their bytes before scratch_pad_directory_table, else it returns 14 and writes nothing. Each such record gets a 6-byte directory entry (address, length) and its data at scratch_pad_write_pointer; the other records are copied straight to their address. It returns 0 (the source steps its low byte, so copies wrap in the 256-byte receive ring). CM848 has no J1708 and no scratch pad.",
+    "evidence": "ROM 0x2cf9e-0x2cfbc pass 1: cmpi.b #5 / #3,(9,a2) -> addq.b #1,d3, add.b (8,a2),d2. 0x2cfbe-0x2cfe8: entries 0x80de2c + d3 > 10 -> moveq #14; 0x80dd86 - (0x80ddc2) < d2 -> moveq #14. Pass 2 0x2cffc-0x2d08e: type 5 / 3 -> move.l a3 to 0x80dd86 + 6n, move.w length to 0x80dd8a + 6n, addq.w #1,(0x80de2c), bytes via (0x80ddc2)+; other types -> move.b to (a3)+. addq.b #1,(-1,a6) steps the low byte of the source. clr.b d0 = 0. Caller 0x1ec3c (from mc68k_dispatchJ1708ReceivedMessages): fills the records (+0 address, +4 pointer, +8 length, +9 lookupApplicationMemoryRegionType result), answers 10 / 9 itself, jsr 0x2cf7e at 0x1ed86. Dump: empty scratch pad (0x80ddc2 = 0x80dcbe, entries 0), 200-byte buffer 0x80dcbe-0x80dd85, directory 0x80dd86.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002ddbc",
+    "current_name": "cm550_FUN_0002ddbc",
+    "proposed_name": "initializePowerTakeOffThrottleOverride",
+    "role": "Start-up: clears the PTO throttle override flag and sets the PTO throttle override engine speed limit to the no-derate maximum engine speed.",
+    "discriminator": "The start-up writer of PTTHOV / PTTHDQRP; the PTO / user fueling selector writes them while running.",
+    "relation": "twin",
+    "cm848_address": "0x0002bd38",
+    "cm848_current_name": "cm848_initializePowerTakeOffThrottleOverride",
+    "plate_comment": "Start-up step (one call from mc68k_applicationMain): power_take_off_throttle_override_flag (e2m 1265 +2 PTTHOV) = 0 and power_take_off_throttle_override_engine_speed_limit (1265 +0 PTTHDQRP) = the maximum engine speed with no derate (1262 +0 EPNTDQRP). These are the values the PTO / user fueling selector stores while the throttle is not overriding. Twin of CM848 0x2bd38 (one shared name).",
+    "evidence": "CM550 0x2ddbc clr.w 0x80dc2e (1265 +2); move.w 0x803f40 (1262 +0) -> 0x80dc2c (1265 +0); rts. CM848 0x2bd38: li r11,0 / sth -> 0x40af58 (1265 +2 PTTHOV); lhz 0x3fd814 (1262 +0 EPNTDQRP engine_speed_limit_default_cal) / sth -> 0x40af56 (1265 +0 PTTHDQRP); blr. Same records and order. Both are called once from the application main at start-up (CM550 between 0x4d9dc and cm550_initializeTripInformation). Dump: 0x80dc2c = 0x803f40 = 21200, 0x80dc2e = 0.",
+    "confidence": "high"
+   }
+  ],
+  "skipped": [
+   {
+    "address": "0x0002cf52",
+    "current_name": "cm550_FUN_0002cf52",
+    "reason": "Its body only copies byte_count bytes from source to 0x801afc, stepping only the source pointer's low byte (addq.b #1,(0xb,a6)), the J1708 receive ring idiom. Nothing in the dumped ROM reaches it: no absolute 0x2cf52, no bsr.w / bsr.s / pc-relative jsr, pea or lea, no stored long 0x0002cf52. Its destination 0x801afc has no row and no other reference (abs_refs lists only 0x2cf5e), so the purpose of the copy cannot be proven. The caller is probably in the undumped 0x40000+ region."
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00800040",
+    "current_name": "",
+    "proposed_name": "acceleration_noise_control_timing_limit_inhibit_timer",
+    "proposed_type": "word",
+    "comment": "Countdown of the ANC timing limit inhibit after a bare engine acceleration: cm550_calculateAccelerationNoiseControlTimingLimit loads it with NZTAIHTM (0x807a4e) while ESFT01AC is above the timing threshold, counts it down, and at 0 clears NZTALMIH (e2m 10A4 +18). No e2m record.",
+    "evidence": "ROM 0xb40c move.w (0x807a4e).l,(0x800040).l; 0xb418 tst.w; 0xb420 subq.w #1; no other reference (abs_refs 0xb412 / 0xb41a / 0xb422). Dump 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800044",
+    "current_name": "anc_timing_limit_active_timer",
+    "proposed_name": "acceleration_noise_control_timing_limit_hold_timer",
+    "proposed_type": "word",
+    "comment": "Holds the ANC timing limit status NZTALMSS (e2m 10A4 +E) on for the minimum active time (0x807a3a) after its conditions end: loaded while the conditions or the override hold, counted down otherwise, NZTALMSS cleared at 0 (cm550_calculateAccelerationNoiseControlTimingLimit). Spelled out and typed (was undefined); the speed limit sibling at 0x800046 is anc_speed_limit_hold_timer.",
+    "evidence": "ROM 0xb3e0 movea.l #0x800044,a4; 0xb464 / 0xb478 move.w (0x807a3a).l,(a4); 0xb480 tst.w (a4); 0xb484 subq.w #1,(a4). Only users are in 0xb3d0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080da34",
+    "current_name": "",
+    "proposed_name": "reference_engine_torque_working",
+    "proposed_type": "word",
+    "comment": "e2m 1102 +1E JCRFTQ 'THE MAXIMUM AVAILABLE TORQUE (CORRESPONDS TO JCOMM_PEAK_FUEL)' (N*M): the RAM copy of the reference engine torque (1104 +2 JCRFEGTQ) that initializeJ1939ReferenceEngineFuelingAndTorque makes while programmable power is off; buildPgn65251EngineConfiguration1Payload sends it (SPN 544). The same record and name as CM848's reference_engine_torque_working (0x40ada8). 705 in the dump.",
+    "evidence": "abs_refs: 0xff60 move.w (0x808160),(0x80da34) (the only writer), 0x33310 move.w read in buildPgn65251EngineConfiguration1Payload; e2m_block_addresses --firmware cm550 --address 0x0080da34 -> 1102 +001E JCRFTQ.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a9ac",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_minimum_reference_speed_1_pointer",
+    "proposed_type": "word *",
+    "comment": "Points at the set 1 ASG reference speed for 0 percent throttle (all_speed_governor_minimum_reference_speed_1_cal, e2m 0008 +20 ASMNRF). Set by cm550_initializeAllSpeedGovernorReferenceSpeedSets; 0xd2be reads through it while asg_throttle_source_selector is 0. Dump 0x803bbc.",
+    "evidence": "ROM 0xd3b2 move.l #0x803bbc,(0x80a9ac); 0xd34a movea.l (0x80a9ac),a0 / move.w (a0),(a3); extended RAM dump 0x00803bbc.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a9b0",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_maximum_reference_speed_1_pointer",
+    "proposed_type": "word *",
+    "comment": "Points at the set 1 ASG reference speed for 100 percent throttle (all_speed_governor_maximum_reference_speed_1_cal, e2m 0008 +22 ASMXRF). Set by cm550_initializeAllSpeedGovernorReferenceSpeedSets; read by 0xd2be for selector 0. Dump 0x803bbe.",
+    "evidence": "ROM 0xd3bc move.l #0x803bbe,(0x80a9b0); 0xd352 movea.l (0x80a9b0),a0 / move.w (a0),(a4); dump 0x00803bbe.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a9b4",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_minimum_reference_speed_2_pointer",
+    "proposed_type": "word *",
+    "comment": "Points at the set 2 (alternate) ASG reference speed for 0 percent throttle (all_speed_governor_minimum_reference_speed_2_cal, e2m 0008 +2E ASMNRF02). Set by cm550_initializeAllSpeedGovernorReferenceSpeedSets; read by 0xd2be for selector 1. Dump 0x803bca.",
+    "evidence": "ROM 0xd3c6 move.l #0x803bca,(0x80a9b4); 0xd362 movea.l (0x80a9b4),a0 / move.w (a0),(a3); dump 0x00803bca.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a9b8",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_maximum_reference_speed_2_pointer",
+    "proposed_type": "word *",
+    "comment": "Points at the set 2 (alternate) ASG reference speed for 100 percent throttle (all_speed_governor_maximum_reference_speed_2_cal, e2m 0008 +30 ASMXRF02). Set by cm550_initializeAllSpeedGovernorReferenceSpeedSets; read by 0xd2be for selector 1. Dump 0x803bcc.",
+    "evidence": "ROM 0xd3d0 move.l #0x803bcc,(0x80a9b8); 0xd36a movea.l (0x80a9b8),a0 / move.w (a0),(a4); dump 0x00803bcc.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803bbc",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_minimum_reference_speed_1_cal",
+    "proposed_type": "word",
+    "comment": "e2m 0008 +20 ASMNRF 'ASG REFERENCE SPEED FOR 0% THROTTLE INPUT' (RPM, 0.125 rpm per count; 5440 = 680 rpm in the dump): set 1 of the all speed governor's 0 percent throttle reference speed, read through all_speed_governor_minimum_reference_speed_1_pointer. EEPROM image, so _cal. CM848 names the same record all_speed_governor_minimum_reference_speed_1_cal.",
+    "evidence": "e2m_block_addresses --firmware cm550 --address 0x00803bbc -> 0008 +0020 ASMNRF; ROM 0xd3b2 stores its address; read by move.w (a0) at 0xd350; RAM dump 0x1540.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803bbe",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_maximum_reference_speed_1_cal",
+    "proposed_type": "word",
+    "comment": "e2m 0008 +22 ASMXRF 'ASG REFERENCE SPEED FOR 100% THROTTLE INPUT' (RPM; 27600 = 3450 rpm in the dump): set 1 of the 100 percent throttle reference speed. EEPROM image, so _cal. CM848 names the same record all_speed_governor_maximum_reference_speed_1_cal.",
+    "evidence": "e2m 0008 +0022 ASMXRF -> 0x803bbe; ROM 0xd3bc stores its address; read at 0xd358; dump 0x6bd0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803bca",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_minimum_reference_speed_2_cal",
+    "proposed_type": "word",
+    "comment": "e2m 0008 +2E ASMNRF02 'ALTERNATE ASG REFERENCE SPEED FOR 0% THROTTLE INPUT' (RPM; 5200 = 650 rpm in the dump): set 2 of the 0 percent throttle reference speed, used while asg_throttle_source_selector is 1. EEPROM image, so _cal. CM848 names the same record all_speed_governor_minimum_reference_speed_2_cal.",
+    "evidence": "e2m 0008 +002E ASMNRF02 -> 0x803bca; ROM 0xd3c6 stores its address; read at 0xd368; dump 0x1450 = ASMNRP 0x80a9a4 (selector 1).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803bcc",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_maximum_reference_speed_2_cal",
+    "proposed_type": "word",
+    "comment": "e2m 0008 +30 ASMXRF02 'ALTERNATE ASG REFERENCE SPEED FOR 100% THROTTLE INPUT' (RPM; 34304 = 4288 rpm in the dump): set 2 of the 100 percent throttle reference speed. EEPROM image, so _cal. CM848 names the same record all_speed_governor_maximum_reference_speed_2_cal.",
+    "evidence": "e2m 0008 +0030 ASMXRF02 -> 0x803bcc; ROM 0xd3d0 stores its address; read at 0xd370; dump 0x8600 = ASMXRP 0x80a9a6.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803bf0",
+    "current_name": "",
+    "proposed_name": "variable_speed_governor_default_cal",
+    "proposed_type": "word",
+    "comment": "e2m 0008 +54 FSTHGVOP 'USER INDICATOR FOR ENABLING AUTOMOTIVE GOVERNING THROUGH THROTTLE' (0 / 1; 1 in the dump; CHR label User_Selected_Throttle_Control): the default that cm550_selectVariableSpeedGovernorMode copies into STUOTHGV (inverted by the switched throttle control governor switch). 0xf796 also takes its driver's demand fueling from cm550_calculateAllSpeedGovernorDroopFueling while it is 1. EEPROM image, so _cal. CM848 names the same record variable_speed_governor_default_cal (0x3fdd42, 0008 +4E).",
+    "evidence": "e2m_block_addresses --firmware cm550 --address 0x00803bf0 -> 0008 +0054 FSTHGVOP; ROM 0xd510 cmpi.w #1 / 0xd51e tst.w / 0xd52c move.w (0x803bf0) in 0xd4ae; cm550_paramSystemModeController 'if (_DAT_00803bf0 == 1)'; dump 1.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807ac8",
+    "current_name": "",
+    "proposed_name": "all_speed_governor_switch_droop_fueling_offset",
+    "proposed_type": "word",
+    "comment": "e2m 107D +A ASSDFUOF 'OFFSET ADDED TO NLFL AND COMPARED WITH FSFNFL FOR THROTTLE GOV. S(WITCH)' (MM3S; 294 in the dump): the governor type switch (cm550_selectVariableSpeedGovernorMode) and the set selection in 0xd2be act only while final_fueling < no_load_fuel_quantity + this. CM848 names the same record all_speed_governor_switch_droop_fueling_offset.",
+    "evidence": "e2m 107D +000A ASSDFUOF -> 0x807ac8; ROM 0xd4cc move.w (0x807ac8) in 0xd4ae and 0xd2ee in 0xd2be, both added to 0x80db1c and compared with 0x80d32e.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080821a",
+    "current_name": "",
+    "proposed_name": "pedal_fault_mode_enable_flag",
+    "proposed_type": "word",
+    "comment": "e2m 10CE +C LHFLEN 'ENABLE BIT FOR THE LIMPHOME FUELING ALGORITHM' (1 in the dump): 0 makes cm550_selectPedalFaultMode return before it can select FUELING_STATE_ACCELERATOR_PEDAL_FAULT. The same record and name as CM848's pedal_fault_mode_enable_flag (0x5c49a). Outside the EEPROM image, so no _cal.",
+    "evidence": "e2m 10CE +000C LHFLEN -> 0x80821a; its only access is tst.w (0x80821a) at 0x25820; dump 0x0001.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800180",
+    "current_name": "anc_speed_limit_table_3_ptr",
+    "proposed_name": "all_speed_governor_droop_snapshot",
+    "proposed_type": "word",
+    "comment": "Not an ANC table pointer: the frozen copy of the ASG selected droop slope ASSLDP (107A +E) that cm550_calculateAllSpeedGovernorDroopFueling refreshes only while all_speed_governor_reference_state is 7 and divides by (x 8). The same role and name as CM848's all_speed_governor_droop_snapshot (refreshed only in mode 7 by cm848_calculateEffectiveFuelLimit).",
+    "evidence": "ROM 0xf718 movea.l #0x800180,a0 (its only reference); move.w (0x80a99a),(a0) at 0xf734 under cmpi.w #7,(0x80a98e); tst.w (a0) at 0xf73a; move.w (a0),d1 / lsl.l #3 at 0xf760.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a99a",
+    "current_name": "asg_selected_droop_slope_0_30",
+    "proposed_name": "asg_selected_droop_slope_0_30",
+    "proposed_type": "word",
+    "comment": "Type only (was undefined, rendered _asg_selected_droop_slope_0_30): e2m 107A +E ASSLDP 'ASG SELECTED DROOP SLOPE'; every access is a word: two move.w stores in 0xd3e6 and the reads mulu.w (0xd454) and move.w (0xf734, the droop snapshot of cm550_calculateAllSpeedGovernorDroopFueling).",
+    "evidence": "ROM 0xd3f4 movea.l #0x80a99a,a3 then move.w d0,(a3) at 0xd428 / 0xd44a and mulu.w (a3) at 0xd454; 0xf734 move.w (0x80a99a).l,(a0).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008091de",
+    "current_name": "rpm_control_override_flag",
+    "proposed_name": "all_speed_governor_no_load_fuel",
+    "proposed_type": "word",
+    "comment": "Not an override flag: e2m 1322 +0 ASNLFL 'FUEL REQUIRED TO OVERCOME FRICTION CALCULATED USING ASG REFERE(NCE SPEED)' (MM3S): the all speed governor's no-load fuel, the offset of the droop line in cm550_calculateAllSpeedGovernorDroopFueling and used by cm550_runAllSpeedGovernor. The same role and name as CM848's all_speed_governor_no_load_fuel (0x40a24a).",
+    "evidence": "e2m_block_addresses --firmware cm550 --address 0x008091de -> 1322 +0000 ASNLFL; ROM 0xf76e move.w (0x8091de) added to the droop term; written at 0xd274; other word reads 0xca06-0xd046 in the ASG.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801a6a",
+    "current_name": "fuel_economy_sample_1",
+    "proposed_name": "low_speed_governor_integral_accumulator",
+    "proposed_type": "dword",
+    "comment": "Not a fuel economy sample: the low speed governor's 16.16 integral accumulator. cm550_presetLowSpeedGovernorIntegrator presets it (value << 16); cm550_runLowSpeedGovernor adds the integral and gain change terms (add.l to (a5)), clamps it and copies its upper word to 0x80dae6. The same role and name as CM848's low_speed_governor_integral_accumulator.",
+    "evidence": "ROM 0x25aea move.l d0,(0x801a6a); 0x25b32 movea.l #0x801a6a,a5 in 0x25b1c; 0x25ef6 add.l d0,(a5); 0x25f36 move.l d0,(a5); 0x25f38 move.w (0x801a6a),(0x80dae6); 0x25ce0 writes its upper word from 0x80824a.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801a6e",
+    "current_name": "fuel_economy_sample_3",
+    "proposed_name": "low_speed_governor_reference_maximum_fuel_quantity",
+    "proposed_type": "word",
+    "comment": "Not a fuel economy sample: the 100 percent throttle 4D fueling at the LSG adjusted reference speed (0x2595a blends the steady state and transient lookups at x = 0x80daee and throttle 400 by alpha, limited to 0..0x1700). The LSG adds its e2m 1064 offsets to it (LSMXITPZ = + LSMXPZOF, and the LSMXFLOF / LSMXITOF clamps). The same role and name as CM848's low_speed_governor_reference_maximum_fuel_quantity.",
+    "evidence": "ROM 0x2596c movea.l #0x801a6e,a4 in 0x2595a, stores at 0x259d8 / 0x259e2 / 0x25a28; add.w (0x801a6e) at 0x25a5a (+0x80823a), 0x25e3c (+0x808236) and 0x25e64 (+0x808246); 0x25986 / 0x259b8 move.w #0x190 (400) as the second input.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801a70",
+    "current_name": "vp44_fuel_demand_previous",
+    "proposed_name": "low_speed_governor_previous_engine_speed",
+    "proposed_type": "word",
+    "comment": "Not a VP44 fuel demand: the previous pass engine speed (engine_rpm_primary) of the low speed governor, used for the speed derivative 2 term LSDV02FL (e2m 1065 +20) = (speed - this) x LSDV02GN / 2226. Stored at the end of each LSG pass, by cm550_presetLowSpeedGovernorIntegrator and by the LSG initializer 0x25ff2.",
+    "evidence": "ROM 0x25df0 move.w (0x801a70),d1 subtracted from (a4)=0x80ccf6, x 0x80826a / 0x8b2 -> 0x80dafe; stores move.w (a4/a5 = 0x80ccf6),(0x801a70) at 0x25b00, 0x25fe6 and 0x2606c.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801a72",
+    "current_name": "",
+    "proposed_name": "low_speed_governor_proportional_gain_previous",
+    "proposed_type": "i16",
+    "comment": "The previous pass LSG proportional gain LSPPGN (10ED +0). The integrator update subtracts (LSPPGN - this) x the speed error so a gain change stays bumpless. Stored by cm550_presetLowSpeedGovernorIntegrator and each LSG pass. Read signed (ext.l). The same role and name as CM848's low_speed_governor_proportional_gain_previous.",
+    "evidence": "ROM 0x25b06 / 0x25c8a move.w (0x80dac4),(0x801a72); 0x25e98 move.w (0x801a72),d1 / ext.l / sub from 0x80dac4, times the error (a2 = 0x80dae0).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801a74",
+    "current_name": "non_idle_time_counter",
+    "proposed_name": "low_speed_governor_proportional_gain_2_previous",
+    "proposed_type": "i16",
+    "comment": "Not a time counter: the previous pass LSG proportional gain 2 LSPP02GN (1064 +32). The integrator update adds (LSPP02GN - this) x the engine speed term so a gain change stays bumpless. Stored by cm550_presetLowSpeedGovernorIntegrator and each LSG pass; read signed (ext.l).",
+    "evidence": "ROM 0x25b10 / 0x25c94 move.w (0x808268),(0x801a74); 0x25ebc move.w (0x801a74),d1 / ext.l / sub from 0x808268, times (a4)=0x80ccf6.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080823c",
+    "current_name": "",
+    "proposed_name": "low_speed_governor_integrator_preset_minimum",
+    "proposed_type": "i16",
+    "comment": "e2m 1064 +6 LSMNITPZ 'LSG INTEGRATOR PRESET MIN' (MM3S): the lower limit of cm550_presetLowSpeedGovernorIntegrator's preset; read signed. The same record and name as CM848's low_speed_governor_integrator_preset_minimum (0x4070bc). Outside the EEPROM image, so no _cal.",
+    "evidence": "e2m_block_addresses --firmware cm550 --address 0x0080823c -> 1064 +0006 LSMNITPZ; ROM 0x25a3e movea.l #0x80823c,a3, then move.w (a3) / ext.l / cmp.l at 0x25ac6 (its only use).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dac4",
+    "current_name": "lsg_proportional_gain_active",
+    "proposed_name": "lsg_proportional_gain_active",
+    "proposed_type": "i16",
+    "comment": "Type only (was undefined, rendered _lsg_proportional_gain_active): e2m 10ED +0 LSPPGN; every access is a word and the reads are signed (muls.w at 0x25a86 and 0x25d02, move.w + ext.l at 0x25e90).",
+    "evidence": "abs_refs 0x80dac4: 0x25a88 (muls.w), 0x25b08 / 0x25c8c (move.w sources), 0x25d04 (muls.w), 0x25e92 (move.w then ext.l), 0x262e0 (move.w store).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801a84",
+    "current_name": "rpm_histogram_sample_divider",
+    "proposed_name": "low_speed_governor_cold_idle_timer",
+    "proposed_type": "word",
+    "comment": "Not a histogram divider: the cold idle timer of cm550_calculateLowSpeedGovernorColdIdleSpeed. Cleared with the engine stopped, it counts each 100 ms pass while the coolant is below LSCICLTP until LSCITMLM (e2m 1066 +4); at that limit the cold idle speed ramps out. The same role as CM848's low_speed_governor_cold_idle_timer.",
+    "evidence": "ROM 0x26620 movea.l #0x801a84,a3 (its only reference); clr.w (a3) at 0x2666a; addq.w #1,(a3) at 0x26694; move.w (a3) compares with 0x80833e at 0x2668a / 0x2669c.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080db08",
+    "current_name": "",
+    "proposed_name": "low_speed_governor_cold_idle_override_flag",
+    "proposed_type": "word",
+    "comment": "e2m 1049 +6 LSCIOD 'COLD IDLE OVERRIDE FLAG - TRUE INHIBITS COLD IDLE ADJUSTMEN(T)' (T/F): with algorithm_enable_flags_12_cal.low_speed_governor_cold_idle_override_enable it stops cm550_calculateLowSpeedGovernorColdIdleSpeed from raising the operator adjusted LSG breakpoint speed. Cleared at start-up by cm550_initializeLowSpeedGovernorIdleAdjustment. 0 in the dump.",
+    "evidence": "e2m 1049 +0006 LSCIOD -> 0x80db08; ROM 0x26652 tst.w (0x80db08); 0x265bc clr.w (0x80db08) in 0x2658c.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080db64",
+    "current_name": "",
+    "proposed_name": "engine_position_normal_phase_lag",
+    "proposed_type": "word",
+    "comment": "e2m 11AA +0 ESPG 'PHASE LAG CALCULATION BASED ON THE NORMAL PHASE LAG SLOPE AND I(NTERCEPT)' (DEG, 1/256): (ESPGIN + average_engine_speed x ESPGSL / 16 + ESCWAJ) / 16, written by cm550_calculateEnginePositionPhaseLag; no dumped code reads it.",
+    "evidence": "e2m 11AA +0000 ESPG -> 0x80db64; ROM 0x26ee4 move.w d0,(0x80db64) (its only code reference; 0x360ec is parameter_id_table data).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080db66",
+    "current_name": "phase_lag_calculation_based_on_the_pulse_0_phase_lag_slope_and_0_40",
+    "proposed_name": "engine_position_pulse_0_phase_lag",
+    "proposed_type": "word",
+    "comment": "e2m 11AA +2 ESPS00PG 'PHASE LAG CALCULATION BASED ON THE PULSE 0 PHASE LAG SLOPE AND (INTERCEPT)' (DEG, 1/256): (ESPSPGIN + average_engine_speed x ESPSPGSL / 16 + ESCWAJ) / 16, written by cm550_calculateEnginePositionPhaseLag. Renamed to pair with engine_position_normal_phase_lag.",
+    "evidence": "e2m 11AA +0002 ESPS00PG -> 0x80db66; ROM 0x26ebc move.w d0,(0x80db66) (its only reference).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00808476",
+    "current_name": "final_fuel_command_min",
+    "proposed_name": "engine_position_normal_phase_lag_intercept",
+    "proposed_type": "word",
+    "comment": "Not a fuel command: e2m 11A9 +0 ESPGIN 'INTERCEPT OF RPM VS PHASE LAG LINE DEFINING TIME OFFSET FOR SYN(C)' (DEG), the intercept of the normal phase lag line in cm550_calculateEnginePositionPhaseLag (its only user).",
+    "evidence": "e2m 11A9 +0000 ESPGIN -> 0x808476; abs_refs: only 0x26ece move.w (0x808476).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00808478",
+    "current_name": "final_fuel_command_max",
+    "proposed_name": "engine_position_normal_phase_lag_slope",
+    "proposed_type": "word",
+    "comment": "Not a fuel command: e2m 11A9 +2 ESPGSL 'SLOPE OF RPM VS PHASE LAG LINE DEFINING TIME OFFSET FOR N(ORMAL)' (D/R), multiplied by average_engine_speed in cm550_calculateEnginePositionPhaseLag (its only user).",
+    "evidence": "e2m 11A9 +0002 ESPGSL -> 0x808478; abs_refs: only 0x26ec4 mulu.w (0x808478).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080847e",
+    "current_name": "fuel_rpm_deviation_calc_param",
+    "proposed_name": "cam_wheel_top_dead_center_adjustment",
+    "proposed_type": "word",
+    "comment": "Not a fuel parameter: e2m 11A9 +8 ESCWAJ 'ONE TIME TDC ADJUSTMENT FOR MISALIGNED CAM WHEELS' (DEG), added to both phase lag lines by cm550_calculateEnginePositionPhaseLag (its only user).",
+    "evidence": "e2m 11A9 +0008 ESCWAJ -> 0x80847e; abs_refs: only 0x26e8e movea.l #0x80847e,a1, read twice via (a1).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccf2",
+    "current_name": "fuel_demand_blend_mode_select",
+    "proposed_name": "average_engine_speed",
+    "proposed_type": "word",
+    "comment": "Not a blend mode selector: e2m 100C +0 ESAVES 'AVERAGE_ENGINE_SPEED: ENGINE SPEED BASED ON THE 2^N PULSE AVE(RAGE)' (RPM). cm550_calculateEngineSpeed writes it from its speed sources; the sync pulse detection compares it with crank_sync_running_speed_threshold; cm550_calculateEnginePositionPhaseLag multiplies it by the phase lag slopes.",
+    "evidence": "e2m 100C +0000 ESAVES -> 0x80ccf2; cpp: cm550_calculateEngineSpeed assigns it 7 times (0 / _DAT_0080cd06 / _DAT_0080cd04 / _DAT_0080cd16 / _DAT_0080a92c); cm550_detectEngineSpeedSensorSyncPulse compares it with crank_sync_running_speed_threshold; ROM 0x26e94 movea.l #0x80ccf2,a0 / mulu.w.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080db68",
+    "current_name": "",
+    "proposed_name": "j1708_memory_write_records",
+    "proposed_type": "j1708_memory_write_record_t[15]",
+    "comment": "The parsed records of a J1708 memory write request: cm550_diagnosticMemoryWriteHandler fills one per item and cm550_applyJ1708MemoryWriteRecords applies them. Each record is 10 bytes: +0 address (dword, from cm550_lookupParameterIdAddress when the item uses a 2-byte ID), +4 data pointer into the J1708 receive ring (byte *), +8 length (byte), +9 region type (MEMORY_REGION_TYPE, 1 byte). The array holds 15 records up to 0x80dbfe (the address size byte the parser sets). Needs a new structure_definitions row set for j1708_memory_write_record_t with this layout; without it use byte[150].",
+    "evidence": "Parser 0x1ec3c: '*pdVar8 = local_e; pdVar8[1] = (dword)local_8; *(byte *)(pdVar8 + 2) = bVar3; *(MEMORY_REGION_TYPE *)((int)pdVar8 + 9) = MVar2; pdVar8 += 10 bytes' starting at 0x80db68 (abs ref 0x1ec7c). Consumer 0x2cf7e: cmpi.b #5 / #3,(9,a2), add.b (8,a2), movea.l (a2), move.l (4,a2), adda 10 (abs refs 0x2cf92 / 0x2cfee). 0x80dbfe written by the parser at 0x1ecce / 0x1ed08.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc2e",
+    "current_name": "throttle_fueling_override_active_flag",
+    "proposed_name": "power_take_off_throttle_override_flag",
+    "proposed_type": "word",
+    "comment": "e2m 1265 +2 PTTHOV 'INDICATES WHETHER THROTTLE BASED FUELING IS OVERRIDING PTO (FUELING)': 1 while the throttle fuel overrides the power take-off fuel (the PTO / user fueling selector at 0x2dcc2); initializePowerTakeOffThrottleOverride clears it at start-up. The same record and name as CM848's power_take_off_throttle_override_flag (0x40af58).",
+    "evidence": "e2m 1265 +0002 PTTHOV -> 0x80dc2e; ROM 0x2ddbc clr.w (0x80dc2e); 0x2dcc2 in the selector; dump 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc2c",
+    "current_name": "max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500",
+    "proposed_name": "power_take_off_throttle_override_engine_speed_limit",
+    "proposed_type": "word",
+    "comment": "e2m 1265 +0 PTTHDQRP 'MAX ENGINE SPEED WHILE THROTTLE FUELING OVERRIDES PTO FUELING' (RPM): an input of selectEngineSpeedLimit, set by the PTO / user fueling selector while the throttle overrides and preset to the no-derate maximum speed (1262 +0) by initializePowerTakeOffThrottleOverride. The same record and name as CM848's power_take_off_throttle_override_engine_speed_limit (0x40af56). The new name also drops the abbreviation 'pto'.",
+    "evidence": "e2m 1265 +0000 PTTHDQRP -> 0x80dc2c; ROM 0x2ddc2 move.w (0x803f40),(0x80dc2c); selectEngineSpeedLimit reads it at 0x1d6c2 / 0x1d6cc; the selector at 0x2dcbc; dump 21200 = 0x803f40.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080da1c",
+    "current_name": "jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125",
+    "proposed_name": "j1939_nominal_friction_percent_torque_times_256",
+    "proposed_type": "word",
+    "comment": "e2m 1102 +6 JCINFCTQ 'JCOMM IND FRICTION TORQUE AMOUNT OF TORQUE REQUIRED BY BASE EN(GINE)' (percent, 1/256): the nominal friction percent torque x 256 that cm550_calculateNominalFrictionPercentTorque writes and the EEC3 builder sends as byte 1 (high byte + 125, SPN 514). The same record and name as CM848's j1939_nominal_friction_percent_torque_times_256 (0x40ad90). 1391 in the dump.",
+    "evidence": "e2m 1102 +0006 JCINFCTQ -> 0x80da1c; abs_refs: 0xf9a0 movea.l #0x80da1c,a2 (the only writer), 0x330e0 move.w read in vp44_configParamCanBuilder; dump 0x056f = 88 x 25600 / 1619.",
+    "confidence": "medium"
+   }
+  ],
+  "enum_members": [],
+  "cm848_functions": [
+   {
+    "address": "0x0000e8cc",
+    "current_name": "cm848_initTemperatureTrimCoeff",
+    "proposed_name": "cm848_initializeSpeedRequestBlendWeightLookupCache",
+    "role": "Start-up preset of the speed request blend weight lookup's cached axis offset.",
+    "discriminator": "Its only store is speed_request_blend_weight_by_speed_difference_cached_axis_offset = 2; nothing about a temperature trim.",
+    "plate_comment": "Start-up step (one call from cm848_applicationMain): sets speed_request_blend_weight_by_speed_difference_cached_axis_offset to 2, the lookup cache of the speed request blend weight table (speed_request_blend_weight_by_speed_difference_axis / _values) that cm848_calculateGovernorReferenceSpeedBlend reads. Counterpart of CM550 0xc880 cm550_initializeSpeedRequestBlendWeightLookup, which also sets the table pointers of its lookup record.",
+    "evidence": "CM848 0xe8cc: lis r12,64 / li r11,2 / sth r11,-24336(r12) (0x3fa0f0) / blr. The only caller is cm848_applicationMain; the other user of 0x3fa0f0 is cm848_calculateGovernorReferenceSpeedBlend (cpp line 9889).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0050daac",
+    "current_name": "cm848_transitionEngineOperatingMode",
+    "proposed_name": "cm848_selectPedalFaultMode",
+    "role": "Selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT (6) when the pedal fault mode is enabled, no operating mode is selected and the pedal input has failed.",
+    "discriminator": "Its only state store is engine_operating_mode = FUELING_STATE_ACCELERATOR_PEDAL_FAULT. It is the pedal fault entry of cm848_resetEngineOperatingMode's selector chain (before cm848_selectVariableSpeedGovernorMode), not a general transition.",
+    "plate_comment": "Pedal fault mode selection, called by cm848_resetEngineOperatingMode with the previous operating mode. When pedal_fault_mode_enable_flag (e2m 10CE +C) is set and engine_operating_mode is FUELING_STATE_NOT_SELECTED it selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT. With the J1939 pedal (sensor_channel_held_value_enable_bits_cal[0] bit 0x2000) the trigger is the fallback or timeout flag; otherwise it is accelerator_pedal_input_fault_flag, or faults_0_to_15 bits 0x400 / 0x800 when the dual channel pedal is off. Entering from another mode it calls presetPedalFaultModeFuelDemand. Counterpart of CM550 cm550_selectPedalFaultMode (0x25806).",
+    "evidence": "cpp 0x50daac: returns unless pedal_fault_mode_enable_flag and engine_operating_mode == NOT_SELECTED; the two branches; 'engine_operating_mode = FUELING_STATE_ACCELERATOR_PEDAL_FAULT; if (previous != 6) presetPedalFaultModeFuelDemand();'. The only call is in cm848_resetEngineOperatingMode (0x42918) between cm848_selectUserCommandedFueling and cm848_selectVariableSpeedGovernorMode; the same slot as CM550 0x25806 in 0x3458c.",
+    "confidence": "high"
+   }
+  ],
+  "notes": "Notes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q4/investigator/notes.md (plus callers.py, peek.py, check_names.py). All proposed names are free in both firmwares.\n\nJudgment calls:\n(1) 0xf99a is called a twin of CM848 0x20aec even though both bodies are empty. The evidence is the call site: the sole call of each is at the same step of twin EEC2 record initializers (CM550 0x33064 / CM848 0x25d60), and both sit right before the friction torque function in ROM. The shared name emptyPgn61443ElectronicEngineController2InitializationStep is my choice. The numbered stub convention was not reused here because emptyStubFunction numbers clash across the firmwares.\n(2) 0xc87c and 0xc87e get descriptive empty-step names from their interrupt call sites. 0x26b82 has a single start-up call and no role, so it follows the cm550_emptyStubFunction10/11 convention (12).\n(3) 0x80db68 is proposed as j1708_memory_write_record_t[15]. The struct needs a structure_definitions row set: 10 bytes, +0 address dword, +4 data byte *, +8 length byte, +9 region_type MEMORY_REGION_TYPE. Fall back to byte[150] without it.\n(4) Optional consistency renames: 0x80db66 (pulse 0 phase lag) and 0x80da1c (CM848's name for the same record).\n\nLeads for later rounds (not in this batch):\n- CM550 0x224f4 (FUN_000224f4, no row) is the twin of CM848 0x50c5d0 cm848_readJ1939DiagnosticMemoryByParameterId; compare 0x2238e with CM848 0x50c42c. The write side is already shared.\n- CM550 0x33064 vp44_cumminsProprietaryDM_983_Builder is the twin of CM848 0x25d60 cm848_initPgn61443Eec2Handler.\n- CM550 0xfa06 vp44State2TransitionHandler is the twin of CM848 0x20b84 cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling (bit 0x40 of flags 12, divs.l #0xa7).\n- CM550 0xfb26 vp44_fuelLimitExceedanceStatisticsAccumulator is the torque curve builder (CM848 0x20d10).\n- CM550 0x2595a cm550_governorFuelPidController matches CM848 cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity.\n- CM550 0xf796 cm550_paramSystemModeController is the J1939 driver's demand percent torque (CM848 cm848_calculateDriverDemandPercentTorque). Its unnamed globals: 0x80d33e (1053 +0 5DFL, CM848 four_dimensional_fueling) and 0x80da18 (1102 +2 JCDRIDTQ).\n- CM550 0x3458c cm550_engine_protection_coordinator is the user fueling state chain, with the same skeleton as CM848 cm848_resetEngineOperatingMode. Its callees cm550_diagnosticStatus30Setter, cm550_setDiagnosticSourceFromFuelArbitrator, cm550_diagnosticStatus2Initializer, cm550_setDiagnosticSourceFromEngineFlags and cm550_diagnosticStatusDefaultSetter line up with CM848's selectors.\n- CM550 0x23be8 diagnosticMainStateProcessor shares its name with CM848 0x1d9b8 but is not its twin: CM550's is the lamp driver feedback check, CM848's the fault scanner. Rename CM550's (cm550_checkLampDriverOutputFaults) and prefix CM848's.\n- CM550 0xd2be cm550_acceleratorThrottleFaultDetector is the ASG throttle reference speed (set selection + interpolation). 0xd3e6 cm550_diagnosticMode10FuelController writes ASSLDP.\n- CM550 0x1af32 mc68k_dutyCycleMonitorIsrHandler is a TPU channel 1 (backup speed) interrupt handler, as are 0x1b30a and 0x1b4b2.\n- Cal audit: 0x803d5a default_throttle_source_selector (1387 +8) and 0x803f40 maximum_rated_engine_speed_0_5000 (1262 +0) lie in the EEPROM image without _cal. CM848's names for them are all_speed_governor_tuning_set_default_blend_weight_cal and engine_speed_limit_default_cal.\n- ANC siblings: 0x80003c and 0x80003e (no rows) are the inhibit timers of 0xb4f2 and 0xb2aa. 0x800042 anc_fuel_limit_active_timer and 0x800046 anc_speed_limit_hold_timer have undefined type (word). The old names of 0xb2aa (cm550_rpm_system_state_controller) and 0xb4f2 (cm550_engineStateFuelLimitInterpolator) are wrong: they are the ANC fuel and engine speed limits.\n- 0x2cf52's destination 0x801afc and its neighbours 0x801afa / 0x801afe carry old unproven names. The caller is probably in the undumped 0x40000+ region."
+ },
+ "blind": {
+  "batch": "Q4",
+  "roles": [
+   {
+    "address": "0x0000b3d0",
+    "role": "Calculates the acceleration noise control (ANC) timing limit, gated by algorithm_enable_flags_3_cal bit 0x2000. A bare-engine latch (ESFT01AC 0x80a294 > NZTAACTR 0x807a50) sets NZTALMIH 0x80a2a4 and reloads the countdown 0x800040 with NZTAIHTM. While ASANENF is set, the latch is clear, coolant 0x80a336 > NZTACLTR, ESFT01AC <= NZTAACTR and ESFT02AC >= NZTAFTTR (or while the ASANODFG override is set), NZTALMSS 0x80a29a = 1 and the hold timer 0x800044 = NZTADYTM. While NZTALMSS is 1, NZTALM 0x80a28e = the engine speed table (record 0x800058 at current_engine_rpm_filtered). Otherwise NZTALM ramps up by NZTARMRT and stops at 1024. The decompiled word return is a leftover d0, so the function is void.",
+    "discriminator": "Its siblings 0xb2aa (fuel limit) and 0xb4f2 (engine speed limit) use the same skeleton. Only this one has enable bit 0x2000, a coolant temperature gate (the siblings gate on engine speed) and the NZTALM output with a 1024 ceiling. cm550_applyAccelerationNoiseControlTimingLimit (0xb4ce) applies that output. Caller: cm550_runEvery10FramesTaskSetPhase1 (0x1b6c8).",
+    "suggested_name": "cm550_calculateAccelerationNoiseControlTimingLimit",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848's ANC timing stage is compiled out. The CHR e2m places 10A4 ANC_Timing / Status / Inhibit at 0x40a04a-0x40a04e, but no CM848 code accesses them. cm848_passCompensatedTimingToCombustionLimits @ 0x17b54 marks the place."
+   },
+   {
+    "address": "0x0000c87c",
+    "role": "A single rts. It is called only from the tail of all four modes of the TPU channel 10 primary engine speed interrupt handler (0x19acc / 0x19e90 / 0x1a52c / 0x1a8a4): after cm550_rpmTimingDeltaComparatorWithReturn, before mc68k_FUN_0001266e and the clear of TPU_CISR bit 10.",
+    "discriminator": "An empty body: the only thing that sets it apart is the call site. The channel 10 (primary speed) handlers call this stub, the channel 1 (backup speed) handlers call 0xc87e.",
+    "suggested_name": "cm550_emptyStubFunction12",
+    "confidence": "low",
+    "cm848_counterpart": "none found: I checked the callers of every cm848_emptyStub*, and no CM848 engine speed interrupt calls an empty stub."
+   },
+   {
+    "address": "0x0000c87e",
+    "role": "A single rts. It is called only at the end of the three TPU channel 1 (backup speed) interrupt handlers mc68k_dutyCycleMonitorIsrHandler 0x1af32, mc68k_FUN_0001b30a and mc68k_FUN_0001b4b2, after mc68k_resetSpeedMeasurementMode0 and before the clear of TPU_CISR bit 1.",
+    "discriminator": "An empty body. It differs from 0xc87c only by its callers, the channel 1 handlers.",
+    "suggested_name": "cm550_emptyStubFunction13",
+    "confidence": "low",
+    "cm848_counterpart": "none found (same check as 0xc87c)."
+   },
+   {
+    "address": "0x0000c880",
+    "role": "Start-up initializer of speed_request_blend_weight_by_speed_difference_lookup (0x800102). It sets x_axis_offset = 2, the x axis pointer = 0x807acc (e2m 1326 ASTHPFXA) and the y values pointer = 0x807ad8 (1327 ASTHPFYA). It has one jsr, from mc68k_applicationMain's start-up list (step 0x8876).",
+    "discriminator": "It is the only writer of that record's size and pointers. The record's only other user is 0xc8a0, which writes x_input and runs the lookup.",
+    "suggested_name": "cm550_initializeSpeedRequestBlendWeightLookup",
+    "confidence": "high",
+    "cm848_counterpart": "none: cm848_calculateGovernorReferenceSpeedBlend @ 0xe8dc passes the same tables (0x5c272 / 0x5c27e) straight to lookupTableInterpolation, so CM848 has no start-up step for them."
+   },
+   {
+    "address": "0x0000d3b2",
+    "role": "Start-up step, jsr from mc68k_applicationMain step 0x8726. It stores four pointers to the all-speed governor reference speeds: 0x80a9ac = 0x803bbc (ASMNRF, set 1 0 % throttle), 0x80a9b0 = 0x803bbe (ASMXRF), 0x80a9b4 = 0x803bca (ASMNRF02, set 2) and 0x80a9b8 = 0x803bcc (ASMXRF02). It then copies the trim ASDPFGTN (0x803d5a) into the droop / set selection flag ASDPFG (0x80a9a2).",
+    "discriminator": "It is the only writer of the four pointers. Their only reader is 0xd2be (misnamed cm550_acceleratorThrottleFaultDetector), which loads ASMNRP / ASMXRP from pair 1 when ASDPFG = 0 and from pair 2 when ASDPFG = 1. The RAM dump holds these pointers, ASDPFGTN = ASDPFG = 1, and ASMNRP / ASMXRP equal ASMNRF02 / ASMXRF02.",
+    "suggested_name": "cm550_initializeAllSpeedGovernorTuningSetSelection",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_initializeAllSpeedGovernorTuningSetBlendWeight @ 0x2c100, counterpart: it only copies ASDPFGTN into ASDPFG. CM848 blends the two sets with a 0..128 weight and keeps no pointers."
+   },
+   {
+    "address": "0x0000d4ae",
+    "role": "Variable speed governor mode selector, the 6th selector of cm550_engine_protection_coordinator. First, at no load (final_fueling < no_load_fuel_quantity + ASSDFUOF 0x807ac8) and with zero commanded throttle, it sets STUOTHGV 0x80a982 = FSTHGVOP 0x803bf0, inverted when algorithm_enable_flags_27_cal bit 3 and bit 1 of 0x80bcd1 are both set. Then, if no user fueling state has been claimed and STUOTHGV = 1, it claims FUELING_STATE_VARIABLE_SPEED_GOVERNOR and runs 0xd3e6. When the previous state was neither 7 nor 3, it also loads the throttle-mode gain set (0x807be0), clears the external reset, and sets ASCNLOLM / ASCNHILM and the ASFTCF filter coefficient.",
+    "discriminator": "It claims state 7 and is the only writer of STUOTHGV. Its sibling 0x25806, which runs just before it, claims state 6.",
+    "suggested_name": "cm550_selectVariableSpeedGovernorMode",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_selectVariableSpeedGovernorMode @ 0x10110 plus cm848_updateVariableSpeedGovernorSelection @ 0x2c6c4, counterpart. It has the same slot in cm848_resetEngineOperatingMode and the same flag logic, but CM848 keeps the flag update in a separate function. CM848 also blends the reference speeds, computes the throttle reference and compensator coefficients, copies ten gains, and tests only prev != 7."
+   },
+   {
+    "address": "0x0000f716",
+    "role": "Returns the fueling on the all-speed governor droop line at the throttle reference speed: (ASTHRFES 0x80a98c - ENGRPM 0x80ccf6) x 9813 / (droop x 8) + ASNLFL 0x8091de, clamped to 0..5888 (400 mm3). The droop word 0x800180 is refreshed from ASSLDP 0x80a99a only while ASRFST 0x80a98e is 7. With a droop of 0 it returns 5888 when the reference is above the engine speed, otherwise 0.",
+    "discriminator": "It is the only user of 0x800180 and has one caller, 0xf796 (misnamed cm550_paramSystemModeController, the J1939 driver demand fueling selector). That caller uses it as JCDRIDFL when FSTHGVOP = 1, and uses the 4D fueling 5DFL otherwise.",
+    "suggested_name": "cm550_calculateAllSpeedGovernorDroopLineFueling",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateEffectiveFuelLimit @ 0x20554, counterpart. It is called from the same place: cm848_calculateDriverDemandPercentTorque calls it when variable_speed_governor_default_cal = 1. Its tail is the same droop line, with all_speed_governor_droop_snapshot and all_speed_governor_no_load_fuel. CM848 adds the speed limiter fuel limit, the minimum of six fuel limits, a minimum droop branch and deadband compensation."
+   },
+   {
+    "address": "0x0000f99a",
+    "role": "A single rts. Its only reference is the jsr at 0x330a8 in the PGN 61443 (EEC2) transmit descriptor initializer 0x33064 (misnamed vp44_cumminsProprietaryDM_983_Builder). The call sits after the descriptor stores (CAN ID 0xf00300, 5 bytes) and before the handler registration 0x2f47e(0xf003, 0x32e4c).",
+    "discriminator": "An empty body, like 0xc87c / 0xc87e / 0x26b82. This is the stub that the EEC2 set-up calls. In ROM it sits between the percent load (0xf930) and nominal friction (0xf99c) calculations of the J1939 torque module.",
+    "suggested_name": "emptyPgn61443InitializationStep",
+    "confidence": "low",
+    "cm848_counterpart": "cm848_emptyStubFunction7 @ 0x20aec, twin by position. It is also one blr, called only by cm848_initPgn61443Eec2Handler @ 0x25d60 at the same point. It sits between cm848_calculateEnginePercentLoadAtCurrentSpeed and cm848_calculateNominalFrictionPercentTorque, in the same source order as CM550. The confidence is high for the twin and low only for the wording of the shared name. A shared 'emptyStubFunction7' would be confusing next to the unrelated cm550_emptyStubFunction7 (0x19aca)."
+   },
+   {
+    "address": "0x0000f99c",
+    "role": "Calculates the J1939 nominal friction percent torque (SPN 514): JCINFCTQ 0x80da1c = (no_load_fuel_quantity - CLNTFL 0x808194) x 25600 / (JCRFEGFL 0x80da32 - CLNTFL), using the saturating division 0x165f2 and capping at 32000. The result is 0 when either difference is not positive.",
+    "discriminator": "It is the only writer of 0x80da1c. Its only caller is the PGN 65247 (EEC3) builder 0x330c4 (misnamed vp44_configParamCanBuilder), which sends the high byte + 125. The other percent calculations in the module (0xf8c6 / 0xf930) divide final_fueling instead.",
+    "suggested_name": "cm550_calculateNominalFrictionPercentTorque",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateNominalFrictionPercentTorque @ 0x20af0, near twin: same steps, the same 25600 / 32000, the same caller position (first call of the EEC3 builder) and the same source order. The floors differ: CM848 floors at -32000 and stores 0x8300, CM550 floors at 0 and stores 0. Strictly that makes it a counterpart, so the name keeps the cm550_ prefix. The writeJ1939DiagnosticMemory precedent would allow the shared name calculateNominalFrictionPercentTorque."
+   },
+   {
+    "address": "0x0000fa68",
+    "role": "Sets J1939 torque curve points 1 and 3 for the derate cases. It calls 0xfa06 (point 1 at the derated idle fueling). Then, if the point 1 speed 0x80da38 is above the point 3 speed 0x80da3c (unsigned compare), point 3 takes point 1's speed and fueling (0x80da42). Otherwise point 3 takes the calibrated speed 0x808162 and fueling 0x80816a.",
+    "discriminator": "Its caller 0xfb26 (misnamed vp44_fuelLimitExceedanceStatisticsAccumulator, the PGN 65251 torque curve update) calls it only in cases 6 and 7 (a derate with the LSG reference outside its band). Cases 2 and 3 call 0xfa06 alone. It contains no VP44 logic, so the vp44_ prefix is wrong.",
+    "suggested_name": "setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling @ 0x20bfc, twin. It calls 0x20b84 (the twin of 0xfa06, with the same /167), makes the same compare on lhz values and the same two stores in each branch. It is called only in cases 6 and 7 of cm848_updateJ1939EngineConfigurationTorqueCurve, and its point 1 setter sits right before it in both ROMs. Both rows take the shared name."
+   },
+   {
+    "address": "0x0000ff48",
+    "role": "Runs while algorithm_enable_flags_18_cal.programmable_power_enable (bit 9) is clear. It copies JCINPKFL 0x80815e (e2m 1104 +0) into JCRFEGFL 0x80da32 (1102 +1C), and JCRFEGTQ 0x808160 (1104 +2) into JCRFTQ 0x80da34 (1102 +1E). The decompiled return is a leftover d0, so the function is void.",
+    "discriminator": "It is the last call of the shared initializePgn65251EngineConfiguration1Buffer (0x33692) and the only writer of 0x80da32 and 0x80da34.",
+    "suggested_name": "initializeJ1939ReferenceEngineFuelingAndTorque",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initializeJ1939ReferenceEngineFuelingAndTorque @ 0x212dc, twin: the same bit 9 test of flags word 18, the same two copies between the same e2m records, and the same position as the last call of initializePgn65251EngineConfiguration1Buffer @ 0x1b900. Both rows take the shared name."
+   },
+   {
+    "address": "0x00022530",
+    "role": "Handler for PGN 61184 service 0x43, registered by pointer from 0x226da. Request bytes 1-2 are the parameter ID and bytes 3-6 the length. It reads from the ID's address at offset 0 through 0x224f4 (cm550_lookupParameterIdAddress, which returns 8 for an unknown ID, then cm550_diagMemoryReadResponseBuilder). The reply is 0x45, or 0x44 below 256 bytes.",
+    "discriminator": "It takes a 4-byte length and uses offset 0. The 0x46 handler takes a 2-byte offset and a 1-byte length, and the 0x48 handler a 4-byte offset and a 4-byte length. The decompilation drops the arguments of 0x224f4, which has no row.",
+    "suggested_name": "handleJ1939ReadByParameterIdLongLengthService",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_handleJ1939ReadByParameterIdLongLengthService @ 0x50c640, twin: the same copies (2 bytes from +1, 4 bytes from +3) and offset 0 (li r5,0), passed to cm848_readJ1939DiagnosticMemoryByParameterId (the twin of 0x224f4). The twin registrar registers it first. Both rows take the shared name."
+   },
+   {
+    "address": "0x0002257c",
+    "role": "Handler for PGN 61184 service 0x46, registered by pointer from 0x226da. Request bytes 1-2 are the parameter ID, bytes 3-4 a 16-bit offset and byte 5 an 8-bit length; both are zero-extended to longs on the stack. It reads from the ID's address + offset through 0x224f4, and the reply is 0x47.",
+    "discriminator": "It is the only read handler with a short (2-byte) offset. The decompiled body shows only the ID copy, so the asm (0x2259c-0x225d4) is the evidence for the offset and length bytes.",
+    "suggested_name": "handleJ1939ReadByParameterIdShortOffsetService",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_handleJ1939ReadByParameterIdShortOffsetService @ 0x50c6a8, twin: it builds the same 0:0:b3:b4 offset and 0:0:0:b5 length words before calling the ID read helper. Both rows take the shared name."
+   },
+   {
+    "address": "0x000225e0",
+    "role": "Handler for PGN 61184 service 0x48, registered by pointer from 0x226da. Request bytes 1-2 are the parameter ID, bytes 3-6 the offset and bytes 7-10 the length. It reads from the ID's address + offset through 0x224f4, and the reply is 0x49.",
+    "discriminator": "It is the only read handler with both a 4-byte offset and a 4-byte length.",
+    "suggested_name": "handleJ1939ReadByParameterIdLongOffsetService",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_handleJ1939ReadByParameterIdLongOffsetService @ 0x50c734, twin: the same three copies (2 bytes from +1, 4 from +3, 4 from +7). Both rows take the shared name."
+   },
+   {
+    "address": "0x00022646",
+    "role": "Handler for PGN 61184 service 0x4a, registered by pointer from 0x226da. Request bytes 1-4 are the address and byte 5 the length (zero-extended). It calls cm550_diagMemoryReadResponseBuilder (0x2238e) directly, and the reply is 0x4b.",
+    "discriminator": "It reads by address with a 1-byte length. Service 0x4c uses a 4-byte length, and the 0x43 / 0x46 / 0x48 handlers read by parameter ID.",
+    "suggested_name": "handleJ1939ReadMemoryService",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_handleJ1939ReadMemoryService @ 0x50c7b0, twin: the same copy and length word, then a call to cm848_readJ1939DiagnosticMemoryAndRespond, the twin of 0x2238e (1764 cap, 0x44 reply rule, reply table). Both rows take the shared name."
+   },
+   {
+    "address": "0x0002268e",
+    "role": "Handler for PGN 61184 service 0x4c, registered by pointer from 0x226da. Request bytes 1-4 are the address and bytes 5-8 the length. It calls cm550_diagMemoryReadResponseBuilder directly, and the reply is 0x4d.",
+    "discriminator": "It reads by address with a 4-byte length.",
+    "suggested_name": "handleJ1939ReadMemoryLongLengthService",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_handleJ1939ReadMemoryLongLengthService @ 0x50c81c, twin. Both rows take the shared name."
+   },
+   {
+    "address": "0x000226da",
+    "role": "Registers the five PGN 61184 memory read services with registerJ1939DiagnosticService (0x2ee62): 0x43 to 0x22530, 0x4a to 0x22646, 0x4c to 0x2268e, 0x46 to 0x2257c and 0x48 to 0x225e0. mc68k_initializeJ1939Datalink calls it after cm550_registerJ1939InputMessageHandlers and before the service 0x41 registrar 0x22370 and registerJ1939MemoryWriteServices.",
+    "discriminator": "It registers the read services. The shared registerJ1939MemoryWriteServices registers the write services 0x44 / 0x45 / 0x4b / 0x4d / 0x47 / 0x49.",
+    "suggested_name": "registerJ1939MemoryReadServices",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_registerJ1939MemoryReadServices @ 0x50c880, twin: the same five services in the same order, through the twin registrar 0x220e4, at the same place in cm848_j1939_system_init. Both rows take the shared name."
+   },
+   {
+    "address": "0x00024804",
+    "role": "Two calls and no logic of its own. First cm550_applyLampRequestsToOutputs (0x23a90) copies lamp_driver_output_bitmask into the output image. Then 0x23be8 (misnamed diagnosticMainStateProcessor) compares io_driver_port_1_feedback bits 0-6 with the output image and sets or clears the open / short circuit faults in error words 7 and 8.",
+    "discriminator": "It is the first call of cm550_runEvery10FramesTaskSetPhase6 (0x1b714, 50 ms) and the only caller of this pair. Lamp sequencing itself is cm550_runLampControl, in slot 5.",
+    "suggested_name": "cm550_applyLampRequestsAndCheckOutputDriverFeedback",
+    "confidence": "medium",
+    "cm848_counterpart": "none: cm848_runEvery10FramesTaskSetPhase6 @ 0xbd28 calls only cm848_processJ1939AcceleratorInputs. CM848's output read-back check cm848_updateOutputReadBackFaultBits @ 0x53a110 runs in slot 2 and has no lamp request mapping."
+   },
+   {
+    "address": "0x00025806",
+    "role": "Accelerator pedal fault (limp home) mode selector, the 5th selector of cm550_engine_protection_coordinator. When LHFLEN 0x80821a (e2m 10CE +C) is set and no state has been claimed, it claims FUELING_STATE_ACCELERATOR_PEDAL_FAULT, and calls presetPedalFaultModeFuelDemand when the previous state was not 6. With algorithm_enable_flags_5_cal.sampled_throttle_override_enable set, the trigger is a J1939 pedal timeout or position error fallback (0x80d70e / 0x80d70c). Otherwise it is error status word 4 bit 1 / 2 / 5, each with its fault_processing_enable_flags[4] bit (faults 65 / 66 = the sampled throttle channel's high / low limits, fault 69 = the throttle mismatch).",
+    "discriminator": "It claims state 6 and is the only caller of presetPedalFaultModeFuelDemand. The selector after it, 0xd4ae, claims state 7.",
+    "suggested_name": "cm550_selectAcceleratorPedalFaultMode",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_transitionEngineOperatingMode @ 0x50daac, counterpart: the same slot in cm848_resetEngineOperatingMode, the same enable record (pedal_fault_mode_enable_flag = LHFLEN), the same J1939 branch and the shared preset. Its analog test is different: accelerator_pedal_input_fault_flag, or the P2123 / P2122 bits 10 / 11 of fault_detected_cal. The CM848 row has no plate comment, and cm848_selectAcceleratorPedalFaultMode would fit it."
+   },
+   {
+    "address": "0x00025a34",
+    "role": "Presets the low speed governor integrator when the LSG fueling state is selected but final fueling is not yet LSG. It runs 0x2595a (4D fueling at the LSG adjusted reference speed and 100 % throttle, into 0x801a6e) and sets LSMXITPZ 0x80daec = clamp(LSMXPZOF + that, 0, 5888). It then sets the integrator 0x801a6a = [final_fueling - LSER x LSPPGN / 960 + ENGRPM x LSPP02GN / 2226], minus no_load_fuel_quantity when algorithm_enable_flags_32_cal bit 0x200 is set, clamped to [LSMNITPZ 0x80823c, LSMXITPZ] and shifted left 16. Finally it sets LSFL = final_fueling and LSDVFL = 0, and stores the previous-speed and gain words 0x801a70-0x801a74.",
+    "discriminator": "cm550_runLowSpeedGovernor calls it only on LSG entry. It is the only reader of LSMNITPZ. It contains no VP44 logic, so the vp44_ prefix is wrong.",
+    "suggested_name": "cm550_presetLowSpeedGovernorIntegrator",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_presetLowSpeedGovernorIntegrator @ 0x27e4c, counterpart. It has the same skeleton: the reference maximum fuel, preset maximum = offset + it, the accumulator from final_fueling minus the proportional term, the clamp, the shift left 16 and the cleared terms. Its proportional term includes the gain adjustment, and it has no speed x gain 2 term. It adds a use-previous branch and park / drive minimums."
+   },
+   {
+    "address": "0x00026616",
+    "role": "Low speed governor cold idle. While the engine is stopped, LSCIRF 0x80db04 = LSCIRFSR (the cold idle speed) if the coolant is below LSCICLTP, else 0, and the timer 0x801a84 is cleared. Outside cranking the timer counts up to LSCITMLM while the coolant is cold. While running, once the time is up or the coolant is warm, LSCIRF ramps down by LSCIRMRT to 0. On every pass LSDSRFRP 0x80db06 (the operator adjusted LSG breakpoint) is raised to LSCIRF, unless algorithm_enable_flags_12_cal bit 0x4000 and LSCIOD 0x80db08 inhibit it.",
+    "discriminator": "It is the only user of LSCIRF and of the timer, and it is the code that reads LSCIOD (start-up only clears it). Called second by cm550_runEvery20FramesTaskSetPhase4 (100 ms).",
+    "suggested_name": "cm550_applyLowSpeedGovernorColdIdleSpeed",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed @ 0x28d44, counterpart: a coolant temperature speed request with its own cold idle timer. CM848 uses a table with hysteresis, park / neutral gating and hot idle timers, and has no ramp-out and no breakpoint floor."
+   },
+   {
+    "address": "0x00026b3a",
+    "role": "Computes the no load fuel: no_load_fuel_quantity (NLFL 0x80db1c) = the coolant temperature friction fuel correction (lookup 0x80db2e at the filtered coolant temperature) + the friction fuel by engine speed (lookup 0x80db20 at ENGRPM).",
+    "discriminator": "It is the only writer of no_load_fuel_quantity and the only call of cm550_runEvery20FramesTaskSetPhase6.",
+    "suggested_name": "cm550_calculateNoLoadFuel",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateNoLoadFuel @ 0x50dba8, counterpart. It is also the only call of cm848_runEvery20FramesTaskSetPhase6, but it sums four terms (adding the A/C clutch and radiator fan adjustments) and stores each one."
+   },
+   {
+    "address": "0x00026b82",
+    "role": "A single rts. It has one jsr (0x287da) from mc68k_applicationMain's start-up list (step 0x87e0), between cm550_initializeLowSpeedGovernorIdleAdjustment and the undumped 0x4cf42.",
+    "discriminator": "An empty body. In ROM it directly follows the no load fuel calculation 0x26b3a; the two rts words before it (0x26b7e / 0x26b80) have no references.",
+    "suggested_name": "cm550_emptyStubFunction14",
+    "confidence": "low",
+    "cm848_counterpart": "none proved. CM848 puts cm848_initInterpolationStateCounters @ 0x50dd10 (the no load fuel lookup caches, also a start-up step) right after cm848_calculateNoLoadFuel. That hints at the same source file's initializer compiled empty in CM550, but an empty body proves nothing."
+   },
+   {
+    "address": "0x00026e86",
+    "role": "Start-up wrapper: jsr 0x26e8e, then rts. It has one jsr from mc68k_applicationMain (step 0x875c), after cm550_canBusTimingInit and before cm550_initializeEnginePositionSignalInputs.",
+    "discriminator": "It is the start-up call of 0x26e8e. cm550_runEvery4FramesTaskSetPhase0 runs 0x26e8e every 20 ms after that.",
+    "suggested_name": "cm550_initializeEngineSpeedPhaseLags",
+    "confidence": "high",
+    "cm848_counterpart": "none (see 0x26e8e)."
+   },
+   {
+    "address": "0x00026e8e",
+    "role": "Computes the engine speed phase lag lines. ESPG 0x80db64 (e2m 11AA +0) = (ESAVES x ESPGSL >> 4 + ESPGIN + ESCWAJ) / 16. ESPS00PG 0x80db66 (11AA +2) = (ESAVES x ESPSPGSL >> 4 + ESPSPGIN + ESCWAJ) / 16. The inputs are the average engine speed ESAVES 0x80ccf2, the normal and pulse 0 slope / intercept records 0x808476-0x80847c, and ESCWAJ 0x80847e, the one-time TDC adjustment for misaligned cam wheels.",
+    "discriminator": "It is the only writer of ESPG / ESPS00PG and the only reader of the 11A9 records. It runs in cm550_runEvery4FramesTaskSetPhase0 after cm550_calculateEngineSpeed.",
+    "suggested_name": "cm550_calculateEngineSpeedPhaseLags",
+    "confidence": "high",
+    "cm848_counterpart": "none: the CHR e2m has no 11A9 / 11AA (ESPG / ESCWAJ) records, and the CM848 CSVs have no phase lag."
+   },
+   {
+    "address": "0x000277e6",
+    "role": "Builds the J1587 PID 243 (component identification) reply for insiteCommandByteDispatcher (insite_parameter_id 0xf3). The reply is [243][data size - 2][MID 0x80][make, 5 bytes][*][model, 17 bytes][*][serial number, 4 raw bytes]. When the data size is at most 19 it is written in place at insite_response_write_pointer. Otherwise it is built at 0x801ade and sent through cm550_insiteMultiFrameResponseBuilder / cm550_insiteMultiFrameContinuation.",
+    "discriminator": "It is the PID 243 branch of the dispatcher; the sibling branches answer PIDs 234 / 235 / 236 / 237. cm550_buildPgn65259ComponentIdentificationMessage sends the same three records on J1939 (plus a unit number).",
+    "suggested_name": "cm550_buildJ1587Pid243ComponentIdentificationReply",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has no J1587 / J1708 datalink."
+   },
+   {
+    "address": "0x00027c20",
+    "role": "Power-down save of the part of the EEPROM image above the refresh window (0x804156-0x804f91). It queues 16-byte pieces through cm550_parameterCircularBufferWrite (source = target address), and after each piece waits up to 16000 x 500 ticks for the queue to drain. If the key input (bit 0 of the CS2 device port 0xffd000) stays set for more than 80 consecutive waits, it calls restartOnKeyOnDuringPowerDown. It stops after two refused pieces in a row; the retry count d4 is never initialised in the function.",
+    "discriminator": "mc68k_runPowerDownSequence calls it once, after its 1000-pass wait for the queue. The last piece passes (0x804f92 - address) / 2 (a word count) where a byte count is expected, so 0x804f8c-0x804f91 are never queued. It contains no VP44 logic. Its direct read of the chip-select device port makes the prefix mc68k_.",
+    "suggested_name": "mc68k_saveEepromForPowerDown",
+    "confidence": "medium",
+    "cm848_counterpart": "cm848_saveEepromForPowerDown @ 0x539a78, counterpart: the same place in its power-down sequence and the same 80-sample key-on rule. CM848 starts the whole mirror save, restarts only after the save, and then stores the verify retry total, the mirror checksum and the completed power-down count."
+   },
+   {
+    "address": "0x0002cf52",
+    "role": "Copies byte_count bytes from source to the fixed buffer 0x801afc. It increments only the low byte of the source pointer, so the pointer wraps every 256 bytes.",
+    "discriminator": "Nothing proves a role. The dumped ROM has no call, branch, pointer or pc-relative reference to it, and nothing else references 0x801afc (the RAM dump is 0 there). The callers and the buffer's readers are presumably in the undumped region above 0x40000. 0x801afc is not the J1708 transmit buffer (that is 0x808b00).",
+    "suggested_name": "",
+    "confidence": "low",
+    "cm848_counterpart": ""
+   },
+   {
+    "address": "0x0002cf7e",
+    "role": "Applies the J1708 memory write records that cm550_diagnosticMemoryWriteHandler (0x1ec3c) builds at 0x80db68. Each record is 10 bytes: address, data pointer, length, MEMORY_REGION_TYPE. Records of type 3 (AUTHORIZATION_REQUIRED) and 5 (EEPROM) are staged in the secure write scratch pad: a directory entry (address / length) at 0x80dd86 + 6n, with the bytes at scratch_pad_write_pointer 0x80ddc2. Other records are copied straight to their address. It returns 14 before copying anything if the pad would exceed 10 entries or the room before the directory; otherwise it returns 0.",
+    "discriminator": "It is the only writer of the scratch pad directory and of number_of_entries_in_the_scratch_pad. Its caller only parses and validates the message (cm550_lookupParameterIdAddress, lookupApplicationMemoryRegionType).",
+    "suggested_name": "cm550_applyJ1708MemoryWriteRecords",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has no J1708 datalink and no secure write scratch pad."
+   },
+   {
+    "address": "0x0002ddbc",
+    "role": "Start-up step: clears PTTHOV 0x80dc2e (e2m 1265 +2) and sets PTTHDQRP 0x80dc2c (1265 +0) to EPNTDQRP 0x803f40 (1262 +0, the maximum engine speed when no derate is in effect). It has one jsr, from mc68k_applicationMain.",
+    "discriminator": "It is the start-up preset of the two words that 0x2dcb0 (misnamed cm550_oil_pressure_shutdown_controller) updates at run time.",
+    "suggested_name": "initializePowerTakeOffThrottleOverride",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_initializePowerTakeOffThrottleOverride @ 0x2bd38, twin: the same two stores in the same order between the same e2m records (EPNTDQRP = engine_speed_limit_default_cal), and one call from cm848_applicationMain. Both rows take the shared name."
+   }
+  ],
+  "enum_roles": [
+   {
+    "enum_name": "J1939_DIAGNOSTIC_SERVICE",
+    "value": 67,
+    "meaning": "J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH (CM848's member). Replaces CM550's MEM_READ_2B_PARAM_4B_OFFSET, which is wrong: the 4 bytes are the length, and the offset is 0.",
+    "evidence": "Handler 0x22530 (asm 0x22530-0x2257a) copies a 2-byte ID from +1 and a 4-byte length from +3, then calls 0x224f4(request, ID, 0, length). The CM848 member and handler 0x50c640 are identical."
+   },
+   {
+    "enum_name": "J1939_DIAGNOSTIC_SERVICE",
+    "value": 70,
+    "meaning": "J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET (CM848's member). Replaces MEM_READ_2B_PARAM_ONLY, which is wrong: the request is [46][ID 2][offset 2][length 1].",
+    "evidence": "Handler 0x2257c (asm 0x2259c-0x225d4) builds the 0:0:b3:b4 offset and 0:0:0:b5 length words. Same in CM848 0x50c6a8."
+   },
+   {
+    "enum_name": "J1939_DIAGNOSTIC_SERVICE",
+    "value": 72,
+    "meaning": "J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET (CM848's member). Replaces SERVICE_48.",
+    "evidence": "Handler 0x225e0: ID from +1, 4-byte offset from +3, 4-byte length from +7. Same in CM848 0x50c734."
+   },
+   {
+    "enum_name": "J1939_DIAGNOSTIC_SERVICE",
+    "value": 74,
+    "meaning": "J1939_DIAGNOSTIC_SERVICE_READ_MEMORY (CM848's member). Replaces MEM_READ_4B_ADDR_1B_LEN.",
+    "evidence": "Handler 0x22646: 4-byte address from +1, 1-byte length from +5, then cm550_diagMemoryReadResponseBuilder. Same in CM848 0x50c7b0."
+   },
+   {
+    "enum_name": "J1939_DIAGNOSTIC_SERVICE",
+    "value": 76,
+    "meaning": "J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH (CM848's member). Replaces MEM_READ_4B_ADDR_4B_LEN.",
+    "evidence": "Handler 0x2268e: 4-byte address from +1, 4-byte length from +5. Same in CM848 0x50c81c."
+   }
+  ],
+  "notes": "Notes with the asm evidence: /home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q4/describer/notes.md. Helper scripts are in the same folder (callers.py, refscan.py, peak.py, check_names.py). Every proposed CM550 function name is unique in both CSVs (check_names.py).\n\nShared twin names; both rows change, and each CM848 row drops cm848_:\n- 0x22530 / 0x2257c / 0x225e0 / 0x22646 / 0x2268e / 0x226da = CM848 0x50c640 / 0x50c6a8 / 0x50c734 / 0x50c7b0 / 0x50c81c / 0x50c880.\n- 0xfa68 = 0x20bfc; 0xff48 = 0x212dc; 0x2ddbc = 0x2bd38.\n- 0xf99a = 0x20aec: twin by position; the name is weak.\n\nWrong prefixes: the vp44_ prefix is wrong on 0xfa68, 0x25a34 and 0x27c20. Their callers 0x33064 / 0x330c4 / 0xfb26 / 0xfa06 also carry wrong vp44_ names.\n\nOut-of-batch twins seen on the way:\n- 0x33064 is the EEC2 initializer, twin of CM848 cm848_initPgn61443Eec2Handler 0x25d60.\n- 0xfa06 is the twin of CM848 0x20b84.\n- 0x224f4 has no row and no body in the export; it is the twin of CM848 cm848_readJ1939DiagnosticMemoryByParameterId 0x50c5d0. Its prototype is (request, ID word, offset dword, length dword), returning 8 for an unknown ID. A row for it would make 0x22530 / 0x2257c / 0x225e0 decompile with their arguments.\n- 0x2238e is the twin of CM848 cm848_readJ1939DiagnosticMemoryAndRespond 0x50c42c.\n- 0xf8c6 / 0xf930 are counterparts of CM848 0x209e8 / 0x20a58. The J1939 torque module has the same source order in both ROMs (0xf796 .. 0xff48 against 0x20860 .. 0x212dc).\n\nGlobals proven by the code and e2m records. Each row is listed as a gap or a wrong current name; a mismatch is marked as a CM848 counterpart or a CM848 name.\n- 0x800040 (no row): acceleration_noise_control_timing_limit_inhibit_timer, word. The NZTAIHTM countdown; only 0xb3d0 uses it.\n- 0x80a9ac / 0x80a9b0 / 0x80a9b4 / 0x80a9b8 (no rows): all_speed_governor_minimum_reference_speed_1_pointer / all_speed_governor_maximum_reference_speed_1_pointer / all_speed_governor_minimum_reference_speed_2_pointer / all_speed_governor_maximum_reference_speed_2_pointer, type word *.\n- Their targets 0x803bbc / 0x803bbe / 0x803bca / 0x803bcc (no rows; ASMNRF / ASMXRF / ASMNRF02 / ASMXRF02, inside the mirror): all_speed_governor_minimum_reference_speed_1_cal / all_speed_governor_maximum_reference_speed_1_cal / all_speed_governor_minimum_reference_speed_2_cal / all_speed_governor_maximum_reference_speed_2_cal. These are the CM848 names of the same records.\n- 0x80821a (no row; LHFLEN): pedal_fault_mode_enable_flag.\n- 0x80a982 (STUOTHGV; now stcg_enable_stcg_switch_xor_...): variable_speed_governor_selected_flag.\n- 0x803bf0 (no row; FSTHGVOP, inside the mirror): variable_speed_governor_default_cal.\n- 0x807ac8 (no row; ASSDFUOF): all_speed_governor_switch_droop_fueling_offset.\n- 0x800180 (now anc_speed_limit_table_3_ptr, typed undefined; only 0xf716 uses it): all_speed_governor_droop_snapshot, word.\n- 0x8091de (ASNLFL 1322 +0; now rpm_control_override_flag): all_speed_governor_no_load_fuel.\n- 0x80da1c (JCINFCTQ): j1939_nominal_friction_percent_torque_times_256.\n- 0x80da32 (JCRFEGFL): j1939_reference_engine_fueling. 0x80da34 (no row; JCRFTQ): reference_engine_torque_working.\n- 0x80823c (no row; LSMNITPZ): low_speed_governor_integrator_preset_minimum.\n- 0x801a6a (dword; now fuel_economy_sample_1 / 2): low_speed_governor_integral_accumulator. 0x801a6e (now fuel_economy_sample_3): low_speed_governor_reference_maximum_fuel_quantity.\n- 0x80db04 (LSCIRF; now cold_idle_speed_adder_0_1000 - it is a speed floor, not an adder): low_speed_governor_cold_idle_reference_speed.\n- 0x801a84 (now rpm_histogram_sample_divider, typed undefined): low_speed_governor_cold_idle_timer, word. The row 0x801a85 fuel_economy_sample_toggle has no references.\n- 0x80db08 (no row; LSCIOD): low_speed_governor_cold_idle_override_flag.\n- 0x80db64 (no row; ESPG): engine_speed_phase_lag. 0x80db66 (ESPS00PG): engine_speed_pulse_0_phase_lag.\n- 0x80db68 (no row): j1708_memory_write_records. A 10-byte struct per record: address, data pointer, length, MEMORY_REGION_TYPE.\n- 0x80dc2e (PTTHOV): power_take_off_throttle_override_flag. 0x80dc2c (PTTHDQRP): power_take_off_throttle_override_engine_speed_limit. Both are CM848 names, and the current CM550 names contain 'pto'.\n\nMisnamed globals that are not owned by this batch:\n- 0x80ccf2 fuel_demand_blend_mode_select is ESAVES, the average engine speed.\n- 0x808476 / 0x808478 (final_fuel_command_min / max) are ESPGIN / ESPGSL.\n- 0x80847e fuel_rpm_deviation_calc_param is ESCWAJ, the cam wheel TDC adjustment.\n- 0x803f40 maximum_rated_engine_speed_0_5000 is EPNTDQRP, CM848's engine_speed_limit_default_cal.\n- 0x80a9a2 / 0x803d5a (asg_throttle_source_selector / default_throttle_source_selector) are ASDPFG / ASDPFGTN, the tuning set selector and its trim. 0x803d5a sits inside the mirror but has no _cal.\n- 0x800044 anc_timing_limit_active_timer is typed undefined but only ever accessed as a word.\n\nReturn types: 0xb3d0 and 0xff48 return nothing; the decompiler's return is a leftover d0."
+ },
+ "verdict": {
+  "batch": "Q4",
+  "overall": "I re-derived all 29 proposed CM550 functions, both CM848 renames and all 36 globals from the disassembly, the decompilation, the e2m records, the RAM dumps and a ROM reference scan. All names are unique in both firmwares and none is refuted. 25 functions are confirmed as proposed. 4 keep their names but get corrected plate comments: 0xd4ae (bit 1 of 0x80bcd1 is the STCG switch SLTHCNSW, not an interlock switch), 0x24804 (0x23be8 sets fault bits in status words 7 AND 8, gated by the key switch), 0x25806 (it must quote the new CM848 name cm848_selectPedalFaultMode) and 0x27c20 (the refusal count d4 is never cleared on entry: it is the caller's drain pass count, so a drain of 2 or more passes makes the save queue nothing; 0x804f8c-0x804f91 are never queued). I checked all ten twins step by step in both firmwares: 0xf99a/0x20aec, 0xfa68/0x20bfc, 0xff48/0x212dc, 0x2ddbc/0x2bd38, the five PGN 61184 read handlers and their registrar 0x226da/0x50c880. They have the same memcpy sizes and offsets, constants, records, step order and call-graph slot. The vp44_ prefix is wrong on all three vp44_ rows (0xfa68 torque curve, 0x25a34 LSG preset, 0x27c20 EEPROM save, mc68k_ because it reads CS2 0xffd000). CM848: 0xe8cc is confirmed (the cm848_initialize<X>LookupCache convention). For 0x50daac the name is confirmed, but the comment is reworded because the dual channel branch was ambiguous. Globals: 29 are confirmed. 7 are amended. 0x803bf0 gets a missing third user, the start-up copy at 0xd5da. 0x807ac8 and 0x8091de get the unit %FU (CM550 e2m), not MM3S. In 0x801a70's comment, 0x25ff2 is cm550_presetLowSpeedGovernorSpeedError. Two typings swallow named rows: the dword at 0x801a6a covers fuel_economy_sample_2 at 0x801a6c (the accumulator's low word, clr.w at 0x25cea), and the word at 0x801a84 covers fuel_economy_sample_toggle at 0x801a85 (no reference). Both rows must be deleted in the same change. 0x80db68 needs structure rows for j1708_memory_write_record_t (or byte[150]), and its comment no longer holds an instruction. The investigator proposed no enum members or prototypes. SKIPPED: 0x2cf52 should stay skipped. The ROM has no absolute reference to it, and no bsr.w/bsr.s/bsr.l/jsr/pea/lea d16(pc) reference. It only copies into 0x801afc, which nothing else references. LEADS: (1) CM550 J1939_DIAGNOSTIC_SERVICE members 0x43 MEM_READ_2B_PARAM_4B_OFFSET (the 4 bytes are the length, the offset is 0), 0x46 MEM_READ_2B_PARAM_ONLY, 0x48 SERVICE_48, 0x4A and 0x4C are stale; CM848's READ_BY_PARAMETER_ID_LONG_LENGTH / _SHORT_OFFSET / _LONG_OFFSET / READ_MEMORY / READ_MEMORY_LONG_LENGTH fit the handler asm. (2) CM550 0x23be8 carries the unprefixed name diagnosticMainStateProcessor, but CM848 0x1d9b8 is a different function (the fault scanner). (3) The old name rpm_control_override_flag is quoted in the 0x800118 row comment, and parameter_id_lookup_table.csv holds old names: regenerate it. (4) The pulse 0 line records 0x80847a/0x80847c, the sibling ANC inhibit timers 0x80003c/0x80003e, STUOTHGV 0x80a982 and LSCIRF 0x80db04 still carry old names.",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000b3d0",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateAccelerationNoiseControlTimingLimit",
+    "final_relation": "standalone",
+    "own_role": "Every 50 ms (runEvery10FramesTaskSetPhase1) while algorithm_enable_flags_3_cal bit 0x2000 is set: latches the bare-engine inhibit NZTALMIH with the countdown 0x800040, holds the timing limit status NZTALMSS with the hold timer 0x800044, and sets NZTALM 0x80a28e to the ANC timing table at current_engine_rpm_filtered, otherwise ramps it up by NZTARMRT to 1024.",
+    "reason": "asm 0xb3ec-0xb4cc matches both descriptions. Discriminator in the code: enable bit 0x2000; the coolant gate 0x80a336 vs NZTACLTR 0x807a38 at 0xb436, where siblings 0xb2aa/0xb4f2 gate on current_engine_rpm_filtered; output NZTALM capped at 0x400. All e2m records match (10A4 +2/+8/+A/+E/+18/+1A/+1C, 10A5 +16/+18/+1A/+1C/+2C/+2E). Only caller is the 50 ms task. The CM848 0x17b54 plate marks the ANC timing stage as compiled out."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000c87c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_emptyPrimarySpeedInterruptStep",
+    "final_relation": "standalone",
+    "own_role": "Empty function (rts) called at the same step of all four TPU channel 10 primary speed interrupt handler modes.",
+    "reason": "ROM 0xc87c = 4e75. The only references are jsr at 0x19c5e/0x19f58/0x1a6be/0x1a90e, one in each mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0-3. Each sits after cm550_rpmTimingDeltaComparatorWithReturn and before mc68k_FUN_0001266e / vp44_communication_state_machine(1). The name states only what the code shows (empty, plus its call site), like the ignoreCanTransmitInterrupt precedent. I checked the callers of every CM848 empty stub: none sits in a speed interrupt."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000c87e",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_emptyBackupSpeedInterruptStep",
+    "final_relation": "standalone",
+    "own_role": "Empty function (rts) called at the end of the three TPU channel 1 (backup speed input) interrupt handlers.",
+    "reason": "ROM 0xc87e = 4e75. The only references are 0x1b1d8/0x1b388/0x1b4be, in 0x1af32 (installed into 0x808ee0 by mc68k_initializeTpuChannel1BackupSpeedInput at 0x1aec6), 0x1b30a and 0x1b4b2. Each sits after mc68k_resetSpeedMeasurementMode0 and before TPU_CISR &= 0xfffd (channel 1). No CM848 twin."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000c880",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeSpeedRequestBlendWeightLookup",
+    "final_relation": "counterpart",
+    "own_role": "Start-up: sets speed_request_blend_weight_by_speed_difference_lookup (0x800102) x_axis_offset = 2, x axis pointer 0x807acc and y values pointer 0x807ad8.",
+    "reason": "asm 0xc880-0xc89e: move.w #2 to +0, move.l #0x807acc to +2, move.l #0x807ad8 to +8 (the table_lookup_1d_arguments_t layout). Only reference is jsr at 0x28870 in mc68k_applicationMain. The user 0xc8a0 writes x_input (0x800108) and looks it up at 0xc92c. CM848 0xe8cc does only li 2 / sth 0x3fa0f0, because CM848's lookup takes the axis and values as arguments. Same role with different code, so counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000d3b2",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeAllSpeedGovernorReferenceSpeedSets",
+    "final_relation": "counterpart",
+    "own_role": "Start-up: points 0x80a9ac/0x80a9b0/0x80a9b4/0x80a9b8 at the set 1 and set 2 ASG 0 / 100 percent throttle reference speeds and presets the set selector ASDPFG from ASDPFGTN.",
+    "reason": "asm 0xd3b2-0xd3e4: four move.l #0x803bbc/#0x803bbe/#0x803bca/#0x803bcc, then move.w 0x803d5a into 0x80a9a2. The only readers of the pointers are in 0xd2be (0xd34a-0xd370), which picks set 1 or 2 by 0x80a9a2. The dump agrees (pointers, selector 1, ASMNRP/ASMXRP = set 2). CM848 0x2c100 only copies 1387 +8, so counterpart. The name covers the main job and the plate covers the preset."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000d4ae",
+    "verdict": "AMENDED",
+    "final_name": "cm550_selectVariableSpeedGovernorMode",
+    "final_relation": "counterpart",
+    "own_role": "Selector of user fueling state 7 in the chain 0x3458c: near no load with zero throttle, updates STUOTHGV from FSTHGVOP (inverted by the STCG switch when STCG is enabled). Then, if nothing is selected and STUOTHGV is 1, selects FUELING_STATE_VARIABLE_SPEED_GOVERNOR, runs 0xd3e6 and loads the throttle mode gains unless the previous state was 7 or 3.",
+    "reason": "Name and relation confirmed: asm 0xd4c2-0xd57e matches. The chain order matches CM848: 0x3458c calls 0x25806 then 0xd4ae, as cm848_resetEngineOperatingMode calls the pedal fault selector then cm848_selectVariableSpeedGovernorMode. The code differs, so counterpart. Comment fix: the tested bit (0x80bcd1 & 2) is e2m 000E +3 SLTHCNSW 'DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH' (mask 02). It is not an interlock switch: the 'interlock' wording came from that row's current misnomer.",
+    "final_comment": "Variable speed governor selection, called by the user fueling state chain 0x3458c with the previous user fueling state. While final_fueling is below no_load_fuel_quantity + ASSDFUOF (e2m 107D +A) and the throttle is 0 it sets STUOTHGV (107C +16) = FSTHGVOP (0008 +54). The value is inverted while two bits are both set: algorithm_enable_flags_27_cal.switched_throttle_control_governor_select, and the switched throttle control governor switch (bit 1 of 0x80bcd1, e2m 000E +3 SLTHCNSW 'debounced value of the STCG ASG droop switch'; its row is named state_of_the_throttle_interlock_switch_on_off). If user_fueling_state is FUELING_STATE_NOT_SELECTED and STUOTHGV is 1 it selects FUELING_STATE_VARIABLE_SPEED_GOVERNOR and calls 0xd3e6. Unless the previous state was 7 or 3 it also loads the throttle mode gain set (107B), clears the external reset flag, and loads the throttle mode fueling limits and the reference filter coefficient. CM848 splits this into cm848_updateVariableSpeedGovernorSelection (the flag) and cm848_selectVariableSpeedGovernorMode (the state)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000f716",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateAllSpeedGovernorDroopFueling",
+    "final_relation": "counterpart",
+    "own_role": "Returns the ASG droop line fueling (ASTHRFES - engine_rpm_primary) x 9813 / (droop snapshot x 8) + ASNLFL, clamped 0..0x1700. The snapshot 0x800180 is refreshed from ASSLDP only while ASRFST is 7, and a zero snapshot gives 0x1700 or 0 by the error sign.",
+    "reason": "asm 0xf716-0xf794 matches both descriptions (mulu.l #0x2655, divs.l by snapshot << 3, add 0x8091de, clamp). Only caller is 0xf796, which uses it when 0x803bf0 is 1. CM848 0x20554 holds the same droop line (9813, the droop snapshot only in mode 7) inside a larger fuel limit function, so counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0000f99a",
+    "verdict": "CONFIRMED",
+    "final_name": "emptyPgn61443ElectronicEngineController2InitializationStep",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00020aec",
+    "own_role": "Empty function (rts) called once, at the same step of the EEC2 transmit record initializer.",
+    "reason": "Both bodies are empty (4e75 / blr). Each has a single call at the same step of initializers whose steps match one for one. CM550 0x33064: +0 = 0xf00300, priority << 2 into byte 0, SA at +3, 5 at +4, data at +6, status at +10, jsr 0xf99a, then 0x2f47e(0xf003, 0x32e4c). CM848 0x25d60: the same stores in the same order, bl 0x20aec, then bl 0x23188(61443, 0x25b10). Both sit right before the nominal friction torque function in ROM. This follows the ignoreCanTransmitInterrupt precedent, an empty twin proven by position. Both rows take the shared name (CM848 was cm848_emptyStubFunction7)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0000f99c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateNominalFrictionPercentTorque",
+    "final_relation": "counterpart",
+    "own_role": "Sets JCINFCTQ 0x80da1c = (NLFL - CLNTFL) x 25600 / (JCRFEGFL - CLNTFL), 0 when either difference is not positive, capped at 32000; first call of the EEC3 builder.",
+    "reason": "asm 0xf99c-0xfa04: clr.w floors, x25600 by shifts, jsr 0x165f2, cap 0x7d00. Dump: 88 x 25600 / 1619 = 1391 = 0x80da1c. CM848 0x20af0 floors with cmpwi -32000 and stores 0x8300, a different constant, so counterpart with the cm550_ prefix."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0000fa68",
+    "verdict": "CONFIRMED",
+    "final_name": "setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00020bfc",
+    "own_role": "Runs the point 1 helper. Then, if point 1 speed > point 3 speed, sets point 3 = point 1 speed and fueling; otherwise sets point 3 to the calibrated 1104 +4 speed and 1104 +C fueling.",
+    "reason": "CM550 0xfa68: bsr 0xfa06, cmp (a4)=1102 +22 vs (a2)=+26, bhi to copy +22 into +26 and +2C into +30, else 0x808162/0x80816a. CM848 0x20bfc: bl 0x20b84, the same compare (cmpw on lhz), the same stores on the same records by offset (1102 base 0x40ad8a; ROM 1104 0x5c348). Both are called only in cases 6 and 7 of the twin torque curve builders (0xfb26 / cm848_updateJ1939EngineConfigurationTorqueCurve). Not VP44 code."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0000ff48",
+    "verdict": "CONFIRMED",
+    "final_name": "initializeJ1939ReferenceEngineFuelingAndTorque",
+    "final_relation": "twin",
+    "final_cm848_address": "0x000212dc",
+    "own_role": "Unless programmable_power_enable (flags 18 bit 9) is set, copies 1104 +0 into 1102 +1C and 1104 +2 into 1102 +1E.",
+    "reason": "CM550 0xff48: andi.l #0x200 of 0x803cb8 / bne rts / two move.w. CM848 0x212dc: rlwinm bit 0x200 of 0x3fd5c0 / bne / the same two copies in the same order. Both are the last call of the shared initializePgn65251EngineConfiguration1Buffer. Dump agrees (1619 / 705)."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00022530",
+    "verdict": "CONFIRMED",
+    "final_name": "handleJ1939ReadByParameterIdLongLengthService",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0050c640",
+    "own_role": "PGN 61184 service 0x43: ID from request +1 (2 bytes), length from +3 (4 bytes), offset 0, read through 0x224f4.",
+    "reason": "CM550 0x22536-0x22572: memcpy 2@+1, 4@+3, clr.l offset, bsr 0x224f4(request, id, 0, length). CM848 0x50c650-0x50c68c: the same copies, li r5,0, bl 0x50c5d0 (the twin of 0x224f4). The twin registrars register it first."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0002257c",
+    "verdict": "CONFIRMED",
+    "final_name": "handleJ1939ReadByParameterIdShortOffsetService",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0050c6a8",
+    "own_role": "PGN 61184 service 0x46: ID from +1, offset = 0:0:b3:b4, length = 0:0:0:b5, read through 0x224f4.",
+    "reason": "asm 0x22586-0x225d4: clr.w / move.b data[3], data[4]; clr.w / clr.b / move.b data[5]. CM848 0x50c6bc-0x50c718 does the same byte-by-byte zero extension, then bl 0x50c5d0."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000225e0",
+    "verdict": "CONFIRMED",
+    "final_name": "handleJ1939ReadByParameterIdLongOffsetService",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0050c734",
+    "own_role": "PGN 61184 service 0x48: ID 2@+1, offset 4@+3, length 4@+7, read through 0x224f4.",
+    "reason": "Both firmwares make three copies of 2/4/4 bytes from +1/+3/+7, then call the ID read helper twin (0x224f4 / 0x50c5d0)."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x00022646",
+    "verdict": "CONFIRMED",
+    "final_name": "handleJ1939ReadMemoryService",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0050c7b0",
+    "own_role": "PGN 61184 service 0x4a: address 4@+1, length 0:0:0:b5, read through cm550_diagMemoryReadResponseBuilder.",
+    "reason": "CM550 0x22650-0x22682 and CM848 0x50c7c4-0x50c800 match: copy 4 from +1, zero-extended length from data[5], call to the read-and-respond twin (0x2238e / 0x50c42c)."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0002268e",
+    "verdict": "CONFIRMED",
+    "final_name": "handleJ1939ReadMemoryLongLengthService",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0050c81c",
+    "own_role": "PGN 61184 service 0x4c: address 4@+1, length 4@+5, read through cm550_diagMemoryReadResponseBuilder.",
+    "reason": "Both firmwares copy 4 bytes from +1 and 4 bytes from +5, then call 0x2238e / 0x50c42c."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x000226da",
+    "verdict": "CONFIRMED",
+    "final_name": "registerJ1939MemoryReadServices",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0050c880",
+    "own_role": "Registers services 0x43/0x4a/0x4c/0x46/0x48 with handlers 0x22530/0x22646/0x2268e/0x2257c/0x225e0 through registerJ1939DiagnosticService.",
+    "reason": "CM550 0x226dc-0x22724: five pea/move.w/jsr (a2=0x2ee62) with 0x43,0x4a,0x4c,0x46,0x48. CM848 0x50c88c-0x50c8d8: li 67,74,76,70,72 with the twin handlers, bl 0x220e4. Same order. Both J1939 inits call it after registerJ1939InputMessageHandlers and before registerJ1939MemoryWriteServices / registerJ1939DiagnosticHandlers."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00024804",
+    "verdict": "AMENDED",
+    "final_name": "cm550_updateLampOutputsAndCheckLampDriverFaults",
+    "final_relation": "standalone",
+    "own_role": "50 ms wrapper: cm550_applyLampRequestsToOutputs, then 0x23be8, which debounces open and short circuit faults of the seven port 1 lamp drivers (output status 000E +34 vs io_driver_port_1_feedback) while the key switch is on.",
+    "reason": "Name confirmed: jsr 0x23a90 / jsr 0x23be8 / rts, and it is the only caller of both; CM848's Phase6 calls only cm848_processJ1939AcceleratorInputs. Comment fix: 0x23be8 sets bits 0x10/0x20/0x40/0x80/0x100 of status word 8 AND 0x400/0x800/0x1000/0x4000/0x8000 of status word 7, not word 8 alone. Its whole body is gated by bit 0 of 0x80bcce, e2m 000E +0 DSKYSWSS (key switch).",
+    "final_comment": "50 ms task, first call of cm550_runEvery10FramesTaskSetPhase6. It runs cm550_applyLampRequestsToOutputs (lamp_driver_output_bitmask into the lamp output bits while each output's override priority is 0). Then it runs 0x23be8 (named diagnosticMainStateProcessor). While the key switch bit is set (bit 0 of 0x80bcce, e2m 000E +0 DSKYSWSS), 0x23be8 compares each of the seven lamp drivers' output status (e2m 000E +34 LCLP01FB to LCLP07FB) with io_driver_port_1_feedback. It debounces their open and short circuit fault bits in system error status words 7 and 8. No CM848 counterpart: CM848's diagnosticMainStateProcessor is its fault scanner."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00025806",
+    "verdict": "AMENDED",
+    "final_name": "cm550_selectPedalFaultMode",
+    "final_relation": "counterpart",
+    "own_role": "Selector of user fueling state 6 in the chain 0x3458c. With LHFLEN set and nothing selected, it selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT on the J1939 pedal flags (flags 5 bit 0x400 set) or on status word 4 bits 0x2/0x4/0x20 enabled in fault_processing_enable_flags[4]. Entering from another state it calls presetPedalFaultModeFuelDemand.",
+    "reason": "Name confirmed: asm 0x25820-0x258aa matches, and it matches the repository's pedal fault mode terms (presetPedalFaultModeFuelDemand, pedal_fault_mode_enable_flag). CM848 0x50daac uses other tests, so counterpart. Comment fix: the plate quotes cm848_transitionEngineOperatingMode, which this batch renames to cm848_selectPedalFaultMode. It now also names the new global at 0x80821a.",
+    "final_comment": "Pedal fault mode selection, called by the user fueling state chain 0x3458c with the previous user fueling state. It acts when the limp home enable LHFLEN (e2m 10CE +C, pedal_fault_mode_enable_flag 0x80821a) is set and user_fueling_state is FUELING_STATE_NOT_SELECTED. It then selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT on either of two conditions. With algorithm_enable_flags_5_cal.sampled_throttle_override_enable (the J1939 pedal) set, the condition is j1939_accelerator_position_error_fallback_flag or j1939_pedal_input_timeout_active_flag. Otherwise it is status word 4 bit 0x2, 0x4 or 0x20 enabled in fault_processing_enable_flags[4]. Entering from another state it calls presetPedalFaultModeFuelDemand. Counterpart of CM848 cm848_selectPedalFaultMode (0x50daac), which uses other pedal fault tests."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00025a34",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_presetLowSpeedGovernorIntegrator",
+    "final_relation": "counterpart",
+    "own_role": "On LSG takeover: refreshes the LSG reference maximum fuel (0x2595a). Sets LSMXITPZ = that + LSMXPZOF clamped 0..0x1700. Presets the 16.16 integrator to final_fueling - LSER x LSPPGN / 960 + speed x LSPP02GN / 2226 (minus NLFL when enabled), clamped to LSMNITPZ..LSMXITPZ. Then sets LSFL and LSDVFL and stores the previous speed and gains.",
+    "reason": "asm 0x25a34-0x25b1a matches both descriptions. Its only call is in cm550_runLowSpeedGovernor when adjusted_user_fueling_state is LSG and final_fueling_state is not. CM848 0x27e4c differs (P gain adjustment, use-previous option, park/drive minimums, no speed x gain 2 term), so counterpart. Not VP44 code."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026616",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateLowSpeedGovernorColdIdleSpeed",
+    "final_relation": "counterpart",
+    "own_role": "Every 100 ms computes the cold idle LSG reference speed LSCIRF from the coolant temperature, engine state and the cold idle timer 0x801a84, ramps it out, and raises LSDSRFRP to it unless the override applies.",
+    "reason": "asm 0x26616-0x266d0 matches. engine_state 1: clear the timer, LSCIRF = LSCIRFSR if cold else 0. State 2: skip. Otherwise the timer counts while cold up to LSCITMLM. State 3: ramps down by LSCIRMRT once the time is up or warm. LSDSRFRP floor unless flags 12 bit 0x4000 and LSCIOD. Only caller is runEvery20FramesTaskSetPhase4. CM848 0x28d44 is a different design, so counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026b3a",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateNoLoadFuel",
+    "final_relation": "counterpart",
+    "own_role": "Every 100 ms: no_load_fuel_quantity = friction fuel lookup at engine_rpm_primary + coolant correction lookup at the filtered coolant temperature.",
+    "reason": "asm 0x26b3a-0x26b7c: two jsr 0x34de0 summed into 0x80db1c, the only writer (decompiled and ROM refs checked). Only caller is runEvery20FramesTaskSetPhase6. CM848 0x50dba8 sums four terms, so counterpart."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026b82",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_emptyStubFunction12",
+    "final_relation": "standalone",
+    "own_role": "Empty function (rts) with a single start-up call.",
+    "reason": "4e75. The only reference is jsr at 0x287da in mc68k_applicationMain (after 0x2658c, before the undumped 0x4cf42). The rts words 0x26b7e/80/84/86 have no reference. Number 12 is free and the convention matches cm550_emptyStubFunction10/11."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026e86",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeEnginePositionPhaseLag",
+    "final_relation": "standalone",
+    "own_role": "Start-up wrapper that runs the engine position phase lag calculation once.",
+    "reason": "jsr 0x26e8e / rts. Only reference is jsr at 0x28756, between cm550_canBusTimingInit and cm550_initializeEnginePositionSignalInputs."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00026e8e",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateEnginePositionPhaseLag",
+    "final_relation": "standalone",
+    "own_role": "Every 20 ms computes ESPS00PG and ESPG = (ESAVES x slope >> 4 + intercept + ESCWAJ) / 16 for the pulse 0 and the normal phase lag lines.",
+    "reason": "asm 0x26e8e-0x26eea matches. It is the only code user of 11A9 +0..+8 and the only writer of 11AA +0/+2. The 0x26e8e references are 0x1b548 (runEvery4FramesTaskSetPhase0) and 0x26e88. 'Engine position' matches the repository's terms. CM848 has no such records."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x000277e6",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_buildJ1587Pid243ComponentIdentificationReply",
+    "final_relation": "standalone",
+    "own_role": "J1587 PID 243 reply: [PID][size-2][0x80][make 5]['*'][model 17]['*'][serial 4], in place when the size is at most 19, else built at 0x801ade and sent multi-frame.",
+    "reason": "Only reference is 0xf622 in insiteCommandByteDispatcher (insite_parameter_id == 0xf3). asm 0x277f6-0x27994 matches, including the low-byte pointer stepping and the 0x1e79a(0xe,0xf) / 0x1e89e / 0x1ec08 frame path. CM848 has no J1587."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00027c20",
+    "verdict": "AMENDED",
+    "final_name": "mc68k_saveEepromForPowerDown",
+    "final_relation": "counterpart",
+    "own_role": "Power-down: queues the EEPROM image 0x804156-0x804f91 in 16-byte chunks, waits for the queue after each, and calls restartOnKeyOnDuringPowerDown when the CS2 input bit 0 stays set for more than 80 waits.",
+    "reason": "Name, prefix and relation confirmed. It reads CS2 device 0xffd000 directly, hence mc68k_. Its only call is right after the 1000-pass drain of mc68k_runPowerDownSequence, the same step as cm848_saveEepromForPowerDown. Comment fix: d4 (the refusal count) is never cleared on entry (Ghidra unaff_D4w). At jsr 0x2801e d4 is the caller's drain pass count (clr.w d4 at 0x27ff6, addq.w at 0x2800c), so the test d4 < 2 at 0x27cc2 fails at once after a drain of 2 or more passes, and nothing is queued. The last chunk is (0x804f92 >> 1) - (0x804f86 >> 1) = 6 bytes, so 0x804f8c-0x804f91 are never queued.",
+    "final_comment": "Power-down EEPROM save, called by mc68k_runPowerDownSequence right after its 1000-pass queue drain. From 0x804156 it queues 16-byte chunks through cm550_parameterCircularBufferWrite. The last partial chunk gets (0x804f92 - pointer) / 2 bytes, so 6 bytes go from 0x804f86 and 0x804f8c-0x804f91 are never queued. A refused chunk is retried and two refusals in a row end the save. The refusal count (d4) is never cleared on entry: it is the caller's drain pass count, so after a drain of 2 or more passes the loop test fails at once and nothing is queued. After each chunk it waits up to 16000 x 500 ticks (mc68k_delayTimeBaseTicksWithWatchdogService) for cm550_circularBufferEmptyCheck. If bit 0 of the chip select 2 device input 0xffd000 stays set for more than 80 consecutive waits it calls restartOnKeyOnDuringPowerDown. Counterpart of CM848 cm848_saveEepromForPowerDown: the same place in the sequence and the same 80-sample key test, but CM848 uses a mirror save state machine and adds checksum and sequence writes."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0002cf7e",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_applyJ1708MemoryWriteRecords",
+    "final_relation": "standalone",
+    "own_role": "Applies the parsed 10-byte J1708 memory write records. Records of type 5/3 go to the secure write scratch pad (6-byte directory entry + data at scratch_pad_write_pointer); other records are copied straight to their address. Returns 14 when the pad lacks entries or room, else 0.",
+    "reason": "asm 0x2cf7e-0x2d09c matches both descriptions: pass 1 counts and sums, the check against 10 entries and the room before 0x80dd86, then pass 2. Only caller is cm550_diagnosticMemoryWriteHandler (from mc68k_dispatchJ1708ReceivedMessages). CM848 has no J1708."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0002ddbc",
+    "verdict": "CONFIRMED",
+    "final_name": "initializePowerTakeOffThrottleOverride",
+    "final_relation": "twin",
+    "final_cm848_address": "0x0002bd38",
+    "own_role": "Start-up: PTTHOV = 0 and PTTHDQRP = EPNTDQRP (the no-derate maximum engine speed).",
+    "reason": "CM550 clr.w 0x80dc2e (1265 +2), then 0x803f40 (1262 +0) into 0x80dc2c (1265 +0). CM848 li 0 / sth 0x40af58, then lhz 0x3fd814 / sth 0x40af56. Same records, same order, and one start-up call in each application main. The run-time selector 0x2dcb0 stores the same pair while the throttle is not overriding."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0000e8cc",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeSpeedRequestBlendWeightLookupCache",
+    "final_relation": "counterpart",
+    "own_role": "Start-up: sets speed_request_blend_weight_by_speed_difference_cached_axis_offset (0x3fa0f0) to 2.",
+    "reason": "lis/li 2/sth 0x3fa0f0/blr, one call from cm848_applicationMain. The other user of 0x3fa0f0 is cm848_calculateGovernorReferenceSpeedBlend. The name follows the cm848_initialize<X>LookupCache convention (0x2156c, 0x3744c, 0x50ebf0). The old initTemperatureTrimCoeff was wrong."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0050daac",
+    "verdict": "AMENDED",
+    "final_name": "cm848_selectPedalFaultMode",
+    "final_relation": "counterpart",
+    "own_role": "Pedal fault entry of cm848_resetEngineOperatingMode: selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT on the J1939 pedal flags or the analog pedal faults, and presets the fuel demand when it enters from another mode.",
+    "reason": "Name confirmed: its only state store is FUELING_STATE_ACCELERATOR_PEDAL_FAULT, so 'transition' overstated it; the name is unique. Comment reworded: in the code accelerator_pedal_input_fault_flag is tested only while accelerator_pedal_dual_channel_enable_flag is set, and faults_0_to_15 bits 0x400/0x800 only while it is clear. The proposed 'X, or Y when the dual channel pedal is off' reads as if X always counted.",
+    "final_comment": "Pedal fault mode selection, called by cm848_resetEngineOperatingMode with the previous operating mode. When pedal_fault_mode_enable_flag (e2m 10CE +C) is set and engine_operating_mode is FUELING_STATE_NOT_SELECTED, it selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT. With the J1939 pedal (sensor_channel_held_value_enable_bits_cal[0] bit 0x2000) the trigger is j1939_accelerator_position_error_fallback_flag or j1939_pedal_input_timeout_active_flag. Otherwise the trigger is accelerator_pedal_input_fault_flag while accelerator_pedal_dual_channel_enable_flag is set, else fault_detected_cal.faults_0_to_15 bit 0x400 or 0x800. Entering from another mode it calls presetPedalFaultModeFuelDemand. Counterpart of CM550 cm550_selectPedalFaultMode (0x25806)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800040",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_inhibit_timer",
+    "final_type": "word",
+    "reason": "No row and no e2m record. Word accesses: move.w dst at 0xb40c, tst.w at 0xb418, subq.w at 0xb420. Used only by 0xb3d0."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800044",
+    "verdict": "CONFIRMED",
+    "final_name": "acceleration_noise_control_timing_limit_hold_timer",
+    "final_type": "word",
+    "reason": "movea.l #0x800044,a4 at 0xb3e0, then move.w/tst.w/subq.w (a4). Loaded with NZTADYTM 0x807a3a. The name spells out ANC and matches the sibling anc_speed_limit_hold_timer."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080da34",
+    "verdict": "CONFIRMED",
+    "final_name": "reference_engine_torque_working",
+    "final_type": "word",
+    "reason": "e2m 1102 +1E JCRFTQ. The only writer is 0xff60 move.w; the reader is 0x33310 in buildPgn65251EngineConfiguration1Payload. Same record and name as CM848 0x40ada8. Dump 705."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a9ac",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_minimum_reference_speed_1_pointer",
+    "final_type": "word *",
+    "reason": "Long store at 0xd3b2, long load at 0xd34a then move.w (a0). No e2m record. Dump 0x00803bbc. No row swallowed."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a9b0",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_maximum_reference_speed_1_pointer",
+    "final_type": "word *",
+    "reason": "Long store at 0xd3bc, long load at 0xd352. Dump 0x00803bbe."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a9b4",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_minimum_reference_speed_2_pointer",
+    "final_type": "word *",
+    "reason": "Long store at 0xd3c6, long load at 0xd362. Dump 0x00803bca."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a9b8",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_maximum_reference_speed_2_pointer",
+    "final_type": "word *",
+    "reason": "Long store at 0xd3d0, long load at 0xd36a. Dump 0x00803bcc."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803bbc",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_minimum_reference_speed_1_cal",
+    "final_type": "word",
+    "reason": "e2m 0008 +20 ASMNRF (0.125 RPM per count). Inside the EEPROM mirror, so _cal. Read through the pointer as move.w. Dump 5440 = 680 rpm. Same name as CM848's record."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803bbe",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_maximum_reference_speed_1_cal",
+    "final_type": "word",
+    "reason": "e2m 0008 +22 ASMXRF. Inside the mirror. Dump 27600 = 3450 rpm."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803bca",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_minimum_reference_speed_2_cal",
+    "final_type": "word",
+    "reason": "e2m 0008 +2E ASMNRF02. Inside the mirror. Dump 5200 = ASMNRP (selector 1)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803bcc",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_maximum_reference_speed_2_cal",
+    "final_type": "word",
+    "reason": "e2m 0008 +30 ASMXRF02. Inside the mirror. Dump 34304 = ASMXRP."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803bf0",
+    "verdict": "AMENDED",
+    "final_name": "variable_speed_governor_default_cal",
+    "final_type": "word",
+    "reason": "Name, type and _cal confirmed: e2m 0008 +54 FSTHGVOP, inside the mirror, all accesses are words. The comment missed a third user: 0xd5da move.w 0x803bf0 into 0x80a982 in cm550_fuelBlendTablePointerSetup (start-up, from cm550_initMultiSystemParameters).",
+    "final_comment": "e2m 0008 +54 FSTHGVOP 'USER INDICATOR FOR ENABLING AUTOMOTIVE GOVERNING THROUGH THROTTLE' (0 / 1; 1 in the dump; CHR label User_Selected_Throttle_Control): the governor type default. cm550_fuelBlendTablePointerSetup (0xd5da) copies it into STUOTHGV at start-up. cm550_selectVariableSpeedGovernorMode copies it there near no load, inverted by the switched throttle control governor switch. While it is 1, 0xf796 takes its driver's demand fueling from cm550_calculateAllSpeedGovernorDroopFueling. EEPROM image, so _cal. CM848 names the same record variable_speed_governor_default_cal (0x3fdd42, 0008 +4E)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807ac8",
+    "verdict": "AMENDED",
+    "final_name": "all_speed_governor_switch_droop_fueling_offset",
+    "final_type": "word",
+    "reason": "Name and type confirmed: word reads at 0xd2ee and 0xd4cc, outside the mirror. Unit fix: CM550's e2m (v64t6_s and the other originals) gives ASSDFUOF as %FU, 0.016983696 per count. MM3S is the CHR (CM848) unit.",
+    "final_comment": "e2m 107D +A ASSDFUOF 'OFFSET ADDED TO NLFL AND COMPARED WITH FSFNFL FOR THROTTLE GOV. S(WITCH)' (%FU, 1/5888 of full fuel per count; 294 = 5 percent in the dump). The governor type switch (cm550_selectVariableSpeedGovernorMode) and the set selection in 0xd2be act only while final_fueling < no_load_fuel_quantity + this. CM848 names the same record all_speed_governor_switch_droop_fueling_offset."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080821a",
+    "verdict": "CONFIRMED",
+    "final_name": "pedal_fault_mode_enable_flag",
+    "final_type": "word",
+    "reason": "e2m 10CE +C LHFLEN. The only access is tst.w at 0x25820. Outside the mirror, no _cal. Dump 1. Same name as CM848 0x5c49a."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800180",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_droop_snapshot",
+    "final_type": "word",
+    "reason": "The only reference is movea.l at 0xf718; through a0 it is a word store (from 0x80a99a under ASRFST == 7), tst.w and move.w. Same role as CM848's snapshot. Not an ANC pointer, and no neighbour row is swallowed."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a99a",
+    "verdict": "CONFIRMED",
+    "final_name": "asg_selected_droop_slope_0_30",
+    "final_type": "word",
+    "reason": "Type only. move.w stores at 0xd428/0xd44a, mulu.w (unsigned) at 0xd454, move.w read at 0xf734."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008091de",
+    "verdict": "AMENDED",
+    "final_name": "all_speed_governor_no_load_fuel",
+    "final_type": "word",
+    "reason": "Name confirmed: e2m 1322 +0 ASNLFL. Written at 0xd274 by cm550_dualTableLookupSum (0xd23c) as friction lookup 0x800118 at 0x80a990 + coolant lookup 0x800126; read by cm550_runAllSpeedGovernor and 0xf716. Comment fixes: the unit is %FU in CM550's e2m (not MM3S), and the writer was missing.",
+    "final_comment": "Not an override flag: e2m 1322 +0 ASNLFL 'FUEL REQUIRED TO OVERCOME FRICTION CALCULATED USING ASG REFERE(NCE SPEED)' (%FU), the all speed governor's no-load fuel. cm550_dualTableLookupSum (0xd23c) writes it as all_speed_governor_friction_fuel_lookup at asg_reference_speed_working + all_speed_governor_coolant_fuel_adjustment_lookup at the filtered coolant temperature. It is the offset of the droop line in cm550_calculateAllSpeedGovernorDroopFueling and is read by cm550_runAllSpeedGovernor. The same role and name as CM848's all_speed_governor_no_load_fuel (0x40a24a)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801a6a",
+    "verdict": "AMENDED",
+    "final_name": "low_speed_governor_integral_accumulator",
+    "final_type": "dword",
+    "reason": "dword proven: move.l at 0x25aea, add.l (a5) at 0x25ef6, move.l (a5) at 0x25f36, upper word read at 0x25f38. However the dword covers the named row 0x801a6c fuel_economy_sample_2, which is its low word: clr.w at 0x25cea when the integrator reset at 0x25ce0 loads the upper word with LSCNRSFL 0x80824a. Delete the 0x801a6c row in the same change, otherwise the new type swallows a named row.",
+    "final_comment": "Not a fuel economy sample: the low speed governor's 16.16 integral accumulator. cm550_presetLowSpeedGovernorIntegrator presets it (value << 16). cm550_runLowSpeedGovernor adds the integral and gain change terms (add.l to (a5)), clamps it and copies its upper word to LSITFL 0x80dae6 (e2m 1065 +8). Its integrator reset (0x25ce0) loads the upper word with LSCNRSFL (1064 +14) and clears the low word 0x801a6c. The same role and name as CM848's low_speed_governor_integral_accumulator (was fuel_economy_sample_1, with fuel_economy_sample_2 at its low word 0x801a6c)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801a6e",
+    "verdict": "CONFIRMED",
+    "final_name": "low_speed_governor_reference_maximum_fuel_quantity",
+    "final_type": "word",
+    "reason": "Word stores through a4 in 0x2595a (0x259d8/0x259e2/0x25a28); add.w reads at 0x25a5a/0x25e3c/0x25e64. 100 percent throttle 4D fueling at LSAJRFES. Same role as CM848's."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801a70",
+    "verdict": "AMENDED",
+    "final_name": "low_speed_governor_previous_engine_speed",
+    "final_type": "word",
+    "reason": "Name and type confirmed: stores move.w of 0x80ccf6 at 0x25b00, 0x25fe6 and 0x2606c; read at 0x25df0 in (speed - prev) x LSDV02GN / 0x8b2. Comment fix: 0x25ff2 is cm550_presetLowSpeedGovernorSpeedError, not 'the LSG initializer'.",
+    "final_comment": "Not a VP44 fuel demand: the previous pass engine speed (engine_rpm_primary) of the low speed governor. It is used for the speed derivative 2 term LSDV02FL (e2m 1065 +20) = (speed - this) x LSDV02GN / 2226. It is stored at the end of each LSG pass, by cm550_presetLowSpeedGovernorIntegrator and by cm550_presetLowSpeedGovernorSpeedError (0x25ff2)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801a72",
+    "verdict": "CONFIRMED",
+    "final_name": "low_speed_governor_proportional_gain_previous",
+    "final_type": "i16",
+    "reason": "No row. move.w stores at 0x25b06/0x25c8a; read at 0x25e98 move.w + ext.l (signed). Used in the bumpless (LSPPGN - prev) x LSER term that is subtracted at 0x25ee4."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801a74",
+    "verdict": "CONFIRMED",
+    "final_name": "low_speed_governor_proportional_gain_2_previous",
+    "final_type": "i16",
+    "reason": "move.w stores at 0x25b10/0x25c94; read at 0x25ebc move.w + ext.l. The (LSPP02GN - prev) x speed term is added (0x25ee6). Not a time counter."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080823c",
+    "verdict": "CONFIRMED",
+    "final_name": "low_speed_governor_integrator_preset_minimum",
+    "final_type": "i16",
+    "reason": "e2m 1064 +6 LSMNITPZ. The only reference is movea.l at 0x25a3e, then move.w / ext.l / cmp.l at 0x25ac6. Outside the mirror. Same name as CM848 0x4070bc."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dac4",
+    "verdict": "CONFIRMED",
+    "final_name": "lsg_proportional_gain_active",
+    "final_type": "i16",
+    "reason": "Type only. muls.w at 0x25a86 and 0x25d02, move.w + ext.l at 0x25e90, word stores at 0x25b06/0x25c8a/0x262de. The e2m record LSPPGN is signed (S)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801a84",
+    "verdict": "AMENDED",
+    "final_name": "low_speed_governor_cold_idle_timer",
+    "final_type": "word",
+    "reason": "Word proven: movea.l at 0x26620, then clr.w / addq.w / move.w (a3). However the word covers the named row 0x801a85 fuel_economy_sample_toggle, which has no ROM reference at all (absolute scan of 0x801a60-0x801a8f). Delete that row in the same change.",
+    "final_comment": "Not a histogram divider: the cold idle timer of cm550_calculateLowSpeedGovernorColdIdleSpeed. It is cleared with the engine stopped. Outside the stopped and cranking states it counts each 100 ms pass while the coolant is below LSCICLTP (e2m 1066 +0), up to LSCITMLM (1066 +4); at that limit the cold idle speed ramps out. The same role as CM848's low_speed_governor_cold_idle_timer (was rpm_histogram_sample_divider; its low byte 0x801a85 was the unreferenced row fuel_economy_sample_toggle)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080db08",
+    "verdict": "CONFIRMED",
+    "final_name": "low_speed_governor_cold_idle_override_flag",
+    "final_type": "word",
+    "reason": "e2m 1049 +6 LSCIOD. clr.w at 0x265bc (start-up, cm550_initializeLowSpeedGovernorIdleAdjustment) and tst.w at 0x26652."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080db64",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_position_normal_phase_lag",
+    "final_type": "word",
+    "reason": "e2m 11AA +0 ESPG (1/256 deg). The only code reference is move.w at 0x26ee4; 0x360ec is parameter ID table data."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080db66",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_position_pulse_0_phase_lag",
+    "final_type": "word",
+    "reason": "e2m 11AA +2 ESPS00PG. The only reference is move.w at 0x26ebc."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00808476",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_position_normal_phase_lag_intercept",
+    "final_type": "word",
+    "reason": "e2m 11A9 +0 ESPGIN. The only code read is 0x26ece. Not a fuel command."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00808478",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_position_normal_phase_lag_slope",
+    "final_type": "word",
+    "reason": "e2m 11A9 +2 ESPGSL. The only reference is mulu.w at 0x26ec4."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080847e",
+    "verdict": "CONFIRMED",
+    "final_name": "cam_wheel_top_dead_center_adjustment",
+    "final_type": "word",
+    "reason": "e2m 11A9 +8 ESCWAJ 'ONE TIME TDC ADJUSTMENT FOR MISALIGNED CAM WHEELS'. The only reference is movea.l at 0x26e8e, read twice through (a1)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccf2",
+    "verdict": "CONFIRMED",
+    "final_name": "average_engine_speed",
+    "final_type": "word",
+    "reason": "e2m 100C +0 ESAVES. cm550_calculateEngineSpeed assigns it 7 times; the sync pulse detection and 0x26e8e read it. Same record and name as CM848 0x40b78e. Unique in CM550."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080db68",
+    "verdict": "AMENDED",
+    "final_name": "j1708_memory_write_records",
+    "final_type": "j1708_memory_write_record_t[15]",
+    "reason": "Layout proven by the parser 0x1ec3c (stores +0 dword, +4 pointer, +8 byte, +9 MEMORY_REGION_TYPE, step 10) and the consumer 0x2cf7e. The only ROM references are the base (0x1ec7c/0x2cf92/0x2cfee). Nothing inside 0x80db68-0x80dbfd is referenced, and 0x80dbfe is a separate byte, so no row is swallowed. The struct does not exist yet. Add these structure_definitions rows in the same change: j1708_memory_write_record_t,,address,dword,4 / data_pointer,byte*,4 / length,byte,1 / region_type,MEMORY_REGION_TYPE,1 (10 bytes, sequential, no padding). If those rows are not added, use byte[150]. The comment is rewritten because it held that instruction.",
+    "final_comment": "The parsed records of a J1708 memory write request: cm550_diagnosticMemoryWriteHandler fills one per item and cm550_applyJ1708MemoryWriteRecords applies them. Each 10-byte j1708_memory_write_record_t holds four fields: +0 the address (dword; from cm550_lookupParameterIdAddress when the item uses a 2-byte parameter ID), +4 the data pointer into the J1708 receive ring (byte *), +8 the length (byte) and +9 the region type (MEMORY_REGION_TYPE). The array runs 15 records up to 0x80dbfe, the address size byte (2 or 4) that the parser sets. The parser has no record limit other than the message length."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc2e",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_throttle_override_flag",
+    "final_type": "word",
+    "reason": "e2m 1265 +2 PTTHOV. clr.w at 0x2ddbc; the PTO / user fueling selector 0x2dcb0 writes 0/1. Same record and name as CM848 0x40af58."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc2c",
+    "verdict": "CONFIRMED",
+    "final_name": "power_take_off_throttle_override_engine_speed_limit",
+    "final_type": "word",
+    "reason": "e2m 1265 +0 PTTHDQRP. Word reads in selectEngineSpeedLimit (0x1d6c2/0x1d6cc); written at 0x2ddc2 and by 0x2dcb0. Dump 21200 = 0x803f40. Same name as CM848 0x40af56, and it drops 'pto'."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080da1c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_nominal_friction_percent_torque_times_256",
+    "final_type": "word",
+    "reason": "e2m 1102 +6 JCINFCTQ. Writer 0xf99c (movea.l a2 at 0xf9a0, word ops); reader 0x330e0 in the EEC3 builder. Dump 1391 = 88 x 25600 / 1619. Same name as CM848 0x40ad90."
+   }
+  ]
+ }
+}

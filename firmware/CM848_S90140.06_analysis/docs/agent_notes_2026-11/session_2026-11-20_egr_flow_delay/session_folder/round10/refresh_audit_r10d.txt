@@ -1,0 +1,14 @@
+global_variables.csv 0x0040b55c: ...0x0040b55c,governor_pressure_rationality_monitor_state,[word -> DIAGNOSTIC_MONITOR_STATE]
+global_variables.csv 0x0040b55c: ...limp_home_flags_3 0x01) when it is 3 (was j1939_fault_state)[ ->  Typed DIAGNOSTIC_MONITOR_STATE (round 10): 1 running / 2 passed / 3 failed / 4 ]
+global_variables.csv 0x0040b560: ...0x0040b560,governor_pressure_zero_check_state,[word -> DIAGNOSTIC_MONITOR_STATE]
+global_variables.csv 0x0040b560: ...e) | earlier note: cold-start protection channel A state 0-4[ ->  Typed DIAGNOSTIC_MONITOR_STATE (round 10): 1 running / 2 passed / 3 failed / 4 ]
+global_variables.csv 0x0040b566: ...0x0040b566,governor_pressure_mid_range_check_state,[word -> DIAGNOSTIC_MONITOR_STATE]
+global_variables.csv 0x0040b566: ...e) | earlier note: cold-start protection channel B state 0-4[ ->  Typed DIAGNOSTIC_MONITOR_STATE (round 10): 1 running / 2 passed / 3 failed / 4 ]
+global_variables.csv 0x0040b56e: ...0x0040b56e,output_speed_sensor_check_state,[word -> DIAGNOSTIC_MONITOR_STATE]
+global_variables.csv 0x0040b56e: ...ult. Not a fuel index. 0 in the dump. (was fuel_state_index)[ ->  Typed DIAGNOSTIC_MONITOR_STATE (round 10): 1 running / 2 passed / 3 failed / 4 ]
+global_variables.csv 0x0040b570: ...0x0040b570,park_neutral_switch_monitor_state,[word -> DIAGNOSTIC_MONITOR_STATE]
+global_variables.csv 0x0040b570: ...he base of 8C5B, so those two records are not this variable)[ ->  Typed DIAGNOSTIC_MONITOR_STATE (round 10): 1 running / 2 passed / 3 failed / 4 ]
+global_variables.csv 0x0040b57f: ...0x0040b57f,converter_clutch_rationality_monitor_state,[word -> DIAGNOSTIC_MONITOR_STATE]
+global_variables.csv 0x0040b57f: ...ction output phase. (was protection_output_controller_phase)[ ->  Typed DIAGNOSTIC_MONITOR_STATE (round 10): 1 running / 2 passed / 3 failed / 4 ]
+global_variables.csv: rows only in HEAD (renamed): 23; only in the tree: 23
+function_renames.csv: rows only in HEAD (renamed): 0; only in the tree: 0

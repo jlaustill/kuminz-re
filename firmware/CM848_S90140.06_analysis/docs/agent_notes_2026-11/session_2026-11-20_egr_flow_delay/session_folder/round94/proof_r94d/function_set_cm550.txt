@@ -1,0 +1,91 @@
+removed 0: 
+added 0: 
+changed 8
+  0x00014720 cm550_assignFaultFreezeFrameEntry: 4 lines
+      -    if (code_index == *(word *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar3))
+      -    {
+      +    if (code_index ==
+      +        *(word *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar3)) {
+  0x0001fd6c cm550_clearExpiredJ1922ControlOccurrences: 3 lines
+      -     (uVar1 = j1922_clear_occurrence_time + j1922_control_last_time_cal, uVar1 < key_on_hour_meter)) {
+      +     (uVar1 = j1922_clear_occurrence_time + j1922_control_last_time_cal, uVar1 < key_on_hour_meter))
+      +  {
+  0x00021fac startJ1939ControlSession: 3 lines
+      -  j1939_active_retarder_control_session_cal.control_device = engine_retarder_control_device_indicator;
+      +  j1939_active_retarder_control_session_cal.control_device =
+      +       engine_retarder_control_device_indicator;
+  0x00022070 trackJ1939ControlSessions: 3 lines
+      -            j1939_active_retarder_control_session_cal.override_control_modes[4] = retarder_control_mode;
+      +            j1939_active_retarder_control_session_cal.override_control_modes[4] =
+      +                 retarder_control_mode;
+  0x0002fd90 cm550_releaseFaultFreezeFrameEntry: 7 lines
+      -    if (code_index == *(word *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar2))
+      -    {
+      +    if (code_index ==
+      +        *(word *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar2)) {
+      -      *(undefined2 *)((int)&fault_freeze_frame_entries_cal[0x14].fault_code_index + (int)sVar2) = 0x7d;
+      +      *(undefined2 *)((int)&fault_freeze_frame_entries_cal[0x14].fault_code_index + (int)sVar2) =
+      +           0x7d;
+  0x0002fe38 cm550_captureFaultFreezeFrame: 28 lines
+      -    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].fault_code_index + (int)sVar1) = code_index;
+      -    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].engine_load_at_current_speed + (int)sVar1) =
+      -         engine_load_at_current_speed_percent;
+      +    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].fault_code_index + (int)sVar1) = code_index
+      +    ;
+      +    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].engine_load_at_current_speed + (int)sVar1)
+      +         = engine_load_at_current_speed_percent;
+      -    *(FUELING_STATE *)((int)&fault_freeze_frame_entries_cal[0x14].final_fueling_state + (int)sVar1) =
+      -         final_fueling_state;
+      +    *(FUELING_STATE *)((int)&fault_freeze_frame_entries_cal[0x14].final_fueling_state + (int)sVar1)
+      +         = final_fueling_state;
+      -    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].final_fueling + (int)sVar1) = final_fueling;
+      +    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].final_fueling + (int)sVar1) = final_fueling
+      +    ;
+      -    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].cruise_control_switch_multiplexer + (int)sVar1)
+      -         = cruise_control_switch_multiplexer_sensor_state.filtered_value;
+      +    *(word *)((int)&fault_freeze_frame_entries_cal[0x14].cruise_control_switch_multiplexer +
+      +             (int)sVar1) = cruise_control_switch_multiplexer_sensor_state.filtered_value;
+      -  if (code_index != *(word *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar1)) {
+      +  if (code_index != *(word *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar1)
+      +     ) {
+      -    *(word *)((int)&fault_freeze_frame_entries_cal[0].vp44_pump_status + (int)sVar1) = vp44_pump_status;
+      +    *(word *)((int)&fault_freeze_frame_entries_cal[0].vp44_pump_status + (int)sVar1) =
+      +         vp44_pump_status;
+  0x000315be cm550_FUN_000315be: 24 lines
+      -    engine_run_counter_snapshot_1_cal = duty_cycle_monitor_load_factor + engine_run_counter_snapshot_1_cal;
+      +    engine_run_counter_snapshot_1_cal =
+      +         duty_cycle_monitor_load_factor + engine_run_counter_snapshot_1_cal;
+      -        *(undefined2 *)(&histogram_stored_ticks_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      -        *(undefined2 *)(&engine_runtime_total_counter_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      +        *(undefined2 *)(&histogram_stored_ticks_cal + (short)(trending_write_index_cal * 7) * 2) = 0
+      +        ;
+      +        *(undefined2 *)
+      +         (&engine_runtime_total_counter_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      -        *(undefined2 *)(&runtime_histogram_array_1_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      +        *(undefined2 *)(&runtime_histogram_array_1_cal + (short)(trending_write_index_cal * 7) * 2)
+      +             = 0;
+      -          *(undefined2 *)(&histogram_stored_ticks_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      +          *(undefined2 *)(&histogram_stored_ticks_cal + (short)(trending_write_index_cal * 7) * 2) =
+      +               0;
+      -        *(undefined2 *)(&engine_runtime_total_counter_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      +        *(undefined2 *)
+      +         (&engine_runtime_total_counter_cal + (short)(trending_write_index_cal * 7) * 2) = 0;
+      -        if ((uint)trending_sample_phase_counter_cal + (uint)trending_presample_interval_counter_cal == 0) {
+      +        if ((uint)trending_sample_phase_counter_cal + (uint)trending_presample_interval_counter_cal
+      +            == 0) {
+      -        *(word *)((short)(trending_write_index_cal * 7) * 2 + 0x804a22) = engine_run_counter_snapshot_2_cal;
+      +        *(word *)((short)(trending_write_index_cal * 7) * 2 + 0x804a22) =
+      +             engine_run_counter_snapshot_2_cal;
+  0x0003258a cm550_j1939HandlePgn65229Dm4FreezeFrame: 12 lines
+      -        if (*(short *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar9) != 0x7d) {
+      +        if (*(short *)((int)&fault_freeze_frame_entries_cal[0].fault_code_index + (int)sVar9) !=
+      +            0x7d) {
+      -                                      ((int)&fault_freeze_frame_entries_cal[0].intake_manifold_pressure
+      -                                      + (int)(short)(sVar9 + sVar4)) >> 7) * 0x1afa) / 1000;
+      +                                      ((int)&fault_freeze_frame_entries_cal[0].
+      +                                             intake_manifold_pressure + (int)(short)(sVar9 + sVar4))
+      +                         >> 7) * 0x1afa) / 1000;
+      -                                       ((int)&fault_freeze_frame_entries_cal[0].coolant_temperature +
+      -                                       (int)(short)(sVar9 + sVar4)) >> 7) * 5 + -0xa0) / 9;
+      +                                       ((int)&fault_freeze_frame_entries_cal[0].coolant_temperature
+      +                                       + (int)(short)(sVar9 + sVar4)) >> 7) * 5 + -0xa0) / 9;

@@ -1,0 +1,25 @@
+docs: round 85 fix-up - the stage A prefix split, the class Z leads, the J1708 dispatcher's old name, CLAUDE.md's relocation map section
+
+An advisor review of the round 85 closing found these.
+- Task 046 and the PR body said stage A's 23 names split 11 mc68k_ / 12 cm550_. They split 14 mc68k_ / 9 cm550_; 12 is
+  the number of proposals kept off mc68k_ (8 renamed with cm550_, 4 left as they were).
+- Before this commit, a byte scan checked the watchdog-only split against the ROM, since the .cpp drops blocks:
+  rom_hardware_operands.py looks for 0x00FFxxxx operands other than the two watchdog registers. The 12 functions are
+  clean. The two hits are an andi.l immediate (0x3664) and flash parameter block data past the boot block's last rts.
+  mc68k_flashEraseBlock's 0xFFD000 and mc68k_delayTimeBaseTicksWithWatchdogService's 0xFFF404 (CTM4_BIUTBR) show as
+  expected.
+- Task 046 leads:
+  - the survey's class Z: 0xFBE4, a fragment of 0xFB26; 0x1B4C2, an interrupt epilogue fragment; and 10 call targets
+    with no function;
+  - the round 86 stack argument fix. The three research reports are archived in session_folder/round85/.
+- Comments that still named the renamed J1708 dispatcher:
+  - four '#' section headers in CM550's enums.csv (ApplyEnums.java skips '#' lines, so the build output cannot change);
+  - a note in work/docs/clip-protocol-spec.md: 0x12484 is the J90280.05 address of
+    mc68k_dispatchJ1708ReceivedMessages (0x15F8E).
+- CLAUDE.md's "Relocation Map" section: a factual correction from this round's audit. It said each firmware directory
+  has a relocation_map.csv. Only CM550 has one, and it is the historical J90280.05 -> J90350.00 map (that firmware's
+  README and docs/comparison_report.md say so). The wrong line misled this round's audit brief into treating it as
+  CM550 -> CM848. The section now says what the map is, and that firmware/cross_firmware_matches.csv lists scored
+  CM550 -> CM848 candidates (all 189 rows are 'review').
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

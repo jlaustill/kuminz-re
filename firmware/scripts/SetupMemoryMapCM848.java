@@ -22,6 +22,12 @@ public class SetupMemoryMapCM848 extends GhidraScript {
     // Bank 2 (extended flash) contains utility functions called from main ROM
     private static final long FLASH2_BASE  = 0x500000L;   // 245 KB extended flash (utility functions)
     private static final long RAM_BASE     = 0x3FA000L;   // 280 KB RAM
+    private static final long RAM_END      = 0x440000L;   // the RAM block ends here (exclusive)
+    // cm848_ram.bin is 0x80 bytes short: the dump tool skipped the failed chunk at 0x40c200 without padding, so
+    // every byte from 0x40c280 on sits 0x80 low in the file (the collector end pointer 0x40c28a and the table
+    // address 0x3fddc4 read at file 0x40c200; PR #53 wave 14). The image puts them back and leaves the chunk 0.
+    private static final long RAM_DUMP_GAP = 0x40C200L;   // PR #53 round 88
+    private static final int RAM_DUMP_GAP_LENGTH = 0x80;
     private static final long EEPROM_BASE  = 0x1000000L;  // 8 KB EEPROM
     // ROM-to-RAM code mirror low gap: copyCalibrationToRam copies ROM 0x3C30+ to
     // RAM 0x3F9800, but the RAM dump starts at 0x3FA000, leaving 0x3F9800-0x3F9FFF
@@ -78,7 +84,11 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         String ramFile = firmwareDir + "/cm848_ram.bin";
         if (new File(ramFile).exists()) {
             println("[2/3] Adding RAM region...");
-            addMemoryRegion(memory, "RAM", RAM_BASE, ramFile, true, true, true);
+            byte[] ram = ScriptUtils.imageFromDumpWithGaps(readFile(ramFile), 0, (int) (RAM_END - RAM_BASE),
+                    new int[][]{{(int) (RAM_DUMP_GAP - RAM_BASE), RAM_DUMP_GAP_LENGTH}}, (byte) 0);
+            println(String.format("  Dump gap 0x%06x-0x%06x left 0 (not in cm848_ram.bin)", RAM_DUMP_GAP,
+                    RAM_DUMP_GAP + RAM_DUMP_GAP_LENGTH - 1));
+            addMemoryRegionFromBytes(memory, "RAM", RAM_BASE, ram, true, true, true);
         } else {
             println("[2/3] SKIPPED: RAM file not found: " + ramFile);
         }
@@ -160,6 +170,39 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
         println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
         println("    Perms:   " + (read ? "r" : "-") + (write ? "w" : "-") + (execute ? "x" : "-"));
+    }
+
+    /** Creates an initialized block holding data (a memory image already built from its dump). */
+    private void addMemoryRegionFromBytes(Memory memory, String name, long baseAddress, byte[] data,
+                                          boolean read, boolean write, boolean execute) throws Exception {
+        Address addr = toAddr(baseAddress);
+        MemoryBlock existingBlock = memory.getBlock(addr);
+        if (existingBlock != null) {
+            println("  Removing existing block " + existingBlock.getName() + "...");
+            memory.removeBlock(existingBlock, monitor);
+        }
+        MemoryBlock block = memory.createInitializedBlock(name, addr, data.length, (byte) 0, monitor, false);
+        block.setRead(read);
+        block.setWrite(write);
+        block.setExecute(execute);
+        memory.setBytes(addr, data);
+        println("  Created " + name + " block:");
+        println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
+        println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
+    }
+
+    private static byte[] readFile(String path) throws Exception {
+        File file = new File(path);
+        byte[] data = new byte[(int) file.length()];
+        try (FileInputStream fis = new FileInputStream(file)) {
+            int done = 0;
+            while (done < data.length) {
+                int n = fis.read(data, done, data.length - done);
+                if (n < 0) break;
+                done += n;
+            }
+        }
+        return data;
     }
 
     /** Creates an initialized, executable block whose bytes are copied from a ROM source range. */

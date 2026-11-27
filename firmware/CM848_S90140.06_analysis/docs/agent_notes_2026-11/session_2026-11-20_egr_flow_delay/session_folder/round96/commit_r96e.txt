@@ -1,0 +1,37 @@
+cm848: round 96 stage E - the boot reflash kernel's CMF tables in the time-shared RAM 0x3fdba4-0x3fdc38 (workflow batch Q5)
+
+Workflow wf_e321e981-9fd batch Q5 (an investigator, an independent describer and a judge; 48 globals and 3 plates:
+45 + 2 CONFIRMED, 3 + 1 AMENDED, nothing refuted). The kernel writes its CMF (flash) erase / program parameters into
+this RAM during boot and reflash (mpc555_initHardwareConfig fills them; mpc555_cmfEraseBlocks and the program path
+0x4320-0x46dc read them), and the application then loads the EEPROM image over the same RAM. Most rows had QADC names
+(qadc_control_word_cal, qadc_channel_config_mask_c ... _i, qadc_queue_timing_config ..., qadc_prescale_count_b ...,
+qadc_sample_rate_cal) that described neither user.
+- The kernel's rows are named by their CMF role: cmf_erase_pulse_total, cmf_erase_control_base / _bits, the erase and
+  program step CMFTST values, cmf_program_control_step_bits (dword[8]), cmf_program_step_pulse_limits (word[8]),
+  cmf_program_step_count, cmf_program_pulse_control_value, and the flash2 (external flash) poll and retry limits. 14
+  rows that were entries of the two arrays go. They keep no _cal: the kernel's value is not the EEPROM data (the
+  audit's boot-named exceptions); apply_r96.py gained a cal_exempt override for them.
+- The rows the application reads are named for that use and keep _cal: the switch input hardware lines 11 / 13 / 19 /
+  20, logical_output_line_active_low_bits_cal, logical_output_line_cal and lines 17 / 18. Two dwords become words so
+  that 0x3fdbb4 and 0x3fdc00 get their own rows (the application reads each as a word).
+- firmware/CLAUDE.md's TIME-SHARED caution listed 0x3fdbb2 as an application read and called the readers protection
+  and J1939 builders; it now gives the read set the judge's base-register scan found.
+- apply_r96.py: a dropped element with an empty proposed name had entered the 'renamed proposal' table as '' ->
+  its current name, and the comment check then replaced every word boundary in the batch's comments with that name.
+  A second run caught it before any commit (the CSV was restored and the apply re-run once); empty names are skipped
+  now.
+
+Proof: CM848 built twice, deterministic, in a copy of the firmware folder (base = HEAD 0d4cafee). The
+function set is unchanged (1969), statement counts are equal and no old name is left in the code. The token changes
+outside the map are the time-share's typing trade-off, which the judge chose for the application: its word reads of
+0x3fdbb4 / 0x3fdbd4 / 0x3fdc00 lose their pieces (logical_output_17_line_cal._0_2_ -> the row's own name), while the
+kernel's dword reads of the narrowed rows render with a leading underscore (_logical_output_17_line_cal x5,
+_cmf_erase_test_register_step_values x3, _switch_input_20_hardware_line_cal x1) and its three indexed step-table
+reads become pointer arithmetic (*(dword *)(&cmf_erase_test_register_step_values + uVar6 * 2), was
+(&qadc_control_word_cal)[uVar6]). The firmware/CLAUDE.md rule gives a dual-use address its application-side name;
+the application runs all the time, the kernel only during a reflash. Five erase step rows lose their underscores
+(dwords now). Pieces 1378 -> 1370. The _cal audit's MISSING count 205 -> 194 (the kernel rows the batch renamed are
+boot-named exceptions now, not unexplained); 0 hard / 0 soft. Headers regenerated (g++ 0 errors); the five Python
+suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

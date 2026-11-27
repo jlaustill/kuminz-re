@@ -1,0 +1,39 @@
+cm848: round 49 stage A - 33 unnamed data the code reads, named from the e2m records the parameter ID table resolves
+
+unnamed_table_reads.py lists the unnamed data the .cpp reads (DAT_ / WORD_ / BYTE_ tokens: 411 addresses). 34 of
+them resolve through the dumped parameter ID table to a default-e2m scalar record. Each is graded by its block's
+consistency, round 47's guard against layout drift.
+- 33 are named here, in the style of their block's named rows. Types follow the access: lhz / sth word, lha with a
+  signed record i16, lwz dword, lbz / stb byte.
+  - The J1939 engine-configuration torque curve: low / high power derated speed and fueling at point 2, and the point
+    5 intersection speed (1104 +12..+1A).
+  - The duty cycle monitor's high cutoff speed and operating region (111C / 111F).
+  - The compressor inlet density source and temperature state, and the coolant temperature state (18E8 / 1A0C / 19C2).
+  - The temperature headroom cap's exhaust temperature limit (1965 +4).
+  - The injector driver's continuous recharge interval (8041 +1C).
+  - Four intake air heater calibrations: the fuel threshold, the postheat coolant limit (i16), and the crank off / on
+    speeds (8A2B).
+  - The altitude derate's charge pressure fault enable bitmap (10A0 +E, read as one byte).
+  - Engine protection: the fueling index ramp rate and the maximum shutdowns (10B4 / 10B9).
+  - J1939: the engine / retarder NAMEs and their defaults, the command security flags, the DM4 manufacturer
+    parameters, and fault 111's data (11D7 / 10E3 / 1228 / 1253).
+  - The MIL fault indicator bitmap (11FA), the fault code assignment table (0024), the Chrysler SCI data plate (1275),
+    and the injector bank / injection / recharge injector by cylinder (8042-8044).
+  - Array-sized records that the code reaches only through an addi pointer get a row at their base, with the e2m size
+    in the comment. Each base takes the element width the code indexes it with: the four J1939 NAMEs (copied as
+    halfwords) and the MIL bitmap (halfwords by fault / 16) are word, and the command security flags (one bit per
+    command, indexed bytewise) are byte. The first build used other widths and rendered pointer arithmetic.
+- 0x40af72 fuel_demand_mode_active_flag -> charge_saturation_temperature_source (1982 +A).
+  - It is 0 while charge pressure, ambient temperature and barometric pressure all come from their primary sources,
+    and 1 otherwise.
+  - The new exhaust_saturation_temperature_source (+C) copies it. The old name read the three source checks as fuel
+    demand modes.
+- 0x4086ca is skipped: the table's 8A14 +30 reaches past 8A2A's base (drift).
+
+Proof (prove_r49a.sh: prove_caches.py with the scalar casts and two char literals folded in both copies):
+- 1967 of 1968 functions match. The other differs only in the order of its local declarations.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

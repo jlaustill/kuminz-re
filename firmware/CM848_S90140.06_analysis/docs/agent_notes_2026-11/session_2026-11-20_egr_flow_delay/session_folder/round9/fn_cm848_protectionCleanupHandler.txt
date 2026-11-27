@@ -1,0 +1,64 @@
+=== cm848_protectionCleanupHandler (lines 32788-32856, 63 non-blank)
+32788: // Function: cm848_protectionCleanupHandler @ 0x0002fe48
+32789: //
+32791: void cm848_protectionCleanupHandler(void)
+32793: {
+32794:   word wVar1;
+32795:   word wVar2;
+32797:   if ((short)transmission_temperature_in_use <= (short)lockup_minimum_transmission_temperature) {
+32798:     return;
+32799:   }
+32800:   if ((transmission_current_gear == 3) &&
+32801:      ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 8) != 0)) {
+32802:     if (converter_clutch_apply_delay_countdown != 0) {
+32803:       return;
+32804:     }
+32805:     if (transmission_lockup_timers.lockup_delay_2_3_timer != 0) {
+32806:       return;
+32807:     }
+32808:     if (transmission_lockup_timers.lockup_delay_3_4_timer != 0) {
+32809:       return;
+32810:     }
+32811:     wVar1 = lookupTableInterpolation
+32812:                       (&DAT_003fb0fe,transmission_output_speed_in_use,
+32813:                        protection_fuel_threshold_l3_rpm_axis_cal,
+32814:                        protection_fuel_threshold_l3_rpm_output_cal,0);
+32815:     wVar2 = lookupTableInterpolation
+32816:                       (&protection_fuel_demand_exit_derate3_interp_state,
+32817:                        transmission_output_speed_in_use,protection_fuel_threshold_l3_axis_cal,
+32818:                        protection_fuel_threshold_l3_values_cal,0);
+32819:     if (((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
+32820:         (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) == 0 ||
+32821:          (wVar2 <= fuel_demand_control_t_0040a57a.calculated)))) ||
+32822:        ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0))
+32823:     goto LAB_00030024;
+32824:   }
+32825:   else {
+32826:     if (transmission_current_gear != 4) {
+32827:       return;
+32828:     }
+32829:     if (transmission_lockup_timers.lockup_delay_3_4_timer != 0) {
+32830:       return;
+32831:     }
+32832:     if (converter_clutch_apply_delay_countdown != 0) {
+32833:       return;
+32834:     }
+32835:     wVar1 = lookupTableInterpolation
+32836:                       (&DAT_003fb100,transmission_output_speed_in_use,
+32837:                        protection_fuel_threshold_l4_rpm_axis_cal,
+32838:                        protection_fuel_threshold_l4_rpm_output_cal,0);
+32839:     wVar2 = lookupTableInterpolation
+32840:                       (&protection_fuel_demand_exit_derate4_interp_state,
+32841:                        transmission_output_speed_in_use,protection_fuel_threshold_l4_axis_cal,
+32842:                        protection_fuel_threshold_l4_values_cal,0);
+32843:     if ((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
+32844:        (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) == 0 ||
+32845:         (wVar2 <= fuel_demand_control_t_0040a57a.calculated)))) goto LAB_00030024;
+32846:   }
+32847:   cm848_setLogicalOutputRequest(0x12,0);
+32848: LAB_00030024:
+32849:   protection_condition_flags_t_0040b0e8.condition_flags_1 =
+32850:        protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+32851:   return;
+32852: }
+32856: //

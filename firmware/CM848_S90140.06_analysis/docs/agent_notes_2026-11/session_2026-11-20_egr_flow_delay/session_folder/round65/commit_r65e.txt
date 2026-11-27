@@ -1,0 +1,14 @@
+cm848: round 65 - two doubled edits repaired, task 046 records the CLAUDE.md fix
+
+fix_r65c.py's edit() skipped an applied edit only when the old text was gone. Its second, idempotence-check run
+therefore re-applied every edit whose new text contains the old text:
+- work/tasks/046 had the round 65 follow-up bullet twice (committed in 79e9e95f). The copy is gone, and the bullet
+  is labelled 79e9e95f.
+- docs/tpu_mios_channel_map.md line 25 had a nested "(were ... (were ...))". It has one "(were ...)" again.
+Also:
+- Task 046 now records the firmware/CLAUDE.md fix that ab2dce05 says it records: lines 217 / 230 on the current
+  names. That commit's task 046 update had failed on an anchor.
+- Round 64's "Corrections (this follow-up)" header is labelled f7e7b6c1.
+The other scripts of rounds 63-65 skip an edit when its new text is already present, so a second run is a no-op.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

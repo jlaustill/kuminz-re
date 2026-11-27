@@ -1,0 +1,31 @@
+T1 skeptic - independent evidence (capstone m68k decode of J90350.00.rom.bin; disasm_func.py for CM848)
+
+HANDLERS (CM550 vs CM848): step-for-step identical. filter slot / timeout constant / data byte & bit field / receiver offset from 12F7+3 base:
+ CM1    0x21a5c  vs 0x50b734: slot0 500 data[0] -> +0x0d
+ EBC1   0x21a8c  vs 0x50b77c: slots1-5 50: d3>>6&3 +0x14, d3>>4&3 +2, d3>>2&3 +0x16, d3&3 +1, d4 +0x0a
+ EEC2   0x21b88  vs 0x50b8a4: slots6-9 25: d0&3 +0x0b, d1 +5, d3 +0x13, d4 +0x11
+ SHUTDN 0x21c3c  vs 0x50b98c: slot10 500 d2&3 +0
+ PTO    0x21c74  vs 0x50b9d8: slots11-14 50: d5>>2&3 +0x12, d5&3 +0x0e, d6>>4&3 +0x0f, d6&3 +0x10
+ CCVS1  0x21d44  vs 0x50bacc: slots15-22 50: d3>>6 +4, d3>>4 +3, d3>>2 +6, d4>>4 +7, d4&3 +8, d7&3 +0x0c, d7>>2 +9, d7>>4 +0x15
+ 0x21a5c / 0x21c3c: no // Function: block, no row, not in deleted_functions.csv, bodies not decompiled anywhere.
+
+REGISTRAR 0x21272 vs 0x538eb0: same steps; capacity 16 (cmpi.b #$10) vs 17 (cmpwi 17); each = its table size
+ (0x800ab0+96 = 0x800b10; 0x3fd414+102 = 0x3fd47a). Precedent: clearWorkingRam / copyCalibrationFromRomToRam twinned with
+ different limits. References to 0x21272: 7 jsr + 1 movea (0x21ef6 calls through a2 6x) = 13 calls; RAM dump count 13.
+ Dispatcher 0x212b2: SA = record+3 -> 0x80d9dc; skip list 0x80d9e0-3 (0xFE end); scan 6-byte entries to count; jsr +2 with record.
+
+REGISTRATION 0x21ef6 vs 0x50bdcc: same 6 keys/handlers/order; CM848 adds li 1000 / sth 0x40aaa4 -> counterpart.
+TICK 0x21edc vs 0x50bca0: only CM848's final loop (25 words inclusive in both) -> counterpart. One jsr site 0x1b4f0
+ (0x1b4d8 and 0x1b4ea are two Ghidra entries over the same code).
+
+TIMEOUTS 0x804234-0x804265: absolute refs = handlers, tick (0x21edc..0x21ef2), 0x20974 indexed base, direct tst.w readers
+ 0x203c8 (slot5) 0x20460 (0) 0x20518 (6) 0x207f0 (1) 0x20ce8 (7) 0x20ffe (9). Hits at 0x13116 / 0x20616 / 0x2068e are
+ coincidental byte pairs. e2m 12F6 = 24 words (+0..+2E), slot 24 = 11C0 J39PDBLK; 11C1 +0/+2 = 0x804266/0x804268 rows agree.
+DESCRIPTOR 0x20108: 17 x 10 bytes, ptr/slot match CM848 0x53a278 entry for entry; only ref 0x2089a (movea.l #$20108,a4);
+ reads +0 / +4 / +6 / +8 (capstone hides the *2 scale when a displacement is present: ext 0x0a06).
+RECEIVERS: every access byte-wide at offset 0 (absolute or base reg with (aN) only); names = CM848's 22 + wet tank.
+SLOT 9: both e2m files: JCWTPRMU PSI_A scale 0.7252683 (5 kPa), max 250; CM848 no reader (only stb 0x50b984, no base reg).
+ CM550 consumer 0x20fac: x 9282/100 (= 5 kPa in 1/128 psi counts) into 0x80a760 = analog_sensor_raw_override_values[0],
+ which is A/D channel 0 = intake_manifold_temperature_sensor (priority byte 0x80a6fc e2m '...RAW INTAKE MANIFOLD TEMPERATURE').
+0x800b00: no absolute ref; inside entry 13 handler field.
+DUMPS: count 13, entries 7-12 = six handlers; filters 0xFF (EEPROM+RAM); SA 0xF9; skip list FE FE FE FE; receivers 0.

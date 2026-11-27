@@ -1,0 +1,33 @@
+cm848: round 21 stage B - the engine protection fault log, the current-channel pointers, stage A's short fields (types)
+
+- engine_protection_fault_log_entry_t (8 bytes):
+  - occurrence_time (key_on_hour_meter), extreme_value (short), duration;
+  - fault_snapshot_capture opens an entry at log + index * 8, and fault_event_timing_snapshot closes it (duration =
+    hour meter - occurrence time) and advances the index % 5;
+  - the e2m names the same three fields in 1152 +2E / +32 / +34.
+- The two EEPROM fault logs (e2m 10DA +28 / +50, 40 bytes = 5 entries) get rows:
+  fuel_temperature_engine_protection_fueling_fault_log_cal and _engine_speed_fault_log_cal, both
+  engine_protection_fault_log_entry_t[5].
+- engine_protection_channel_state_t: the two fault log pointers point at those logs, and +2E / +36 (both helpers copy
+  the current entry there) become fueling_fault_log_entry / engine_speed_fault_log_entry.
+- The current-channel pointers of governor_fault_channelProcess_mainLoop and the two log helpers:
+  fault_channel_config_ptr and fault_channel_state_ptr (were dword) and 0x3fbd4a (an unnamed pointer) are typed as
+  the three record pointers, so those functions read fields (start_monitor_engine_speed / _time,
+  errors_allowed_timer, the history's elapsed times and log flags and indexes) instead of raw offsets.
+- Stage A defect, fixed here: five signed fields were written as i16, which ApplyStructures.java does not know. Its
+  getDataType falls back to byte, so they became byte[2] arrays. They are configuration +0E / +20 / +22, history
+  +08, and the new entry's +4. They rendered as array decays (`(word *)...engine_speed_lower_limit_threshold`) and
+  became the base of computed offsets (`... engine_speed_lower_limit_threshold + iVar6 + -0xe`). They are short now,
+  the struct CSV's own name (30 rows use it). struct_type_fallbacks.py finds no other CM848 field with an unknown
+  type.
+
+Proof (prove_r21b.py, against stage A's .cpp):
+- 14 layout sites in the loop and the two log helpers render the expected fields.
+- No array-decay form is left on the five short fields.
+- The changed functions are the predicted 4, plus protection_threshold_check and threshold_adjustment_ramp, which now
+  read the short fields directly or through an honest `(int)&configuration->configuration_flags + iVar` base, plus
+  cm848_checkPciMessageTimeouts and mpc555_areBootModeStrapPinsHigh (local declaration order only).
+- The counts do not grow: pieces 500 -> 500, extraout_ 13, unaff_ 275, in_r 86.
+Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

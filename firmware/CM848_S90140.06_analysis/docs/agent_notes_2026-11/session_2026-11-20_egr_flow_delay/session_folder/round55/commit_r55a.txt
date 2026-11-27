@@ -1,0 +1,43 @@
+cm848: round 55 stage A - the fault manager core named from its code (15 functions)
+
+The fault manager at 0x533aec-0x535344, read function by function. Fourteen unprefixed legacy names (none in CM550),
+plus cm848_initFaultManagement, renamed to "initialize" now that it is touched.
+
+Two old names were swapped in meaning. cm848_clearDiagnosticState runs the second alone, or both on a full clear
+(request bit 2):
+- diag_resetSingleFault -> cm848_clearAllFaultRecords: it clears all 170 status records, the readiness and complete
+  bits, the recent DTC list and the freeze frame queue.
+- diag_resetAllFaults -> cm848_clearPreviouslyActiveFaults: it clears only the previously active faults, the J1939
+  DM3 meaning.
+
+The rest:
+- fault_clearByIndex -> cm848_clearFaultStatusRecord;
+- fault_clearFromRing -> cm848_removeFaultFromRecentDtcList;
+- fault_updateActiveCounters -> cm848_removeFaultFreezeFrameEntry;
+- fault_ring_buffer_auto_clear_emission -> cm848_autoClearFaultsAfterWarmUpCycles (a stored, inactive fault is erased
+  at fault_auto_clear_warm_up_cycle_count_cal warm-up cycles);
+- diag_faultEntry_conditions_validate -> cm848_areConditionsSimilarToFreezeFrame (engine speed within 375 rpm, load,
+  and the coolant warm state against the freeze frame);
+- diag_activeFault_remove -> cm848_removeHealedFault (the per-fault step of cm848_removeHealedFaults);
+- diag_faultState_severity_increment -> cm848_countFaultOccurrence (the 3-bit count in flags bits 1-3);
+- diag_faultState_healCycleCount_increment -> cm848_incrementFaultHealCycleCount;
+- fault_enqueueRecord -> cm848_queueFaultFreezeFrameEntry;
+- fault_captureDataSnapshot -> cm848_recordFaultDetection: the first detection marks the fault pending; a later one
+  stores the freeze frame and latches it;
+- diag_mainStateHandler -> cm848_registerFaultsOfCompletedMonitors;
+- diag_stateTransition -> cm848_markFaultsOfCompletedMonitorsHandled;
+- cm848_initFaultManagement -> cm848_initializeFaultManagement.
+- Each plate states the masks and lists the function reads (fault_status_record_t's bits from round 42).
+- diagnosticMainStateProcessor is shared with CM550 and keeps its name.
+- refresh_struct_comments_r55.py updated the four old names in fault_status_record_t's field comments, which
+  refresh_references.py does not cover.
+
+Proof (prove_r55.sh: the 15 function renames applied to the old .cpp, the casts and two char literals folded,
+then prove_caches.py):
+- 0 of 1968 functions differ.
+- Each old name is left once in the .cpp, in its own plate's (was ...) note.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

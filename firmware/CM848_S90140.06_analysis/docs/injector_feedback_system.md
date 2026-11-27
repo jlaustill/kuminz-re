@@ -386,7 +386,7 @@ Intermediate calculation values in RAM:
 | `cbd_trim_min` | 0x00408ef0 | Minimum trim limit |
 | `cbd_threshold` | 0x00408ef2 | FFT magnitude threshold |
 | `cbd_filter_coef` | 0x00408eec | Filter coefficient |
-| `cbd_enable_flag` | 0x00408ef6 | CBD master enable |
+| `cylinder_balance_enable_flag` | 0x00408ef6 | CBD master enable |
 
 ### Bank 2 Utility Functions
 

@@ -1,0 +1,26 @@
+=== hpcr_initFuelTemperatureSensorChannel (lines 66100-66129, 25 non-blank)
+66100: // Function: hpcr_initFuelTemperatureSensorChannel @ 0x00507e20
+66101: //
+66103: void hpcr_initFuelTemperatureSensorChannel(void)
+66105: {
+66106:   fuel_temperature_derate_input_pointer = (undefined *)&fuel_temperature_sensor_filtered;
+66107:   PTR_fuel_temperature_derate_fueling_minimum_temperature_0040a73e =
+66108:        (undefined *)&fuel_temperature_derate_fueling_minimum_temperature;
+66109:   PTR_fuel_temperature_derate_fueling_maximum_temperature_0040a742 =
+66110:        (undefined *)&fuel_temperature_derate_fueling_maximum_temperature;
+66111:   PTR_fuel_temperature_derate_engine_speed_minimum_temperature_0040a746 =
+66112:        (undefined *)&fuel_temperature_derate_engine_speed_minimum_temperature;
+66113:   PTR_DAT_0040a75e = &DAT_003fe006;
+66114:   PTR_DAT_0040a75a = &DAT_003fe006;
+66115:   if ((fuel_temperature_derate_configuration_flags & 0x1000) == 0) {
+66116:     PTR_DAT_0040a75e = &DAT_003fe02e;
+66117:   }
+66118:   cm848_initializeFaultDerateEngineSpeedLimit();
+66119:   cm848_resetFaultDerateFuelLimit();
+66120:   cm848_completeEngineStartSequence();
+66121:   exception_resetProtectionModeState();
+66122:   cm848_initSensorChannelDataStructures();
+66123:   governor_faultDerate_task_index = 0;
+66124:   return;
+66125: }
+66129: //

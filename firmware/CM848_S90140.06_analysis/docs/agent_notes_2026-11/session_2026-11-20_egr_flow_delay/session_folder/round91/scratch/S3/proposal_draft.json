@@ -1,0 +1,15 @@
+{
+  "item": "S3",
+  "struct": "all_speed_governor_gain_set_t (cm550 type-only template, 9 x short, 18 bytes, same fields as CM848)",
+  "globals": {
+    "0x00807b92": ["j1939_tsc1_speed_control_condition_gain_sets", "all_speed_governor_gain_set_t[4]"],
+    "0x00807be0": ["all_speed_governor_throttle_mode_gain_set", "all_speed_governor_gain_set_t"],
+    "0x0080a95a": ["all_speed_governor_application_gain_set", "all_speed_governor_gain_set_t"],
+    "0x0080a9a8": ["all_speed_governor_gain_set_pointer", "all_speed_governor_gain_set_t *"],
+    "0x0080a93c": ["all_speed_governor_reset_state_fuel_demand_correction", "i16 (comment fix only: muls.w (16,a2) @ 0xcffa)"]
+  },
+  "remove": ["0x807be2", "0x807be4", "0x807be6", "0x807be8", "0x807bea", "0x807bec", "0x807bee", "0x807bf0",
+             "0x80a95c", "0x80a95e", "0x80a960", "0x80a962", "0x80a964", "0x80a966", "0x80a968", "0x80a96a"],
+  "pointer_loads": ["0xc9b2", "0xc9be", "0xcbbe", "0xcbc8", "0xcbf2", "0xcd7c", "0xce0a", "0xce1c", "0xcfde"],
+  "pointer_stores": {"0xd11a": "0x80a95a (state 30)", "0xd1d4": "0x807b92 + 18 x condition (state 2)", "0xd550": "0x807be0 (state 7)"}
+}

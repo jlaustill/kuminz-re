@@ -1,0 +1,1136 @@
+MPC555 User's Manual excerpts for PR #53 round 95 (pdftotext -layout; line numbers refer to that text)
+
+====================================================================================================
+Appendix A, USIU / SIU registers 0x2FC000-0x2FC3FF and CMF 0x2FC800 / 0x2FC840 (lines 48215-48560)
+====================================================================================================
+  Table A-3 USIU (Unified System Interface Unit)
+  Address  Access  Symbol  Register  Size  Reset
+  SIU Module Configuration Register.
+  0x2F C000  U1  SIUMCR
+  See Table 6-5 for bit descriptions.
+  32  H
+  System Protection Control Register.
+  0x2F C004  U2  SYPCR
+  See Table 6-13 for bit descriptions.
+  32  H
+  0x2F C008  —  —  Reserved  —  —
+  U,  Software Service Register.
+  0x2F C00E  SWSR  16  S
+  write only  See Table 6-14 for bit descriptions.
+  Interrupt Pending Register.
+  0x2F C010  U  SIPEND  See 6.13.2.1 SIPEND Register for bit descrip-  32  S
+  tions.
+  Interrupt Mask Register.
+  0x2F C014  U  SIMASK  See 6.13.2.2 SIU Interrupt Mask Register  32  S
+  (SIMASK) for bit descriptions.
+  Interrupt Edge Level Mask.
+  0x2F C018  U  SIEL  See 6.13.2.3 SIU Interrupt Edge Level Reg-  32  H
+  ister (SIEL) for bit descriptions.
+  Interrupt Vector.
+  U,
+  0x2F C01C  SIVEC  See 6.13.2.4 SIU Interrupt Vector Register  32  —
+  read only
+  for bit descriptions.
+  Transfer Error Status Register.
+  0x2F C020  U  TESR  32  S
+  See Table 6-15 for bit descriptions.
+  USIU General-Purpose I/O Data Register 1.
+  0x2F C024  U  SGPIODT1  32  H
+  See Table 6-21 for bit descriptions.
+  USIU General-Purpose I/O Data Register 2.
+  0x2F C028  U  SGPIODT2  32  H
+  See Table 6-22 for bit descriptions.
+  USIU General-Purpose I/O Control Register.
+  0x2F C02C  U  SGPIOCR  32  H
+  See Table 6-23 for bit descriptions.
+  External Master Mode Control Register.
+  0x2F C030  U  EMCR  32  H
+  See Table 6-12 for bit descriptions.
+  Pads Module Configuration Register.
+  0x2F C03C  U  PDMCR  32  H
+  See Table 2-3 for bit descriptions.
+  0x2F C040 –
+  —  —  Reserved  —  —
+  0x2F C0FC
+  Memory Controller Registers
+  Base Register 0.
+  0x2F C100  U  BR0  32  H
+  See Table 10-7 for bit descriptions.
+  Option Register 0.
+  0x2F C104  U  OR0  32  H
+  See Table 10-8 for bit descriptions.
+  Base Register 1.
+  0x2F C108  U  BR1  32  H
+  See Table 10-7 for bit descriptions.
+  Option Register 1.
+  0x2F C10C  U  OR1  32  H
+  See Table 10-8 for bit descriptions.
+  Base Register 2.
+  0x2F C110  U  BR2  32  H
+  See Table 10-7 for bit descriptions.
+  Option Register 2.
+  0x2F C114  U  OR2  32  H
+  See Table 10-8 for bit descriptions.
+  Base Register 3.
+  0x2F C118  U  BR3  32  H
+  See Table 10-7 for bit descriptions.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-5
+  Go to: www.freescale.com
+  Table A-3 USIU (Unified System Interface Unit) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  Option Register 3.
+  0x2F C11C  U  OR3  32  H
+  See Table 10-8 for bit descriptions.
+  0x2F C120 –
+  —  —  Reserved  —  —
+  0x2F C13C
+  Dual-Mapping Base Register.
+  0x2F C140  U  DMBR  32  H
+  See Table 10-9 for bit descriptions.
+  Dual-Mapping Option Register.
+  0x2F C144  U  DMOR  32  H
+  See Table 10-10 for bit descriptions.
+  0x2F C148 –
+  —  —  Reserved  —  —
+  0x2F C174
+  Memory Status.
+  0x2F C178  U  MSTAT  16  H
+  See Table 10-6 for bit descriptions.
+  System Integration Timers
+  Time Base Status and Control.
+  0x2F C200  U3  TBSCR
+  See Table 6-16 for bit descriptions.
+  16  H
+  Time Base Reference 0.
+  0x2F C204  U3  TBREF0  See 6.13.4.3 Time Base Reference Regis-  32  U
+  ters for bit descriptions.
+  Time Base Reference 1.
+  0x2F C208  U3  TBREF1  See 6.13.4.3 Time Base Reference Regis-  32  U
+  ters for bit descriptions.
+  0x2F C20C –
+  —  —  Reserved  —  —
+  0x2F C21C
+  Real Time Clock Status and Control.
+  0x2F C220  U4  RTCSC  16  H
+  See Table 6-17 for bit descriptions.
+  Real Time Clock.
+  0x2F C224  4  RTC  See 6.13.4.6 Real-Time Clock Register  32  U
+  U
+  (RTC) for bit descriptions.
+  0x2F C228  T4  RTSEC  Real Time Alarm Seconds, reserved.  32  —
+  Real Time Alarm.
+  0x2F C22C  U4  RTCAL  See 6.13.4.7 Real-Time Clock Alarm Regis-  32  U
+  ter (RTCAL) for bit descriptions.
+  0x2F C230 –
+  —  —  Reserved  —  —
+  0x2F C23C
+  PIT Status and Control.
+  0x2F C240  U3  PISCR  16  H
+  See Table 6-18 for bit descriptions.
+  32
+  PIT Count.
+  0x2F C244  U3  PITC  (half re-  U
+  See Table 6-19 for bit descriptions.
+  served)
+  32
+  U,  PIT Register.
+  0x2F C248  PITR  (half re-  U
+  read only  See Table 6-20 for bit descriptions.
+  served)
+  0x2F C24C –
+  —  Reserved  —  —
+  0x2F C27C
+  Clocks and Reset
+  System Clock Control Register.
+  0x2F C280  U2  SCCR
+  See Table 8-9 for bit descriptions.
+  32  H
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-6
+  Go to: www.freescale.com
+  Table A-3 USIU (Unified System Interface Unit) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  PLL Low Power and Reset Control Register.
+  0x2F C284  U3,5,6  PLPRCR
+  See Table 8-10 for bit descriptions.
+  32  H
+  Reset Status Register.
+  0x2F C288  U3  RSR
+  See Table 7-3 for bit descriptions.
+  16  POR
+  Change of Lock Interrupt Register.
+  0x2F C28C  U  COLIR  16  U
+  See Table 8-11 for bit descriptions.
+  VDDSRM Control Register.
+  0x2F C290  U  VSRMCR  16  U
+  See Table 8-12 for bit descriptions.
+  0x2F C294 –
+  —  —  Reserved  —  —
+  0x2F C2FC
+  System Integration Timer Keys
+  Time Base Status and Control Key.
+  0x2F C300  U  TBSCRK  32  POR
+  See Table 8-8 for bit descriptions.
+  Time Base Reference 0 Key.
+  0x2F C304  U  TBREF0K  32  POR
+  See Table 8-8 for bit descriptions.
+  Time Base Reference 1 Key.
+  0x2F C308  U  TBREF1K  32  POR
+  See Table 8-8 for bit descriptions.
+  Time Base and Decrementer Key.
+  0x2F C30C  U  TBK  32  POR
+  See Table 8-8 for bit descriptions.
+  0x2F C310 –
+  —  —  Reserved  —  —
+  0x2F C31C
+  Real-Time Clock Status and Control Key.
+  0x2F C320  U  RTCSCK  32  POR
+  See Table 8-8 for bit descriptions.
+  Real-Time Clock Key.
+  0x2F C324  U  RTCK  32  POR
+  See Table 8-8 for bit descriptions.
+  Real-Time Alarm Seconds Key.
+  0x2F C328  U  RTSECK  32  POR
+  See Table 8-8 for bit descriptions.
+  Real-Time Alarm Key.
+  0x2F C32C  U  RTCALK  32  POR
+  See Table 8-8 for bit descriptions.
+  0x2F C330 –
+  —  —  Reserved  —  —
+  0x2F C33C
+  PIT Status and Control Key.
+  0x2F C340  U  PISCRIK  32  POR
+  See Table 8-8 for bit descriptions.
+  PIT Count Key.
+  0x2F C344  U  PITCK  32  POR
+  See Table 8-8 for bit descriptions.
+  0x2F C348 –
+  —  —  Reserved  —  —
+  0x2F C37C
+  Clocks and Reset Keys
+  System Clock Control Key.
+  0x2F C380  U  SCCRK  32  POR
+  See Table 8-8 for bit descriptions.
+  PLL Low-Power and Reset Control Register
+  0x2F C384  U  PLPRCRK  Key.  32  POR
+  See Table 8-8 for bit descriptions.
+  Reset Status Register Key.
+  0x2F C388  U  RSRK  32  POR
+  See Table 8-8 for bit descriptions.
+  0x2F C38C –
+  —  Reserved  —  —
+  0x2F C3FC
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-7
+  Go to: www.freescale.com
+  NOTES:
+  1. Entire register is locked if bit 15 (DLK) is set.
+  2. Write once after power on reset (POR).
+  3. Must use the key register to unlock if it has been locked by a key register, see 8.9.3.2 Keep Alive Power Regis-
+  ters Lock Mechanism.
+  4. Locked after Power on Reset (POR). A write of 0x55CCAA33 must performed to the key register to unlock. See
+  8.9.3.2 Keep Alive Power Registers Lock Mechanism.
+  5. Can have bits 0:11 (MF bits) write-protected by setting bit 4 (MFPDL) in the SCCR register to 1. Bit 21 (CSRC)
+  and bits 22:23 (LPM) can be locked by setting bit 5 (LPML) of the SCCR register to 1.
+  6. Bit 24 (CSR) is write-once after soft reset.
+  Table A-4 CMF (CDR MoneT Flash EEPROM)
+  Address  Access  Symbol  Register  Size  Reset
+  CMF_A
+  CMF_A EEPROM Configuration Register.
+  0x2F C800  S1  CMFMCR
+  See Table 19-2 for bit descriptions.
+  32  POR, H
+  CMF_A EEPROM Test Register.
+  0x2F C804  S  CMFTST  32  POR, H
+  See Table 19-3 for bit descriptions.
+  CMF_A EEPROM High Voltage Control Reg-
+  0x2F C808  S  CMFCTL  ister.  32  POR, H
+  See Table 19-6 for bit descriptions.
+  CMF_B
+  CMF_B EEPROM Configuration Register.
+  0x2F C840  S1  CMFMCR  32  POR, H
+  See Table 19-2 for bit descriptions.
+  CMF_B EEPROM Test Register.
+  0x2F C844  S  CMFTST  32  POR, H
+  See Table 19-3 for bit descriptions.
+  CMF_B EEPROM High Voltage Control Reg-
+  0x2F C848  S  CMFCTL  ister.  32  POR, H
+  See Table 19-6 for bit descriptions.
+  NOTES:
+  1. Bit 3 (FIC) is write-once. Bit 0 (LOCK) is write-once unless in freeze or test mode.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-8
+  Go to: www.freescale.com
+  Table A-5 DPTRAM (Dual-Port TPU RAM)
+  Address  Access  Symbol  Register  Size  Reset
+  DPT Module Configuration Register.
+  0x30 0000  S  DPTMCR  16  S
+  See Table 18-2 for bit descriptions.
+  0x30 0002  T  RAMTST  Test register, factory test only.  16  S
+  RAM Array Address Register.
+  0x30 0004  S1  RAMBAR
+  See Table 18-3 for bit descriptions.
+  16  S
+  Multiple Input Signature Register High.
+  S,
+  0x30 0006  MISRH  See 18.3.4 MISR High (MISRH) and MISR  16  S
+  read only
+  Low (MISRL) for bit descriptions.
+  Multiple Input Signature Register Low.
+  S,
+  0x30 0008  MISRL  See 18.3.4 MISR High (MISRH) and MISR  16  S
+  read only
+  Low (MISRL) for bit descriptions.
+  MISC Counter.
+
+====================================================================================================
+Appendix A, Table A-7 TPU3 module registers (lines 48590-48690)
+====================================================================================================
+  Table A-7 TPU3 (Time Processor Unit)
+  Address  Access  Symbol  Register  Size  Reset
+  TPU_A
+  (Note: Bit descriptions apply to TPU_B as well)
+  TPU3_A Module Configuration Register.
+  0x30 4000  S1  TPUMCR_A
+  See Table 17-6 for bit descriptions.
+  16 only  S, M
+  0x30 4002  T  TCR_A  TPU3_A Test Configuration Register.  16  S, M
+  TPU3_A Development Support Control Regis-
+  0x30 4004  S  DSCR_A  ter.  162  S, M
+  See Table 17-7 for bit descriptions.
+  TPU3_A Development Support Status Regis-
+  0x30 4006  S  DSSR_A  ter.  162  S, M
+  See Table 17-8 for bit descriptions.
+  TPU3_A Interrupt Configuration Register.
+  0x30 4008  S  TICR_A
+  See Table 17-9 for bit descriptions.  162  S, M
+  TPU3_A Channel Interrupt Enable Register.
+  0x30 400A  S  CIER_A
+  See Table 17-10 for bit descriptions.  162  S, M
+  TPU3_A Channel Function Selection Register
+  0x30 400C  S  CFSR0_A  0.  162  S, M
+  See Table 17-11 for bit descriptions.
+  TPU3_A Channel Function Selection Register
+  0x30 400E  S  CFSR1_A  1.  162  S, M
+  See Table 17-11 for bit descriptions.
+  TPU3_A Channel Function Selection Register
+  0x30 4010  S  CFSR2_A  2.  162  S, M
+  See Table 17-11 for bit descriptions.
+  TPU_A Channel Function Selection Register
+  0x30 4012  S  CFSR3_A  3.  162  S, M
+  See Table 17-11 for bit descriptions.
+  TPU_A Host Sequence Register 0.
+  0x30 4014  S/U3  HSQR0_A
+  See Table 17-12 for bit descriptions.  162  S, M
+  TPU_A Host Sequence Register 1.
+  0x30 4016  S/U3  HSQR1_A
+  See Table 17-12 for bit descriptions.  162  S, M
+  TPU_A Host Service Request Register 0.
+  0x30 4018  S/U3  HSRR0_A
+  See Table 17-13 for bit descriptions.  162  S, M
+  TPU_A Host Service Request Register 1.
+  0x30 401A  S/U3  HSRR1_A
+  See Table 17-13 for bit descriptions.  162  S, M
+  TPU_A Channel Priority Register 0.
+  0x30 401C  S  CPR0_A
+  See Table 17-14 for bit descriptions.  162  S, M
+  TPU_A Channel Priority Register 1.
+  0x30 401E  S  CPR1_A
+  See Table 17-14 for bit descriptions.  162  S, M
+  TPU_A Channel Interrupt Status Register.
+  0x30 4020  S  CISR_A  16  S, M
+  See Table 17-16 for bit descriptions.
+  0x30 4022  T  LR_A  TPU_A Link Register  162  S, M
+  0x30 4024  T  SGLR_A  TPU_A Service Grant Latch Register  162  S, M
+  0x30 4026  T  DCNR_A  TPU_A Decoded Channel Number Register  162  S, M
+  TPU_A Module Configuration Register 2.
+  0x30 4028  S4  TPUMCR2_A
+  See Table 17-17 for bit descriptions.  162  S, M
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-10
+  Go to: www.freescale.com
+  Table A-7 TPU3 (Time Processor Unit) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  TPU_A Module Configuration Register 3.
+  0x30 402A  S  TPUMCR3_A
+  See Table 17-20 for bit descriptions.  162  S, M
+  0x30 402C  T  ISDR_A  TPU_A Internal Scan Data Register  16, 322
+  0x30 402E  T  ISCR_A  TPU_A Internal Scan Control Register  16, 322
+  0x30 4100 –
+  0x30 410F  S/U3  —  TPU_A Channel 0 Parameter Registers  16, 322
+  0x30 4110 –
+  0x30 411F  S/U3  —  TPU_A Channel 1 Parameter Registers  16, 322
+  0x30 4120 –
+  0x30 412F  S/U3  —  TPU_A Channel 2 Parameter Registers.  16, 322
+
+====================================================================================================
+Appendix A, QADC64 module registers (lines 48870-48905)
+====================================================================================================
+  Table A-8 QADC64 (Queued Analog-to-Digital Converter)
+  Address  Access  Symbol  Register  Size  Reset
+  QADC_A
+  (Note: Bit descriptions apply to QADC_B as well)
+  QADC64 Module Configuration Register.
+  0x30 4800  S  QADC64MCR_A  16  S
+  See Table 13-7 for bit descriptions.
+  QADC64TEST_
+  0x30 4802  T  QADC64 Test Register  16  —
+  A
+  Interrupt Register.
+  0x30 4804  S  QADC64INT_A  16  S
+  See Table 13-8 for bit descriptions.
+  PORTQA_A/  Port A and Port B Data.
+  0x30 4806  S/U  16  U
+  PORTQB_A  See Table 13-9 for bit descriptions.
+  DDRQA_A/  Port A Data and Port B Direction Register.
+  0x30 4808  S/U  16  S
+  DDRQB_A  See Table 13-10 for bit descriptions.
+  QADC64 Control Register 0.
+  0x30 480A  S/U  QACR0_A  16  S
+  See Table 13-11 for bit descriptions.
+  QADC64 Control Register 1.
+  0x30 480C  S/U1  QACR1_A
+  See Table 13-12 for bit descriptions.
+  16  S
+  QADC64 Control Register 2.
+  0x30 480E  S/U1  QACR2_A  16  S
+  See Table 13-14 for bit descriptions.
+  QADC64 Status Register 0.
+  0x30 4810  S/U  QASR0_A  16  S
+  See Table 13-16 for bit descriptions.
+  QADC64 Status Register 1.
+  0x30 4812  S/U  QASR1_A  16  S
+  See Table 13-18 for bit descriptions.
+
+====================================================================================================
+13.12 QADC64 address map (control registers vs the CCW table and the result areas) (lines 26940-27000)
+====================================================================================================
+  0  15
+  QADC64 Module Configuration Register
+  0x30 4800
+  S1  0x30 4C00
+  (QADC64MCR_x)
+  See Table 13-7 for bit descriptions.
+  0x30 4802
+  T2  0x30 4C02
+  QADC64 Test Register (QADC64TEST_x)
+  0x30 4804  Interrupt Register (QADC64INT_x)
+  S
+  0x30 4C04  See Table 13-8 for bit descriptions.
+  Port A Data
+  0x30 4806  (PORTQA_x)  Port B Data
+  S/U3  0x30 4C06  See Table 13-10 for bit  (PORTQB_x)
+  descriptions.
+  0x30 4808  Port A Data Direction Register (DDRQA_x)
+  S/U
+  0x30 4C08  See Table 13-10 for bit descriptions.
+  0x30 480A  QADC64 Control Register 0 (QACR0_x)
+  S/U
+  0x30 4C0A  See Table 13-11 for bit descriptions.
+  0x30 480C  QADC64 Control Register 1 (QACR1_x)
+  S/U
+  0x30 4C0C  See Table 13-12 for bit descriptions.
+  0x30 480E  QADC64 Control Register 2 (QACR2_x)
+  S/U
+  0x30 4C0E  See Table 13-14 for bit descriptions.
+  0x30 4810,  QADC64 Status Register 0 (QASR0_x)
+  S/U
+  0x30 4C10  See Table 13-16 for bit descriptions.
+  0x30 4812,  QADC64 Status Register 1 (QASR1_x)
+  S/U
+  0x30 4C12  See Table 13-18 for bit descriptions.
+  0x30 4814 – 0x30 49FE
+  ---  Reserved
+  0x30 4C14 – 0x30 4DFE
+  0x30 4A00 – 0x30 4A7E  Conversion Command Word (CCW_x) Table
+  S/U
+  0x30 4E00 – 0x30 4E7E  See Table 13-19 for bit descriptions.
+  Result Word Table
+  0x30 4A80 – 0x30 4AFE  Right-Justified, Unsigned Result Register
+  S/U
+  0x30 4E80 – 0x30 4EFE  (RJURR_x)
+  See 13.12.12 for bit descriptions.
+  Result Word Table
+  0x30 4B00 – 0x30 4B7E
+  S/U  Left-Justified, Signed Result Register (LJSRR_x)
+  0x30 4F00 – 0x30 4F7E
+  See 13.12.12 for bit descriptions.
+  Result Word Table
+  0x30 4B80 – 0x30 4BFE  Left-Justified, Unsigned Result Register
+  S/U
+  0x30 4F80 – 0x30 4FFE  (LJURR_x)
+  See 13.12.12 for bit descriptions.
+
+====================================================================================================
+Appendix A, QSMCM registers (lines 48988-49030)
+====================================================================================================
+  Table A-9 QSMCM (Queued Serial Multi-Channel Module)
+  Address  Access  Symbol  Register  Size  Reset
+  QSMCM Module Configuration Register.
+  0x30 5000  S  QSMCMMCR  16  S
+  See Table 14-4 for bit descriptions.
+  0x30 5002  T  QTEST  QSMCM Test Register  16  S
+  Dual SCI Interrupt Level.
+  0x30 5004  S  QDSCI_IL  16  S
+  See Table 14-5 for bit descriptions.
+  Queued SPI Interrupt Level.
+  0x30 5006  S  QSPI_IL  16  S
+  See Table 14-6 for bit descriptions.
+  SCI1Control Register 0.
+  0x30 5008  S/U  SCC1R0  16  S
+  See Table 14-23 for bit descriptions.
+  SCI1Control Register 1.
+  0x30 500A  S/U  SCC1R1  16  S
+  See Table 14-24 for bit descriptions.
+  SCI1 Status Register.
+  0x30 500C  S/U  SC1SR  16  S
+  See Table 14-25 for bit descriptions.
+  SCI1 Data Register.
+  0x30 500E  S/U  SC1DR  16  S
+  See Table 14-26 for bit descriptions.
+  0x30 5010 —
+  —  —  Reserved  —  —
+  0x30 5012
+  QSMCM Port QS Data Register.
+  0x30 5014  S/U  PORTQS  See 14.6.1 Port QS Data Register  16  S
+  (PORTQS) for bit descriptions.
+  QSMCM Port QS PIn Assignment Register/
+  PQSPAR/
+  0x30 5016  S/U  QSMCM Port QS Data Direction Register.  16  S
+  DDRQST
+  See Table 14-11 for bit descriptions.
+  QSPI Control Register 0.
+  0x30 5018  S/U  SPCR0  16  S
+
+====================================================================================================
+Appendix A, MIOS1 registers (MPWMSM / MMCSM / MDASM / MCPSM / interrupt registers) (lines 49095-49520)
+====================================================================================================
+  Address  Access  Symbol  Register  Size  Reset
+  MPWMSM0 (MIOS Pulse Width Modulation Submodule 0)
+  MPWMSM0 Period Register.
+  0x30 6000  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM0 Pulse Register.
+  0x30 6002  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM0 Count Register.
+  0x30 6004  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM0 Status/Control Register.
+  0x30 6006  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MPWMSM1 (MIOS Pulse Width Modulation Submodule 1)
+  MPWMSM1 Period Register.
+  0x30 6008  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM1 Pulse Register.
+  0x30 600A  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM1 Count Register.
+  0x30 600C  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM1 Status/Control Register.
+  0x30 600E  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MPWMSM2 (MIOS Pulse Width Modulation Submodule 2)
+  MPWMSM2 Period Register.
+  0x30 6010  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM2 Pulse Register.
+  0x30 6012  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM2 Count Register.
+  0x30 6014  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM2 Status/Control Register.
+  0x30 6016  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MPWMSM3 (MIOS Pulse Width Modulation Submodule 3)
+  MPWMSM3 Period Register.
+  0x30 6018  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM3 Pulse Register.
+  0x30 601A  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM3 Count Register.
+  0x30 601C  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-16
+  Go to: www.freescale.com
+  Table A-10 MIOS1 (Modular Input/Output Subsystem) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  MPWMSM3 Status/Control Register.
+  0x30 601E  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MMCSM6 (MIOS Modulus Counter Submodule 6)
+  MMCSM6 Up-Counter Register.
+  0x30 6030  S/U  MMCSMCNT  16  X
+  See Table 15-12 for bit descriptions.
+  MMCSM6 Modulus Latch Register.
+  0x30 6032  S/U  MMCSMML  16  X
+  See Table 15-13 for bit descriptions.
+  MMCSM6 Status/Control Register Duplicated.
+  0x30 6034  S/U  MMCSMSCRD  See 15.10.1.3 MMCSM Status/Control Reg-  16  S
+  ister (Duplicated) for bit descriptions.
+  MMCSM6 Status/Control Register.
+  0x30 6036  S/U  MMCSMSCR  16  S
+  See Table 15-14 for bit descriptions.
+  MDASM11 (MIOS Double Action Submodule 11)
+  MDASM11 Data A Register.
+  0x30 6058  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM11 Data B Register.
+  0x30 605A  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM11 Status/Control Register Duplicat-
+  ed.
+  0x30 605C  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM11 Status/Control Register.
+  0x30 605E  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM12 (MIOS Double Action Submodule 12)
+  MDASM12 Data A Register.
+  0x30 6060  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM12 Data B Register.
+  0x30 6062  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM12 Status/Control Register Duplicat-
+  ed.
+  0x30 6064  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM12 Status/Control Register.
+  0x30 6066  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM13 (MIOS Double Action Submodule 13)
+  MDASM13 Data A Register.
+  0x30 6068  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM13 Data B Register.
+  0x30 606A  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM13 Status/Control Register Duplicat-
+  ed.
+  0x30 606C  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-17
+  Go to: www.freescale.com
+  Table A-10 MIOS1 (Modular Input/Output Subsystem) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  MDASM13 Status/Control Register.
+  0x30 606E  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM14 (MIOS Double Action Submodule 14)
+  MDASM14 Data A Register.
+  0x30 6070  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM14 Data B Register.
+  0x30 6072  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM14 Status/Control Register Duplicat-
+  ed.
+  0x30 6074  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM14 Status/Control Register.
+  0x30 6076  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM15 (MIOS Double Action Submodule 15)
+  MDASM15 Data A Register.
+  0x30 6078  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM15 Data B Register.
+  0x30 607A  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM15 Status/Control Register Duplicat-
+  ed.
+  0x30 607C  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM15 Status/Control Register.
+  0x30 607E  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MPWMSM16 (MIOS Pulse Width Modulation Submodule 16)
+  MPWMSM16 Period Register.
+  0x30 6080  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM16 Pulse Register.
+  0x30 6082  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM16 Count Register.
+  0x30 6084  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM16 Status/Control Register.
+  0x30 6086  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MPWMSM17 (MIOS Pulse Width Modulation Submodule 17)
+  MPWMSM17 Period Register.
+  0x30 6088  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM17 Pulse Register.
+  0x30 608A  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM17 Count Register.
+  0x30 608C  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM17 Status/Control Register.
+  0x30 608E  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-18
+  Go to: www.freescale.com
+  Table A-10 MIOS1 (Modular Input/Output Subsystem) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  MPWMSM18 (MIOS Pulse Width Modulation Submodule 18)
+  MPWMSM18 Period Register.
+  0x30 6090  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM18 Pulse Register.
+  0x30 6092  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM18 Count Register.
+  0x30 6094  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM18 Status/Control Register.
+  0x30 6096  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MPWMSM19 (MIOS Pulse Width Modulation Submodule 19)
+  MPWMSM19 Period Register.
+  0x30 6098  S/U  MPWMSMPERR  16  X
+  See Table 15-20 for bit descriptions.
+  MPWMSM19 Pulse Register.
+  0x30 609A  S/U  MPWMSMPULR  16  X
+  See Table 15-21 for bit descriptions.
+  MPWMSM19 Count Register.
+  0x30 609C  S/U  MPWMSMCNTR  16  X
+  See Table 15-22 for bit descriptions.
+  MPWMSM19 Status/Control Register.
+  0x30 609E  S/U  MPWMSMSCR  16  S
+  See Table 15-23 for bit descriptions.
+  MMCSM22 (MIOS Modulus Counter Submodule 22)
+  MMCSM Up-Counter Register.
+  0x30 60B0  S/U  MMCSMCNT  16  X
+  See Table 15-12 for bit descriptions.
+  MMCSM Modulus Latch Register.
+  0x30 60B2  S/U  MMCSMML  16  X
+  See Table 15-12 for bit descriptions.
+  MMCSM Status/Control Register Duplicated.
+  0x30 60B4  S/U  MMCSMSCRD  See 15.10.1.3 MMCSM Status/Control Reg-  16  S
+  ister (Duplicated) for bit descriptions.
+  MMCSM Status/Control Register.
+  0x30 60B6  S/U  MMCSMSCR  16  S
+  See Table 15-14 for bit descriptions.
+  MDASM27 (MIOS Double Action Submodule 27)
+  MDASM27 Data A Register.
+  0x30 60D8  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM27 Data B Register.
+  0x30 60DA  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM27 Status/Control Register Duplicat-
+  ed.
+  0x30 60DC  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM27 Status/Control Register.
+  0x30 60DE  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM28 (MIOS Double Action Submodule 28)
+  MDASM28 Data A Register.
+  0x30 60E0  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM28 Data B Register.
+  0x30 60E2  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-19
+  Go to: www.freescale.com
+  Table A-10 MIOS1 (Modular Input/Output Subsystem) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  MDASM28 Status/Control Register Duplicat-
+  ed.
+  0x30 60E4  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM28 Status/Control Register.
+  0x30 60E6  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM29 (MIOS Double Action Submodule 29)
+  MDASM29 Data A Register.
+  0x30 60E8  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM29 Data B Register.
+  0x30 60EA  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM29 Status/Control Register Duplicat-
+  ed.
+  0x30 60EC  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM29 Status/Control Register.
+  0x30 60EE  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM30 (MIOS Double Action Submodule 30)
+  MDASM30 Data A Register.
+  0x30 60F0  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM30 Data B Register.
+  0x30 60F2  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM30 Status/Control Register Duplicat-
+  ed.
+  0x30 60F4  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM30 Status/Control Register.
+  0x30 60F6  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MDASM31 (MIOS Double Action Submodule 31)
+  MDASM31 Data A Register.
+  0x30 60F8  S/U  MDASMAR  See 15.11.1.1 MDASM Data A Register for  16  X
+  bit descriptions.
+  MDASM31 Data B Register.
+  0x30 60FA  S/U  MDASMBR  See 15.11.1.2 MDASM Data B Register  16  X
+  (MDASMBR) for bit descriptions.
+  MDASM31 Status/Control Register Duplicat-
+  ed.
+  0x30 60FC  S/U  MDASMSCRD  16  S
+  See 15.11.1.3 MDASM Status/Control Reg-
+  ister (Duplicated) for bit descriptions.
+  MDASM31 Status/Control Register.
+  0x30 60FE  S/U  MDASMSCR  16  S
+  See Table 15-17 for bit descriptions.
+  MPIOSM (MIOS 16-bit Parallel Port I/O Submodule)
+  MPIOSM Data Register.
+  0x30 6100  S/U  MPIOSMDR  16  X
+  See Table 15-26 for bit descriptions.
+  MPIOSM Data Direction Register.
+  0x30 6102  S/U  MPIOSMDDR  16  S
+  See Table 15-27 for bit descriptions.
+  MPC555 / MPC556  MPC555 / MPC556 INTERNAL MEMORY MAP  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  A-20
+  Go to: www.freescale.com
+  Table A-10 MIOS1 (Modular Input/Output Subsystem) (Continued)
+  Address  Access  Symbol  Register  Size  Reset
+  0x30 6104 —
+  S/U  —  Reserved  —  —
+  0x30 6106
+  MBISM (MIOS Bus Interface Submodule)
+  MIOS1 Test and Pin Control Register.
+  0x30 6800  S1  MIOS1TPCR
+  See Table 15-3 for bit descriptions.
+  16  S
+  0x30 6802  S  —  Reserved  —  —
+  S,  MIOS1 Module Version Number Register.
+  0x30 6804  MIOS1VNR  16  X
+  read only  See Table 15-4 for bit descriptions.
+  MIOS1 Module Control Register.
+  0x30 6806  S  MIOS1MCR  16  S
+  See Table 15-4 for bit descriptions.
+  0x30 6808 –
+  S  —  Reserved  —  —
+  0x30 680E
+  MCPSM (MIOS Counter Prescaler Submodule)
+  0x30 6810 –
+  S  —  Reserved  —  S
+  0x30 6814
+  MCPSM Status/Control Register.
+  0x30 6816  S  MCPSMSCR  16  S
+  See Table 15-10 for bit descriptions.
+  MIRSM0 (MIOS Interrupt Request Submodule 0)
+  MIRSM0 Interrupt Status Register.
+  0x30 6C00  S  MIOS1SR0  16  X
+  See Table 15-29 for bit descriptions.
+  0x30 6C02  S  —  Reserved  —  —
+  MIRSM0 Interrupt Enable Register.
+  0x30 6C04  S  MIOS1ER0  16  S
+  See Table 15-30 for bit descriptions.
+  S,  MIRSM0 Request Pending Register.
+  0x30 6C06  MIOS1RPR0  16  S
+  read only  See Table 15-31 for bit descriptions.
+  MIRSM (MIOS Interrupt Request Submodule)
+  MIOS1 Interrupt Level Register 0.
+  0x30 6C30  S  MIOS1LVL0  16  S
+  See Table 15-7 for bit descriptions.
+  MIRSM1 (MIOS Interrupt Request Submodule 1)
+  MIRSM1 Interrupt Status Register.
+  0x30 6C40  S  MIOS1SR1  16  X
+  See Table 15-33 for bit descriptions.
+  0x30 6C42  S  —  Reserved  —  —
+  MIRSM1 Interrupt Enable Register.
+  0x30 6C44  S  MIOS1ER1  16  S
+  See Table 15-34 for bit descriptions.
+
+====================================================================================================
+15.10 MMCSM register map and 15.10.1.3 SCRD (lines 33975-34080)
+====================================================================================================
+  15.10.1 MIOS Modulus Counter Submodule (MMCSM) Registers
+  Each of the two MMCSM submodules in the MPC555 / MPC556 includes the register
+  set shown in Table 15-11.
+  Table 15-11 MMCSM Address Map
+  Address  Register
+  MMCSM6
+  MMCSM6 Up-Counter Register (MMCSMCNT)
+  0x30 6030
+  See Table 15-12 for bit descriptions.
+  MMCSM6 Modulus Latch Register (MMCSMML)
+  0x30 6032
+  See Table 15-13 for bit descriptions.
+  MMCSM6 Status/Control Register Duplicated (MMCSMSCRD)
+  0x30 6034  See 15.10.1.3 MMCSM Status/Control Register (Duplicated) for bit
+  descriptions.
+  0x30 6036  MMCSM6 Status/Control Register (MMCSMSCR)
+  MMCSM22
+  0x30 60B0  MMCSM Up-Counter Register (MMCSMCNT)
+  0x30 60B2  MMCSM Modulus Latch Register (MMCSMML)
+  0x30 60B4  MMCSM Status/Control Register Duplicated (MMCSMSCRD)
+  0x30 60B6  MMCSM Status/Control Register (MMCSMSCR)
+  MPC555 / MPC556  MODULAR INPUT/OUTPUT SUBSYSTEM (MIOS1)  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  15-15
+  Go to: www.freescale.com
+  15.10.1.1 MMCSM Up-Counter Register (MMCSMCNT)
+  The MMCSMCNT register contains the 16-bit value of the up counter. Note that writing
+  to MMCSMCNT simultaneously writes to MMCSMML.
+  MMCSMCNT — MMCSM Up-Counter Register  0x30 6030
+  0x30 60B0
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+  CNT
+  RESET:
+  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U
+  U = Unaffected by reset
+  Table 15-12 MMCSMCNT Bit Descriptions
+  Bit(s)  Name  Description
+  Counter value. These read/write data bits represent the 16-bit value of the up-counter. CNT con-
+  0:15  CNT
+  tains the value that is driven onto the 16-bit counter bus.
+  15.10.1.2 MMCSM Modulus Latch Register (MMCSMML)
+  The MMCSMML is a read/write register containing the 16-bit value of the up-counter.
+  MMCSMML — MMCSM Modulus Latch Register  0x30 6032
+  0x30 60B2
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+  ML
+  RESET:
+  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U
+  U = Unaffected by reset
+  Table 15-13 MMCSMML Bit Descriptions
+  Bit(s)  Name  Description
+  Modulus latches. These bits are read/write data bits containing the 16-bit modulus value to be
+  loaded into the up-counter.
+  0:15  ML  The value loaded in this register must be the two’s complement of the desired modulus count.
+  The up-counter increments from this two’s complement value up to 0xFFFF to get the correct
+  number of steps before an overflow is generated to reload the modulus value into the up-
+  counter. A value of 0x0000 should be used for a free-running counter.
+  15.10.1.3 MMCSM Status/Control Register (Duplicated)
+  The MMCSMSCRD and the MMCSMSCR are the same registers accessed at two dif-
+  ferent addresses. Reading or writing to one of these two addresses has exactly the
+  same effect.
+  NOTE
+  The user should not write directly to the address of the MMCSM-
+  SCRD. This register’s address may be reserved for future use and
+  should not be accessed by the software to assure future software
+  compatibility.
+  MPC555 / MPC556  MODULAR INPUT/OUTPUT SUBSYSTEM (MIOS1)  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  15-16
+  Go to: www.freescale.com
+  MMCSMSCRD — MMCSM Status/Control Register (Duplicated)  0x30 6034
+  0x30 60B4
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+
+====================================================================================================
+15.11 MDASM register map and 15.11.1.3 SCRD (lines 34275-34455)
+====================================================================================================
+  Table 15-16 MDASM Address Map
+  Address  Register
+  MDASM11
+  MDASM11 Data A Register (MDASMAR)
+  0x30 6058
+  See 15.11.1.1 MDASM Data A Register for bit descriptions.
+  MDASM11 Data B Register (MDASMBR)
+  0x30 605A  See 15.11.1.2 MDASM Data B Register (MDASMBR) for bit descrip-
+  tions.
+  MDASM11 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 605C  See 15.11.1.3 MDASM Status/Control Register (Duplicated) for bit
+  descriptions.
+  MDASM11 Status/Control Register (MDASMSCR)
+  0x30 605E
+  See Table 15-17 for bit descriptions.
+  MDASM12
+  0x30 6060  MDASM12 Data A Register (MDASMAR)
+  0x30 6062  MDASM12 Data B Register (MDASMBR)
+  0x30 6064  MDASM12 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 6066  MDASM12 Status/Control Register (MDASMSCR)
+  MDASM13
+  0x30 6068  MDASM13 Data A Register (MDASMAR)
+  0x30 606A  MDASM13 Data B Register (MDASMBR)
+  0x30 606C  MDASM13 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 606E  MDASM13 Status/Control Register (MDASMSCR)
+  MDASM14
+  0x30 6070  MDASM14 Data A Register (MDASMAR)
+  0x30 6072  MDASM14 Data B Register (MDASMBR)
+  0x30 6074  MDASM14 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 6076  MDASM14 Status/Control Register (MDASMSCR)
+  MDASM15
+  0x30 6078  MDASM15 Data A Register (MDASMAR)
+  0x30 607A  MDASM15 Data B Register (MDASMBR)
+  0x30 607C  MDASM15 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 607E  MDASM15 Status/Control Register (MDASMSCR)
+  MDASM27
+  0x30 60D8  MDASM27 Data A Register (MDASMAR)
+  0x30 60DA  MDASM27 Data B Register (MDASMBR)
+  0x30 60DC MDASM27 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 60DE  MDASM27 Status/Control Register (MDASMSCR)
+  MDASM28
+  0x30 60E0  MDASM28 Data A Register (MDASMAR)
+  0x30 60E2  MDASM28 Data B Register (MDASMBR)
+  0x30 60E4  MDASM28 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 60E6  MDASM28 Status/Control Register (MDASMSCR)
+  MDASM29
+  0x30 60E8  MDASM29 Data A Register (MDASMAR)
+  MPC555 / MPC556  MODULAR INPUT/OUTPUT SUBSYSTEM (MIOS1)  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  15-20
+  Go to: www.freescale.com
+  Table 15-16 MDASM Address Map (Continued)
+  Address  Register
+  0x30 60EA  MDASM29 Data B Register (MDASMBR)
+  0x30 60EC  MDASM29 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 60EE  MDASM29 Status/Control Register (MDASMSCR)
+  MDASM30
+  0x30 60F0  MDASM30 Data A Register (MDASMAR)
+  0x30 60F2  MDASM30 Data B Register (MDASMBR)
+  0x30 60F4  MDASM30 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 60F6  MDASM30 Status/Control Register (MDASMSCR)
+  MDASM31
+  0x30 60F8  MDASM31 Data A Register (MDASMAR)
+  0x30 60FA  MDASM31 Data B Register (MDASMBR)
+  0x30 60FC  MDASM31 Status/Control Register Duplicated (MDASMSCRD)
+  0x30 60FE  MDASM31 Status/Control Register (MDASMSCR)
+  15.11.1.1 MDASM Data A Register
+  MDASMAR is the data register associated with channel A. Its use varies with the mode
+  of operation:
+  • In the DIS mode, MDASMAR can be accessed to prepare a value for a subse-
+  quent mode selection
+  • In the IPWM mode, MDASMAR contains the captured value corresponding to the
+  trailing edge of the measured pulse
+  • In the IPM and IC modes, MDASMAR contains the captured value corresponding
+  to the most recently detected dedicated edge (rising or falling edge)
+  • In the OCB and OCAB modes, MDASMAR is loaded with the value corresponding
+  to the leading edge of the pulse to be generated. Writing to MDASMAR in the
+  OCB and OCAB modes also enables the corresponding channel A comparator
+  until the next successful comparison.
+  • In the OPWM mode, MDASMAR is loaded with the value corresponding to the
+  leading edge of the PWM pulse to be generated
+  MDASMAR — MDASM Data A Register  0x30 6058*
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+  AR
+  RESET:
+  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U
+  * Refer to Table 15-16 for a complete list of all the base addresses for the MDASM registers.
+  15.11.1.2 MDASM Data B Register (MDASMBR)
+  MDASMBR is the data register associated with channel B. Its use varies with the mode
+  of operation. Depending on the mode selected, software access is to register B1 or
+  register B2.
+  MPC555 / MPC556  MODULAR INPUT/OUTPUT SUBSYSTEM (MIOS1)  MOTOROLA
+  USER’S MANUAL  For MoreRev. 15 October
+  Information  On2000
+  This Product,  15-21
+  Go to: www.freescale.com
+  • In the DIS mode, MDASMBR can be accessed to prepare a value for a subse-
+  quent mode selection. In this mode, register B1 is accessed in order to prepare a
+  value for the OPWM mode. Unused register B2 is hidden and cannot be read, but
+  is written with the same value when register B1 is written.
+  • In the IPWM mode, MDASMBR contains the captured value corresponding to the
+  leading edge of the measured pulse. In this mode, register B2 is accessed; buffer
+  register B1 is hidden and cannot be accessed.
+  • In the IPM and IC modes, MDASMBR contains the captured value corresponding
+  to the most recently detected period edge (rising or falling edge). In this mode,
+  register B2 is accessed; buffer register B1 is hidden and cannot be accessed.
+  • In the OCB and OCAB modes, MDASMBR is loaded with the value corresponding
+  to the trailing edge of the pulse to be generated. Writing to MDASMBR in the OCB
+  and OCAB modes also enables the corresponding channel B comparator until the
+  next successful comparison. In this mode, register B2 is accessed; buffer register
+  B1 is hidden and cannot be accessed.
+  • In the OPWM mode, MDASMBR is loaded with the value corresponding to the
+  trailing edge of the PWM pulse to be generated. In this mode, register B1 is ac-
+  cessed; buffer register B2 is hidden and cannot be accessed.
+  MDASMBR — MDASM Data B Register  0x30 605A*
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+  BR
+  RESET:
+  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U  U
+  * Refer to Table 15-16 for a complete list of all the base addresses for the MDASM registers.
+  15.11.1.3 MDASM Status/Control Register (Duplicated)
+  The MDASMSCRD and the MDASMSCR are the same registers accessed at two dif-
+  ferent addresses. Reading or writing to either of these two addresses has exactly the
+  same effect.
+  NOTE
+  The user should not write directly to the address of the MDASM-
+  SCRD. This register’s address may be reserved for future use and
+  should not be accessed by the software to assure future software
+  compatibility.
+  MDASMSCRD — MDASM Status/Control Register (Duplicated)  0x30 605C*
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+  ED-  FORC FORC
+  PIN  WOR  FREN  0  RESERVED  BSL  0  MOD
+  POL  A  B
+
+====================================================================================================
+13.12.2-13.12.9 QACR0 / QACR1 / QACR2 / QASR0 (lines 27185-27200)
+====================================================================================================
+  13.12.6 QADC64 Control Register 0 (QACR0)
+  Control register zero establishes the QCLK with prescaler parameter fields and de-
+  fines whether external multiplexing is enabled. All of the implemented control register
+  fields can be read or written, reserved fields read zero and writes have no effect. They
+  are typically written once when the software initializes the QADC64, and not changed
+  afterwards.
+  QACR0 — QADC64 Control Register 0  0x30 480A
+  0x30 4C0A
+  MSB  LSB
+  1  2  3  4  5  6  7  8  9  10  11  12  13  14
+  0  15
+  MUX  RESERVED  TRG  RESERVED  PSH  PSA  PSL
+

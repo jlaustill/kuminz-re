@@ -1,0 +1,103 @@
+0.33 1002+0002 0x0040aa98 key_off_shutdown_inhibit_flag [word] <- Key_Switch_Override (UNITLESS) [SSKYOD] KEY SWITCH OVERRIDE FLAG
+0.33 1008+0008 0x0040b716 vehicle_speed_pulse_timeout [word] <- Road_Speed_Timer (SEC) When this parameter is zero vehicle speed is set to zero.
+0.33 1032+0004 0x00406882 engine_overspeed_debounce_limit [word] <- Time_Overspeed_Allowed (MSEC) [FSOSEN] Time before triggering Engine Overspeed
+0.33 1033+0000 0x0040a893 fuel_mass_flow_raw [word] <- Fuel_Delivery_Rate (LB/HR) [FDFLRT] rate of fuel delivered to injectors as determined for use in alpha alg.
+0.33 103B+0000 0x0040a2ee injection_timing_offset_map_output [i16] <- Four_D_Timing (CRANK_DEG_BTDC) [_4DTBTA] Timing advance value calculated from the 4D timing table -valid only when activ
+0.33 1069+0012 0x003fdc8e sensor_diag_clear_flag [word] <- Flash_Failure_Flag (HEX) [SDFHFXFG] Flag stored in EEPROM which indicates a Flash write failure has been detected.
+0.33 1070+000A 0x0040a35c service_brake_active_governor_mode_config_bit_0_flag [dword] <- EB_Immediate_Brake (UNITLESS) Engage the Engine Brake without rate limiting.
+0.33 1070+0012 0x0040a364 engine_retarder_request_shift_hold_flag [word] <- Engine_Brake_Inhibit (UNITLESS) Prevents EB from being engaged while a time delay is in process.
+0.33 1070+0016 0x0040a368 engine_retarder_limit_source_code [word] <- EB_Non_Override_Command_Source (UNITLESS) source of eb req.: 1=JC_OVRD,2=CRUISE,3=SWITCH,4=JC_LIM,5=NOT_SET,6=NO_OVRD
+0.29 1071+0022 0x00408ebc engine_retarder_monitored_rpm_threshold_governor_mode_4 [word] <- Maximum_PTO_EB_Speed (RPM) PTO reference speed below which Exhaust Brakes be allowed ON. For cab heat!
+0.33 1071+0024 0x00408ebe engine_retarder_coolant_temperature_threshold [i16] <- EB_Max_Idle_PTO_Coolant_Temperature (DEG_F) Coolant_Temperature below which Idle & PTO / exhaust brake operation is allowed
+0.33 1071+0028 0x00408ec2 engine_retarder_output_mode_flags [word] <- EB_Brake_Type (UNITLESS) Selects devices used for engine braking. 0=NONE, 1=EXHAUST, 2=VG, 3=BOTH
+0.33 107A+0010 0x0040a25c governor_fuel_demand_tracking_floor [i16] <- ASG_Fuel_Low_Limit (MM3S) [ASFLLOLM] ASG fueling lower limit
+0.33 107C+0016 0x0040a1c0 variable_speed_governor_selected_flag [word] <- Selected_Throttle_Control (HEX) [STUOTHGV] = (STCG_Enable & STCG_Switch) XOR User_Selected_Throttle_Control
+0.29 107D+0020 0x003ff6a6 fuel_demand_decaying_peak_ceiling_offset_above_pressure_error_threshold [word] <- ASG_Fuel_Slew_Threshold_1 (MM3S) Delta below no-load fuel to start slewing when rail not large neg
+0.29 107D+0022 0x003ff6a8 fuel_demand_decaying_peak_ceiling_offset_below_pressure_error_threshold [word] <- ASG_Fuel_Slew_Threshold_2 (MM3S) Delta below no-load fuel to start slewing when rail is large neg
+0.29 107D+0038 0x003ff6be fuel_demand_ramp_upper_threshold [word] <- ASG_Fuel_Slew_Inc_Threshold (MM3S) Pos slew limit #1 used below this;limit #2 above this thresh
+0.33 1094+0004 0x0040ae60 j1939_feature_enable_cmd_flag [word] <- OCM_Reset_Flag (UNITLESS) [OCRSFG] Indicates a manual reset was performed on OCM data
+0.33 109C+0000 0x0040aeec fuel_demand_base_offset [word] <- No_Load_Fuel (MM3S) [NLFL] Fuel required to overcome friction
+0.33 10E7+0016 0x0005c398 fuel_demand_norm_zero_cal [word] <- FSS_Zero_Torque_Fueling (MM3S) MAXIMUM FUELING VALUE THAT DOES NOT INJECT FUEL.
+0.33 116B+0002 0x0040c260 engine_rpm_override_enable [word] <- Tachometer_Override_Mode (UNITLESS) [DRTKODMD] Flag to set Tach to Tachometer_Override_RPM(1=override,0=no override).
+0.33 117D+0016 0x0040a27e j1939_cruise_speed_setpoint [word] <- Max_Road_Speed (MPH) [RSMXRZ] MAX. VEHICLE SPEED IN TG (ANY GEAR w/o GD) after Driver Reward adjustment
+0.33 117D+0026 0x0040a28e vehicle_speed_sensor_ok_flag [word] <- VSS_Valid_Flag (UNITLESS) [VSSVF] TRUE when no VSS_Signal_Lost_Error and VSS sensor exists, else FALSE
+0.33 1184+0002 0x0040b68e cruise_control_state [CRUISE_CONTROL_STATE] <- Cruise_Command_Mode (UNITLESS) Cruise Command Mode (off/set/resume/coast/accel/bump down/bump up/hold/cancel)
+0.33 1186+0010 0x00408e0c cruise_speed_offset_default [word] <- Cruise_RSG_Top_Droop_Offset0 (MM3S) Offset of CC/RSG top droop fueling for Tau = 0 droop calculation
+0.33 1187+0000 0x0040b696 cruise_deadband_active_flag [word] <- Cruise_Allow_Droops (UNITLESS) STATUS OF CRUISE DROOP STATE MACHINE
+0.33 118C+0000 0x00408e86 cruise_speed_setpoint_adj_offset_cal [word] <- Max_Cruise_RSG_Road_Spd_Change (MPH) Maximum change allowed in cruise road speed
+0.33 118F+0000 0x00408e88 protection_fuel_rate_ramp_param_cal [word] <- Cruise_Accel_Ramp (MPH) RATE OF INCREMENT IN CRUISE CONTROL REFERENCE IF IN ACCEL
+0.33 11A4+0004 0x0040b676 cruise_control_fueling [word] <- Desired_CC_Fuel (MM3S) PREDICTED FUELING VALUE FOR USE IN STAT TRANSITION
+0.33 11A4+0006 0x0040b678 governor_fuel_demand_working [word] <- Desired_User_Fuel (MM3S) Steady State Approximation of User Fuel
+0.33 11BC+0000 0x0040a794 engine_hour_meter [dword] <- Engine_Run_Time (SEC) [CMEGTR] Time that the engine is not in stop state
+0.33 1226+0000 0x0040aefe diagnostic_monitor_complete_bits [dword] <- NC_Monitor_Status (UNITLESS) [DGNCMNST] a bit for up to 16 non-cont. monitors to set when mon. has run
+0.33 125C+0002 0x003fd808 injection_timing_offset_cal [i16] <- User_Commanded_Timing (CRANK_DEG_BTDC) [USC_ADV] Commanded timing value for 4D Timing if User_Commanded_Timing_Enable is ENABLE
+0.33 1262+0000 0x003fd814 engine_speed_limit_default_cal [word] <- No_Derate_RPM (RPM) [EPNTDQRP] MAX ENGINE SPEED WHEN NO DERATE IS IN EFFECT. (HSG BRAKE RPM)
+0.33 12F7+0001 0x0040aaa7 j1939_accelerator_low_idle_switch_unavailable_flag [byte] <- J1939_Mux_IVS_Configuration_Error (HEX) [MXIVCFER] IVS Parameter not properly configured. NOT logged as a fault.
+0.33 12FE+0000 0x0005c340 j1939_input_source_priority [word] <- Mux_Module_Priority (HEX) [MXMOPZ] Priority given which MUXed parameters will use for the priority interface.
+0.33 12FE+0002 0x0005c342 j1939_engine_retarder_selection_default_percent [word] <- EB_Switch_Level_Global_Default (%) [ADDFEBLV] Global default for Engine Brake
+0.33 132C+0002 0x003fee7c protection_timing_counter [word] <- VSS_Noise_Counter (CNTS) # VSS noise spikes that caused using (n-1)Sampled_Road_Speed
+0.33 13D8+0002 0x0005c47e engine_retarder_stage_1_weight [word] <- Jcomm_EB_Driver_1_Num_Cyl (UNITLESS) [JCDR1NCY] Indicates # of cyl. brakes driven by eb driver 1 for J1939 ret. map
+0.33 13D9+0000 0x0040ae5a engine_retarder_engaged_stage_count [word] <- Engine_Brake_On_Sum (CNTS) [EBONSM] Indicates number of engine brake cylinders on.
+0.29 1401+0000 0x00407266 engine_speed_limit_droop_cap_alternate_disable [word] <- HSG_Droop_Select_Port_Type (UNITLESS) [HSDSPTY] indicator of what type switch is connected 0=discrete, 1=analog
+0.33 162B+0006 0x0040b9ea intake_air_heater_preheat_remaining_ticks [word] <- IAH_Preheat_Timer (SEC) Preheat countdown timer
+0.33 162B+0008 0x0040b9ec intake_air_heater_performance_test_state [word] <- IAH_Monitor_State (UNITLESS) state of the intake air heater monitor
+0.33 164A+0012 0x000642f4 radiator_fan_speed_spike_up_limit [word] <- EOL_Fan_Speed_Max_Pos_Delta (RPM) Max allowable pos delta from for the middle of three consec fan teeth
+0.33 164A+0014 0x000642f6 radiator_fan_speed_spike_down_limit [word] <- EOL_Fan_Speed_Max_Neg_Delta (RPM) Max allowable neg delta from for the middle of three consec fan teeth
+0.33 16A2+002A 0x0040a3e8 battery_voltage_gain_lookup [word] <- TGC_ULim_Battery_Voltage_Comp (UNITLESS) Scaling factor for battery voltage based TGC upper limit correction
+0.33 16A5+0012 0x0040a492 injection_quantity_oxygen_limit [word] <- OFC_Fuel_Limit (MM3S) Upper fuel limit above which oxygen is limited
+0.33 177E+000E 0x004002f0 egr_valve_position_filter_coefficient [word] <- C_CHP_EGR_Pos_Delay_Fil_Cnst (UNITLESS) Filter constant for estimating EGR Pos_Delay at intake manifold
+0.33 17C8+0000 0x0040afe6 turbocharger_speed [word] <- Filtered_Turbo_Speed (KRPM) Turbo speed after filtering
+0.33 18F0+0006 0x0040ba68 fuel_pressure_setpoint_not_reached_monitor_state [word] <- HPCR_Cusum_Leak_System_Monitor_State (UNITLESS) State of Cusum leak detection monitor
+0.33 1901+003E 0x00409fb2 temperature_rationality_cranking_decision_count [word] <- C_Rationality_Debounce_Delay (SEC) Debounce counter limit for BT key-on fault
+0.33 1902+0024 0x0040ba42 temperature_rationality_cranking_cycle_count [word] <- Rationality_Startup_Timer (SEC) Rationality_Startup_Timer
+0.33 1921+0002 0x0040a196 barometric_pressure_reference [word] <- Ambient_Air_Press (IN_HG) Value of Ambient Air Pressure
+0.33 1966+000C 0x0040bd8c sensor_channel10_value [word] <- Oil_Press_Sensor (PSI_A) Oil_Pressure raw value linearized and filtered
+0.33 1966+0012 0x0040bd92 sensor_channel69_value [word] <- Battery_Tmptr_Sensor (DEG_F) Battery_Temperature raw value linearized and filtered
+0.33 1966+0032 0x0040bdb2 sensor_channel69_default_value [word] <- Battery_Tmptr_Default (DEG_F) Battery_Tmptr_Sensor global default value
+0.33 1966+0050 0x0040bdd0 sensor_channel7_value [word] <- Fuel_Tmptr_Sensor (DEG_F) Fuel_Temperature raw value linearized and filtered
+0.33 1966+0052 0x0040bdd2 sensor_channel7_default_value [word] <- Fuel_Tmptr_Default (DEG_F) Fuel_Tmptr_Sensor global default value
+0.33 1966+0054 0x0040bdd4 sensor_channel71_value [word] <- AC_Press_Sensor (PSI) Air Conditioner pressure value linearized and filtered (in PSI)
+0.33 1966+0056 0x0040bdd6 sensor_channel71_default_value [word] <- AC_Press_Default (PSI) Air Conditioner pressure AD global default value (in PSI)
+0.33 1966+005C 0x0040bddc sensor_channel8_value [word] <- Remote_Throt_Sensor (%) Remote_Throt raw value linearized and filtered
+0.33 1966+005E 0x0040bdde sensor_channel8_default_value [word] <- Remote_Throt_Default (%) Remote_Throt default value
+0.33 1966+0060 0x0040bde0 sensor_channel13_value [word] <- Sampled_Throt_Sensor (%) Sampled_Throt raw value linearized and filtered
+0.33 1966+0062 0x0040bde2 sensor_channel13_default_value [word] <- Sampled_Throt_Default (%) Sampled_Throt default value
+0.33 1966+006C 0x0040bdec sensor_channel21_value [word] <- Throt_SV_Sensor (VOLT) Throttle_Sensor_Supply_Voltage linearized and filtered value
+0.33 1966+006E 0x0040bdee sensor_channel21_default_value [word] <- Throt_SV_Default (VOLT) Throttle_Sensor_Supply_Voltage Default value
+0.33 1966+0084 0x0040be04 sensor_channel76_value [word] <- Tcase_Mux_Sensor (UNITLESS) Tcase Switch Mux linearized and filtered value
+0.33 1966+0086 0x0040be06 sensor_channel76_default_value [word] <- Tcase_Mux_Default (UNITLESS) Tcase Switch Mux Default value
+0.33 1966+0094 0x0040be14 barometric_pressure_sensor_fault_status [word] <- TVA_Position_Sensor (DEG) TVA_Position input linearized and filtered value
+0.29 1982+0000 0x0040af68 charge_water_vapor_fraction [word] <- TPE_Charge_H2O_Mole_Fraction (UNITLESS) fraction of charge molecules that are water
+0.33 1B2C+0002 0x00409eee fuel_pressure_sensor_pre_start_high_volts_threshold [word] <- Fuel_Pressure_Keyon_Rat_Max_Voltage (VOLT) Maximum Voltage reading for fuel pressure keyon rationality
+0.33 1B2C+0006 0x00409ef2 fuel_pressure_sensor_pre_start_low_volts_threshold [word] <- Fuel_Pressure_Keyon_Rat_Min_Voltage (VOLT) Minimum Voltage reading for fuel pressure keyon rationality
+0.33 801A+002E 0x00409544 fuel_pressure_limp_home_trigger_enable_mask [word] <- HPCR_Fuelpr_Limp_Home_Derate_N (UNITLESS) Bitmap indicating if derate is enabled for fuel press limp home
+0.33 801E+0010 0x004095a8 fuel_pressure_sensor_fault_default [word] <- HPCR_Fuelpr_Default (MPa) HPCR_Fuel_Pressure set to this value when fuel pressure sensor faulted
+0.33 8021+0004 0x0040b8b2 fuel_pressure_feedback_filtered [word] <- HPCR_Filtered_Fuelpr (MPa) Filtered fuel pressure
+0.33 8022+0000 0x00409a6a fuel_pressure_setpoint_running_minimum [i16] <- HPCR_Min_Fuelpr (MPa) Minimum fuel pressure
+0.33 8022+000A 0x00409a74 fuel_pressure_setpoint_offset_slew_step [word] <- HPCR_Pressure_Offset_Rate_AFC_Derate (MPa/SEC) Rate at which fuel pressure setpoint offset will be added for AFC derate
+0.33 803F+0000 0x0040b8b6 fuel_pressure_setpoint [i16] <- HPCR_Fuelpr_Setpoint (MPa) Fuel pressure setpoint
+0.33 804C+0004 0x004090d4 main_injection_pulse_width_override_switch [byte] <- HPCR_Maininj_Duration_Override_Switch_N (UNITLESS) Override switch of duration of main injection
+0.33 804C+0007 0x004090d7 pilot_injection_pulse_width_override_switch [byte] <- HPCR_Pilotinj_Duration_Override_Switch_N (UNITLESS) Override switch of duration of pilot injection
+0.33 804C+000A 0x004090da auxiliary_injection_pulse_width_override_switch [byte] <- HPCR_Auxinj_Duration_Override_Switch_N (UNITLESS) Override switch of duration of aux injection
+0.33 806C+002C 0x0040b98c injection_timing_speed_component [word] <- Calc_Delay_Timing (CRANK_DEG) Calc delay offset beyond static wakeup where inj can begin
+0.33 806D+000A 0x00409e78 injection_timing_rpm_snap_tolerance [word] <- Pilot_SOI_Constant_Time_RPM_Window (RPM) Pilot-to-Main time interval fixed in this window
+0.33 8086+0020 0x0040b92e injection_timing_demand [i16] <- Main_Penultimate_SOI (CRANK_DEG_BTDC) Next-to-final main SOI
+0.33 80CE+0008 0x0040b838 injection_timing_auxiliary_map_blend [word] <- Aux_SOI_Base (CRANK_DEG_ATDC) Base Aux SOI
+0.33 8192+0014 0x0040b77a pilot_injection_quantity [word] <- Injected_Pilot_Fuel (MM3S) Amount of pilot fuel actually implemented at injection
+0.33 8A0D+0010 0x0005c7be obd_pid_1_monitor_support [word] <- J1979_Mode01_PID01_B_Support (UNITLESS) Bit mapped def for PID 01 mode 01 J1979 byte B msg response
+0.29 8A0E+0006 0x00408724 cruise_steady_debounce_count [word] <- Cruise_N_V_Ratio_Int_Clear_Count (CNTS) Number of executions without ratio change before integrator clears
+0.29 8A0E+0008 0x00408726 cruise_ratio_steady_threshold [word] <- Cruise_N_V_Ratio_Int_Clear_Level (RPM/SEC) Level below which a difference in ratio is considered no change
+0.33 8A0F+0004 0x0040b208 cruise_control_on_flag [word] <- Cruise_On_Switch_Mux (UNITLESS) Cruise Main On/Off Switch value for Chrysler
+0.33 8A35+0004 0x0040b33e intake_air_heater_schedule_level [word] <- IAH_Postheat_Schedule (UNITLESS) Intake air heater postheat schedule selected by intake manifold temperature
+0.33 8A35+000E 0x0040b348 intake_air_heater_preheat_depleted_flag [word] <- IAH_Preheat_Status (UNITLESS) 1st Preheat cycle complete = 1
+0.33 8A3D+0000 0x0040aee8 injection_timing_demand_floor [i16] <- Misfire_Timing_Limit (DEG) Output of the misfire timing limit table
+0.33 8A3D+0002 0x0040aeea injection_timing_pid_init_flag [word] <- SOI_Before_MST (DEG) Desired SOI before being limited by misfire algorithm
+0.33 8C4F+0002 0x00408ab2 output_speed_sensor_check_minimum_output_speed [word] <- OSS_Min_Fault (RPM) OSS < this, check for OSS_Rationality_Error
+0.33 8C4F+0004 0x00408ab4 output_speed_sensor_check_minimum_vehicle_speed [word] <- OSS_Min_MPH (MPH) minimum vehicle velocity to start OSS rationality monitor
+0.33 8C50+0001 0x00408719 second_brake_switch_serial_driver_expected_transmit_bits [byte] <- Alt_Brake_Octal_Switch_Test_Mask (HEX) Test conditions of SPI LS octal switch outputs for Alt_Not_Brake_Switch
+0.29 8C50+0002 0x0040871a second_brake_switch_serial_driver_status_polarity_bits [byte] <- Alt_Brake_Octal_Switch_Feedback_Invert_Mask (HEX) Inversion mask for SPI LS octal switch feedbacks for Alt_Not_Brake_Switch
+0.29 8C50+0005 0x0040871d second_brake_switch_trigger_accumulator_step [byte] <- Alt_Not_Brake_Switch_Debounce_Inc_Rate (UNITLESS) Calibration to debounce increment rate for LS octal switch diag. check.
+0.33 8C54+0000 0x0040b1fa sensor_filter_update_counter [word] <- MPH_Counter_Nvratio (CNTS) Delay for RE_Axle_Ratio_Factor_Learned determination.
+0.29 8C5E+000A 0x00408dd4 wastegate_solenoid_retest_off_passes [word] <- Wastegate_Pressure_Control_Driver_Inhibit_Off_Time (SEC) Wastegate duty cycle Off cycle time when open or short circuit.
+0.33 8C60+0007 0x0040b547 engine_to_vehicle_speed_ratio_invalid_flag [byte] <- Tcase_Launch_Flag (UNITLESS) flag set true if percent change < cal and vehicle speed > cal
+0.33 8C60+0008 0x0040b548 vehicle_speed_filtered_for_engine_speed_ratio [word] <- Tcase_Road_Speed (MPH) Filtered Sampled_Road_Speed

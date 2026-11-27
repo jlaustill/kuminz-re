@@ -1,0 +1,24 @@
+cm848: round 9 stage B - the RE tables after 8C18 and the exhaust brake tables, named from e2m (label-only)
+
+- **After 8C18 (0x4082f4 +00..+98).** The walk from 0x40838e matches 0B9E..0BA9: the closed-throttle relock /
+  unlock curves for 3rd / 4th and the 3rd gear lockup / unlock curves. 11.46 has no T tables RE_Gear_Ratio /
+  RE_Two_Three_Lag here; the gear ratio table sits after 8BBC. From 0x408476 the walk from 0BB5 matches 0BB5..0BC6:
+  the 2nd gear relock / lockup / unlock curves and the overheat lockup / unlock curves for 2nd to 4th. 0x4085de is
+  RE_CT_Unlock_2nd, which the code reads with the 3rd / 4th closed-throttle unlock curves. Each table's users are
+  the function its record describes.
+- **The exhaust brake tables are e2m blocks 8CA6..8CC6** (column 5 1010..1030). Stage 9A had called them "11.46
+  tables". They sit in that order at 0x4080b0..0x4082bf, without 1020..1028, and at 0x408606..0x408689, which holds
+  1020..1025, the closed-throttle unlock copies.
+  - Every one matches the switch-12 branch the code reads it in: the cruise / normal 3-4 / 4-3 lines, the 4th gear
+    / cruise lockup grids with their 8D1D / 8D1E boost axes inline, the 4th gear / cruise / 3rd gear unlock curves,
+    the 3rd gear lockup curve, the 3-4 anti-hunt envelope and the closed-throttle unlock curves for 2nd to 4th.
+  - The 3rd gear copy is also the exhaust brake relock threshold, read at the output speed minus
+    converter_clutch_closed_throttle_relock_exhaust_brake_hysteresis.
+  - The 14 tables stage 9A named from the code alone get their records in their comments.
+- **Two curves:**
+  - The manual low curve is RE_Manual_2nd_Curve (8C66 / 8C67), now governor_pressure_manual_2nd_curve.
+  - 0x4082c0 is governor_pressure_exhaust_brake_curve (pressure state 0x18, used instead of the fuel economy curve
+    with switch 12 on). It is the only table here with no record in the 11.45 file.
+- **Proof:** reverse_names.py EQUIVALENT (0 functions differ).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

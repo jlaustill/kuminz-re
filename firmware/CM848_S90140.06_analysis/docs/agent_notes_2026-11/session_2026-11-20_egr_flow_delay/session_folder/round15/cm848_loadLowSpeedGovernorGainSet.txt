@@ -1,0 +1,24 @@
+=== cm848_loadLowSpeedGovernorGainSet (lines 27728-27757, 23 non-blank)
+// Function: cm848_loadLowSpeedGovernorGainSet @ 0x00028a14
+//
+/* Picks the gain set (TSC1 - override - the requested set - the default set for user state 0) and
+   loads its four words into the working proportional / integral / derivative / jerk gains (e2m 10ED
+   +0 / +2 / +4 / +14) (was cm848_updateGovernorSetpointParameters) */
+void cm848_loadLowSpeedGovernorGainSet(void)
+{
+  short sVar1;
+  sVar1 = cm848_selectLowSpeedGovernorTsc1GainSet();
+  sVar1 = cm848_selectLowSpeedGovernorOverrideGainSet((int)sVar1);
+  if ((sVar1 == 0) &&
+     (low_speed_governor_final_gain_state = low_speed_governor_user_gain_state,
+     low_speed_governor_gain_set_pointer = low_speed_governor_requested_gain_set_pointer,
+     low_speed_governor_user_gain_state == 0)) {
+    low_speed_governor_gain_set_pointer = &low_speed_governor_default_gain_set;
+  }
+  low_speed_governor_proportional_gain = low_speed_governor_gain_set_pointer->proportional_gain;
+  low_speed_governor_integral_gain = low_speed_governor_gain_set_pointer->integral_gain;
+  low_speed_governor_derivative_gain = low_speed_governor_gain_set_pointer->derivative_gain;
+  low_speed_governor_jerk_gain = low_speed_governor_gain_set_pointer->jerk_gain;
+  return;
+}
+//

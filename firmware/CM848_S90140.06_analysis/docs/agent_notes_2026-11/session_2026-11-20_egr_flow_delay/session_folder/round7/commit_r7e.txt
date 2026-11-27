@@ -1,0 +1,19 @@
+cm848: round 7 closing 2 - the final review's comment fixes (comment-only)
+
+- The session plates now say session_kind. The history store's plate puts the table behind
+  j1939_input_signal_timeouts[24], not past the array: word 24 is the table's length word.
+- The zero torque timer: in limit control the test reads the previous torque limit, before this message updates it.
+- retarder_tsc1_speed_control_flag is an inference. No e2m record covers 0x40ae20-0x40ae4c; that was checked word by
+  word with e2m_block_addresses.py --address.
+- The session record length words: no direct load or store in the disassembly. They are e2m type T records, which e2m
+  gives no size.
+- top_gear_ratio_threshold: e2m 1185 +A's wording ("above which ... top gear") disagrees with the code's direction.
+  The period formula backs the code.
+- Docs: task 046, firmware/CLAUDE.md (the int32_t note points at the existing rule), the PR body (8b1c0f3).
+- Checks:
+  - no enum renders as an OR of members (the one grep hit is a logical ||);
+  - the piece census from before round 6's types to now is 494 -> 490 (0 added);
+  - the .cpp diff is comments only (0 functions);
+  - ./analyze.sh verify is byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

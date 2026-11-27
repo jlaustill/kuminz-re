@@ -1,0 +1,64 @@
+firmware: CM550 stack parameters in 2-byte slots - custom parameter storage from stack_parameter_layout.csv; 60 CM550 prototypes placed, in_stack tokens 125 -> 0
+
+Round 85's research workflow found why 89 CM550 functions rendered in_stack_00000004 / param_N._0_2_.
+- The compiler passes every 1- or 2-byte argument in one 2-byte slot, and a byte is the slot's low byte. It passes
+  every 4-byte argument in the next 4 bytes with no padding, so a long can sit at +6 after a word. The survey decoded
+  747 call sites and 1411 argument reads from the ROM and found no exception.
+- Ghidra's 68000.cspec __stdcall gives each argument a 4-byte slot and right-justifies it there (pentry align 4, and
+  <stackpointer> has no reversejustify). So a declared word lands at +6 while the callee reads +4.
+- A spec extension cannot change the justification, and an align="2" prototype cannot place a long at +6 (11 callees
+  need that). So the fix is custom storage.
+
+The change (one atomic commit: the code, the switch file and the rows; either half alone misplaces names):
+- ScriptUtils.java:
+  - parseStackParameterLayout(): needs language / first_stack_offset / slot_size; an unknown setting is an error;
+  - packStackParameters(): ceil(length / slot) slots, right-justified, no alignment padding;
+  - 15 unit tests: busyWaitDelayLoop {2} -> {4}, a byte -> {5}, {2,4} -> {4,6}, {4,4,2,2} -> {4,8,12,14},
+    {1,1,1,2} -> {5,7,9,10}, slot 4 = the cspec layout, the parser's refusals.
+- ApplyFunctionDefinitions.java:
+  - An optional second argument, the layout file. The script refuses a layout for another Ghidra language.
+  - With a layout, each typed parameter gets stack storage at its packed offset (CUSTOM_STORAGE), read back and
+    checked.
+  - A function with a missing or unknown parameter row is skipped, return row included, with an Error line: packing
+    would move every later offset.
+  - Without the file, the call is unchanged.
+- common.sh: apply_function_definitions() passes output/stack_parameter_layout.csv when the firmware has one.
+- CM550's new output/stack_parameter_layout.csv: language 68000:BE:32:CPU32, first offset 4, 2-byte slots.
+- CM550 function_definitions.csv, from the design's proposed rows:
+  - Wave 0 corrects 26 functions whose rows only fit the 4-byte slots:
+    - 9 byte rows that the callee loads as a word become ushort;
+    - re-indexed so each name stays on its bytes: 0xfaa6, 0x1cb76, 0x18968, 0x32b38;
+    - reshaped: exponentialMovingAverage / cm550_coreTableInterpolation / cm550_unsignedLinearInterpolation take a
+      word and then a pointer at +6; 0x10e16 gains its out-pointer; 0x2f4be takes the received message.
+  - Wave 1 adds cm550_busyWaitDelayLoop, cm550_memcpy and mc68k_delayTimeBaseTicksWithWatchdogService.
+  - The phantom row of 0x32244 is deleted: its body reads no argument and its caller pushes none.
+  - Two names are corrected from the code: 0x142d4's calc_mode is lookup_result_offset (added to 0x80052C and
+    subtracted from the lookup result), and 0x1cb76's rpm_index is throttle_input (stored to the tables' throttle
+    input words).
+  - The header comment states the rule: a row per parameter, at the width the callee loads.
+
+Proof (the design's test plan):
+- T0: script_tests 104 / 104 pass.
+- T1: CM848, built with the new code, is byte-identical to the committed .cpp apart from the Generated line. Its log
+  has no layout line.
+- T3, CM550 verify DETERMINISTIC:
+  - The log has the layout line, 60 functions placed, no Error line and no read-back mismatch.
+  - in_stack_0000000N tokens 125 -> 0 in the whole file, and 0 left in the functions with rows.
+  - The 20 control functions (they call nothing that changed) are byte-identical.
+  - 758 functions before and after. 100 changed: 41 with rows, 57 of their callers, and the 0x32244 builder plus
+    its caller (now (void) with no garbage argument).
+  - Call arguments render the pushed constants: cm550_busyWaitDelayLoop(1) x4 and (2); the delay (500) x15 /
+    (10000) x4; the 7 clr.w callers of the diagnostic queue writer (0); cm550_circularBufferInit(..., 10);
+    exponentialMovingAverage(_DAT_0080a292,(dword *)&timing_table_4_ptr).
+  - The re-indexed names land on their values: torque_index is the byte tested == 0, throttle_input is stored to
+    fuel_table_primary_throttle_input, sensor_value is compared with 0 / 2, and response_code's address goes to
+    byteSwap16.
+  - The callers' local rows still land (currentTimerCount / elapsedTimerCount, tree_nodes, address / length).
+  - The Huffman caller now reads start_node = cm550_huffmanTreeBuilder(tree_nodes).
+- T5: the headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_rename_waves.py:
+  ALL PASS.
+
+Leads: 61 survey functions still have no rows. candidate_rows.txt ranks them with types from the callee loads, and
+198 param_N._x_y_ pieces remain (201 before).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,12 @@
+cm848: round 18 closing - stale text, docs, the session archive, verify
+
+- Three plates and one global comment that still used the retired words ('delivery mode', 'injection timing offset
+  map', the altitude derate 'dims' cache names); the .cpp changes only in those plate comment lines.
+- Task 046: the round 18 section (stages A-C, the leads: the ANC timing stage, fuel_demand_offset_correction); the
+  round 15 / 16 type, user commanded timing and Main_Cold_Advance_Select leads are marked done.
+- The PR body, the session README, the todo line; the round 18 scratch in session_folder/round18/; the build /
+  verify logs and the e2m audit in the large-files tarball.
+
+./analyze.sh verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

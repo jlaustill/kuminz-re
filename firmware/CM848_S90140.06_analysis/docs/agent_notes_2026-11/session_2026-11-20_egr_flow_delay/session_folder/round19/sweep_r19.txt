@@ -1,0 +1,3 @@
+work/tasks/046-cm848-egr-flow-estimate.md:1072: ...  - **Two more 'row count' caches:** `governor_adjustment_input_table_row_count` (0x3fb9da) and
+work/tasks/046-cm848-egr-flow-estimate.md:1073: ...    `boost_fuel_rpm_blend_table_row_count` (0x3fb9f2) look like lookup 
+work/tasks/046-cm848-egr-flow-estimate.md:1074: ...  - **`cm848_storeFuelDemandPreviousValues`** copies the off-nominal com

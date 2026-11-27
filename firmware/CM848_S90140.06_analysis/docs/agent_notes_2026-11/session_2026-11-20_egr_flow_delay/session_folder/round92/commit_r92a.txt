@@ -1,0 +1,38 @@
+cm550 + cm848: round 92 stage A - the algorithm enable words (e2m 106B AENBLFLG) as bitfields
+
+CM550's algorithm enable flag table sits at 0x803c92 in the EEPROM mirror: a length word, then word n at
+0x803c94 + 2 x n. Its rows had five different name patterns (calibration_feature_enable_flags_word_0/1/2/3/5/9 - the
+"9" was word 12 -, feature_enable_flags_word, switch_override_configuration, ...) and 18 words had no row, so the code
+printed _calibration_feature_enable_flags_word_2 & 0x1000 and _DAT_00803cca & 8.
+
+Workflow wf_5794b4eb-1ec ran an investigator and a skeptic per batch of words (8 agents; 4 were refused by a usage
+limit and re-run on resume): 437 elements confirmed, 28 amended (27 comment texts and one field name), none refuted.
+- Every row is algorithm_enable_flags_<n>_cal (CM848's names); the length word is
+  algorithm_enable_flags_table_length_cal. 11 rows renamed, 18 new.
+- 4 words share CM848's type, bit for bit (algorithm_enable_flags_1_t / 4_t / 11_t / 25_t).
+- 14 words get a cm550_algorithm_enable_flags_<n>_t (2, 3, 5, 7, 8, 12, 13, 14, 16, 18, 27, 28, 32, 33): at least one
+  bit differs from CM848's word, or CM848 has no type. Each type's header says how it differs.
+- 11 stay plain words with the bit meanings in the comment: the length, word 0 (the base of the indexed bit tests,
+  as in CM848), and 6, 9, 15, 17, 19, 22, 23, 26 (reached only by index, or per-channel bits) and 20 (no record in
+  v64t6_s.e2m; one test, added by hand).
+- A bit that nothing proves is reserved_bit_<n> with the guess in its comment. No word is written by the dumped ROM.
+- CM848: algorithm_enable_flags_3_t bits 12 / 13 / 14 (reserved) are the acceleration noise control fuel / timing /
+  engine speed limit enables and algorithm_enable_flags_12_t bit 1 is overspeed_fuel_shutoff_enable, each from
+  CM848's own e2m. Bit 8 of word 3 is gear_down_protection_enable (was
+  road_speed_governor_without_droops_below_top_gear): Cummins' label for that table position in CM550's e2m and the
+  later CHR_B2 files; the behaviour stays in the comment.
+- Two previous-pass copies found through stage B's enum: user_fueling_state_previous_pass (0x8000fe) and
+  final_fueling_state_prev (0x80d33c, the twin of CM848's row), both FUELING_STATE.
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed / added; 90 changed. All 132 mask tests in the token census became
+  the field of exactly that bit on the same word (mask_exact_r92.py: 0 mismatches), e.g.
+  (_feature_enable_flags_word & 0x200) -> algorithm_enable_flags_18_cal.programmable_power_enable. The indexed reads
+  from word 0 print as array indexing. About 28 places that keep the masked value print (ushort)word & mask; 12
+  masks stay on plain word 0. No bitfield store renders as a piece; caller artifacts unchanged (unaff_ 45, extraout_ 33,
+  in_ 43, CONCAT 128); no local row moved; no new build warning; _cal MISSING 25 -> 14.
+- CM848: verify DETERMINISTIC; label-only (the bit 8 field's 2 renders); no new build warning.
+- test_e2m_block_addresses (table CSV rewritten) / test_e2m_name_audit / test_rename_waves / test_lookup_tables /
+  test_disasm_tools pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

@@ -17,7 +17,7 @@
 #   This tool reads the ECM's ENGINE-RUN hour meter and prints that command.
 #
 # THE TWO HOUR METERS (firmware-traced, PR #48, 2026-11-15):
-#   cm848_advanceHourMeters (flash2 0x506780) runs in phase 0 of the 40-phase
+#   advanceHourMeters (flash2 0x506780) runs in phase 0 of the 40-phase
 #   main loop, i.e. once every 40 PIT ticks. Each tick is 5 ms (PITC = 4999, a
 #   5000-count PIT period at 1 MHz), so ONE COUNT = 0.200 s (hours = counts / 18000).
 #   - EEPROM 0x01000042 (u32 BE) = engine_hour_meter_cal - ENGINE-RUNNING time.
@@ -28,9 +28,9 @@
 #     (powered time, an over-estimate of engine hours). Live copy: RAM 0x0040A64C
 #     (key_on_hour_meter). The boot ROM keeps its own copy at RAM 0x00302012
 #     (+1 every 41 PIT ticks = 0.205 s while in the boot ROM only).
-#   Both are loaded at start (cm848_loadHourMetersFromEeprom) and saved back at
+#   Both are loaded at start (loadHourMetersFromEeprom) and saved back at
 #   power-down (cm848_runPowerDownSequence) and before a reflash restart
-#   (cm848_restartThroughBootRom).
+#   (restartThroughBootRom).
 #
 # EVIDENCE THAT 0x42 IS ENGINE-RUNNING TIME:
 #   during the two HP Tuners flash sessions (key on, engine off) the key-on

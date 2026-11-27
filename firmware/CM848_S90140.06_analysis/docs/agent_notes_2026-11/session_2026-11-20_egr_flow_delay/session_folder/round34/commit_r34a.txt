@@ -1,0 +1,23 @@
+cm848: round 34 stage A - the application J1939 transport's function names (labels)
+
+The application transport's transmit side, named from the code (task 046's round 34 lead):
+- cm848_sendJ1939BroadcastDataPacket (0x50d2c0, was j1939_transport_singleFrame_send). It sends the next TP.DT
+  packet of broadcast (BAM) session record 0 or 1, once its packet delay timer reaches 0. The status is 0x11 while
+  sending, 5 after the last packet, or the send result.
+- cm848_sendJ1939ConnectionModeDataPackets (0x50d444, was j1939_transport_dataFrame_bulkSend). It sends the
+  packets a clear to send granted, up to 10 per call, then waits up to 0x70 passes. The status is 6 on that
+  timeout, or 7 when a frame fails.
+- cm848_serviceJ1939TransportSessions (0x50d60c, was phase_group_a_triggerControllerUpdates). It is the periodic
+  service: both broadcast records, the connection mode session, and the receive timeout.
+- cm848_initializeJ1939Transport (0x50d700, was j1939_pgn_handler_init_ec00eb00). It sets the frame buffers and
+  registers the PGN 60416 / 60160 (TP.CM / TP.DT) handlers.
+- j1939_broadcast_no_packet_delay_flag (0x3fbdc4, was j1939_tp_bam_session_active). The disassembly sets it only
+  when the descriptor's PDU format and PDU specific bytes are both 0xff (PGN 65535). It turns the packet delay
+  from 5 to 0, so it does not mean "a BAM session is active".
+- The four functions get plates. The gate's cm848_ prefix replaces the j1939_transport_ one; the existing
+  j1939_transport_* names predate the gate.
+
+Proof: reverse_names.py with the stage map is EQUIVALENT. Headers regenerated (0 g++ errors), lookup_tables.py 0
+sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

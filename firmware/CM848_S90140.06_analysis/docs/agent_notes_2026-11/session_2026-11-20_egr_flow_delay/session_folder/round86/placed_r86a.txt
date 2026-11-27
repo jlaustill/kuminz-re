@@ -1,0 +1,60 @@
+arrayRangeSum: start_ptr sp+4:4, end_ptr sp+8:4
+circularBufferPop: buffer_ctrl sp+4:4, data_out sp+8:4
+circularBufferPush: buffer_ctrl sp+4:4, data_byte sp+9:1
+cm550_busyWaitDelayLoop: pass_count sp+4:2
+cm550_calculateBlendedTableValue: fuel_table_x_input sp+4:2, throttle_input sp+6:2
+cm550_calculateGovernorDroopSpeed: breakpoint_fueling sp+4:2, torque_index sp+7:1
+cm550_canBusConfigTypeSelector: config_type sp+4:2
+cm550_circularBufferInit: buffer_ctrl sp+4:4, base_address sp+8:4, buffer_size sp+12:2
+cm550_clampedDivisionCalculator: dividend sp+4:4, divisor sp+8:4, max_result sp+12:2
+cm550_coreTableInterpolation: input_value sp+4:2, table_descriptor sp+6:4
+cm550_diagnosticCodeDebounceHandler: code_index sp+4:2
+cm550_diagnosticCodeRegistrar: code_index sp+4:2
+cm550_diagnosticMemoryAddressResolver: param_id sp+4:2, resolved_address sp+6:4
+cm550_diagnosticMemoryReadHandler: service_id sp+4:2
+cm550_diagnosticMemoryWriteHandler: service_id sp+4:2
+cm550_diagnosticMessageQueueWrite: response_type sp+4:2
+cm550_flashEraseFromRam: block_address sp+4:4, suspend_check_disabled sp+8:4
+cm550_flashProgramFromRam: dest_address sp+4:4, source_ptr sp+8:4, byte_count sp+12:2
+cm550_FUN_000142d4: fuel_table_x_input sp+4:2, lookup_result_offset sp+6:2
+cm550_FUN_00020890: input_index sp+4:2
+cm550_FUN_0002f4be: rx_msg sp+4:4
+cm550_huffmanDecompress: tree_buffer sp+4:4, start_node sp+8:2
+cm550_huffmanTreeBuilder: tree_buffer sp+4:4
+cm550_limitedDivisionCalculator: dividend sp+4:4, divisor sp+8:4, limit_value sp+12:2
+cm550_memcpy: destination sp+4:4, source sp+8:4, byte_count sp+12:2
+cm550_protectionConditionEvaluator: threshold_ptr sp+4:4, state_ptr sp+8:4, threshold_set_select sp+12:2, sensor_value sp+14:2
+cm550_safeDivideWithClamp: dividend sp+4:4, divisor sp+8:2
+cm550_serialNodeAddressChecker: node_address sp+4:2
+cm550_serialNodeAddressForwarder: node_address sp+4:2
+cm550_unsignedLinearInterpolation: x_input sp+4:2, interpolation_state sp+6:4
+diagMemoryReadResponseBuilder: request_ptr sp+4:4, start_address sp+8:4, read_length sp+12:4
+diagnosticByteResponseDispatcher: msg_ptr sp+4:4
+diagnosticErrorHandler: rx_msg sp+4:4
+diagnosticParamRequestHandler: rx_msg sp+4:4
+diagnosticProtectionProcessor: config_ptr sp+4:4, state_offset sp+8:4, threshold_value sp+12:4
+diagnosticServiceDispatcher: msg_ptr sp+4:4
+diagnosticServiceSecurityValidator: msg_ptr sp+4:4
+diagnosticStatusRequestHandler: rx_msg sp+4:4
+exponentialMovingAverage: new_sample sp+4:2, filter_state sp+6:4
+fuelingValueClamp: fuel_value_ptr sp+4:4
+handleJ1939WriteMemoryLongLengthService: request sp+4:4
+handleJ1939WriteMemoryService: request sp+4:4
+lookupApplicationMemoryRegionType: range_start sp+4:4, range_length sp+8:2
+lookupTableInterpolation: args sp+4:4
+mc68k_delayTimeBaseTicksWithWatchdogService2: tick_count sp+4:2
+mc68k_delayTimeBaseTicksWithWatchdogService: tick_count sp+4:2
+mc68k_queueCanCs4ReceiveMessage: message_object sp+4:2
+parameterCircularBufferWrite: dest_address sp+4:4, source_ptr sp+8:4, byte_count sp+12:2
+protectionStateUpdater: source_ptr sp+4:4, dest_ptr sp+8:4, condition_flag sp+12:2
+ptpSwitchedInputDebouncer: input_state sp+4:4, debounce_mask sp+8:4
+sendCanMessage: msg_header sp+4:4
+signedMultiplyDivide64: multiplicand sp+4:4, multiplier sp+8:4, divisor sp+12:4
+twoDimensionalTableInterpolation: table_args sp+4:4
+unscrambleSecurityKey: input_buffer sp+4:4, output_buffer sp+8:4
+unsignedMultiplyDivide: multiplicand sp+4:4, multiplier sp+8:4, divisor sp+12:4
+validateSecurityKey: auth_payload_ptr sp+4:4
+vp44CanMessageDispatcher: rx_msg sp+4:4
+vp44_diagnosticByteResponseSender: first_data_byte sp+5:1, response_code sp+6:2
+vp44FuelTempHandler: rx_msg sp+4:4
+writeJ1939DiagnosticMemory: request sp+4:4, address sp+8:4, length sp+12:4

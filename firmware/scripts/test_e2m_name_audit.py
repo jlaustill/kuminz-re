@@ -44,5 +44,25 @@ with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False) as f:
 check("enum sizes: the last column, commas in comments", m.load_enum_sizes(f.name),
       {"RAM_REFRESH_STATE": 2, "RUN_LOCATION": 1})
 
+# the dump reader (PR #53 round 90): CM848's RAM dump misses 0x40c200-0x40c27f, CM550's extended RAM file is 0x80 short
+ram = bytearray(0x440000 - 0x3FA000 - 0x80)
+ram[0x40C1FE - 0x3FA000:0x40C200 - 0x3FA000] = b"\x12\x34"
+ram[0x40C200 - 0x3FA000:0x40C202 - 0x3FA000] = b"\xab\xcd"      # the bytes of 0x40c280 (the file skips the gap)
+read = m.make_reader(m.cm848_segments(b"\x00\x01\x02\x03", bytes(ram)))
+check("cm848 read before the gap", read(0x40C1FE, 2, False), 0x1234)
+check("cm848 read in the gap", read(0x40C200, 2, False), None)
+check("cm848 read after the gap", read(0x40C280, 2, False), 0xABCD)
+check("cm848 read signed", read(0x40C280, 2, True), 0xABCD - 0x10000)
+check("cm848 read ROM", read(0x2, 2, False), 0x0203)
+check("cm848 read across the gap", read(0x40C1FF, 2, False), None)
+ext = bytearray(0x6DBE)
+ext[0x80:0x82] = b"\x56\x78"                                       # file offset 0x80 = 0x8092C2
+read = m.make_reader(m.cm550_segments(b"", b"\x00" * 0x91C2, bytes(ext), b"\x9a" * 0x1000))
+check("cm550 extended RAM", read(0x8092C2, 2, False), 0x5678)
+check("cm550 uncertain extended RAM", read(0x8091C2, 2, False), None)
+check("cm550 EEPROM", read(0x1000010, 1, False), 0x9A)
+check("cm550 description words", m.description_words("FILTERED INTAKE MANIFOLD TEMPERATURE~-50 TO 293"),
+      "FILTERED INTAKE MANIFOLD TEMPERATURE")
+
 print("\n".join(failures) if failures else "ALL PASS")
 sys.exit(1 if failures else 0)

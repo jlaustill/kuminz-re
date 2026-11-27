@@ -1,0 +1,98 @@
+{
+ "key_switch": [
+  "switches_0_to_7",
+  1
+ ],
+ "lift_pump_feedback": [
+  "switches_0_to_7",
+  2
+ ],
+ "not_brake_switch": [
+  "switches_0_to_7",
+  4
+ ],
+ "power_take_off_on_switch": [
+  "switches_0_to_7",
+  8
+ ],
+ "wait_to_start_lamp_feedback": [
+  "switches_0_to_7",
+  16
+ ],
+ "engine_brake_driver_1_feedback": [
+  "switches_0_to_7",
+  32
+ ],
+ "air_conditioning_clutch_feedback": [
+  "switches_0_to_7",
+  64
+ ],
+ "idle_switch": [
+  "switches_0_to_7",
+  128
+ ],
+ "not_idle_switch": [
+  "switches_8_to_15",
+  1
+ ],
+ "intake_air_heater_1_feedback": [
+  "switches_8_to_15",
+  2
+ ],
+ "intake_air_heater_2_feedback": [
+  "switches_8_to_15",
+  4
+ ],
+ "brake_switch": [
+  "switches_8_to_15",
+  8
+ ],
+ "exhaust_brake_switch": [
+  "switches_8_to_15",
+  16
+ ],
+ "air_conditioning_switch": [
+  "switches_8_to_15",
+  32
+ ],
+ "low_oil_pressure_switch": [
+  "switches_8_to_15",
+  64
+ ],
+ "clutch_switch": [
+  "switches_8_to_15",
+  128
+ ],
+ "converter_clutch_solenoid_feedback": [
+  "switches_24_to_31",
+  1
+ ],
+ "cruise_vent_solenoid_feedback": [
+  "switches_24_to_31",
+  2
+ ],
+ "throttle_interlock_switch": [
+  "switches_24_to_31",
+  4
+ ],
+ "cruise_vacuum_solenoid_feedback": [
+  "switches_24_to_31",
+  8
+ ],
+ "cruise_servo_supply_feedback": [
+  "switches_24_to_31",
+  16
+ ],
+ "reserved_bit_29": [
+  "switches_24_to_31",
+  32
+ ],
+ "reserved_bit_30": [
+  "switches_24_to_31",
+  64
+ ],
+ "unwired_switch": [
+  "switches_24_to_31",
+  128
+ ]
+}

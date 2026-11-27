@@ -1,0 +1,2 @@
+firmware,address,name,old_label
+CM550,0x00803631,j1939_pgn65249_payload.retarder_control_method,engine_brake_cylinders_per_step

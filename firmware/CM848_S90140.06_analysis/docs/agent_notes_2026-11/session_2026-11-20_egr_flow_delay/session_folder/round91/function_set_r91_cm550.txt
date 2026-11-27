@@ -1,0 +1,566 @@
+removed 1: 0x0001452e cm550_phase2_sensor_data_processor
+added 2: 0x00021a5c receivePgn57344CabMessage1, 0x00021c3c receivePgn65252ShutdownMessage
+changed 42
+  0x0000c962 cm550_runAllSpeedGovernor: 46 lines
+      -              ((int)_asg_governor_gains_ptr[3] + (int)_asg_governor_gains_ptr[2]);
+      +              ((int)all_speed_governor_gain_set_pointer->integral_gain_2 +
+      +              (int)all_speed_governor_gain_set_pointer->integral_gain_1);
+      -      if (_asg_governor_gains_ptr[6] == _asg_governor_gains_ptr[7]) {
+      +      if (all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1 ==
+      +          all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2) {
+      -                            0x100 - (int)_asg_governor_gains_ptr[8],
+      -                            (int)_asg_governor_gains_ptr[6] - (int)_asg_governor_gains_ptr[7]);
+      +                            0x100 - (int)all_speed_governor_gain_set_pointer->
+      +                                         compensation_filter_coefficient_3,
+      +                            (int)all_speed_governor_gain_set_pointer->
+      +                                 compensation_filter_coefficient_1 -
+      +                            (int)all_speed_governor_gain_set_pointer->
+      +                                 compensation_filter_coefficient_2);
+      -                            0x100 - (int)_asg_governor_gains_ptr[8],
+      -                            (int)_asg_governor_gains_ptr[6] - (int)_asg_governor_gains_ptr[7]);
+      +                            0x100 - (int)all_speed_governor_gain_set_pointer->
+      +                                         compensation_filter_coefficient_3,
+      +                            (int)all_speed_governor_gain_set_pointer->
+      +                                 compensation_filter_coefficient_1 -
+      +                            (int)all_speed_governor_gain_set_pointer->
+      +                                 compensation_filter_coefficient_2);
+      -         ((int)sVar5 * ((int)_asg_governor_gains_ptr[3] + (int)_asg_governor_gains_ptr[2]) +
+      +         ((int)sVar5 *
+  0x0000d0e2 cm550_diagnosticDataCopyHandler: 2 lines
+      -    _asg_governor_gains_ptr = &all_speed_governor_application_gain_set;
+      +    all_speed_governor_gain_set_pointer = &all_speed_governor_application_gain_set;
+  0x0000d0fc cm550_fuelDeliverySystemInit: 2 lines
+      -  _asg_governor_gains_ptr = &all_speed_governor_application_gain_set;
+      +  all_speed_governor_gain_set_pointer = &all_speed_governor_application_gain_set;
+  0x0000d1a4 cm550_diagnosticStatus2Initializer: 4 lines
+      -    _asg_governor_gains_ptr =
+      +    all_speed_governor_gain_set_pointer =
+      -         (uint)_jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 * 9;
+      +         _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3;
+  0x0000d3e6 cm550_diagnosticMode10FuelController: 4 lines
+      -  uVar1 = (uint)(ushort)(_asg_integral_gain_2_calibration_0_6_75 +
+      -                        _asg_integral_gain_1_calibration_0_6_75) *
+      +  uVar1 = (uint)(ushort)(all_speed_governor_throttle_mode_gain_set.integral_gain_2 +
+      +                        all_speed_governor_throttle_mode_gain_set.integral_gain_1) *
+  0x0000d4ae cm550_FUN_0000d4ae: 2 lines
+      -      _asg_governor_gains_ptr = &all_speed_governor_throttle_mode_gain_set;
+      +      all_speed_governor_gain_set_pointer = &all_speed_governor_throttle_mode_gain_set;
+  0x000138b6 cm550_updateDataloggerTriggers: 73 lines
+      -  _trending_sample_counter = _trending_sample_counter + 1;
+      -  if (datalogger_sample_period_passes <= _trending_sample_counter) {
+      -    datalogger_sample_due_flag = '\x01';
+      -    _trending_sample_counter = 0;
+      +  datalogger_sample_period_counter = datalogger_sample_period_counter + 1;
+      +  if (datalogger_sample_period_passes <= datalogger_sample_period_counter) {
+      +    datalogger_sample_due_flag = 1;
+      +    datalogger_sample_period_counter = 0;
+      -    _trending_trigger_detected_flag = 0;
+      -    _DAT_0080bac6 = 0;
+      -    _DAT_0080bac8 = 0;
+      -    DAT_00800352 = '\0';
+      +    datalogger_trigger_detected_flag = 0;
+      +    datalogger_and_inputs_trigger_flag = 0;
+      +    datalogger_or_input_trigger_flag = 0;
+      +    datalogger_setup_complete_flag = 0;
+      -    if ((DAT_00800352 == '\0') && (_snapshot_capture_active_flag == 0)) {
+      +    if ((datalogger_setup_complete_flag == 0) && (datalogger_event_logging_active_flag == 0)) {
+      -      if (_DAT_00803dc6 == 1) {
+      +      if (datalogger_trigger_mode_cal == 1) {
+      -      _trending_trigger_detected_flag = 0;
+      -      _DAT_0080bac6 = 0;
+      -      _DAT_0080bac8 = 0;
+      +      datalogger_trigger_detected_flag = 0;
+  0x00013a5c cm550_recordDataloggerSamples: 178 lines
+      -undefined * cm550_recordDataloggerSamples(void)
+      +byte * cm550_recordDataloggerSamples(void)
+      -  undefined *puVar1;
+      -  undefined *puVar2;
+      -  char cVar3;
+      +  byte *pbVar1;
+      +  char cVar2;
+      +  byte bVar4;
+      +  ushort uVar3;
+      -  ushort uVar4;
+      -  byte bVar6;
+      -  short sVar7;
+      -  undefined4 uVar8;
+      -  undefined1 *puVar9;
+      -  puVar1 = (undefined *)(_feature_enable_flags_word & 0x20);
+      -  if ((((_feature_enable_flags_word & 0x20) == 0) && (_trending_trigger_detected_flag != 1)) &&
+      -     (_snapshot_capture_active_flag != 1)) {
+      -    if (DAT_00800372 == '\0') {
+      -      uVar4 = 0;
+      -      puVar9 = &datalogger_sample_ring_buffer;
+      +  short sVar6;
+      +  byte *pbVar7;
+      +  pbVar7 = (byte *)(_feature_enable_flags_word & 0x20);
+      +  if ((((_feature_enable_flags_word & 0x20) == 0) && (datalogger_trigger_detected_flag != 1)) &&
+  0x00013cc8 cm550_initializeDatalogger: 24 lines
+      -  undefined1 *puVar4;
+      -  undefined *puVar5;
+      -  _trending_sample_counter = 0;
+      +  byte *pbVar4;
+      +  datalogger_sample_period_counter = 0;
+      -  pbVar3 = &datalogger_trigger_fault_indexes;
+      -  puVar5 = &datalogger_trigger_previous_fault_status;
+      +  pbVar3 = datalogger_trigger_fault_indexes;
+      +  pbVar4 = datalogger_trigger_previous_fault_status;
+      -      *puVar5 = (&fault_count_table[0].status)[(short)((ushort)*pbVar3 + (ushort)*pbVar3 * 4) * 2]
+      -      ;
+      +      *pbVar4 = (&fault_count_table[0].status)[(short)((ushort)*pbVar3 + (ushort)*pbVar3 * 4) * 2];
+      -    puVar5 = puVar5 + 1;
+      +    pbVar4 = pbVar4 + 1;
+      -  puVar4 = &datalogger_sample_ring_buffer;
+      +  pbVar3 = datalogger_sample_ring_buffer;
+      -    *puVar4 = 0;
+      +    *pbVar3 = 0;
+      -    puVar4 = puVar4 + 1;
+      +    pbVar3 = pbVar3 + 1;
+      -  _data_record_buffer_write_ptr = &datalogger_sample_ring_buffer;
+      -  DAT_00800372 = 1;
+      +  datalogger_ring_buffer_write_pointer = datalogger_sample_ring_buffer;
+      +  datalogger_ring_buffer_cleared_flag = 1;
+  0x00013d42 cm550_selectDataloggerSamplePeriod: 13 lines
+      -  if ((_DAT_00803dc6 == 1) && (2 < _DAT_00803dc4)) {
+      -    _DAT_00803dc4 = 2;
+      +  if ((datalogger_trigger_mode_cal == 1) && (2 < (short)datalogger_sample_rate_code_cal)) {
+      +    datalogger_sample_rate_code_cal = 2;
+      -  uVar1 = (uint)_DAT_00803dc4;
+      +  uVar1 = (uint)(short)datalogger_sample_rate_code_cal;
+      -    uVar1 = CONCAT22(_DAT_00803dc4 >> 0xf,(&switchD_00013d76::switchdataD_00013d7a)[uVar1]);
+      -    switch(_DAT_00803dc4) {
+      +    uVar1 = CONCAT22((short)datalogger_sample_rate_code_cal >> 0xf,
+      +                     (&switchD_00013d76::switchdataD_00013d7a)[uVar1]);
+      +    switch(datalogger_sample_rate_code_cal) {
+      -  _trending_sample_counter = 0;
+      +  datalogger_sample_period_counter = 0;
+  0x00013dbe cm550_resolveDataloggerTriggerAddresses: 10 lines
+      -  resolved_address = (dword *)&datalogger_trigger_parameter_addresses;
+      +  resolved_address = datalogger_trigger_parameter_addresses;
+      -                (*(word *)((int)&datalogger_triggers_cal[0].parameter_id_or_fault_code + (int)sVar1),
+      -                 resolved_address);
+      -      *resolved_address = (uint)*(ushort *)(&DAT_00803d6c + sVar1) + *resolved_address;
+      +                (*(word *)((int)&datalogger_triggers_cal[0].parameter_id_or_fault_code + (int)sVar1)
+      +                 ,resolved_address);
+      +      *resolved_address =
+      +           (uint)*(ushort *)((int)&datalogger_triggers_cal[0].parameter_offset + (int)sVar1) +
+      +           *resolved_address;
+  0x00013e12 cm550_resolveDataloggerDataParameterAddresses: 11 lines
+      -  resolved_address = (dword *)&DAT_00800508;
+      +  resolved_address = datalogger_data_parameter_addresses;
+      -  for (bVar2 = 0; bVar2 < _DAT_00803dc8; bVar2 = bVar2 + 1) {
+      +  for (bVar2 = 0; bVar2 < datalogger_data_parameter_count_cal; bVar2 = bVar2 + 1) {
+      -              (*(word *)((int)&datalogger_data_parameters_cal[0].parameter_id + (int)sVar1),resolved_address);
+      -    *resolved_address = (uint)*(ushort *)(&DAT_00803da8 + sVar1) + *resolved_address;
+      +              (*(word *)((int)&datalogger_data_parameters_cal[0].parameter_id + (int)sVar1),
+      +               resolved_address);
+      +    *resolved_address =
+      +         (uint)*(ushort *)((int)&datalogger_data_parameters_cal[0].parameter_offset + (int)sVar1) +
+      +         *resolved_address;
+  0x00013e64 cm550_findDataloggerTriggerFaultIndexes: 13 lines
+      -  undefined *puVar5;
+      +  byte *pbVar5;
+      -  puVar5 = &datalogger_trigger_previous_fault_status;
+      +  pbVar5 = datalogger_trigger_previous_fault_status;
+      -          (&datalogger_trigger_fault_indexes)[uVar4] = bVar2;
+      -          bVar1 = (&datalogger_trigger_fault_indexes)[uVar4];
+      -          *puVar5 = (&fault_count_table[0].status)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2]
+      -          ;
+      +          datalogger_trigger_fault_indexes[uVar4] = bVar2;
+      +          bVar1 = datalogger_trigger_fault_indexes[uVar4];
+      +          *pbVar5 = (&fault_count_table[0].status)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+      -    puVar5 = puVar5 + 1;
+      +    pbVar5 = pbVar5 + 1;
+  0x00013ed8 cm550_evaluateDataloggerTrigger: 219 lines
+      -  char cVar1;
+      -  short sVar2;
+      +  short sVar1;
+      +  byte bVar2;
+      -  byte bVar4;
+      -  bVar4 = (byte)condition_record_index;
+      -  sVar2 = (condition_record_index & 0xff) << 4;
+      -  if (*(short *)((int)&datalogger_triggers_cal[0].fault_code_flag + (int)sVar2) == 0) {
+      -    if (*(short *)(sVar2 + 0x803d68) == 0) {
+      -      if (*(short *)(sVar2 + 0x803d72) == 0) {
+      -        cVar1 = *(char *)((short)((condition_record_index & 0xff) * 2) * 8 + 0x803d64);
+      -        if (cVar1 == '\x01') {
+      -          if ((uint)**(byte **)(&datalogger_trigger_parameter_addresses + (uint)bVar4 * 4) <
+      -              (*(uint *)(sVar2 + 0x803d6e) & 0xff)) {
+      -            bVar3 = 1;
+      +  bVar3 = (byte)condition_record_index;
+      +  sVar1 = (condition_record_index & 0xff) << 4;
+      +  if (*(short *)((int)&datalogger_triggers_cal[0].fault_code_flag + (int)sVar1) == 0) {
+      +    if (*(short *)((int)&datalogger_triggers_cal[0].above_threshold_or_fault_active_flag +
+      +                  (int)sVar1) == 0) {
+      +      if (*(short *)((int)&datalogger_triggers_cal[0].signed_value_flag + (int)sVar1) == 0) {
+      +        if ((&datalogger_triggers_cal[0].value_length)
+      +            [(short)((condition_record_index & 0xff) * 2) * 8] == 1) {
+      +          if ((uint)*(byte *)datalogger_trigger_parameter_addresses[bVar3] <
+  0x000144bc cm550_countDownPreviouslyActiveFault: 25 lines
+      -     ((&fault_count_table[0].occurrence_count)[(short)((code_index & 0xff) * 5) * 2] != '\0')) {
+      +     ((&fault_count_table[0].occurrence_count)[(short)((code_index & 0xff) * 5) * 2] != 0)) {
+      -    if (((*(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20) == 0) &&
+      +    if (((*(int *)((int)&fault_count_table[0].last_countdown_time +
+      +                  (short)((code_index & 0xff) * 5) * 2) == 0) &&
+      -         *(int *)((int)&fault_count_table + (short)((code_index & 0xff) * 5) * 2))
+      -        ) || ((*(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20) != 0 &&
+      -              (*(uint *)(iVar1 + 0x806550) <=
+      -               key_on_hour_meter - *(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20))))) {
+      +         *(int *)((int)&fault_count_table[0].status_change_time +
+      +                 (short)((code_index & 0xff) * 5) * 2))) ||
+      +       ((*(int *)((int)&fault_count_table[0].last_countdown_time +
+      +                 (short)((code_index & 0xff) * 5) * 2) != 0 &&
+      +        (*(uint *)(iVar1 + 0x806550) <=
+      +         key_on_hour_meter -
+      +         *(int *)((int)&fault_count_table[0].last_countdown_time +
+      +                 (short)((code_index & 0xff) * 5) * 2))))) {
+      -      *(dword *)(sVar2 + 0x805a20) = key_on_hour_meter;
+      -      if ((&fault_count_table[0].occurrence_count)[sVar2] != '\0') {
+      +      *(dword *)((int)&fault_count_table[0].last_countdown_time + (int)sVar2) = key_on_hour_meter;
+      +      if ((&fault_count_table[0].occurrence_count)[sVar2] != 0) {
+      -             (&fault_count_table[0].occurrence_count)[sVar2] + -1;
+      +             (&fault_count_table[0].occurrence_count)[sVar2] - 1;
+      -      if ((&fault_count_table[0].occurrence_count)[sVar2] == '\0') {
+  0x000146b4 cm550_oldestDiagnosticTimestampSearch: 6 lines
+      -    if (((byte)(&fault_count_table[0].status)[sVar1] == fault_status) &&
+      -       (*(uint *)((int)&fault_count_table + (int)sVar1) < uVar4)) {
+      -      uVar4 = *(uint *)((int)&fault_count_table + (int)sVar1);
+      +    if (((&fault_count_table[0].status)[sVar1] == fault_status) &&
+      +       (*(uint *)((int)&fault_count_table[0].status_change_time + (int)sVar1) < uVar4)) {
+      +      uVar4 = *(uint *)((int)&fault_count_table[0].status_change_time + (int)sVar1);
+  0x00014872 cm550_processFaultScanGroup: 11 lines
+      -        *(dword *)((int)&fault_count_table + (short)(uVar5 * 5) * 2) =
+      +        *(dword *)((int)&fault_count_table[0].status_change_time + (short)(uVar5 * 5) * 2) =
+      -        if ((&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] != -1) {
+      +        if ((&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] != 0xff) {
+      -               (&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] + '\x01';
+      +               (&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] + 1;
+      -          *(dword *)((int)&fault_count_table + (short)(uVar5 * 5) * 2) =
+      +          *(dword *)((int)&fault_count_table[0].status_change_time + (short)(uVar5 * 5) * 2) =
+      -          *(undefined4 *)((short)(uVar5 * 5) * 2 + 0x805a20) = 0;
+      +          *(undefined4 *)((int)&fault_count_table[0].last_countdown_time + (short)(uVar5 * 5) * 2) =
+      +               0;
+  0x00014f42 cm550_insitePidDtcHandler: 2 lines
+      -        ((&fault_count_table[0].occurrence_count)[sVar2] != '\0')))) {
+      +        ((&fault_count_table[0].occurrence_count)[sVar2] != 0)))) {
+  0x0001f4e8 cm550_FUN_0001f4e8: 38 lines
+      -uint cm550_FUN_0001f4e8(void)
+      +tsc1_source_configuration_t * cm550_FUN_0001f4e8(void)
+      -  uint uVar7;
+      +  tsc1_source_configuration_t *ptVar7;
+      -    return (uint)wVar8;
+      +    return (tsc1_source_configuration_t *)(uint)wVar8;
+      -  uVar7 = (uint)(&switchD_0001f53e::switchdataD_0001f542)[(short)uVar4];
+      +  ptVar7 = (tsc1_source_configuration_t *)
+      +           (uint)(&switchD_0001f53e::switchdataD_0001f542)[(short)uVar4];
+      -      return uVar7;
+      +      return ptVar7;
+      -      return uVar7;
+      +      return ptVar7;
+      -    return uVar7;
+      +    return ptVar7;
+      -      return (uint)wVar8;
+      +      return (tsc1_source_configuration_t *)(uint)wVar8;
+      -    _datalink_active_session_pointer = _datalink_session_config_pointer;
+      +    tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -      return (uint)wVar8;
+      +      return (tsc1_source_configuration_t *)(uint)wVar8;
+      -    if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
+      -      return _datalink_session_config_pointer;
+      +    if (tsc1_source_configuration_pointer < tsc1_matched_source_configuration_pointer) {
+  0x0001f8bc cm550_engineFluidLevelDataBuilder: 40 lines
+      -uint cm550_engineFluidLevelDataBuilder(void)
+      +tsc1_source_configuration_t * cm550_engineFluidLevelDataBuilder(void)
+      -  uint uVar5;
+      +  tsc1_source_configuration_t *ptVar5;
+      -  uVar5 = *local_8 & 4;
+      +  ptVar5 = (tsc1_source_configuration_t *)(*local_8 & 4);
+      -    uVar5 = (uint)wVar6;
+      +    ptVar5 = (tsc1_source_configuration_t *)(uint)wVar6;
+      -            return (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
+      +            return (tsc1_source_configuration_t *)
+      +                   (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
+      -            return (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
+      +            return (tsc1_source_configuration_t *)
+      +                   (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
+      -          return (uint)wVar6;
+      +          return (tsc1_source_configuration_t *)(uint)wVar6;
+      -        _datalink_active_session_pointer = _datalink_session_config_pointer;
+      +        tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -          return (uint)wVar6;
+      +          return (tsc1_source_configuration_t *)(uint)wVar6;
+      -        if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
+      -          return _datalink_session_config_pointer;
+      +        if (tsc1_source_configuration_pointer < tsc1_matched_source_configuration_pointer) {
+      +          return tsc1_matched_source_configuration_pointer;
+  0x00020380 cm550_FUN_00020380: 2 lines
+      -    if (_DAT_0080423e == 0) {
+      +    if (j1939_input_signal_timeouts[5] == 0) {
+  0x0002041c cm550_FUN_0002041c: 2 lines
+      -    if (_DAT_00804234 == 0) {
+      +    if (j1939_input_signal_timeouts[0] == 0) {
+  0x000204b0 cm550_outputControlState1Handler: 8 lines
+      -    if (_DAT_00804240 == 0) {
+      +    if (j1939_input_signal_timeouts[6] == 0) {
+      -    if (j1939_received_accelerator_pedal_1_low_idle_switch == '\x03') {
+      +    if (j1939_received_accelerator_pedal_1_low_idle_switch == 3) {
+      -    else if (j1939_received_accelerator_pedal_1_low_idle_switch == '\x02') {
+      +    else if (j1939_received_accelerator_pedal_1_low_idle_switch == 2) {
+      -      if (j1939_received_accelerator_pedal_1_low_idle_switch != '\0') {
+      +      if (j1939_received_accelerator_pedal_1_low_idle_switch != 0) {
+  0x00020784 cm550_FUN_00020784: 2 lines
+      -    if (_DAT_00804236 == 0) {
+      +    if (j1939_input_signal_timeouts[1] == 0) {
+  0x00020890 cm550_FUN_00020890: 131 lines
+      -  int iVar1;
+      -  char *pcVar2;
+      -  ushort uVar3;
+      +  byte *pbVar1;
+      +  uint uVar2;
+      +  int iVar3;
+      -  iVar1 = (short)input_index * 10;
+      -  uVar4 = cm550_FUN_0002024a((word)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),
+      -                                            (&DAT_0002010c)[iVar1]));
+      -  cm550_FUN_000201d6((word)CONCAT31((int3)((uint)uVar4 >> 8),(&DAT_0002010c)[iVar1]));
+      +  iVar3 = (int)(short)input_index;
+      +  uVar4 = cm550_FUN_0002024a((word)CONCAT31((int3)((uint)(iVar3 * 5) >> 8),
+      +                                            j1939_input_signal_descriptor_table[iVar3].timeout_slot)
+      +                            );
+      +  cm550_FUN_000201d6((word)CONCAT31((int3)((uint)uVar4 >> 8),
+      +                                    j1939_input_signal_descriptor_table[iVar3].timeout_slot));
+      +  uVar2 = (ushort)j1939_input_signal_descriptor_table[iVar3].logical_switch + 0xd0;
+      -  if ((((uint)*(ushort *)
+      -               (&calibration_feature_enable_flags_word_0 +
+      -               (short)((int)(*(ushort *)(&DAT_00020110 + iVar1) + 0xd0) >> 4) * 2) &
+      -       1 << (*(ushort *)(&DAT_00020110 + iVar1) + 0xd0) % 0x10) != 0) &&
+      -     (uVar5 = (uint)*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a),
+      -     uVar5 <= _j1939_source_address_of_commanding_device)) {
+      -    if (*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a) <=
+  0x00020c98 cm550_FUN_00020c98: 2 lines
+      -    if (_DAT_00804242 == 0) {
+      +    if (j1939_input_signal_timeouts[7] == 0) {
+  0x00020fac cm550_FUN_00020fac: 5 lines
+      -    if (_DAT_00804246 == 0) {
+      +    if (j1939_input_signal_timeouts[9] == 0) {
+      -      uVar1 = ((uint)j1939_received_wet_tank_pressure * 0x2442)
+      -              / 100;
+      +      uVar1 = ((uint)j1939_received_wet_tank_pressure * 0x2442) / 100;
+  0x000212b2 mc68k_FUN_000212b2: 30 lines
+      -  char *pcVar7;
+      -  short *psVar8;
+      +  byte *pbVar7;
+      +  j1939_receive_handler_entry_t *pjVar8;
+      -  short local_6;
+      +  word local_6;
+      -      local_6 = *(short *)(_can_receive_buffer_read_pointer + 1);
+      +      local_6 = *(word *)(_can_receive_buffer_read_pointer + 1);
+      -      j1939_received_source_address = *(char *)(_can_receive_buffer_read_pointer + 3);
+      +      j1939_received_source_address = *(byte *)(_can_receive_buffer_read_pointer + 3);
+      -      pcVar7 = &DAT_0080d9e0;
+      +      pbVar7 = &DAT_0080d9e0;
+      -        if ((*pcVar7 == -2) || ((char *)0x80d9e3 < pcVar7)) goto LAB_0002136c;
+      -        cVar1 = *pcVar7;
+      -        pcVar7 = pcVar7 + 1;
+      -      } while (j1939_received_source_address != cVar1);
+      +        if ((*pbVar7 == 0xfe) || ((byte *)0x80d9e3 < pbVar7)) goto LAB_0002136c;
+      +        bVar6 = *pbVar7;
+      +        pbVar7 = pbVar7 + 1;
+      +      } while (j1939_received_source_address != bVar6);
+      -        psVar8 = (short *)&DAT_00800ab0;
+      -        for (bVar6 = 0; bVar6 < DAT_00800b10; bVar6 = bVar6 + 1) {
+      -          if (*psVar8 == local_6) {
+      -            (**(code **)(psVar8 + 1))(_can_receive_buffer_read_pointer);
+  0x00021a8c receivePgn61441ElectronicBrakeController1Message: 27 lines
+      -    _DAT_00804236 = 0x32;
+      +    j1939_input_signal_timeouts[1] = 0x32;
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
+      +         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
+      -    _DAT_00804238 = 0x32;
+      +    j1939_input_signal_timeouts[2] = 0x32;
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
+      +         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
+      -    _DAT_0080423a = 0x32;
+      +    j1939_input_signal_timeouts[3] = 0x32;
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
+      +         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
+      -  if ((j1939_accelerator_interlock_switch_source_address_filter_cal == j1939_received_source_address)
+      -     || (j1939_accelerator_interlock_switch_source_address_filter_cal == 0xff)) {
+      -    _DAT_0080423c = 0x32;
+      +  if ((j1939_accelerator_interlock_switch_source_address_filter_cal == j1939_received_source_address
+      +      ) || (j1939_accelerator_interlock_switch_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[4] = 0x32;
+      -  if ((j1939_engine_retarder_selection_source_address_filter_cal == j1939_received_source_address) ||
+      -     (j1939_engine_retarder_selection_source_address_filter_cal == 0xff)) {
+      -    _DAT_0080423e = 0x32;
+      -    j1939_received_engine_retarder_selection =
+      -         *(undefined1 *)(*(int *)(param_1 + 6) + 4);
+      +  if ((j1939_engine_retarder_selection_source_address_filter_cal == j1939_received_source_address)
+  0x00021b88 receivePgn61443ElectronicEngineController2Message: 17 lines
+      -    _DAT_00804240 = 0x19;
+      +    j1939_input_signal_timeouts[6] = 0x19;
+      -  if ((j1939_accelerator_pedal_position_1_source_address_filter_cal == j1939_received_source_address)
+      -     || (j1939_accelerator_pedal_position_1_source_address_filter_cal == 0xff)) {
+      -    _DAT_00804242 = 0x19;
+      +  if ((j1939_accelerator_pedal_position_1_source_address_filter_cal == j1939_received_source_address
+      +      ) || (j1939_accelerator_pedal_position_1_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[7] = 0x19;
+      -    _DAT_00804244 = 0x19;
+      -    j1939_received_remote_accelerator_pedal_position = *(undefined1 *)(*(int *)(param_1 + 6) + 3);
+      +    j1939_input_signal_timeouts[8] = 0x19;
+      +    j1939_received_remote_accelerator_pedal_position = *(byte *)(*(int *)(param_1 + 6) + 3);
+      -    _DAT_00804246 = 0x19;
+      -    j1939_received_wet_tank_pressure =
+      -         *(undefined1 *)(*(int *)(param_1 + 6) + 4);
+      +    j1939_input_signal_timeouts[9] = 0x19;
+      +    j1939_received_wet_tank_pressure = *(byte *)(*(int *)(param_1 + 6) + 4);
+  0x00021c74 receivePgn65264PowerTakeoffInformationMessage: 24 lines
+      -  if ((j1939_remote_power_take_off_switch_source_address_filter_cal == j1939_received_source_address)
+      -     || (j1939_remote_power_take_off_switch_source_address_filter_cal == 0xff)) {
+      -    _DAT_0080424a = 0x32;
+      +  if ((j1939_remote_power_take_off_switch_source_address_filter_cal == j1939_received_source_address
+      +      ) || (j1939_remote_power_take_off_switch_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[0xb] = 0x32;
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 5) & 0xc) >> 2);
+      +         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 5) & 0xc) >> 2);
+      -    _DAT_0080424c = 0x32;
+      +    j1939_input_signal_timeouts[0xc] = 0x32;
+      -  if ((j1939_power_take_off_resume_switch_source_address_filter_cal == j1939_received_source_address)
+      -     || (j1939_power_take_off_resume_switch_source_address_filter_cal == 0xff)) {
+      -    _DAT_0080424e = 0x32;
+      +  if ((j1939_power_take_off_resume_switch_source_address_filter_cal == j1939_received_source_address
+      +      ) || (j1939_power_take_off_resume_switch_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[0xd] = 0x32;
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 6) & 0x30) >> 4);
+      +         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 6) & 0x30) >> 4);
+      -  if ((j1939_power_take_off_set_switch_source_address_filter_cal == j1939_received_source_address) ||
+      -     (j1939_power_take_off_set_switch_source_address_filter_cal == 0xff)) {
+      -    _DAT_00804250 = 0x32;
+      +  if ((j1939_power_take_off_set_switch_source_address_filter_cal == j1939_received_source_address)
+      +     || (j1939_power_take_off_set_switch_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[0xe] = 0x32;
+  0x00021d44 receivePgn65265CruiseControlVehicleSpeedMessage: 50 lines
+      -    _DAT_00804252 = 0x32;
+      -    j1939_received_clutch_switch =
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
+      +    j1939_input_signal_timeouts[0xf] = 0x32;
+      +    j1939_received_clutch_switch = (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
+      -    _DAT_00804254 = 0x32;
+      -    j1939_received_brake_switch =
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
+      +    j1939_input_signal_timeouts[0x10] = 0x32;
+      +    j1939_received_brake_switch = (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
+      -  if ((j1939_cruise_control_enable_switch_source_address_filter_cal == j1939_received_source_address)
+      -     || (j1939_cruise_control_enable_switch_source_address_filter_cal == 0xff)) {
+      -    _DAT_00804256 = 0x32;
+      +  if ((j1939_cruise_control_enable_switch_source_address_filter_cal == j1939_received_source_address
+      +      ) || (j1939_cruise_control_enable_switch_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[0x11] = 0x32;
+      -         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
+      +         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
+      -  if ((j1939_cruise_control_resume_switch_source_address_filter_cal == j1939_received_source_address)
+      -     || (j1939_cruise_control_resume_switch_source_address_filter_cal == 0xff)) {
+      -    _DAT_00804258 = 0x32;
+      +  if ((j1939_cruise_control_resume_switch_source_address_filter_cal == j1939_received_source_address
+      +      ) || (j1939_cruise_control_resume_switch_source_address_filter_cal == 0xff)) {
+      +    j1939_input_signal_timeouts[0x12] = 0x32;
+  0x00021edc cm550_tickJ1939InputSupervision: 9 lines
+      -  short *psVar1;
+      -  for (psVar1 = (short *)&DAT_00804234; psVar1 < (short *)0x804265; psVar1 = psVar1 + 1) {
+      -    if (*psVar1 != 0) {
+      -      *psVar1 = *psVar1 + -1;
+      +  word *pwVar1;
+      +  for (pwVar1 = j1939_input_signal_timeouts;
+      +      pwVar1 < (word *)((int)j1939_input_signal_timeouts + 0x31); pwVar1 = pwVar1 + 1) {
+      +    if (*pwVar1 != 0) {
+      +      *pwVar1 = *pwVar1 - 1;
+  0x00023244 cm550_fuelDemandLimitOrchestrator: 7 lines
+      -      _DAT_0080da7e = *(short *)(_datalink_active_session_pointer + 6) + 1;
+      +      _DAT_0080da7e = tsc1_source_configuration_pointer->speed_control_time_limit + 1;
+      -      _DAT_0080da7e = *(short *)(_datalink_active_session_pointer + 10) + 1;
+      +      _DAT_0080da7e = tsc1_source_configuration_pointer->torque_control_time_limit + 1;
+      -    _retarder_command_inactivity_timer = *(short *)(_retarder_session_config_pointer + 0x10) + 1;
+      +    _retarder_command_inactivity_timer =
+      +         retarder_tsc1_source_configuration_pointer->retarder_torque_control_time_limit + 1;
+  0x00026fea cm550_insiteFaultDetailBuilder: 12 lines
+      -          *(undefined *)insite_response_write_pointer =
+      -               (&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+      +          *(byte *)insite_response_write_pointer =
+      +               (&fault_count_table[0].occurrence_count)
+      +               [(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+      -          *(undefined *)insite_response_write_pointer =
+      -               (&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+      +          *(byte *)insite_response_write_pointer =
+      +               (&fault_count_table[0].occurrence_count)
+      +               [(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+      -            *(undefined *)insite_response_write_pointer =
+      +            *(byte *)insite_response_write_pointer =
+  0x0002f128 processEngineTsc1Request: 17 lines
+      -      _datalink_active_session_pointer = _datalink_session_config_pointer;
+      +      tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -        _datalink_active_session_pointer = _datalink_session_config_pointer;
+      +        tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -      if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
+      +      if (tsc1_source_configuration_pointer < tsc1_matched_source_configuration_pointer) {
+      -      _datalink_active_session_pointer = _datalink_session_config_pointer;
+      +      tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 4) + 1;
+      +      _datalink_command_timeout_counter =
+      +           tsc1_source_configuration_pointer->speed_control_request_timeout + 1;
+      -      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 8) + 1;
+      +      _datalink_command_timeout_counter =
+      +           tsc1_source_configuration_pointer->torque_control_request_timeout + 1;
+      -      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 0xc) + 1;
+      +      _datalink_command_timeout_counter =
+      +           tsc1_source_configuration_pointer->speed_torque_limit_control_request_timeout + 1;
+  0x0002f7e6 cm550_retarderControlModeHandler: 18 lines
+      -          _retarder_session_config_pointer = _datalink_session_config_pointer;
+      +          retarder_tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -          _retarder_session_config_pointer = _datalink_session_config_pointer;
+      +          retarder_tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
+      -                 *(short *)(_retarder_session_config_pointer + 0xe) + 1;
+      +                 retarder_tsc1_source_configuration_pointer->retarder_torque_control_request_timeout
+      +                 + 1;
+      -                   *(short *)(_retarder_session_config_pointer + 0xe) + 1;
+      +                   retarder_tsc1_source_configuration_pointer->
+      +                   retarder_torque_control_request_timeout + 1;
+      -        _retarder_command_timeout_counter = *(short *)(_retarder_session_config_pointer + 0x12) + 1;
+      +        _retarder_command_timeout_counter =
+      +             retarder_tsc1_source_configuration_pointer->
+      +             retarder_speed_torque_limit_control_request_timeout + 1;
+      -          _retarder_disengage_hold_timer = *(short *)(_retarder_session_config_pointer + 0x12) + 1;
+      +          _retarder_disengage_hold_timer =
+      +               retarder_tsc1_source_configuration_pointer->
+      +               retarder_speed_torque_limit_control_request_timeout + 1;
+  0x0002fddc cm550_resetFaultStatus: 6 lines
+      -  *(undefined4 *)((int)&fault_count_table + (int)sVar1) = 0;
+      -  *(undefined4 *)(sVar1 + 0x805a20) = 0;
+      -  if ((&fault_count_table[0].status)[sVar1] == '\x02') {
+      +  *(undefined4 *)((int)&fault_count_table[0].status_change_time + (int)sVar1) = 0;
+      +  *(undefined4 *)((int)&fault_count_table[0].last_countdown_time + (int)sVar1) = 0;
+      +  if ((&fault_count_table[0].status)[sVar1] == 2) {
+  0x000315be cm550_FUN_000315be: 4 lines
+      -      if (((&fault_count_table[0].status)[sVar2] == '\x01') ||
+      -         ((&fault_count_table[0].status)[sVar2] == '\x03')) {
+      +      if (((&fault_count_table[0].status)[sVar2] == 1) ||
+      +         ((&fault_count_table[0].status)[sVar2] == 3)) {
+  0x00031ace findTsc1SourceConfiguration: 14 lines
+      -  word *pwVar2;
+      -  pwVar2 = &tsc1_source_configuration_table;
+      +  tsc1_source_configuration_t *ptVar2;
+      +  ptVar2 = tsc1_source_configuration_table;
+      -  while (((data_link != *pwVar2 || ((char)source_address != *(char *)((int)pwVar2 + 3))) &&
+      -         ((data_link != 1 || ((*pwVar2 != 1 || (*(char *)((int)pwVar2 + 3) != -1))))))) {
+      -    pwVar2 = pwVar2 + 10;
+      +  while (((data_link != ptVar2->data_link ||
+      +          ((char)source_address != (char)ptVar2->source_address_filter)) &&
+      +         ((data_link != 1 ||
+      +          ((ptVar2->data_link != 1 || ((char)ptVar2->source_address_filter != -1))))))) {
+      +    ptVar2 = ptVar2 + 1;
+      -  _datalink_session_config_pointer = pwVar2;
+      +  tsc1_matched_source_configuration_pointer = ptVar2;
+  0x000322ae j1939HandlePgn65226Dm1ActiveDtc: 2 lines
+      -          if ((byte)(&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
+      +          if ((&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
+  0x0003241c cm550_previousDtcListBuilder: 2 lines
+      -          if ((byte)(&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
+      +          if ((&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {

@@ -1,0 +1,7 @@
+j1939_ackm_msg
+data_end_pointer
+j1939_dm1_fault_data_channel_byte
+j1939_dm1_cmd_word_b
+j1939_pgn56320_alternate_data_length
+j1939_pgn56320_alternate_data_pointer
+j1939_pgn56320_alternate_data_end_pointer

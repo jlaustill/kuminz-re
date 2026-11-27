@@ -1,0 +1,3 @@
+{"old": {"boot_can_ring_state._pad16._0_1_": "TRANSMIT_RING_FULL", "boot_can_ring_state._pad16._1_1_": "RECEIVE_RING_FULL"},
+ "new": {"boot_can_ring_state.transmit_ring_full_flag": "TRANSMIT_RING_FULL", "boot_can_ring_state.receive_ring_full_flag": "RECEIVE_RING_FULL"},
+ "old_regex": []}

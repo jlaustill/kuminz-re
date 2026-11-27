@@ -1,0 +1,93 @@
+0x0000b3b2: 2 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x11 => FUELING_STATE_UNIDENTIFIED_17
+0x0000c2a0: 1 token changes: 0x10 => FUELING_STATE_AIR_FUEL_CONTROL_DERATE
+0x0000c2be: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 0x10 => FUELING_STATE_AIR_FUEL_CONTROL_DERATE
+0x0000c496: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR
+0x0000c4b2: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR
+0x0000c742: 2 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0xf => FUELING_STATE_ALTITUDE_DERATE
+0x0000c962: 5 token changes: 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR | 3 => FUELING_STATE_UNIDENTIFIED_3 | 2 => FUELING_STATE_TSC1_SPEED_CONTROL | 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION | 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR
+0x0000d18a: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION
+0x0000d1a4: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 2 => FUELING_STATE_TSC1_SPEED_CONTROL
+0x0000d4ae: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR
+0x0000ed64: 2 token changes: _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR
+0x0000f796: 29 token changes: _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 5 => FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND | _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 9 => FUELING_STATE_CRUISE_CONTROL | _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 6 => FUELING_STATE_ACCELERATOR_PEDAL_FAULT | _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR | _indica
+0x0000fb26: 4 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0xf => FUELING_STATE_ALTITUDE_DERATE | _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x10 => FUELING_STATE_AIR_FUEL_CONTROL_DERATE
+0x00017120: 2 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x21 => FUELING_STATE_UNIDENTIFIED_33
+0x000196e4: 2 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x1d => FUELING_STATE_FAULT_DERATE
+0x0001c03c: 8 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0xd => FUELING_STATE_TORQUE_DERATE_OVERRIDE | _fuel_limit_selection_state => final_fueling_state | _fuel_limit_selection_state => final_fueling_state | _fuel_limit_selection_state => final_fueling_state | _fuel_limit_selection_state => final_fueling_state | _fuel_limit_selection_state => final_fueling_state | 0x20 => FUELING_STATE_MASTER_SLAVE_OVERRIDE
+0x0001c0d4: 1 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code
+0x0001c152: 30 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0xd => FUELING_STATE_TORQUE_DERATE_OVERRIDE | _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | _fuel_limit_selection_state => final_fueling_state | 0x1a => FUELING_STATE_ENGINE_STOPPED | _fuel_limit_selection_state => final_fueling_state | 0x1b => FUELING_STATE_SHUTDOWN | _fuel_limit_selection_state => final_fueling_state | 0x
+0x0001c630: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 8 => FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE
+0x0001c640: 1 token changes: 8 => FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE
+0x0001ce58: 3 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x13 => FUELING_STATE_MAXIMUM_THROTTLE | 0x28 => FUELING_STATE_NO_DERATE
+0x0001ce7c: 2 token changes: _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 0xc => FUELING_STATE_HIGH_SPEED_GOVERNOR
+0x0001d252: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 0xc => FUELING_STATE_HIGH_SPEED_GOVERNOR
+0x0001f0de: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR
+0x0002571e: 1 token changes: 6 => FUELING_STATE_ACCELERATOR_PEDAL_FAULT
+0x00025806: 3 token changes: 0 => FUELING_STATE_NOT_SELECTED | 6 => FUELING_STATE_ACCELERATOR_PEDAL_FAULT | 6 => FUELING_STATE_ACCELERATOR_PEDAL_FAULT
+0x00025b1c: 8 token changes: _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR | _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR | _fuel_limit_selection_state => final_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR | _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR
+0x00026340: 2 token changes: _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR
+0x00026cc8: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 0xc => FUELING_STATE_HIGH_SPEED_GOVERNOR
+0x0002d3c6: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 4 => FUELING_STATE_POWER_TAKE_OFF
+0x0002dcb0: 15 token changes: 1 => FUELING_STATE_TSC1_TORQUE_CONTROL | 2 => FUELING_STATE_TSC1_SPEED_CONTROL | 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION | 3 => FUELING_STATE_UNIDENTIFIED_3 | _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 => power_take_off_or_user_fueling_state | 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR | 8 => FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE | _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 => power_take_off_or_user_fueling_state | _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 => power_take_off_or_user_fueling_state | 4 => FUELING_STA
+0x0002fe38: 4 token changes: undefined2 => FUELING_STATE | _fuel_limit_selection_state => final_fueling_state | undefined2 => FUELING_STATE | _fuel_limit_selection_state => final_fueling_state
+0x000304f4: 4 token changes: _fuel_limit_selection_state => final_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR | _fuel_limit_selection_state => final_fueling_state | 0x12 => FUELING_STATE_UNIDENTIFIED_18
+0x0003061a: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 0x12 => FUELING_STATE_UNIDENTIFIED_18
+0x000306ca: 2 token changes: _fuel_limit_selection_state => final_fueling_state | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR
+0x00030b62: 6 token changes: _fuel_limit_selection_state => final_fueling_state | 0x1b => FUELING_STATE_SHUTDOWN | _fuel_limit_selection_state => final_fueling_state | 0x19 => FUELING_STATE_OVERSPEED | _fuel_limit_selection_state => final_fueling_state | 0x1a => FUELING_STATE_ENGINE_STOPPED
+0x00030bf6: 2 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x1c => FUELING_STATE_FUEL_SYSTEM_DERATE
+0x00030c14: 2 token changes: _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code | 0x14 => FUELING_STATE_TSC1_TORQUE_LIMIT
+0x00032c76: 40 token changes: _fuel_limit_selection_state => final_fueling_state | 1 => FUELING_STATE_TSC1_TORQUE_CONTROL | 2 => FUELING_STATE_TSC1_SPEED_CONTROL | 3 => FUELING_STATE_UNIDENTIFIED_3 | 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR | 8 => FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE | 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION | 0x25 => FUELING_STATE_UNIDENTIFIED_37 | 4 => FUELING_STATE_POWER_TAKE_OFF | 9 => FUELING_STATE_CRUISE_CONTROL | 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR | 0xc => FUELING_STATE_HIGH_SPEED_GOVERNOR | 0xd => FUELING_STATE_TORQUE_DERATE_OVERRID
+0x00032c7a: 40 token changes: _fuel_limit_selection_state => final_fueling_state | 1 => FUELING_STATE_TSC1_TORQUE_CONTROL | 2 => FUELING_STATE_TSC1_SPEED_CONTROL | 3 => FUELING_STATE_UNIDENTIFIED_3 | 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR | 8 => FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE | 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION | 0x25 => FUELING_STATE_UNIDENTIFIED_37 | 4 => FUELING_STATE_POWER_TAKE_OFF | 9 => FUELING_STATE_CRUISE_CONTROL | 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR | 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR | 0xc => FUELING_STATE_HIGH_SPEED_GOVERNOR | 0xd => FUELING_STATE_TORQUE_DERATE_OVERRID
+0x00034540: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 1 => FUELING_STATE_TSC1_TORQUE_CONTROL
+0x00034564: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 5 => FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND
+0x0003458c: 2 token changes: word => FUELING_STATE | 0 => FUELING_STATE_NOT_SELECTED
+---- census of distinct changes
+  40 _fuel_limit_selection_state => final_fueling_state
+  18 _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 => adjusted_user_fueling_state
+  16 _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 => torque_derate_fuel_source_code
+  14 0xb => FUELING_STATE_LOW_SPEED_GOVERNOR
+   9 _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 => power_take_off_or_user_fueling_state
+   8 2 => FUELING_STATE_TSC1_SPEED_CONTROL
+   8 0 => FUELING_STATE_NOT_SELECTED
+   7 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR
+   7 4 => FUELING_STATE_POWER_TAKE_OFF
+   7 1 => FUELING_STATE_TSC1_TORQUE_CONTROL
+   6 10 => FUELING_STATE_ROAD_SPEED_GOVERNOR
+   6 6 => FUELING_STATE_ACCELERATOR_PEDAL_FAULT
+   6 8 => FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE
+   6 0xc => FUELING_STATE_HIGH_SPEED_GOVERNOR
+   6 0x14 => FUELING_STATE_TSC1_TORQUE_LIMIT
+   5 0x10 => FUELING_STATE_AIR_FUEL_CONTROL_DERATE
+   5 3 => FUELING_STATE_UNIDENTIFIED_3
+   5 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION
+   5 0xd => FUELING_STATE_TORQUE_DERATE_OVERRIDE
+   4 0xf => FUELING_STATE_ALTITUDE_DERATE
+   4 0x12 => FUELING_STATE_UNIDENTIFIED_18
+   3 0x11 => FUELING_STATE_UNIDENTIFIED_17
+   3 5 => FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND
+   3 9 => FUELING_STATE_CRUISE_CONTROL
+   3 0x21 => FUELING_STATE_UNIDENTIFIED_33
+   3 0x1d => FUELING_STATE_FAULT_DERATE
+   3 0x18 => FUELING_STATE_ENGINE_BRAKE
+   3 0x13 => FUELING_STATE_MAXIMUM_THROTTLE
+   3 0x28 => FUELING_STATE_NO_DERATE
+   3 0x1c => FUELING_STATE_FUEL_SYSTEM_DERATE
+   2 0x1a => FUELING_STATE_ENGINE_STOPPED
+   2 0x1b => FUELING_STATE_SHUTDOWN
+   2 0x19 => FUELING_STATE_OVERSPEED
+   2 0x16 => FUELING_STATE_CRANKING
+   2 undefined2 => FUELING_STATE
+   2 0x25 => FUELING_STATE_UNIDENTIFIED_37
+   2 0xe => FUELING_STATE_LOW_GEAR
+   2 0x15 => FUELING_STATE_OUT_OF_GEAR
+   2 0x1f => FUELING_STATE_ALTERNATE_TORQUE
+   2 0x22 => FUELING_STATE_POWER_TAKE_OFF_DERATE
+   2 0x23 => FUELING_STATE_TORQUE_CONTROL
+   2 0x24 => FUELING_STATE_UNIDENTIFIED_36
+   2 0x26 => FUELING_STATE_UNIDENTIFIED_38
+   2 0x27 => FUELING_STATE_UNIDENTIFIED_39
+   2 0x29 => FUELING_STATE_IMMOBILIZER_FUEL_DISABLE
+   1 _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 => ( short ) power_take_off_or_user_fueling_state
+   1 0x20 => FUELING_STATE_MASTER_SLAVE_OVERRIDE
+   1 0x17 => FUELING_STATE_FUEL_OVERRIDE
+   1 word => FUELING_STATE

@@ -1,0 +1,31 @@
+cm848: round 8 stage E - converter clutch engagement monitor, high gear mode, WOT anti-hang, cruise decel timers (label-only)
+
+The timer tick (cm848_decrementTransmissionTimers) still counted five timers under protection_* names. Each one is
+named by the calibration it reloads from:
+- **Cruise decel delay timers:** transmission_cruise_downshift_delay_timer / _upshift_ (were
+  protection_load_check_timer_a / _b). They reload from transmission_cruise_downshift / upshift_delay_time (e2m 8BBC
+  RE_Cruise_*_Timer_Max) in the cruise decel 4-3 / 3-4 requests.
+- **WOT anti-hang:** governor_pressure_wide_open_throttle_anti_hang_timer (was protection_init_timer). It loads 7 s
+  when the engine speed sits above 3000 rpm without reaching the shift point, and at 0 it forces the upshift. The WOT
+  upshift aims at governor_pressure_wide_open_throttle_upshift_target_engine_speed (24600 = 3075 rpm, was
+  protection_rpm_threshold), commanded at _upshift_command_engine_speed: the target minus engine acceleration x the
+  predicted shift delay (was protection_rpm_margin).
+- **Converter clutch engagement:** converter_clutch_engagement_timer (was protection_monitor_countdown) and its limit
+  converter_clutch_engagement_time_limit (300 = 3 s).
+  - cm848_monitorConverterClutchEngagement (was cm848_processProtectionRateLimitFlags): after each converter clutch
+    command, the speed ratio (engine / output speed x 32) must enter the gear's locked window before the timer runs
+    out. Otherwise it sets the lockup inhibit (condition_eval bit 6).
+  - The windows are transmission_2nd / 3rd / 4th_gear_locked_speed_ratio_minimum / _maximum (were
+    protection_derate_l2 / l3 / l4_measurement_lower / upper_cal): 43-50 / 28-35 / 19-25, around the gear ratio
+    table's 46 / 32 / 20.
+  - The previous request and pending bit (converter_clutch_solenoid_request_previous /
+    converter_clutch_engagement_pending_previous) are named too, and the converter_clutch_transition_state comment
+    now gives bits 0 and 2 as proved.
+  - The e2m 8C17 record at +4A (RE_E_Brake_Inhibit_Timer) does not fit this timer, so 8C17 drifts from +4A, not +4C.
+- **High gear mode:** cm848_selectGovernorPressureHighGear (was cm848_calculateProtectionThresholdLimit), pressure
+  state 0x10. In 3rd / 4th below a throttle curve the target is governor_pressure_high_gear_target. With the lever in
+  1 / 2 it requests the 4-3 downshift.
+- **Docs:** task 046 (stage E, the drift point, the leads), firmware/CLAUDE.md, the session README, the PR body.
+- **Proof:** label-only, reverse_names.py EQUIVALENT.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

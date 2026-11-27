@@ -1,0 +1,24 @@
+cm550 + docs: round 89 stage A - clean round 88's generated comments; three stale script comments; dump provenance
+
+From the advisor review of round 88:
+- CM550 global_variables.csv: 29 transmit descriptor comments cited line numbers of the audit's scratch copy
+  ("(frozen J90350.00.ghidra.cpp:34846)"); the citations go. "the frozen CM848 .cpp" -> "the CM848 decompilation".
+  engine_state's typing note now reads as a description and has the skeptic's count (33 compares, not 35).
+- CM550 enums.csv: ENGINE_STATE_UNINITIALIZED and the 11 J1939_DIAGNOSTIC_SERVICE rows read as descriptions
+  ("Service 6 (CM848's member name). ..."); the regenerated firmware_types.hpp carries them.
+- Scripts (comments only): read_engine_hours.sh names restartThroughBootRom, ScriptUtilsTest.java's example
+  cm550_signedFirstOrderFilter, audit_cal_suffixes.py the counterpart cm848_commitEepromMirrorToEeprom.
+- Dump provenance (checked in the code): kuminz-cli asks for CM848_RAM_SIZE 0x46000 bytes from 0x3FA000 (the file
+  holds 0x45F80) and for 0x8091C2-0x80FFFF (0x6E3E bytes; the file holds 0x6DBE), so each dump is exactly one
+  0x80 chunk short. firmware/CLAUDE.md and the CM550 README / memory_map.md say so.
+
+firmware/CLAUDE.md (one line becomes two):
+- old:     - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding.
+- new:     - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding
+             (kuminz-cli asks for `CM848_RAM_SIZE` 0x46000 bytes from 0x3FA000; the file holds 0x45F80).
+
+No build input that reaches the decompilation changed (global and enum comments do not render in the .cpp).
+Tested: the 20 round 88 enum rows parse (quote-aware) to 5 columns; 109 JUnit tests pass; headers 0 g++ errors;
+_cal HARD 0; bash -n and py_compile clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,36 @@
+cm848: round 54 stage A - the last unnamed tables, the stack high-water monitor, the distance record index
+
+- The last WORD_ARRAY_ tables. After the 2026-11-16 table campaign ten stayed unnamed, because their input or
+  output could not be traced then. The parameter ID table now resolves nine; the tenth is a lookup cache. Named in the
+  table grammar:
+  - turbocharger_speed_linearization_axis / _values (17CB / 17CC: 0-2500 Hz to 0-171.4 krpm);
+  - egr_orifice_temperature_lead_time_constant_axis / _values (1A2F / 1A30, by the delayed EGR flow);
+  - turbocharger_speed_derate_gain_axis / _values (19C7 / 19C8: the margin below
+    charge_flow_turbocharger_speed_derate_limit, 1.5 to 1.0, into the wastegate controller's first_error_gain);
+  - torque_management_fuel_table_x_axis / _y_axis / _grid (8A59-8A5B, engine speed by alpha);
+  - four lookup caches, two of which had no row.
+  - No WORD_ARRAY_ table is left in the .cpp.
+- The application stack high-water monitor. It was read as a message buffer; the application's stack is RAM
+  0x3f9800-0x3f9ff8 (cm848_restartApplicationWithoutReset loads r1 = 0x3f9ff8).
+  - bufferManagementWithBounds -> cm848_updateStackHighWaterMark: it scans 20 bytes a pass up from 0x3f9808 for the
+    first nonzero byte;
+  - initMessageBufferPointers -> cm848_initializeStackHighWaterMark;
+  - message_buffer_scan_cursor -> stack_high_water_mark_scan_cursor, message_buffer_scan_low_watermark ->
+    stack_deepest_address;
+  - new row stack_headroom_factor_tenths = 20400 / the bytes used (the divw): 27 in the dump, with 751 bytes used.
+- initSensorTableIndexing -> cm848_initializeLifetimeDistanceRecordIndex: it picks the newest of the four
+  lifetime_distance_8_mile_record_cal entries.
+- None of the old names is in CM550.
+- scripts/test_disasm_tools.py picked an unnamed WORD_ARRAY_ table to test xref_addr's default-label lookup, and
+  none is left. It now falls back to a type-only word row (WORD_<addr>), which goes through the same path.
+
+Proof (prove_r54.sh: the function renames applied to the old .cpp, the casts and two char literals folded, then
+prove_caches.py):
+- 1966 of 1968 functions match. mpc555_areBootModeStrapPinsHigh and cm848_checkPciMessageTimeouts differ only in the
+  order of their local declarations.
+- The old function names left in the .cpp are the new plates' (was ...) notes.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

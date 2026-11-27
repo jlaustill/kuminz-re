@@ -1,0 +1,173 @@
+{
+ "batch": "A1",
+ "verdicts": [
+  {
+   "address": "0x00803f9d",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_remote_accelerator_enable_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 remote accelerator enable switch input (PGN 61441 EBC1 byte 4 bits 7-8; SPN 969 Remote Accelerator Enable Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +7 MXRTSWSA (Calterm Remote_Throttle_Switch_Source_Address_Enable) = slot 1 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[1] in cm848_receivePgn61441ElectronicBrakeController1Message). The EBC1 receive handler cm550_FUN_00021a8c (0x21a8c; registered for PGN 61441 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804236 with 50 (12F6 +2 MXRTSWTR by slot order) and stores the signal in 0x80d723 (12F7 +17 JCRTSWMU)",
+   "reason": "Re-checked: resolver 12E8 +7 MXRTSWSA -> 0x803f9d (slot 1); move.b @ 0x21a98 and cmpi.b #255 @ 0x21aa2 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21a8c for PGN 61441; the handler stores byte 4 bits 7-8 into 0x80d723 and reloads 0x804236 = 50 exactly as CM848 slot 1 does; name unique; EEPROM mirror (EEPROM 0x493 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803f9e",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_engine_auxiliary_shutdown_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 engine auxiliary shutdown switch input (PGN 61441 EBC1 byte 4 bits 5-6; SPN 970 Engine Auxiliary Shutdown Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +8 MXAUSHSA (Calterm Aux_Shutdown_Switch_Source_Address_Enable) = slot 2 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[2] in cm848_receivePgn61441ElectronicBrakeController1Message). The EBC1 receive handler cm550_FUN_00021a8c (0x21a8c; registered for PGN 61441 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804238 with 50 (12F6 +4 MXAUSHTR by slot order) and stores the signal in 0x80d711 (12F7 +5 JCAUSHMU)",
+   "reason": "Re-checked: resolver 12E8 +8 MXAUSHSA -> 0x803f9e (slot 2); move.b @ 0x21aca and cmpi.b #255 @ 0x21ad4 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21a8c for PGN 61441; the handler stores byte 4 bits 5-6 into 0x80d711 and reloads 0x804238 = 50 exactly as CM848 slot 2 does; name unique; EEPROM mirror (EEPROM 0x494 = 0xFF) so _cal is right. Flat rows kept for the whole batch: every handler reads its byte at the absolute address (no index and no pointer walk), so the type follows the access; one byte[23] row at 0x803f9c named like CM848's j1939_input_source_address_filter_cal is the alternative (it would also cover slots 0 and 10) but not clearly better, and no array verdict is added."
+  },
+  {
+   "address": "0x00803f9f",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_engine_derate_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 engine derate switch input (PGN 61441 EBC1 byte 4 bits 3-4; SPN 971 Engine Derate Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +9 MXTQSWSA (Calterm Torque_Derate_Switch_Source_Address_Enable) = slot 3 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[3] in cm848_receivePgn61441ElectronicBrakeController1Message). The EBC1 receive handler cm550_FUN_00021a8c (0x21a8c; registered for PGN 61441 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80423a with 50 (12F6 +6 MXTQSWTR by slot order) and stores the signal in 0x80d725 (12F7 +19 JCTQSWMU)",
+   "reason": "Re-checked: resolver 12E8 +9 MXTQSWSA -> 0x803f9f (slot 3); move.b @ 0x21afc and cmpi.b #255 @ 0x21b06 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21a8c for PGN 61441; the handler stores byte 4 bits 3-4 into 0x80d725 and reloads 0x80423a = 50 exactly as CM848 slot 3 does; name unique; EEPROM mirror (EEPROM 0x495 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa0",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_accelerator_interlock_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 accelerator interlock switch input (PGN 61441 EBC1 byte 4 bits 1-2; SPN 972 Accelerator Interlock Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +A MXTHILSA (Calterm Accel_Interlock_Switch_Source_Address_Enable) = slot 4 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[4] in cm848_receivePgn61441ElectronicBrakeController1Message). The EBC1 receive handler cm550_FUN_00021a8c (0x21a8c; registered for PGN 61441 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80423c with 50 (12F6 +8 MXTHILTR by slot order) and stores the signal in 0x80d710 (12F7 +4 JCTHILMU)",
+   "reason": "Re-checked: resolver 12E8 +A MXTHILSA -> 0x803fa0 (slot 4); move.b @ 0x21b2e and cmpi.b #255 @ 0x21b38 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21a8c for PGN 61441; the handler stores byte 4 bits 1-2 into 0x80d710 and reloads 0x80423c = 50 exactly as CM848 slot 4 does; name unique; EEPROM mirror (EEPROM 0x496 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa1",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_engine_retarder_selection_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 engine retarder selection input (PGN 61441 EBC1 byte 5; SPN 973 Engine Retarder Selection) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +B MXEBLVSA (Calterm EB_Switch_Level_Source_Address_Enable) = slot 5 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[5] in cm848_receivePgn61441ElectronicBrakeController1Message). The EBC1 receive handler cm550_FUN_00021a8c (0x21a8c; registered for PGN 61441 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80423e with 50 (12F6 +A MXEBLVTR by slot order) and stores the signal in 0x80d719 (12F7 +D JCEBSWMU)",
+   "reason": "Re-checked: resolver 12E8 +B MXEBLVSA -> 0x803fa1 (slot 5); move.b @ 0x21b5c and cmpi.b #255 @ 0x21b66 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21a8c for PGN 61441; the handler stores byte 5 into 0x80d719 and reloads 0x80423e = 50 exactly as CM848 slot 5 does; name unique; EEPROM mirror (EEPROM 0x497 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa2",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_accelerator_pedal_1_low_idle_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 accelerator pedal 1 low idle switch input (PGN 61443 EEC2 byte 1 bits 1-2; SPN 558 Accelerator Pedal 1 Low Idle Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +C MXISSWSA (Calterm Idle_Switch_Source_Address_Enable) = slot 6 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[6] in cm848_receivePgn61443ElectronicEngineController2Message). The EEC2 receive handler cm550_FUN_00021b88 (0x21b88; registered for PGN 61443 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804240 with 25 (12F6 +C MXISSWTR by slot order) and stores the signal in 0x80d71a (12F7 +E JCISSWMU)",
+   "reason": "Re-checked: resolver 12E8 +C MXISSWSA -> 0x803fa2 (slot 6); move.b @ 0x21b94 and cmpi.b #255 @ 0x21b9e are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21b88 for PGN 61443; the handler stores byte 1 bits 1-2 into 0x80d71a and reloads 0x804240 = 25 exactly as CM848 slot 6 does; name unique; EEPROM mirror (EEPROM 0x498 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa3",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_accelerator_pedal_position_1_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 accelerator pedal position 1 input (PGN 61443 EEC2 byte 2; SPN 91 Accelerator Pedal Position 1) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +D MXCMTHSA (Calterm Commanded_Throttle_Source_Address_Enable) = slot 7 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[7] in cm848_receivePgn61443ElectronicEngineController2Message). The EEC2 receive handler cm550_FUN_00021b88 (0x21b88; registered for PGN 61443 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804242 with 25 (12F6 +E MXCMTHTR by slot order) and stores the signal in 0x80d714 (12F7 +8 JCCMTHMU)",
+   "reason": "Re-checked: resolver 12E8 +D MXCMTHSA -> 0x803fa3 (slot 7); move.b @ 0x21bc0 and cmpi.b #255 @ 0x21bca are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21b88 for PGN 61443; the handler stores byte 2 into 0x80d714 and reloads 0x804242 = 25 exactly as CM848 slot 7 does; name unique; EEPROM mirror (EEPROM 0x499 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa4",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_remote_accelerator_pedal_position_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 remote accelerator pedal position input (PGN 61443 EEC2 byte 4; SPN 974 Remote Accelerator Pedal Position) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +E MXROTHSA (Calterm Remote_Throttle_Source_Address_Enable) = slot 8 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[8] in cm848_receivePgn61443ElectronicEngineController2Message). The EEC2 receive handler cm550_FUN_00021b88 (0x21b88; registered for PGN 61443 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804244 with 25 (12F6 +10 MXROTHTR by slot order) and stores the signal in 0x80d722 (12F7 +16 JCRTTHMU)",
+   "reason": "Re-checked: resolver 12E8 +E MXROTHSA -> 0x803fa4 (slot 8); move.b @ 0x21be8 and cmpi.b #255 @ 0x21bf2 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21b88 for PGN 61443; the handler stores byte 4 into 0x80d722 and reloads 0x804244 = 25 exactly as CM848 slot 8 does; name unique; EEPROM mirror (EEPROM 0x49a = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa5",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_wet_tank_pressure_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 wet tank pressure input (PGN 61443 EEC2 byte 5) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +F MXWTPRSA (Calterm Wet_Tank_Pressure_Source_Address_Enable) = slot 9 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[9] in cm848_receivePgn61443ElectronicEngineController2Message). The EEC2 receive handler cm550_FUN_00021b88 (0x21b88; registered for PGN 61443 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804246 with 25 (12F6 +12 MXWTPRTR by slot order) and stores the signal in 0x80d720 (12F7 +14 JCWTPRMU); its one consumer cm550_FUN_00020fac converts it at 5 kPa per bit (x 9282 / 100 = psi x 128; the pedal inputs use 0.4 %/bit) so the slot is a pressure as the e2m says. That consumer writes 0x80a760 (12D3 +0 ADIMTPUR) whose intake manifold temperature label is unresolved",
+   "reason": "Re-checked: resolver 12E8 +F MXWTPRSA -> 0x803fa5 (slot 9); move.b @ 0x21c10 and cmpi.b #255 @ 0x21c1a are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21b88 for PGN 61443; the handler stores byte 5 into 0x80d720 and reloads 0x804246 = 25 exactly as CM848 slot 9 does; name unique; EEPROM mirror (EEPROM 0x49b = 0xFF) so _cal is right. Slot 9 identity: three e2m records agree (MXWTPRSA filter / MXWTPRTR timer = 0x804246 / JCWTPRMU value = 0x80d720) in both firmwares' e2m files; the only consumer (cm550_FUN_00020fac: timeout bit 9 in 0x800aa4 / error bit 9 in 0x800aa0 / enable bit 9 of 0x803cbc) converts at 5 kPa per bit, which rules out SPN 29 (0.4 %/bit) and an IMT reading (degrees). J1939-71 (local database) lists EEC2 byte 5 as SPN 29 Accelerator Pedal Position 2 at 0.4 %/bit, and CM848 names its slot 9 receiver 0x40aaba j1939_received_accelerator_pedal_position_2 from that position only (one writer in cm848_receivePgn61443ElectronicEngineController2Message and no reader; its own e2m record there is 12F7 +14 J1939_Mux_Wet_Tank_Pressure), so that name is not reused here. The A/D loop mc68k_processAnalogSensorChannels uses 0x80a760 + 2 x channel as channel 0's raw override, so that destination label stays a separate open question; it does not change the filter's name."
+  },
+  {
+   "address": "0x00803fa7",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_remote_power_take_off_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 remote power take-off switch input (PGN 65264 PTO byte 6 bits 3-4) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +11 MXRXSWSA (Calterm Remote_PTO_Switch_Source_Address_Enable) = slot 11 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[11] in cm848_receivePgn65264PowerTakeoffInformationMessage). The PTO receive handler cm550_FUN_00021c74 (0x21c74; registered for PGN 65264 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80424a with 50 (12F6 +16 MXRXSWTR by slot order) and stores the signal in 0x80d721 (12F7 +15 JCRXSWMU)",
+   "reason": "Re-checked: resolver 12E8 +11 MXRXSWSA -> 0x803fa7 (slot 11); move.b @ 0x21c80 and cmpi.b #255 @ 0x21c8a are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21c74 for PGN 65264; the handler stores byte 6 bits 3-4 into 0x80d721 and reloads 0x80424a = 50 exactly as CM848 slot 11 does; name unique; EEPROM mirror (EEPROM 0x49d = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa8",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_power_take_off_on_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 power take-off on switch input (PGN 65264 PTO byte 6 bits 1-2) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +12 MXPTONSA (Calterm PTO_On_Switch_Source_Address_Enable) = slot 12 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[12] in cm848_receivePgn65264PowerTakeoffInformationMessage). The PTO receive handler cm550_FUN_00021c74 (0x21c74; registered for PGN 65264 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80424c with 50 (12F6 +18 MXPTONTR by slot order) and stores the signal in 0x80d71d (12F7 +11 JCPTONMU)",
+   "reason": "Re-checked: resolver 12E8 +12 MXPTONSA -> 0x803fa8 (slot 12); move.b @ 0x21cb2 and cmpi.b #255 @ 0x21cbc are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21c74 for PGN 65264; the handler stores byte 6 bits 1-2 into 0x80d71d and reloads 0x80424c = 50 exactly as CM848 slot 12 does; name unique; EEPROM mirror (EEPROM 0x49e = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fa9",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_power_take_off_resume_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 power take-off resume switch input (PGN 65264 PTO byte 7 bits 5-6) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +13 MXPTRUSA (Calterm PTO_Resume_Switch_Source_Address_Enable) = slot 13 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[13] in cm848_receivePgn65264PowerTakeoffInformationMessage). The PTO receive handler cm550_FUN_00021c74 (0x21c74; registered for PGN 65264 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80424e with 50 (12F6 +1A MXPTRUTR by slot order) and stores the signal in 0x80d71e (12F7 +12 JCPTRUMU)",
+   "reason": "Re-checked: resolver 12E8 +13 MXPTRUSA -> 0x803fa9 (slot 13); move.b @ 0x21ce0 and cmpi.b #255 @ 0x21cea are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21c74 for PGN 65264; the handler stores byte 7 bits 5-6 into 0x80d71e and reloads 0x80424e = 50 exactly as CM848 slot 13 does; name unique; EEPROM mirror (EEPROM 0x49f = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803faa",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_power_take_off_set_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 power take-off set switch input (PGN 65264 PTO byte 7 bits 1-2) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +14 MXPTSESA (Calterm PTO_Set_Switch_Source_Address_Enable) = slot 14 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[14] in cm848_receivePgn65264PowerTakeoffInformationMessage). The PTO receive handler cm550_FUN_00021c74 (0x21c74; registered for PGN 65264 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804250 with 50 (12F6 +1C MXPTSETR by slot order) and stores the signal in 0x80d71f (12F7 +13 JCPTSEMU)",
+   "reason": "Re-checked: resolver 12E8 +14 MXPTSESA -> 0x803faa (slot 14); move.b @ 0x21d12 and cmpi.b #255 @ 0x21d1c are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21c74 for PGN 65264; the handler stores byte 7 bits 1-2 into 0x80d71f and reloads 0x804250 = 50 exactly as CM848 slot 14 does; name unique; EEPROM mirror (EEPROM 0x4a0 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fab",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_clutch_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 clutch switch input (PGN 65265 CCVS1 byte 4 bits 7-8; SPN 598 Clutch Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +15 MXCHSWSA (Calterm Clutch_Switch_Source_Address_Enable) = slot 15 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[15] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804252 with 50 (12F6 +1E MXCHSWTR by slot order) and stores the signal in 0x80d713 (12F7 +7 JCCHSWMU)",
+   "reason": "Re-checked: resolver 12E8 +15 MXCHSWSA -> 0x803fab (slot 15); move.b @ 0x21d50 and cmpi.b #255 @ 0x21d5a are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 4 bits 7-8 into 0x80d713 and reloads 0x804252 = 50 exactly as CM848 slot 15 does; name unique; EEPROM mirror (EEPROM 0x4a1 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fac",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_brake_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 brake switch input (PGN 65265 CCVS1 byte 4 bits 5-6; SPN 597 Brake Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +16 MXBRSWSA (Calterm Brake_Switch_Source_Address_Enable) = slot 16 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[16] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804254 with 50 (12F6 +20 MXBRSWTR by slot order) and stores the signal in 0x80d712 (12F7 +6 JCBRSWMU)",
+   "reason": "Re-checked: resolver 12E8 +16 MXBRSWSA -> 0x803fac (slot 16); move.b @ 0x21d82 and cmpi.b #255 @ 0x21d8c are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 4 bits 5-6 into 0x80d712 and reloads 0x804254 = 50 exactly as CM848 slot 16 does; name unique; EEPROM mirror (EEPROM 0x4a2 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fad",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_cruise_control_enable_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 cruise control enable switch input (PGN 65265 CCVS1 byte 4 bits 3-4; SPN 596 Cruise Control Enable Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +17 MXCRONSA (Calterm Cruise_On_Switch_Source_Address_Enable) = slot 17 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[17] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804256 with 50 (12F6 +22 MXCRONTR by slot order) and stores the signal in 0x80d715 (12F7 +9 JCCRONMU)",
+   "reason": "Re-checked: resolver 12E8 +17 MXCRONSA -> 0x803fad (slot 17); move.b @ 0x21db4 and cmpi.b #255 @ 0x21dbe are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 4 bits 3-4 into 0x80d715 and reloads 0x804256 = 50 exactly as CM848 slot 17 does; name unique; EEPROM mirror (EEPROM 0x4a3 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fae",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_cruise_control_resume_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 cruise control resume switch input (PGN 65265 CCVS1 byte 5 bits 5-6; SPN 601 Cruise Control Resume Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +18 MXCRRUSA (Calterm Cruise_Resume_Switch_Source_Address_Enable) = slot 18 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[18] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804258 with 50 (12F6 +24 MXCRRUTR by slot order) and stores the signal in 0x80d716 (12F7 +A JCCRRUMU)",
+   "reason": "Re-checked: resolver 12E8 +18 MXCRRUSA -> 0x803fae (slot 18); move.b @ 0x21de6 and cmpi.b #255 @ 0x21df0 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 5 bits 5-6 into 0x80d716 and reloads 0x804258 = 50 exactly as CM848 slot 18 does; name unique; EEPROM mirror (EEPROM 0x4a4 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803faf",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_cruise_control_set_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 cruise control set switch input (PGN 65265 CCVS1 byte 5 bits 1-2; SPN 599 Cruise Control Set Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +19 MXCRSESA (Calterm Cruise_Set_Switch_Source_Address_Enable) = slot 19 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[19] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80425a with 50 (12F6 +26 MXCRSETR by slot order) and stores the signal in 0x80d717 (12F7 +B JCCRSEMU)",
+   "reason": "Re-checked: resolver 12E8 +19 MXCRSESA -> 0x803faf (slot 19); move.b @ 0x21e18 and cmpi.b #255 @ 0x21e22 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 5 bits 1-2 into 0x80d717 and reloads 0x80425a = 50 exactly as CM848 slot 19 does; name unique; EEPROM mirror (EEPROM 0x4a5 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fb0",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_engine_idle_increment_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 engine idle increment switch input (PGN 65265 CCVS1 byte 8 bits 1-2; SPN 968 Engine Idle Increment Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +1A MXICSWSA (Calterm Increment_Switch_Source_Address_Enable) = slot 20 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[20] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80425c with 50 (12F6 +28 MXICSWTR by slot order) and stores the signal in 0x80d71b (12F7 +F JCICSWMU)",
+   "reason": "Re-checked: resolver 12E8 +1A MXICSWSA -> 0x803fb0 (slot 20); move.b @ 0x21e46 and cmpi.b #255 @ 0x21e50 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 8 bits 1-2 into 0x80d71b and reloads 0x80425c = 50 exactly as CM848 slot 20 does; name unique; EEPROM mirror (EEPROM 0x4a6 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fb1",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_engine_idle_decrement_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 engine idle decrement switch input (PGN 65265 CCVS1 byte 8 bits 3-4; SPN 967 Engine Idle Decrement Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +1B MXDTSWSA (Calterm Decrement_Switch_Source_Address_Enable) = slot 21 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[21] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x80425e with 50 (12F6 +2A MXDTSWTR by slot order) and stores the signal in 0x80d718 (12F7 +C JCDTSWMU)",
+   "reason": "Re-checked: resolver 12E8 +1B MXDTSWSA -> 0x803fb1 (slot 21); move.b @ 0x21e74 and cmpi.b #255 @ 0x21e7e are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 8 bits 3-4 into 0x80d718 and reloads 0x80425e = 50 exactly as CM848 slot 21 does; name unique; EEPROM mirror (EEPROM 0x4a7 = 0xFF) so _cal is right."
+  },
+  {
+   "address": "0x00803fb2",
+   "verdict": "CONFIRMED",
+   "final_name": "j1939_engine_diagnostic_test_mode_switch_source_address_filter_cal",
+   "final_type": "byte",
+   "comment": "EEPROM-backed source address that the J1939 engine diagnostic test mode switch input (PGN 65265 CCVS1 byte 8 bits 5-6; SPN 966 Engine Diagnostic Test Mode Switch) is accepted from (0xFF = any source; 0xFF in the RAM and EEPROM dumps): e2m 12E8 +1C MXTESWSA (Calterm Test_Switch_Source_Address_Enable) = slot 22 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[22] in cm848_receivePgn65265CruiseControlVehicleSpeedMessage). The CCVS1 receive handler cm550_FUN_00021d44 (0x21d44; registered for PGN 65265 by cm550_FUN_00021ef6) compares it with can_received_source_address and with 0xFF; on a match it reloads timeout word 0x804260 with 50 (12F6 +2C MXTESWTR by slot order) and stores the signal in 0x80d724 (12F7 +18 JCTESWMU)",
+   "reason": "Re-checked: resolver 12E8 +1C MXTESWSA -> 0x803fb2 (slot 22); move.b @ 0x21ea6 and cmpi.b #255 @ 0x21eb0 are the only two ROM references (byte equality compares); 0x21ef6 registers 0x21d44 for PGN 65265; the handler stores byte 8 bits 5-6 into 0x80d724 and reloads 0x804260 = 50 exactly as CM848 slot 22 does; name unique; EEPROM mirror (EEPROM 0x4a8 = 0xFF) so _cal is right."
+  }
+ ]
+}

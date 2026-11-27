@@ -1,0 +1,19 @@
+cm848: round 59 follow-up - "superseded" reworded for two types, origins traced, j1939_ack_msg_t as a lead
+
+Corrections from the closing checks (fix_r59c.py; docs, the archive note and memory only):
+- Stage A called four removed types "superseded: a live type has the layout". Only two match their live types'
+  sizes: ad_sensor_config_t (16 bytes) = sensor_channel_config_t (16), and address_range_entry_t (10) =
+  memory_region_t (10). sensor_fault_config_t (24 bytes) and sensor_debounce_state_t (22) only cover the role of
+  sensor_channel_config_t / sensor_channel_state_t (16 / 12), and their own titles marked them "documentation only".
+  The deletions stand (nothing used them); task 046, the PR body and the archive note now say so.
+- "Most came with the 2026-01-30 port" was traced for two types. Now traced for all 29: 24 came with fdc657a, and the
+  5 protocol / DMA / patch types (parameter_response_t, calterm_protocol_t, insite_protocol_t, dma_descriptor_t,
+  memory_patch_entry_t) were there before.
+- j1939_ack_msg_t is unused too: only an enums.csv comment names it, and j1939_acknowledgement_payload_t covers its
+  role. It is a lead for a later removal, which needs a rebuild.
+- Stage B's "exactly 2 stores" is now checked in the disassembly for the booster counter as well: sth 0(r6) at
+  0x5290dc / 0x529140, with r6 = &0x3fd0b8 until 0x529194.
+
+No rebuild: nothing here renders.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

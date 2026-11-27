@@ -1,0 +1,60 @@
+89 unprefixed; 59 not in CM550
+0x00021fc4 j1939_receivePgn56576Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 56576: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aab
+0x00044bf4 engine_injectionTiming_crankSyncDispatch | Crank-synchronous injection dispatcher. With engine_speed_limp_home_active_flag = 0 it waits until the TPU-A host service request bits clear, takes th
+0x000539fc sendJ1939Message | jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate
+0x00509be0 j1939_diagService15And16Handler | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: services 0x0F and 0x10 - returns 0 (accepted / no ac
+0x00509ce4 j1939_diagService4DisableBroadcast | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 4 - cm848_updateJ1939BroadcastEnableMask wit
+0x00509d0c j1939_diagService5EnableBroadcast | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 5 - cm848_updateJ1939BroadcastEnableMask wit
+0x0050af58 j1939_writeDiagMemory | Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trail
+0x0050b1b8 j1939_writeDiagMemoryByParameterId | Application CLIP diagnostic stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined stubs): resolves the parameter ID (0x539768; 8 = unkn
+0x0050b228 j1939_diagService68_memoryWriteByParameterId | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x44 - write by parameter ID (j1939_writeDia
+0x0050b298 j1939_diagService69_memoryWriteByParameterIdExt | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x45 - write by parameter ID with a long len
+0x0050b300 j1939_diagService71Handler | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x47 (header length 6) | review-function-rea
+0x0050b38c j1939_diagService73_memoryWriteByParameterId | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x49 (header length 11) - write by parameter
+0x0050b408 j1939_diagService75_memoryWrite | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4B - write by address (j1939_writeDiagMemo
+0x0050b474 j1939_diagService77_memoryWriteExt | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4D - write by address with a long length |
+0x0050b554 j1939_reverseByteOrder32 | 
+0x0050b58c j1939_reverseByteOrder16 | 
+0x0050b5b4 j1939_buildLampStatusByte | 
+0x0050b610 j1939_getDiagServiceDataOffset | Application CLIP diagnostic stack (PGN 61184): request header length before the data: 0 for service below 0x41 else the byte at 0x53a2e1 + service (tw
+0x0050b734 j1939_receivePgn57344Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 57344: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aab
+0x0050b77c j1939_receivePgn61441Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 61441 (EBC1): unpacks the message into working RAM (signal globals at 0x40aaa9-
+0x0050b8a4 j1939_receivePgn61443Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 61443 (EEC2): unpacks the message into working RAM (signal globals at 0x40aaa9-
+0x0050b98c j1939_receivePgn65252Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 65252: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aab
+0x0050b9d8 j1939_receivePgn65264Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 65264 (PTO): unpacks the message into working RAM (signal globals at 0x40aaa9-0
+0x0050bacc j1939_receivePgn65265Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 65265 (CCVS - cruise control / vehicle speed): unpacks the message into working
+0x0050c318 j1939_diagService65_getAddressByParameterId | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x41 - resolves a parameter ID (cm848_lookup
+0x0050c42c j1939_readDiagMemoryAndRespond | Application CLIP diagnostic stack (PGN 61184): memory read + response (twin of boot cm848_diagMemoryReadHandler): response service from 0x53a330 (0x43
+0x0050c5d0 j1939_readDiagMemoryByParameterId | Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48 (via undefined stubs): resolves the parameter ID then j1939_readDiagMemoryA
+0x0050c640 j1939_diagService67_memoryReadByParameterId | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x43 - read by parameter ID (j1939_readDiagM
+0x0050c6a8 j1939_diagService70Handler | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x46 | review-function-readability reviewed 
+0x0050c734 j1939_diagService72_memoryReadByParameterId | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x48 - read by parameter ID | review-functio
+0x0050c7b0 j1939_diagService74_memoryRead | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4A - read by address (j1939_readDiagMemory
+0x0050c81c j1939_diagService76_memoryReadExt | Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4C - read by address with a long length | 
+0x0050c8ec initiateJ1939TransportProtocol | 
+0x0050cc18 j1939_transport_handleClearToSend | Application J1939 transport: matches the transmit session's destination + PGN; 0 packets = hold (timer 55) else sets the window | review-function-read
+0x0050ccbc j1939_transport_sendAbort | Application J1939 transport: sends TP.CM abort 0x18EC<destination><source> FF FF FF FF FF 00 PGN | review-function-readability reviewed 2026-11-11 - R
+0x0050cd54 j1939_transport_sendEndOfMessageAcknowledge | Application J1939 transport: sends TP.CM 0x13 (total bytes / packets / FF / PGN) | review-function-readability reviewed 2026-11-11 - Readability Mediu
+0x0050cdfc j1939_transport_sendClearToSend | Application J1939 transport: sends TP.CM 0x11 (packets allowed / next packet / FF FF / PGN) | review-function-readability reviewed 2026-11-11 - Readab
+0x0050ce90 j1939_transport_handleRequestToSend | Application J1939 transport: accepts only PGN 61184 / up to 1700 bytes / window of 5 or fewer (timer 112); otherwise aborts | review-function-readabil
+0x0050cfa8 j1939_transport_handleDataPacket | Application J1939 transport: registered for PGN 60160 (TP.DT): checks the sequence / copies 7 bytes / restarts the 25-tick timer / sends the next clea
+0x0050d144 j1939_transport_handleEndOfMessageAcknowledge | Application J1939 transport: closes the matching transmit session with status 9 | review-function-readability reviewed 2026-11-11 - Readability Medium
+0x0050d1ac j1939_transport_handleAbort | Application J1939 transport: closes the transmit session with status 10 or drops the matching receive session | review-function-readability reviewed 2
+0x0050d250 j1939_transport_dispatchConnectionManagement | Application J1939 transport: registered for PGN 60416 (TP.CM): 8-byte frames 0x10 request-to-send / 0x11 clear-to-send / 0x13 end-of-message acknowled
+0x0050d5d8 j1939_transport_timeout_decrement | 
+0x0050d688 j1939_selectResponseBuffer | 
+0x00515bac j1939_periodic_processing | 
+0x0051d840 phaseGroupB_ControlDispatchers | 
+0x00523750 initGovernorFlagsAux | 
+0x0052731c engine_injectionAngle_updateCutoutAndTimingDemand | Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank -> cylinder_cutout_mask; can clear TPU-A channel 4 enable bit) then the per-cyl
+0x00527938 engine_injectionAngle_accumulateInjectedFuel | injected_fuel_running_total += injection_fuel_quantity_snapshot - once per injection from the TPU-A channel 6 injection interrupt (was engine_injectio
+0x005280a4 engine_injectionAngle_tpuUpdate | 
+0x005283d0 engine_injectionAngle_tpuChannel10CylinderEventHandler | TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max -> cm848_evaluateInjectorDiagnostics) and starts the n
+0x00528508 engine_injectionAngle_writeTpuEvent | Converts an injection angle for a cylinder (wraps at 0x7800) into crank tooth number + fraction (tooth math from cam_wheel_pulse_count) and writes it 
+0x0052877c engine_injectionAngle_selectCylinderInjector | Per-cylinder injector selection from ROM tables 0x5f14e (bank) / 0x5f156 / 0x5f15e (output index; shifted by injection_cylinder_fault_index_offset whe
+0x00528978 engine_injectionAngle_lookupTimingTableOffset | injection_timing_table_offset = RPM-indexed table lookup (table state 0x3fd0b0) | review-function-readability reviewed 2026-11-11 - Readability Medium
+0x00529284 engine_injectionAngle_computeLoadCh6 | computes injection_timing_tooth_b + phase from cam/crank sync and loads TPU-A ch6 param 0x304162; no caller found in decompilation (pointer/tail-call?
+0x00529640 engine_injectionAngle_tpuChannel6EventHandler | TPU-A channel 6 interrupt: the injection scheduling state machine on injection_angle_sequence_state. State 1 runs the cut-out, quantity and timing dem
+0x00537b50 sensorChannelConditionValidator | 
+0x00538c8c diag_record_queue_add_entry | 
+0x00538eb0 j1939_handlerInitializer | 

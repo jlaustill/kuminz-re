@@ -1,0 +1,660 @@
+=== 0x6009e acceleration_noise_control_fuel_limit_axis size 20: 4 refs
+   +0x0 at 0x851a prev 28 4e 00 00 00 30
+   +0x0 at 0xb624 prev 00 80 00 4a 21 7c
+   +0x0 at 0x358cc prev 7a 22 00 80 7a 22
+   +0x0 at 0x358d0 prev 7a 22 00 06 00 9e
+=== 0x600b2 acceleration_noise_control_fuel_limit_values size 20: 4 refs
+   +0x0 at 0x8522 prev 00 9e 00 00 00 14
+   +0x0 at 0xb62c prev 00 9e 00 02 21 7c
+   +0x0 at 0x358d4 prev 00 9e 00 06 00 9e
+   +0x0 at 0x358d8 prev 00 9e 00 06 00 b2
+=== 0x600c6 acceleration_noise_control_timing_limit_axis size 20: 4 refs
+   +0x0 at 0x852a prev 00 b2 00 00 00 14
+   +0x0 at 0xb64e prev 00 80 00 58 21 7c
+   +0x0 at 0x358dc prev 00 b2 00 06 00 b2
+   +0x0 at 0x358e0 prev 00 b2 00 06 00 c6
+=== 0x600da acceleration_noise_control_timing_limit_values size 20: 4 refs
+   +0x0 at 0x8532 prev 00 c6 00 00 00 14
+   +0x0 at 0xb656 prev 00 c6 00 02 21 7c
+   +0x0 at 0x358e4 prev 00 c6 00 06 00 c6
+   +0x0 at 0x358e8 prev 00 c6 00 06 00 da
+=== 0x60462 all_speed_governor_alternate_droop_axis size 16: 4 refs
+   +0x0 at 0x899a prev 38 6a 00 00 00 04
+   +0x0 at 0xd5b4 prev 00 80 01 36 21 7c
+   +0x0 at 0x35efc prev de 3c 00 80 de 3c
+   +0x0 at 0x35f00 prev de 3c 00 06 04 62
+=== 0x60472 all_speed_governor_alternate_droop_values size 16: 4 refs
+   +0x0 at 0x89a2 prev 04 62 00 00 00 10
+   +0x0 at 0xd5bc prev 04 62 00 02 21 7c
+   +0x0 at 0x35f04 prev 04 62 00 06 04 62
+   +0x0 at 0x35f08 prev 04 62 00 06 04 72
+=== 0x60482 all_speed_governor_droop_axis size 16: 4 refs
+   +0x0 at 0x89aa prev 04 72 00 00 00 10
+   +0x0 at 0xd5cc prev 00 80 01 44 23 7c
+   +0x0 at 0x35f0c prev 04 72 00 06 04 72
+   +0x0 at 0x35f10 prev 04 72 00 06 04 82
+=== 0x60492 all_speed_governor_droop_values size 16: 4 refs
+   +0x0 at 0x89b2 prev 04 82 00 00 00 10
+   +0x0 at 0xd5d4 prev 04 82 00 02 23 7c
+   +0x0 at 0x35f14 prev 04 82 00 06 04 82
+   +0x0 at 0x35f18 prev 04 82 00 06 04 92
+=== 0x6052a engine_retarder_torque_engine_speed_axis size 10: 7 refs
+   +0x0 at 0xa8a2 prev 05 66 00 00 00 0a
+   +0x0 at 0x10000 prev 3c 0c 4e 75 25 7c
+   +0x0 at 0x10008 prev 05 2a 00 02 23 fc
+   +0x0 at 0x100ec prev 00 06 05 66 22 7c
+   +0x0 at 0x2faaa prev 48 e7 00 30 24 7c
+   +0x0 at 0x3724c prev 05 66 00 06 05 66
+   +0x0 at 0x37250 prev 05 66 00 06 05 2a
+=== 0x60534 engine_retarder_torque_stage_1_values size 10: 5 refs
+   +0x0 at 0xa872 prev 00 00 00 00 00 00
+   +0x0 at 0x1003c prev 00 2c 00 34 28 bc
+   +0x0 at 0x2fb06 prev 00 80 1e 32 23 fc
+   +0x0 at 0x3721c prev 00 00 00 00 00 00
+   +0x0 at 0x37220 prev 00 00 00 06 05 34
+=== 0x6053e engine_retarder_torque_stage_2_values size 10: 5 refs
+   +0x0 at 0xa87a prev 05 34 00 00 00 0a
+   +0x0 at 0x10044 prev 05 34 60 26 28 bc
+   +0x0 at 0x2fb1e prev 00 80 1e 40 23 fc
+   +0x0 at 0x37224 prev 05 34 00 06 05 34
+   +0x0 at 0x37228 prev 05 34 00 06 05 3e
+=== 0x60548 engine_retarder_torque_stage_3_values size 10: 5 refs
+   +0x0 at 0xa882 prev 05 3e 00 00 00 0a
+   +0x0 at 0x1004c prev 05 3e 60 1e 28 bc
+   +0x0 at 0x2fb34 prev 21 4a 00 02 21 7c
+   +0x0 at 0x3722c prev 05 3e 00 06 05 3e
+   +0x0 at 0x37230 prev 05 3e 00 06 05 48
+=== 0x60552 engine_retarder_torque_stage_4_values size 10: 6 refs
+   +0x0 at 0xa88a prev 05 48 00 00 00 0a
+   +0x0 at 0x10054 prev 05 48 60 16 28 bc
+   +0x8 at 0x2f684 prev 1e 28 66 0c 33 f9
+   +0x0 at 0x2fb48 prev 23 4a 00 02 23 7c
+   +0x0 at 0x37234 prev 05 48 00 06 05 48
+   +0x0 at 0x37238 prev 05 48 00 06 05 52
+=== 0x6055c engine_retarder_torque_stage_5_values size 10: 5 refs
+   +0x0 at 0xa892 prev 05 52 00 00 00 0a
+   +0x0 at 0x1005c prev 05 52 60 0e 28 bc
+   +0x0 at 0x2fb5c prev 27 4a 00 02 27 7c
+   +0x0 at 0x3723c prev 05 52 00 06 05 52
+   +0x0 at 0x37240 prev 05 52 00 06 05 5c
+=== 0x60566 engine_retarder_torque_stage_6_values size 10: 7 refs
+   +0x0 at 0xa89a prev 05 5c 00 00 00 0a
+   +0x0 at 0x10012 prev 00 80 01 94 23 fc
+   +0x0 at 0x10064 prev 05 5c 60 06 28 bc
+   +0x0 at 0x100e6 prev 00 80 01 92 26 7c
+   +0x8 at 0x2f690 prev 1e 2c 60 0a 33 f9
+   +0x0 at 0x37244 prev 05 5c 00 06 05 5c
+   +0x0 at 0x37248 prev 05 5c 00 06 05 66
+=== 0x60596 cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis size 28: 4 refs
+   +0x0 at 0x84ba prev 06 a4 00 00 00 b6
+   +0x0 at 0x124f6 prev 00 80 01 f0 23 fc
+   +0x0 at 0x357f4 prev 06 a4 00 06 06 a4
+   +0x0 at 0x357f8 prev 06 a4 00 06 05 96
+=== 0x605b2 cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values size 28: 4 refs
+   +0x0 at 0x84c2 prev 05 96 00 00 00 1c
+   +0x0 at 0x12500 prev 00 80 01 ec 23 fc
+   +0x0 at 0x357fc prev 05 96 00 06 05 96
+   +0x0 at 0x35800 prev 05 96 00 06 05 b2
+=== 0x60640 cylinder_pressure_maintenance_temperature_per_timing_degree_axis size 28: 4 refs
+   +0x0 at 0x84ca prev 05 b2 00 00 00 1c
+   +0x0 at 0x12548 prev 31 51 00 06 21 7c
+   +0x0 at 0x35804 prev 05 b2 00 06 05 b2
+   +0x0 at 0x35808 prev 05 b2 00 06 06 40
+=== 0x6065c cylinder_pressure_maintenance_temperature_per_timing_degree_values size 28: 4 refs
+   +0x0 at 0x84d2 prev 06 40 00 00 00 1c
+   +0x0 at 0x12550 prev 06 40 00 02 21 7c
+   +0x0 at 0x3580c prev 06 40 00 06 06 40
+   +0x0 at 0x35810 prev 06 40 00 06 06 5c
+=== 0x607d6 double_pulsing_fueling_mapping_axis size 14: 4 refs
+   +0x0 at 0x848a prev 07 e4 00 00 00 0e
+   +0x0 at 0x1c7be prev 00 80 06 aa 21 7c
+   +0x0 at 0x357bc prev bd 9e 00 80 bd 9e
+   +0x0 at 0x357c0 prev bd 9e 00 06 07 d6
+=== 0x607e4 double_pulsing_fueling_mapping_values size 14: 4 refs
+   +0x0 at 0x8482 prev 07 ba 00 00 00 1c
+   +0x0 at 0x1c7c6 prev 07 d6 00 02 21 7c
+   +0x0 at 0x357c4 prev 07 d6 00 06 07 d6
+   +0x0 at 0x357c8 prev 07 d6 00 06 07 e4
+=== 0x607f2 engine_warmup_protection_fuel_limit_axis size 42: 4 refs
+   +0x0 at 0x8c5a prev 08 1c 00 00 00 2a
+   +0x0 at 0x17104 prev 08 5a 00 08 25 7c
+   +0x0 at 0x36304 prev 08 1c 00 06 08 1c
+   +0x0 at 0x36308 prev 08 1c 00 06 07 f2
+=== 0x6081c engine_warmup_protection_fuel_limit_values size 42: 4 refs
+   +0x0 at 0x8c52 prev 2c 00 00 00 00 0c
+   +0x0 at 0x17114 prev 00 80 05 9c 25 7c
+   +0x0 at 0x362fc prev 7d d4 00 80 7d d4
+   +0x0 at 0x36300 prev 7d d4 00 06 08 1c
+=== 0x60846 engine_warmup_protection_rifle_to_turbocharger_delay_time_axis size 20: 4 refs
+   +0x0 at 0x8c6a prev 08 5a 00 00 00 14
+   +0x0 at 0x170ec prev 32 bc 00 01 27 7c
+   +0x0 at 0x36314 prev 08 5a 00 06 08 5a
+   +0x0 at 0x36318 prev 08 5a 00 06 08 46
+=== 0x6085a engine_warmup_protection_rifle_to_turbocharger_delay_time_values size 20: 4 refs
+   +0x0 at 0x8c62 prev 07 f2 00 00 00 2a
+   +0x0 at 0x170fc prev 00 80 05 8e 27 7c
+   +0x0 at 0x3630c prev 07 f2 00 06 07 f2
+   +0x0 at 0x36310 prev 07 f2 00 06 08 5a
+=== 0x611d0 engine_protection_oil_pressure_limit_axis size 14: 4 refs
+   +0x0 at 0x85b2 prev 1f d4 00 00 00 32
+   +0x0 at 0x2592e prev 00 80 1a 3e 20 7c
+   +0x0 at 0x3597c prev 71 a8 00 80 71 a8
+   +0x0 at 0x35980 prev 71 a8 00 06 11 d0
+=== 0x611de engine_protection_low_oil_pressure_limit_values size 14: 4 refs
+   +0x0 at 0x85ba prev 11 d0 00 00 00 0e
+   +0x0 at 0x25934 prev 00 06 11 d0 23 7c
+   +0x0 at 0x35984 prev 11 d0 00 06 11 d0
+   +0x0 at 0x35988 prev 11 d0 00 06 11 de
+=== 0x611ec engine_protection_very_low_oil_pressure_limit_values size 14: 4 refs
+   +0x0 at 0x85c2 prev 11 de 00 00 00 0e
+   +0x0 at 0x25948 prev 00 80 1a 3e 23 7c
+   +0x0 at 0x3598c prev 11 de 00 06 11 de
+   +0x0 at 0x35990 prev 11 de 00 06 11 ec
+=== 0x611fa friction_fuel_by_engine_speed_axis size 20: 4 refs
+   +0x0 at 0x84f2 prev 48 28 00 00 00 02
+   +0x0 at 0x1de1e prev 09 82 00 10 21 7c
+   +0x0 at 0x3585c prev 58 d4 00 80 58 d4
+   +0x0 at 0x35860 prev 58 d4 00 06 11 fa
+=== 0x6120e friction_fuel_by_engine_speed_values size 20: 4 refs
+   +0x0 at 0x84fa prev 11 fa 00 00 00 14
+   +0x0 at 0x1de26 prev 11 fa 00 02 21 7c
+   +0x0 at 0x35864 prev 11 fa 00 06 11 fa
+   +0x0 at 0x35868 prev 11 fa 00 06 12 0e
+=== 0x61222 friction_fuel_correction_by_coolant_temperature_axis size 20: 4 refs
+   +0x0 at 0x8502 prev 12 0e 00 00 00 14
+   +0x0 at 0x1de36 prev 00 80 db 20 23 7c
+   +0x0 at 0x3586c prev 12 0e 00 06 12 0e
+   +0x0 at 0x35870 prev 12 0e 00 06 12 22
+=== 0x61236 friction_fuel_correction_by_coolant_temperature_values size 20: 4 refs
+   +0x0 at 0x850a prev 12 22 00 00 00 14
+   +0x0 at 0x1de3e prev 12 22 00 02 23 7c
+   +0x0 at 0x35874 prev 12 22 00 06 12 22
+   +0x0 at 0x35878 prev 12 22 00 06 12 36
+=== 0x80004a acceleration_noise_control_fuel_limit_lookup size 14: 5 refs
+   +0x6 at 0xb37c prev 33 f9 00 80 cc f4
+   +0x0 at 0xb382 prev 00 80 00 50 48 79
+   +0x0 at 0xb616 prev 00 48 4e 75 20 7c
+   +0x0 at 0xb61e prev 00 4a 33 fc 00 02
+   +0xc at 0xc7e6 prev 00 52 20 51 11 7c
+=== 0x800058 acceleration_noise_control_timing_limit_lookup size 14: 4 refs
+   +0x6 at 0xb496 prev 33 f9 00 80 cc f4
+   +0x0 at 0xb49c prev 00 80 00 5e 48 79
+   +0x0 at 0xb640 prev a2 8c 4e 75 20 7c
+   +0x0 at 0xb648 prev 00 58 33 fc 00 02
+=== 0x800102 speed_request_blend_weight_by_speed_difference_lookup size 14: 4 refs
+   +0x0 at 0xc882 prev 4e 75 4e 75 20 7c
+   +0x0 at 0xc88a prev 01 02 33 fc 00 02
+   +0x6 at 0xc922 prev 90 53 44 40 33 c0
+   +0x0 at 0xc928 prev 00 80 01 08 48 79
+=== 0x800118 all_speed_governor_friction_fuel_lookup size 14: 3 refs
+   +0x0 at 0xd248 prev 00 80 01 26 26 7c
+   +0x0 at 0xd288 prev 00 80 01 26 20 7c
+   +0x0 at 0xd2a0 prev 00 08 33 fc 00 02
+=== 0x800126 all_speed_governor_coolant_fuel_adjustment_lookup size 14: 3 refs
+   +0x0 at 0xd242 prev 48 e7 00 30 24 7c
+   +0x0 at 0xd282 prev 0c 00 4e 75 22 7c
+   +0x0 at 0xd2b8 prev 00 08 33 fc 00 02
+=== 0x800136 all_speed_governor_alternate_droop_lookup size 14: 4 refs
+   +0x6 at 0xd43a prev 33 f9 00 80 a9 90
+   +0x0 at 0xd440 prev 00 80 01 3c 48 79
+   +0x0 at 0xd5a6 prev 00 80 01 44 20 7c
+   +0x0 at 0xd5ae prev 01 36 33 fc 00 02
+=== 0x800144 all_speed_governor_droop_lookup size 14: 4 refs
+   +0x6 at 0xd416 prev 33 f9 00 80 a9 90
+   +0x0 at 0xd41c prev 00 80 01 4a 48 79
+   +0x0 at 0xd5a0 prev 00 07 4e 75 22 7c
+   +0x0 at 0xd5c6 prev 00 08 33 fc 00 02
+=== 0x800184 engine_retarder_torque_lookup size 14: 3 refs
+   +0x0 at 0xff72 prev 48 e7 30 3c 24 7c
+   +0x0 at 0x100f2 prev 00 06 05 2a 20 7c
+   +0x0 at 0x100fa prev 01 84 33 fc 00 02
+=== 0x800192 engine_retarder_reference_torque_lookup size 14: 7 refs
+   +0x2 at 0x1000c prev 23 fc 00 06 05 2a
+   +0x8 at 0x10016 prev 23 fc 00 06 05 66
+   +0x2 at 0x10088 prev 3c 0c 4e 75 20 79
+   +0x6 at 0x10090 prev 01 94 33 e8 00 08
+   +0x0 at 0x10096 prev 00 80 01 98 48 79
+   +0x0 at 0x100e0 prev 48 e7 00 30 24 7c
+   +0x0 at 0x1010a prev 00 08 33 fc 00 02
+=== 0x8001ea cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup size 14: 6 refs
+   +0x6 at 0x11ed8 prev 00 80 01 fe 33 c0
+   +0x0 at 0x11fdc prev 00 80 02 06 48 79
+   +0x6 at 0x124f0 prev 00 80 02 0e 33 d1
+   +0x2 at 0x124fa prev 23 fc 00 06 05 96
+   +0x8 at 0x12504 prev 23 fc 00 06 05 b2
+   +0x0 at 0x1250c prev 01 f2 33 fc 00 02
+=== 0x80020e cylinder_pressure_maintenance_temperature_per_timing_degree_lookup size 14: 4 refs
+   +0x6 at 0x11ecc prev 00 80 cc f6 33 c0
+   +0x0 at 0x122c2 prev aa 9c 48 c2 48 79
+   +0x0 at 0x124ea prev 00 80 cc f6 20 7c
+   +0x0 at 0x1255a prev 00 08 33 fc 00 02
+=== 0x80024e cylinder_balance_threshold_lookup size 14: 5 refs
+   +0x6 at 0x12ff6 prev 33 f9 00 80 cc f4
+   +0x0 at 0x12ffc prev 00 80 02 54 48 79
+   +0x0 at 0x1343e prev 65 e8 33 fc 00 02
+   +0x2 at 0x13448 prev 23 fc 00 80 72 f4
+   +0x8 at 0x13452 prev 23 fc 00 80 73 16
+=== 0x80025c cylinder_balance_real_2_dynamics_compensation_lookup size 14: 5 refs
+   +0x6 at 0x129c0 prev 33 f9 00 80 cc f4
+   +0x0 at 0x129c6 prev 00 80 02 62 48 79
+   +0x0 at 0x1345a prev 02 56 33 fc 00 02
+   +0x2 at 0x13464 prev 23 fc 00 80 72 f4
+   +0x8 at 0x1346e prev 23 fc 00 80 9e 9e
+=== 0x80026a cylinder_balance_imaginary_2_dynamics_compensation_lookup size 14: 5 refs
+   +0x6 at 0x129de prev 33 f9 00 80 cc f4
+   +0x0 at 0x129e4 prev 00 80 02 70 48 79
+   +0x0 at 0x13476 prev 02 64 33 fc 00 02
+   +0x2 at 0x13480 prev 23 fc 00 80 72 f4
+   +0x8 at 0x1348a prev 23 fc 00 80 9e be
+=== 0x800278 cylinder_balance_engine_speed_breakpoint_lookup size 14: 3 refs
+   +0x0 at 0x134ee prev 02 48 33 fc 00 02
+   +0x2 at 0x134f8 prev 23 fc 00 80 73 60
+   +0x8 at 0x13502 prev 23 fc 00 80 73 70
+=== 0x800286 cylinder_balance_delta_fueling_breakpoint_lookup size 14: 3 refs
+   +0x0 at 0x1350a prev 02 80 33 fc 00 02
+   +0x2 at 0x13514 prev 23 fc 00 80 73 80
+   +0x8 at 0x1351e prev 23 fc 00 80 73 8e
+=== 0x800294 cylinder_balance_filtered_fueling_breakpoint_lookup size 14: 3 refs
+   +0x0 at 0x13526 prev 02 8e 33 fc 00 02
+   +0x2 at 0x13530 prev 23 fc 00 80 73 9c
+   +0x8 at 0x1353a prev 23 fc 00 80 73 aa
+=== 0x80058e engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup size 14: 4 refs
+   +0x6 at 0x17024 prev 33 f9 00 80 a3 36
+   +0x0 at 0x1702a prev 00 80 05 94 48 79
+   +0x0 at 0x170aa prev 00 80 05 9c 26 7c
+   +0x0 at 0x170f6 prev 00 02 33 fc 00 02
+=== 0x80059c engine_warmup_protection_fuel_limit_lookup size 14: 4 refs
+   +0x6 at 0x17080 prev 33 f9 00 80 cc f6
+   +0x0 at 0x17086 prev 00 80 05 a2 48 79
+   +0x0 at 0x170a4 prev 48 e7 00 30 24 7c
+   +0x0 at 0x1710e prev 00 02 33 fc 00 02
+=== 0x8005b4 crank_wet_stack_timing_by_intake_manifold_temperature_lookup size 14: 2 refs
+   +0x0 at 0x17f08 prev 00 80 05 c2 20 7c
+   +0x0 at 0x17f20 prev 00 08 33 fc 00 02
+=== 0x8005fe fault_derate_fuel_limit_at_torque_curve_points_lookup size 14: 3 refs
+   +0x0 at 0x183d2 prev 48 e7 3e 3c 24 7c
+   +0x0 at 0x185f2 prev 3c 04 4e 75 20 7c
+   +0x0 at 0x1860a prev 06 0c 33 fc 00 02
+=== 0x800632 fault_derate_fuel_limit_by_engine_speed_lookup size 14: 4 refs
+   +0x6 at 0x19902 prev 33 f9 00 80 cc f6
+   +0x0 at 0x19908 prev 00 80 06 38 48 79
+   +0x0 at 0x19962 prev 3c 7c 4e 75 20 7c
+   +0x0 at 0x19976 prev 06 30 33 fc 00 02
+=== 0x8006aa double_pulsing_fueling_mapping_lookup size 14: 4 refs
+   +0x6 at 0x1c6a8 prev 33 f9 00 80 d3 2e
+   +0x0 at 0x1c6ae prev 00 80 06 b0 48 79
+   +0x0 at 0x1c7b8 prev 00 80 06 b8 20 7c
+   +0x0 at 0x1c7d0 prev 00 08 33 fc 00 02
+=== 0x80071e high_speed_governor_derivative_gain_adjustment_multiplier_lookup size 14: 4 refs
+   +0x6 at 0x1cfae prev 30 12 44 40 33 c0
+   +0x0 at 0x1cfb4 prev 00 80 07 24 48 79
+   +0x0 at 0x1d2f4 prev 00 80 07 2c 20 7c
+   +0x0 at 0x1d352 prev 00 02 33 fc 00 02
+=== 0x80072c high_speed_governor_proportional_gain_adjustment_multiplier_lookup size 14: 4 refs
+   +0x6 at 0x1d020 prev 30 12 44 40 33 c0
+   +0x0 at 0x1d026 prev 00 80 07 32 48 79
+   +0x0 at 0x1d2ee prev 00 80 07 3a 22 7c
+   +0x0 at 0x1d36a prev 00 02 33 fc 00 02
+=== 0x80073a high_speed_governor_integral_gain_adjustment_multiplier_lookup size 14: 4 refs
+   +0x6 at 0x1d080 prev 30 12 44 40 33 c0
+   +0x0 at 0x1d086 prev 00 80 07 40 48 79
+   +0x0 at 0x1d2e8 prev 4e 75 2f 0a 24 7c
+   +0x0 at 0x1d382 prev 00 02 33 fc 00 02
+=== 0x801a3e engine_protection_low_oil_pressure_limit_lookup size 14: 3 refs
+   +0x0 at 0x258ee prev 48 e7 00 30 24 7c
+   +0x0 at 0x25928 prev 0c 00 4e 75 22 7c
+   +0x0 at 0x25942 prev 00 02 33 fc 00 02
+=== 0x801a4c engine_protection_very_low_oil_pressure_limit_lookup size 14: 0 refs
+=== 0x801c0e power_take_off_gain_adjustment_lookup size 14: 6 refs
+   +0x6 at 0x2d484 prev 33 f9 00 80 dc 18
+   +0x0 at 0x2d48a prev 00 80 1c 14 48 79
+   +0x6 at 0x2da4c prev 33 f9 00 80 dc 18
+   +0x0 at 0x2da52 prev 00 80 1c 14 48 79
+   +0x0 at 0x2db30 prev 48 e7 00 3c 24 7c
+   +0x0 at 0x2dbc4 prev 00 08 33 fc 00 02
+=== 0x801c1c power_take_off_governor_derivative_gain_adjustment_lookup size 14: 4 refs
+   +0x6 at 0x2d57a prev 06 40 3e 80 33 c0
+   +0x0 at 0x2d580 prev 00 80 1c 22 48 79
+   +0x0 at 0x2db42 prev 00 80 1c 2a 2a 7c
+   +0x0 at 0x2db7c prev dc 22 33 fc 00 02
+=== 0x801c2a power_take_off_governor_integral_gain_adjustment_lookup size 14: 4 refs
+   +0x6 at 0x2d5a6 prev 06 40 3e 80 33 c0
+   +0x0 at 0x2d5ac prev 00 80 1c 30 48 79
+   +0x0 at 0x2db3c prev 00 80 1c 38 28 7c
+   +0x0 at 0x2db94 prev 00 08 33 fc 00 02
+=== 0x801c38 power_take_off_governor_proportional_gain_adjustment_lookup size 14: 4 refs
+   +0x6 at 0x2d5d2 prev 06 40 3e 80 33 c0
+   +0x0 at 0x2d5d8 prev 00 80 1c 3e 48 79
+   +0x0 at 0x2db36 prev 00 80 1c 0e 26 7c
+   +0x0 at 0x2dbac prev 00 08 33 fc 00 02
+=== 0x801e30 engine_retarder_torque_stage_1_lookup size 14: 5 refs
+   +0x6 at 0x2f6b2 prev 33 f9 00 80 cc f6
+   +0x0 at 0x2f6b8 prev 00 80 1e 36 48 79
+   +0x2 at 0x2fb00 prev 00 80 1e 28 23 ca
+   +0x8 at 0x2fb0a prev 23 fc 00 06 05 34
+   +0x0 at 0x2fb12 prev 1e 38 33 fc 00 02
+=== 0x801e3e engine_retarder_torque_stage_2_lookup size 14: 5 refs
+   +0x6 at 0x2f6ea prev 33 f9 00 80 cc f6
+   +0x0 at 0x2f6f0 prev 00 80 1e 44 48 79
+   +0x2 at 0x2fb18 prev 00 80 1e 30 23 ca
+   +0x8 at 0x2fb22 prev 23 fc 00 06 05 3e
+   +0x0 at 0x2fb2a prev 1e 46 33 fc 00 02
+=== 0x801e4c engine_retarder_torque_stage_3_lookup size 14: 4 refs
+   +0x6 at 0x2f724 prev 33 f9 00 80 cc f6
+   +0x0 at 0x2f72a prev 00 80 1e 52 48 79
+   +0x0 at 0x2fabc prev 00 80 1e 5a 20 7c
+   +0x0 at 0x2fb3e prev 00 08 33 fc 00 02
+=== 0x801e5a engine_retarder_torque_stage_4_lookup size 14: 4 refs
+   +0x6 at 0x2f75e prev 33 f9 00 80 cc f6
+   +0x0 at 0x2f764 prev 00 80 1e 60 48 79
+   +0x0 at 0x2fab6 prev 00 80 1e 68 22 7c
+   +0x0 at 0x2fb52 prev 00 08 33 fc 00 02
+=== 0x801e68 engine_retarder_torque_stage_5_lookup size 14: 4 refs
+   +0x6 at 0x2f798 prev 33 f9 00 80 cc f6
+   +0x0 at 0x2f79e prev 00 80 1e 6e 48 79
+   +0x0 at 0x2fab0 prev 00 06 05 2a 26 7c
+   +0x0 at 0x2fb66 prev 00 08 33 fc 00 02
+=== 0x8036c6 wet_stack_timing_by_intake_manifold_temperature_lookup size 14: 2 refs
+   +0x0 at 0x34cd0 prev 00 80 36 d4 26 7c
+   +0x0 at 0x34ce4 prev de e8 33 fc 00 02
+=== 0x8036d4 wet_stack_timing_by_coolant_temperature_lookup size 14: 2 refs
+   +0x0 at 0x34cca prev 48 e7 30 3c 24 7c
+   +0x0 at 0x34d04 prev 00 08 33 fc 00 02
+=== 0x806d3a intake_manifold_temperature_linearization_axis size 52: 4 refs
+   +0x0 at 0xbd04 prev 6d 6e 00 08 2b 7c
+   +0x2 at 0x20fbe prev 00 80 a7 60 2a 7c
+   +0x0 at 0x35474 prev 4f 9e 00 80 4f 9e
+   +0x0 at 0x35478 prev 4f 9e 00 80 6d 3a
+=== 0x806d6e intake_manifold_temperature_linearization_values size 52: 3 refs
+   +0x0 at 0xbcfc prev 00 80 a7 92 2b 7c
+   +0x0 at 0x35464 prev 6e 2a 00 80 6e 2a
+   +0x0 at 0x35468 prev 6e 2a 00 80 6d 6e
+=== 0x806da2 fuel_temperature_linearization_axis size 44: 3 refs
+   +0x0 at 0xbd1c prev 6d ce 00 16 2b 7c
+   +0x0 at 0x377a4 prev 00 00 00 00 00 00
+   +0x0 at 0x377a8 prev 00 00 00 80 6d a2
+=== 0x806dce fuel_temperature_linearization_values size 44: 3 refs
+   +0x0 at 0xbd14 prev 00 80 a7 92 2b 7c
+   +0x0 at 0x377ac prev 6d a2 00 80 6d a2
+   +0x0 at 0x377b0 prev 6d a2 00 80 6d ce
+=== 0x806dfa coolant_level_linearization_axis size 18: 3 refs
+   +0x0 at 0xbd32 prev 6e 0c 00 24 2b 7c
+   +0x0 at 0x377b4 prev 6d ce 00 80 6d ce
+   +0x0 at 0x377b8 prev 6d ce 00 80 6d fa
+=== 0x806e0c coolant_level_linearization_values size 18: 3 refs
+   +0x0 at 0xbd2a prev 00 02 00 0e 2b 7c
+   +0x0 at 0x377bc prev 6d fa 00 80 6d fa
+   +0x0 at 0x377c0 prev 6d fa 00 80 6e 0c
+=== 0x806e1e fuel_pressure_linearization_axis size 6: 3 refs
+   +0x0 at 0xbd48 prev 6e 24 00 32 2b 7c
+   +0x0 at 0x3785c prev 6e 24 00 80 6e 24
+   +0x0 at 0x37860 prev 6e 24 00 80 6e 1e
+=== 0x806e2a oil_pressure_linearization_axis size 12: 3 refs
+   +0x0 at 0xbd5e prev 6e 36 00 40 2b 7c
+   +0x0 at 0x3545c prev 6e 36 00 80 6e 36
+   +0x0 at 0x35460 prev 6e 36 00 80 6e 2a
+=== 0x806e42 boost_pressure_linearization_axis size 10: 3 refs
+   +0x0 at 0xbd74 prev 6e 4c 00 4e 2b 7c
+   +0x0 at 0x3544c prev 6e 4c 00 80 6e 4c
+   +0x0 at 0x35450 prev 6e 4c 00 80 6e 42
+=== 0x806e56 coolant_temperature_linearization_axis size 52: 3 refs
+   +0x0 at 0xbd8a prev 6e 8a 00 5c 2b 7c
+   +0x0 at 0x3543c prev 6e 8a 00 80 6e 8a
+   +0x0 at 0x35440 prev 6e 8a 00 80 6e 56
+=== 0x806ebe ambient_air_temperature_linearization_axis size 18: 3 refs
+   +0x0 at 0xbda0 prev 6e d0 00 6a 2b 7c
+   +0x0 at 0x3786c prev 6e d0 00 80 6e d0
+   +0x0 at 0x37870 prev 6e d0 00 80 6e be
+=== 0x806ee2 power_steering_temperature_linearization_axis size 6: 3 refs
+   +0x0 at 0xbdb6 prev 6e e8 00 78 2b 7c
+   +0x0 at 0x3787c prev 6e e8 00 80 6e e8
+   +0x0 at 0x37880 prev 6e e8 00 80 6e e2
+=== 0x806eee exhaust_pressure_linearization_axis size 6: 3 refs
+   +0x0 at 0xbdcc prev 6e f4 00 86 2b 7c
+   +0x0 at 0x3788c prev 6e f4 00 80 6e f4
+   +0x0 at 0x37890 prev 6e f4 00 80 6e ee
+=== 0x806efa sampled_throttle_linearization_axis size 14: 3 refs
+   +0x0 at 0xbde2 prev 6f 08 00 94 2b 7c
+   +0x0 at 0x3542c prev 6f 08 00 80 6f 08
+   +0x0 at 0x35430 prev 6f 08 00 80 6e fa
+=== 0x806f16 remote_throttle_linearization_axis size 14: 3 refs
+   +0x0 at 0xbdf8 prev 6f 24 00 a2 2b 7c
+   +0x0 at 0x354b4 prev 6f 24 00 80 6f 24
+   +0x0 at 0x354b8 prev 6f 24 00 80 6f 16
+=== 0x806f32 ambient_air_pressure_linearization_axis size 10: 3 refs
+   +0x0 at 0xbe0e prev 6f 3c 00 b0 2b 7c
+   +0x0 at 0x35484 prev 6f 3c 00 80 6f 3c
+   +0x0 at 0x35488 prev 6f 3c 00 80 6f 32
+=== 0x806f46 battery_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbe24 prev 6f 4c 00 be 2b 7c
+   +0x0 at 0x354d4 prev 6f 4c 00 80 6f 4c
+   +0x0 at 0x354d8 prev 6f 4c 00 80 6f 46
+=== 0x806f52 engine_speed_sensor_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbe3a prev 6f 58 00 cc 2b 7c
+   +0x0 at 0x377c4 prev 6e 0c 00 80 6e 0c
+   +0x0 at 0x377c8 prev 6e 0c 00 80 6f 52
+=== 0x806f5e throttle_position_sensor_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbe50 prev 6f 64 00 da 2b 7c
+   +0x0 at 0x378ac prev 6f 64 00 80 6f 64
+   +0x0 at 0x378b0 prev 6f 64 00 80 6f 5e
+=== 0x806f6a vehicle_connector_sensor_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbe66 prev 6f 70 00 e8 2b 7c
+   +0x0 at 0x378bc prev 6f 70 00 80 6f 70
+   +0x0 at 0x378c0 prev 6f 70 00 80 6f 6a
+=== 0x806f76 engine_connector_sensor_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbe7c prev 6f 7c 00 f6 2b 7c
+   +0x0 at 0x378cc prev 6f 7c 00 80 6f 7c
+   +0x0 at 0x378d0 prev 6f 7c 00 80 6f 76
+=== 0x806f82 frequency_throttle_input_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbe92 prev 6f 88 01 04 2b 7c
+   +0x0 at 0x378dc prev 6f 88 00 80 6f 88
+   +0x0 at 0x378e0 prev 6f 88 00 80 6f 82
+=== 0x806f8e cruise_control_switch_multiplexer_linearization_axis size 38: 3 refs
+   +0x0 at 0xbea8 prev 6f b4 01 12 2b 7c
+   +0x0 at 0x377d4 prev 6f 58 00 80 6f 58
+   +0x0 at 0x377d8 prev 6f 58 00 80 6f 8e
+=== 0x806fda water_in_fuel_linearization_axis size 18: 3 refs
+   +0x0 at 0xbebe prev 6f ec 01 20 2b 7c
+   +0x0 at 0x3789c prev 6f ec 00 80 6f ec
+   +0x0 at 0x378a0 prev 6f ec 00 80 6f da
+=== 0x806ffe egr_current_feedback_linearization_axis size 8: 5 refs
+   +0x0 at 0xbed4 prev 70 06 01 2e 2b 7c
+   +0x2 at 0x261aa prev 00 80 82 28 6f 00
+   +0x2 at 0x2d8d0 prev 50 76 26 80 48 78
+   +0x0 at 0x377e4 prev 6f b4 00 80 6f b4
+   +0x0 at 0x377e8 prev 6f b4 00 80 6f fe
+=== 0x80700e programming_pulse_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbeea prev 70 14 01 3c 2b 7c
+   +0x0 at 0x378ec prev 70 14 00 80 70 14
+   +0x0 at 0x378f0 prev 70 14 00 80 70 0e
+=== 0x80701a high_side_gate_bias_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbf00 prev 70 20 01 4a 2b 7c
+   +0x0 at 0x378fc prev 70 20 00 80 70 20
+   +0x0 at 0x37900 prev 70 20 00 80 70 1a
+=== 0x807026 operational_amplifier_and_comparator_supply_voltage_linearization_axis size 6: 3 refs
+   +0x0 at 0xbf16 prev 70 2c 01 58 2b 7c
+   +0x0 at 0x3790c prev 70 2c 00 80 70 2c
+   +0x0 at 0x37910 prev 70 2c 00 80 70 26
+=== 0x807176 fault_derate_fuel_limit_by_engine_speed_axis size 50: 9 refs
+   +0x0 at 0x18610 prev 00 80 05 fe 21 7c
+   +0x0 at 0x18cfe prev 74 70 42 43 2a 7c
+   +0x0 at 0x18e2c prev 01 a0 42 46 2a 7c
+   +0x0 at 0x19050 prev 00 80 06 20 28 7c
+   +0x0 at 0x19556 prev 00 80 57 c0 24 7c
+   +0x0 at 0x19722 prev 01 a0 42 46 2a 7c
+   +0x0 at 0x1997c prev 00 80 06 32 21 7c
+   +0x0 at 0x3596c prev 7f 3c 00 80 7f 3c
+   +0x0 at 0x35970 prev 7f 3c 00 80 71 76
+=== 0x8071a8 fault_derate_fuel_limit_by_engine_speed_values size 50: 4 refs
+   +0x0 at 0x18618 prev 71 76 00 02 21 7c
+   +0x0 at 0x19984 prev 71 76 00 02 21 7c
+   +0x0 at 0x35974 prev 71 76 00 80 71 76
+   +0x0 at 0x35978 prev 71 76 00 80 71 a8
+=== 0x8071e0 wet_stack_timing_by_intake_manifold_temperature_axis size 22: 4 refs
+   +0x0 at 0x17f0e prev 00 80 05 b4 21 7c
+   +0x0 at 0x34cea prev 00 80 36 c6 27 7c
+   +0x0 at 0x35744 prev 71 da 00 80 71 da
+   +0x0 at 0x35748 prev 71 da 00 80 71 e0
+=== 0x8071f6 wet_stack_timing_by_intake_manifold_temperature_values size 22: 4 refs
+   +0x0 at 0x17f16 prev 71 e0 00 02 21 7c
+   +0x0 at 0x34cfa prev a2 b2 00 06 27 7c
+   +0x0 at 0x3574c prev 71 e0 00 80 71 e0
+   +0x0 at 0x35750 prev 71 e0 00 80 71 f6
+=== 0x80720c wet_stack_timing_by_coolant_temperature_axis size 18: 3 refs
+   +0x0 at 0x34d0a prev 00 80 36 d4 25 7c
+   +0x0 at 0x369f4 prev 7c 2a 00 80 7c 2a
+   +0x0 at 0x369f8 prev 7c 2a 00 80 72 0c
+=== 0x807230 all_speed_governor_friction_fuel_axis size 18: 3 refs
+   +0x0 at 0xd28e prev 00 80 01 18 21 7c
+   +0x0 at 0x36ca4 prev 00 00 00 00 00 00
+   +0x0 at 0x36ca8 prev 00 00 00 80 72 30
+=== 0x807242 all_speed_governor_friction_fuel_values size 18: 3 refs
+   +0x0 at 0xd296 prev 72 30 00 02 21 7c
+   +0x0 at 0x36cb4 prev 91 de 00 80 91 de
+   +0x0 at 0x36cb8 prev 91 de 00 80 72 42
+=== 0x807254 all_speed_governor_coolant_fuel_adjustment_axis size 20: 3 refs
+   +0x0 at 0xd2a6 prev 00 80 01 18 23 7c
+   +0x0 at 0x36cbc prev 72 42 00 80 72 42
+   +0x0 at 0x36cc0 prev 72 42 00 80 72 54
+=== 0x807268 all_speed_governor_coolant_fuel_adjustment_values size 20: 3 refs
+   +0x0 at 0xd2ae prev 72 54 00 02 23 7c
+   +0x0 at 0x36cc4 prev 72 54 00 80 72 54
+   +0x0 at 0x36cc8 prev 72 54 00 80 72 68
+=== 0x8072f4 cylinder_balance_threshold_axis size 34: 6 refs
+   +0x2 at 0x12a66 prev 03 20 74 01 24 7c
+   +0x0 at 0x13444 prev 00 80 02 4e 23 fc
+   +0x0 at 0x13460 prev 00 80 02 5c 23 fc
+   +0x0 at 0x1347c prev 00 80 02 6a 23 fc
+   +0x0 at 0x38894 prev 00 00 00 00 00 00
+   +0x0 at 0x38898 prev 00 00 00 80 72 f4
+=== 0x807316 cylinder_balance_threshold_values size 34: 3 refs
+   +0x0 at 0x1344e prev 00 80 02 50 23 fc
+   +0x0 at 0x3889c prev 72 f4 00 80 72 f4
+   +0x0 at 0x388a0 prev 72 f4 00 80 73 16
+=== 0x807360 cylinder_balance_engine_speed_breakpoint_axis size 16: 3 refs
+   +0x0 at 0x134f4 prev 00 80 02 78 23 fc
+   +0x0 at 0x388d4 prev 73 58 00 80 73 58
+   +0x0 at 0x388d8 prev 73 58 00 80 73 60
+=== 0x807370 cylinder_balance_engine_speed_breakpoint_values size 16: 3 refs
+   +0x0 at 0x134fe prev 00 80 02 7a 23 fc
+   +0x0 at 0x388dc prev 73 60 00 80 73 60
+   +0x0 at 0x388e0 prev 73 60 00 80 73 70
+=== 0x807380 cylinder_balance_delta_fueling_breakpoint_axis size 14: 3 refs
+   +0x0 at 0x13510 prev 00 80 02 86 23 fc
+   +0x0 at 0x388e4 prev 73 70 00 80 73 70
+   +0x0 at 0x388e8 prev 73 70 00 80 73 80
+=== 0x80738e cylinder_balance_delta_fueling_breakpoint_values size 14: 3 refs
+   +0x0 at 0x1351a prev 00 80 02 88 23 fc
+   +0x0 at 0x388ec prev 73 80 00 80 73 80
+   +0x0 at 0x388f0 prev 73 80 00 80 73 8e
+=== 0x80739c cylinder_balance_filtered_fueling_breakpoint_axis size 14: 3 refs
+   +0x0 at 0x1352c prev 00 80 02 94 23 fc
+   +0x0 at 0x388f4 prev 73 8e 00 80 73 8e
+   +0x0 at 0x388f8 prev 73 8e 00 80 73 9c
+=== 0x8073aa cylinder_balance_filtered_fueling_breakpoint_values size 14: 3 refs
+   +0x0 at 0x13536 prev 00 80 02 96 23 fc
+   +0x0 at 0x388fc prev 73 9c 00 80 73 9c
+   +0x0 at 0x38900 prev 73 9c 00 80 73 aa
+=== 0x807acc speed_request_blend_weight_by_speed_difference_axis size 12: 3 refs
+   +0x0 at 0xc890 prev 00 80 01 02 21 7c
+   +0x0 at 0x36ccc prev 72 68 00 80 72 68
+   +0x0 at 0x36cd0 prev 72 68 00 80 7a cc
+=== 0x807ad8 speed_request_blend_weight_by_speed_difference_values size 12: 3 refs
+   +0x0 at 0xc898 prev 7a cc 00 02 21 7c
+   +0x0 at 0x36cd4 prev 7a cc 00 80 7a cc
+   +0x0 at 0x36cd8 prev 7a cc 00 80 7a d8
+=== 0x808068 high_speed_governor_derivative_gain_adjustment_error_axis size 28: 3 refs
+   +0x0 at 0x1d348 prev 00 80 d6 36 21 7c
+   +0x0 at 0x36aa4 prev dc 4c 00 80 dc 4c
+   +0x0 at 0x36aa8 prev dc 4c 00 80 80 68
+=== 0x8080a0 high_speed_governor_proportional_gain_adjustment_error_axis size 28: 3 refs
+   +0x0 at 0x1d360 prev 80 84 00 08 23 7c
+   +0x0 at 0x36ab4 prev 80 84 00 80 80 84
+   +0x0 at 0x36ab8 prev 80 84 00 80 80 a0
+=== 0x8080d8 high_speed_governor_integral_gain_adjustment_error_axis size 28: 3 refs
+   +0x0 at 0x1d378 prev 80 bc 00 08 25 7c
+   +0x0 at 0x36ac4 prev 80 bc 00 80 80 bc
+   +0x0 at 0x36ac8 prev 80 bc 00 80 80 d8
+=== 0x8088b0 power_take_off_governor_derivative_gain_adjustment_axis size 28: 3 refs
+   +0x0 at 0x2db82 prev 00 80 1c 1c 2b 7c
+   +0x0 at 0x370fc prev d6 0a 00 80 d6 0a
+   +0x0 at 0x37100 prev d6 0a 00 80 88 b0
+=== 0x8088e8 power_take_off_governor_integral_gain_adjustment_axis size 28: 3 refs
+   +0x0 at 0x2db9a prev 00 80 1c 2a 29 7c
+   +0x0 at 0x3710c prev 88 cc 00 80 88 cc
+   +0x0 at 0x37110 prev 88 cc 00 80 88 e8
+=== 0x808920 power_take_off_governor_proportional_gain_adjustment_axis size 28: 3 refs
+   +0x0 at 0x2dbb2 prev 00 80 1c 38 27 7c
+   +0x0 at 0x3711c prev 89 04 00 80 89 04
+   +0x0 at 0x37120 prev 89 04 00 80 89 20
+=== 0x808958 power_take_off_gain_adjustment_axis size 22: 3 refs
+   +0x0 at 0x2dbca prev 00 80 1c 0e 25 7c
+   +0x0 at 0x3712c prev 89 3c 00 80 89 3c
+   +0x0 at 0x37130 prev 89 3c 00 80 89 58
+=== 0x80896e power_take_off_gain_adjustment_values size 22: 3 refs
+   +0x0 at 0x2dbd2 prev 89 58 00 02 25 7c
+   +0x0 at 0x37134 prev 89 58 00 80 89 58
+   +0x0 at 0x37138 prev 89 58 00 80 89 6e
+=== 0x809e9e cylinder_balance_real_2_dynamics_compensation_values size 32: 9 refs
+   +0x0 at 0x12b30 prev 00 80 03 20 20 7c
+   +0x2 at 0x12b52 prev 00 80 03 20 20 7c
+   +0x0 at 0x12ba6 prev 00 80 03 20 20 7c
+   +0x2 at 0x12bc6 prev 00 80 03 20 20 7c
+   +0x0 at 0x12c3e prev 00 80 9e be 2a 7c
+   +0x0 at 0x1341e prev 00 80 9e be 26 7c
+   +0x0 at 0x1346a prev 00 80 02 5e 23 fc
+   +0x0 at 0x38954 prev 91 e8 00 80 91 e8
+   +0x0 at 0x38958 prev 91 e8 00 80 9e 9e
+=== 0x809ebe cylinder_balance_imaginary_2_dynamics_compensation_values size 32: 9 refs
+   +0x0 at 0x12b74 prev 00 80 03 20 20 7c
+   +0x2 at 0x12b96 prev 00 80 03 20 20 7c
+   +0x0 at 0x12be6 prev 00 80 03 20 20 7c
+   +0x2 at 0x12c06 prev 00 80 03 20 20 7c
+   +0x0 at 0x12c38 prev 00 80 02 e0 28 7c
+   +0x0 at 0x13418 prev 00 80 02 e0 28 7c
+   +0x0 at 0x13486 prev 00 80 02 6c 23 fc
+   +0x0 at 0x3895c prev 9e 9e 00 80 9e 9e
+   +0x0 at 0x38960 prev 9e 9e 00 80 9e be
+=== 0x80a792 intake_manifold_temperature_linearization_lookup size 14: 3 refs
+   +0x0 at 0xb7ee prev 00 80 00 76 2d 7c
+   +0x0 at 0xbcf6 prev 48 e7 00 3c 2a 7c
+   +0x0 at 0xbd0e prev 00 02 33 fc 00 02
+=== 0x80a7a0 fuel_temperature_linearization_lookup size 14: 0 refs
+=== 0x80a7ae coolant_level_linearization_lookup size 14: 0 refs
+=== 0x80a7bc fuel_pressure_linearization_lookup size 14: 0 refs
+=== 0x80a7ca oil_pressure_linearization_lookup size 14: 0 refs
+=== 0x80a7d8 boost_pressure_linearization_lookup size 14: 0 refs
+=== 0x80a7e6 coolant_temperature_linearization_lookup size 14: 0 refs
+=== 0x80a7f4 ambient_air_temperature_linearization_lookup size 14: 0 refs
+=== 0x80a802 power_steering_temperature_linearization_lookup size 14: 0 refs
+=== 0x80a810 exhaust_pressure_linearization_lookup size 14: 0 refs
+=== 0x80a81e sampled_throttle_linearization_lookup size 14: 0 refs
+=== 0x80a82c remote_throttle_linearization_lookup size 14: 0 refs
+=== 0x80a83a ambient_air_pressure_linearization_lookup size 14: 0 refs
+=== 0x80a848 battery_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a856 engine_speed_sensor_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a864 throttle_position_sensor_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a872 vehicle_connector_sensor_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a880 engine_connector_sensor_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a88e frequency_throttle_input_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a89c cruise_control_switch_multiplexer_linearization_lookup size 14: 0 refs
+=== 0x80a8aa water_in_fuel_linearization_lookup size 14: 0 refs
+=== 0x80a8b8 egr_current_feedback_linearization_lookup size 14: 0 refs
+=== 0x80a8c6 programming_pulse_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a8d4 high_side_gate_bias_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80a8e2 operational_amplifier_and_comparator_supply_voltage_linearization_lookup size 14: 0 refs
+=== 0x80db20 friction_fuel_by_engine_speed_lookup size 14: 7 refs
+   +0x0 at 0x1434e prev 48 e7 00 38 26 7c
+   +0x0 at 0x1445a prev 00 80 bc 88 26 7c
+   +0x6 at 0x1d7d4 prev 33 f9 00 80 d6 50
+   +0x0 at 0x1d7f4 prev 58 8f 2e 80 48 79
+   +0x0 at 0x1ddcc prev 00 80 db 2e 20 7c
+   +0x0 at 0x1de30 prev 00 08 33 fc 00 02
+   +0x0 at 0x26b46 prev 00 80 db 2e 26 7c
+=== 0x80db2e friction_fuel_correction_by_coolant_temperature_lookup size 14: 6 refs
+   +0x0 at 0x143c2 prev 00 01 42 d4 26 7c
+   +0x6 at 0x1d7de prev 33 f9 00 80 a3 36
+   +0x0 at 0x1d7e4 prev 00 80 db 34 48 79
+   +0x0 at 0x1ddc6 prev 00 80 d3 72 22 7c
+   +0x0 at 0x1de48 prev 00 08 33 fc 00 02
+   +0x0 at 0x26b40 prev 48 e7 00 30 24 7c

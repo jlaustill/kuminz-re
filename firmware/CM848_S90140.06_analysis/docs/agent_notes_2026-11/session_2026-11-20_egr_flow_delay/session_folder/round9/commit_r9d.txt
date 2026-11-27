@@ -1,0 +1,30 @@
+cm848: round 9 stage D - the e2m 8C19 RE flag bytes as transmission_control_flags_t / transmission_shift_strategy_flags_t
+
+e2m 8C19, the RE flag block, aligns at 0x40b0e8. It is checked by code use at +0..+4, +9..+C, +E, +F, +11, +12 and
++16. The two old protection_* structs are its bytes.
+
+**transmission_control_flags_t** (0x40b0e8, was protection_condition_flags_t):
+- request_flags (RE_Trans_Flag1): bits 1 / 2 are the 4-3 / 3-4 requests, bit 6 the converter unlock request;
+- mode_flags (RE_Trans_Flag2): bit 0 cruise decel, bit 2 low range, bit 4 cruise active;
+- state_flags (RE_Trans_Flag3): bit 1 forced 2nd gear, bit 2 the lockup boost hold, bit 5 service lockup, bit 7 a
+  3-4 upshift in progress;
+- overdrive_flags (RE_OD_Flags);
+- axle_ratio_learning_flags (RE_Nvratio_Learn_Flags; only cm848_learnOutputSpeedToVehicleSpeedRatio uses it);
+- limp_home_flags_1..4 (RE_Limp_Flags1..4);
+- low_range_boost_flags.
+
+**transmission_shift_strategy_flags_t** (0x40b0f2, was protection_status_flags_t):
+- wide_open_throttle_flags (bit 4 = the anti-hang timer armed);
+- run_fuel_mode_flags;
+- the 3-byte flags array split into anti_hunt_flags (+C: the anti-hunt boosts at bits 7 / 6, the detent at bit 4),
+  output_shaft_speed_flags (+D) and actuator_test_flags (+E: the SCI output test);
+- service_test_request_flags (+F: RE_Cmd25, set by SCI command 37);
+- limp_home_and_temperature_flags (+11).
+
+The old bit notes stay as earlier notes. refresh_qualified_r9d.py refreshes the `instance.field` mentions, and the
+wave 11 lesson in firmware/CLAUDE.md keeps the old field names alongside the new.
+
+**Proof:** reverse_names.py with the split fields mapped back to flags[0..2]: 0 functions differ. So the split changed
+only field names.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

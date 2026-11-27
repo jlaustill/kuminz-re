@@ -1,0 +1,28 @@
+cm848: round 42 fix - the status record's bit 0 checked on the dump, the proof re-run on all 24 users, MISSING 233
+
+A review of round 42 found claims wider than the checks behind them. Comment and document text only. Struct comments
+reach the headers (regenerated, 0 g++ errors) but not the .cpp, so the build is unchanged.
+- **status_word bit 0 is not simply "active":** that word came from the legacy name
+  cm848_sciCommand51ReportActiveFaultDtcs.
+  - The truck's dump has it clear in every slot, including the active P0483: fault 407 -> slot 100 reads flags 0x82
+    and status_word 0.
+  - The struct comment now says only what is known. The flags byte agrees with the dump: 0x82 has the stored DTC bit.
+- **The proof, re-run:** stage A's run covered only 12 of the 24 users, because prove_caches.py prints at most 12
+  names.
+  - With base-pointer temps and every slot x 3 set-up handled, prove_status_records.py gives 0 differing statements in
+    23 of the 24 users.
+  - In cm848_mainLoopServiceMonitor, one pair is the same address written two ways: (ushort *)(base + i + 1) and
+    (ushort *)((int)&base->status_word + i).
+  - 34f1e78's message said 22 users and "23 of the 24"; task 046 and the PR test plan now say what was checked.
+- **Wording:** "severity count" for flags 0x0e came from a legacy function name; task 046 now uses the CSV's neutral
+  wording.
+- **firmware/CLAUDE.md (factual refresh):** MISSING is 233, not 234. Stage A gave one row _cal and made one a
+  documentation row: 124 documentation rows, 77 boot-named, 10 dual-use, 18 unreferenced, 4 deferred.
+- **Also checked, no change needed:**
+  - HARD is still 0.
+  - Stage B's seven rows match their e2m record's size and sign.
+  - No global named selected_stage_torque_values.
+- task 046 records that stage A resolves round 40's deferred fault_status_* pair, and that the parameter ID table has
+  no record at 0x3feb92.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

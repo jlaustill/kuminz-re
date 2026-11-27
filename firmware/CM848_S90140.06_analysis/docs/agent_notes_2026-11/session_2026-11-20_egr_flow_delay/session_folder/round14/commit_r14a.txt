@@ -1,0 +1,39 @@
+cm848: round 14 stage A - the low speed governor reference speed chain from e2m 14EE / 1496 / 14EF / 14F0 (label-only)
+
+The LSG reference speed chain (round 13's first lead) carried governor_speed_limit_* / thermal_governor_* /
+protection names. The Cummins e2m blocks lie past the end of the dumped parameter ID table, so they are aligned by
+relative offset, and every record checks against its code use and the dump values.
+- **14EE (ROM settings) at 0x4070ee:** all 32 records +0..+3E fit, and 8C76 follows at 0x40712e (11.46 drops +40 /
+  +42).
+  - The cold / hot idle coolant temperatures and timers, the A/C / drive / park idle speeds.
+  - The extended idle conditions (coolant, intake manifold and battery temperatures, road speed) and its speed.
+  - The idle increment / decrement rates, the minimum / maximum / maximum tool idle speeds, the J1850 and J1939
+    enables, and the altitude slew rate (4 bytes, as the e2m says) and hystereses.
+  - The three *_PN_Enable flags read backwards (0 = park / neutral at rest only), so they are named
+    *_outside_park_neutral_enable.
+  - Switch 13 is e2m 1612 AC_On_Off_Switch.
+- **1496 (RAM) at 0x40aeb2:** all 16 records fit.
+  - The reference before droop, the desired reference speed, and the coolant / park-or-drive / extended idle / A/C /
+    J1850 / tool / moving speed requests, plus the extended idle status.
+  - The struct at +10 (was governor_output_t / governor_output_t_0040aec2) is low_speed_governor_reference_t: reference_speed,
+    no_load_fuel, reference_speed_state (e2m +14 LSG_Reference_Speed_State) and the 4-byte altitude_speed.
+  - +1A SCI_Cmd19_Status is round 13's 0xE5C1 key.
+- **14EF (ROM) at 0x5c4ae** (it ends where 8A51 starts) and **14F0 (RAM) at 0x40aede:** the LSG error filter
+  coefficient / gain / clamps, the adjusted reference speed, and the derivative and jerk terms.
+- **The functions:**
+  - The task is cm848_updateLowSpeedGovernorReferenceSpeed (was cm848_updateGovernorSpeedLimits). It runs
+    cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed, then cm848_selectLowSpeedGovernorDesiredReferenceSpeed
+    (was cm848_calculateProtectionSpeedLimits), then cm848_slewLowSpeedGovernorReferenceSpeed (was
+    cm848_applySpeedLimitConstraints; the thermal_governor_* words were its rates).
+  - Also the error terms, the initializer and the no-load fuel.
+- **The tables:** coolant (8A51 / 8A52), altitude (8B16 / 8B17 by role) and moving (8C51 / 8C52). New rows: the
+  14EF gain and clamps.
+- **Left for stage C:** the 0x3faf7a dword is two words (sth / lhz only). Left out: the droop offset at 0x40aedc
+  (only ever cleared).
+- **Checks:**
+  - reverse_names.py EQUIVALENT (79 of 80 names render; the struct type is not a code token).
+  - 19 thunks / 13 call overrides; lookup_tables 0 sizing problems; the headers compile.
+  - No old name is in CM550.
+  - firmware/CLAUDE.md: two example names in the vehicle speed note refreshed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

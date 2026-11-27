@@ -1,0 +1,15 @@
+cm550: round 79 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 79" records stage A (c1820e23) and its proof. CM550's chip selects 5 / 4 are two Intel
+  82527 CAN controllers, named from the 82527 address map. The register block now starts at 0xFFC800, and the CS5
+  controller's two functions are named.
+- Leads:
+  - which bus each controller carries: CS5 uses 11-bit identifiers, so not J1939, perhaps the VP44 link;
+  - a message object struct for CS4's indexed accesses;
+  - the chip select 2 device at 0xFFD000;
+  - the earlier rounds' leads.
+- The PR body: the Round 79 bullet, "Beyond CM848" for rounds 72-79, and the test plan line.
+- work/todo.md, the session README, session_folder/round79/, the large-files tarball (the round's 4 verify / build
+  logs), pr_body.md. The Intel document is cited, not archived.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

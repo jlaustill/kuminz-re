@@ -1,0 +1,94 @@
+  1 0x28616: jsr 0x31428 mc68k_loadTpuMicrocode
+  2 0x2861c: jsr 0x2e9ac clearWorkingRam
+  3 0x28622: jsr 0x117ec copyCalibrationFromRomToRam
+  4 0x28642: jsr 0x1e77a cm550_initVectorTable
+  5 0x28656: jsr 0x2e95e initQadcModule
+  6 0x28674: jsr 0x26854 mc68k_initializeSerialEepromDriverAndLoadMirror
+  7 0x2867a: jsr 0x2e5c0 mc68k_pwmFuelDemandOutputCalculator
+  8 0x2868a: jsr 0x114d4 cm550_loadParameterBlockAndUpdatePowerDownCounts
+  9 0x286fc: jsr 0x15dd0 cm550_initializeDiscreteInputs
+ 10 0x28702: jsr 0xbcf0 cm550_initializeAnalogSensorChannels
+ 11 0x28708: jsr 0x15df0 mc68k_initializeDiscreteOutputDrivers
+ 12 0x2870e: jsr 0x3452a loadHourMetersFromEeprom
+ 13 0x28714: jsr 0xb666 cm550_initFuelSystemOutputDriver
+ 14 0x2871a: jsr 0xb63e cm550_dmaDescriptorSetup2
+ 15 0x28720: jsr 0xd3b2 cm550_initializeAllSpeedGovernorReferenceSpeedSets
+ 16 0x28726: jsr 0x345c8 cm550_initMultiSystemParameters
+ 17 0x2872c: jsr 0xb5e4 initializeEngineAccelerationFilters
+ 18 0x28732: jsr 0x1873e vp44_engineProtectionSystemInit
+ 19 0x28738: jsr 0x18ac4 cm550_diagnosticProtectionEvaluator
+ 20 0x2873e: jsr 0x1d2e4 initializeHighSpeedGovernorGainSet
+ 21 0x28744: jsr 0x1d94e initializeEngineSpeedLimitDefaults
+ 22 0x2874a: jsr 0x176de cm550_initializeEngineSpeedCalculation
+ 23 0x28750: jsr 0x10394 cm550_canBusTimingInit
+ 24 0x28756: jsr 0x26e86 cm550_initializeEnginePositionPhaseLag
+ 25 0x2875c: jsr 0x17150 cm550_initializeEnginePositionSignalInputs
+ 26 0x28762: jsr 0x1839a cm550_canRpmModeConfigInit
+ 27 0x28768: jsr 0x18384 initializeEngineState
+ 28 0x2876e: jsr 0x1bf54 mc68k_scheduler_init
+ 29 0x28774: jsr 0x30b0e cm550_emptyStubFunction11
+ 30 0x2877a: jsr 0x42ad4 
+ 31 0x28780: jsr 0x10e06 cm550_initializeThrottleMinimum
+ 32 0x28786: jsr 0xd5e6 cm550_initBoostProtectionSystem
+ 33 0x2878c: jsr 0x124d2 cm550_initLoadTrendingSystem
+ 34 0x28792: jsr 0x13cc8 cm550_initializeDatalogger
+ 35 0x28798: jsr 0x138a0 vp44_initVp44BufferAddresses
+ 36 0x2879e: jsr 0x14fae cm550_initHourMeterSystem
+ 37 0x287a4: jsr 0x17ef8 vp44_fuelLimitParameterPointerSetup
+ 38 0x287aa: jsr 0x1ade8 cm550_initializeElectronicSmartPower
+ 39 0x287b0: jsr 0x1c7a8 cm550_initializeFourDimensionalInjectionTimingLookups
+ 40 0x287b6: jsr 0x1dbd8 cm550_initializeInjectorFaultEngineSpeedLimit
+ 41 0x287bc: jsr 0x1db8a cm550_initializeIdleShutdown
+ 42 0x287c2: jsr 0x2482e cm550_startPowerUpLampSequence
+ 43 0x287c8: jsr 0x24812 cm550_iahDisableWaitToStartLamp
+ 44 0x287ce: jsr 0x25926 cm550_initLookupTablePointers1
+ 45 0x287d4: jsr 0x2658c cm550_initializeLowSpeedGovernorIdleAdjustment
+ 46 0x287da: jsr 0x26b82 cm550_emptyStubFunction12
+ 47 0x287e0: jsr 0x4cf42 
+ 48 0x287e6: jsr 0x4d9dc 
+ 49 0x287ec: jsr 0x2ddbc initializePowerTakeOffThrottleOverride
+ 50 0x287f2: jsr 0x30ade cm550_initializeTripInformation
+ 51 0x287f8: jsr 0x31a68 cm550_restartTrendingAfterEngineRebuild
+ 52 0x287fe: jsr 0x1dcfc cm550_initializeAlpha
+ 53 0x28804: jsr 0x2ddce mc68k_hardwareTimerFlagsInit
+ 54 0x2880a: jsr 0x26078 cm550_initializeLowSpeedGovernor
+ 55 0x28810: jsr 0x1709e cm550_initializeEngineWarmupProtection
+ 56 0x28816: jsr 0x30c78 cm550_masterSubsystemInit
+ 57 0x2881c: jsr 0x1e04c cm550_initializeFourDimensionalFuelingInterpolationFactor
+ 58 0x28822: jsr 0xaf70 cm550_initializeDutyCycleMonitor
+ 59 0x28828: jsr 0x1fe40 cm550_canMessageFilterInit
+ 60 0x2882e: jsr 0x2ed62 cm550_initializeRemoteThrottle
+ 61 0x28834: jsr 0x1e522 cm550_tpuChannelIsrRegister
+ 62 0x2883a: jsr 0x30274 mc68k_engineSpeedIsrRegister
+ 63 0x28840: jsr 0x30342 mc68k_initializeTpuChannel12
+ 64 0x28846: jsr 0x26c7e mc68k_pwmOutputInit
+ 65 0x2884c: jsr 0x1e25a cm550_serialCommunicationIsrRegister
+ 66 0x28852: jsr 0x1e1a0 cm550_canMessageInterruptHandlerSetup
+ 67 0x28858: jsr 0x28a04 mc68k_dualCanControllerInit
+ 68 0x2885e: jsr 0x29130 mc68k_initializeJ1708Datalink
+ 69 0x28864: jsr 0x1ffd0 cm550_emptyPlaceholderInit
+ 70 0x2886a: jsr 0x1ddb4 initializeFourDimensionalFuelingAndFrictionFuelLookups
+ 71 0x28870: jsr 0xc880 cm550_initializeSpeedRequestBlendWeightLookup
+ 72 0x28876: jsr 0xd280 cm550_interpolationTableSetup
+ 73 0x2887c: jsr 0x4381c 
+ 74 0x28882: jsr 0x442f4 
+ 75 0x28888: jsr 0x432fa 
+ 76 0x2888e: jsr 0x4939c 
+ 77 0x28894: jsr 0x4461c 
+ 78 0x2889a: jsr 0x44978 
+ 79 0x288a0: jsr 0x44c32 
+ 80 0x288a6: jsr 0x44d36 
+ 81 0x288ac: jsr 0x45196 
+ 82 0x288b2: jsr 0x4c934 
+ 83 0x288b8: jsr 0x45bbc 
+ 84 0x288be: jsr 0x455f2 
+ 85 0x288c4: jsr 0x45e4c 
+ 86 0x288ca: jsr 0x4627e 
+ 87 0x288d0: jsr 0x468ec 
+ 88 0x288d6: jsr 0x4c45e 
+ 89 0x288dc: jsr 0x46996 
+ 90 0x288e2: jsr 0x4723e 
+ 91 0x288e8: jsr 0x47394 
+ 92 0x288ee: jsr 0x473a0 
+ 93 0x288f4: jsr 0x474ae 
+ 94 0x288fa: jsr 0x48886 

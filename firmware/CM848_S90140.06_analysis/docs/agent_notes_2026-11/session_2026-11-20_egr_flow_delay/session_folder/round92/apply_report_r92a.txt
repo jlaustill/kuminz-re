@@ -1,0 +1,34 @@
+W1 word -1 0x803c92 (no row) -> algorithm_enable_flags_table_length_cal word
+W1 word 0 0x803c94 calibration_feature_enable_flags_word_0 -> algorithm_enable_flags_0_cal word
+W1 word 1 0x803c96 calibration_feature_enable_flags_word_1 -> algorithm_enable_flags_1_cal algorithm_enable_flags_1_t
+W1 word 2 0x803c98 calibration_feature_enable_flags_word_2 -> algorithm_enable_flags_2_cal cm550_algorithm_enable_flags_2_t
+W1 word 3 0x803c9a calibration_feature_enable_flags_word_3 -> algorithm_enable_flags_3_cal cm550_algorithm_enable_flags_3_t
+W1 word 4 0x803c9c (no row) -> algorithm_enable_flags_4_cal algorithm_enable_flags_4_t
+W1 word 5 0x803c9e calibration_feature_enable_flags_word_5 -> algorithm_enable_flags_5_cal cm550_algorithm_enable_flags_5_t
+W1 word 6 0x803ca0 (no row) -> algorithm_enable_flags_6_cal word
+W1 cm848 algorithm_enable_flags_3_t bit 12: reserved_bit_12 -> acceleration_noise_control_fuel_limit_enable
+W1 cm848 algorithm_enable_flags_3_t bit 13: reserved_bit_13 -> acceleration_noise_control_timing_limit_enable
+W1 cm848 algorithm_enable_flags_3_t bit 14: reserved_bit_14 -> acceleration_noise_control_engine_speed_limit_enable
+W1 cm848 algorithm_enable_flags_3_t bit 8: road_speed_governor_without_droops_below_top_gear -> gear_down_protection_enable
+W2 word 7 0x803ca2 (no row) -> algorithm_enable_flags_7_cal cm550_algorithm_enable_flags_7_t
+W2 word 8 0x803ca4 (no row) -> algorithm_enable_flags_8_cal cm550_algorithm_enable_flags_8_t
+W2 word 9 0x803ca6 (no row) -> algorithm_enable_flags_9_cal word
+W2 word 11 0x803caa diagnostic_subsystem_enable_flags -> algorithm_enable_flags_11_cal algorithm_enable_flags_11_t
+W2 word 12 0x803cac calibration_feature_enable_flags_word_9 -> algorithm_enable_flags_12_cal cm550_algorithm_enable_flags_12_t
+W2 word 13 0x803cae switch_override_configuration -> algorithm_enable_flags_13_cal cm550_algorithm_enable_flags_13_t
+W2 word 14 0x803cb0 (no row) -> algorithm_enable_flags_14_cal cm550_algorithm_enable_flags_14_t
+W2 cm848 algorithm_enable_flags_12_t bit 1: reserved_bit_1 -> overspeed_fuel_shutoff_enable
+W3 word 15 0x803cb2 (no row) -> algorithm_enable_flags_15_cal word
+W3 word 16 0x803cb4 switch_input_override_enable_flags -> algorithm_enable_flags_16_cal cm550_algorithm_enable_flags_16_t
+W3 word 17 0x803cb6 (no row) -> algorithm_enable_flags_17_cal word
+W3 word 18 0x803cb8 feature_enable_flags_word -> algorithm_enable_flags_18_cal cm550_algorithm_enable_flags_18_t
+W3 word 19 0x803cba (no row) -> algorithm_enable_flags_19_cal word
+W3 word 22 0x803cc0 (no row) -> algorithm_enable_flags_22_cal word
+W3 word 23 0x803cc2 (no row) -> algorithm_enable_flags_23_cal word
+W4 word 25 0x803cc6 (no row) -> algorithm_enable_flags_25_cal algorithm_enable_flags_25_t
+W4 word 26 0x803cc8 (no row) -> algorithm_enable_flags_26_cal word
+W4 word 27 0x803cca (no row) -> algorithm_enable_flags_27_cal cm550_algorithm_enable_flags_27_t
+W4 word 28 0x803ccc (no row) -> algorithm_enable_flags_28_cal cm550_algorithm_enable_flags_28_t
+W4 word 32 0x803cd4 timing_governor_feature_enable_flags -> algorithm_enable_flags_32_cal cm550_algorithm_enable_flags_32_t
+W4 word 33 0x803cd6 (no row) -> algorithm_enable_flags_33_cal cm550_algorithm_enable_flags_33_t
+

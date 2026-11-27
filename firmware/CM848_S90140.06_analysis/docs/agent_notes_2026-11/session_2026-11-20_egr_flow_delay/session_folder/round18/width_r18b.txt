@@ -1,0 +1,6 @@
+0x0040a2ee four_dimensional_injection_timing e2m 2 row 2 Four_D_Timing 
+0x003fd806 user_commanded_injection_timing_increment_ca e2m 2 row 2 User_Commanded_Timing_Increment 
+0x003fd808 user_commanded_injection_timing_cal e2m 2 row 2 User_Commanded_Timing 
+0x00409e40 main_injection_timing_selection e2m 2 row 2 Main_SOI_Selection_Switch_N 
+0x00409e44 main_injection_timing_extended_idle_minimum e2m 2 row 2 LSG_Extended_Idle_Main_SOI 
+0x0040aee8 main_injection_timing_misfire_limit e2m 2 row 2 Misfire_Timing_Limit 

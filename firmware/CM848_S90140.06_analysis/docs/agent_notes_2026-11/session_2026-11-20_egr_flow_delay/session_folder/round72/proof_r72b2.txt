@@ -1,0 +1,1 @@
+both .cpp files are identical to B1's past the Generated line (the enum rendered nowhere; the CM550 edit is a comment), with B1's WARNING lines; CM848 verify byte-identical (thunks 18 / 14, locals Skipped 8); the CM848 headers no longer declare MEMORY_ACCESS_FLAG (0 g++ errors).

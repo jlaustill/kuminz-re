@@ -18,10 +18,10 @@
 #
 # The ECU's real distance counters, verified across four EEPROM dumps (they
 # move together and HP Tuners zeroes them):
-#   EEPROM 0x08EA  lifetime_distance_pulses   u32, 8000 pulses/mile
+#   EEPROM 0x08EA  lifetime_distance_pulses_cal   u32, 8000 pulses/mile
 #                  -> this is what PGN 65248 (total vehicle distance) reports
 #   EEPROM 0x19A6  trip distance copy          u32, same unit
-#   EEPROM 0x19CE  lifetime_distance_8_mile_record  4 x u16 ring,
+#   EEPROM 0x19CE  lifetime_distance_8_mile_record_cal  4 x u16 ring,
 #                  each = lifetime pulses / 64000 (= miles / 8)
 #
 # Block checksum (EEPROM 0x005C) is SELF-HEALING: the ECU recomputes the
@@ -54,7 +54,7 @@ set -euo pipefail
 KUMINZ_CLI="${KUMINZ_CLI:-/home/linux/code/kuminz-re/kuminz-cli/build/kuminz-cli}"
 
 # EEPROM/RAM addresses (CLIP address space: EEPROM = 0x01000000 + offset)
-LIFETIME_ADDR="010008EA"   # u32 lifetime_distance_pulses (EEPROM 0x08EA)
+LIFETIME_ADDR="010008EA"   # u32 lifetime_distance_pulses_cal (EEPROM 0x08EA)
 TRIP_ADDR="010019A6"       # u32 trip distance copy       (EEPROM 0x19A6)
 RING_ADDR="010019CE"       # 4 x u16 eight-mile record    (EEPROM 0x19CE)
 CHECKSUM_ADDR="0100005C"   # u16 block checksum (read-only reference)

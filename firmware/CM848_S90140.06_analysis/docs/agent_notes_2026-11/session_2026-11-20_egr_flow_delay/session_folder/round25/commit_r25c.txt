@@ -1,0 +1,24 @@
+cm848: round 25 stage C - the executive frame timing records and their pointers (types)
+
+A round 24 lead. With algorithm_enable_flags_18_cal.executive_timing_enable set, main_loop times every pass:
+- When the enable rises, it clears 12-byte records from 0x40be6a up to ram_refresh_enable. That is 40 records, and
+  nothing else lives in the range.
+- After each pass it adds the pass's timebase ticks to the record its walking pointer points at (sum, count,
+  minimum, maximum, overflows above the threshold), and an overflow also counts e2m 12A6 Executive_Timing_Overflows
+  in EEPROM.
+- It steps the pointer by one record, and phase 0 of its 11-phase switch resets it.
+- scheduler_task_stat_t -> executive_frame_timing_t (type-only): call_count / min_time / max_time / overrun_count ->
+  frame_count / minimum_ticks / maximum_ticks / overflow_count. The instance becomes the array executive_frame_timings
+  (executive_frame_timing_t[40]), and its 4 dotted alias rows go.
+- The two walking pointers are executive_frame_timing_t * now (executive_frame_timing_pointer /
+  _clear_pointer), so *(ushort *)(p + 8) etc. read p->maximum_ticks / ->minimum_ticks / ->total_ticks /
+  ->frame_count / ->overflow_count, and the pointer steps by + 1.
+- The helpers: executive_frame_ticks / executive_frame_start_ticks / executive_timing_enabled_previous_flag /
+  executive_frame_overflow_threshold_ticks / executive_timing_overflow_count_cal. The old offset alias row
+  timer_base_snapshot+2 goes, and 0x3feec0 gets its e2m row (12A6 +2 Executive_Frame_Max_Time_Capture, no reader).
+
+Proof (prove_tokens.py with the renamed names mapped to address tokens): only main_loop differs, and it differs only
+in the typed pointer accesses above, which use the same offsets. Pieces 480 -> 480. Headers regenerated (0 g++ errors),
+lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

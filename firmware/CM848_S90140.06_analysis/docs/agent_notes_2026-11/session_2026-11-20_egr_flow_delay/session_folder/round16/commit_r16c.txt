@@ -1,0 +1,22 @@
+cm848: round 16 stage C - switch_input_state_t bytes 0 / 1 / 3 as bitfields (types; the user's decision)
+
+The user approved the round 11 pilot in this session ("Yes, ship the bitfields"): every byte of
+switch_input_state_bits is now a bitfield unit, one bit per switch from its e2m 1612 record (switch N
+= byte N/8, mask 1 << N%8), with the pilot's names (key_switch, not_brake_switch, idle_switch /
+not_idle_switch, brake_switch, exhaust_brake_switch, clutch_switch, ..., unwired_switch). Byte 2's
+unused bit is reserved_bit_18 (named by its switch, like 29 / 30).
+
+- 180 named bit accesses replace 198 masked byte-field accesses (231 named switch references in all).
+- The cost, as the pilot measured: 10 ._N_1_ piece lines in three single-bit setters
+  (cm848_checkSwitch31OnTimeFault, cm848_updateAirConditioningSwitchFromPci,
+  cm848_deriveSecondBrakeSwitchSignal; 457 -> 467 piece lines in the .cpp), and the indexed loops of
+  cm848_scanAndDebounceSwitchInputs / hpcr_initProtectionAndOutputCycle print field_0x0. Two setters
+  fold into unwired_switch = 1 / 0.
+- The proof: switch_normalize_r16c.py (each new field -> its byte field & mask) +
+  cast_normalized_diff.py: 8 functions differ, all in those classes (plus one parenthesis artifact of
+  the normalizer).
+
+Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass;
+the thunk counts are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

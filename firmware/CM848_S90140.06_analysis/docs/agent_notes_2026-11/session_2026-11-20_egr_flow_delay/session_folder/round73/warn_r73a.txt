@@ -1,0 +1,3 @@
+am file from project: /cm848_rom.bin (HeadlessAnalyzer)  
+ at 0000b450: Unable to resolve constructor at 0000b450 (DecompileCallback)  
+ function imports failed (GhidraScript)  

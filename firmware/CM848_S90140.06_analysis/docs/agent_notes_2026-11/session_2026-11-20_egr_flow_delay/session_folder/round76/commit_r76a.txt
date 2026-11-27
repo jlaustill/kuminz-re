@@ -1,0 +1,63 @@
+cm550: round 76 stage A - the MC68336 module registers named from the manual's register summary; five wrong register struct types removed
+
+Round 75 named the first four registers (the QSM SCI). The other MC68336 registers the code reaches still rendered as
+raw addresses (Ram00fffXXX). All 141 now have names and the manual's widths, taken from the MC68336/376 User's Manual,
+Appendix D (Register Summary, Rev. 15 Oct 2000). The code addresses the register block at $FFF000 (Y = F).
+- Names are <module>_<mnemonic>, the form CM848's mpc555_registers.csv uses (TPUA_CIER, TPUA_CH0_PARAM0).
+- SIM (Table D-3): SIM_SIMCR / SYNCR / PORTE0 / DDRE / PEPAR / PORTF0 / DDRF / PFPAR / SYPCR / PICR / PITR / SWSR (the
+  watchdog service, 128 references), CSPAR0-1, CSBARBT / CSORBT and CSBAR0-10 / CSOR0-10.
+- TPURAM_TRAMBAR, SRAM_RAMMCR and SRAM_RAMBAH_RAMBAL (one dword: the code's only access writes both registers with one
+  move.l).
+- QADC: QADCMCR / QADCTEST / QADCINT / QADC_PORTQA_PORTQB (the code reads and writes the two ports as one word) / DDRQA
+  / QACR0-2 / QASR and the CCW table's first entry.
+- QSM (Table D-31): QSMCR / QILR / QIVR / PORTQS / PQSPAR / DDRQS / SPCR0-2 / SPSR, and the QSPI receive / transmit /
+  command RAM entries the code uses.
+- CTM4 (Table D-35): BIUMCR / BIUTBR / CPCR, MCSM2, DASM3 / 4 / 9 / 10, PWMSM5-8 (SIC / period / pulse width), MCSM11
+  (the timer mc68k_startJ1708Transmission arms) and FCSM12.
+- TPU: TPUMCR / TICR / CIER / CFSR0 / CFSR1 / CFSR3 / HSQR0-1 / HSRR0-1 / CPR0-1 / CISR, and the parameter RAM words the
+  code uses (Table D-57: channel n parameter m at $YFFF00 + 0x10 n + 2 m). The code clears TPU_CH0_PARAM6, which the
+  table lists as not implemented on channels 0-13.
+- Each width is the manual's (byte registers at odd addresses). It is confirmed by the m68k accesses that llvm-mc
+  decodes (register_access_sizes.py in the session archive).
+
+Removed: mc68336_reg16_t, tpu_dscr_block_t, tpu_hsq_block_t, sim_timer_block_t and serial_port_regs_t (41 rows). Their
+only instances sat in the register space, which has no memory block when ApplyStructures runs, so they never applied.
+Their names contradict the manual:
+- a "QSM SCI data register" at 0xFFD00E (SCDR is 0xFFFC0E);
+- TPU blocks on QSM addresses (0xFFFC04 / 0xFFFC14 / 0xFFFC1E);
+- "TPU parameter RAM" on the QSPI command RAM (0xFFFD40);
+- a SIM timer on CTM4 BIUTBR;
+- SIM ports I / D and CSOR1 on PORTE0 / DDRE / SWSR.
+
+Two follow-ups from reading the first build:
+- 32-bit pairs: the code reaches three TPU parameter pairs (channel 0 parameters 4-5, channel 3 parameters 2-3, channel
+  12 parameters 2-3) only with one 32-bit access. Each pair is now one dword, as SRAM_RAMBAH_RAMBAL is. Eight pairs that
+  the code also reaches as separate words keep their word names, and their 32-bit accesses render as the raw address:
+  CTM4 DASM3 A / B, PWMSM5-8 period / pulse width, and the TPU channel 1 / 3 / 10 parameter pairs. The channel 15 low
+  byte row is gone: the stage applies rows in order, so its byte data cleared the TPU_CH15_PARAM6 word under it.
+- param_circular_buffer_t removed (6 rows). Each of its fields had its own address, so ApplyStructures built one
+  1544-byte type with an instance at every field address. None rendered before. The changed type set let the instance
+  at the count address 0x80C3FE apply, and the 1280-byte buffer at 0x80C7A8 rendered as
+  circular_buffer_count.metadata[index + 0x3aa]. Removing the struct puts those two stores back to the raw address.
+
+Proof:
+- CM550 verify is DETERMINISTIC after each of the three steps.
+- Of 775 functions, 33 differ from the round's first build after each register's old render is renamed and the
+  temporaries are renumbered. All 33 are explained; residual_r76a_cm550.py lists each changed line:
+  - the read-modify-write temporaries of the word registers become word (their declarations and numbering), and
+    three functions that return a register read now return word, not short;
+  - casts drop: (undefined2 *)&QSM_RR4, (ushort *)&QADC_CCW, and *(undefined2 *)(&QSM_TR0 + i * 2) becomes
+    (&QSM_TR0)[i];
+  - the eight mixed pairs' 32-bit accesses render as the raw address;
+  - the low byte of TPU_CH15_PARAM6 (the tooth count read) renders as a piece;
+  - diagnosticCommandDispatcher's two local rows (currentTimerCount / elapsedTimerCount) bind again, on the two reads
+    of CTM4_BIUTBR that their comments describe;
+  - line wrapping, and one expression with its operands in the other order.
+- No register renders with an underscore, and no other raw register render is left.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_lookup_tables and
+  test_rename_waves pass. CM848 is untouched.
+
+The register map source is NXP's MC68336/376 User's Manual, Appendix D:
+https://www.nxp.jp/docs/en/user-guide/MC68336376UMD.pdf
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

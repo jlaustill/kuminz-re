@@ -1,0 +1,26 @@
+cm848: round 70 follow-up - the dual-port TPU RAM from NXP's MPC5xx memory map: DPTRAM_RAMBAR, TPUMCR's EMU bit, the stale TPU3 map out of mpc555_registers.csv
+
+From the round's closing review:
+- NXP's "Motorola MPC5xx Memory Maps" (Revision C, March 2003) lists, for the MPC555, "DPTRAM (6 Kbytes)" at
+  0x302000-0x3037ff and "DPTRAM Control" at 0x300000-0x30003f. So the RAM ae4338bd named is sourced, not inferred.
+- 0x300004 usiu_ext_004 -> DPTRAM_RAMBAR (word):
+  - it sits in the DPTRAM control block, while the USIU is 0x2fc000-0x2fc7ff;
+  - mpc555_reset_vector / mpc555_initSystemRegisters / cm848_initClockAndTimers write 0xffa0 to it, the value the
+    MPC555 user's manual requires (as a web search excerpted it);
+  - it rendered _usiu_ext_004 untyped.
+- TPUMCR bit 0x400 is EMU. A TPU in emulation mode runs its microcode from the DPTRAM, and the CPU loses access to it,
+  which is why mpc555_initTpuConfiguration loads dual_port_tpu_ram_load_table first. The function is sourced; the bit
+  position comes from the TPU3 register layout. The table's comment and the function's plate say so.
+- mpc555_registers.csv, which the build applies (ApplyMPC555Registers.java), carried the same TPU3 map at 0x302000:
+  29 rows plus a comment that said "the firmware doesn't use TPU3". The block is now a DPTRAM note, and its TPUA / TPUB
+  headers say TPU3_A / TPU3_B, not the "second" / "third" instance.
+- Tried and reverted: cm848_writeBootKernelCanTxMailbox's frame as boot_can_transmit_frame_t *. Its halfword copy then
+  started at frame[-1].data + 6, so it stays word * (fix_r70b2.py).
+
+Proof (round 69's prove_r69.py, no renames): 3 of 1968 functions differ, the three RAMBAR writers (DPTRAM_RAMBAR =
+0xffa0). verify is byte-identical with stage A's WARNING lines; the register importer's MemoryConflictException trace
+for 0x300000-0x307fff is in round 69's log too. Thunks 18 / 14; prototype and local rows 0 failed; locals Skipped 8.
+Headers regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 211, and no TPU3_ or
+usiu_ext_004 name renders.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

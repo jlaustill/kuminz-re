@@ -1,0 +1,82 @@
+=== cm848_calculateFaultDerateFuelLimit (lines 67171-67272, 95 non-blank)
+67171: // Function: cm848_calculateFaultDerateFuelLimit @ 0x00509540
+67172: //
+67174: /* Calculates the fault derate fuel limit fault_derate_fuel_limit (fuel quantity counts, 5888 = no
+67175:    derate). For each channel of the derate table at 0x597b2 (one entry: the fuel temperature channel
+67176:    fuel_temperature_derate_input_pointer with its 200 to 210 degrees F ramp) it takes a derate level
+67177:    while the channel fault bits allow it, keeps the highest level of the unlatched channels and
+67178:    moves fault_derate_ramp_times_256 (0 to 256) toward it by DAT_0005c2ec (13) per call. With the
+67179:    ramp above 0 the limit lies between the fault_derate_fuel_limit_by_engine_speed curve (ramp 256)
+67180:    and throttle_100_fueling (ramp near 0), otherwise it is fuel_demand_maximum;
+67181:    fault_derate_active_flag is the ramp above 0. Task 2 of the fault derate scheduler
+67182:    cm848_runFaultDerateScheduler. (was engine_torqueLimit_upperCap_calc) */
+67184: void cm848_calculateFaultDerateFuelLimit(void)
+67186: {
+67187:   uint uVar1;
+67188:   word wVar2;
+67189:   int iVar3;
+67190:   uint uVar4;
+67191:   word *pwVar5;
+67192:   uint uVar6;
+67193:   word *pwVar7;
+67194:   undefined **ppuVar8;
+67195:   short sVar9;
+67196:   uint uVar10;
+67198:   pwVar7 = &fuel_temperature_derate_configuration_flags;
+67199:   ppuVar8 = &fuel_temperature_derate_input_pointer;
+67200:   pwVar5 = &fuel_temperature_derate_fueling_severity_index_cal;
+67201:   uVar6 = 0x80;
+67202:   uVar10 = 0x1a4;
+67203:   uVar4 = 0;
+67204:   do {
+67205:     if ((*pwVar7 & 1) != 0) {
+67206:       iVar3 = (int)uVar10 >> 4;
+67207:       if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar6 >> 4] &
+67208:            1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
+67209:          (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0
+67210:          )) {
+67211:         uVar1 = 0;
+67212:       }
+67213:       else {
+67214:         if ((*pwVar7 & 0x40) == 0) {
+67215:           if (pwVar7[1] < *(ushort *)((int)ppuVar8 + 6)) {
+67216:             uVar1 = threshold_value_interpolate
+67217:                               ((int)*(short *)*ppuVar8,(int)**(short **)((int)ppuVar8 + 10),
+67218:                                (int)**(short **)((int)ppuVar8 + 0xe));
+67219:           }
+67220:           else {
+67221:             uVar1 = 0;
+67222:           }
+67223:         }
+67224:         else {
+67225:           uVar1 = threshold_adjustment_ramp(pwVar7,ppuVar8,pwVar5,0);
+67226:         }
+67227:         if (((uVar1 & 0xffff) < (uint)pwVar5[2]) &&
+67228:            (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) ==
+67229:             0)) {
+67230:           uVar1 = (uint)pwVar5[2];
+67231:         }
+67232:       }
+67233:       *pwVar5 = (word)uVar1;
+67234:       if ((uVar4 < (uVar1 & 0xffff)) &&
+67235:          (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0
+67236:          )) {
+67237:         uVar4 = uVar1 & 0xffff;
+67238:       }
+67239:     }
+67240:     pwVar7 = pwVar7 + 0x12;
+67241:     ppuVar8 = (undefined **)((int)ppuVar8 + 0x3e);
+67242:     pwVar5 = pwVar5 + 0xf;
+67243:     uVar6 = uVar6 + 4 & 0xffff;
+67244:     uVar10 = uVar10 + 1 & 0xffff;
+67245:   } while (pwVar7 < fault_derate_fuel_limit_by_engine_speed_axis);
+67246:   sVar9 = fault_derate_ramp_times_256 + DAT_0005c2ec;
+67247:   if (((int)uVar4 <= (int)sVar9) &&
+67248:      (sVar9 = fault_derate_ramp_times_256 - DAT_0005c2ec, (int)sVar9 <= (int)uVar4)) {
+67249:     sVar9 = (short)uVar4;
+67250:   }
+67251:   fault_derate_ramp_times_256 = sVar9;
+67252:   if (0x100 < sVar9) {
+67253:     fault_derate_ramp_times_256 = 0x100;
+67254:   }
+... 15 more lines

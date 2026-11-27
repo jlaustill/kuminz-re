@@ -1,0 +1,16 @@
+cm550: round 84 stage B closing - task 046, the session archive, the PR body
+
+- work/tasks/046 "Done, round 84" records stage B (0a0965dc) and its proof:
+  - the boot block image's nine function copies are CM550's first deleted_functions.csv rows;
+  - tpu_microcode_image is dword[419] again;
+  - 0x395a takes the mc68k_ prefix;
+  - the Huffman tree builder's prototype row moves to the original.
+- New leads:
+  - the prefix rule (31 CM550 functions without mc68k_ touch MC68336 registers);
+  - 16-bit stack arguments (72 in_stack_00000004 and 79 param_N._0_2_ lines);
+  - cm550_FUN_0001c484, the erase twin of cm550_flashProgramFromRam.
+- The PR body: the Stage B bullet and the test plan line.
+- The session README, session_folder/round84/ (the stage B scripts), the large-files tarball (the stage B / B2 verify
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

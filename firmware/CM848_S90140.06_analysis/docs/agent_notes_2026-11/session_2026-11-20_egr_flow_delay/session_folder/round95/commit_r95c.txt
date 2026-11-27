@@ -1,0 +1,65 @@
+both firmwares: round 95 stage C - CM550's last placeholders in 0x30000-0x34fff, the 1-D lookup records, the periodic J1939 scheduler's prototype and the round 94 leads
+
+Workflow wf_8c242712-7b6: per batch an investigator, an independent describer who did not see the proposals, and a
+judge with both (r95/workflow_r95.js; 9 agents, nothing refuted). Applied with r95/apply_r95.py and
+r95/overrides_r95.json, then r95/post_apply_r95.py for the judges' applier notes.
+
+**N1, CM550's 29 placeholders in 0x30000-0x34fff** (21 confirmed, 8 amended):
+- The trip information task: cm550_updateTripInformation (counterpart of cm848_updateTripAndLifetimeCounters; e2m
+  1214-1217 / 117F), cm550_countEngineBrakeTime, cm550_flagTripInformationPowerDownDataLoss, and the
+  TRIP_INFORMATION_ENGINE_STATE enum (e2m TIEGST: engine off / idle / power take-off / driving).
+- The engine data trending feature (e2m TRENDING 126C-126E): cm550_evaluateTrendingTriggers,
+  cm550_runTrendingIntervalAndStoreSamples, cm550_restartTrendingAfterEngineRebuild; trending_storage_table_cal is
+  100 trending_sample_record_t records (14 bytes), and the dump decodes to 24 samples about 100 h apart.
+- The J1939 builders and descriptor set-ups, located by CM550's set-up order, which matches CM848's J1939
+  initializer one for one: PGN 65269 / 65259 / 65263 / 65253 / 65262 / 65257 / 65270 / 65264 / 65248 / 65255 builders and
+  the 61441 / 65265 / 65253 / 65249 / 65260 / 65279 set-ups (...Handler where the set-up also registers a PGN 59904
+  request responder). Three are twins and share one name with CM848: sendPgn65251EngineConfiguration1Message /
+  sendPgn65251EngineConfiguration1OnChange / initializePgn65213FanDrive1Buffer (CM848's rows renamed too).
+- cm550_hasWordIncreasedOrDroppedToZero / cm550_hasByteIncreasedOrDroppedToZero, cm550_calculateWetStackTimingAdvance,
+  cm550_emptyStubFunction11. None of the four vp44_ placeholders touches the pump.
+- 76 globals (the trip / trending / J1939 words; the trending table swallows 36 rows, part_number_list moves 3 bytes
+  to where the dump's part numbers start).
+
+**N2, CM550's 1-D table lookup:** 0x34de0 is cm550_lookupTableInterpolation, a counterpart of CM848's
+lookupTableInterpolation (one record argument against five registers). Its record is table_lookup_1d_arguments_t, 14
+bytes (x_axis_offset / x_axis_pointer / x_input / y_values_pointer / no_interpolation_flag); table_interp_args_t
+(12 bytes, it missed the flag and its header named the 2-D lookup) is gone. All 66 records are typed and named from
+the Calterm records of the tables they point at, and the 89 tables they point at are typed word[N] and named
+(<base>_axis / <base>_values); 184 rows inside them go (their old names were guesses such as vp44_smoke_limiter_threshold
+inside a timing axis).
+
+**N3, prototypes and leads:**
+- scheduleJ1939PeriodicMessage (CM550 0x1fe84 / CM848 0x538c8c, twins): byte return, the queue as the new
+  J1939_PERIODIC_TRANSMIT_QUEUE enum (ENGINE / RETARDER, both firmwares), the PGN key, the interval and first-send
+  offset in ms, the builder. cm550_tableLookup2D: a table_lookup_2d_arguments_t pointer and a word return.
+- CM550: the J1708 transmit / receive pointer record (e2m 1126-1128), the main engine position sensor words (e2m 100C),
+  and cm550_j1939_powertrain_messages_received_t (22 bytes: the ETC1 / TSC1 bytes the receive handlers keep; CM848's
+  layout differs).
+- CM848: cm848_calculateMaximumTorqueAtCurrentEngineSpeed / cm848_initializeMaximumTorqueAtCurrentEngineSpeed (were
+  cm848_calculateFuelDemandFilter / cm848_initFuelDemandFilterDimensions), the unreachable leaf at 0x29ecc
+  (cm848_applyInjectionTimingMainMisfireLimit; it had no function), the fuel pressure governor fault blend words (were
+  safety_*), and the all_speed_governor_ prefix on the tuning set blend weight words.
+
+Proof: both firmwares built twice, deterministic, in copies of their folders (base = HEAD 699816aa);
+r95/prove_r95c.sh, results in session_folder/round95/proof_r95c/.
+- CM550: 705 -> 706 functions (0x1fe84 renders as a function for the first time; no function lost); the token changes
+  outside the map are typing effects: record arguments (cm550_tableLookup2D(&record) where the old short* made it
+  &record.x_axis_offset), struct field paths, the prototypes' typed arguments, table names where raw addresses were;
+  12 functions changed their statement count, all by folding (timing_4DTBTA = cm550_tableLookup2D(...) where an
+  extraout_D0w copy was) or the prototypes; no function's unaff_ / extraout_ / in_ / CONCAT count went up (totals
+  26 -> 25 / 43 -> 41 / 32 -> 28 / 299 -> 295); pieces 494 = 494 (the J1708 pointers' 16 are the same accesses under
+  their new names); every new name renders; local rows Skipped 0 (the mc68k_dispatchJ1708ReceivedMessages row moved to
+  the auto-name wVar4 that the typed pointers gave the entry timer count).
+- CM848: 1968 -> 1969 functions (0x29ecc); the token changes outside the map are the prototype's typing in
+  scheduleJ1939PeriodicMessage, the queue enum at its 19 calls, and local declarations moving in three functions;
+  statement counts equal; pieces equal; no old name left in the code.
+- Two side effects found by the proof and fixed before this commit: the byte return of CM848's scheduler passed a
+  phantom argument to cm848_initJ1939DiagnosticServiceHandler (now an explicit void row), and CM550's
+  cm550_FUN_000183cc returned CONCAT22(extraout_D0u ...) (its caller ignores it: void). The apply kept 0x801d44's live
+  byte type (a different width); it is the struct now.
+- Overlap check: CM550 has no row inside another row's span; CM848's 385 are the documentation rows. Headers
+  regenerated (g++ 0 errors); the _cal audit 0 hard / 0 soft; lookup_tables.py: 920 tables typed, 0 sizing problems;
+  CM550's parameter ID table regenerated; the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

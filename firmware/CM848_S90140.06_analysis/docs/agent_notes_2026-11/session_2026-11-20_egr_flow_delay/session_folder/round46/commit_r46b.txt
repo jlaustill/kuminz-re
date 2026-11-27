@@ -1,0 +1,36 @@
+cm848: round 46 stage B - the park / neutral exit engine speed limit is rock cycle torque management (e2m 8C2A / 8C49-8C4B)
+
+Three e2m blocks name the family:
+- Its enable bit was already algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable (e2m 106B).
+- 8C49 (in the dumped parameter ID table) RE_RCTM_* holds the window function's enabling calibrations ("rock cycle
+  torque mgt. speed derate"). 8C4A / 8C4B hold its transmission temperature dwell table.
+- 8C2A (past the table; a field match of 6 / 6 records) TC_Rock_Cycle_* holds the speed limit function's
+  calibrations: "engine speed to send HSG during rock cycle derate" (850 rpm), the commanded throttle window, the
+  maximum road speed, the ramp rate and the active-too-long time.
+- 8A7C +8 TC_Rock_Cycle_Flag / +A RE_RCTM_Timer hold the active flag and the dwell countdown.
+
+The trigger stays in the plates. While the park / neutral switch is set with the throttle and the output shaft speed
+in range, a dwell is loaded from the transmission temperature. Once the switch clears, the engine speed is held at
+850 rpm until the dwell runs out, then ramps back.
+
+Renames: park_neutral_exit_ -> rock_cycle_; every other word stays, so the two halves stay apart.
+- 20 globals, e.g. park_neutral_exit_engine_speed_limit_active_flag -> rock_cycle_engine_speed_limit_active_flag,
+  and engine_speed_limit_park_neutral_exit -> engine_speed_limit_rock_cycle (speed limit source 15).
+- The five state rows without a record are named by code membership, and say so.
+- New row rock_cycle_engine_speed_limit_maximum_output_shaft_speed (8C49 +6 RE_RCTM_Max_OSS), read once by the
+  window function.
+- Functions:
+  - cm848_calculateParkNeutralExitEngineSpeedLimit -> cm848_calculateRockCycleEngineSpeedLimit;
+  - cm848_initializeParkNeutralExitEngineSpeedLimit -> cm848_initializeRockCycleEngineSpeedLimit;
+  - cm848_updateParkNeutralExitEngineSpeedLimitWindow -> cm848_updateRockCycleEngineSpeedLimitWindow.
+- The park / neutral switch functions (cm848_monitorParkNeutralSwitch, cm848_updateParkNeutralFlagAndTsc1Activity) keep
+  their names; they are not this feature.
+- The enable bit's comment in structure_definitions.csv names the new functions. The refresh does not cover that file.
+
+Proof: prove_caches.py against a copy of the old .cpp with only the three function names changed.
+- All 1968 functions match. The only old function names left in the .cpp are the plates' (was ...) notes.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

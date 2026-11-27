@@ -1,0 +1,156 @@
+0008 +0000 Adjustable_Parameters [UNITLESS] -> EEPROM 0x872 = 0x3fdcf4 (no name) (no row); service tool adjustable parameters
+0008 +0002 LSG_Breakpoint_Speed [RPM] -> EEPROM 0x874 = 0x3fdcf6 low_speed_governor_base_reference_speed_cal word; [LSBPRFES] LSG base reference speed
+0008 +0004 HSG_Breakpoint_Speed [RPM] -> EEPROM 0x876 = 0x3fdcf8 engine_speed_limit_reference_default_cal word; [HSBKRF] HSG base reference speed
+0008 +0006 HSG_Breakpoint_Speed_2 [RPM] -> EEPROM 0x878 = 0x3fdcfa (no name) (no row); [HSBKRF02] Alternate HSG base reference speed
+0008 +0008 HSG_Breakpoint_Speed_3 [RPM] -> EEPROM 0x87a = 0x3fdcfc (no name) (no row); [HSBKRF03] Alternate HSG base reference speed
+0008 +000A PTO_Remote_Speed [RPM] -> EEPROM 0x87c = 0x3fdcfe power_take_off_remote_speed_1_cal word; [PTROSEES] Engine speed set point for remote PTO operation
+0008 +000C PTO_Maximum_Reference_Speed [RPM] -> EEPROM 0x87e = 0x3fdd00 power_take_off_maximum_reference_engine_speed_cal word; [PTMXRFES] max range limit for pto setpoints
+0008 +000E PTO_Droop [%] -> EEPROM 0x880 = 0x3fdd02 (no name) (no row); [PTDP] Tool PTO Droop Percent adjustable parameter
+0008 +0010 PTO_Droop_Slope [RPM/MM3S] -> EEPROM 0x882 = 0x3fdd04 power_take_off_droop_slope_cal word; [PTDPSL] RPM droop at one unit fuel increase
+0008 +0012 PTO_Gain_Adjust_Offset [UNITLESS] -> EEPROM 0x884 = 0x3fdd06 power_take_off_gain_adjustment_offset_cal word; [PTGNAJOF] offset used to obtain calculated pto proportional gain
+0008 +0014 PTO_Gain_Adjust_Slope [1/RPM] -> EEPROM 0x886 = 0x3fdd08 power_take_off_gain_adjustment_slope_cal word; [PTGNAJSL] slope used to obtain calculated pto proportional gain
+0008 +0016 ASG_Droop_Minimum_Throttle [%] -> EEPROM 0x888 = 0x3fdd0a (no name) (no row); [ASDPMN] Tool ASG Droop Minimum Throttle Percent adjustable parameter
+0008 +0018 ASG_Droop_Maximum_Throttle [%] -> EEPROM 0x88a = 0x3fdd0c (no name) (no row); [ASDPMX] Tool ASG Droop Maximum Throttle Percent adjustable parameter
+0008 +001A ASG_Droop_Gain1 [RPM] -> EEPROM 0x88c = 0x3fdd0e (no name) (no row); [ASDP01GN] Offset used to adjust droop in the gain adjust calculation of the ASG
+0008 +001C ASG_Droop_Gain2 [RPM] -> EEPROM 0x88e = 0x3fdd10 (no name) (no row); [ASDP02GN] Slope multiplier used to adjust droop in the gain adjust calculation of the ASG
+0008 +0020 ASG_Minimum [RPM] -> EEPROM 0x892 = 0x3fdd14 all_speed_governor_minimum_reference_speed_1_cal word; [ASMNRF] ASG reference speed for 0% throttle input -should be less than LSGMNREF
+0008 +0022 ASG_Maximum [RPM] -> EEPROM 0x894 = 0x3fdd16 all_speed_governor_maximum_reference_speed_1_cal word; [ASMXRF] ASG reference speed for 100% throttle input -should be greater than HSGBRKRPM
+0008 +0024 ASG_Droop_Minimum_Throttle_2 [%] -> EEPROM 0x896 = 0x3fdd18 (no name) (no row); [ASDPMN02] Tool ASG Droop Min Throttle % for Switched Droop 2 adjustable parameter
+0008 +0026 ASG_Droop_Maximum_Throttle_2 [%] -> EEPROM 0x898 = 0x3fdd1a (no name) (no row); [ASDPMX02] Tool ASG Droop Max Throttle % for Switched Droop 2 adjustable parameter
+0008 +0028 ASG_Droop_Gain1_2 [RPM] -> EEPROM 0x89a = 0x3fdd1c (no name) (no row); [ASDP21GN] Alternate offset used to adjust droop in gain adjust calc. for ASG
+0008 +002A ASG_Droop_Gain2_2 [RPM] -> EEPROM 0x89c = 0x3fdd1e (no name) (no row); [ASDP22GN] Alternate slope multiplier used to adjust droop in gain adjust calc.
+0008 +002E ASG_Minimum_2 [RPM] -> EEPROM 0x8a0 = 0x3fdd22 all_speed_governor_minimum_reference_speed_2_cal word; [ASMNRF02] Alternate ASG reference speed for 0% throttle input
+0008 +0030 ASG_Maximum_2 [RPM] -> EEPROM 0x8a2 = 0x3fdd24 all_speed_governor_maximum_reference_speed_2_cal word; [ASMXRF02] Alternate ASG reference speed for 100% throttle input
+0008 +0032 ASG_Droop_Minimum_Throttle_3 [%] -> EEPROM 0x8a4 = 0x3fdd26 (no name) (no row); [ASDPMN03] Tool ASG Droop Min Throttle % for Switched Droop 3 adjustable parameter
+0008 +0034 ASG_Droop_Maximum_Throttle_3 [%] -> EEPROM 0x8a6 = 0x3fdd28 (no name) (no row); [ASDPMX03] Tool ASG Droop Max Throttle % for Switched Droop 3 adjustable parameter
+0008 +0036 ASG_Droop_Gain1_3 [RPM] -> EEPROM 0x8a8 = 0x3fdd2a (no name) (no row); [ASDP31GN] Alternate offset used to adjust droop in gain adjust calc. for ASG
+0008 +0038 ASG_Droop_Gain2_3 [RPM] -> EEPROM 0x8aa = 0x3fdd2c (no name) (no row); [ASDP32GN] Alternate slope multiplier used to adjust droop in gain adjust calc.
+0008 +003C ASG_Minimum_3 [RPM] -> EEPROM 0x8ae = 0x3fdd30 (no name) (no row); [ASMNRF03] Alternate ASG reference speed for 0% throttle input
+0008 +003E ASG_Maximum_3 [RPM] -> EEPROM 0x8b0 = 0x3fdd32 (no name) (no row); [ASMXRF03] Alternate ASG reference speed for 100% throttle input
+0008 +0040 HSG_Droop [%] -> EEPROM 0x8b2 = 0x3fdd34 (no name) (no row); [HSDP] Tool HSG Droop Percent adjustable parameter
+0008 +0042 HSG_Droop_Slope [RPM/MM3S] -> EEPROM 0x8b4 = 0x3fdd36 (no name) (no row); [HSDPSL] Slope of the line defining the droop line for the HSG reference
+0008 +0044 HSG_Droop_Type_Select [UNITLESS] -> EEPROM 0x8b6 = 0x3fdd38 engine_speed_limit_droop_type_select_cal word; [HSDPTY] indicator of what type switch is connected
+0008 +0046 HSG_Droop_2 [%] -> EEPROM 0x8b8 = 0x3fdd3a (no name) (no row); [HSDP02] Tool HSG Droop Percent for Switched Droop 2 adjustable parameter
+0008 +0048 HSG_Droop_Slope_2 [RPM/MM3S] -> EEPROM 0x8ba = 0x3fdd3c (no name) (no row); [HSDPSL02] Alternate slope of line defining HSG droop line
+0008 +004A HSG_Droop_3 [%] -> EEPROM 0x8bc = 0x3fdd3e (no name) (no row); [HSDP03] Tool HSG Droop Percent for Switched Droop 3 adjustable parameter
+0008 +004C HSG_Droop_Slope_3 [RPM/MM3S] -> EEPROM 0x8be = 0x3fdd40 (no name) (no row); [HSDPSL03] Alternate slope of line defining HSG droop line
+0008 +004E User_Selected_Throttle_Control [UNITLESS] -> EEPROM 0x8c0 = 0x3fdd42 variable_speed_governor_default_cal word; [FSTHGVOP] User indicator for enabling automotive governing through throttle (ASG throttle
+0008 +0050 Time_Total_Offset [HR] -> EEPROM 0x8c2 = 0x3fdd44 (no name) (no row); [TITMT2OF] Tool Previous ECM Engine Time for offset of Engine Total Time adj parameter
+0008 +0054 Idle_Shutdown_Max_IMT [DEG_F] -> EEPROM 0x8c6 = 0x3fdd48 (no name) (no row); [ISMXIM] Desired extremely warm temperature by customer
+0008 +0056 Idle_Shutdown_Min_IMT [DEG_F] -> EEPROM 0x8c8 = 0x3fdd4a (no name) (no row); [ISMNIM] Desired extremely cold temperature by customer
+0008 +0058 Idle_Shutdown_Period [SEC] -> EEPROM 0x8ca = 0x3fdd4c (no name) (no row); [ISTMLM] DELAY PERIOD BEFORE IDLE SHUTDOWN OCCURS
+0008 +005A PTO_Delta_Droop [UNITLESS] -> EEPROM 0x8cc = 0x3fdd4e (no name) (no row); [PTODELTA] (PTO Max Droop - PTO Min Droop) / (PTO Max Droop Rpm- PTO Min Droop Rpm), calcu
+0008 +005C PTO_Resume_Speed [RPM] -> EEPROM 0x8ce = 0x3fdd50 power_take_off_resume_speed_cal word; [PTRUES] reference speed when PTO enabled and resume switch is pressed
+0008 +005E PTO_Resume_Speed_Display_Value [RPM] -> EEPROM 0x8d0 = 0x3fdd52 (no name) (no row); [PTORESDV] PTO RESUME SPEED DISPLAY VALUE
+0008 +0060 PTO_Set_Speed [RPM] -> EEPROM 0x8d2 = 0x3fdd54 power_take_off_set_speed_cal word; [PTSEES] PTO reference speed when PTO enabled and set switch is pressed
+0008 +0062 PTO_Set_Speed_Display_Value [RPM] -> EEPROM 0x8d4 = 0x3fdd56 (no name) (no row); [PTOSETDV] PTO SET SPEED DISPLAY VALUE
+0008 +0064 LSG_Droop_Selected_Percent [%] -> EEPROM 0x8d6 = 0x3fdd58 (no name) (no row); [LSDPSEPC] LSG Droop Selected Percent
+0008 +0066 OCM_Option [UNITLESS] -> EEPROM 0x8d8 = 0x3fdd5a (no name) (no row); [OCOP] User Mode select: 0=AUTOMATIC, 1=HOURS, 2=FUEL, 3=OTHER, 4=CORS
+0008 +0068 OCM_User_Hours [HR] -> EEPROM 0x8da = 0x3fdd5c (no name) (no row); [OCUOHR] OCM Interval hours (threshold) set by user in Manual Mode
+0008 +006A OCM_Interval_Multi_Factor [UNITLESS] -> EEPROM 0x8dc = 0x3fdd5e (no name) (no row); [OCITML] Used to modify default values to comp for spl oils/conditions
+0008 +006C OCM_Warning_Percent [%] -> EEPROM 0x8de = 0x3fdd60 (no name) (no row); [OCTDPCWN] Early warning of OCM Interval expiring (User programmable)
+0008 +006E OCM_Warning_While_Running [UNITLESS] -> EEPROM 0x8e0 = 0x3fdd62 (no name) (no row); [OCRNSTEA] Enables use of warning light with engine in Run_State
+0008 +0070 Tool_HSG_OEM_Breakpoint_Speed_Min [RPM] -> EEPROM 0x8e2 = 0x3fdd64 (no name) (no row); [HSOMBKMN] Trimmable lower limit of HSG Breakpoint Speed
+0008 +0072 Tool_HSG_OEM_Breakpoint_Speed_Max [RPM] -> EEPROM 0x8e4 = 0x3fdd66 (no name) (no row); [HSOMBKMX] Trimmable upper limit of HSG Breakpoint Speed
+0008 +0074 HSG_Governed_Speed [RPM] -> EEPROM 0x8e6 = 0x3fdd68 (no name) (no row); [HSGVSP] Customer Set High Speed governed speed
+104A +0000 Alpha [UNITLESS] -> 0x40a168 combustion_alpha_input word; [ALPHA] ALPHA PARAMETER 0.0 = URBAN 1.0 = OPEN ROAD
+104A +0002 Alpha_Base [UNITLESS] -> 0x40a16a alpha_base word; [APAPBA] Result of AFC, LSG, On Governor, and Fuel Rate alpha comparison
+104A +0004 Alpha_State [UNITLESS] -> 0x40a16c alpha_state word; [APAPST] Indicate the source (base, user, altitude, epf, slave, esp) of alpha
+104A +0006 Alpha_AFC [UNITLESS] -> 0x40a16e alpha_air_fuel_control_result word; [APAFSS] result of AFC algorithm
+104A +0008 Alpha_Fuel_Rate [UNITLESS] -> 0x40a170 alpha_fuel_rate_result word; [APFLRTAP] result of Fuel Rate algorithm
+104A +000A Alpha_Governor [UNITLESS] -> 0x40a172 alpha_on_governor_result word; [APGVAP] result of On Governor
+104A +000C Alpha_LSG [UNITLESS] -> 0x40a174 alpha_low_speed_governor_result word; [APLSAP] result of LSG algorithm
+104A +000E Fueling_AFC_State_Detected [UNITLESS] -> 0x40a176 alpha_air_fuel_control_state_detected_flag word; [FLAFSTFG] semaphore used to latch AFC events that occur between alpha executions
+104A +0010 Fueling_LSG_State_Detected [UNITLESS] -> 0x40a178 alpha_low_speed_governor_state_detected_flag word; [FSLSSTFG] semaphore used to latch LSG events that occur between alpha executions
+104A +0012 Alpha_Low_Ambient_Air_Pressure [UNITLESS] -> 0x40a17a alpha_low_ambient_air_pressure_result word; [APAAPRSS] Alpha based only on ambient air pressure logic
+104A +0014 Filtered_Fuel_Delivery_Rate [LB/HR] -> 0x40a17c alpha_filtered_fuel_delivery_rate word; [APFLDLRT] fuel rate, after filtering, which alpha uses in comparison to trigger Fuel_Rate
+104A +0016 Alpha_LSG_Timer [SEC] -> 0x40a17e alpha_low_speed_governor_timer word; [APLSTR] Trace the time since fueling state has left LSG state
+104A +0018 Alpha_AFC_Timer [SEC] -> 0x40a180 alpha_air_fuel_control_timer word; [APAFTR] Trace the time since fueling state is not AFC or LSG.
+104A +001A Alpha_Altitude_Derate_Timer [SEC] -> 0x40a182 alpha_altitude_derate_timer word; semaphore used to latch AFC events that occur between alpha executions
+104B +0000 Alpha_Ramp_Rate_1 [1/SEC] -> 0x05be5a alpha_ramp_rate_below_threshold word; [APRM01RT] Rate at which alpha increases while alpha is below the alpha threshold
+104B +0002 Alpha_Ramp_Rate_2 [1/SEC] -> 0x05be5c alpha_ramp_rate_at_or_above_threshold word; [APRM02RT] Rate at which alpha increases while alpha is >= the alpha threshold
+104B +0004 Alpha_Ramp_Threshold [UNITLESS] -> 0x05be5e alpha_ramp_threshold word; [APRMBKTD] Value of alpha at which the ramp rate transition takes place
+104B +0006 AFC_Alpha_Timeout [SEC] -> 0x05be60 air_fuel_control_alpha_timeout word; [APAFTRTM] Time that must elapse without AFC limiting before ALPHA may be set to one
+104B +0008 Altitude_Derate_Alpha [UNITLESS] -> 0x05be62 altitude_derate_alpha word; [ATAP] Value of alpha to be output if the Altitude derate is limiting fuel
+104B +000A Altitude_Derate_Alpha_Timeout [SEC] -> 0x05be64 altitude_derate_alpha_timeout word; [ATAPMNTM] Time alpha is latched to ADALF after Altitude Derate stops fuel limiting
+104B +000C Alpha_Fuel_Rate_Filter_Constant [UNITLESS] -> 0x05be66 alpha_fuel_rate_filter_coefficient word; [APFLFTTC] Time constant of LB/HR filter used in the alpha fuel rate calculations
+104B +000E Alpha_Lock_Off_Air_Pressure [IN_HG] -> 0x05be68 alpha_lock_off_barometric_pressure word; [APOFAAPR] Air pressure after hysterisis to unlock alpha.
+104B +0010 Alpha_Lock_On_Air_Pressure [IN_HG] -> 0x05be6a alpha_lock_on_barometric_pressure word; [APONAAPR] Air Pressure Below Which Alpha Is Ramped To 1
+104B +0012 Engine_Protection_Alpha [UNITLESS] -> 0x05be6c engine_protection_alpha word; [EPAPOD] Value alpha is forced to when engine protection is limiting fuel
+104B +0014 LSG_Alpha_Timeout [SEC] -> 0x05be6e low_speed_governor_alpha_timeout word; [APLSTMTR] Time that must expire without LSG commanding fuel before alpha is one
+104B +0016 C_Alpha_LSG_Reference_Offset [RPM] -> 0x05be70 (no name) (no row); offset to low idle ref beyond which excludes LSG alpha transition
+104B +0018 C_Alpha_Reset_Rate [LB/HR] -> 0x05be72 alpha_reset_fuel_rate word; Alpha reset rate
+104B +001A C_Alpha_Threshold_Rate [LB/HR] -> 0x05be74 alpha_threshold_fuel_rate word; Alpha threshold rate
+1064 +0000 LSG_Fueling_Clamp_Max_Offset [MM3S] -> 0x4070b6 low_speed_governor_fueling_clamp_maximum_offset i16; [LSMXFLOF] Added to 4D fueling at LSG_Adjusted_Reference_Speed to det. maximum LSG fueling
+1064 +0002 LSG_Fueling_Clamp_Min [MM3S] -> 0x4070b8 low_speed_governor_fueling_clamp_minimum word; [LSMNLMFL] LSG FUELING CLAMP MIN
+1064 +0004 LSG_Integrator_Preset_Max_Offset [MM3S] -> 0x4070ba low_speed_governor_integrator_preset_maximum_offset i16; [LSMXPZOF] Added to 4D fueling at LSG Adj Ref Speed to determine LSG_Integrator_Preset_Max
+1064 +0006 LSG_Integrator_Preset_Min [MM3S] -> 0x4070bc low_speed_governor_integrator_preset_minimum i16; [LSMNITPZ] LSG INTEGRATOR PRESET MIN
+1064 +0008 LSG_Integrator_Clamp_Max_Offset [MM3S] -> 0x4070be low_speed_governor_integrator_clamp_maximum_offset i16; [LSMXITOF] Added to 4D fueling at LSG Adj Ref Speed to determine LSG_Integrator_Clamp_Max
+1064 +000A LSG_Integrator_Clamp_Min [MM3S] -> 0x4070c0 low_speed_governor_integrator_clamp_minimum i16; [LSMNITFL] LSG minimum integrator fuel output
+1064 +000C LSG_Integrator_Reset [MM3S] -> 0x4070c2 low_speed_governor_integrator_reset_value i16; [LSCNRSFL] LSG integrator reset value used to adjust integrator under defined RPM/TVO limi
+1064 +000E LSG_Reset_RPM [RPM] -> 0x4070c4 low_speed_governor_reset_speed_offset i16; [LSITRSES] Offset to lsg reference speed over which lsg integrator may be reset
+1064 +0010 LSG_Reset_Fueling [MM3S] -> 0x4070c6 low_speed_governor_reset_fueling word; [LSITRSFL] Engine fueling below which the LSG integrator may be reset
+1064 +0012 LSG_Derivative_Filter_Coefficient [UNITLESS] -> 0x4070c8 low_speed_governor_derivative_filter_coefficient i16; [LSDVFTCF] LSG Derivative Filter Coefficient
+1064 +0014 LSG_Jerk_Deadband [MM3S] -> 0x4070ca low_speed_governor_jerk_deadband i16; [LSJKDB] LSG jerk Fueling deadband
+1064 +0016 LSG_Jerk_Filter_Coefficient [UNITLESS] -> 0x4070cc low_speed_governor_jerk_filter_coefficient i16; [LSJKFTCF] LSG Jerk Filter Coefficient
+1064 +0018 LSG_Jerk_Term_Limit [MM3S] -> 0x4070ce low_speed_governor_jerk_term_limit i16; [LSJKFLLM] Fuel limitation for absolute value of LSG jerk fueling
+1064 +001A LSG_Proportional_Filter_Coefficient [UNITLESS] -> 0x4070d0 low_speed_governor_proportional_filter_coefficient i16; [LSPFTCF] LSG Jerk Filter Coefficient
+1064 +001C LSG_Reset_Delay_Time [SEC] -> 0x4070d2 low_speed_governor_reset_delay_time word; [LSRSDYTM] LSG reset delay time after LSG fueling is not selected
+1064 +001E LSG_Derivative_Max [MM3S] -> 0x4070d4 low_speed_governor_derivative_term_maximum i16; limitation on LSG derivative term.
+1064 +0020 LSG_No_Load_Fuel_Enable [UNITLESS] -> 0x4070d6 low_speed_governor_no_load_fuel_enable word; Enables using no load fuel offset in LSG fueling calculation.
+1064 +0022 LSG_Integrator_Preset_Min_Drive [MM3S] -> 0x4070d8 low_speed_governor_integrator_preset_minimum_in_drive i16; LSG INTEGRATOR PRESET MIN if in drive
+1064 +0024 LSG_Integrator_Preset_Use_Previous [UNITLESS] -> 0x4070da low_speed_governor_integrator_preset_use_previous_enable word; If=1, resets LSG integrator to its previous value
+1064 +0026 LSG_Integrator_Preset_Accel_Limit [RPM/SEC] -> 0x4070dc low_speed_governor_integrator_preset_acceleration_limit i16; If Unfiltered_Engine_Acceleration < this, use learned integrator during reset
+1064 +0028 LSG_Integrator_Preset_VSS_Limit [MPH] -> 0x4070de low_speed_governor_integrator_preset_vehicle_speed_limit word; If Road_Speed < this, use learned integrator during reset
+1064 +002A LSG_EVR_Gain [UNITLESS] -> 0x4070e0 low_speed_governor_alternator_load_fuel_gain word; Slope for EVR duty cycle to fuel conversion (mm3s/%)
+1064 +002C LSG_EVR_Offset [%] -> 0x4070e2 low_speed_governor_alternator_load_duty_offset word; Offset for EVR duty cycle to fuel conversion
+1064 +002E Alternator_Load_Filter_Coefficient [UNITLESS] -> 0x4070e4 low_speed_governor_alternator_load_filter_coefficient word; Filters calculated alternator load for LSG compensation
+1065 +0000 LSG_Fueling [MM3S] -> 0x40ae94 low_speed_governor_fueling_working word; [LSFL] Fueling output of the LSG
+1065 +0002 LSG_Proportional_Term [MM3S] -> 0x40ae96 low_speed_governor_proportional_term i16; [LSPPFL] LSG PID proportional fueling contribution
+1065 +0004 LSG_Derivative_Term [MM3S] -> 0x40ae98 low_speed_governor_derivative_term i16; [LSDVFL] LSG PID derivative fueling contribution
+1065 +0006 LSG_Integral_Term [MM3S] -> 0x40ae9a low_speed_governor_integral_term i16; [LSITFL] LSG PID integrator fueling contribution
+1065 +0008 LSG_Jerk_Term [MM3S] -> 0x40ae9c low_speed_governor_jerk_term i16; [LSJKFL] LSG jerk fueling contribution
+1065 +000A LSG_Fueling_Clamp_Max [MM3S] -> 0x40ae9e low_speed_governor_fueling_clamp_maximum word; [LSMXLMFL] LSG FUELING CLAMP MAX
+1065 +000C LSG_Integrator_Clamp_Max [MM3S] -> 0x40aea0 low_speed_governor_integrator_clamp_maximum word; [LSMXITFL] LSG maximum integrator fuel output
+1065 +000E LSG_Integrator_Preset_Max [MM3S] -> 0x40aea2 low_speed_governor_integrator_preset_maximum word; [LSMXITPZ] LSG INTEGRATOR PRESET MAX
+1065 +0010 LSG_QD_Adjustment [UNITLESS] -> 0x40aea4 low_speed_governor_derivative_gain_adjustment word; [LSQDAJ] LSG derivative gain adjustment coefficient
+1065 +0012 LSG_QI_Adjustment [UNITLESS] -> 0x40aea6 low_speed_governor_integral_gain_adjustment word; [LSQIAJ] LSG integral gain adjustment coefficient
+1065 +0014 LSG_QP_Adjustment [UNITLESS] -> 0x40aea8 low_speed_governor_proportional_gain_adjustment word; [LSQPAJ] LSG proportional gain adjustment coefficient
+1065 +0016 LSG_Reset_Delay_Timer [SEC] -> 0x40aeaa low_speed_governor_reset_delay_timer word; [LSRSDYTR] Timer tracking time period LSG fueling is not selected
+1065 +0018 LSG_QPID_Inhibit_Flag [UNITLESS] -> 0x40aeac low_speed_governor_gain_adjustment_inhibit_flag word; [LSQAIHFG] True-turn off QPID adjustment
+1065 +001A LSG_Integrator_Preset_Used_Previous [UNITLESS] -> 0x40aeae low_speed_governor_integrator_preset_used_previous_flag word; If=1, LSG used previous integral on last reset; if=0, used reset value.
+1065 +001C Alternator_Load [MM3S] -> 0x40aeb0 low_speed_governor_alternator_load_fuel i16; Calculated fuel value to add to LSG
+10EB +0000 Jcomm_LSG_Proportional_Gain [MM3S/RPM] -> 0x05c4a6 j1939_low_speed_governor_gain_set low_speed_governor_gain_set_t; [LSJCPPGN] LSG P gain passed from fuel system specific algorithm.
+10EB +0002 Jcomm_LSG_Integral_Gain [MM3S/RPM/SEC] -> 0x05c4a8 (no name) (no row); [LSJCITGN] LSG I gain passed from fuel system specific algorithm
+10EB +0004 Jcomm_LSG_Derivative_Gain [MM3S*SEC/RPM] -> 0x05c4aa (no name) (no row); [LSJCDVGN] LSG D gain passed from fuel system specific algorithm
+10EB +0006 Jcomm_LSG_Jerk_Gain [MM3S*SEC/RPM] -> 0x05c4ac (no name) (no row); [LSJCJKGN] LSG J gain passed from fuel system specific algorithm
+10ED +0000 LSG_Proportional_Gain [MM3S/RPM] -> 0x40ae76 low_speed_governor_proportional_gain i16; [LSPPGN] LSG PID proportional gain
+10ED +0002 LSG_Integral_Gain [MM3S/RPM/SEC] -> 0x40ae78 low_speed_governor_integral_gain i16; [LSITGN] LSG PID integrator gain
+10ED +0004 LSG_Derivative_Gain [MM3S*SEC/RPM] -> 0x40ae7a low_speed_governor_derivative_gain i16; [LSDVGN] LSG PID derivative gain
+10ED +0006 LSG_User_Gain_State [UNITLESS] -> 0x40ae7c low_speed_governor_user_gain_state word; [LSUSGNST] IDENTIFIES THE CURRENT LSG PID GAIN SET
+10ED +0008 LSG_Final_Gain_State [UNITLESS] -> 0x40ae7e low_speed_governor_final_gain_state word; [LSFNGNST] Indicator of the lsg gain set currently being used
+10ED +000A FSS_LSG_Override_Gain_State [UNITLESS] -> 0x40ae80 low_speed_governor_override_gain_state word; [LSOVGNST] Indicator of current active override gain state
+10ED +000C FSS_LSG_Proportional_Gain [MM3S/RPM] -> 0x40ae82 low_speed_governor_override_gain_set low_speed_governor_gain_set_t; [LSAPPPGN] LSG P gain passed from fuel system specific algorithm.
+10ED +000E FSS_LSG_Integral_Gain [MM3S/RPM/SEC] -> 0x40ae84 (no name) (no row); [LSAPITGN] LSG I gain passed from fuel system specific algorithm
+10ED +0010 FSS_LSG_Derivative_Gain [MM3S*SEC/RPM] -> 0x40ae86 (no name) (no row); [LSAPDVGN] LSG D gain passed from fuel system specific algorithm
+10ED +0012 FSS_LSG_Jerk_Gain [MM3S*SEC/RPM] -> 0x40ae88 (no name) (no row); [LSAPJKGN] LSG J gain passed from fuel system specific algorithm
+10ED +0014 LSG_Jerk_Gain [MM3S*SEC/RPM] -> 0x40ae8a low_speed_governor_jerk_gain i16; [LSJKGN] LSG jerk gain
+1104 +0000 Jcomm_Peak_Fueling [MM3S] -> 0x05c348 j1939_peak_fueling word; [JCINPKFL] Jcomm Peak Fueling ref fuel for all indicated percent peak torques
+1104 +0002 Jcomm_Reference_Engine_Torque [N_M] -> 0x05c34a j1939_reference_engine_torque word; [JCRFEGTQ] Jcomm Reference Engine Torque reference engine torque that corresponds to Jcomm
+1104 +0004 Jcomm_Engine_Speed_at_Point_3 [RPM] -> 0x05c34c j1939_engine_speed_at_point_3 word; [JC39P3RP] Jcomm Engine Speed at Pt 3 RPM at pt 3 of engine config map (follows high hp cu
+1104 +0006 Jcomm_Engine_Speed_at_Point_4 [RPM] -> 0x05c34e j1939_engine_speed_at_point_4 word; [JC39P4RP] Jcomm Engine Speed at Pt 4 RPM at pt 4 of engine config map (follows high hp cu
+1104 +0008 Jcomm_Engine_Speed_at_Point_5 [RPM] -> 0x05c350 j1939_engine_speed_at_point_5 word; [JC39P5RP] Jcomm Engine Speed at Pt 5 RPM at pt 5 of engine config map (follows high hp cu
+1104 +000A Jcomm_Derated_Fueling_at_Idle [MM3S] -> 0x05c352 j1939_derated_fueling_at_idle word; [JCDQFLIS] Jcomm fueling value at idle in engine config. message when torque derate
+1104 +000C Jcomm_Derated_Fueling_at_Point_3 [MM3S] -> 0x05c354 j1939_derated_fueling_at_point_3 word; [JCDQFLP3] Jcomm fueling value at pt. 3 in engine config. message when torque derate
+1104 +000E Jcomm_Derated_Fueling_at_Point_4 [MM3S] -> 0x05c356 j1939_derated_fueling_at_point_4 word; [JCDQFLP4] Jcomm fueling value at pt. 4 in engine config. message when torque derate
+1104 +0010 Jcomm_Derated_Fueling_at_Point_5 [MM3S] -> 0x05c358 j1939_derated_fueling_at_point_5 word; [JCDQFLP5] Jcomm fueling value at pt. 5 in engine config. message when torque derate
+1104 +0012 Jcomm_Tau_0_Derated_Breakpoint [RPM] -> 0x05c35a j1939_low_power_derated_engine_speed_at_point_2 word; [JCT0P2RP] Jcomm RPM low hp pt. 2 in engine config. when torque derate
+1104 +0014 Jcomm_Tau_0_Derated_Fueling_at_Point_2 [MM3S] -> 0x05c35c j1939_low_power_derated_fueling_at_point_2 word; [JCT0P2FL] Jcomm fueling low hp value at pt. 2 in engine config. when torque derate
+1104 +0016 Jcomm_Tau_0_Point_5_Intersection_Speed [RPM] -> 0x05c35e j1939_low_power_point_5_intersection_engine_speed word; [JCT0P5IN] when Derate_Speed < this point, low hp hsg ref. line left of pt. 5
+1104 +0018 Jcomm_Tau_1_Derated_Breakpoint [RPM] -> 0x05c360 j1939_high_power_derated_engine_speed_at_point_2 word; [JCT1P2RP] Jcomm RPM hi hp pt. 2 in engine config. when torque derate
+1104 +001A Jcomm_Tau_1_Derated_Fueling_at_Point_2 [MM3S] -> 0x05c362 j1939_high_power_derated_fueling_at_point_2 word; [JCT1P2FL] Jcomm fueling hi hp value at pt. 2 in engine config. when torque derate
+1104 +001C Jcomm_Tau_1_Point_5_Intersection_Speed [RPM] -> 0x05c364 (no name) (no row); [JCT1P5IN] when Derate_Speed < this point, hi hp hsg ref. line left of pt. 5
+1104 +001E LSG_Reference_Speed_Delta [RPM] -> 0x05c366 low_speed_governor_reference_speed_delta word; [LSRFESDC] difference between the LSG Breakpoint and the LSG Reference Speed.
+1104 +0020 Jcomm_ASG_Droop_Limit [RPM/MM3S] -> 0x05c368 j1939_all_speed_governor_droop_minimum_limit word; Min. droop limit on ASG for datalink transmit.
+11A3 +0000 LSG_Reference_Offset_2 [RPM] -> 0x408de4 (no name) (no row); Offset to low idle reference speed used in LSG-to-no adjust transition
+11A3 +0002 Fuel_Hysteresis [MM3S] -> 0x408de6 low_speed_governor_exit_fuel_hysteresis word; Amt. by which Sel. User Fuel must be > Adj. User Fueling to leave LSG

@@ -1,0 +1,16 @@
+cm848: round 16 review fixes - the cruise state machine plate, retired wording, two CLAUDE.md facts
+
+- cm848_cruiseSpeedCommandStateMachine's plate (and the CRUISE_CONTROL_STATE header comment in
+  enums.csv) still said the states map to J1939 SPN 527 and grouped 3-6 as fuel-rate steps. Both now
+  describe the e2m 1184 +2 list, case by case. ccvs1_cruise_control_state is the SPN 527 field.
+- The retired 'vehicle speed limit' / 'zone' wording in current comment text (retired_prose.py): 9
+  global comments and 2 plates (EEC1 torque mode 0xf4 is the road speed governor). The fault ramp
+  limit (fault_vehicle_speed_limit*), SPN 74 and the LSG preset's road speed limit keep their words.
+- firmware/CLAUDE.md (stage D block, factual corrections): of the discrete I/O and output blocks, only
+  12A7, 12A8 and 1966 are in the dumped parameter ID table (the others are placed by layout). The 8A6F
+  note now follows task 046: a fixed word at +4, and Temp_Source has no word.
+- Task 046: the 8A0F +C / +E / +10 lead is open (drift or a misnamed family), not drift.
+
+The rebuild's .cpp diff is comment lines only (the plate and two wording refreshes); headers unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

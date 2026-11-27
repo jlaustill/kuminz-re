@@ -1,0 +1,15 @@
+cm848: round 60 follow-up - the _param_id_lookup_table row dated right
+
+The closing's firmware/CLAUDE.md stuck-warning row said "Resolved in PR #53 round 60". The pre-round decompile of
+cm848_lookupTableEntryByKey already rendered &param_id_lookup_table without the '_'; round 60 only typed it. The row
+now says it was no longer stuck before round 60 and is typed since round 60 as boot_parameter_id_table (a
+parameter_id_entry_t[20] array that applies over the ROM-to-RAM window). Task 046's line matches.
+
+Also checked after the closing:
+- the removed '#' lines are only j1939_ack_msg_t's two titles and param_id_entry_t's four comment lines, which the
+  new comment carries forward;
+- the renamed row keeps its (was ...) note;
+- the .cpp keeps cm848_lookupTableEntryByKey once (its plate) and none of param_id_lookup_table, DAT_0053be38,
+  DAT_0053af76, DAT_0053af78, DAT_0053a9a0 or the old PTR_ label.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

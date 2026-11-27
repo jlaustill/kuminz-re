@@ -1,0 +1,24 @@
+{
+ "old": {
+  "diag_buf_a_ctrl_t_0030305a.data_ptr": "SINGLE_DATA",
+  "diag_buf_a_ctrl_t_0030305a.service_count": "SINGLE_LENGTH",
+  "diag_buf_a_ctrl_t_0030305a.end_ptr": "SINGLE_STATUS_POINTER",
+  "diag_buf_b_ctrl_t_0030304b.data_ptr": "MULTI_DATA",
+  "diag_buf_b_ctrl_t_0030304b.service_count": "MULTI_LENGTH",
+  "diag_buf_b_ctrl_t_0030304b.end_ptr": "MULTI_STATUS_POINTER",
+  "DAT_00303056": "SINGLE",
+  "DAT_00303047": "MULTI",
+  "diag_buffer_b_status": "MULTI_STATUS"
+ },
+ "new": {
+  "diagnostic_single_frame_response_message.data_pointer": "SINGLE_DATA",
+  "diagnostic_single_frame_response_message.header.data_length": "SINGLE_LENGTH",
+  "diagnostic_single_frame_response_message.status_pointer": "SINGLE_STATUS_POINTER",
+  "diagnostic_transport_response_message.data_pointer": "MULTI_DATA",
+  "diagnostic_transport_response_message.header.data_length": "MULTI_LENGTH",
+  "diagnostic_transport_response_message.status_pointer": "MULTI_STATUS_POINTER",
+  "diagnostic_single_frame_response_message": "SINGLE",
+  "diagnostic_transport_response_message": "MULTI",
+  "diagnostic_transport_response_status": "MULTI_STATUS"
+ }
+}

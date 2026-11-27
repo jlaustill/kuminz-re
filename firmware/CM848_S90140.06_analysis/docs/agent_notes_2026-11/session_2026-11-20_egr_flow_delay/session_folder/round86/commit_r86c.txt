@@ -1,0 +1,41 @@
+cm550: round 86 stage C - wave 2 of the stack parameter rows: 60 more functions placed, parameter pieces 656 -> 461
+
+After stage A (11298ed3), 58 CM550 functions without prototype rows still rendered param_N._x_y_ pieces (the 2-byte
+slots seen through Ghidra's 4-byte convention).
+- A workflow (wf_7593be98-3c4) gave them rows. Six read-only investigators worked on frozen copies of the .cpp and the
+  CSVs, about ten functions each. They took each type from the callee's load width (a word load is ushort even when
+  only the low byte is used; a byte row only for an odd-byte load; 4-byte loads a 4-byte type). They took each name
+  from how the callee uses the value and what the callers push, or kept it neutral. A return row was added only where
+  the callers use D0.
+- Six skeptics re-derived every row from the ROM and two or more call sites: 50 accepted, 8 amended (comments only),
+  0 rejected. That is 88 parameter rows, appended under one section comment.
+- C2: two chip select 5 message object wrappers, 0x1e1ac and 0x1e1be, read their own word at +4
+  (32 2f 00 04 / 10 01 / 3f 00 / jsr / 54 8f / 4e 75). Once wave 2 placed their callee, they were the last functions
+  with a stack token, so they get a message_object row each.
+
+Proof:
+- CM550 verify is DETERMINISTIC after wave 2 and after C2. The log has 120 functions placed (60 after stage A), no
+  Error line, no read-back mismatch and no exception.
+- 758 functions throughout.
+- Wave 2 changed 120 functions: 70 that now have rows and 50 of their callers (classify_changes.py: 0 others). C2
+  changed the two wrappers and their caller, mc68k_canCs5InterruptHandler.
+- placed_vs_survey.py: every ROM read and every call-site push of the 83 placed survey functions matches the placed
+  slots. The 2 exceptions are the design's expected in-place addq.b on the low byte of a pointer argument
+  (cm550_crc16Calculate / cm550_FUN_0002cf52, the _0_3_ piece).
+- remaining_and_hazard.py: 0 functions without rows still show a parameter piece or a stack read, and no
+  local_variables.csv row retypes a placed parameter.
+- Round 86 totals (stages A + C): param_N._x_y_ pieces 201 -> 0, all ._N_M_ pieces 664 -> 461, in_stack_ tokens
+  139 -> 2. The 2 left are an offset-0 return read in mc68k_phase2_slot_8_handler, not a stack argument.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_rename_waves.py:
+  ALL PASS.
+
+Leads (task 046):
+- Callers that push a word built from a register whose high byte is stale (the compiler replaced only the low byte)
+  render the stale byte now that their callees take the whole word they load: extraout_var / in_D0w / CONCAT11 in 13
+  functions, the most in insiteCommandByteDispatcher and cm550_FUN_000334ec. Those callees compare only the low byte.
+- Naming leads from wave 2:
+  - 0xb688 is the same code as CM848's cm848_getJ1939DiagnosticResponseEchoLength;
+  - cm550_modeBasedDataDispatcher is the chip select 5 CAN receive message object dispatcher;
+  - cm550_retarderModeThresholdCalculator works on the engine speed pulse period rings.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

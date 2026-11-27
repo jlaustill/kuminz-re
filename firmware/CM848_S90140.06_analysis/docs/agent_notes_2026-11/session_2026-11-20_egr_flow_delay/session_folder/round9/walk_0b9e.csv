@@ -1,0 +1,15 @@
+col5,block,type,e2m_name,address,words,row_name,row_type,description
+0B9E,8C1B,X,RE_CT_Relock_3rd_OSS_Axis,0x40838e,10,protection_rpm_peak_axis_cal,word[10],Trans output shaft speed axis for 3rd gear relock curve
+0B9F,8C1C,Y,RE_CT_Relock_3rd_Tbl,0x4083a2,10,protection_rpm_peak_output_cal,word[10],Min TPS for TCC relock in 3rd gear vs OSS
+0BA0,8C1D,X,RE_CT_Relock_4th_OSS_Axis,0x4083b6,10,protection_load_derate_l1_axis_cal,word[10],Trans output shaft speed axis for 4th gear relock curve
+0BA1,8C1E,Y,RE_CT_Relock_4th_Tbl,0x4083ca,10,protection_load_derate_l1_output_cal,word[10],Min TPS for TCC relock in 4th gear vs OSS
+0BA2,8C1F,X,RE_CT_Unlock_3rd_OSS_Axis,0x4083de,10,protection_rpm_peak_axis_b_cal,word[10],Trans output shaft speed axis for 3rd gear unlock curve
+0BA3,8C20,Y,RE_CT_Unlock_3rd_Tbl,0x4083f2,10,protection_rpm_peak_output_b_cal,word[10],Max TPS for unlock in 3rd gear vs OSS
+0BA4,8C21,X,RE_CT_Unlock_4th_OSS_Axis,0x408406,10,protection_load_derate_l2_axis_cal,word[10],Trans output shaft speed axis for 4th gear unlock table
+0BA5,8C22,Y,RE_CT_Unlock_4th_Tbl,0x40841a,10,protection_load_derate_l2_output_cal,word[10],Max TPS for unlock in 4th gear vs OSS
+0BA6,8C23,X,RE_Lockup_Curve_3_OSS_Axis,0x40842e,9,protection_threshold_axis_cal,word[9],Trans output shaft speed axis for 3rd gear lockup curve
+0BA7,8C24,Y,RE_Lockup_Curve_3,0x408440,9,protection_threshold_values_cal,word[9],Max throttle for lockup in 3rd gear vs OSS
+0BA8,8C25,X,RE_Unlock_Curve_3_OSS_Axis,0x408452,9,protection_load_axis_e_cal,word[9],Trans output shaft speed axis for 3rd gear unlock curve
+0BA9,8C26,Y,RE_Unlock_Curve_3,0x408464,9,protection_load_values_e_cal,word[9],Max TPS for unlock vs OSS in 3rd gear
+0BAA,8C27,T,RE_Gear_Ratio,0x408476,10,protection_load_derate_l3_axis_cal,word[10],Array containing actual ratios for gears 1-4
+0BAB,8C28,T,RE_Two_Three_Lag,0x40848a,10,protection_load_derate_l3_output_cal,word[10],"Shift lag tbl corresponding to temperature range, pwr-dwn trim"

@@ -1,0 +1,23 @@
+02fd90: 48e73800                 movem.l d2-d4, -(a7)
+02fd94: 322f0010                 move.w $10(a7), d1
+02fd98: 4204                     clr.b d4
+02fd9a: 4203                     clr.b d3
+02fd9c: 7400                     moveq #$0, d2
+02fd9e: 602c                     bra.b $2fdcc
+02fda0: 207c0080426e             movea.l #$80426e, a0
+02fda6: b2702000                 cmp.w (a0, d2.w), d1
+02fdaa: 661a                     bne.b $2fdc6
+02fdac: 207c0080426e             movea.l #$80426e, a0
+02fdb2: 31bc007d2000             move.w #$7d, (a0, d2.w)
+02fdb8: 207c0080462e             movea.l #$80462e, a0
+02fdbe: 31bc007d2000             move.w #$7d, (a0, d2.w)
+02fdc4: 7801                     moveq #$1, d4
+02fdc6: 7030                     moveq #$30, d0
+02fdc8: d480                     add.l d0, d2
+02fdca: 5203                     addq.b #$1, d3
+02fdcc: 0c030014                 cmpi.b #$14, d3
+02fdd0: 6404                     bcc.b $2fdd6
+02fdd2: 4a04                     tst.b d4
+02fdd4: 67ca                     beq.b $2fda0
+02fdd6: 4cdf001c                 movem.l (a7)+, d2-d4
+02fdda: 4e75                     rts 

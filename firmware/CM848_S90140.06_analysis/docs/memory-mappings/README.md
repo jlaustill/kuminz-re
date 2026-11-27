@@ -137,7 +137,7 @@ This shows:
 
 | E2M Parameter | Calterm Address | RAM Address | Ghidra Variable |
 |---------------|-----------------|-------------|-----------------|
-| CBD_Enable | 0x0181AE14(25259540) | 0x00408EF6(4231926) | cbd_enable_flag |
+| CBD_Enable | 0x0181AE14(25259540) | 0x00408EF6(4231926) | cylinder_balance_enable_flag |
 | CBD_Lower_Speed_Limit | 0x0181AE06(25259526) | 0x00408EE8(4231912) | cbd_rpm_lower_limit |
 | CBD_Upper_Speed_Limit | 0x0181AE04(25259524) | 0x00408EE6(4231910) | cbd_rpm_upper_limit |
 | CBD_Trim_Max | 0x0181AE0C(25259532) | 0x00408EEE(4231918) | cbd_trim_max_limit |

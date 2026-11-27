@@ -1,0 +1,44 @@
+removed 0: 
+added 0: 
+changed 7
+  0x00020860 cm848_calculateDriverDemandPercentTorque: 3 lines
+      -      (operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))) {
+      +      (operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))
+      +     ) {
+  0x000236f0 cm848_processEngineRetarderTsc1Request: 7 lines
+      -      engine_retarder_control_device_indicator =
+      -           lookupJ1939ControlDevice((uint)msg->source_address);
+      +      engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address)
+      +      ;
+      -    engine_retarder_control_device_indicator =
+      -         lookupJ1939ControlDevice((uint)msg->source_address);
+      +    engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
+  0x0004043c cm848_arbitrateGovernedFueling: 3 lines
+      -      (operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))) {
+      +      (operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))
+      +     ) {
+  0x000411b0 cm848_selectCruiseOrUserFueling: 7 lines
+      -      (operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL)) ||
+      -     ((operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL ||
+      -      (operating_mode_governor_output.mode_code == FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)))) {
+      +      (operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL))
+      +     || ((operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL
+      +         || (operating_mode_governor_output.mode_code == FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)
+      +         ))) {
+  0x0050b4d8 registerJ1939MemoryWriteServices: 3 lines
+      -            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,
+      -             handleJ1939WriteByParameterIdService);
+      +            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,handleJ1939WriteByParameterIdService);
+  0x005251e4 cm848_presetCruiseAndRoadSpeedGovernor: 4 lines
+      -        (cruise_governor_fueling_state_previous == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL))))
+      -    goto LAB_0052540c;
+      +        (cruise_governor_fueling_state_previous == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))
+      +       ) goto LAB_0052540c;
+  0x00525504 cm848_runCruiseAndRoadSpeedGovernor: 7 lines
+      -       (operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL)) ||
+      -      ((operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL ||
+      -       ((short)cruise_governor_preset_fueling_acceleration_threshold < iVar9)))) ||
+      +       (operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL))
+      +      || ((operating_mode_governor_output.mode_code ==
+      +           FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL ||
+      +          ((short)cruise_governor_preset_fueling_acceleration_threshold < iVar9)))) ||

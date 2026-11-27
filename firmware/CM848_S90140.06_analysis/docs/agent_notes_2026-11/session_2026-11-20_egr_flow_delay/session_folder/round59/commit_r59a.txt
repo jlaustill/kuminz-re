@@ -1,0 +1,36 @@
+cm848: round 59 stage A - 29 struct types nothing in CM848 uses are removed
+
+orphan_struct_types.py lists every struct type that nothing names. It checks: no address row of its own, no other
+type's field or dependency, no CSV in output/, no .cpp render, nothing in firmware/scripts/ or the script tests,
+neither CLAUDE.md, and no skill. 32 of the 192 types qualified. Most came with the 2026-01-30 port of 26 generic CM550
+structures ("Port 26 generic structures from CM550", fdc657a) and never applied here.
+
+They fall into three piles:
+- Superseded (deleted; a live CM848 type has the layout):
+  - ad_sensor_config_t / sensor_fault_config_t -> sensor_channel_config_t;
+  - sensor_debounce_state_t -> sensor_channel_state_t;
+  - address_range_entry_t -> memory_region_t (memory_region_table).
+- No CM848 home (deleted, 25):
+  - speculative types never in CM550: parameter_response_t, calterm_protocol_t, insite_protocol_t, can_param_msg_t
+    and others;
+  - CM550 templates unused there too;
+  - three CM550 applies (cummins_data_plate_t, fuel_limit_arbitration_t, oil_pressure_protection_t) with no CM848
+    layout. CM848's EEPROM 0x2C0 holds ASCII '0' characters, so the data plate is not at CM550's offset.
+  - This pile includes engine_control_flags_t and timing_mode_control_t, whose protection_system /
+    protection_blend_ramp / protection_counter_1 / _2 fields were the last protection_ field names.
+- Kept as leads (a CM848 table without a type yet): param_id_entry_t for the parameter ID table at 0x53be38,
+  diag_dispatch_entry_t / ef00_dispatch_entry_t for the 6-byte dispatch tables at 0x539508 / 0x53a9a0.
+
+Each deleted type's own '#' title lines went with it (295 lines in all). removed_orphan_types.txt in the session
+folder keeps the removed text verbatim with each type's pile. The finder's rerun lists only the 3 kept types, so no
+type became an orphan through a deleted one. CM550's structure_definitions.csv is untouched: 18 of the names have
+rows there, and its unused copies are a lead.
+
+Proof:
+- verify is byte-identical. cm848_rom.ghidra.cpp is unchanged: the build's only difference was the Generated:
+  timestamp, which was restored. Thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- firmware_types.hpp loses exactly the 29 removed types (29 struct definitions and 29 typedefs, none added).
+  firmware_globals.hpp and firmware_functions.hpp are unchanged, and g++ reports 0 errors.
+- Tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 218.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

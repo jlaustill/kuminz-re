@@ -1,0 +1,74 @@
+{
+  byte bVar1;
+  word wVar2;
+  char cVar3;
+  code *pcVar4;
+  DAT_00ffd008 = 0x40;
+  DAT_00ffd00e = 0x80;
+  cm550_FUN_0000395a();
+  bVar1 = SIM_DDRE;
+  SIM_DDRE = bVar1 | 8;
+  bVar1 = SIM_PORTE0;
+  SIM_PORTE0 = bVar1 | 8;
+  bVar1 = QSM_SPSR;
+  QSM_SPSR = bVar1 & 0x7f;
+  wVar2 = QSM_SPCR1;
+  QSM_SPCR1 = wVar2 & 0x7fff;
+  wVar2 = QSM_SPCR2;
+  QSM_SPCR2 = wVar2 & 0x7fff;
+  wVar2 = QSM_SPCR2;
+  QSM_SPCR2 = wVar2 & 0xfff0;
+  wVar2 = QSM_SPCR2;
+  QSM_QILR = 0;
+  QSM_SCCR1 = 0;
+  SIM_PICR = 0;
+  SIM_PITR = 0;
+  TPU_CIER = 0;
+  QADC_QADCMCR = 0;
+  QADC_QADCTEST = 0;
+  QADC_QADCINT = 0;
+  QADC_PORTQA_PORTQB = 0;
+  QADC_DDRQA = 0;
+  QADC_QACR0 = 0;
+  QADC_QACR1 = 0;
+  QADC_QACR2 = 0;
+  QADC_QASR = 0;
+  CTM4_BIUMCR = 0;
+  CTM4_MCSM2SIC = 0;
+  CTM4_DASM3SIC = 0;
+  CTM4_DASM4SIC = 0;
+  CTM4_PWM5SIC = 0;
+  CTM4_PWM6SIC = 0;
+  CTM4_PWM7SIC = 0;
+  CTM4_PWM8SIC = 0;
+  CTM4_DASM9SIC = 0;
+  CTM4_DASM10SIC = 0;
+  CTM4_MCSM11SIC = 0;
+  CTM4_BIUMCR = 0x1601;
+  CTM4_CPCR = 8;
+  CTM4_MCSM2SIC = 0;
+  CTM4_MCSM11SIC = 4;
+  CTM4_FCSM12SIC = 0x104;
+  QSM_QSMCR = 5;
+  QSM_QILR = 0x13;
+  QSM_QIVR = 0x50;
+  cm550_ramClearWithWatchdog();
+  cVar3 = mc68k_portPinTestSequence2();
+  if (cVar3 == '\0') {
+    cVar3 = mc68k_checkSerialEepromSignature();
+    if (cVar3 == '\0') {
+      if ((DAT_00008000 == -0x6789abcd) || (DAT_00008000 == -0x6789abce)) {
+        pcVar4 = DAT_00008062;
+      }
+      else {
+        pcVar4 = (code *)&SUB_343cffff;
+      }
+      goto LAB_00003c1a;
+    }
+  }
+  cm550_huffmanDecompressMain();
+  pcVar4 = (code *)&SUB_0080339e;
+LAB_00003c1a:
+  (*pcVar4)();
+  return;
+}

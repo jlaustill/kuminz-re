@@ -1,0 +1,6 @@
+{
+ "global|CM550|0x0080da50": {"name": "tsc1_override_control_mode", "reason": "F1 proposed datalink_engine_control_mode and J2 tsc1_override_control_mode for e2m 10E8 +4 JCEGMD; CM848 keeps the same record as j1939_powertrain_control_state.tsc1_override_control_mode, so the shared name wins"},
+ "function|0x0001b754": {"drop": true, "reason": "an executive frame task set, named by its schedule slot in round 93 (cm550_runEvery20FramesTaskSetPhase1)"},
+ "function|0x0001b788": {"drop": true, "reason": "an executive frame task set, named by its schedule slot in round 93 (cm550_runEvery20FramesTaskSetPhase3)"},
+ "function|0x0001b7f2": {"drop": true, "reason": "an executive frame task set, named by its schedule slot in round 93 (cm550_runEvery20FramesTaskSetPhase11)"}
+}

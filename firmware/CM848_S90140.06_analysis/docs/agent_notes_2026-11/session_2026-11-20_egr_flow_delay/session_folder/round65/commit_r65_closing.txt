@@ -1,0 +1,15 @@
+cm848: round 65 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 65". It records:
+  - the two stages (5e0d02e6 / f2588f7e) and their proofs;
+  - the firmware/CLAUDE.md name refresh.
+  It lists the leads: initGovernorFlagsAux / 0x3fcfba, the 30 unprefixed names shared with CM550, and rounds
+  63-64's open items.
+- work/todo.md: the round 65 line.
+- The session README: the round 65 section.
+- session_folder/round65/: the round's scripts, maps, commit messages, proof notes and the four CLAUDE.md lines
+  before / after.
+- session_folder_large_files.tar.xz: the round's verify logs.
+- pr_body.md: refreshed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

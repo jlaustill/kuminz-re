@@ -1,0 +1,25 @@
+cm848: round 15 stage A - sixteen sensor channels named as families from e2m 1966 and their DTCs (label-only)
+
+e2m 1966 is the sensor channels' value / default outputs. Sixteen channels still carried slot numbers, and their
+state records carried the wrapper ordinals (channel 7's state was sensor_channel9_ram, channel 15's
+fuel_demand_table_xaxis_base).
+- **Each channel is proved at its calls:** the rows are arguments 1 / 2 / 3 / 7 / 11 / 12 / 13 of the sensor channel
+  calls whose channel_index (argument 8) is the slot.
+- **The fault bits decode** to the sensor's DTCs.
+  - 21 / 28 / 42 are sensor reference voltages C / B / A (P0699 / P0653 / P0643).
+  - 97 / 98 are accelerator pedal position sensors 1 / 2 (P2123 / P2128), 76 the four wheel drive switch (P0839),
+    102 the 48RE governor pressure (P0868).
+  - The rest: 7 fuel temperature, 8 remote accelerator pedal, 10 oil pressure, 13 accelerator pedal, 15 water in
+    fuel, 69 battery temperature, 71 A/C pressure, 105 / 108 the EGR delta pressure / orifice temperature.
+- **Per channel:** <sensor>_config, _channel_state, _filter_state, _value, _default_value, _fault_status, and the
+  linearization cache.
+  - 77 named rows renamed and 47 type-only rows named; the tables that still had a slot number are renamed too.
+  - Channel 15's two configs are its feature bit 4 off / on variants.
+- **Left alone:** the cm848_sensorChannelN_* wrappers (their N is an ordinal), and 1966 from +94, where wave 13
+  found the drift.
+- **firmware/CLAUDE.md:** sensor_channel13_ram is accelerator_pedal_sensor_channel_state (a rename refresh).
+- **Checks:**
+  - reverse_names.py EQUIVALENT (124 names render); 19 thunks / 13 call overrides.
+  - lookup_tables 0 sizing problems; the headers compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

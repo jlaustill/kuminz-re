@@ -1,0 +1,16 @@
+cm848: round 17 stage B - the engine retarder command source and allowed state enums (types)
+
+- ENGINE_RETARDER_COMMAND_SOURCE from the e2m 117D +8 E_Brake_Command_Source value labels (0 NONE / 1
+  JCOMMOVD / 2 CRUISE / 3 SWITCH / 4 JCOMMLMT / 5 NOT_SET / 6 NOOVERDE; 1070 +2 / +16 list 1-6 the same):
+  the override, non-override and command source words. The code stores every member and compares them
+  whole, including the ERC1 builder's SPN 900 mapping.
+- ENGINE_RETARDER_ALLOWED_STATE from 1070 +14 EB_Allowed_State (0 NONE / 1 OVERRIDE / 2 OVER_OR_NON):
+  ENGINE_RETARDER_ALLOWED_NONE / _OVERRIDE_ONLY / _OVERRIDE_OR_NON_OVERRIDE.
+- J1939_CONTROL_DEVICE (round 6) on engine_retarder_j1939_control_device (117D +14 labels), which copies
+  engine_retarder_control_device_indicator.
+
+Proof: check_enum_proof3.py - 0 functions differ beyond the enum substitutions (21 command source, 8
+allowed state and 4 more J1939_CONTROL_DEVICE renders; no OR-combined renders). Headers regenerated (0
+g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

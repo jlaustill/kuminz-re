@@ -1,0 +1,14 @@
+cm550: round 82 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 82" records stage A (e875e603: the six CAN-named TPU set-up functions renamed and the
+  TPU microcode loader) and its proof.
+- Leads:
+  - the TPU microcode in ROM (0x30c9c-0x31427): its function table would name each channel's function;
+  - the pwmTimerMode* functions;
+  - the CS4 message object handlers;
+  - the 182 rows inside the EEPROM write queue's range.
+- The PR body: the Round 82 bullet, "Beyond CM848" for rounds 72-82, and the test plan line.
+- work/todo.md, the session README, session_folder/round82/, the large-files tarball (the round's verify log),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

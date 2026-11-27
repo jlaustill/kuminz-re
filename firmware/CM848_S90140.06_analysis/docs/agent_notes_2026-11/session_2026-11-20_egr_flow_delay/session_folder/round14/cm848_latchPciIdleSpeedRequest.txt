@@ -1,0 +1,17 @@
+=== cm848_latchPciIdleSpeedRequest (lines 39805-39826, 16 non-blank)
+// Function: cm848_latchPciIdleSpeedRequest @ 0x0003af7c
+//
+/* PCI RX[2] header 0x0E consumer: when payload byte 1 bit 7 is set and pci_receive_message_2_status
+   has no timeout or error bits (& 0x3f) stores (byte & 0x7f) << 7 (16 rpm steps in 1/8 rpm) in
+   pci_requested_idle_speed - otherwise keeps the old value (was
+   cm848_applyProtectionSpeedLimitOverride) | review-function-readability reviewed 2026-11-13 -
+   Readability Medium Accuracy Confidence Medium */
+void cm848_latchPciIdleSpeedRequest(void)
+{
+  if (((pci_receive_message_2_idle_speed_request & 0x80) != 0) &&
+     ((pci_receive_message_2_status & 0x3f) == 0)) {
+    pci_requested_idle_speed = (pci_receive_message_2_idle_speed_request & 0x7f) << 7;
+  }
+  return;
+}
+//

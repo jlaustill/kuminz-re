@@ -1,0 +1,50 @@
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:32625: ...   cm848_protectionOverloadHandler) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:33992: ...   cm848_calculateProtectionFuelDemandThreshold) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:78850: ...   protectionPhaseGroupA_Init) */
+work/tasks/046-cm848-egr-flow-estimate.md:380: ...  - The transmission gear functions `cm848_calculateProtectionFuelDemandThreshold` (0x3241c) and
+work/tasks/046-cm848-egr-flow-estimate.md:381: ...    `cm848_processProtectionStateFlags` (0x3257c): `transmission_cur
+work/tasks/025-cm848-naming-wave-followups.md:400: ...0x40b148 = current_rpm x 32 / output shaft speed; protection_load_scale_table_cal 0x40786a = gear ratio x 32 pe
+work/tasks/025-cm848-naming-wave-followups.md:401: ...tio and the multiplicand of the gear ratio table (cm848_protectionScaledLimitCalculation).
+work/tasks/025-cm848-naming-wave-followups.md:411: ...DAT_003fb140) / 0x40821c (D - DAT_003fb142). With hot_mode_flag set none of the four 2-D tabl
+work/tasks/025-cm848-naming-wave-followups.md:591: ...ROTECTION_STATUS_CODE enum = governor curve mode; protection_lockout_t thermal_lockout / load_lockou
+work/tasks/025-cm848-naming-wave-followups.md:591: ...d_lockout / rpm_lockout / sensor_fault_active and protection_derate_countdown / protection_entry_countdown 
+work/tasks/025-cm848-naming-wave-followups.md:591: ...or_fault_active and protection_derate_countdown / protection_entry_countdown = per-gear converter relock d
+work/tasks/025-cm848-naming-wave-followups.md:591: ...try_countdown = per-gear converter relock delays; cm848_initProtectionSystem / cm848_decrementProtectionTi
+work/tasks/025-cm848-naming-wave-followups.md:591: ...erter relock delays; cm848_initProtectionSystem / cm848_decrementProtectionTimers = transmission init / timer t
+work/tasks/025-cm848-naming-wave-followups.md:600: ... Governor pressure solenoid chain still misnamed: protectionPhaseGroupA_Init 0x51c3d8 is the governor pres
+work/tasks/025-cm848-naming-wave-followups.md:605: ...- Governor target constants and curves: protection_timer_state_t.status_code is the governor p
+work/tasks/025-cm848-naming-wave-followups.md:608: ...- WOT shift adaptives: protection_rpm_peak_a / _b (0x40b112 / 0x40b114) ar
+work/tasks/025-cm848-naming-wave-followups.md:610: ...- Minor: protection_derate_level_trial 0x40b0ca is a gear index (cur
+work/tasks/025-cm848-naming-wave-followups.md:610: ...r / +1 / +2) used by the per-gear calculations in cm848_protectionRateOfChangeCalculation. 0x3fb3fe and 0x40b0e0 (last 
+work/tasks/025-cm848-naming-wave-followups.md:623: ...dMonitor + cm848_protectionStateTransitionCheck + cm848_processProtectionStateFlags (normal schedule: 3-4 and 4-3
+work/tasks/025-cm848-naming-wave-followups.md:762: ...- `protection_load_scale_table_cal` → `transmission_gear_ratio_t
+work/tasks/025-cm848-naming-wave-followups.md:763: ...- `cm848_protectionScaledLimitCalculation` → `cm848_calculateTransmissi
+work/tasks/025-cm848-naming-wave-followups.md:764: ...- `hot_mode_flag` → `transmission_overheat_pro
+work/tasks/025-cm848-naming-wave-followups.md:765: ...- `protection_lockout_t` → `transmission_lockup_timer
+work/tasks/025-cm848-naming-wave-followups.md:766: ...- `protection_derate_countdown` → `transmission_lockup_delay
+work/tasks/025-cm848-naming-wave-followups.md:767: ...- `protection_entry_countdown` → `transmission_lockup_delay
+work/tasks/025-cm848-naming-wave-followups.md:768: ...- `cm848_initProtectionSystem` → `cm848_initializeTransmiss
+work/tasks/025-cm848-naming-wave-followups.md:769: ...- `cm848_decrementProtectionTimers` → `cm848_decrementTransmissi
+work/tasks/025-cm848-naming-wave-followups.md:770: ...- `protectionPhaseGroupA_Init` → `cm848_calibrateGovernorPr
+work/tasks/025-cm848-naming-wave-followups.md:771: ...- `protection_timer_state_t` → `transmission_pressure_sta
+work/tasks/025-cm848-naming-wave-followups.md:772: ...- `protection_rpm_peak_a` → `transmission_1st_gear_max
+work/tasks/025-cm848-naming-wave-followups.md:773: ...- `protection_derate_level_trial` → `transmission_output_torqu
+work/tasks/025-cm848-naming-wave-followups.md:774: ...- `cm848_protectionRateOfChangeCalculation` → `cm848_predictPostShiftAcc
+work/tasks/025-cm848-naming-wave-followups.md:775: ...- `cm848_processProtectionStateFlags` → `cm848_selectGovernorPress
+work/tasks/027-cm848-naming-wave-2-followups.md:65: ...- protection_status_flags_t @0x40b0f2 and protection_timer_state_t.status_code (PROTECTION_STATU
+work/tasks/027-cm848-naming-wave-2-followups.md:66: ...gger chain (protection_rpm_threshold = 3075 rpm / protection_rpm_peak_a / protection_rpm_peak_b / pro
+work/tasks/027-cm848-naming-wave-2-followups.md:66: ...pm_threshold = 3075 rpm / protection_rpm_peak_a / protection_rpm_peak_b / protection_engine_load_scal
+work/tasks/027-cm848-naming-wave-2-followups.md:66: .../ protection_rpm_peak_a / protection_rpm_peak_b / protection_engine_load_scaled / protection_rpm_peak_thresho
+work/tasks/027-cm848-naming-wave-2-followups.md:67: ...- cm848_protectionOverloadHandler @0x2e... shares the same per-
+work/tasks/027-cm848-naming-wave-2-followups.md:72: ..._* names and also write governor_pressure_target: cm848_protectionOverloadHandler / protectionNormalHandler / p
+work/tasks/027-cm848-naming-wave-2-followups.md:73: ...- protection_rpm_peak_a / protection_rpm_peak_b = gea
+work/tasks/027-cm848-naming-wave-2-followups.md:73: ...- protection_rpm_peak_a / protection_rpm_peak_b = gear1 / gear2 shift peak RP
+work/tasks/027-cm848-naming-wave-2-followups.md:81: ...- protection_rpm_peak_a and protection_rpm_peak_b are
+work/tasks/027-cm848-naming-wave-2-followups.md:81: ...- protection_rpm_peak_a and protection_rpm_peak_b are the gear1 / gear2 peak-RP
+work/tasks/027-cm848-naming-wave-2-followups.md:82: ...- The governor-pressure MODE code written to protection_timer_state_t_0040b100.status_code (values 1 2 4 5 6
+work/tasks/027-cm848-naming-wave-2-followups.md:244: ...- `protection_timer_state_t` → `transmission_pressure_sta
+work/tasks/027-cm848-naming-wave-2-followups.md:245: ...- `protection_rpm_peak_a` → `transmission_1st_gear_max
+work/tasks/027-cm848-naming-wave-2-followups.md:246: ...- `protection_rpm_peak_b` → `transmission_2nd_gear_max
+work/tasks/027-cm848-naming-wave-2-followups.md:247: ...- `protection_engine_load_scaled` → `transmission_engine_accel
+work/tasks/027-cm848-naming-wave-2-followups.md:248: ...- `cm848_protectionOverloadHandler` → `cm848_selectGovernorPress
+work/tasks/027-cm848-naming-wave-2-followups.md:249: ...- `protection_timer_state_t_0040b100` → `transmission_pressure_sta

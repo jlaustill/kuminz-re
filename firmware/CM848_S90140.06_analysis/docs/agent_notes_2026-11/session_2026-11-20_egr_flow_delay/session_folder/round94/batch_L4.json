@@ -1,0 +1,561 @@
+{
+ "batch": "L4",
+ "proposal": {
+  "batch": "L4",
+  "summary": "Batch L4 is 17 CM848 functions named by an old automatic pass that called anything near a limit 'protection'. None of them is an engine protection. Four are executive frame task sets, named here by schedule slot the way CM550's sets were named in round 93. Three set points of the J1939 PGN 65251 engine configuration torque curve. Two belong to the fuel derate chain: the chain itself and the step that turns the torque limit into a fuel limit. One computes the percent load on the low horsepower curve. Six are power-up initializers (4D timing caches, misfire timing limit, governor tuning blend weight, fuel pressure governor fault blend, engine retarder TSC1 state, switch inputs). The last is an unreachable store in the transmission type 3 branch of torque management. Each name rests on the outputs of its own body, checked by disassembly, by e2m records resolved through the ECU's parameter ID table and by the RAM dump. No CM550 twin is proven: 0x4280c, 0x1e4e8 and 0x50e000 are counterparts of CM550 0x30c3c, 0x1c0d4 and 0x26e2c.",
+  "functions": [],
+  "cm848_functions": [
+   {
+    "address": "0x0000bb68",
+    "current_name": "cm848_periodicTaskSet_protection",
+    "proposed_name": "cm848_runEvery8FramesTaskSetPhase2",
+    "role": "Executive frame task set that runs the torque management pass, the cruise control periodic update and the fuel metering battery voltage filter once every 8 frames.",
+    "discriminator": "Its schedule slot: it is the only set called as call 4 of frames 2, 10, 18, 26 and 34 (the 8-frame slot, phase 2). Its three tasks have no shared role: the torque management fuel limit, the cruise control state and the battery voltage filter of the fuel metering PWM.",
+    "plate_comment": "Executive frame task set: runs every 8 frames (40 ms), at frames 2, 10, 18, 26 and 34 of the 40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: cm848_runTorqueManagement, cm848_cruiseControlPeriodicUpdate, cm848_filterEngineSensorValue (was cm848_periodicTaskSet_protection; named by slot like CM550's cm550_runEvery<N>FramesTaskSetPhase<M> sets).",
+    "evidence": "executiveFrameInterruptHandler 0xc0a0 has a jump table at 0xc198-0xc234 (40 cases). bl 0xbb68 is at 0xc29c (frame 2), 0xc3b4 (10), 0xc4d8 (18), 0xc5f0 (26) and 0xc6f8 (34), each the 4th bl of its case after 0xb76c / 0xb7b4 / 0xba08. No other bl to 0xbb68 and no pointer to it in ROM or flash2. Body: bl 0x3f2b0 (0xbb74), bl 0x512ff4 (0xbb78), bl 0x4922c (0xbb7c). cm848_filterEngineSensorValue filters battery_voltage_sensor_channel_state.value into fuel_pressure_governor_state.filtered_battery_voltage. A frame is one PIT period: PITC = 4999, and the advanceHourMeters plate says '40 PIT ticks of 5 ms'. CM848 has no 'runEvery' names. Its CM550 slot sibling cm550_runEvery8FramesTaskSetPhase2 (0x1b678) calls 0x449f4 / 0x451fa, which are not dumped, so no twin can be proven.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000bce8",
+    "current_name": "cm848_periodicTaskSet_protection2",
+    "proposed_name": "cm848_runEvery10FramesTaskSetPhase4",
+    "role": "Executive frame task set that starts the periodic EEPROM block read (the EEPROM mirror reload) once every 10 frames.",
+    "discriminator": "Its schedule slot: it is the only set called as call 5 of frames 4, 14, 24 and 34 (the 10-frame slot, phase 4). Its only task is cm848_startEepromBlockRead. It is named by slot like CM550's single-task sets (cm550_runEvery10FramesTaskSetPhase5 runs only cm550_runLampControl).",
+    "plate_comment": "Executive frame task set: runs every 10 frames (50 ms), at frames 4, 14, 24 and 34 of the 40-frame cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls only cm848_startEepromBlockRead, the periodic EEPROM mirror reload: one 30-word block per call, copied in by cm848_onEepromBlockRead (was cm848_periodicTaskSet_protection2).",
+    "evidence": "bl 0xbce8 is at 0xc2ec (frame 4), 0xc448 (14), 0xc5ac (24) and 0xc6fc (34), each the 5th bl of its case. No other reference. Body: bl 0x4bd5c (0xbcf4) only. cm848_startEepromBlockRead: when eeprom_driver_operation is 0 it sets it to 1 and builds command 3 (READ) at eeprom_mirror_load_offset with word_count 0x20 and completion_callback cm848_onEepromBlockRead, then calls cm848_queueQspiJob. The cm848_refreshRamCalibration plate calls this the EEPROM side of the RAM refresh.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000beb4",
+    "current_name": "cm848_periodicTaskSet_protection3",
+    "proposed_name": "cm848_runEvery20FramesTaskSetPhase8",
+    "role": "Executive frame task set that runs the charging voltage target, the charging system voltage monitor, the fuel pressure fault reaction requests and the fuel limits for fuel pressure faults once every 20 frames.",
+    "discriminator": "Its schedule slot: it is the only set called as call 5 of frames 8 and 28 (the 20-frame slot, phase 8; frames 8 and 28 have no 10-frame call). It does two unrelated jobs: the alternator charging voltage, and the reactions to fuel pressure faults.",
+    "plate_comment": "Executive frame task set: runs every 20 frames (100 ms), at frames 8 and 28 of the 40-frame cycle, as call 5 of those frames in executiveFrameInterruptHandler (the 10-frame slot is empty there). Calls, in order: cm848_calculateChargingVoltageTarget, cm848_monitorChargingSystemVoltageHighAndLow, cm848_updateFuelPressureFaultReactionRequests, cm848_applyFuelLimitsForFuelPressureFaults (was cm848_periodicTaskSet_protection3).",
+    "evidence": "bl 0xbeb4 is at 0xc378 (frame 8, after 0xb76c 0xb7b4 0xb8fc 0xbb18) and 0xc638 (frame 28, after 0xb76c 0xb7b4 0xb8fc 0xbbb8). No other reference. Body: bl 0x375c8 (0xbec0), 0x37f28 (0xbec4), 0x49df0 (0xbec8), 0x49edc (0xbecc).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0000c050",
+    "current_name": "hpcr_periodicTaskSet_protection4",
+    "proposed_name": "cm848_runEvery20FramesTaskSetPhase18",
+    "role": "Executive frame task set that runs the switch 31 from accelerator pedal logic, the engine retarder cruise permission and the fuel system hardware shutdown monitor once every 20 frames.",
+    "discriminator": "Its schedule slot: it is the only set called as call 5 of frames 18 and 38 (the 20-frame slot, phase 18). Its three tasks are unrelated. The set itself has nothing HPCR-specific (all its callees are cm848_), so cm848_ replaces hpcr_.",
+    "plate_comment": "Executive frame task set: runs every 20 frames (100 ms), at frames 18 and 38 of the 40-frame cycle, as call 5 of those frames in executiveFrameInterruptHandler (the 10-frame slot is empty there). Calls, in order: cm848_updateSwitch31FromAcceleratorPedal, cm848_calculateEngineRetarderCruisePermissionPercent, cm848_monitorFuelSystemHardwareShutdown (was hpcr_periodicTaskSet_protection4).",
+    "evidence": "bl 0xc050 is at 0xc4dc (frame 18, after 0xb76c 0xb7b4 0xba08 0xbb68) and 0xc77c (frame 38, after 0xb76c 0xb7b4 0xba08 0xbc08). No other reference. Body: bl 0x2c3c8 (0xc05c), 0x524594 (0xc060), 0x529068 (0xc064).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0001e4e8",
+    "current_name": "cm848_calculateProtectionRateLimited",
+    "proposed_name": "cm848_convertTorqueDerateTorqueLimitToFuelLimit",
+    "role": "Converts the lowest torque limit of the derate chain (torque_derate_torque_limit, in lb-ft) into a fuel quantity and applies it to torque_derate_fuel_quantity when it is lower.",
+    "discriminator": "It is the only code that turns torque_derate_torque_limit (e2m 1051 +A Torque_Derate_Torque, foot-pounds) into fuel. The fuel is the no-load fuel plus the torque limit times (the 100 percent throttle fueling without programmable power minus the no-load fuel), divided by the maximum torque at the current engine speed. The chain steps before it lower either the torque limit (applyPowerTakeOffTorqueLimit) or the fuel limit itself. There is no rate limit.",
+    "plate_comment": "Turns torque_derate_torque_limit (e2m 1051 +A Torque_Derate_Torque, lb-ft; 0xffff = none) into a fuel limit: no_load_fuel_quantity + torque_derate_torque_limit x (throttle_100_fueling_without_programmable_power - no_load_fuel_quantity) / the maximum torque at the current engine speed (0x40aee6, forced to at least 1), clamped at 0. When that is below torque_derate_fuel_quantity (105D +0) it becomes the limit, and torque_derate_fuel_source_code takes torque_derate_torque_limit_state (1051 +C). cm848_arbitrateRequestedFueling calls it right after cm848_runFuelLimitChains and resets the torque limit to 0xffff / NO_DERATE before that chain. Counterpart of CM550 0x1c0d4, which resets the torque limit itself after the conversion (was cm848_calculateProtectionRateLimited).",
+    "evidence": "disasm 0x1e4e8-0x1e5a0. It reads 0x40aee6 (lhz 0x1e504) and stores 1 if it is 0 (sth 0x1e514). It reads 0x40aeec no_load (lhz 0x1e51c), 0x40a2d8 (lhz 0x1e524) and 0x40a89f (lhz 0x1e52c). It multiplies with mulhw / mullw (0x1e534 / 0x1e538) and divides by 0x40aee6 with the 64-bit divide bl 0x570f0 (0x1e54c). It adds no_load (0x1e554) and clamps at 0 (0x1e55c). It compares with 0x40afac (lhz / cmpw 0x1e570), stores 0x40afac (sth 0x1e578) and copies lha 0x40a2da to 0x40afae (0x1e584 / 0x1e588). The only caller is cm848_arbitrateRequestedFueling (bl at 0x1e610). Before that call it stores 0xffff to 0x40a2d8 (0x1e5fc) and 40 to 0x40a2da (0x1e608), then calls bl 0x4280c (0x1e60c). e2m records resolved through the parameter ID table: 1051 +A -> 0x40a2d8, 1051 +C -> 0x40a2da, 105D +0 / +2 -> 0x40afac / 0x40afae, 105A +8 Throttle_100_Fueling_No_PP -> 0x40a89f, 109C +0 No_Load_Fuel -> 0x40aeec. The only other writer of 0x40a2d8 is applyPowerTakeOffTorqueLimit (0x2a92c). CM550 0x1c0d4 uses the same formula through jsr 0x35076 (cm550_scaleByRatioSigned), then adds a step: move.w #0xffff,(0x80d338) and move.w #0x28,(0x80d33a) at 0x1c140 / 0x1c148. So it is a counterpart, not a twin; batch L1 names the CM550 side. RAM dump: limit 0xffff with state 40; torque_derate_fuel_quantity 1030 with source 62.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0001ea6c",
+    "current_name": "cm848_initProtectionTableSizes",
+    "proposed_name": "cm848_initializeFourDimensionalInjectionTimingLookupCaches",
+    "role": "Power-up initialization of the two 2-D lookup caches of the 4D injection timing maps.",
+    "discriminator": "It writes only four_dimensional_injection_timing_map_a_cached_axis_offsets and four_dimensional_injection_timing_map_b_cached_axis_offsets (both words = 2). Only cm848_calculateFourDimensionalInjectionTiming uses these caches. Nothing in the body concerns protection or table sizes.",
+    "plate_comment": "Sets both words of four_dimensional_injection_timing_map_a_cached_axis_offsets and four_dimensional_injection_timing_map_b_cached_axis_offsets to 2 (the first segment). These are the 2-D lookup caches of the two 4D timing maps that cm848_calculateFourDimensionalInjectionTiming blends (e2m 103B Four_D_Timing). Called once from cm848_applicationMain (was cm848_initProtectionTableSizes).",
+    "evidence": "disasm 0x1ea6c-0x1ea90: li r3,2; sth to 0x3fa878 and 0x3fa87a (0x1ea78 / 0x1ea7c) and to 0x3fa87c and 0x3fa87e (0x1ea88 / 0x1ea8c); blr. The only caller is cm848_applicationMain (bl at 0x54994, after cm848_selectColdStartFactor). The only reader of the caches is cm848_calculateFourDimensionalInjectionTiming (cpp lines 20891-20915). RAM dump at 0x3fa878: 0002 0002 0002 0002. Naming convention: cm848_initialize<X>LookupCache(s), as in cm848_initializeColdDeltaFuelLookupCache 0x3744c and cm848_initializeCombustionLimitLookupCaches 0x144d0.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020b84",
+    "current_name": "cm848_updateProtectionParameters",
+    "proposed_name": "cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling",
+    "role": "Sets point 1 (the idle point) of the J1939 PGN 65251 engine configuration torque curve to the low speed governor reference speed and the derated idle fueling.",
+    "discriminator": "It writes only point 1: the speed (e2m 1102 +22) and the fueling (1102 +2C). The speed is low_speed_governor_reference.reference_speed. While low_speed_governor_droop_enable is set and the correction term is nonzero, the LSG droop at the derated idle fueling is subtracted. The fueling is j1939_derated_fueling_at_idle (1104 +A). Its sibling 0x20bfc also sets point 3; 0x21c3c sets the throttle 100 speeds.",
+    "plate_comment": "Sets point 1 of the J1939 engine configuration torque curve (PGN 65251, e2m 1102) for the derate cases. j1939_torque_curve_speed_at_point_1 (1102 +22 Jcomm_RPM_At_Point_1) = low_speed_governor_reference.reference_speed; while algorithm_enable_flags_12_cal.low_speed_governor_droop_enable is set and governor_integrator_correction_term is nonzero, that term x j1939_derated_fueling_at_idle / 167 is subtracted (a negative result gives 0). j1939_torque_curve_fueling_at_point_1 (1102 +2C) = j1939_derated_fueling_at_idle (1104 +A Jcomm_Derated_Fueling_at_Idle); governor_integrator_correction_term is only ever cleared, so the droop never applies in this build. Called by cm848_updateJ1939EngineConfigurationTorqueCurve (cases 2 and 3) and by cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling (was cm848_updateProtectionParameters).",
+    "evidence": "disasm 0x20b84-0x20bf8. lhz 0x5c352 -> r3 (0x20b88). lhz 0x3fd5b4 masked with 0x40 (0x20b90 / 0x20b94) = low_speed_governor_droop_enable. lha 0x40aeda (0x20ba4). Else branch: lhz 0x40aec2 (0x20bb4). Droop branch: lha 0x40aec2 - (0x40aeda x r3) / 167 (mullw / divw 0x20bc4-0x20bd0), extsh, negative -> 0. sth r4 -> 0x40adac (0x20bec), sth r3 -> 0x40adb6 (0x20bf4). Callers: bl at 0x20c08 (0x20bfc), 0x20e64 and 0x20ef0 (cm848_updateJ1939EngineConfigurationTorqueCurve). e2m: 1102 +22 -> 0x40adac, 1102 +2C -> 0x40adb6, 1104 +A -> 0x5c352 (736 = 50 mm3). 0x40aeda has one store, sth at 0x28b94 (cm848_clearGovernorFilterAccumulators, = 0), and two reads, 0x20ba4 and 0x507a84; RAM dump 0. RAM dump: point 1 speed 6000 = LSG reference 6000.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00020bfc",
+    "current_name": "cm848_updateProtectionInputs",
+    "proposed_name": "cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "role": "Sets point 1 (through 0x20b84) and point 3 of the J1939 PGN 65251 torque curve for the derate cases.",
+    "discriminator": "It adds point 3 to the point 1 setter. Point 3 takes the derated ROM point 3 (j1939_engine_speed_at_point_3 / j1939_derated_fueling_at_point_3), or point 1's speed and fueling when the point 3 speed is below the point 1 speed.",
+    "plate_comment": "Runs cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling, then sets point 3 of the J1939 engine configuration torque curve (PGN 65251, e2m 1102 +26 / +30). Point 3 takes point 1's speed and fueling when j1939_torque_curve_speed_at_point_3 is below j1939_torque_curve_speed_at_point_1, otherwise j1939_engine_speed_at_point_3 (1104 +4 Jcomm_Engine_Speed_at_Point_3) and j1939_derated_fueling_at_point_3 (1104 +C). Called by cm848_updateJ1939EngineConfigurationTorqueCurve in its cases 6 and 7: a derate while the low speed governor reference is outside its band (was cm848_updateProtectionInputs).",
+    "evidence": "disasm 0x20bfc-0x20c60. bl 0x20b84 (0x20c08). It compares lhz 0x40adb0 with lhz 0x40adac (0x20c1c / 0x20c18, cmpw / blt at 0x20c20 / 0x20c24). blt path: sth the point 1 speed -> 0x40adb0 (0x20c40), lhz 0x40adb6 (0x20c48). Else path: lhz 0x5c34c -> sth 0x40adb0 (0x20c2c / 0x20c30), lhz 0x5c354 (0x20c38). Both paths end with sth -> 0x40adba (0x20c50). Callers: bl at 0x20ff4 and 0x21080 in cm848_updateJ1939EngineConfigurationTorqueCurve (cases 6 and 7). e2m: 1102 +26 -> 0x40adb0, 1102 +30 -> 0x40adba, 1104 +4 -> 0x5c34c, 1104 +C -> 0x5c354.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00021c3c",
+    "current_name": "cm848_updateProtectionThresholdsIfLow",
+    "proposed_name": "cm848_setThrottle100J1939TorqueCurveSpeedPoints",
+    "role": "Writes the five J1939 torque curve point speeds of the throttle 100 request unless a higher priority request bit is set.",
+    "discriminator": "It is gated by the throttle 100 priority bit (1 << throttle_100_priority_bit_index) against j1939_pgn65251_speed_points_request_flags. It writes all five point speeds, and no fuelings, from the throttle 100 sources: the LSG reference plus an offset, engine_speed_limit_ramped, and 12BD Throttle_Speed_At_Point_3-5. The fault derate request does the same in cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints.",
+    "plate_comment": "Sets the five speed points of the J1939 engine configuration torque curve (PGN 65251, e2m 1102 +22 .. +2A) for the throttle 100 request. It returns at once when j1939_pgn65251_speed_points_request_flags (12BB +0 Active_Speed_Points_State) holds a request bit above 1 << throttle_100_priority_bit_index (12BD +A Throttle_100_Priority). Point 1 = low_speed_governor_reference.reference_speed + j1939_pgn65251_speed_at_point_1_low_speed_governor_offset (12BD +0; a negative sum gives 0), point 2 = engine_speed_limit_ramped (the high speed governor speed before droop), points 3 to 5 = j1939_pgn65251_speed_at_point_3 / _4 / _5 (12BD +2 / +4 / +6 Throttle_Speed_At_Point_3-5). Called by cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings after it sets the throttle 100 bit (was cm848_updateProtectionThresholdsIfLow).",
+    "evidence": "disasm 0x21c3c-0x21cd0. li 1, slw by lhz 0x5c33e (0x21c44 / 0x21c48), clrlwi 16. lhz 0x40a732, andc with the bit (0x21c54 / 0x21c58), then cmpw / bgt 0x21cd0 (return). Point 1: lhz 0x40aec2 + lha 0x5c334 (0x21c68 / 0x21c70), negative -> 0, sth 0x40adac (0x21c8c). Point 2: lhz 0x40a308 -> sth 0x40adae (0x21c98 / 0x21c9c). Points 3-5: 0x5c336 -> 0x40adb0, 0x5c338 -> 0x40adb2, 0x5c33a -> 0x40adb4 (0x21ca8-0x21ccc). The only caller is bl at 0x21d4c (cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings), after it ORs throttle_100_speed_points_request_bit into 0x40a732. e2m: 12BB +0 -> 0x40a732; 12BD +0 / +2 / +4 / +6 / +A -> 0x5c334 / 0x5c336 / 0x5c338 / 0x5c33a / 0x5c33e. RAM dump: request flags 0x80 (bit 7 = throttle_100_priority_bit_index 7), point 1 speed 6000.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00023a9c",
+    "current_name": "cm848_initGovernorProtectionState",
+    "proposed_name": "cm848_initializeEngineRetarderTsc1RequestState",
+    "role": "Power-up initialization of the engine retarder TSC1 request state and of the retarder stage quantizer.",
+    "discriminator": "It writes the retarder TSC1 request words (torque limit 100, override control mode off, control device none), the retarder stage count (the sum of the six engine brake driver cylinder counts) and the five stage table lookup caches. resetEngineRetarderTsc1Request (0x27118) only ends a request (limit 125, timers cleared) and sets up no stage data.",
+    "plate_comment": "Power-up initialization of the engine retarder TSC1 path (TSC1 frames addressed to the engine retarder, handled by cm848_processEngineRetarderTsc1Request). It sets engine_retarder_torque_limit_percent = 100, engine_retarder_override_control_mode = TSC1_OVERRIDE_OFF, engine_retarder_control_device_indicator = J1939_CONTROL_DEVICE_NONE (e2m 10E6 +2) and engine_retarder_stage_count = the sum of engine_retarder_driver_1..6_cylinder_count (e2m 13D8; 1 here). It sets the five stage table lookup caches engine_retarder_torque_stage_1..5_cached_axis_offset of cm848_selectEngineRetarderStagePercent to 2. Called by cm848_j1939_system_init after the ERC1 and retarder configuration buffers are set up (was cm848_initGovernorProtectionState).",
+    "evidence": "disasm 0x23a9c-0x23b34: li 100 -> sth 0x40ad62 (0x23aa4); li 0 -> sth 0x40ad5a (0x23ab0) and 0x40ad5c (0x23ab8); lhz 0x5c47e + 0x5c480 + 0x5c482 + 0x5c484 + 0x5c486 + 0x5c488 (0x23ac4-0x23b00) -> sth 0x3faa72 (0x23b04); li 2 -> 0x3faa7a / 7c / 7e / 80 / 82 (0x23b10-0x23b30). The only caller is bl at 0x539278 in cm848_j1939_system_init, after cm848_initializePgn61440ElectronicRetarderController1Buffer and cm848_initializePgn65249RetarderConfigurationBuffer. Readers: cm848_selectEngineRetarderStagePercent (the stage count == 4 test and the five caches) and cm848_applyEngineRetarderTsc1Request (the torque limit). RAM dump: 0x40ad62 = 100, 0x3faa72 = 1, override 0, device 0.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00029e24",
+    "current_name": "cm848_initProtectionFilterAccumulators",
+    "proposed_name": "cm848_initializeInjectionTimingMainMisfireLimit",
+    "role": "Power-up initialization of the misfire timing limit: its lookup cache, its output and the main timing before the limit.",
+    "discriminator": "It writes only the state of the misfire timing limit (e2m 8A3D): the cache of cm848_calculateInjectionTimingMainMisfireLimit (2 / 2), injection_timing_main_misfire_limit (8A3D +0) = 0 and 0x40aeea (8A3D +2 SOI_Before_MST) = 0. The body has no filter, no accumulator and no PID.",
+    "plate_comment": "Power-up initialization of the misfire timing limit (e2m 8A3D). It sets both words of injection_timing_main_misfire_limit_cached_axis_offsets (the 2-D lookup cache of cm848_calculateInjectionTimingMainMisfireLimit) to 2. It clears injection_timing_main_misfire_limit (8A3D +0 Misfire_Timing_Limit) and main_injection_timing_before_misfire_limit (8A3D +2 SOI_Before_MST, 'desired SOI before being limited by misfire algorithm'). Called once from cm848_applicationMain (was cm848_initProtectionFilterAccumulators).",
+    "evidence": "disasm 0x29e24-0x29e4c: li 2; sth 0x3fafa6 (0x29e30) and 0x3fafa4 (0x29e34); li 0; sth 0x40aeea (0x29e40) and 0x40aee8 (0x29e48). The only caller is cm848_applicationMain (bl at 0x54a64). e2m through the parameter ID table: 8A3D +0 Misfire_Timing_Limit -> 0x40aee8, 8A3D +2 SOI_Before_MST -> 0x40aeea. The only other store to 0x40aeea is at 0x29f04, in code at 0x29ecc that nothing calls (no bl, no pointer); that code copies 103B +2 SOI into 0x40aeea before it raises SOI to the limit. RAM dump: 0x40aeea = 0, 0x40aee8 = 60.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0002c100",
+    "current_name": "cm848_initProtectionLimitVariables",
+    "proposed_name": "cm848_initializeGovernorTuningSetBlendWeight",
+    "role": "Power-up initialization of the all-speed governor tuning set blend weight from its EEPROM default.",
+    "discriminator": "One step: it copies governor_tuning_set_default_blend_weight_cal (EEPROM 0xa4, e2m 1387 +8 ASG_Droop_Flag_Trim) into governor_tuning_set_blend_weight. The only other writer of that word is cm848_blendAllSpeedGovernorReferenceSpeeds.",
+    "plate_comment": "Copies governor_tuning_set_default_blend_weight_cal (EEPROM 0xa4, e2m 1387 +8 ASG_Droop_Flag_Trim 'select droop source') into governor_tuning_set_blend_weight. That word is the 0..128 weight between the all-speed governor's two tuning sets; cm848_blendAllSpeedGovernorReferenceSpeeds later picks it from drivetrain_ratio. Called once from cm848_applicationMain (was cm848_initProtectionLimitVariables).",
+    "evidence": "disasm 0x2c100-0x2c110: lhz 0x3fd526 (0x2c108) -> sth 0x40af7c (0x2c10c); blr. The only caller is cm848_applicationMain (bl at 0x54a1c). e2m: 1387 +8 -> EEPROM 0xa4 = 0x3fd526. Writers of 0x40af7c: this function and cm848_blendAllSpeedGovernorReferenceSpeeds (0x2bf6c). Readers: the governor tuning blends (cpp lines 10290-10409 and 48373-48400). RAM dump 0x40af7c = 128.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00038a98",
+    "current_name": "cm848_initProtectionFilterLimits",
+    "proposed_name": "cm848_initializeFuelPressureGovernorFaultBlend",
+    "role": "Power-up initialization of the state of the fuel pressure governor fault blend (step 13 of the fuel limit chain).",
+    "discriminator": "It writes only the state words of cm848_applyFuelPressureGovernorFaultBlend: its lookup cache (2), the blend output and the blend start fuel (5888 = 400 mm3, no limit) and the blend fraction (0).",
+    "plate_comment": "Power-up initialization of cm848_applyFuelPressureGovernorFaultBlend (fueling state 62): safety_fuel_limit_cached_axis_offset = 2, safety_fuel_blend_output and safety_blend_fuel_demand_prev = 5888 (400 mm3, no limit), safety_fuel_blend_fraction = 0. Called once from cm848_applicationMain (was cm848_initProtectionFilterLimits).",
+    "evidence": "disasm 0x38a98-0x38ac4: li 2 -> sth 0x3fb3c2 (0x38aa0); li 5888 -> sth 0x40b31e (0x38aac) and 0x40b320 (0x38ab4); li 0 -> sth 0x40b322 (0x38ac0). The only caller is cm848_applicationMain (bl at 0x54d28). cm848_applyFuelPressureGovernorFaultBlend (0x3889c, the last step of the fuel limit chain 0x4280c) reads and writes all four words. RAM dump: 0x40b31e = 1030, 0x40b320 = 5888, 0x40b322 = 0, 0x3fb3c2 = 2.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0003eccc",
+    "current_name": "cm848_setThermalProtectionMode5",
+    "proposed_name": "cm848_setTorqueManagementTransmissionType3Code",
+    "role": "Stores the 32-bit value 5 at 0x3fb500 in the transmission_type_cal 3 branch of the torque management requirement check. That branch never runs.",
+    "discriminator": "It makes the only access to 0x3fb500 in ROM and flash2 (a 32-bit store of 5). Its only caller is the transmission_type_cal == 3 branch of cm848_evaluateTorqueManagementRequired. The body has nothing thermal in it.",
+    "plate_comment": "Stores 5 as a 32-bit word in torque_management_transmission_type_3_code (0x3fb500, next to torque_management_gear_ratio_stage) for transmission_type_cal 3. That is the one branch of cm848_evaluateTorqueManagementRequired that sets neither the required flag nor the stage. Nothing reads the word (no other access in ROM or flash2, no e2m record, 0 in the RAM dump), and the call never happens: cm848_runTorqueManagement, the only caller of cm848_evaluateTorqueManagementRequired, skips torque management when transmission_type_cal is 3 (3 in this calibration; the app never writes that EEPROM word). Nothing thermal (was cm848_setThermalProtectionMode5).",
+    "evidence": "disasm 0x3eccc-0x3ecd8: li r11,5; stw r11 -> 0x3fb500 (0x3ecd4); blr. The only caller is bl at 0x3ee94 in cm848_evaluateTorqueManagementRequired, after lha 0x3fd934 (transmission_type_cal) and cmpwi 3 (0x3ecec / 0x3ed08). The only caller of cm848_evaluateTorqueManagementRequired is bl at 0x3f304 in cm848_runTorqueManagement. Before that call it does lha 0x3fd934, cmpwi 3, bne (0x3f2e8-0x3f2f0); for type 3 it stores 5888 into the torque management fuel limit instead (0x3f2fc). The ppcrefs.py d-form scan and the baserefs.py base-register scan of ROM and flash2 find no other access to 0x3fb500-0x3fb503. RAM dump at 0x3fb500: 00000000. The code does not show what the value 5 means.",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0004280c",
+    "current_name": "cm848_processProtectionLimits",
+    "proposed_name": "cm848_runFuelLimitChains",
+    "role": "Runs the derate fuel limit chain that produces torque_derate_fuel_quantity / torque_derate_fuel_source_code and the group 2 minimum.",
+    "discriminator": "It is the 13-step chain: first the seven steps shared with CM550 (initializeFuelLimitChains .. applyFuelSystemDerateFuelLimit) in the same order, then six CM848 limiters (coolant overheat, torque management, rpm and demand, net torque, rail pressure shortfall, fuel pressure governor fault blend). Counterpart of cm550_runFuelLimitChains.",
+    "plate_comment": "Runs the fuel limit chains that produce torque_derate_fuel_quantity / torque_derate_fuel_source_code (e2m 105D +0 / +2) and the group 2 minimum fuel_demand_minimum_tracked (105D +6 / +8). The steps, with their fueling state codes: initializeFuelLimitChains (19 / 40), applyPowerTakeOffTorqueLimit (34), applyAirFuelControlFuelLimit (16), applyAltitudeDerateFuelLimit (15), applyFaultDerateFuelLimit (29), applyTsc1TorqueLimit (20), applyFuelSystemDerateFuelLimit (28), cm848_applyCoolantOverheatFuelDerate (46), cm848_applyTorqueManagementFuelLimit (45), cm848_applyFuelLimitByRpmAndDemand (42), cm848_applyNetTorqueFuelLimit (59), cm848_limitFuelQuantityOnRailPressureShortfall (61), cm848_applyFuelPressureGovernorFaultBlend (62). Called by cm848_arbitrateRequestedFueling before cm848_convertTorqueDerateTorqueLimitToFuelLimit. Counterpart of cm550_runFuelLimitChains (0x30c3c): the same seven shared steps in the same order, without CM550's steps 17 / 33 and with six newer limiters (was cm848_processProtectionLimits).",
+    "evidence": "disasm 0x4280c-0x42858: bl 0x1f318 (0x42818), 0x2a918, 0xe0c4, 0x502af4, 0x509510, 0x427cc, 0x4279c, 0x513ddc, 0x3f35c, 0x4b9ac, 0x3cefc, 0x519e2c, 0x3889c (0x42848), and no other code. The only caller is bl at 0x1e60c (cm848_arbitrateRequestedFueling). CM550 0x30c3c calls initializeFuelLimitChains, applyPowerTakeOffTorqueLimit, cm550_applyAccelerationNoiseControlFuelLimit, applyAirFuelControlFuelLimit, applyAltitudeDerateFuelLimit, applyFaultDerateFuelLimit, applyTsc1TorqueLimit, applyFuelSystemDerateFuelLimit, cm550_applyEngineWarmupProtectionFuelLimit, 0x45252 and 0x455c8. The steps differ, so it is a counterpart. The state codes are FUELING_STATE members (enums.csv).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0004eeb8",
+    "current_name": "hpcr_initProtectionAndOutputCycle",
+    "proposed_name": "cm848_initializeSwitchInputStates",
+    "role": "Power-up initialization of the debounced switch inputs: the default states, one input line snapshot and four scan-and-debounce passes.",
+    "discriminator": "It is the only code that seeds switch_input_state_bits from the ROM defaults and then runs cm848_scanAndDebounceSwitchInputs four times in a row after one cm848_refreshInputLineImage, which fills the 4-sample debounce. Nothing in it concerns protection or outputs, and nothing is HPCR-specific, so cm848_ replaces hpcr_.",
+    "plate_comment": "Power-up initialization of the logical switch inputs. It copies the 4 bytes of j1939_switch_input_default_state_bits (ROM, all 0) into switch_input_state_bits, takes one input line snapshot (cm848_refreshInputLineImage) and runs cm848_scanAndDebounceSwitchInputs 4 times, so the 4-sample debounce starts from the real line states. Called once from cm848_applicationMain before the sensor channel initializers (was hpcr_initProtectionAndOutputCycle).",
+    "evidence": "disasm 0x4eeb8-0x4ef20: a loop of lbzx 0x6456e[i] -> stbx 0x40c050[i] for i < 4 (0x4eedc-0x4eef0); bl 0x533e0 (0x4eef4); a loop of bl 0x4eb48, 4 times (0x4eefc-0x4ef0c). The only caller is cm848_applicationMain (bl at 0x54930). ROM 0x6456e = 00000000. The cm848_scanAndDebounceSwitchInputs plate describes a 4-sample debounce (all 4 set -> set, all 4 clear -> clear, else hold) into switch_input_state_bits.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0050e000",
+    "current_name": "cm848_validateFuelDemandRelativeToTiming",
+    "proposed_name": "cm848_calculateEngineLoadLowHorsepowerCurvePercent",
+    "role": "Calculates the percent load on the low horsepower torque curve (e2m 10BF +4 Tau_0_Percent_Load).",
+    "discriminator": "Its only output is engine_load_low_horsepower_curve_percent (10BF +4 SPT0PCLD): (final_fueling - no_load) x 25600 / (throttle_100_fueling_low_horsepower_curve - no_load), clamped at 0xff00, and 0 unless both fuelings are above the no-load fuel. Nothing in it concerns timing or validation.",
+    "plate_comment": "Percent load on the low horsepower torque curve (e2m 10BF +4 Tau_0_Percent_Load [SPT0PCLD], 1/256 percent), every 100 ms from cm848_periodicTaskGroup28_calibration10, right after cm848_calculateEngineLoadPercentages. When final_fueling (1051 +0) and throttle_100_fueling_low_horsepower_curve (105A +2 FST0MXFL) are both above no_load_fuel_quantity (109C +0) it stores (final_fueling - no_load) x 25600 / (the low horsepower curve fueling - no_load), clamped at 0xff00; otherwise it stores 0. Counterpart of cm550_calculateEngineLoadLowHorsepowerCurvePercent (0x26e2c), which compares unsigned and does not clamp (was cm848_validateFuelDemandRelativeToTiming).",
+    "evidence": "disasm 0x50e000-0x50e09c. lhz 0x40a2ce final_fueling (0x50e014) and lhz 0x40aeec no_load (0x50e01c), cmpw / ble (0x50e020 / 0x50e024). lha 0x40a899 (0x50e02c), cmpw / ble. subf, li 25600, mulhwu / mullw, then bl 0x571b0 divides by (0x40a899 - no_load) (0x50e060). cmplwi 65280 -> 0xff00 (0x50e068-0x50e074); else li 0 (0x50e080). sth -> 0x40af26 (0x50e088). The only caller is bl at 0xbde8 (cm848_periodicTaskGroup28_calibration10, the 20-frame slot, phase 3). e2m: 10BF +4 -> 0x40af26, 105A +2 -> 0x40a899, 1051 +0 -> 0x40a2ce, 109C +0 -> 0x40aeec. CM550 0x26e2c uses unsigned bls compares, x 25600 by shifts, divu.l, and stores with move.w and no clamp (0x26e48-0x26e76), so it is a counterpart; CM550's plate already names this one.",
+    "confidence": "high"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM848",
+    "address": "0x0040aeea",
+    "current_name": "injection_timing_pid_init_flag",
+    "proposed_name": "main_injection_timing_before_misfire_limit",
+    "proposed_type": "i16",
+    "comment": "e2m 8A3D +2 SOI_Before_MST 'Desired SOI before being limited by misfire algorithm' (DEG, signed, 0.1171875 per count; address from the ECU's parameter ID table). Cleared at power-up by cm848_initializeInjectionTimingMainMisfireLimit. Its only other store (0x29f04) is in code at 0x29ecc that nothing calls; that code copies main_injection_timing_copy (103B +2 SOI) here before it raises SOI to injection_timing_main_misfire_limit. 0 in the RAM dump. It is not a flag and has nothing to do with a PID (was injection_timing_pid_init_flag).",
+    "evidence": "e2m_block_addresses.py --address 0x40aeea -> 8A3D +0002 SOI_Before_MST [DEG]. CHR_CC_11.45.01.07.e2m line 7925: type N, length 2, signed (S), scale 0.1171875. ppcrefs.py finds two stores: sth at 0x29e40 (the initializer) and sth at 0x29f04 (r5 from lha 0x40a2f0), and no reads. RAM dump 0000.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040aee6",
+    "current_name": "fuel_demand_filter_dimension",
+    "proposed_name": "maximum_torque_at_current_engine_speed",
+    "proposed_type": "word",
+    "comment": "The maximum engine torque in lb-ft at the filtered engine speed (e2m MT_Max_Torque_At_RPM_Ftlb [MTMPRPFL] 'max torque at current rpm in foot-pounds'). Its block 1461 is not in this ECU's parameter ID table, but CM550's word with the same role, 0x80db1a, resolves to 1461 +0. cm848_calculateFuelDemandFilter blends the MT_Max_Torque_Map lookups (maximum_torque_map_grid at alpha 0 and at the two chi rows) by combustion_reference_state and turns 0 into 1; cm848_initFuelDemandFilterDimensions sets it to 1. Read by cm848_calculateEngineOutputTorque, cm848_calculateJ1939ReferenceEngineFueling and cm848_convertTorqueDerateTorqueLimitToFuelLimit; 290 in the RAM dump (was fuel_demand_filter_dimension).",
+    "evidence": "Writers: cm848_calculateFuelDemandFilter 0x29c98 (base addi at 0x29d84; the cm848_interpolateAlphaChiValue result) and cm848_initFuelDemandFilterDimensions (sth 0x29de8 = 1). Readers: lhz 0x17ee8 (cm848_calculateEngineOutputTorque), 0x1e504 (0x1e4e8) and lhz 0x20518 (cm848_calculateJ1939ReferenceEngineFueling). CM550 0x1c0d4 uses 0x80db1a in the same position; --firmware cm550 --address 0x80db1a gives 1461 +0 MTMPRPFL. CM848's e2m 1461 +0 MT_Max_Torque_At_RPM_Ftlb is 'not in the dumped table'. RAM dump 0x0122 = 290 lb-ft. Not a protection_* row; batch L1 found the same role.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fb500",
+    "current_name": "subsystem_init_code",
+    "proposed_name": "torque_management_transmission_type_3_code",
+    "proposed_type": "dword",
+    "comment": "32-bit word that only cm848_setTorqueManagementTransmissionType3Code stores (stw 5 at 0x3ecd4). That function runs in the transmission_type_cal 3 branch of cm848_evaluateTorqueManagementRequired, which never runs because cm848_runTorqueManagement skips type 3. The word has no reader and no e2m record, and is 0 in the RAM dump; the code does not show what 5 means (was subsystem_init_code).",
+    "evidence": "The 32-bit stw at 0x3ecd4 is the only access to 0x3fb500..0x3fb503 (ppcrefs.py d-form scan and baserefs.py base-register scan over ROM and flash2). The next row is 0x3fb504; the row before is 0x3fb4fe torque_management_gear_ratio_stage. RAM dump 00000000. The dword width comes from the stw (the decompiler prints _subsystem_init_code).",
+    "confidence": "low"
+   }
+  ],
+  "enum_members": [],
+  "skipped": [],
+  "notes": "Scratch notes and scripts are in /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L4/investigator/ (notes.md, slots.py, findptr.py, whichfunc.py, ppcrefs.py, baserefs.py).\nJudgment calls:\n(1) All four task sets take the CM550 round 93 slot names (cm848_runEvery<N>FramesTaskSetPhase<M>), including 0xbce8, which has a single task, because CM550 named its single-task sets by slot too. The other CM848 task sets keep role names, some of them wrong (cm848_periodicTaskSet_canTx calls no CAN transmit), or meaningless group numbers (cm848_periodicTaskGroup<N>_calibration<M>). Lead: rename them all by slot. 8-frame slot: canTx 0 / sensors2 1 / timing 3 / outputs 4 / sensors 5 / monitoring 6 / communication 7. 10-frame slot: Group12..15 = phases 0..3, Group17 = 5, Group18 = 6; phases 7..9 are empty. 20-frame slot: Group25..32 = phases 0..7, auxiliary 9, periodicTaskSet_fuelDemand 10, Group36..38 = 11..13, diagnostics2 14, Group20..22 = 15..17, outputs2 19. 4-frame slot: fuelFinal 0 / sensorProcessing 1 / controlLoop 2 / auxiliaryControl 3.\n(2) For 0x1e4e8, batch L1 decides the CM550 relation. L1's notes reach the same conclusion: counterpart, because CM550 0x1c0d4 resets the torque limit at its end. If L1 agrees, the same base name with the cm550_ prefix would pair the two.\n(3) 0x3eccc gets a descriptive name, with medium confidence, for code that is unreachable under any calibration. The meaning of the value 5 is unknown.\nLeads:\n- Code at 0x29ecc-0x29f38 is not in function_renames and nothing calls it (no bl, no pointer). It applies the misfire timing limit to 103B +2 SOI, writes SOI_Before_MST and stores intermediate source 11 (e2m 103B label 0B MISFIRE). INJECTION_TIMING_INTERMEDIATE_SOURCE has no member 11.\n- cm848_calculateFuelDemandFilter (0x29c98) and cm848_initFuelDemandFilterDimensions (0x29de0) are misnamed: they compute and initialize the maximum torque at the current engine speed (MT_Max_Torque_Map), with no fuel demand filter.\n- 0x40aeda governor_integrator_correction_term is only ever cleared (0x28b94) and read (0x20ba4, 0x507a84), so the LSG droop correction of the torque curve point 1 never applies.\n- The fault blend globals 0x40b31e / 0x40b320 / 0x40b322 / 0x40b324 / 0x40b326 (safety_*; 'prev' is an abbreviation) could take fuel_pressure_governor_fault_blend_* names.\n- Comments that still use the old names need a text sweep after the renames: global_variables.csv rows for 0x3faa72, 0x3faa7a, 0x3fd526, 0x40a2d8, 0x40a2da, 0x40adac, 0x40adb6, 0x40afac, 0x40c04a, 0x5c34c, 0x5c352, 0x5c334, 0x5c336; structure_definitions.csv lines 1853 and 2070; the function_renames.csv header line 19 (CM848D periodicTaskSet_protection <-> CM550 periodicTaskSet_governorProtection); the plates of 0x20d10, 0x21cd4, 0x3f2b0, 0x49df0, 0x533e0 and 0x538a84.\nNone of the batch functions owns a protection_* global."
+ },
+ "blind": {
+  "batch": "L4",
+  "roles": [
+   {
+    "address": "0x0000bb68",
+    "role": "Executive frame task set, every-8-frames slot, phase 2. executiveFrameInterruptHandler (0xc0a0, a 40-case jump table on executive_frame_phase) calls it as call 4 of frames 2, 10, 18, 26 and 34 (40 ms at the 5 ms frame). It calls cm848_runTorqueManagement (0x3f2b0), cm848_cruiseControlPeriodicUpdate (0x512ff4) and cm848_filterEngineSensorValue (0x4922c) and nothing else (asm 0xbb68-0xbb8c).",
+    "discriminator": "Its slot: the other every-8 call-4 sets are canTx (phase 0), sensors2 (1), timing (3), outputs (4), sensors (5), monitoring (6) and communication (7). Its three callees have no shared role (torque management, cruise control, a sensor filter), so the slot is the only name. No callee protects anything. Convention: CM550 round 93 cm550_runEvery<N>FramesTaskSetPhase<k>. (In CM848's older index numbering this set would be periodicTaskGroup6.)",
+    "suggested_name": "cm848_runEvery8FramesTaskSetPhase2",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: counterpart by slot only (cm550_runEvery8FramesTaskSetPhase2 0x1b678 calls other, undumped functions), no twin, so it keeps the cm848_ prefix."
+   },
+   {
+    "address": "0x0000bce8",
+    "role": "Executive frame task set, every-10-frames slot, phase 4: call 5 of frames 4, 14, 24 and 34 (50 ms). Its only call is cm848_startEepromBlockRead (0x4bd5c).",
+    "discriminator": "Phase 4 of the every-10 call-5 slot. cm848_periodicTaskGroup12..15 fill phases 0-3 and Group17/18 fill phases 5-6, so this is the missing Group16. It has one callee, but CM550 round 93 also names single-call sets by slot (cm550_runEvery10FramesTaskSetPhase5 calls only cm550_runLampControl). It does nothing protective: it starts an EEPROM block read.",
+    "suggested_name": "cm848_runEvery10FramesTaskSetPhase4",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: slot counterpart cm550_runEvery10FramesTaskSetPhase4 0x1b6f2 (other callees), not a twin."
+   },
+   {
+    "address": "0x0000beb4",
+    "role": "Executive frame task set, every-20-frames slot, phase 8: call 5 of frames 8 and 28 (100 ms). It calls cm848_calculateChargingVoltageTarget (0x375c8), cm848_monitorChargingSystemVoltageHighAndLow (0x37f28), cm848_updateFuelPressureFaultReactionRequests (0x49df0) and cm848_applyFuelLimitsForFuelPressureFaults (0x49edc).",
+    "discriminator": "Frames 8 / 28. The callees are two unrelated pairs (charging system voltage, rail pressure fault reactions), so there is no single role and the slot gives the name.",
+    "suggested_name": "cm848_runEvery20FramesTaskSetPhase8",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: slot counterpart cm550_runEvery20FramesTaskSetPhase8 0x1b7e0 is empty (a single rts), not a twin."
+   },
+   {
+    "address": "0x0000c050",
+    "role": "Executive frame task set, every-20-frames slot, phase 18: call 5 of frames 18 and 38. It calls cm848_updateSwitch31FromAcceleratorPedal (0x2c3c8), cm848_calculateEngineRetarderCruisePermissionPercent (0x524594) and cm848_monitorFuelSystemHardwareShutdown (0x529068).",
+    "discriminator": "Frames 18 / 38. Its three callees are unrelated. The wrapper only dispatches, so the hpcr_ prefix is not warranted: the slot belongs to the CM848 executive.",
+    "suggested_name": "cm848_runEvery20FramesTaskSetPhase18",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: slot counterpart cm550_runEvery20FramesTaskSetPhase18 0x1b85a (other callee), not a twin."
+   },
+   {
+    "address": "0x0001e4e8",
+    "role": "Turns the torque derate torque limit into a fuel limit and folds it into the derate minimum. If the maximum torque at the current speed (0x40aee6) is 0 it sets it to 1. Then fuel = no_load_fuel_quantity (e2m 109C +0) + torque_derate_torque_limit (1051 +A TQDQTQ, lb-ft) x (throttle_100_fueling_without_programmable_power (105A +8) - no_load_fuel_quantity) / that maximum torque, using a signed 64/32 divide (cm848_signedDivision32), with a floor at 0. When the result is below torque_derate_fuel_quantity (105D +0 FSLMFL), it is stored there with torque_derate_fuel_source_code = torque_derate_torque_limit_state (1051 +C).",
+    "discriminator": "It is the only derate step that converts a TORQUE (lb-ft) into fuel: a straight line from the friction fuel at 0 torque to the full-throttle fuel at the maximum torque for this speed. It is also the only one that copies its source code from torque_derate_torque_limit_state. The chain steps in 0x4280c fold ready-made fuel limits with fixed codes, and applyPowerTakeOffTorqueLimit only lowers the torque limit that this function converts. Its only caller is cm848_arbitrateRequestedFueling 0x1e5a4 (when torque_derate_override_enable = 0), which presets the torque limit to 0xffff / NO_DERATE, runs 0x4280c and then this function. The code has no rate limit and no protection.",
+    "suggested_name": "cm848_applyTorqueDerateTorqueLimitAsFuelLimit",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550 cm550_FUN_0001c0d4 @ 0x1c0d4 is a COUNTERPART, not a twin. It uses the same formula (cm550_scaleByRatioSigned, with 0x80db1a = e2m 1461 +0 MTMPRPFL, max torque at current rpm) and the same min-fold, but it also resets torque_derate_torque_limit to 0xffff / NO_DERATE at its end. CM848 does that reset in its caller before the chain. Batch L1 owns the CM550 side."
+   },
+   {
+    "address": "0x0001ea6c",
+    "role": "Writes 2 (first segment) into both words of four_dimensional_injection_timing_map_a_cached_axis_offsets (0x3fa878) and four_dimensional_injection_timing_map_b_cached_axis_offsets (0x3fa87c) (asm: li r3,2 plus four sth). These are the lookup caches of the two 4D timing maps that only cm848_calculateFourDimensionalInjectionTiming (0x1e870) interpolates. cm848_applicationMain calls it once, at boot.",
+    "discriminator": "It touches only the two 4D injection timing map caches. Same pattern as cm848_initializeCombustionLimitLookupCaches / cm848_initializeTorqueLookupCaches / cm848_initializeColdDeltaFuelLookupCache. No table sizes and nothing protective.",
+    "suggested_name": "cm848_initializeFourDimensionalInjectionTimingLookupCaches",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: none found (no 4D timing map caches in its globals)."
+   },
+   {
+    "address": "0x00020b84",
+    "role": "Sets point 1 (the idle point) of the J1939 PGN 65251 engine configuration torque curve. The speed j1939_torque_curve_speed_at_point_1 (e2m 1102 +22 Jcomm_RPM_At_Point_1, 'LSG Reference') = low_speed_governor_reference.reference_speed. When algorithm_enable_flags_12_cal.low_speed_governor_droop_enable is set and the droop term 0x40aeda is nonzero, it subtracts (term x j1939_derated_fueling_at_idle) / 167 and clamps at 0. The fueling j1939_torque_curve_fueling_at_point_1 (1102 +2C) = j1939_derated_fueling_at_idle (1104 +A JCDQFLIS, 'fueling at idle ... when torque derate').",
+    "discriminator": "It writes only point 1, from the derated idle fueling. cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling (0x20c64) writes points 2/5. cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints (0x507a20) computes the same droop-adjusted speed with the fault derate intercept fueling. Callers: cm848_updateJ1939EngineConfigurationTorqueCurve 0x20d10, cases 2 / 3 (altitude or air fuel control derate), and through 0x20bfc in cases 6 / 7. Nothing protective.",
+    "suggested_name": "cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: not identified."
+   },
+   {
+    "address": "0x00020bfc",
+    "role": "Calls 0x20b84 (point 1) and then sets point 3 of the J1939 PGN 65251 torque curve. If the current point 3 speed (0x40adb0) is below the new point 1 speed (0x40adac), point 3 takes point 1's speed and fueling. Otherwise point 3 = j1939_engine_speed_at_point_3 (e2m 1104 +4) and j1939_derated_fueling_at_point_3 (1104 +C) (asm 0x20c08-0x20c50).",
+    "discriminator": "It is the only function that sets points 1 and 3 together, with the 'point 3 not below point 1' rule. cm848_updateJ1939EngineConfigurationTorqueCurve calls it in cases 6 / 7 (low speed governor reference outside its idle band plus an altitude or air fuel control derate), and in cases 2 / 3 it calls 0x20b84 alone.",
+    "suggested_name": "cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: not identified."
+   },
+   {
+    "address": "0x00021c3c",
+    "role": "When no request bit higher than the throttle 100 bit (1 << throttle_100_priority_bit_index, e2m 12BD +A Throttle_100_Priority) is set in j1939_pgn65251_speed_points_request_flags (e2m 12BB +0), it writes all five J1939 torque curve SPEEDS. Point 1 = LSG reference speed + j1939_pgn65251_speed_at_point_1_low_speed_governor_offset (12BD +0), clamped at 0. Point 2 = engine_speed_limit_ramped. Points 3/4/5 = Throttle_Speed_At_Point_3..5 (12BD +2/+4/+6). It writes no fuelings.",
+    "discriminator": "It is the throttle 100 source of the PGN 65251 speed points. Its priority-gated sibling for the fault derate source is cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints (0x507a20). Its only caller is cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings 0x21cd4, which runs it while programmable_power_enable = 0, after it sets the throttle 100 bit. The 'IfLow' in the old name is this priority test. No thresholds and no protection.",
+    "suggested_name": "cm848_setThrottle100J1939TorqueCurveSpeedPoints",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: not identified."
+   },
+   {
+    "address": "0x00023a9c",
+    "role": "Start-up initialization of the engine retarder TSC1 request and stage selection. It sets engine_retarder_torque_limit_percent = 100, engine_retarder_override_control_mode = TSC1_OVERRIDE_OFF and engine_retarder_control_device_indicator = J1939_CONTROL_DEVICE_NONE. It sets engine_retarder_stage_count = the sum of engine_retarder_driver_1..6_cylinder_count (e2m 13D8 Jcomm_EB_Driver_n_Num_Cyl) and writes 2 into engine_retarder_torque_stage_1..5_cached_axis_offset. Called once at boot: cm848_applicationMain -> cm848_initCanHardware -> cm848_j1939_system_init.",
+    "discriminator": "It is the only writer of the stage count and of the five stage torque lookup caches, which only cm848_selectEngineRetarderStagePercent (0x234a4) reads. resetEngineRetarderTsc1Request (0x27118) is the run-time end of a request (limit 125, clears the timers; no stage count or caches). cm848_initializeEngineRetarderRequestState (0x421c8) handles the output chain, and cm848_initializeEngineRetarderTorqueLookupCache (0x2156c) handles the ERC1 lookups. No governor and no protection.",
+    "suggested_name": "cm848_initializeEngineRetarderStageSelectionState",
+    "confidence": "medium",
+    "cm848_counterpart": "CM848 function itself. CM550: none found (its reset twin resetEngineRetarderTsc1Request 0x23216 sets 0x7d; no dumped CM550 code sets the limit to 100 or builds a stage count)."
+   },
+   {
+    "address": "0x00029e24",
+    "role": "Start-up reset of the misfire timing limit. It writes 2 into both words of injection_timing_main_misfire_limit_cached_axis_offsets (0x3fafa4) and 0 into 0x40aeea (e2m 8A3D +2 SOI_Before_MST) and into injection_timing_main_misfire_limit (0x40aee8, 8A3D +0 Misfire_Timing_Limit) (asm 0x29e24-0x29e4c). Its only call is the bl at 0x54a64 in cm848_applicationMain.",
+    "discriminator": "It initializes exactly the outputs and the cache of cm848_calculateInjectionTimingMainMisfireLimit (0x29e50), and with it forms an initialize/calculate pair. No filter, no accumulator and no protection.",
+    "suggested_name": "cm848_initializeInjectionTimingMainMisfireLimit",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550 has a misfire timing limit (grid 0x80794e, output 0x80a26e BSTAMNLM), but its initializer was not identified."
+   },
+   {
+    "address": "0x0002c100",
+    "role": "One store at boot: governor_tuning_set_blend_weight (0x40af7c; 0 = tuning set 1, 128 = set 2 of the all-speed governor) = governor_tuning_set_default_blend_weight_cal (0x3fd526, EEPROM mirror +0xa4, e2m 1387 +8 ASG_Droop_Flag_Trim 'select droop source'). The caller is the cm848_applicationMain boot list.",
+    "discriminator": "It is the start-up writer of the all-speed governor tuning set blend weight. The run-time writer is cm848_blendAllSpeedGovernorReferenceSpeeds (0x2bf6c), and the readers are the ASG no-load fuel, compensator and equivalent throttle functions. No limit and no protection.",
+    "suggested_name": "cm848_initializeAllSpeedGovernorTuningSetBlendWeight",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: not identified."
+   },
+   {
+    "address": "0x00038a98",
+    "role": "Start-up reset of the fuel pressure governor fault blend. It sets safety_fuel_limit_cached_axis_offset (0x3fb3c2) = 2, safety_fuel_blend_output (0x40b31e) = 0x1700 (5888 = no limit), safety_blend_fuel_demand_prev (0x40b320) = 0x1700 and safety_fuel_blend_fraction (0x40b322) = 0. The caller is the cm848_applicationMain boot list.",
+    "discriminator": "Every word it writes is used only by cm848_applyFuelPressureGovernorFaultBlend (0x3889c, derate code 62), which makes the two an initialize/apply pair. These words have no e2m records.",
+    "suggested_name": "cm848_initializeFuelPressureGovernorFaultBlend",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: none (the code 62 blend is CM848-only in the chain)."
+   },
+   {
+    "address": "0x0003eccc",
+    "role": "A 4-instruction leaf that stores the 32-bit value 5 to 0x3fb500 (li r11,5; stw). The row is a word, which is why the decompile shows _subsystem_init_code. Its only call is the transmission_type_cal == 3 branch of cm848_evaluateTorqueManagementRequired (0x3ecdc). That branch calls it and returns without touching torque_management_required_flag.",
+    "discriminator": "That branch cannot run. The only caller, cm848_runTorqueManagement (0x3f2b0), skips the evaluator when transmission_type_cal == 3 (it sets the limit to 0x1700 instead). transmission_type_cal (EEPROM +0x4b2) is 3 (48RE) in cm848_eeprom.bin, and the app never writes it. Nothing reads 0x3fb500: a lis/D-form scan of the ROM and flash2, the decompile and the e2m all show no other access, and the RAM dump holds 0. The code contains nothing thermal and nothing protective. The output has no reader, so the code does not show a purpose; the name is only a description of the store.",
+    "suggested_name": "cm848_setTorqueManagementTransmissionType3Code",
+    "confidence": "low",
+    "cm848_counterpart": "CM848 function itself. CM550: none found."
+   },
+   {
+    "address": "0x0004280c",
+    "role": "Runs the derate fuel limit chain (13 bl in order): initializeFuelLimitChains, applyPowerTakeOffTorqueLimit, applyAirFuelControlFuelLimit, applyAltitudeDerateFuelLimit, applyFaultDerateFuelLimit, applyTsc1TorqueLimit, applyFuelSystemDerateFuelLimit, then the CM848-only cm848_applyCoolantOverheatFuelDerate, cm848_applyTorqueManagementFuelLimit, cm848_applyFuelLimitByRpmAndDemand, cm848_applyNetTorqueFuelLimit, cm848_limitFuelQuantityOnRailPressureShortfall and cm848_applyFuelPressureGovernorFaultBlend. Each step lowers torque_derate_fuel_quantity and records its source (the power take-off step lowers the torque limit instead).",
+    "discriminator": "It is the chain runner. Its only caller is cm848_arbitrateRequestedFueling 0x1e5a4, between the torque limit preset and 0x1e4e8. It runs no protection of its own.",
+    "suggested_name": "cm848_runFuelLimitChains",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550 cm550_runFuelLimitChains @ 0x30c3c is a COUNTERPART, not a twin. It has the same first seven shared steps in the same order, but it adds 17 (acceleration noise control) and 33 (warm-up) plus two undumped calls, and it lacks CM848's six steps. So CM848 gets the cm848_ prefix of the same name."
+   },
+   {
+    "address": "0x0004eeb8",
+    "role": "Start-up initialization of the debounced switch inputs. It copies the 4 bytes j1939_switch_input_default_state_bits (ROM 0x6456e, all 0) into switch_input_state_bits (0x40c050, the 32 logical switches), calls cm848_refreshInputLineImage (0x533e0) once, and then calls cm848_scanAndDebounceSwitchInputs (0x4eb48) four times, the four samples its debounce needs. cm848_applicationMain calls it once, early in boot.",
+    "discriminator": "It is the only code that presets switch_input_state_bits and fills the 4-sample debounce before the periodic tasks run (the run-time scan is in the task sets). Nothing in it is protective, it drives no output cycle, and nothing is HPCR-specific, so cm848_ rather than hpcr_.",
+    "suggested_name": "cm848_initializeSwitchInputs",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550: not identified."
+   },
+   {
+    "address": "0x0050e000",
+    "role": "Calculates engine_load_low_horsepower_curve_percent (0x40af26, e2m 10BF +4 Tau_0_Percent_Load SPT0PCLD, 'Percent Load based on Low HP Torque curve', 1/256 percent) = (final_fueling (1051 +0) - no_load_fuel_quantity (109C +0)) x 25600 / (throttle_100_fueling_low_horsepower_curve (105A +2 FST0MXFL) - no_load_fuel_quantity), with an unsigned divide and a clamp at 0xff00 (asm 0x50e068). The result is 0 unless both fuelings are above the no-load fuel. It reads no timing input.",
+    "discriminator": "It is the only writer of the low horsepower curve percent load. cm848_periodicTaskGroup28_calibration10 runs it (frames 3 / 23 = every 20 frames, phase 3) right after cm848_calculateEngineLoadPercentages. Nothing in it validates fuel demand or touches timing.",
+    "suggested_name": "cm848_calculateEngineLoadLowHorsepowerCurvePercent",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 function itself. CM550 cm550_calculateEngineLoadLowHorsepowerCurvePercent @ 0x26e2c is a COUNTERPART, not a twin. It uses the same four records and the same formula in the same slot (cm550_runEvery20FramesTaskSetPhase3, right after cm550_calculateEngineLoadPercentages), but it has no 0xff00 clamp. So CM848 gets the cm848_ prefix of the same name."
+   }
+  ],
+  "notes": "Describer for L4. Notes and the scanner script: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L4/describer/notes.md and tools/dform_refs.py.\n\nTASK SETS: the slots come from the disassembly of executiveFrameInterruptHandler 0xc0a0 (the bl order in each of the 40 cases matches the decompile). Each frame makes these calls: 1 phase_common (every frame); 2 group_a / group_b (every 2); 3 fuelFinal / sensorProcessing / controlLoop / auxiliaryControl (every 4); 4 the every-8 sets; 5 the every-10 sets (phases 0-6) or every-20 sets (phases 8/9/18/19); 6 the other every-20 sets. The proposed names follow CM550's round 93 convention (runEvery<N>FramesTaskSetPhase<k>). In the older CM848 index numbering they would be Group6 / Group16 / Group33 / Group23.\n\nNO protection_* GLOBALS: none of the 17 functions touches a protection_* global, so I propose none of that kind. Two other globals that these functions own or read are misnamed, with proof:\n(1) 0x40aeea injection_timing_pid_init_flag = e2m 8A3D +2 SOI_Before_MST, 'Desired SOI before being limited by misfire algorithm'. 0x29e24 zeroes it. A leaf routine at 0x29ecc writes it. Ghidra did not split that routine out (it sits inside 0x29e50's span), and no bl, pointer or lis/addi reaches it. When misfire_timing_limit_enable is set and injection_timing_intermediate_source_code = 0, it copies main_injection_timing_copy 0x40a2f0 into 0x40aeea, then raises 0x40a2f0 to the misfire limit (clears bit 0 of 0x40a2f4, source 11). It is loaded with lha. Proposed name: injection_timing_main_before_misfire_limit, typed i16 (the name is free).\n(2) 0x40aee6 fuel_demand_filter_dimension is the maximum torque in lb-ft at the current engine speed. cm848_calculateFuelDemandFilter 0x29c98 writes it from MT_Max_Torque_Map (e2m 1460) at the filtered engine speed, blended by chi and alpha (RAM dump: 290). CM550 uses the same quantity in the same formula (0x1c0d4) as 0x80db1a, e2m 1461 +0 MTMPRPFL 'max torque at current rpm in foot-pounds'. CM848's block 1461 is not in the dumped parameter ID table, so the code proves the meaning but no record proves the address. Proposed name: maximum_torque_at_current_engine_speed (free). Rename cm848_calculateFuelDemandFilter at the same time.\n(3) 0x3fb500 subsystem_init_code is stored as a dword (stw) and has no reader (see 0x3eccc). It could be retyped to dword; no name is proven.\n\nOther findings: transmission_type_cal = 3 in the dump, so the type-3 branch of cm848_evaluateTorqueManagementRequired can never run (its caller bypasses the evaluator for type 3). That makes 0x3eccc unreachable under any calibration. Its suggested name is a low-confidence description of the store only. The current name of 0x3eccc ('thermal protection mode 5') has no support in the code."
+ },
+ "verdict": {
+  "batch": "L4",
+  "overall": "I re-derived all 17 CM848 functions from the code. Method: my own decode of the 40-entry jump table of executiveFrameInterruptHandler (0xc198); a scan of every load and store in ROM and flash2, built on disasm_func.find_accesses; a scan for addresses built in registers; a bl / b / pointer search; e2m records; and the RAM dump.\n\nResult: 15 function names CONFIRMED as proposed and 2 AMENDED.\n- 0x2c100 is AMENDED to the describer's cm848_initializeAllSpeedGovernorTuningSetBlendWeight. Every user of the weight is an all-speed governor function, and CM848 has several other governors, so a bare 'Governor' does not say which one.\n- 0x3eccc keeps its proposed name, but its plate is corrected. The plate said the type 3 branch is the only branch of cm848_evaluateTorqueManagementRequired that sets neither the flag nor the stage. Any transmission_type_cal value outside 0-3 also returns without either.\n\nAll 3 globals are CONFIRMED (0x40aeea i16, 0x40aee6 word, 0x3fb500 dword).\n\nNo CM550 twin is proven; 0x4280c, 0x1e4e8 and 0x50e000 are counterparts:\n- CM550 0x30c3c has extra steps 17 and 33 plus two undumped calls, and lacks CM848's six limiters.\n- CM550 0x1c0d4 resets the torque limit itself at its end (0x1c140 / 0x1c148); CM848 does it in the caller.\n- CM550 0x26e2c compares unsigned and has no 0xff00 clamp.\n\nThe names pair with the other batches: 0x1e4e8 with L1's cm550_convertTorqueDerateTorqueLimitToFuelLimit, and 0x40aee6 with the name L1 and L2 give CM550 0x80db1a. None of the 17 bodies touches a protection_* global (the only 'protection' text is 0x20bfc's call to 0x20b84), so no protection_* global rename is due.\n\nThe investigator's skipped[] is empty, and nothing should be skipped: each function has a discriminator in its own body.\n\nLeads for later rounds:\n- Name the other CM848 task sets by slot too; their periodicTaskGroup<N>_calibration<M> and role names carry no meaning.\n- cm848_calculateFuelDemandFilter / cm848_initFuelDemandFilterDimensions really compute and initialize the maximum torque at the current engine speed.\n- The uncalled leaf at 0x29ecc.\n- The safety_* fault blend globals (0x40b31e-0x40b326).\n- governor_tuning_set_blend_weight could take an all_speed_governor_ prefix.\n- Sweep the stale old names in comments, including the stale header pair on line 19 of function_renames.csv (periodicTaskSet_protection <-> periodicTaskSet_governorProtection).\n\nMy notes and scripts are in /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L4/judge/.",
+  "verdicts": [
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0000bb68",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_runEvery8FramesTaskSetPhase2",
+    "final_relation": "counterpart",
+    "own_role": "Executive frame task set of the 8-frame slot, phase 2: call 4 of frames 2/10/18/26/34 (40 ms). Calls only cm848_runTorqueManagement, cm848_cruiseControlPeriodicUpdate and cm848_filterEngineSensorValue, which share no role.",
+    "reason": "My own decode of the jump table at 0xc198 from the ROM bytes puts bl 0xbb68 as call 4 of exactly frames 2, 10, 18, 26 and 34. The only references are those bl instructions (no pointer). The body is bl 0x3f2b0 / 0x512ff4 / 0x4922c. The callees share no role, so the set is named by its slot in CM550's round 93 style. The name is free in both frozen CSVs. It is a counterpart only by slot: cm550_runEvery8FramesTaskSetPhase2 (0x1b678) calls undumped 0x449f4 / 0x451fa."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0000bce8",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_runEvery10FramesTaskSetPhase4",
+    "final_relation": "counterpart",
+    "own_role": "Executive frame task set of the 10-frame slot, phase 4: call 5 of frames 4/14/24/34 (50 ms). Its only call is cm848_startEepromBlockRead, the periodic EEPROM mirror reload.",
+    "reason": "The jump table decode gives call 5 of frames 4, 14, 24 and 34; those are the only references. The body is bl 0x4bd5c only. Naming a single-task set by its slot matches CM550 round 93 (cm550_runEvery10FramesTaskSetPhase5). The plate's '30-word block' is right: the QSPI job is 32 words, a command word, an address word and 30 data words, and cm848_onEepromBlockRead copies words 2-31. It is a counterpart by slot of CM550 0x1b6f2, which calls other functions."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0000beb4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_runEvery20FramesTaskSetPhase8",
+    "final_relation": "counterpart",
+    "own_role": "Executive frame task set of the 20-frame slot, phase 8: call 5 of frames 8/28 (100 ms). CM848 leaves the 10-frame slot empty at phases 7-9. It runs the charging voltage target, the charging system voltage monitor, the fuel pressure fault reaction requests and the fuel limits for fuel pressure faults.",
+    "reason": "The jump table decode gives call 5 of frames 8 and 28 (after 0xb76c 0xb7b4 0xb8fc 0xbb18 / 0xbbb8); those are the only references. The body is bl 0x375c8, 0x37f28, 0x49df0, 0x49edc. That is two unrelated jobs, so the set is named by its slot. It is a counterpart by slot of cm550_runEvery20FramesTaskSetPhase8 (0x1b7e0, empty)."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0000c050",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_runEvery20FramesTaskSetPhase18",
+    "final_relation": "counterpart",
+    "own_role": "Executive frame task set of the 20-frame slot, phase 18: call 5 of frames 18/38 (100 ms). Calls cm848_updateSwitch31FromAcceleratorPedal, cm848_calculateEngineRetarderCruisePermissionPercent and cm848_monitorFuelSystemHardwareShutdown, which are unrelated.",
+    "reason": "The jump table decode gives call 5 of frames 18 and 38; those are the only references. The body is bl 0x2c3c8, 0x524594, 0x529068. The dispatcher has nothing specific to the common rail, so cm848_ replaces hpcr_ (hpcr_ marks high pressure common rail code). It is a counterpart by slot of cm550_runEvery20FramesTaskSetPhase18 (0x1b85a)."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0001e4e8",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_convertTorqueDerateTorqueLimitToFuelLimit",
+    "final_relation": "counterpart",
+    "own_role": "Turns torque_derate_torque_limit (1051 +A, lb-ft) into fuel and keeps it when lower. If 0x40aee6 (the maximum torque at the current engine speed) is 0 it first sets it to 1. Fuel = no_load_fuel_quantity + limit x (throttle_100_fueling_without_programmable_power - no_load) / that maximum torque (64-bit divide), floored at 0. When the result is below torque_derate_fuel_quantity (105D +0), it is stored there and torque_derate_fuel_source_code takes torque_derate_torque_limit_state (1051 +C).",
+    "reason": "The disassembly at 0x1e4e8-0x1e5a0 matches both roles. The whole-image scan shows it is the only reader of 0x40a2da, and that the only other users of 0x40a2d8 are the caller's preset (0x1e5fc) and applyPowerTakeOffTorqueLimit. The only caller is cm848_arbitrateRequestedFueling. With the override bit clear it presets the limit to 0xffff and state 40 (FUELING_STATE_NO_DERATE), then calls bl 0x4280c and bl 0x1e4e8. The code has no rate limit and no protection. CM550 0x1c0d4 resets 0x80d338 / 0x80d33a to 0xffff / 0x28 at its own end, so it is a counterpart, not a twin. The investigator's name pairs with both L1 roles' cm550_convertTorqueDerateTorqueLimitToFuelLimit, so I keep it over the describer's apply...AsFuelLimit. Every plate claim checks."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0001ea6c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeFourDimensionalInjectionTimingLookupCaches",
+    "final_relation": "standalone",
+    "own_role": "Power-up: stores 2 into both words of the two 4D injection timing map lookup caches (0x3fa878 and 0x3fa87c).",
+    "reason": "The asm is li 2 and four sth (0x3fa878 / 7a / 7c / 7e). These are the only stores to the caches, which are passed only to the lookups in cm848_calculateFourDimensionalInjectionTiming. The only caller is cm848_applicationMain (0x54994). The name follows the cm848_initialize<X>LookupCaches pattern and is free. Nothing in it concerns protection or table sizes."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00020b84",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling",
+    "final_relation": "standalone",
+    "own_role": "Sets PGN 65251 torque curve point 1. The speed (1102 +22) is the LSG reference speed (0x40aec2), less term x fuel / 167 only while flags_12 bit 0x40 is set and 0x40aeda is nonzero, with a floor at 0. The fueling (1102 +2C) is j1939_derated_fueling_at_idle (1104 +A, 'when torque derate').",
+    "reason": "The asm matches both roles. 0x40aeda has exactly one store, li 0 / sth at 0x28b94 in cm848_clearGovernorFilterAccumulators, so the droop branch is unreachable; the droop enable bit is also clear in the calibration (0x2e06). The jump table at 0x20e40 in cm848_updateJ1939EngineConfigurationTorqueCurve sends case 2 to 0x20e64 and case 3 to 0x20ef0, both bl 0x20b84; 0x20bfc also calls it. The name is free and matches its sibling cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00020bfc",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling",
+    "final_relation": "standalone",
+    "own_role": "Calls 0x20b84 for point 1, then sets point 3 (1102 +26 / +30). When the current point 3 speed (0x40adb0) is below the new point 1 speed, point 3 takes point 1's speed and fueling. Otherwise it takes the derated ROM point 3 (1104 +4 / 1104 +C).",
+    "reason": "The asm at 0x20bfc-0x20c60 matches. The jump table sends case 6 to 0x20ff4 and case 7 to 0x21080, both bl 0x20bfc, and there is no other caller. The builder's plate defines +4 as the LSG base reference outside its band and +2 as an altitude or air fuel control derate, so the plate's case description holds. The name is free."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00021c3c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_setThrottle100J1939TorqueCurveSpeedPoints",
+    "final_relation": "standalone",
+    "own_role": "The throttle 100 source of the PGN 65251 speed points. It returns when (0x40a732 & ~bit) > bit, with bit = 1 << throttle_100_priority_bit_index (12BD +A); that is, when a higher request bit is set. Otherwise it writes the five point speeds: LSG reference + offset (12BD +0, floor 0), engine_speed_limit_ramped (1063 +10), and 12BD +2 / +4 / +6. It writes no fuelings.",
+    "reason": "The asm at 0x21c3c-0x21cd0 matches both roles. The only caller, 0x21cd4, ORs throttle_100_speed_points_request_bit (0x3fa8ae) into 0x40a732 at 0x21d3c-0x21d48 just before bl 0x21c3c. The fault derate source with the same priority gate is cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints. The name is free."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00023a9c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeEngineRetarderTsc1RequestState",
+    "final_relation": "standalone",
+    "own_role": "Power-up of the J1939 engine retarder TSC1 path. It sets engine_retarder_torque_limit_percent = 100 (10E5 +2), override control mode off and control device none (10E6 +0 / +2). It also sets the stage count to the sum of the six driver cylinder counts (13D8, 'for J1939 ret. map'), and the five stage lookup caches to 2.",
+    "reason": "The asm matches both roles; they differ only in the name. I keep the investigator's name over the describer's StageSelectionState because all nine stores serve the retarder TSC1 request path. The stage quantizer cm848_selectEngineRetarderStagePercent is called only by cm848_processEngineRetarderTsc1Request (bl 0x238f4 / 0x23a74) and reads the override mode. The scan shows 0x23a9c is the only writer of the stage count (0x3faa72) and the caches. The TSC1 words are also written by the TSC1 handler and by resetEngineRetarderTsc1Request (limit 125). The name is distinct from cm848_initializeEngineRetarderRequestState (0x421c8, the output chain). CM550 never stores 100 to its 0x80d9ee (only 125, clr or a copy), so there is no twin. The caller order (after the 61440 / 65249 buffer setups) and the RAM values (100 / 0 / 0 / count 1) check."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00029e24",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeInjectionTimingMainMisfireLimit",
+    "final_relation": "standalone",
+    "own_role": "Power-up of the misfire timing limit (e2m 8A3D): both words of injection_timing_main_misfire_limit_cached_axis_offsets = 2, injection_timing_main_misfire_limit (0x40aee8) = 0, SOI_Before_MST (0x40aeea) = 0.",
+    "reason": "The asm at 0x29e24-0x29e4c matches. The only caller is cm848_applicationMain (0x54a64). The cache is used only by cm848_calculateInjectionTimingMainMisfireLimit, so the two functions form an initialize / calculate pair. There is no filter, accumulator or PID. The name is free."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0002c100",
+    "verdict": "AMENDED",
+    "final_name": "cm848_initializeAllSpeedGovernorTuningSetBlendWeight",
+    "final_relation": "standalone",
+    "own_role": "Power-up: governor_tuning_set_blend_weight (0x40af7c, the all-speed governor's 0..128 weight between its two tuning sets) = governor_tuning_set_default_blend_weight_cal (EEPROM 0xa4, e2m 1387 +8 ASG_Droop_Flag_Trim).",
+    "reason": "The asm (lhz 0x3fd526, sth 0x40af7c) matches both roles. The scan shows every other user of 0x40af7c is an all-speed governor function: cm848_calculateAllSpeedGovernorNoLoadFuel, cm848_calculateGovernorCompensatorCoefficients ('the all-speed governor's two droop gains'), cm848_blendAllSpeedGovernorReferenceSpeeds (the run-time writer) and cm848_calculateAllSpeedGovernorEquivalentThrottle. CM848 also has low speed, high speed, power take-off, road speed and fuel pressure governors, so the bare 'Governor' in the proposed name does not say which. The describer's name adds that and pairs with cm848_blendAllSpeedGovernorReferenceSpeeds. It is free. The proposal's plate has no error and stays."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00038a98",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeFuelPressureGovernorFaultBlend",
+    "final_relation": "standalone",
+    "own_role": "Power-up of cm848_applyFuelPressureGovernorFaultBlend (fueling state 62): cache 0x3fb3c2 = 2, output 0x40b31e and previous demand 0x40b320 = 5888 (400 mm3, no limit), fraction 0x40b322 = 0.",
+    "reason": "The asm matches. The scan shows every other access to these four words is in 0x3889c, so the two form an initialize / apply pair. 5888 x 0.067934784 (the MM3S scale) = 400 mm3. The only caller is cm848_applicationMain (0x54d28). The name is free."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0003eccc",
+    "verdict": "AMENDED",
+    "final_name": "cm848_setTorqueManagementTransmissionType3Code",
+    "final_relation": "standalone",
+    "final_comment": "Stores 5 as a 32-bit word in torque_management_transmission_type_3_code (0x3fb500, next to torque_management_gear_ratio_stage). Its only caller is the transmission_type_cal 3 branch of cm848_evaluateTorqueManagementRequired, which then returns without setting the required flag or the stage (type 0 sets the flag and the stage, types 1 and 2 the flag; any other value also returns without either). Nothing reads the word (no other access in ROM or flash2, no e2m record, 0 in the RAM dump), and the call never happens: cm848_runTorqueManagement, the only caller of cm848_evaluateTorqueManagementRequired, skips torque management when transmission_type_cal is 3 (3 in this calibration; the app never writes that EEPROM word). The code does not show what 5 means. Nothing thermal (was cm848_setThermalProtectionMode5).",
+    "own_role": "A leaf that stores the 32-bit value 5 to 0x3fb500, which nothing reads. It is called only in the transmission_type_cal 3 branch of cm848_evaluateTorqueManagementRequired. That branch is unreachable: cm848_runTorqueManagement stores 5888 and skips the evaluator for type 3 (0x3f2e8-0x3f300).",
+    "reason": "The name is kept; it describes the only thing the code shows. The asm is li 5 / stw at 0x3ecd4. The scan finds no other access to 0x3fb500-0x3fb503 and no address built in a register that points there. transmission_type_cal is only ever loaded. The comment is AMENDED because the proposal said the type 3 branch is 'the one branch' that sets neither the flag nor the stage. The decompile shows that any value outside 0-3 also returns without either (if != 3: return)."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0004280c",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_runFuelLimitChains",
+    "final_relation": "counterpart",
+    "own_role": "Runs the 13-step derate fuel limit chain: initializeFuelLimitChains, the six shared limiters in CM550's order, then six CM848 limiters (46, 45, 42, 59, 61, 62). It produces torque_derate_fuel_quantity / source (105D +0 / +2) and the group 2 minimum (105D +6 / +8).",
+    "reason": "The asm is 13 bl at 0x42818-0x42848 and nothing else; the only caller is bl 0x1e60c in cm848_arbitrateRequestedFueling. All step names and state codes match function_renames / enums.csv, and 105D +6 / +8 resolves to fuel_demand_minimum_tracked(_state). CM550 0x30c3c makes the same 7 shared calls in the same order but adds 0xb3b2 (17) and 0x17120 (33) and two undumped calls, and lacks CM848's six steps. So it is a counterpart, and the name pairs with cm550_runFuelLimitChains. The name is free in CM848."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0004eeb8",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeSwitchInputStates",
+    "final_relation": "standalone",
+    "own_role": "Power-up of the debounced switch inputs. It copies the 4 bytes of j1939_switch_input_default_state_bits (ROM 0x6456e, all 0) into switch_input_state_bits (0x40c050). It then takes one cm848_refreshInputLineImage snapshot and runs cm848_scanAndDebounceSwitchInputs 4 times, which fills the 4-sample debounce history.",
+    "reason": "The asm (a lbzx / stbx loop of 4, bl 0x533e0, then bl 0x4eb48 four times) matches both roles. The only caller is cm848_applicationMain (0x54930), just before the sensor channel initializers at 0x54938. Nothing in it concerns protection or outputs, and nothing is specific to the common rail, so cm848_ replaces hpcr_. Both names fit; the investigator's matches the main output, switch_input_state_bits. It is free."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x0050e000",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_calculateEngineLoadLowHorsepowerCurvePercent",
+    "final_relation": "counterpart",
+    "own_role": "Calculates engine_load_low_horsepower_curve_percent (0x40af26, 10BF +4 SPT0PCLD, 1/256 %) = (final_fueling - no_load) x 25600 / (throttle_100_fueling_low_horsepower_curve - no_load), clamped at 0xff00. It is 0 unless both fuelings are above the no-load fuel. It reads no timing.",
+    "reason": "The asm at 0x50e000-0x50e09c matches, and its only store is to 0x40af26. Its only caller is 0xbdd8 (20-frame slot, phase 3), which runs cm848_calculateEngineLoadPercentages just before it. CM550 0x26e2c uses unsigned bls compares, x25600 by shifts and divu.l, with no clamp. So it is a counterpart, and the name pairs with cm550_calculateEngineLoadLowHorsepowerCurvePercent. The name is free."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040aeea",
+    "verdict": "CONFIRMED",
+    "final_name": "main_injection_timing_before_misfire_limit",
+    "final_type": "i16",
+    "reason": "The parameter ID table resolves 0x40aeea to e2m 8A3D +2 SOI_Before_MST, 'Desired SOI before being limited by misfire algorithm' (CHR line 7925: signed, 0.1171875 DEG). The scan finds only two stores and no load. One is sth 0x29e40 (the initializer, 0). The other is sth 0x29f04 in a leaf at 0x29ecc, after the blr at 0x29ec8. No bl, b, pointer or register-built address reaches that leaf; it copies the lha of main_injection_timing_copy (103B +2) here. The RAM dump holds 0. i16 matches the signed record, and the name is free. The describer's injection_timing_main_before_misfire_limit is equally valid, so I see no reason to amend."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040aee6",
+    "verdict": "CONFIRMED",
+    "final_name": "maximum_torque_at_current_engine_speed",
+    "final_type": "word",
+    "reason": "Writers: cm848_calculateFuelDemandFilter (0x29db4 / 0x29dc8), the alpha / chi blend of the maximum_torque_map_grid lookups at the filtered engine speed, with 0 turned into 1; cm848_initFuelDemandFilterDimensions (= 1); and 0x1e514 (0 to 1). Readers: 0x17ee8 (engine output torque), 0x1e504 / 0x1e540 and 0x20518, all lhz / sth, so word. CM848's parameter ID table lacks block 1461. The CHR record 1461 +0 MT_Max_Torque_At_RPM_Ftlb (unsigned, minimum 1, 'max torque at current rpm in foot-pounds') matches the code's 0-to-1 guard, and CM550's 0x80db1a in the same formula resolves to 1461 +0. The RAM dump holds 290. The name is free, and L1 / L2 give CM550 0x80db1a the same name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fb500",
+    "verdict": "CONFIRMED",
+    "final_name": "torque_management_transmission_type_3_code",
+    "final_type": "dword",
+    "reason": "The only access in ROM and flash2 is the stw at 0x3ecd4 (32 bits), by the leaf renamed above; no address built in a register reaches it and it has no reader. The address lies in the boot kernel image window (ROM source 0x5930), but no boot call or pointer targets it, so it needs no thunk handling. It has no e2m record, and the RAM dump holds 0. The next row is 0x3fb504, so the dword overlaps no named row and clears the decompile's _subsystem_init_code. The name only describes its one writer; it claims no meaning for the value 5."
+   }
+  ]
+ }
+}

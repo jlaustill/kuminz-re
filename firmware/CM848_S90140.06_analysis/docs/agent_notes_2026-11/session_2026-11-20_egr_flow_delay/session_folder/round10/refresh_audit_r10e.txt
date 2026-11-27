@@ -1,0 +1,9 @@
+global_variables.csv 0x0040889a: ...n_protection_duty,word,Duty request (source code 9) while co[ld_start_injection_protection -> oling_fan_actuator_test_active]
+global_variables.csv 0x0040b57d: ...nverterClutchAndOverdrivePerformance. The previous ratio is [protection_pid_rpm_setpoint_prev -> converter_clutch_rationality_previous_ratio]
+global_variables.csv: rows only in HEAD (renamed): 11; only in the tree: 14
+function_renames.csv 0x0051ba6c: ...elta: converter_clutch_rationality_ratio_delta = saturate16([protection_pid_rpm_setpoint_prev -> converter_clutch_rationality_previous_ratio]
+function_renames.csv 0x0051ba6c: ...pdate 0x51ba1c; the monitor then stores the new sample into [protection_pid_rpm_setpoint_prev -> converter_clutch_rationality_previous_ratio]
+function_renames.csv 0x0051e894: ...0x0051e894,cm848_sciStartTimedOutputTest,[ -> Starts one SCI 0x13 actuator test (timer pointer, logical output, duration in ph]
+function_renames.csv 0x0051e914: ...Callback,SCI diagnostic link next-byte callback: command 19 [output test ( -> (0x13) actuator tests, ]
+function_renames.csv 0x0051e914: ...link next-byte callback: command 19 output test (only while [ -> the engine is stopped (a running engine or code 0 stops all tests). Codes (DRB n]
+function_renames.csv: rows only in HEAD (renamed): 5; only in the tree: 5

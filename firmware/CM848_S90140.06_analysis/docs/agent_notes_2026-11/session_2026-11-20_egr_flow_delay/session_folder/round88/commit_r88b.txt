@@ -1,0 +1,53 @@
+cm550 + cm848: round 88 stage B - the misname audit: 6 new twins, ENGINE_STATE, 37 J1939 transmit descriptors
+
+A workflow of 4 read-only investigators and 4 skeptics audited round 87's open leads in four groups; 179 changes
+(171 accepted, 8 amended), plus the skeptics' actions:
+- Twins (one unprefixed name in both firmwares): registerJ1939DiagnosticHandlers (CM550 0x11b36 / CM848 0x21a24),
+  registerJ1939DiagnosticService (0x2ee62 / 0x220e4), commandEngineShutdown (0x118fc, was
+  cm550_activateHighRpmShutdownFlag: it sets the engine shutdown command and tests no rpm / 0x216e8),
+  inhibitKeyOffShutdown (0x11a68 / 0x21904), initializeEngineState (0x18384 / 0x1c978, was cm848_initCrankingLimits),
+  handleJ1939CanTransmitInterrupt (0x1e056, was cm550_serialNodeAddressChecker / 0x53aa8).
+- The shared commitEepromMirrorToEeprom splits: CM550 answers through a deferred J1708 reply and returns 0xff, CM848
+  answers the J1939 request, so cm550_ / cm848_commitEepromMirrorToEeprom are counterparts.
+- CM550: cm550_loadParameterBlockAndUpdatePowerDownCounts (0x114d4, was vp44_validateRedundantSensors - it reads no
+  sensor), mc68k_restartBootRomWithoutReset (0x3abe), cm550_updateEngineState (0x17f7c, was vp44TimingFaultMonitor),
+  cm550_initializeRamRefresh / cm550_refreshRamCalibration (were cm550_canMemoryPointerTableInit /
+  cm550_canMessageMemorySyncController - nothing about CAN), cm550_handleJ1939CanReceiveInterrupt,
+  cm550_requestClearInactiveFaults. 0x1b6e2 / 0x1b666 (emptyStubFunction2 / 3) are rts tails of other functions with
+  no reference: deleted_functions.csv rows.
+- CM848: the register save / restore helpers cm848_saveRegisters26To31 / cm848_saveRegisters27To31 /
+  cm848_restoreRegisters26To31AndReturn / cm848_restoreRegisters27To31AndReturn (two were named
+  cm848_calibrationTableLookup1D / 2D), cm848_handleJ1939CanReceiveInterrupt, cm848_emptyStubFunction3; the J1939
+  transmit / receive message object numbers and engine_state_key_on_previous_flag.
+- CM550 globals: the power-down bookkeeping in CM848's names (power_cycle_sequence_number_cal,
+  completed_power_down_count_cal (was vp44_reset_count), incomplete / consecutive counts, the limit,
+  power_down_left_ecm_powered_flag_cal, eeprom_write_failure_flag_cal ...), the engine overspeed latch and its
+  calibration words (were intake / throttle threshold names), the crank exit / reentry speeds and jump start timer,
+  key_on_hour_meter, key_off_shutdown_inhibit_flag, engine_shutdown_command_flag, the RAM refresh pointers, the
+  DM8 payload (SPNs 1224-1228), port_e_output_image.
+- CM550 types: j1939_header_t becomes CM848's j1939_msg_hdr_t (can_id / data_length); j1939_tx_msg_t (37 transmit
+  descriptors, each with its j1939_<message>_transmit_status byte; the rows inside them were the descriptors' own
+  fields under VP44 / lift pump names, or unused); engine_overspeed_event_t (engine_overspeed_log, e2m 10DA
+  DGRPOSLF, 19 rows inside); j1939_diagnostic_service_entry_t (j1939_diagnostic_service_table[32]).
+- CM550 enums: ENGINE_STATE (CM848's members, 33 compares now name the state); J1939_DIAGNOSTIC_SERVICE members take
+  CM848's names (11).
+- Prototypes: cm550_sendCanMessage / cm550_multiPacketBufferAllocator / sendJ1939MultiFrame take j1939_tx_msg_t *;
+  the CAN handlers' parameter is message_object_number.
+- clearWorkingRam (both twins): dword * locals working_ram_pointer / chunk_end, so both loops read
+  working_ram_pointer + 1 and chunk_end = working_ram_pointer + 0x40.
+- Comments: the old names refreshed in every CSV (per firmware where the two rename an old name differently) and in
+  CM550's parameter_id_lookup_table.csv; parameter_by_id_system.md no longer calls the EEPROM commit shared.
+
+Proof:
+- CM550: verify DETERMINISTIC; 2 functions removed (the two rts tails, deleted on purpose), 0 added; the changes
+  beyond labels are the struct fields (descriptor header.can_id / data_length / data_pointer / status_pointer, the
+  overspeed log fields), ENGINE_STATE members for 1-8, removed descriptor casts, the clearWorkingRam locals, and
+  CONCAT31(can_id._0_3_, source address) for the source-address byte store (CM848 renders it the same way, 28
+  times); caller artifacts unchanged in total (CONCAT 111 -> 111) except cm550_sendJ1939MultiFrameWrapper, whose
+  call now shows the A2 value it pushes (move.l a2,-(sp) / jsr 0x22726); no existing local row moved; no new build
+  warning (unmapped types 5373 -> 5246; the 0x104e8 name-mismatch warning is gone).
+- CM848: verify DETERMINISTIC; label-only except clearWorkingRam (the two local rows) and one local declaration moved
+  in cm848_checkPciMessageTimeouts; no new build warning.
+- Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 27 -> 25).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,27 @@
+cm848: round 42 stage B - the engine retarder cylinder counts named after e2m 13D8 / 13D9, the stage table pointer named
+
+cm848_calculateEngineRetarderTorque's names said "stage weights". The e2m records the rows already cited say
+cylinder counts:
+- engine_retarder_stage_1..6_weight -> engine_retarder_driver_1..6_cylinder_count. These are 13D8 +2..+C
+  Jcomm_EB_Driver_N_Num_Cyl, "# of cyl. brakes driven by eb driver N for J1939 ret. map": 1 / 0 / 0 / 0 / 0 / 0 here.
+- engine_retarder_engaged_stage_count -> engine_retarder_cylinders_on_count: 13D9 +0 Engine_Brake_On_Sum, "number of
+  engine brake cylinders on", the sum over the engaged drivers.
+- The prefix follows the block's engine_retarder_output_driver_count (13D8 +0).
+- **The table pointer:** in_r6 is the engine_retarder_torque_stage_N_values table the count selects, now named
+  selected_stage_torque_values (local_variables.csv, word *).
+  - Ghidra calls it live-in because a count above 6 selects no table, and the lookup then reads whatever r6 held.
+  - With these driver counts the count is 0 or 1, so that path is not reachable in this calibration. The plate says
+    so.
+  - The "stage N" table names stay: no e2m record resolves for them, and table N is the one for N braking cylinders.
+- **Plate wording:** "the number of engaged retarder stages" becomes "the number of braking cylinders". A struct
+  comment naming the old weight is refreshed too.
+
+Proof:
+- statement_diff.py (the renames and in_r6 -> selected_stage_torque_values): 0 differing statements in
+  cm848_calculateEngineRetarderTorque.
+- mpc555_areBootModeStrapPinsHigh differs only in the order of its local declarations. The other 1966 functions match
+  the canonical form.
+- Thunks 18 / 14. lookup_tables.py: 0 sizing problems. Headers regenerated (0 g++ errors), tests pass. CM550 uses none
+  of the names.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,69 @@
+=== mc68k_can1TimerBufferInitConditional
+{
+uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),_ESSXSNEN) & 0xffff0001;
+if ((_ESSXSNEN & 1) != 0) {
+wVar1 = TPU_CPR0;
+TPU_CPR0 = wVar1 & 0xffcf;
+wVar1 = TPU_CIER;
+TPU_CIER = wVar1 & 0xfbff;
+wVar1 = TPU_CISR;
+TPU_CISR = wVar1 & 0xfbff;
+_eps_control_mode_param_1 =
+(int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+(uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+for (piVar3 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+piVar3 <= _eps_control_mode_param_1; piVar3 = piVar3 + 1) {
+*piVar3 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+}
+_eps_override_output_state =
+&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+if (_DAT_00807ec8 < 2) {
+_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+}
+else {
+_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 +
+(uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 * 4;
+}
+_pulse_period_sum_primary =
+_initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+(uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+uVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+(uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+_DAT_00800668 = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+TPU_CH10_PARAM0 = 0x8080;
+wVar1 = TPU_HSRR0;
+TPU_HSRR0 = wVar1 & 0xffcf;
+wVar1 = TPU_HSRR0;
+TPU_HSRR0 = wVar1 | 0x20;
+_rpm_timer_isr_function_pointer = vp44_FUN_0001a8a4;
+wVar1 = TPU_CFSR1;
+TPU_CFSR1 = wVar1 & 0xf0ff;
+wVar1 = TPU_CFSR1;
+TPU_CFSR1 = wVar1 | 0xd00;
+TPU_CH10_PARAM1 = 0x100;
+TPU_CH10_PARAM3 = 0;
+Ram00ffffa8 = 0;
+TPU_CH10_PARAM0 = 7;
+wVar1 = TPU_HSQR0;
+TPU_HSQR0 = wVar1 & 0xffcf;
+wVar1 = TPU_HSQR0;
+TPU_HSQR0 = wVar1 | 0x20;
+wVar1 = TPU_HSRR0;
+TPU_HSRR0 = wVar1 & 0xffcf;
+wVar1 = TPU_HSRR0;
+TPU_HSRR0 = wVar1 | 0x30;
+wVar1 = TPU_CIER;
+TPU_CIER = wVar1 | 0x400;
+wVar1 = TPU_CPR0;
+TPU_CPR0 = wVar1 & 0xffcf;
+wVar1 = TPU_CPR0;
+TPU_CPR0 = wVar1 | 0x20;
+_DAT_0080d090 = 0x1ab6a;
+_average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = uVar2;
+}
+if (speed_measurement_mode == '\0') {
+_speed_measurement_function_pointer = 0x17f74;
+}
+}

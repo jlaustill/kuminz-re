@@ -1,0 +1,17 @@
+cm848: round 20 stage B - algorithm_enable_flags_3_t, the cruise / road speed governor / PTO enables (types)
+
+algorithm_enable_flags_3_cal (0x3fd5a2, EEPROM 0x120) as a word bitfield, one bit per e2m 106B +8 record:
+power_take_off_enable (0x10), cruise_control_enable (0x40), road_speed_governor_enable (0x80),
+cruise_save_set_speed_at_power_down_enable (0x8000), plus idle_speed_adjust_enable / cruise_governor_droop_enable
+(e2m-named, no reader). Bit 8 has no record. Its two readers prove it:
+road_speed_governor_without_droops_below_top_gear makes the road speed governor a hard limit with no droop delta
+outside top gear. The ANC bits (12-14) keep reserved_bit_N, with their e2m names in the comments, because the e2m never
+spells ANC out and nothing reads them. 0xd0 on this truck (PTO, cruise, road speed governor).
+
+Every code use was a masked read, so the 16 tests now read algorithm_enable_flags_3_cal.cruise_control_enable == 0
+with no pieces (the piece count is unchanged at 464).
+
+Proof: normalize_r20b.py (each bit -> its mask) + cast_normalized_diff.py: 0 functions differ. Headers regenerated (0
+g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

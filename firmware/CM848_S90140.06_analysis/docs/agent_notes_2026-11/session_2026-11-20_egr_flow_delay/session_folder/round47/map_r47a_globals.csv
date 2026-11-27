@@ -1,0 +1,4 @@
+address,name,old_label,kind,dims
+0x0040a336,j1939_torque_and_load_not_available_flag,j1939_broadcast_enable_flag,global,1
+0x003fad92,j1939_eec1_actual_engine_percent_torque_byte,j1939_dm1_spn_fmi_byte,global,1
+0x0040be5e,throttle_valve_actuator_position_sensor_fault_status,sensor_diag_default_a,global,1

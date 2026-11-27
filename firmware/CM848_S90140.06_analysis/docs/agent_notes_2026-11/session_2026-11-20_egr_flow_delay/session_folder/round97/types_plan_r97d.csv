@@ -1,0 +1,12 @@
+firmware,file,owner,old,new,problem
+both,types,,can_std_rx_desc_t,can_standard_receive_descriptor_t,
+both,types,,diag_service_request_t,diagnostic_service_request_t,
+both,types,,diag_tp_state_t,diagnostic_transport_protocol_state_t,
+both,types,,diag_transfer_state_t,diagnostic_transfer_state_t,
+both,types,,j1939_tx_msg_buffer_t,j1939_transmit_message_buffer_t,
+both,types,,j1939_vp44_msg_t,j1939_vp44_message_t,
+both,types,,param_lookup_args_t,parameter_lookup_arguments_t,
+both,types,,sensor_config_t,sensor_configuration_t,
+both,types,,diag_clear_flags_t,diagnostic_clear_flags_t,
+both,types,,diag_write_request_state_t,diagnostic_write_request_state_t,
+both,types,,sensor_channel_config_t,sensor_channel_configuration_t,

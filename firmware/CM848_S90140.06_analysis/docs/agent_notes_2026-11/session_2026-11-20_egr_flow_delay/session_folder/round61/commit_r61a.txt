@@ -1,0 +1,39 @@
+cm848: round 61 stage A - both diagnostic service dispatch tables typed, the request check named, no more name-mismatch warnings
+
+The two dispatch templates kept in round 59 get the homes their own comments named. Round 59 / 60 had pointed them
+elsewhere.
+- ef00_dispatch_entry_t -> j1939_diagnostic_service_entry_t {byte service_id, byte pad, pointer handler} (6 bytes)
+  on j1939_diagnostic_service_table: RAM 0x3fa8b2, 32 slots, in the ROM-to-RAM window, and no boot call lands in it.
+  - cm848_j1939RegisterDiagnosticService appends {service, handler};
+  - cm848_j1939DiagnosticServiceHandler scans it for a PGN 61184 request's service byte.
+  - The type-only pointer row at 0x3fa8b4 goes.
+- diag_dispatch_entry_t -> boot_diagnostic_service_entry_t {byte service_id, pointer handler} (5 bytes, handler at
+  offset 1) on the boot kernel's diagnostic_service_dispatch_table (0x3fdb30).
+  - cm848_registerDiagnosticService appends and cm848_dispatchDiagnosticService scans.
+  - The arrays.csv byte[10] row becomes a global_variables.csv boot_diagnostic_service_entry_t[2] row, the same 10
+    bytes, short of the application's EEPROM mirror words from 0x3fdb3a. ApplyArrays maps primitive element types
+    only.
+- j1939_diagServiceDispatch -> cm848_validateJ1939DiagnosticRequest. It does not dispatch; it checks the request's
+  length and security key before the handler runs (0xff accepted / 2 wrong length / 0x1a key missing / 3 key
+  refused).
+- The 15 j1939_diagService plates said "registered with cm848_processJ1939DiagnosticRequest", the registrar's old
+  name. They now name cm848_j1939RegisterDiagnosticService, and the registrar's plate drops its note about them.
+- function_definitions.csv carried pre-rename names at 0x21918 / 0x220e4 / 0x227a0, which were the build's three
+  "Function name mismatch" warnings. Syncing them changes no render (the importer applied the prototypes anyway), and
+  the warnings are gone. The DM7 handler's parameter comment said DM1.
+- None of the names is in CM550.
+
+Proof (a type stage):
+- prove_r61.sh: exactly the four table functions differ (the two registrars and the two scanners), with no piece
+  renders.
+- diff_function_r57.py: table[i].service_id / .handler in the registrars, and ->service_id /
+  (*(code *)->handler)(...) / +1 steps in the scanners. The boot dispatcher's handler-address check now reads as a
+  pointer compare (0x6fffe < ->handler).
+- count_casts.py: 2 -> 1, 0 -> 0, 1 -> 1, 0 -> 0.
+- firmware_types.hpp: the two dispatch types renamed, nothing else.
+- verify is byte-identical; thunks 18 / 14; the build log has no name-mismatch warning now.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems. audit_cal_suffixes.py HARD 0 /
+  MISSING 219: the boot table's row is now in global_variables.csv, a boot-named row at a time-shared EEPROM mirror
+  address.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

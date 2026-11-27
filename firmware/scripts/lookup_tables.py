@@ -47,10 +47,10 @@ LOOKUPS = [
     Lookup("cm848_interpolateFuelMapTable", 0x15e08,
            {"x": (2, "r5"), "y": (3, "r6"), "x2": (4, "r7"), "y2": (5, "r8"), "y3": (6, "r9"),
             "y4": (7, "r10")}, None),
-    Lookup("sensorChannelTypeB_configInit", 0x5012dc, SENSOR_ROLES, (2, "r5", 1)),
-    Lookup("sensorChannelTypeB_update", 0x501b4c, SENSOR_ROLES, (2, "r5", 1)),
-    Lookup("sensorChannelConfigInit", 0x500234, SENSOR_ROLES, (2, "r5", 1)),
-    Lookup("updateSensorChannelWithConfig", 0x500a4c, SENSOR_ROLES, (2, "r5", 1)),
+    Lookup("cm848_processUnsignedSensorChannel", 0x5012dc, SENSOR_ROLES, (2, "r5", 1)),
+    Lookup("cm848_initializeUnsignedSensorChannel", 0x501b4c, SENSOR_ROLES, (2, "r5", 1)),
+    Lookup("cm848_processSignedSensorChannel", 0x500234, SENSOR_ROLES, (2, "r5", 1)),
+    Lookup("cm848_initializeSignedSensorChannel", 0x500a4c, SENSOR_ROLES, (2, "r5", 1)),
 ]
 AXIS_ROLES = ("x", "x2", "y_axis")
 DATA_AXIS = {"y": "x", "y2": "x2", "y3": "x2", "y4": "x2"}     # 1-D data role -> its axis role

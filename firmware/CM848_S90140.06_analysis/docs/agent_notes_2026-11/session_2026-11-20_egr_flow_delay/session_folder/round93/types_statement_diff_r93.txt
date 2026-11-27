@@ -1,0 +1,76 @@
+0x127c2 vp44_FUN_000127c2: statements 260 -> 261, lines 460 -> 461
+     @@ -5 +5 @@
+     -  short sVar3;
+     +  word wVar3;
+     @@ -11,2 +11,2 @@
+     -  short sVar9;
+     -  dword *pdVar10;
+     +  dword dVar9;
+     +  short sVar10;
+     @@ -15,4 +15,4 @@
+     -  char *pcVar13;
+     -  word *pwVar14;
+     -  short *psVar15;
+     -  undefined2 *puVar16;
+     +  dword *pdVar13;
+0x1d5a0 selectEngineSpeedLimit: statements 70 -> 71, lines 179 -> 176
+     @@ -4,0 +5 @@
+     +  short sVar3;
+     @@ -6 +7 @@
+     -  ushort uVar3;
+     +  word wVar4;
+     @@ -10 +11 @@
+     -    _hsg_droop_active_flag = 0;
+     +    hsg_droop_active_flag = 0;
+     @@ -13 +14 @@
+     -    _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 = *_DAT_0080d666;
+     +    hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 = *_DAT_0080d666;
+     @@ -18 +19 @@
+     -    if (_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 <
+     +    if (hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 <
+0x1f4e8 cm550_FUN_0001f4e8: statements 104 -> 103, lines 176 -> 173
+     @@ -8,5 +8,4 @@
+     -  short sVar6;
+     -  word wVar8;
+     -  tsc1_source_configuration_t *ptVar7;
+     -  short unaff_D3w;
+     -  bool bVar9;
+     +  word wVar7;
+     +  tsc1_source_configuration_t *ptVar6;
+     +  word unaff_D3w;
+     +  bool bVar8;
+     @@ -22,3 +21,3 @@
+     -  wVar8 = cm550_diagnosticMessageValidator(0,0x4a,uVar4);
+     -  if (wVar8 != 0) {
+     -    return (tsc1_source_configuration_t *)(uint)wVar8;
+0x1f8bc cm550_engineFluidLevelDataBuilder: statements 86 -> 85, lines 153 -> 152
+     @@ -7,4 +7,3 @@
+     -  short sVar4;
+     -  word wVar6;
+     -  tsc1_source_configuration_t *ptVar5;
+     -  short unaff_D3w;
+     +  word wVar5;
+     +  tsc1_source_configuration_t *ptVar4;
+     +  word unaff_D3w;
+     @@ -19 +18 @@
+     -  ptVar5 = (tsc1_source_configuration_t *)(*local_8 & 4);
+     +  ptVar4 = (tsc1_source_configuration_t *)(*local_8 & 4);
+     @@ -22,3 +21,3 @@
+     -    wVar6 = cm550_diagnosticMessageValidator(0,0x4f,override_control_mode);
+     -    ptVar5 = (tsc1_source_configuration_t *)(uint)wVar6;
+0x26fea cm550_insiteFaultDetailBuilder: statements 123 -> 124, lines 266 -> 266
+     @@ -9 +9 @@
+     -  ushort uVar7;
+     +  word wVar7;
+     @@ -11 +11 @@
+     -  byte *pbVar9;
+     +  ushort uVar9;
+     @@ -12,0 +13 @@
+     +  byte *pbVar11;
+     @@ -19 +20 @@
+     -           (insite_fault_change_queue_count + (char)_active_j1922_reportable_fault_count) * '\x02';
+     +           (insite_fault_change_queue_count + (char)active_j1922_reportable_fault_count) * '\x02';
+     @@ -25,3 +26,3 @@
+     -      uVar7 = 1;
+     -      while ((bVar5 <= active_dtc_list[0] && (bVar3 < _active_j1922_reportable_fault_count))) {
+5 functions with a different statement count

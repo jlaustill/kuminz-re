@@ -77,3 +77,9 @@ trans-temp corrections. Apply individually after confirming.
 - [other-indirect-dispatch] RE-DOMAIN FOLLOW-UP: the cm848_*ProtectionOutput* cluster (dispatcher 0x376dc + calculateProtectionOutputDemand 0x37a40 + filter/check/initProtectionFilterValues) is the charging/alternator voltage regulator - its working globals protection
 - [other-indirect-dispatch] Selector subsystem labels for fuel_demand/fuel_control/fuel_rate/cam_timing/cold_start/engine_rpm_diagnostic (_c/_d) are inferred from reader-function names (possibly guess-campaign) - marked Low - the hard facts (EEPROM cal + value=row = p
 - [other-indirect-dispatch] hpcr_protectionTimerMonitor calls the vtable +4 (MIOS duty) slot via (&PTR_LAB_0053ac4a)[*pwVar4*4] where pwVar4 points at an unresolved selector - possibly a 10th output-channel index - not traced. Single-callback fields (diag entry->handl
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_j1939HandleProprietaryCommand` → `cm848_j1939HandlePgn56832Reset`
+- `hpcr_initJ1939BufferValues` → `cm848_initializePciMessageStatusBytes`

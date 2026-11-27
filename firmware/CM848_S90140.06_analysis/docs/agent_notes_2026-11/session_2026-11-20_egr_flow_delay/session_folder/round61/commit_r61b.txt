@@ -1,0 +1,21 @@
+cm848: round 61 follow-up - two dropped field facts restored, verified
+
+Stage A's new field comments for the two dispatch entry types dropped two facts the old ones carried. Both are
+verified (fix_r61b.py; struct field comments do not render in the .cpp, so no rebuild; firmware_types.hpp
+regenerates with them, 0 g++ errors):
+- j1939_diagnostic_service_entry_t.service_id points at the EF00_SERVICE_ID enum again (24 members in enums.csv).
+- boot_diagnostic_service_entry_t.service_id lists the kernel's constant-ID registrations
+  (cm848_registerDiagnosticService): 0x0b / 0x10 / 0x18 acknowledge (no operation), 0x19 execute function, 0x41
+  service 65, and the 0x43 / 0x4a / 0x4c memory reads the old comment named.
+
+New leads in task 046:
+- type the J1939 service_id field as EF00_SERVICE_ID (pilot it);
+- cm848_validateJ1939DiagnosticRequest's plate says the key check runs when calibration_download_security_key_cal
+  "is set", but the code tests != 0xff (fix it at the next rebuild);
+- j1939_dm1_request_mode_byte holds the DM7 request's mode byte.
+
+Also checked: the .cpp keeps j1939_diagServiceDispatch once (its plate) and cm848_processJ1939DiagnosticRequest once
+(the registrar's was-note), with no DAT_003fa8b2 or old PTR_ label. The other-CSV refresh's one mention was the
+validator's function_definitions.csv row, which is why no new name-mismatch warning appeared.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

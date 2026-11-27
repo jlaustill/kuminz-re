@@ -1,0 +1,21 @@
+cm848: round 24 closing - docs, the session archive, verify, a CLAUDE.md fact
+
+- task 046: stages E and F, a stage B review fix (fault bits 306 / 307 have no DTC slot; the slot table holds u16
+  entries), and the round 24 leads:
+  - named fault bits (the user's call);
+  - diag_clear_flags_t's time-shared word;
+  - the executive timing record array;
+  - the sensor channel blocks;
+  - the TouCAN A register map;
+  - the kernel's response messages;
+  - j1939_can_ring_buf._pad16;
+  - e2m 1036 +0x64;
+  - definition flag 0x2000;
+  - the editing-firmware-csvs skill's outdated byte enum line, which is left unchanged.
+- firmware/CLAUDE.md, a factual correction to the stuck-warnings table: _pad5 was a real field (frame_queue_status,
+  stage D), and the _pad2 / _pad16 entries are struct field names, not Ghidra internals.
+- PR body, README, the todo line.
+- The session archive: the stage E / F scripts, the bit table, the build and verify logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

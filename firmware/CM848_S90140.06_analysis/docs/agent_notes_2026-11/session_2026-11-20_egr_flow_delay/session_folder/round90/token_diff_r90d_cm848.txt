@@ -1,0 +1,12 @@
+0x000227a0: 2 token changes: ( byte ) =>  | ( byte ) => 
+0x000255c0: 5 token changes: dest_address => test_identifier | byte fault_count => word test_value | undefined1 in_register_00000012 => word local_6 | undefined2 local_6 => j1939_pgn65232_payload . test_identifier = test_identifier | CONCAT11 ( in_register_00000012 , fault_count ) ; DAT_003fad6e = dest_address => test_value
+0x0002560c: 2 token changes: DAT_003fad6e => j1939_pgn65232_payload . test_identifier | DAT_003fad6f => j1939_pgn65232_payload . test_type_component_identifier
+---- census of distinct changes
+   2 ( byte ) => 
+   1 dest_address => test_identifier
+   1 byte fault_count => word test_value
+   1 undefined1 in_register_00000012 => word local_6
+   1 undefined2 local_6 => j1939_pgn65232_payload . test_identifier = test_identifier
+   1 CONCAT11 ( in_register_00000012 , fault_count ) ; DAT_003fad6e = dest_address => test_value
+   1 DAT_003fad6e => j1939_pgn65232_payload . test_identifier
+   1 DAT_003fad6f => j1939_pgn65232_payload . test_type_component_identifier

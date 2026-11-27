@@ -1,0 +1,239 @@
+=== cm848_sciCommand37Callback (lines 82666-82910, 238 non-blank)
+// Function: cm848_sciCommand37Callback @ 0x00520b14
+//
+/* next-byte callback for SCI command 0x25 (37) installed by cm848_sciCommand37Handler (0x520ad8) -
+   works on DAT_003fcf60 - reached only via sci_next_byte_handler - not a dead function |
+   registration-table-sweep reviewed 2026-11-13 */
+void cm848_sciCommand37Callback(void)
+{
+  byte bVar1;
+  byte bVar2;
+  uint uVar3;
+  uint uVar4;
+  (&DAT_003fcf61)[DAT_003fcf60] = *(undefined1 *)sci_buffer_cursor;
+  bVar2 = DAT_003fcf62;
+  bVar1 = DAT_003fcf61;
+  uVar4 = DAT_003fcf60 + 1;
+  DAT_003fcf60 = (byte)uVar4;
+  if ((uVar4 & 0xff) < 2) goto LAB_0052145c;
+  uVar4 = (uint)DAT_003fcf61;
+  if (DAT_003fcf61 == 0x11) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_voltage_active_flag = 1;
+      protection_voltage_active_timeout_count = 0xf;
+    }
+    else if (DAT_003fcf62 == 2) {
+      sci_buffer[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_voltage_active_flag = 0;
+      protection_voltage_active_timeout_count = 0;
+    }
+  }
+  else if (((DAT_003fcf61 == 0x14) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 1;
+      if ((governor_pressure_solenoid_output_channel_cal != 0) &&
+         (governor_pressure_solenoid_output_channel_cal < 0x33)) {
+        governor_pressure_solenoid_duty_command = DAT_00408ba0;
+        (**(code **)(&output_channel_driver_table_set_duty +
+                    (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+      }
+    }
+    else {
+      if (DAT_003fcf62 != 2) {
+        transmission_shift_strategy_flags.service_test_request_flags =
+             transmission_shift_strategy_flags.service_test_request_flags & 0xfe;
+        protection_throttle_output_timeout_count = 0;
+        goto LAB_005212a0;
+      }
+      sci_buffer[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 1;
+      if ((governor_pressure_solenoid_output_channel_cal != 0) &&
+         (governor_pressure_solenoid_output_channel_cal < 0x33)) {
+        governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
+        (**(code **)(&output_channel_driver_table_set_duty +
+                    (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+      }
+    }
+    protection_throttle_output_timeout_count = 0x19;
+  }
+  else if (((DAT_003fcf61 == 0x15) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 3;
+      cm848_setLogicalOutputRequest(0x12,5);
+    }
+    else {
+      if (DAT_003fcf62 != 2) {
+        transmission_shift_strategy_flags.service_test_request_flags =
+             transmission_shift_strategy_flags.service_test_request_flags & 0xfc;
+        if (logical_output_request_priority[0x12] == 5) {
+          logical_output_request_priority[0x12] = 0;
+        }
+        protection_load_derate_output_timeout_count = 0;
+        goto LAB_005212a0;
+      }
+      sci_buffer[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 3;
+      cm848_clearLogicalOutputRequest(0x12,5);
+    }
+    if ((governor_pressure_solenoid_output_channel_cal != 0) &&
+       (governor_pressure_solenoid_output_channel_cal < 0x33)) {
+      governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
+      (**(code **)(&output_channel_driver_table_set_duty +
+                  (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
+                (governor_pressure_solenoid_duty_minimum);
+    }
+    protection_load_derate_output_timeout_count = 10;
+  }
+  else if (((DAT_003fcf61 == 0x16) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 5;
+      cm848_setLogicalOutputRequest(0x11,5);
+    }
+    else {
+      if (DAT_003fcf62 != 2) {
+        transmission_shift_strategy_flags.service_test_request_flags =
+             transmission_shift_strategy_flags.service_test_request_flags & 0xfa;
+        if (logical_output_request_priority[0x11] == 5) {
+          logical_output_request_priority[0x11] = 0;
+        }
+        protection_engine_protection_output_timeout_count = 0;
+        goto LAB_005212a0;
+      }
+      sci_buffer[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 5;
+      cm848_clearLogicalOutputRequest(0x11,5);
+    }
+    if ((governor_pressure_solenoid_output_channel_cal != 0) &&
+       (governor_pressure_solenoid_output_channel_cal < 0x33)) {
+      governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
+      (**(code **)(&output_channel_driver_table_set_duty +
+                  (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+    }
+    protection_engine_protection_output_timeout_count = 10;
+  }
+  else if (((DAT_003fcf61 == 0x17) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags | 8;
+    }
+  }
+  else if (DAT_003fcf61 == 0x24) {
+    if ((DAT_003fcf62 == 1) && (engine_state == ENGINE_STATE_STOPPED)) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cm848_setLogicalOutputRequest(0x35,5);
+    }
+    else {
+      if ((DAT_003fcf62 != 2) || (engine_state != ENGINE_STATE_STOPPED)) goto LAB_005212a0;
+      sci_buffer[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cm848_clearLogicalOutputRequest(0x35,5);
+    }
+    protection_crank_fault_severity_timeout_count = 0x7d;
+  }
+  else if (DAT_003fcf61 == 0x25) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cylinder_diag_active_flag = 1;
+      protection_cylinder_diag_timeout_count = 0x5dc;
+    }
+    else if (DAT_003fcf62 == 2) {
+      sci_buffer[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cylinder_diag_active_flag = 0;
+      protection_cylinder_diag_timeout_count = 0;
+    }
+  }
+  else if (DAT_003fcf61 == 0x26) {
+    if (DAT_003fcf62 == 1) {
+      sci_buffer[sci_transmit_byte_count] = 1;
+      governor_speed_limit_enable_flag = 1;
+      protection_speed_limit_enable_timeout_count = 0x96;
+    }
+    else {
+      if (DAT_003fcf62 != 2) goto LAB_005212a0;
+      sci_buffer[sci_transmit_byte_count] = 2;
+      governor_speed_limit_enable_flag = 0;
+      protection_speed_limit_enable_timeout_count = 0;
+    }
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+  }
+LAB_005212a0:
+  if (((bVar1 == 0) || (bVar2 == 0)) || ((bVar1 - 5 < 6 && ((bVar2 == 1 || (bVar2 == 2)))))) {
+    sci_buffer[sci_transmit_byte_count] = bVar2;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    if ((bVar1 == 0) || (bVar2 == 0)) {
+      uVar4 = 0;
+      do {
+        if ((&DAT_003fcf64)[uVar4] != 0) {
+          DAT_003fcf63 = DAT_003fcf63 + -1;
+          (&DAT_003fcf64)[uVar4] = 0;
+          cylinder_cutout_test_mask = 0;
+        }
+        uVar4 = uVar4 + 1 & 0xff;
+      } while (uVar4 < 8);
+      protection_voltage_active_flag = 0;
+      if (logical_output_request_priority[0x35] == 5) {
+        logical_output_request_priority[0x35] = 0;
+      }
+      protection_voltage_active_timeout_count = 0;
+      cylinder_diag_active_flag = 0;
+      protection_cylinder_diag_timeout_count = 0;
+      governor_speed_limit_enable_flag = 0;
+      protection_speed_limit_enable_timeout_count = 0;
+    }
+    else {
+      uVar4 = uVar4 + 0xfb;
+      if (bVar2 == 1) {
+        uVar3 = uVar4 * 2 & 0x1fe;
+        if (*(short *)((int)&DAT_003fcf64 + uVar3) != 0) {
+          DAT_003fcf63 = DAT_003fcf63 + -1;
+          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 0;
+          cylinder_cutout_test_mask = cylinder_cutout_test_mask & ~(ushort)(1 << (uVar4 & 0x3f));
+        }
+      }
+      else {
+        uVar3 = uVar4 * 2 & 0x1fe;
+        if (*(short *)((int)&DAT_003fcf64 + uVar3) == 0) {
+          DAT_003fcf63 = DAT_003fcf63 + '\x01';
+          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+          cylinder_cutout_test_mask = cylinder_cutout_test_mask | (ushort)(1 << (uVar4 & 0x3f));
+        }
+        else {
+          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+        }
+      }
+    }
+  }
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+LAB_0052145c:
+  cm848_sciStartTransmit();
+  return;
+}
+//

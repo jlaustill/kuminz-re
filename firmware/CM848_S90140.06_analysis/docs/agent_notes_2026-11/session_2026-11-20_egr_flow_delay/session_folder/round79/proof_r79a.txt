@@ -1,0 +1,1 @@
+CM550: all 45 CAN rows render (no DAT_ / Ram left at a named address); 3 functions differ at statement level, all because the register block is volatile (each CS5 register access is kept instead of being folded as memory); the mask fix and the renames are label-only; verify DETERMINISTIC; CM848 unchanged; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

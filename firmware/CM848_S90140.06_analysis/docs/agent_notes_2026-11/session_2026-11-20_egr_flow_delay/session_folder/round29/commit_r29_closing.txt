@@ -1,0 +1,13 @@
+cm848: round 29 closing - task 046, the session archive, verify
+
+- task 046, the round 29 section:
+  - stage A: the transfer case low-range detector, the nine fault bits, the scan's other hits;
+  - the leads: faults 22 / 23 / 179 / 180 / 101 / 410 / 524 / 110, and the kernel transport parameter.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round29/: the scan, the worklist, the label table, the fault evidence scripts, the maps and the
+    commit messages;
+  - the large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

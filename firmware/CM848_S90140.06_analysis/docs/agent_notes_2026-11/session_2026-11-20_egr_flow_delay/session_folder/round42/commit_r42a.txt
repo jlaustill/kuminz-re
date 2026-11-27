@@ -1,0 +1,32 @@
+cm848: round 42 stage A - the per-fault-slot status records as a 3-byte struct
+
+fault_status_array (byte, 0x3feb92) and fault_status_word_array (word, 0x3feb93) overlapped. They are one table: a
+3-byte status record per fault slot, at EEPROM 0x1710 + 3 x slot. The slot is the fault's entry in the ROM 0x5985a
+table, and 22 application functions index it slot x 3. It is now fault_status_records_cal, typed
+fault_status_record_t.
+- **The fields:**
+  - flags (byte):
+    - 0x01: cleared at init;
+    - 0x0e: a 3-bit severity count;
+    - 0x10: the MIL request. The sensor monitors fall back to their defaults while it is set, and it clears at 3 heal
+      cycles;
+    - 0x60: the 2-bit heal cycle count;
+    - 0x80: a stored DTC (the OBD stored DTC count).
+  - status_word (word): bit 0 = active (the SCI active DTC report), bits 1 / 2 = flags, bits 3-9 = a 7-bit age.
+  - The flags stay a byte because the code updates them with read-modify-write masks (firmware/CLAUDE.md's bitfield
+    rule).
+- **Why one record, not [170]:** 170 records would run across the boot kernel's time-shared structures at
+  0x3fec7a-0x3fecf6 (reflash_transfer_state, boot_sci_session_state, diag_serial_buffer). So the struct is typed at the
+  base only. Ghidra renders the slot x 3 indexing through it, e.g. (&fault_status_records_cal)[slot].flags & 0x10, and
+  .status_word in place of *(ushort *)((int)&fault_status_word_array + slot * 3).
+- **Plates:** 8 references refreshed.
+
+Proof:
+- prove_status_records.py maps both forms to FS.flags / FS.status_word and drops the index set-up. That proves field
+  identity and statement structure, not the index.
+- Result: 0 differing statements in 23 of the 24 users. The 24th, fault_clearByIndex, keeps one old
+  param_1 = param_1 * 3, which the struct index absorbs.
+- The other 1944 functions are unchanged.
+- lookup_tables.py: 0 sizing problems. Thunks 18 / 14. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

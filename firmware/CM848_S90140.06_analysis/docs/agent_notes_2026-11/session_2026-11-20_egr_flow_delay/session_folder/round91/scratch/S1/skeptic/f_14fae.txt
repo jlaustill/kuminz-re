@@ -1,0 +1,6 @@
+014fae: 3f3c000a                 move.w #$a, -(a7)
+014fb2: 48790080bc9e             pea.l $80bc9e.l
+014fb8: 48790080bc8c             pea.l $80bc8c.l
+014fbe: 4eb90001c016             jsr $1c016.l
+014fc4: 4fef000a                 lea.l $a(a7), a7
+014fc8: 4e75                     rts 

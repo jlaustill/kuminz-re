@@ -1,0 +1,2 @@
+totals over the changed functions (before -> after): unaff_ 0 -> 0, extraout_ 19 -> 19, in_ 4 -> 4, uStack 0 -> 0, CONCAT 65 -> 65
+0 functions with a count that went up:

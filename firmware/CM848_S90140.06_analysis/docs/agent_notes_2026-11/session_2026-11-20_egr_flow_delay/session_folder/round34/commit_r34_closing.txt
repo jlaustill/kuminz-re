@@ -1,0 +1,16 @@
+cm848: round 34 closing - task 046, the session archive, verify
+
+- task 046, the round 34 section: stages A-C and their proofs, plus the round 35 leads:
+  - the boot session's misnamed qadc_a_* bytes;
+  - mpc555_sendJ1939TransportRequestToSend's header-pointer parameter;
+  - the receive session;
+  - round 33's leftovers.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round34/: the area census, the worklist, the apply scripts, the maps / tokens and the commit
+    messages. The .cpp copies are left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp. That includes
+  the dropped sendJ1939Message local row, which changed nothing.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

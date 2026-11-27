@@ -1,0 +1,87 @@
+=== cm848_calculateVehicleSpeedLimitFueling (lines 44300-44392, 86 non-blank)
+// Function: cm848_calculateVehicleSpeedLimitFueling @ 0x00040f80
+//
+/* WARNING: Removing unreachable block (ram,0x00041198) */
+/* Sets vehicle_speed_limit_fueling (FUELING_STATE_VEHICLE_SPEED_LIMIT when it wins the
+   arbitration): from the error between vehicle_speed_rise_limited and cruise_speed_limit_working
+   through vehicle_speed_limit_fueling_bottom_droop_gain / _d (5888 = no limit while
+   j1939_governor_feature_cal bit 0x80 is clear, fault 29 (P0500 vehicle speed sensor) is set or
+   TSC1 controls the engine); capped at adjusted_user_fueling + 58 while the limit governs (was
+   cm848_processProtectionRampTimer) */
+void cm848_calculateVehicleSpeedLimitFueling(void)
+{
+  uint uVar1;
+  uint uVar2;
+  dword dVar3;
+  if (((((j1939_governor_feature_cal & 0x80) == 0) ||
+       ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
+      (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
+     (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) {
+    vehicle_speed_limit_fueling = 0x1700;
+    return;
+  }
+  if (((j1939_governor_feature_cal & 0x100) == 0) ||
+     (drivetrain_gear_range == DRIVETRAIN_GEAR_RANGE_TOP_GEAR)) {
+    uVar1 = (uint)vehicle_speed_rise_limited;
+    uVar2 = (uint)cruise_speed_limit_working;
+    if (uVar2 < uVar1) {
+      if (vehicle_speed_limit_fueling_bottom_droop_gain != 0) {
+        cruise_mode_transition_flag = 1;
+        cruise_speed_reference_active = vehicle_speed_limit_fueling_bottom_droop_gain;
+        cruise_speed_deviation = (uVar1 - uVar2) * 0x400;
+        goto LAB_000410d0;
+      }
+      vehicle_speed_limit_fueling = 0;
+    }
+    else {
+      if (vehicle_speed_limit_fueling_top_droop_gain != 0) {
+        cruise_mode_transition_flag = 0;
+        cruise_speed_reference_active = vehicle_speed_limit_fueling_top_droop_gain;
+        cruise_speed_deviation = (uVar2 - uVar1) * 0x400;
+        goto LAB_000410d0;
+      }
+      vehicle_speed_limit_fueling = 0x1700;
+    }
+    cruise_speed_reference_active = 0;
+  }
+  else {
+    if (cruise_speed_limit_working < vehicle_speed_rise_limited) {
+      vehicle_speed_limit_fueling = 0;
+    }
+    else {
+      vehicle_speed_limit_fueling = 0x1700;
+    }
+    cruise_speed_reference_active = 0;
+  }
+LAB_000410d0:
+  if (cruise_speed_reference_active != 0) {
+    uVar1 = cruise_speed_deviation / cruise_speed_reference_active;
+    if (cruise_mode_transition_flag == 0) {
+      cruise_speed_deviation = uVar1 + vehicle_speed_limit_fueling_top_droop_offset;
+    }
+    else {
+      cruise_speed_deviation = vehicle_speed_limit_fueling_bottom_droop_offset - uVar1;
+    }
+    if ((int)cruise_speed_deviation < 0x1701) {
+      dVar3 = cruise_speed_deviation;
+      if ((int)cruise_speed_deviation < 0) {
+        dVar3 = 0;
+      }
+    }
+    else {
+      dVar3 = 0x1700;
+    }
+    vehicle_speed_limit_fueling = (word)dVar3;
+  }
+  if ((adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT) &&
+     (adjusted_user_fueling + 0x3a < (uint)vehicle_speed_limit_fueling)) {
+    if (adjusted_user_fueling + 0x3a < 0x1701) {
+      vehicle_speed_limit_fueling = adjusted_user_fueling + 0x3a;
+    }
+    else {
+      vehicle_speed_limit_fueling = 0x1700;
+    }
+  }
+  return;
+}
+//

@@ -1,0 +1,39 @@
+68 unprefixed; 38 not in CM550
+0x00021fc4 j1939_receivePgn56576Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 56576: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aab
+0x00044bf4 engine_injectionTiming_crankSyncDispatch | Crank-synchronous injection dispatcher. With engine_speed_limp_home_active_flag = 0 it waits until the TPU-A host service request bits clear, takes th
+0x000539fc sendJ1939Message | jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate
+0x0050b554 j1939_reverseByteOrder32 | 
+0x0050b58c j1939_reverseByteOrder16 | 
+0x0050b5b4 j1939_buildLampStatusByte | 
+0x0050b734 j1939_receivePgn57344Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 57344: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aab
+0x0050b77c j1939_receivePgn61441Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 61441 (EBC1): unpacks the message into working RAM (signal globals at 0x40aaa9-
+0x0050b8a4 j1939_receivePgn61443Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 61443 (EEC2): unpacks the message into working RAM (signal globals at 0x40aaa9-
+0x0050b98c j1939_receivePgn65252Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 65252: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aab
+0x0050b9d8 j1939_receivePgn65264Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 65264 (PTO): unpacks the message into working RAM (signal globals at 0x40aaa9-0
+0x0050bacc j1939_receivePgn65265Handler | J1939 receive handler registered with j1939_handlerInitializer for PGN 65265 (CCVS - cruise control / vehicle speed): unpacks the message into working
+0x0050c8ec initiateJ1939TransportProtocol | 
+0x0050cc18 j1939_transport_handleClearToSend | Application J1939 transport: matches the transmit session's destination + PGN; 0 packets = hold (timer 55) else sets the window | review-function-read
+0x0050ccbc j1939_transport_sendAbort | Application J1939 transport: sends TP.CM abort 0x18EC<destination><source> FF FF FF FF FF 00 PGN | review-function-readability reviewed 2026-11-11 - R
+0x0050cd54 j1939_transport_sendEndOfMessageAcknowledge | Application J1939 transport: sends TP.CM 0x13 (total bytes / packets / FF / PGN) | review-function-readability reviewed 2026-11-11 - Readability Mediu
+0x0050cdfc j1939_transport_sendClearToSend | Application J1939 transport: sends TP.CM 0x11 (packets allowed / next packet / FF FF / PGN) | review-function-readability reviewed 2026-11-11 - Readab
+0x0050ce90 j1939_transport_handleRequestToSend | Application J1939 transport: accepts only PGN 61184 / up to 1700 bytes / window of 5 or fewer (timer 112); otherwise aborts | review-function-readabil
+0x0050cfa8 j1939_transport_handleDataPacket | Application J1939 transport: registered for PGN 60160 (TP.DT): checks the sequence / copies 7 bytes / restarts the 25-tick timer / sends the next clea
+0x0050d144 j1939_transport_handleEndOfMessageAcknowledge | Application J1939 transport: closes the matching transmit session with status 9 | review-function-readability reviewed 2026-11-11 - Readability Medium
+0x0050d1ac j1939_transport_handleAbort | Application J1939 transport: closes the transmit session with status 10 or drops the matching receive session | review-function-readability reviewed 2
+0x0050d250 j1939_transport_dispatchConnectionManagement | Application J1939 transport: registered for PGN 60416 (TP.CM): 8-byte frames 0x10 request-to-send / 0x11 clear-to-send / 0x13 end-of-message acknowled
+0x0050d5d8 j1939_transport_timeout_decrement | 
+0x00515bac j1939_periodic_processing | 
+0x0051d840 phaseGroupB_ControlDispatchers | 
+0x00523750 initGovernorFlagsAux | 
+0x0052731c engine_injectionAngle_updateCutoutAndTimingDemand | Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank -> cylinder_cutout_mask; can clear TPU-A channel 4 enable bit) then the per-cyl
+0x00527938 engine_injectionAngle_accumulateInjectedFuel | injected_fuel_running_total += injection_fuel_quantity_snapshot - once per injection from the TPU-A channel 6 injection interrupt (was engine_injectio
+0x005280a4 engine_injectionAngle_tpuUpdate | 
+0x005283d0 engine_injectionAngle_tpuChannel10CylinderEventHandler | TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max -> cm848_evaluateInjectorDiagnostics) and starts the n
+0x00528508 engine_injectionAngle_writeTpuEvent | Converts an injection angle for a cylinder (wraps at 0x7800) into crank tooth number + fraction (tooth math from cam_wheel_pulse_count) and writes it 
+0x0052877c engine_injectionAngle_selectCylinderInjector | Per-cylinder injector selection from ROM tables 0x5f14e (bank) / 0x5f156 / 0x5f15e (output index; shifted by injection_cylinder_fault_index_offset whe
+0x00528978 engine_injectionAngle_lookupTimingTableOffset | injection_timing_table_offset = RPM-indexed table lookup (table state 0x3fd0b0) | review-function-readability reviewed 2026-11-11 - Readability Medium
+0x00529284 engine_injectionAngle_computeLoadCh6 | computes injection_timing_tooth_b + phase from cam/crank sync and loads TPU-A ch6 param 0x304162; no caller found in decompilation (pointer/tail-call?
+0x00529640 engine_injectionAngle_tpuChannel6EventHandler | TPU-A channel 6 interrupt: the injection scheduling state machine on injection_angle_sequence_state. State 1 runs the cut-out, quantity and timing dem
+0x00537b50 sensorChannelConditionValidator | 
+0x00538c8c diag_record_queue_add_entry | 
+0x00538eb0 j1939_handlerInitializer | 

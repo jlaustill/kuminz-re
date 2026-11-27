@@ -1,0 +1,75 @@
+== temp: 2 kinds, 4 changes
+== named: 3 kinds, 5 changes
+     3 _DAT_00800718 => high_speed_governor_integrator . _2_2_
+     1 _DAT_00808316 => low_speed_governor_default_gain_set . integral_gain
+     1 _DAT_00808318 => low_speed_governor_default_gain_set . derivative_gain
+== enum: 5 kinds, 15 changes
+     8 0 => LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT
+     4 1 => LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE
+     1 2 => LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR
+     1 3 => LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR
+     1 4 => LOW_SPEED_GOVERNOR_GAIN_STATE_J1939
+== cast / index: 20 kinds, 84 changes
+== other: 62 kinds, 184 changes
+    24 _eps_override_output_state => pulse_period_table_average_oldest_entry_pointer
+    18 _eps_control_mode_param_1 => pulse_period_table_last_entry_pointer
+    16 _hsg_integrator_fuel_output => high_speed_governor_integrator
+     9 _anc_altitude_table_3_ptr => sync_pulse_check_previous_period_pointer
+     8 _eps_control_mode_param_3 => pulse_period_table_backup_last_entry_pointer
+     7 _high_temp_idle_cooldown_timer => low_speed_governor_stopped_vehicle_settled_count
+     6 _engine_mode_previous_state_1a7e => low_speed_governor_gear_gain_transition_timer
+     5 _anc_fuel_limit_active_timer => acceleration_noise_control_fuel_limit_hold_timer
+     5 _anc_speed_limit_hold_timer => acceleration_noise_control_engine_speed_limit_hold_timer
+     5 _lsg_exit_timer_active_flag => alpha_low_speed_governor_timer_active_flag
+     5 _afc_exit_timer_active_flag => alpha_air_fuel_control_timer_active_flag
+     4 _asg_throttle_droop_gain_1_0_1 => all_speed_governor_throttle_droop_gain_1
+     4 int => sdword
+     4 _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer
+     4 _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 => angle_pulse_output_high_duration_angle
+     3 _anc_altitude_table_3_size => main_engine_position_sensor_sync_pulse_period_threshold
+     3 ( dword * ) ( ( uint ) => pulse_period_table +
+     3 _eps_control_mode_init_value_2 => pulse_period_table_backup_average_oldest_entry_pointer
+     3 _hsg_integrator_fuel_output => iVar2
+     3 uVar2 => 
+     2 _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 => backup_engine_position_sensor_period
+     2 uVar2 = CONCAT22 => if
+     2 uVar2 = => ( int ) (
+     1 sdword => sword
+     1  => ( sword * ) (
+     1 ( sdword * ) => 
+     1 _duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20 => acceleration_noise_control_fuel_limit_inhibit_duration
+     1 _pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 => pulse_period_table_backup [ 0 ]
+     1  => ; int iVar2
+     1 short => sword
+     1 _lsg_derivative_filter_coefficient_1_to_1 => low_speed_governor_derivative_filter_coefficient
+     1 uint => void
+     1 undefined2 uVar1 ; uint uVar2 ; => 
+     1 uVar2 = ( uint ) sVar3 ; => 
+     1 uVar2 = CONCAT22 ( sVar3 >> 0xf , sampled_road_speed_after_it_has_been_filtered_0_255_9961 ) ; => 
+     1 uVar2 = CONCAT22 ( sVar3 >> 0xf , _high_temp_idle_cooldown_timer ) ; => 
+     1 != => ==
+     1 short => ( low_speed_governor_aggressive_gains_used_flag == 1
+     1 uVar2 >> 0x10 => ( ( ( int
+     1 , _high_temp_idle_cooldown_timer => low_speed_governor_aggressive_gain_speed_offset_3 + ( int
+     1  => low_speed_governor_filtered_speed_error < 0 && ( ( debounced_switch_value_for_switch_16_on_off & 4 ) == 0 ) ) || ( ( low_speed_governor_aggressive_gain_low_vehicle_speed <= sampled_road_speed_afte
+     1  => } } else
+     1 ( short ) ( uVar2 >> 0x10 ) , algorithm_enable_flags_1_cal ) & 0xffff1000 ; if => 
+     1 { uVar1 = ( undefined2 ) ( uVar2 >> 0x10 ) ; uVar2 = CONCAT22 ( uVar1 , low_speed_governor_filtered_speed_error ) ; if => &&
+     1 uVar2 = CONCAT22 ( uVar1 , low_speed_governor_filtered_speed_error ) , => 
+     1 } => 
+     1 uVar2 = => ( int ) low_speed_governor_filtered_speed_error <
+     1 , ( int ) low_speed_governor_filtered_speed_error < ( int ) uVar2 => 
+     1 uVar2 = CONCAT22 ( ( short ) ( uVar2 >> 0x10 ) , low_speed_governor_filtered_speed_error ) , => 
+     1 0x808230 => & low_speed_governor_aggressive_gain_set
+     1 * _lsg_gain_set_pointer => low_speed_governor_gain_set_pointer -> proportional_gain
+     1 _lsg_gain_set_pointer [ 1 ] => low_speed_governor_gain_set_pointer -> integral_gain
+     1 _lsg_gain_set_pointer [ 2 ] => low_speed_governor_gain_set_pointer -> derivative_gain
+     1 _lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 => low_speed_governor_override_gain_set . proportional_gain
+     1  => . proportional_gain
+     1 ' \ => 
+     1 ' => 
+     1 uint in_D0 ; => 
+     1 in_D0 = 0 , => 
+     1 in_D0 & 0xffff0000 => 0
+     1 bool all_keys_match ; => 
+     1  => ; bool all_keys_match

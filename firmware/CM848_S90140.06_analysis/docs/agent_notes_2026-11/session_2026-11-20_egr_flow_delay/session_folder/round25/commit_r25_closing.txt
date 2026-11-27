@@ -1,0 +1,13 @@
+cm848: round 25 closing - docs, the session archive, verify
+
+- task 046, the round 25 section, with stage C's phase-count correction on record. The leads:
+  - the sensor channel blocks;
+  - TouCAN B's base;
+  - the "Can2" mailbox writer name;
+  - the kernel transport's message parameter;
+  - from round 24, named fault bits (the user's call) and diag_clear_flags_t.
+- PR body, README, the todo line.
+- The session archive: the round 25 scripts and token maps, the build and verify logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

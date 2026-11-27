@@ -1,0 +1,29 @@
+cm848: round 11 stage A - the lift pump control, the SCI output status word, three cache names, the switch map (label-only)
+
+- **The lift pump (logical output 53).** e2m 12A7 +0x35 is Lift_Pump_Driver_Priority and 1577 +6 0x20 is
+  Lift_Pump_Driver; DRB test 13-33 is 'FUEL PUMP RELAY / TRANSFER PUMP'.
+  - cm848_controlLiftPump (was protection_ambient_qualification) and cm848_initializeLiftPumpControl (was
+    protection_exception_event_35_init).
+  - lift_pump_run_reason (1 key on / 2 ran / 3 cranked) and lift_pump_engine_stopped_time (0.1 s), were the
+    protection_event35_* words.
+  - The e2m 8A6F calibrations at 0x408976 (new label-only rows): lift_pump_override_state,
+    lift_pump_run_time_after_cranking (20 s), lift_pump_run_time_after_key_on (35 s),
+    lift_pump_run_time_after_running (0 s) and lift_pump_override_enable. The code fixes the order: override value
+    +0, the cranking / key-on / running limits of reasons 3 / 1 / 2, and the override gate +8. This calibration
+    keeps the key-on time as a fixed word, where 11.45 looks it up from a temperature table (8D2C / 8D2D into RAM
+    8D2E). So the 11.45 records after +2 sit one word later, and 11.45's Temp_Source has no word (0x408980 belongs
+    to the next block).
+- **cm848_sciPackOutputStatusWord** (was FUN_0051dfdc, a new function row) and sci_output_status_word (DAT_003fcf26):
+  the wait to start lamp, lift pump and ASIC shutoff output bits, packed before each SCI high-speed table read (next
+  to cm848_sciPackEventHistoryWords).
+- **Cache names:** cruise_switch_ladder_cached_axis_offset (was cruise_switch_interp_index) and
+  fuel_pressure_setpoint_map_cached_axis_offsets (was fuel_pressure_setpoint_interpolation_states).
+- **logical_output_request_bits_32_to_39** (was air_conditioning_clutch_request_byte) is byte 4 of the request array,
+  named like its siblings; stage B gives it a bitfield struct.
+- **The switch map:** the switch_input_state_bits comment (arrays.csv) gets the e2m 1612 switch names (switch N =
+  byte N/8 bit N%8). They confirm switch 20 = park / neutral, 12 = the exhaust brake select and 13 = the A/C switch.
+  It stays a byte array because three functions update single bits with | / &.
+- **Checks:** CM550 has none of these names. reverse_names.py EQUIVALENT (one function differs only in a local
+  declaration's position, as usual after inserted rows).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,31 @@
+cm848: signedness sweep - i16 for 430 e2m-signed words whose every load is an lha (617 fewer (short) casts)
+
+classify_signed_loads.py took every named word row whose table-resolved
+e2m record is a signed 2-byte value (583) and collected each load of its
+address in every referencing function (the xref_addr / disasm_func
+access detector): 444 load only with lha, 35 have an lhz load (kept
+word), 104 have no load (skipped).
+
+The 444 become i16 except 15 kept word on review:
+- 14 whose address is passed to a word * parameter (the sensor channel
+  value / default outputs of channels 1 / 5 / 7 / 10 / 20 / 75 / 105 /
+  the VGT position sensor, two duty lower limits): as i16 every call
+  gained a (word *)& cast;
+- variable_geometry_turbocharger_position: a shared pointer in
+  cm848_updateVariableGeometryTurbochargerStagedPositionCommand reads it
+  with lhz.
+Plus cylinder_acceleration (819B +1C, stored with sth and read as
+(int)(short)) and pulse_period_table_backup as dword[4] (it renders
+pulse_period_table_backup[i]).
+
+Proof (cast_normalized_diff.py: per function, comments / declarations /
+casts removed, auto-names folded, literals reduced mod 2^16): 133
+functions changed, 6 still differ and all are cosmetic - (word *) ->
+(sword *) pointer casts in four, an auto-name renumber, and timer - 1
+-> timer + -1 beside two removed casts. Casts: (short) 2033 -> 1416,
+(int)(short) 921 -> 574, (sword) 10 -> 41. Pieces 508 -> 508; build
+warnings and thunks unchanged; the two changed functions with local
+rows keep them (stack locals). Headers regenerated (g++ clean),
+lookup_tables.py clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

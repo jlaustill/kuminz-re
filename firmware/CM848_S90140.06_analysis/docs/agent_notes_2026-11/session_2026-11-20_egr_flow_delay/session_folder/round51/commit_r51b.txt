@@ -1,0 +1,29 @@
+cm848: round 51 stage B - types from the stage A records (three i16, the P0711 check's state enum, a void prototype)
+
+- i16 where the record is signed:
+  - transmission_temperature_default_during_limp_in_delay (8B9B +A, one lha)
+  - transmission_temperature_coolant_model_offset (8B9B +E, one lha)
+  - transmission_temperature_rationality_driving_range (8C2D +2, never loaded; the check compares the value it just
+    stored as a short)
+- transmission_temperature_default_after_limp_in_delay stays a word. 8B9B +8 is signed, but its only reference is an
+  addi: it is read through a pointer shared with the sensor value.
+- New enum TRANSMISSION_TEMPERATURE_RATIONALITY_STATE on transmission_temperature_rationality_state.
+  - Members 0-4 come from 8C2D +4's labels (NORUN / RUN / CMPPS / CMPFL / ABORT).
+  - 5 / 6 are the check's own pass / fail verdicts, which the report turns into PASSED / FAILED.
+  - A first build typed the word with the shared DIAGNOSTIC_MONITOR_STATE. 5 and 6 then rendered as
+    ABORTED|RUNNING and ABORTED|PASSED, so it was rebuilt with the dedicated enum.
+- cm848_flagTripInformationPowerDownDataLoss gets a void (void) prototype. Its power-down calls in
+  cm848_applicationMain and cm848_restartApplicationWithoutReset stop passing the r3 left over from the preceding code
+  (0x30d4). The stage A plate wrongly named cm848_applicationMain twice; it is fixed here.
+
+Proof:
+- prove_r51a.sh with an empty map (casts and two char literals folded): 1962 of 1968 functions match.
+- The other six are cm848_applicationMain / cm848_restartApplicationWithoutReset (the dropped argument) and the
+  four P0711 functions (the enum). prove_r51b_enum.py puts each member's value back, drops the removed 0x30d4
+  and removes whitespace: all six then equal the old text.
+- The i16 rows change no line.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,37 @@
+cm848: round 35 stage C - the boot message record senders and the diagnostic service chain (prototypes)
+
+The boot record senders:
+- cm848_transmitCanMessage and mpc555_sendJ1939TransportRequestToSend take one diagnostic_response_message_t *.
+  They read the data pointer and the status pointer behind the header.
+  - Their old rows (j1939_msg_hdr_t * + data / length) made them print msg_header[1].can_id, and made the callers
+    pass a leftover r4 (extraout_r4) and an unset in_r5.
+  - Now they read message->data_pointer / message->status_pointer, and the callers'
+    cm848_allocateDiagnosticResponseBuffer locals are typed records.
+- mpc555_canTransmitQueuePush (can_id / data_length / data / result) is the boot twin of
+  mpc555_sendJ1939SingleFrame.
+  - The boot transport's result argument reads &boot_j1939_transport_transmit_session.frame_queue_status (was a raw
+    0x30290a).
+  - data_length stays dword: the body compares the whole register, and ushort printed CONCAT22 with a phantom
+    register half.
+
+The diagnostic service chain:
+- cm848_j1939DiagnosticServiceHandler / j1939_diagServiceDispatch / cm848_sendJ1939ResponseFrame take the received
+  message as a j1939_rx_msg_t *.
+  - Each reads the destination / source address bytes, the length and the data pointer, so the code now reads
+    *rx_msg->data_pointer / request->source_address and so on.
+  - The application transport's call reads (j1939_rx_msg_t *)&j1939_transport_receive_session.request_to_send_can_id,
+    which fixes stage B's 0x3fbdf7. The receive record's tail from +8 is the received message the handler sees.
+  - result_code stays dword: the body reuses it as a 32-bit variable, and byte printed CONCAT31. The handler's
+    result now shows & 0xff masks.
+
+Proof: prove_tokens.py (an empty label map: prototypes only) gives 1950 of 1969 functions token-equal. Three only
+reorder their declarations. The other 16 were read as unified diffs: parameter / field names, the record types,
+byte for undefined1 and the two call arguments above.
+- Casts: (undefined1 *) 80 -> 78, (byte *) 177 -> 173. Phantom register lines (in_r / in_register) 86 -> 84.
+  CONCAT unchanged.
+- Pieces 1402 -> 1402. "1 failed (in code)" and the thunk counts are unchanged.
+- An intermediate build ran with eight rows duplicated by a non-idempotent apply. Its .cpp was byte-identical to
+  the clean rows' build.
+- Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,61 @@
+function_address,function_name,param_index,name,type,comment
+# Proposed CM550 function_definitions.csv rows for the 2-byte stack parameter layout (round 85 fix design).
+# Read-only proposal - not applied. Names marked "name to review" are proposals from the body, not settled.
+# WAVE 0 - replace these functions' parameter rows IN THE SAME COMMIT as stack_parameter_layout.csv
+# (keep their return rows). Without them the switch moves names onto the wrong argument or keeps a token.
+0x0000b6e8,cm550_diagnosticMessageQueueWrite,0,response_type,ushort,Type of diagnostic response (0 / 1 / a code) - the word at sp+4: the body loads it with move.w (8;a6) after link and all 39 callers push a word (32 move.w / 7 clr.w) (was byte; round 85)
+0x0000faa6,cm550_calculateGovernorDroopSpeed,0,breakpoint_fueling,ushort,The fueling written to torque curve breakpoints 2 and 5 and subtracted from the full fueling at the droop start - the word at +4 (move.w (12;sp) after a movem of 2 registers) (new - name to review; round 85)
+0x0000faa6,cm550_calculateGovernorDroopSpeed,1,torque_index,byte,Torque curve breakpoint index - the low byte of the second word argument (+7: tst.b (15;sp)) - 0 takes breakpoint 5's speed from JC39P5RP (was index 0 - it sat on +7 only through the 4-byte slots; round 85)
+0x00010e16,cm550_diagnosticMemoryAddressResolver,0,param_id,ushort,Parameter ID to resolve address for - the word at +4 (move.w (8;sp))
+0x00010e16,cm550_diagnosticMemoryAddressResolver,1,resolved_address,uint*,Receives the parameter's address from the 8-byte record table at 0x35224 / 0x35228 (by ram_refresh_enable) - the long at +6 (movea.l (10;sp)); 6 callers pea it and 3 move.l (new - name to review; round 85)
+0x000142a8,cm550_canBusConfigTypeSelector,0,config_type,ushort,CAN bus configuration type - the word at +4 (move.w (4;sp)); the 5 callers push a word (was byte; round 85)
+0x000142d4,cm550_FUN_000142d4,0,fuel_table_x_input,ushort,Stored to 0x80d378 (fuel_table_primary_descriptor + 6) before the table lookup - the word at +4 (move.w (8;a6)) (new - name to review; round 85)
+0x000142d4,cm550_FUN_000142d4,1,calc_mode,ushort,The word at +6 (move.w (10;a6)) - added to 0x80052c and subtracted from the lookup result; not a mode (name to review) (was byte - it sat on +7 = this word's low byte; round 85)
+0x000144bc,cm550_diagnosticCodeDebounceHandler,0,code_index,ushort,Diagnostic code index - the word at +4 (move.w (36;sp)) (was byte; round 85)
+0x00014720,cm550_diagnosticCodeRegistrar,0,code_index,ushort,Diagnostic code index - the word at +4 (move.w (20;sp)) (was byte; round 85)
+0x0001645e,cm550_safeDivideWithClamp,0,dividend,dword,Dividend value for division
+0x0001645e,cm550_safeDivideWithClamp,1,divisor,ushort,Divisor - the word at +8 (move.w (16;sp)); both callers push one word (was division_operand_t - its limit half at +10 is never pushed; round 85)
+0x0001651e,cm550_clampedDivisionCalculator,0,dividend,dword,Dividend value for division
+0x0001651e,cm550_clampedDivisionCalculator,1,divisor,division_operand_t,Divisor with value and limit fields - the words at +8 / +10 (move.w (24;sp) / (26;sp))
+0x0001651e,cm550_clampedDivisionCalculator,2,max_result,ushort,Maximum result clamp value - the word at +12 (move.w (28;sp)); the 6 callers push one word (5 clr.w) (was division_operand_t; round 85)
+0x00016628,cm550_limitedDivisionCalculator,0,dividend,uint,Value to be divided - the long at +4
+0x00016628,cm550_limitedDivisionCalculator,1,divisor,division_operand_t,The words at +8 / +10 (move.w (24;sp) / (26;sp)) - the layout of clampedDivisionCalculator (was uint; no caller in the dump; round 85)
+0x00016628,cm550_limitedDivisionCalculator,2,limit_value,ushort,Division result limit - the word at +12 (move.w (28;sp)) (was uint; round 85)
+0x00018968,cm550_protectionConditionEvaluator,0,threshold_ptr,ushort*,Pointer to threshold configuration
+0x00018968,cm550_protectionConditionEvaluator,1,state_ptr,uint*,Pointer to protection state data
+0x00018968,cm550_protectionConditionEvaluator,2,threshold_set_select,ushort,The word at +12 (tst.w (32;sp)): 0 reads state_ptr + 10 / threshold_ptr[8] / [0x10] - otherwise state_ptr + 0x12 / [9] (new - name to review; round 85)
+0x00018968,cm550_protectionConditionEvaluator,3,sensor_value,ushort,Current sensor value to evaluate - the word at +14 (move.w (34;sp)) (was index 2 - it sat on +14 only through the 4-byte slots; round 85)
+0x0001c016,cm550_circularBufferInit,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001c016,cm550_circularBufferInit,1,base_address,uint,Base memory address for buffer data
+0x0001c016,cm550_circularBufferInit,2,buffer_size,ushort,Size of buffer in bytes - the word at +12 (move.w (12;sp)); cm550_initHourMeterSystem pushes move.w #10 (was uint; round 85)
+0x0001c5e8,cm550_flashProgramFromRam,0,dest_address,int,Flash destination address
+0x0001c5e8,cm550_flashProgramFromRam,1,source_ptr,uint,Source data pointer
+0x0001c5e8,cm550_flashProgramFromRam,2,byte_count,ushort,Number of bytes to program - the word at +12 (move.w (16;a6)); the 5 callers push a word (was uint; round 85)
+0x0001cb76,cm550_calculateBlendedTableValue,0,fuel_table_x_input,ushort,Stored to 0x80d378 / 0x80d38e (both table descriptors + 6) - the word at +4 (move.w (8;a6)) (new - name to review; round 85)
+0x0001cb76,cm550_calculateBlendedTableValue,1,rpm_index,ushort,The word at +6 (move.w (10;a6)) - stored to fuel_table_primary / secondary_throttle_input; the name needs a review (was index 0 - it sat on +6 only through the 4-byte slots; round 85)
+0x0001e056,cm550_serialNodeAddressChecker,0,node_address,ushort,Serial node address - the word at +4 (move.w (8;sp)) (was byte; round 85)
+0x0001e086,cm550_serialNodeAddressForwarder,0,node_address,ushort,Serial node address - the word at +4 (move.w (8;sp)) (was byte; round 85)
+0x0001e5f0,mc68k_queueCanCs4ReceiveMessage,0,message_object,ushort,The 82527 message object number - the word at +4 (move.w (20;sp)); the caller pushes a word (was uint; round 85)
+0x0001ec3c,cm550_diagnosticMemoryWriteHandler,0,service_id,ushort,Diagnostic service ID - the word at +4 (move.w (8;a6)) (was byte; round 85)
+0x0001edae,cm550_diagnosticMemoryReadHandler,0,service_id,ushort,Diagnostic service ID - the word at +4 (move.w (8;a6)) (was byte; round 85)
+0x00020890,cm550_FUN_00020890,0,input_index,ushort,Switched input index - the word at +4 (move.w (32;sp)) (was byte; round 85)
+0x0002f4be,cm550_FUN_0002f4be,0,rx_msg,can_std_rx_desc_t*,The received message - the long at +4 (movea.l (24;sp)); the body reads ID byte 2 (the destination address) and data_ptr (+6); a callback registered with 0x21272 whose dispatchers push one long (was byte cmd_index; round 85)
+# 0x00032244 diagnosticDM11PGN_65234_Builder: DELETE its dtc_count row - the body reads no stack argument and its only caller (0x2f5fc) pushes nothing
+0x00032b38,vp44_diagnosticByteResponseSender,0,first_data_byte,byte,The low byte of the word at +4 (move.b (9;a6)) - stored to 0x803470 - the transmit message's first data byte (new - name to review; round 85)
+0x00032b38,vp44_diagnosticByteResponseSender,1,response_code,ushort,Diagnostic response code to send - the word at +6 - its address goes to byteSwap16 (pea (10;a6)) (was index 0 - it sat on +6 only through the 4-byte slots; round 85)
+0x0003460e,lookupApplicationMemoryRegionType,0,range_start,uint,The range's first address - the long at +4 (movea.l (12;sp)) (unchanged; was target_address; PR #53 round 72)
+0x0003460e,lookupApplicationMemoryRegionType,1,range_length,ushort,Its length in bytes - the word at +8 (move.w (16;sp)); the 7 callers push a word (was uint with the upper-half workaround; round 85)
+0x00034e9a,exponentialMovingAverage,0,new_sample,ushort,The sample - the word at +4 (move.w (8;a6)) (was 3 ushort rows at 6 / 10 / 14; round 85)
+0x00034e9a,exponentialMovingAverage,1,filter_state,dword*,The filter record: a coefficient word pointer then a Q16.16 accumulator (CM848's ema_filter_state_t shape - a struct lead) - the long at +6 (movea.l (10;a6)); 5 callers pea and 1 move.l (new; round 85)
+0x00034f00,cm550_unsignedLinearInterpolation,0,x_input,ushort,The word at +4 (move.w (20;sp)) (was 5 ushort rows; no caller in the dump; name to review; round 85)
+0x00034f00,cm550_unsignedLinearInterpolation,1,interpolation_state,dword*,The long at +6 (movea.l (22;sp)) (new - name to review; round 85)
+0x00034f8a,cm550_coreTableInterpolation,0,input_value,ushort,The word at +4 (move.w (8;a6)) (was index 1; round 85)
+0x00034f8a,cm550_coreTableInterpolation,1,table_descriptor,void*,The long at +6 (movea.l (10;a6)); 7 callers move.l and 4 pea - the same filter record shape as exponentialMovingAverage's (was index 0 at +4; round 85)
+# WAVE 1 - new rows on functions that have none (most call sites first; candidate_rows.txt ranks all 61)
+0x00003870,cm550_busyWaitDelayLoop,return,,void,No return value
+0x00003870,cm550_busyWaitDelayLoop,0,pass_count,ushort,Number of delay passes of 888 (0x378) spins each - the word at +4 (cmp.w (4;sp)); the 5 callers push it with move.w #n (1 four times in mc68k_portPinTestSequence2 - 2 in mc68k_waitForChipSelect2InputBit0High) - the role of cm848_busyWaitDelay's pass_count (round 85)
+0x00026a64,cm550_memcpy,return,,void,No return value
+0x00026a64,cm550_memcpy,0,destination,byte*,Destination - the long at +4
+0x00026a64,cm550_memcpy,1,source,byte*,Source - the long at +8
+0x00026a64,cm550_memcpy,2,byte_count,ushort,Bytes to copy - the word at +12; the 24 callers push a word (round 85)
+0x00034bba,mc68k_delayTimeBaseTicksWithWatchdogService,0,tick_count,ushort,CTM4_BIUTBR ticks to wait - the word at +4; the 19 callers push 500 or 10000 as a word (round 85)

@@ -1,0 +1,32 @@
+cm848: round 66 stage A - BOOT_DIAGNOSTIC_RESULT, the boot kernel's result codes; the coolant friction torque term
+
+- BOOT_DIAGNOSTIC_RESULT (size 4), the boot kernel's twin of J1939_DIAGNOSTIC_RESULT. Its 11 codes are named from
+  their producers in the boot kernel.
+  - The application's 0 / 2 / 3 / 4 / 8 / 9 / 10 / 0x1a mean the same here; 10 also covers the dispatcher refusing
+    a ROM handler while the low nibble of eeprom_service_mode_flags is set.
+  - Its own:
+    - 5 UNKNOWN_SERVICE: the dispatcher's default; the application uses 0x18;
+    - 0x11 FLASH_WRITE_FAILED: cm848_writeBootDiagnosticMemory, a flash write at an odd address or a failed flash
+      write;
+    - 0x17 EEPROM_TRANSFER_NOT_STARTED: service 2, when mpc555_initEepromTransfer returns 0.
+  - 0xff (nothing to send) is no member, as in the application enum: the dispatcher masks each result with 0xff.
+  - Typed on cm848_validateDiagnosticRequestLengthAndAuthorization's return. Its full prototype also takes
+    j1939_rx_msg_t *request, so the validator reads request->data_length / data_pointer.
+  - Typed on the boot dispatcher's result_code local (keyed BVar4, the positional name with the type's prefix,
+    from round 64's lesson), and its entry local is named.
+  - Applied on the first build:
+    - the dispatcher reads result_code = BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE / _REGION_REFUSED;
+    - the validator returns _WRONG_LENGTH / _KEY_MISSING / _KEY_REFUSED.
+  - cm848_handleBootExecuteAtAddressService takes the enum return by inference. Its region check now reads
+    != BOOT_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS (9 = no region) and gains & 0xff masks.
+- DAT_003fba10 -> net_combustion_torque_coolant_friction_term (i16; sth r29 @ 0x503afc, the only access found):
+  friction_torque_adjustment_for_coolant_temperature x its scale / 2048. cm848_calculateNetCombustionTorque
+  subtracts it with pumping_torque_adjustment from combustion_torque. This is round 62's lead. The scale
+  net_combustion_torque_subtracted_term_scale is renamed net_combustion_torque_coolant_friction_scale.
+
+Proof (prove_r66.sh): 6 of 1968 functions differ: the 4 predicted (the validator, the dispatcher, the 0x19 handler,
+the net torque calculation) and two local declaration-order moves. No artifact count changed. verify is
+byte-identical; thunks 18 / 14; prototype and local rows 0 failed (the 8 skips that were there before). Headers
+regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219, history notes intact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,197 @@
+0x3fdba4 BOOT S w1 @0x001480 mpc555_initHardwareConfig (0x1454) stb r11,-9308(r12) 
+0x3fdba4 BOOT L w1 @0x004324 mpc555_cmfRestoreNormalMode (0x4320) lbz r12,-9308(r12) 
+0x3fdba4 BOOT L w1 @0x0043c4 mpc555_cmfSelectBlockAndStartSequence (0x43a4) lbz r10,-9308(r10) 
+0x3fdba4 BOOT L w1 @0x004580 mpc555_cmfApplyHighVoltagePulse (0x4570) lbz r10,-9308(r10) 
+0x3fdba4 BOOT L w1 @0x004700 mpc555_cmfEndHighVoltagePulse (0x46dc) lbz r12,-9308(r12) 
+0x3fdba4 BOOT L w1 @0x004aac mpc555_cmfEraseBlocks (0x49d0) lbz r10,-9308(r10) 
+0x3fdba4 BOOT L w1 @0x004b40 mpc555_cmfEraseBlocks (0x49d0) lbz r10,-9308(r10) 
+0x3fdba4 BOOT L w1 @0x004c30 mpc555_cmfEraseBlocks (0x49d0) lbz r12,-9308(r12) 
+0x3fdba4 BOOT L w1 @0x004e60 mpc555_cmfEraseBlocks (0x49d0) lbz r12,-9308(r12) 
+0x3fdba4 APP  L w2 @0x02408c cm848_buildPgn65241AuxiliaryInputOutputStatus1Message (0x24028) lhz r12,22(r5) 
+0x3fdba4 APP  L w2 @0x512158 cm848_monitorBrakeSwitchPairAgreement (0x512130) lhz r11,22(r30) 
+0x3fdba5 BOOT S w1 @0x0014f8 mpc555_initHardwareConfig (0x1454) stb r10,-9307(r11) 
+0x3fdba5 BOOT L w1 @0x004be4 mpc555_cmfEraseBlocks (0x49d0) lbz r12,-9307(r12) 
+0x3fdba5 BOOT A w0 @0x004bfc mpc555_cmfEraseBlocks (0x49d0) addi r14,r14,-9307 ADDR
+0x3fdba5 BOOT L w1 @0x004c00 mpc555_cmfEraseBlocks (0x49d0) lbz r11,0(r14) 
+0x3fdba5 BOOT L w1 @0x004dc0 mpc555_cmfEraseBlocks (0x49d0) lbz r12,0(r15) 
+0x3fdba6 BOOT S w2 @0x0015e0 mpc555_initHardwareConfig (0x1454) sth r30,-9306(r9) 
+0x3fdba6 BOOT S w2 @0x004a28 mpc555_cmfEraseBlocks (0x49d0) sth r9,-9306(r10) 
+0x3fdba6 BOOT L w2 @0x004bc0 mpc555_cmfEraseBlocks (0x49d0) lhz r11,-9306(r11) 
+0x3fdba6 BOOT A w0 @0x004c18 mpc555_cmfEraseBlocks (0x49d0) addi r21,r21,-9306 ADDR
+0x3fdba6 BOOT L w2 @0x004c1c mpc555_cmfEraseBlocks (0x49d0) lhz r12,0(r21) 
+0x3fdba6 BOOT L w2 @0x004cac mpc555_cmfEraseBlocks (0x49d0) lhz r12,0(r21) 
+0x3fdba6 BOOT L w2 @0x004da8 mpc555_cmfEraseBlocks (0x49d0) lhz r11,0(r21) 
+0x3fdba6 BOOT S w2 @0x004db4 mpc555_cmfEraseBlocks (0x49d0) sth r11,0(r21) 
+0x3fdba8 BOOT S w2 @0x001504 mpc555_initHardwareConfig (0x1454) sth r12,-9304(r9) 
+0x3fdba8 BOOT A w0 @0x004bb8 mpc555_cmfEraseBlocks (0x49d0) addi r19,r19,-9304 ADDR
+0x3fdba8 BOOT L w2 @0x004bc4 mpc555_cmfEraseBlocks (0x49d0) lhz r10,0(r19) 
+0x3fdba8 BOOT L w2 @0x004c20 mpc555_cmfEraseBlocks (0x49d0) lhz r11,0(r14) 
+0x3fdba8 BOOT L w2 @0x004cb0 mpc555_cmfEraseBlocks (0x49d0) lhz r11,0(r20) 
+0x3fdba8 APP  L w2 @0x03be34 cm848_updateAirConditioningSwitchFromPci (0x3be30) lhz r12,-9304(r12) 
+0x3fdbaa BOOT S w4 @0x00148c mpc555_initHardwareConfig (0x1454) stw r29,-9302(r9) 
+0x3fdbaa BOOT L w4 @0x004a30 mpc555_cmfEraseBlocks (0x49d0) lwz r17,-9302(r17) 
+0x3fdbae BOOT S w4 @0x001498 mpc555_initHardwareConfig (0x1454) stw r11,-9298(r12) 
+0x3fdbae BOOT A w0 @0x004a40 mpc555_cmfEraseBlocks (0x49d0) addi r28,r28,-9298 ADDR
+0x3fdbae BOOT L w4 @0x004a44 mpc555_cmfEraseBlocks (0x49d0) lwz r9,0(r28) 
+0x3fdbae BOOT L w4 @0x004a58 mpc555_cmfEraseBlocks (0x49d0) lwz r11,0(r28) 
+0x3fdbae BOOT L w4 @0x004ac8 mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004ad8 mpc555_cmfEraseBlocks (0x49d0) lwz r11,0(r28) 
+0x3fdbae BOOT L w4 @0x004b5c mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004b6c mpc555_cmfEraseBlocks (0x49d0) lwz r11,0(r28) 
+0x3fdbae BOOT L w4 @0x004cc4 mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004d10 mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004d28 mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004d74 mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004e9c mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbae BOOT L w4 @0x004eb4 mpc555_cmfEraseBlocks (0x49d0) lwz r12,0(r28) 
+0x3fdbb2 BOOT A w0 @0x0014a4 mpc555_initHardwareConfig (0x1454) addi r9,r9,-9294 ADDR
+0x3fdbb2 BOOT S w4 @0x0014a8 mpc555_initHardwareConfig (0x1454) stw r3,0(r9) 
+0x3fdbb2 BOOT L w4 @0x004ac0 mpc555_cmfEraseBlocks (0x49d0) lwz r11,-9294(r11) 
+0x3fdbb2 BOOT L w4 @0x004b54 mpc555_cmfEraseBlocks (0x49d0) lwz r11,-9294(r11) 
+0x3fdbb2 BOOT A w0 @0x004c54 mpc555_cmfEraseBlocks (0x49d0) addi r11,r11,-9294 ADDR
+0x3fdbb2 BOOT L w4 @0x004c5c mpc555_cmfEraseBlocks (0x49d0) lwzx r11,r11,r10 INDEXED base 0x3fdbb2+0 via r11
+0x3fdbb2 BOOT A w0 @0x004c74 mpc555_cmfEraseBlocks (0x49d0) addi r11,r11,-9294 ADDR
+0x3fdbb2 BOOT L w4 @0x004c7c mpc555_cmfEraseBlocks (0x49d0) lwzx r11,r11,r10 INDEXED base 0x3fdbb2+0 via r11
+0x3fdbb4 APP  L w2 @0x02404c cm848_buildPgn65241AuxiliaryInputOutputStatus1Message (0x24028) lhz r9,38(r5) 
+0x3fdbb6 BOOT S w4 @0x0014b0 mpc555_initHardwareConfig (0x1454) stw r4,4(r9) 
+0x3fdbb6 APP  L w2 @0x511ba8 cm848_updateParkNeutralFlagAndTsc1Activity (0x511b64) lhz r12,-9290(r12) 
+0x3fdbba BOOT S w4 @0x0014b8 mpc555_initHardwareConfig (0x1454) stw r5,8(r9) 
+0x3fdbbe BOOT S w4 @0x0014c0 mpc555_initHardwareConfig (0x1454) stw r6,12(r9) 
+0x3fdbc2 BOOT S w4 @0x0014c8 mpc555_initHardwareConfig (0x1454) stw r7,16(r9) 
+0x3fdbc6 BOOT S w4 @0x0014d0 mpc555_initHardwareConfig (0x1454) stw r8,20(r9) 
+0x3fdbca BOOT S w4 @0x0014d8 mpc555_initHardwareConfig (0x1454) stw r30,24(r9) 
+0x3fdbce BOOT S w4 @0x0014e0 mpc555_initHardwareConfig (0x1454) stw r31,28(r9) 
+0x3fdbce APP  A w0 @0x02423c cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) addi r5,r5,-9266 ADDR
+0x3fdbce APP  A w0 @0x02568c cm848_j1939BuildEngineControlByte (0x2567c) addi r6,r6,-9266 ADDR
+0x3fdbce APP  L w1 @0x025bb0 cm848_buildPgn61443ElectronicEngineController2Message (0x25b10) lbz r11,-9266(r11) 
+0x3fdbce APP  A w0 @0x02bd98 cm848_buildPgn65264PowerTakeOffInformationMessage (0x2bd58) addi r3,r3,-9266 ADDR
+0x3fdbce APP  L w1 @0x02bddc cm848_buildPgn65264PowerTakeOffInformationMessage (0x2bd58) lbz r12,0(r3) 
+0x3fdbce APP  A w0 @0x02c510 cm848_checkSwitch31OnTimeFault (0x2c4fc) addi r4,r4,-9266 ADDR
+0x3fdbce APP  A w0 @0x04eb5c cm848_scanAndDebounceSwitchInputs (0x4eb48) addi r6,r6,-9266 ADDR
+0x3fdbce APP  L w1 @0x04eb64 cm848_scanAndDebounceSwitchInputs (0x4eb48) lbzx r12,r6,r12 INDEXED base 0x3fdbce+0 via r6
+0x3fdbce APP  L w1 @0x50a1dc cm848_processJ1939AcceleratorLowIdleSwitch (0x50a1b4) lbz r9,-9266(r9) 
+0x3fdbce APP  A w0 @0x50a4b4 cm848_copyStatusBitToDatalinkSwitch (0x50a4a0) addi r12,r12,-9266 ADDR
+0x3fdbce APP  L w1 @0x50a4c0 cm848_copyStatusBitToDatalinkSwitch (0x50a4a0) lbzx r12,r12,r11 INDEXED base 0x3fdbce+0 via r12
+0x3fdbce APP  A w0 @0x50a5cc cm848_evaluateJ1939InputSignalFault (0x50a57c) addi r10,r10,-9266 ADDR
+0x3fdbce APP  L w1 @0x50a5d0 cm848_evaluateJ1939InputSignalFault (0x50a57c) lbzx r10,r10,r7 INDEXED base 0x3fdbce+0 via r10
+0x3fdbce APP  L w1 @0x50a72c cm848_processJ1939AcceleratorPedalPosition (0x50a700) lbz r12,-9266(r12) 
+0x3fdbce APP  L w1 @0x50aa18 cm848_processJ1939AcceleratorIdleSwitchPair (0x50a9d4) lbz r12,-9266(r12) 
+0x3fdbcf APP  L w1 @0x024240 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r11,1(r5) 
+0x3fdbcf APP  L w1 @0x024284 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,1(r5) 
+0x3fdbd0 APP  L w1 @0x02bd9c cm848_buildPgn65264PowerTakeOffInformationMessage (0x2bd58) lbz r9,2(r3) 
+0x3fdbd1 APP  L w1 @0x0242d4 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x024348 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x02436c cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x0243c4 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x02442c cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x024450 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x0244a0 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x024590 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x0245d4 cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x02460c cm848_buildPgn65265CruiseControlVehicleSpeedMessage (0x24178) lbz r12,3(r5) 
+0x3fdbd1 APP  L w1 @0x02569c cm848_j1939BuildEngineControlByte (0x2567c) lbz r10,3(r6) 
+0x3fdbd1 APP  L w1 @0x0256f4 cm848_j1939BuildEngineControlByte (0x2567c) lbz r11,3(r6) 
+0x3fdbd1 APP  L w1 @0x02572c cm848_j1939BuildEngineControlByte (0x2567c) lbz r12,3(r6) 
+0x3fdbd1 APP  L w1 @0x025778 cm848_j1939BuildEngineControlByte (0x2567c) lbz r12,3(r6) 
+0x3fdbd1 APP  L w1 @0x02be14 cm848_buildPgn65264PowerTakeOffInformationMessage (0x2bd58) lbz r12,3(r3) 
+0x3fdbd1 APP  L w1 @0x02be54 cm848_buildPgn65264PowerTakeOffInformationMessage (0x2bd58) lbz r12,3(r3) 
+0x3fdbd1 APP  L w1 @0x02c52c cm848_checkSwitch31OnTimeFault (0x2c4fc) lbz r12,3(r4) 
+0x3fdbd1 APP  L w1 @0x02c564 cm848_checkSwitch31OnTimeFault (0x2c4fc) lbz r12,3(r4) 
+0x3fdbd2 BOOT S w2 @0x0014ec mpc555_initHardwareConfig (0x1454) sth r12,-9262(r9) 
+0x3fdbd2 BOOT A w0 @0x004c94 mpc555_cmfEraseBlocks (0x49d0) addi r20,r20,-9262 ADDR
+0x3fdbd2 BOOT L w2 @0x004c98 mpc555_cmfEraseBlocks (0x49d0) lhz r11,0(r20) 
+0x3fdbd2 BOOT L w2 @0x004d94 mpc555_cmfEraseBlocks (0x49d0) lhz r11,0(r19) 
+0x3fdbd2 APP  A w0 @0x04efac cm848_setLogicalOutputAndDriveLine (0x4ef74) addi r12,r12,-9262 ADDR
+0x3fdbd2 APP  L w1 @0x04efb4 cm848_setLogicalOutputAndDriveLine (0x4ef74) lbzx r12,r12,r11 INDEXED base 0x3fdbd2+0 via r12
+0x3fdbd2 APP  A w0 @0x04f088 cm848_clearLogicalOutputAndDriveLine (0x4f050) addi r12,r12,-9262 ADDR
+0x3fdbd2 APP  L w1 @0x04f090 cm848_clearLogicalOutputAndDriveLine (0x4f050) lbzx r12,r12,r11 INDEXED base 0x3fdbd2+0 via r12
+0x3fdbd2 APP  A w0 @0x04f214 cm848_applyLogicalOutputRequests (0x4f190) addi r10,r10,-9262 ADDR
+0x3fdbd2 APP  L w1 @0x04f218 cm848_applyLogicalOutputRequests (0x4f190) lbzx r10,r10,r5 INDEXED base 0x3fdbd2+0 via r10
+0x3fdbd4 BOOT S w2 @0x0015a8 mpc555_initHardwareConfig (0x1454) sth r9,-9260(r10) 
+0x3fdbd4 BOOT L w2 @0x0045f8 mpc555_cmfApplyHighVoltagePulse (0x4570) lhz r12,-9260(r12) 
+0x3fdbd6 BOOT S w4 @0x00150c mpc555_initHardwareConfig (0x1454) stw r29,-9258(r11) 
+0x3fdbd6 BOOT A w0 @0x004358 mpc555_cmfRestoreNormalMode (0x4320) addi r3,r3,-9258 ADDR
+0x3fdbd6 BOOT L w4 @0x004368 mpc555_cmfRestoreNormalMode (0x4320) lwz r9,0(r3) 
+0x3fdbd6 BOOT L w4 @0x00437c mpc555_cmfRestoreNormalMode (0x4320) lwz r10,0(r3) 
+0x3fdbd6 BOOT A w0 @0x0043bc mpc555_cmfSelectBlockAndStartSequence (0x43a4) addi r31,r31,-9258 ADDR
+0x3fdbd6 BOOT L w4 @0x0043f8 mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r11,0(r31) 
+0x3fdbd6 BOOT L w4 @0x00440c mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r9,0(r31) 
+0x3fdbd6 BOOT L w4 @0x00441c mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r7,0(r31) 
+0x3fdbda BOOT S w4 @0x00455c mpc555_cmfLoadProgramPage (0x4500) stw r12,-9254(r9) 
+0x3fdbda BOOT A w0 @0x0045ac mpc555_cmfApplyHighVoltagePulse (0x4570) addi r4,r4,-9254 ADDR
+0x3fdbda BOOT L w4 @0x0045b8 mpc555_cmfApplyHighVoltagePulse (0x4570) lwz r10,0(r4) 
+0x3fdbda BOOT S w4 @0x004648 mpc555_cmfApplyHighVoltagePulse (0x4570) stw r12,0(r4) 
+0x3fdbdc APP  A w0 @0x04ef88 cm848_setLogicalOutputAndDriveLine (0x4ef74) addi r12,r12,-9252 ADDR
+0x3fdbdc APP  L w2 @0x04ef90 cm848_setLogicalOutputAndDriveLine (0x4ef74) lhzx r6,r12,r11 INDEXED base 0x3fdbdc+0 via r12
+0x3fdbdc APP  A w0 @0x04f064 cm848_clearLogicalOutputAndDriveLine (0x4f050) addi r12,r12,-9252 ADDR
+0x3fdbdc APP  L w2 @0x04f06c cm848_clearLogicalOutputAndDriveLine (0x4f050) lhzx r6,r12,r11 INDEXED base 0x3fdbdc+0 via r12
+0x3fdbdc APP  A w0 @0x04f0ec cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 (0x4f0dc) addi r6,r6,-9252 ADDR
+0x3fdbdc APP  A w0 @0x04f1d8 cm848_applyLogicalOutputRequests (0x4f190) addi r3,r3,-9252 ADDR
+0x3fdbdc APP  L w2 @0x04f1e0 cm848_applyLogicalOutputRequests (0x4f190) lhzx r7,r3,r12 INDEXED base 0x3fdbdc+0 via r3
+0x3fdbdc APP  A w0 @0x052e98 cm848_refreshOutputPortsAndReadback (0x529b8) addi r5,r5,-9252 ADDR
+0x3fdbdc APP  L w2 @0x052ea0 cm848_refreshOutputPortsAndReadback (0x529b8) lhzx r27,r5,r12 INDEXED base 0x3fdbdc+0 via r5
+0x3fdbdc APP  A w0 @0x537cb0 cm848_checkDiscreteOutputReadBack (0x537c64) addi r10,r10,-9252 ADDR
+0x3fdbdc APP  L w2 @0x537cb8 cm848_checkDiscreteOutputReadBack (0x537c64) lhzx r10,r10,r11 INDEXED base 0x3fdbdc+0 via r10
+0x3fdbde BOOT A w0 @0x001518 mpc555_initHardwareConfig (0x1454) addi r29,r29,-9250 ADDR
+0x3fdbde BOOT S w4 @0x00151c mpc555_initHardwareConfig (0x1454) stw r9,0(r29) 
+0x3fdbde BOOT A w0 @0x004360 mpc555_cmfRestoreNormalMode (0x4320) addi r4,r4,-9250 ADDR
+0x3fdbde BOOT L w4 @0x00436c mpc555_cmfRestoreNormalMode (0x4320) lwz r12,0(r4) 
+0x3fdbde BOOT L w4 @0x004380 mpc555_cmfRestoreNormalMode (0x4320) lwz r12,0(r4) 
+0x3fdbde BOOT A w0 @0x0043b4 mpc555_cmfSelectBlockAndStartSequence (0x43a4) addi r30,r30,-9250 ADDR
+0x3fdbde BOOT L w4 @0x0043fc mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r10,0(r30) 
+0x3fdbde BOOT L w4 @0x004410 mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r10,0(r30) 
+0x3fdbde BOOT L w4 @0x0044bc mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r12,0(r30) 
+0x3fdbde BOOT L w4 @0x0044d0 mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r9,0(r30) 
+0x3fdbde BOOT L w4 @0x0044e0 mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r11,0(r30) 
+0x3fdbde BOOT L w4 @0x004550 mpc555_cmfLoadProgramPage (0x4500) lwz r11,-9250(r11) 
+0x3fdbde BOOT A w0 @0x004630 mpc555_cmfApplyHighVoltagePulse (0x4570) addi r11,r11,-9250 ADDR
+0x3fdbde BOOT L w4 @0x00463c mpc555_cmfApplyHighVoltagePulse (0x4570) lwzx r11,r11,r10 INDEXED base 0x3fdbde+0 via r11
+0x3fdbde BOOT L w4 @0x0046f0 mpc555_cmfEndHighVoltagePulse (0x46dc) lwz r10,-9250(r10) 
+0x3fdbe2 BOOT S w4 @0x001520 mpc555_initHardwareConfig (0x1454) stw r9,4(r29) 
+0x3fdbe6 BOOT S w4 @0x001524 mpc555_initHardwareConfig (0x1454) stw r9,8(r29) 
+0x3fdbea BOOT S w4 @0x001528 mpc555_initHardwareConfig (0x1454) stw r9,12(r29) 
+0x3fdbee BOOT S w4 @0x001530 mpc555_initHardwareConfig (0x1454) stw r9,16(r29) 
+0x3fdbf2 BOOT S w4 @0x001534 mpc555_initHardwareConfig (0x1454) stw r9,20(r29) 
+0x3fdbf6 BOOT S w4 @0x001538 mpc555_initHardwareConfig (0x1454) stw r9,24(r29) 
+0x3fdbfa BOOT S w4 @0x00153c mpc555_initHardwareConfig (0x1454) stw r9,28(r29) 
+0x3fdbfe BOOT A w0 @0x001544 mpc555_initHardwareConfig (0x1454) addi r29,r29,-9218 ADDR
+0x3fdbfe BOOT S w4 @0x001548 mpc555_initHardwareConfig (0x1454) stw r3,0(r29) 
+0x3fdbfe BOOT A w0 @0x004334 mpc555_cmfRestoreNormalMode (0x4320) addi r4,r4,-9218 ADDR
+0x3fdbfe BOOT L w4 @0x00433c mpc555_cmfRestoreNormalMode (0x4320) lwz r10,0(r4) 
+0x3fdbfe BOOT L w4 @0x004348 mpc555_cmfRestoreNormalMode (0x4320) lwz r12,0(r4) 
+0x3fdbfe BOOT A w0 @0x0043d4 mpc555_cmfSelectBlockAndStartSequence (0x43a4) addi r8,r8,-9218 ADDR
+0x3fdbfe BOOT L w4 @0x0043dc mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r10,0(r8) 
+0x3fdbfe BOOT L w4 @0x0043e8 mpc555_cmfSelectBlockAndStartSequence (0x43a4) lwz r12,0(r8) 
+0x3fdbfe BOOT A w0 @0x004598 mpc555_cmfApplyHighVoltagePulse (0x4570) addi r11,r11,-9218 ADDR
+0x3fdbfe BOOT L w4 @0x0045a0 mpc555_cmfApplyHighVoltagePulse (0x4570) lwzx r11,r11,r10 INDEXED base 0x3fdbfe+0 via r11
+0x3fdbfe APP  L w2 @0x04f0f0 cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 (0x4f0dc) lhz r11,34(r6) 
+0x3fdc02 BOOT S w4 @0x00154c mpc555_initHardwareConfig (0x1454) stw r4,4(r29) 
+0x3fdc06 BOOT S w4 @0x001550 mpc555_initHardwareConfig (0x1454) stw r5,8(r29) 
+0x3fdc0a BOOT S w4 @0x001554 mpc555_initHardwareConfig (0x1454) stw r6,12(r29) 
+0x3fdc0e BOOT S w4 @0x001558 mpc555_initHardwareConfig (0x1454) stw r7,16(r29) 
+0x3fdc12 BOOT S w4 @0x00155c mpc555_initHardwareConfig (0x1454) stw r8,20(r29) 
+0x3fdc16 BOOT S w4 @0x001560 mpc555_initHardwareConfig (0x1454) stw r30,24(r29) 
+0x3fdc1a BOOT S w4 @0x001564 mpc555_initHardwareConfig (0x1454) stw r31,28(r29) 
+0x3fdc1e BOOT A w0 @0x001570 mpc555_initHardwareConfig (0x1454) addi r31,r31,-9186 ADDR
+0x3fdc1e BOOT S w2 @0x001574 mpc555_initHardwareConfig (0x1454) sth r30,0(r31) 
+0x3fdc1e BOOT A w0 @0x0045e0 mpc555_cmfApplyHighVoltagePulse (0x4570) addi r11,r11,-9186 ADDR
+0x3fdc1e BOOT L w2 @0x0045e8 mpc555_cmfApplyHighVoltagePulse (0x4570) lhzx r11,r11,r10 INDEXED base 0x3fdc1e+0 via r11
+0x3fdc20 BOOT S w2 @0x001578 mpc555_initHardwareConfig (0x1454) sth r30,2(r31) 
+0x3fdc22 BOOT S w2 @0x00157c mpc555_initHardwareConfig (0x1454) sth r30,4(r31) 
+0x3fdc24 BOOT S w2 @0x001580 mpc555_initHardwareConfig (0x1454) sth r30,6(r31) 
+0x3fdc26 BOOT S w2 @0x001588 mpc555_initHardwareConfig (0x1454) sth r30,8(r31) 
+0x3fdc28 BOOT S w2 @0x00158c mpc555_initHardwareConfig (0x1454) sth r30,10(r31) 
+0x3fdc2a BOOT S w2 @0x001590 mpc555_initHardwareConfig (0x1454) sth r30,12(r31) 
+0x3fdc2c BOOT S w2 @0x00159c mpc555_initHardwareConfig (0x1454) sth r11,14(r31) 
+0x3fdc2e BOOT A w0 @0x001224 cm848_flashEraseChip (0x11b4) addi r26,r26,-9170 ADDR
+0x3fdc2e BOOT L w4 @0x001240 cm848_flashEraseChip (0x11b4) lwz r5,0(r26) 
+0x3fdc2e BOOT S w4 @0x0015f0 mpc555_initHardwareConfig (0x1454) stw r11,-9170(r12) 
+0x3fdc32 BOOT L w4 @0x001318 cm848_flashWriteWord (0x12a8) lwz r5,-9166(r5) 
+0x3fdc32 BOOT S w4 @0x0015fc mpc555_initHardwareConfig (0x1454) stw r9,-9166(r10) 
+0x3fdc36 BOOT A w0 @0x00121c cm848_flashEraseChip (0x11b4) addi r25,r25,-9162 ADDR
+0x3fdc36 BOOT L w2 @0x00126c cm848_flashEraseChip (0x11b4) lhz r11,0(r25) 
+0x3fdc36 BOOT S w2 @0x001608 mpc555_initHardwareConfig (0x1454) sth r11,-9162(r12) 
+0x3fdc38 BOOT A w0 @0x001398 cm848_flashWriteBlock (0x1338) addi r27,r27,-9160 ADDR
+0x3fdc38 BOOT L w2 @0x00139c cm848_flashWriteBlock (0x1338) lhz r11,0(r27) 
+0x3fdc38 BOOT L w2 @0x0013f0 cm848_flashWriteBlock (0x1338) lhz r12,0(r27) 
+0x3fdc38 BOOT S w2 @0x001614 mpc555_initHardwareConfig (0x1454) sth r9,-9160(r10) 

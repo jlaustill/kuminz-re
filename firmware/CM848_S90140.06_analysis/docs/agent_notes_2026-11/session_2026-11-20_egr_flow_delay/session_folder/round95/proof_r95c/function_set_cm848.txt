@@ -1,0 +1,92 @@
+removed 0: 
+added 1: 0x00029ecc cm848_applyInjectionTimingMainMisfireLimit
+changed 8
+  0x00007608 mpc555_tickTransferTimeoutAndRuntimeCounter: 2 lines
+      +  word counter_value;
+      -  word counter_value;
+  0x0002bf6c cm848_blendAllSpeedGovernorReferenceSpeeds: 3 lines
+      -        if (drivetrain_ratio < all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis[uVar2]) {
+      +        if (drivetrain_ratio <
+      +            all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis[uVar2]) {
+  0x0002c100 cm848_initializeAllSpeedGovernorTuningSetBlendWeight: 3 lines
+      -  all_speed_governor_tuning_set_blend_weight = all_speed_governor_tuning_set_default_blend_weight_cal;
+      +  all_speed_governor_tuning_set_blend_weight =
+      +       all_speed_governor_tuning_set_default_blend_weight_cal;
+  0x0003889c cm848_applyFuelPressureGovernorFaultBlend: 23 lines
+      -    fuel_pressure_governor_fault_blend_fraction = fuel_pressure_governor_fault_blend_fraction - fuel_pressure_governor_fault_blend_fraction_decrement
+      +    fuel_pressure_governor_fault_blend_fraction =
+      +         fuel_pressure_governor_fault_blend_fraction -
+      +         fuel_pressure_governor_fault_blend_fraction_decrement;
+      -                   (&fuel_pressure_governor_fault_fuel_limit_cached_axis_offset,engine_speed_state.filtered_engine_speed,
+      -                    fuel_pressure_governor_fault_fuel_limit_axis,fuel_pressure_governor_fault_fuel_limit_values,0);
+      -    if (((fuel_pressure_governor_fault_active_flag_previous == 0) && (fuel_pressure_governor_fault_active_flag != 0)) &&
+      +                   (&fuel_pressure_governor_fault_fuel_limit_cached_axis_offset,
+      +                    engine_speed_state.filtered_engine_speed,
+      +                    fuel_pressure_governor_fault_fuel_limit_axis,
+      +                    fuel_pressure_governor_fault_fuel_limit_values,0);
+      +    if (((fuel_pressure_governor_fault_active_flag_previous == 0) &&
+      +        (fuel_pressure_governor_fault_active_flag != 0)) &&
+      -       (fuel_pressure_governor_fault_blend_fraction = fuel_pressure_governor_fault_blend_fraction + fuel_pressure_governor_fault_blend_fraction_incre
+      +       (fuel_pressure_governor_fault_blend_fraction =
+      +             fuel_pressure_governor_fault_blend_fraction +
+      +             fuel_pressure_governor_fault_blend_fraction_increment,
+      -  uVar1 = ((uint)fuel_pressure_governor_fault_blend_start_fuel * (0x6400 - (uint)fuel_pressure_governor_fault_blend_fraction)) /
+      -          0x6400 + ((uint)fuel_pressure_governor_fault_fuel_limit * (uint)fuel_pressure_governor_fault_blend_fraction) / 0x6400;
+      +  uVar1 = ((uint)fuel_pressure_governor_fault_blend_start_fuel *
+      +          (0x6400 - (uint)fuel_pressure_governor_fault_blend_fraction)) / 0x6400 +
+      +          ((uint)fuel_pressure_governor_fault_fuel_limit *
+      +          (uint)fuel_pressure_governor_fault_blend_fraction) / 0x6400;
+  0x00038ac8 cm848_checkPciMessageTimeouts: 2 lines
+      +  byte all_transmits_overdue;
+      -  byte all_transmits_overdue;
+  0x00054ec4 mpc555_miosSetChannelPwmDuty: 2 lines
+      +  word modulus_start_value;
+      -  word modulus_start_value;
+  0x00538c8c scheduleJ1939PeriodicMessage: 22 lines
+      -undefined4
+      -scheduleJ1939PeriodicMessage
+      -          (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
+      +byte scheduleJ1939PeriodicMessage
+      +               (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,dword interval_milliseconds,
+      +               dword first_send_offset_milliseconds,void *builder)
+      -  undefined2 *puVar2;
+      -  if (param_1 == 0) {
+      +  word *pwVar2;
+      +  if (queue_index == J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE) {
+      -    puVar2 = (undefined2 *)((uint)j1939_periodic_queue0_count * 10 + 0x3fd2e2);
+      +    pwVar2 = (word *)((uint)j1939_periodic_queue0_count * 10 + 0x3fd2e2);
+      -    puVar2 = (undefined2 *)((uint)j1939_periodic_queue1_count * 10 + 0x3fd3aa);
+      +    pwVar2 = (word *)((uint)j1939_periodic_queue1_count * 10 + 0x3fd3aa);
+      -  *puVar2 = param_2;
+      -  puVar2[2] = (short)(param_4 / 10) + wVar1;
+      -  puVar2[1] = (short)(param_3 / 10);
+      -  *(undefined4 *)(puVar2 + 3) = param_5;
+      +  *pwVar2 = pgn_key;
+      +  pwVar2[2] = (short)((int)first_send_offset_milliseconds / 10) + wVar1;
+      +  pwVar2[1] = (word)((int)interval_milliseconds / 10);
+      +  *(void **)(pwVar2 + 3) = builder;
+  0x00539190 cm848_j1939_system_init: 69 lines
+      -            (0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
+      -  scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message);
+      +            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef1,100,0x46,
+      +             cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
+      -            (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
+      +            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf004,0x14,0,
+      +             sendPgn61444ElectronicEngineController1Message);
+      -            (0,0xfedf,0x32,0x1e,cm848_buildPgn65247ElectronicEngineController3Message);
+      -  scheduleJ1939PeriodicMessage(0,0xfee3,5000,0x6e,sendPgn65251EngineConfiguration1Message);
+      +            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf003,0x14,10,
+      +             cm848_buildPgn61443ElectronicEngineController2Message);
+      -            (1,0xf000,100,0x32,cm848_buildPgn61440ElectronicRetarderController1Message);
+      -  scheduleJ1939PeriodicMessage(1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
+      -  scheduleJ1939PeriodicMessage(0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
+      +            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfedf,0x32,0x1e,
+      +             cm848_buildPgn65247ElectronicEngineController3Message);
+      -            (0,0xfed9,0xfa,200,cm848_buildPgn65241AuxiliaryInputOutputStatus1Message);
+      +            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfee3,5000,0x6e,
+      +             sendPgn65251EngineConfiguration1Message);
+      -            (0,0xfeef,500,0x82,cm848_buildPgn65263EngineFluidLevelPressure1Message);
+      -  scheduleJ1939PeriodicMessage(0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
+      -  scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
+      -  scheduleJ1939PeriodicMessage(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
+      -  scheduleJ1939PeriodicMessage(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);

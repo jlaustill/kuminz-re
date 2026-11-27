@@ -1,0 +1,108 @@
+0.25 0008+0004 0x003fdcf8 engine_speed_limit_reference_default_cal [word] <- HSG_Breakpoint_Speed (RPM) [HSBKRF] HSG base reference speed
+0.25 104C+0002 0x0040a15a boost_fuel_limit_blend_target [word] <- AFC_Low_Boost_Fueling (MM3S) fueling limit as calculated by AFC Low Boost Fueling algorithm
+0.22 105A+0004 0x0040a89b engine_speed_limit_ramped_maximum_fuel_quantity [word] <- Throttle_100_Fuel_At_HSG_Bef_Droop_Speed (MM3S) [FSMXBFDP] 100% Fueling value at HSG_Bef_Droop_Speed
+0.25 105A+0006 0x0040a89d engine_speed_limit_reference_maximum_fuel_quantity [word] <- Throttle_100_Fuel_At_HSG_Bkpt_Speed (MM3S) [FSMXBK] 100% Fueling value at HSG_Breakpoint_Speed
+0.25 106C+000C 0x0040b700 drivetrain_ratio_unsettled_release_timer [word] <- Out_Of_Gear_Settling_Timer (SEC) The additional time remainind when over RSG
+0.25 1070+0000 0x0040a352 engine_retarder_arbitrated_request_percent [word] <- EB_Command_Level (%BRAKE) Commanded level of engine braking
+0.25 1070+0004 0x0040a356 engine_retarder_tsc1_request_percent [word] <- EB_Override_Command (%) relates to JCEBSW: driv.1 on-33%, driv.2 on-67%, both-100%
+0.25 1071+0002 0x00408e9c engine_retarder_release_passes [word] <- EB_Brake_to_Fuel_Delay (SEC) DELAY BETWEEN BRAKES COMMANDED OFF TO STATUS(EBSS) DEACTIVATION
+0.25 107A+0002 0x0040a24e speed_request_unfiltered [word] <- ASG_Selected_Speed (RPM) [ASRF] Selected input reference speed used as input to the ASG
+0.25 107C+0058 0x0040a202 engine_rpm_delta [word] <- Actual_RPM_Decel_Rate (RPM) Decrease in engine speed during one 20 msec period
+0.25 1094+0002 0x0040ae5e oil_change_monitor_change_due_flag [word] <- OCM_Interval_Warning_Flag (UNITLESS) [OCITWNFG] Set when leading threshold has expired - Time to change oil
+0.25 1096+0000 0x003fdfdc engine_rpm_trigger_ready_flag [word] <- Engine_Startup_Inhibit_N (UNITLESS) ENGINE STARTUP INHIBIT
+0.25 109F+0006 0x0040a192 altitude_derate_air_handling_fault_fuel_limit [word] <- Torque_Derate_Turbo_Fueling (MM3S) Derate fueling value if input to turbo speed/COT estimater is corrupt
+0.25 117D+0006 0x0040a26e engine_retarder_selection_percent_fault_masked [word] <- EB_Switch_Status (UNITLESS) [EBSWSS] indicator of desired engine retarder driver control
+0.25 117D+0010 0x0040a278 engine_speed_limit_source_2 [word] <- Zero_Vss_Derate_RPM (RPM) [ZVLMES] Output engine speed limit going to HSG Reference Speed algorithm
+0.25 117D+0028 0x0040a290 engine_retarder_selection_percent [word] <- EB_Switch_Level (%) [EBSWLV] Commanded brake level from operator switches.
+0.25 117D+0046 0x0040a2ae output_shaft_speed_current [word] <- J1939_Tailshaft_Speed (RPM) [JCTSSP] Output shaft speed from J1939 ETC1 message
+0.25 117D+004A 0x0040a2b2 engine_retarder_request_percent [word] <- EB_Driver_Level (%) [EBDRLV] Rate limited, commanded level of engine braking
+0.25 1180+0004 0x003fd52c cruise_speed_setpoint_default [word] <- Max_Road_Speed_Trim (MPH) [RSMXRZTN] MAXIMUM ALLOWABLE VEHICLE SPEED FOR RSG IN TOP GEAR (ANY GEAR IF GD DISABLED)
+0.25 1180+0008 0x003fd530 j1939_ccvs1_switch_logic_option_cal [word] <- Set_Accel_Switch_Select (UNITLESS) [CRSEACSW] TRUE = SET/ACCEL and RESUME/COAST FALSE = SET/COAST and RESUME/ACCEL
+0.25 1186+0026 0x00408e22 cruise_zone_boundary_hysteresis [word] <- Cruise_RSG_Gain_Hyster (MPH) Hysteresis applied to CRGNVSTD in Cruise/RSG gain set switching logic
+0.25 1187+0008 0x0040b69e cruise_zone_transition_flag [word] <- Cruise_RSG_Calculate_Bumpless (UNITLESS) FLAG INDICATING CRUISE GOVERNOR SHALL PERFORM A BUMPLESS GAIN/DROOP TRANSITION
+0.25 1187+000A 0x0040b6a0 cruise_pid_kd_working [i16] <- Cruise_RSG_Derivative_Gain (MM3S*SEC/RPM) PARAMETER INDICATING THE CURRENT DERIVATIVE GAIN THE CRUISE / RSG IS USING.
+0.25 1187+0010 0x0040b6a6 cruise_pid_ki_working [i16] <- Cruise_RSG_Integral_Gain (MM3S/RPM/SEC) PARAMETER INDICATING THE CURRENT INTEGRAL GAIN THE CRUISE / RSG IS USING.
+0.25 1187+0014 0x0040b6aa cruise_pid_kp_working [i16] <- Cruise_RSG_Proportional_Gain (MM3S/RPM) PARAMETER INDICATING THE CURRENT PROPORTIONAL GAIN THE CRUISE / RSG IS USING.
+0.25 118A+0000 0x0040b6c4 cruise_fuel_demand_hold [word] <- Cruise_Control_RSG_Fueling (MM3S) CRUISE CONTROL RSG FUELING
+0.25 118A+0008 0x0040b6cc cruise_confirm_flag_a [word] <- Cruise_RSG_External_Reset (UNITLESS) FLAG INDICATING CC/RSG SHALL PERFORM A RESET
+0.25 118A+000E 0x0040b6d2 cruise_pid_p_term_working [word] <- Cruise_RSG_Proportional_Fuel (MM3S) CRUISE RSG PROPORTIONAL FUEL
+0.25 118A+0014 0x0040b6d8 cruise_confirm_flag_b [word] <- Cruise_Rate_Limit_Preset (HEX) When 1, prev rate_limited_cc_ref_speed is set to road speed
+0.25 118A+0018 0x0040b6dc cruise_fuel_demand_stable_ref [word] <- CC_RS_Preset_Fueling (MM3S) CRUISE CONTROL RSG PRESET FUELING
+0.25 118D+0000 0x0040b6e0 vehicle_speed_rise_limited [word] <- Cruise_RSG_Road_Speed (MPH) VEHICLE SPEED INPUT INTO THE CRUISE / RSG GOVERNOR
+0.25 118F+0002 0x00408e8a protection_fuel_rate_step_b_param_cal [word] <- Cruise_Bump_Down_Step (MPH) ADJUSTMENT IN CRUISE REFERENCE THAT IS TO BE MADE IF FOR A BUMP DOWN
+0.25 118F+0004 0x00408e8c cruise_speed_margin_cal [word] <- Cruise_Bump_Up_Step (MPH) ADJUSTMENT IN CRUISE REFERENCE THAT IS TO BE MADE IF FOR A BUMP UP
+0.25 11D5+0006 0x003feff8 fuel_demand_load_threshold_c [word] <- AFC_Fueling_Threshold_1 (MM3S) Fueling threshold 1 for AFC_Fueling_Slew_Rate_1
+0.25 11D5+0008 0x003feffa fuel_demand_load_threshold_b [word] <- AFC_Fueling_Threshold_2 (MM3S) Fueling threshold 2 for AFC_Fueling_Slew_Rate_2
+0.25 11D5+000A 0x003feffc fuel_demand_load_threshold_a [word] <- AFC_Fueling_Threshold_3 (MM3S) Fueling threshold 3 for AFC_Fueling_Slew_Rate_3
+0.25 1226+0004 0x0040af02 diagnostic_monitor_complete_handled_bits [dword] <- Previous_NC_Monitor_Status (UNITLESS) [DGPVMNST] flags indicating previous state of NC_Monitor_Status
+0.25 12A7+0000 0x0040c094 logical_output_request_priority [byte[80]] <- Stop_Lamp_Driver_Priority (UNITLESS) Current override priority for Stop_Lamp_Driver.
+0.25 12EA+0004 0x003fd80e engine_speed_limit_droop_cap_cal [word] <- HSG_Isochronous_Speed (RPM) [HSISRF] HSG isochronous speed
+0.25 12F7+0020 0x0040aac6 idle_check_accelerator_pedal_raw [word] <- Mux_Limphome_Raw_Throttle (CNTS) [MXLPRWTH] takes raw throttle for mux limphome on a2d
+0.25 12F7+0022 0x0040aac8 j1939_input_monitor_startup_timer [word] <- Multiplex_Engine_Run_Timer (SEC) [JCMXRNTR] Keeps track of how long engine has been running
+0.25 1405+0000 0x003fd4c4 engine_hour_meter_cal [dword] <- Engine_Run_Time_Backup (SEC) [CMEGBUTR] Non-volatile copy of Engine_Run_Time
+0.25 1630+0000 0x0040a02a sensor_channel_ratio_scale [word] <- Ratio_Supply_Constant_Voltage (VOLT) Ratio Supply Constant ( filtered voltage )
+0.25 1631+0004 0x000642b8 boost_pressure_sensor_high_reading_maximum_engine_load [word] <- BIR_Low_Load_Threshold (%) [DGLWTD] Limit that load must be below for BIR high error check
+0.25 1631+0008 0x000642bc boost_pressure_sensor_high_reading_minimum_boost_pressure [word] <- BIR_Stabilized_Boost_Threshold (IN_HG) [DGSTBSTD] Boost Threshold for BIR High Error
+0.25 1631+0014 0x000642c8 underboost_minimum_engine_load [word] <- BIR_High_Load_Threshold (%) Limit that load must exceed for BIRL error check
+0.25 1631+0016 0x000642ca underboost_maximum_boost_pressure [word] <- BIR_Low_Boost_Threshold (IN_HG) Boost threshold for BIRL error
+0.25 1651+0028 0x0040ba16 misfire_monitor_cylinder_balance_suspend_flag [word] <- Misfire_CBD_Compensation_Disable (UNITLESS) If set, disable cyl bal while misfire is running
+0.25 169C+0000 0x003fd7d6 charge_system_transform_angle_override_enable_cal [word] <- T_CSE_Xform_User_Override (UNITLESS) Enable bit for user override of charge system transform angle
+0.25 169D+0000 0x003ff856 charge_system_transform_angle_lower_limit [word] <- C_CSE_Xform_LLim (DEG) Lower limit for charge system transform angle
+0.25 169D+0004 0x003ff85a charge_system_transform_angle_upper_limit [word] <- C_CSE_Xform_ULim (DEG) Upper limit for charge system transform angle
+0.25 16A1+0002 0x003ffc9a wastegate_duty_integrator_lower_limit [i16] <- C_TGC_Int_LLim (%) Low position int limit for turbocharger control device
+0.25 16A1+0004 0x003ffc9c wastegate_duty_integrator_upper_limit [i16] <- C_TGC_Int_ULim (%) High position int limit for turbocharger control device
+0.25 16A2+0006 0x0040a3c4 wastegate_duty_integral_gain [word] <- TGC_Adjusted_I_Gain (UNITLESS) Testpoint - Turbo control integral gain after adjustment
+0.25 16A5+004A 0x0040a4ca nitrogen_oxides_target_combustion_map_1_output [word] <- CBR_NOx_Alpha1 (G/HP*HR) NOx table output for Alpha=1
+0.25 16A5+004C 0x0040a4cc nitrogen_oxides_target_combustion_map_2_output [word] <- CBR_NOx_Chi2 (G/HP*HR) NOx table output for Chi=2
+0.25 16A5+004E 0x0040a4ce nitrogen_oxides_target_combustion_map_3_output [word] <- CBR_NOx_Chi3 (G/HP*HR) NOx table output for Chi=3
+0.25 16A5+0050 0x0040a4d0 nitrogen_oxides_target_combustion_map_4_output [word] <- CBR_NOx_Chi4 (G/HP*HR) NOx table output for Chi=4
+0.25 1806+0000 0x0040afc2 turbocharger_overspeed_immediate_derate_flag [word] <- AH_Fuel_Derate_Latch (UNITLESS) [AHFLDRLA] Indicates turbo overspeed protection fuel derate
+0.25 1902+0022 0x0040ba40 temperature_rationality_confirm_dwell_count [word] <- Rationality_Engine_Run_Timer (SEC) Rationality_Engine_Run_Timer
+0.25 1964+0000 0x0040a55a injection_quantity_temperature_headroom_cap [word] <- Texh_Fuel_Limit (MM3S) Exhaust fuel limit
+0.25 1966+0004 0x0040bd84 sensor_channel105_value [word] <- EGR_Delta_Press_Sensor (IN_HG) EGR Delta-P sensor output from A/D before any post-processing
+0.25 1966+0014 0x0040bd94 sensor_channel108_value [word] <- EGR_Orifice_Tmptr_Sensor (DEG_F) EGR_Orifice_Temperature raw value linearized and filtered
+0.25 1966+0028 0x0040bda8 sensor_channel105_default_value [word] <- EGR_Delta_Press_Default (IN_HG) EGR_Delta_Press_Sensor global default value
+0.25 1966+002C 0x0040bdac sensor_channel108_default_value [word] <- EGR_Orifice_Tmptr_Default (DEG_F) EGR Orifice Tmptr Default value
+0.25 1966+0040 0x0040bdc0 sensor_channel28_value [word] <- Engine_Conn_SV_Sensor (VOLT) Engine_Conn_SV linearized and filtered value
+0.25 1966+0042 0x0040bdc2 sensor_channel28_default_value [word] <- Engine_Conn_SV_Default (VOLT) Engine_Conn_SVage Default value
+0.25 1966+0064 0x0040bde4 sensor_channel42_value [word] <- Supply_1_Volt_Sensor (VOLT) Sensor_Supply_1_Voltage linearized and filtered value
+0.25 1966+0066 0x0040bde6 sensor_channel42_default_value [word] <- Supply_1_Volt_Default (VOLT) Throttle_Sensor_Supply_Voltage Default value
+0.25 1966+0074 0x0040bdf4 sensor_channel102_default_value [word] <- Trans_Gov_Press_Default (PSI) Trans_Governor oil pressure AD global default value
+0.25 1966+0076 0x0040bdf6 sensor_channel102_value [word] <- Trans_Gov_Press_Sensor (PSI) Trans_Governor oil pressure value linearized and filtered
+0.25 1966+008C 0x0040be0c sensor_channel97_value [word] <- PPS_1_Throt_Sensor (%) PPS1 Throttle input linearized and filtered value
+0.25 1966+008E 0x0040be0e sensor_channel97_default_value [word] <- PPS_1_Throt_Default (%) PPS_1_Throt Default value
+0.25 1966+0090 0x0040be10 sensor_channel98_value [word] <- PPS_2_Throt_Sensor (%) PPS2 Throttle input linearized and filtered value
+0.25 1966+0092 0x0040be12 sensor_channel98_default_value [word] <- PPS_2_Throt_Default (%) PPS_2_Throt Default value
+0.25 8019+0009 0x0040b888 fuel_pressure_governor_integral_term [i16] <- HPCR_Fuelpr_Integral_Dutycycle (%) Integral component of dutycycle for fuel pressure monitoring
+0.25 8019+000B 0x0040b88a fuel_pressure_governor_derivative_term [word] <- HPCR_Fuelpr_Derivative_Dutycycle (%) Derivative contribution to the dutycycle
+0.25 801A+0004 0x0040951a fuel_pressure_diagnostic_set_debounce_limit [word] <- HPCR_Def_Debounce_Time (MSEC) Debouncing time for defect classification
+0.25 801A+0006 0x0040951c fuel_pressure_diagnostic_clear_debounce_limit [word] <- HPCR_OK_Debounce_Time (MSEC) Debouncing time for OK classification
+0.25 801A+000A 0x00409520 fuel_pressure_minimum_expected_check_floor [i16] <- HPCR_Low_Pressure_Plausibility (MPa) Fuel pressure limit for "Low pressure" defect classification
+0.25 801E+000A 0x004095a2 fuel_pressure_feedback_filter_coefficient [word] <- HPCR_Fuelpr_Filter_Constant (UNITLESS) PT1-Filter time constant for fuel pressure
+0.25 8022+000E 0x00409a78 fuel_pressure_setpoint_rise_limit [i16] <- HPCR_Fuelpr_Increment_Limit (MPa) Slew rate limit per execution that fuelpr is allowed to increase
+0.25 8022+001A 0x00409a84 fuel_pressure_setpoint_deadband [i16] <- HPCR_Fuelpr_Setpoint_Hysteresis (MPa) plus-or-minus deadband applied to setpoint rail pressure
+0.25 8022+001C 0x00409a86 fuel_pressure_setpoint_cranking_minimum [i16] <- HPCR_Min_Fuelpr_Crank (MPa) Min allowed rail press setpoint in crank mode
+0.25 803F+0002 0x0040b8b8 fuel_pressure_setpoint_cold_start_value [word] <- HPCR_Crank_Fuelpr_Setpoint (MPa) Output of cranking fuel pressure setpoint table
+0.25 803F+0006 0x0040b8bc fuel_pressure_setpoint_running_value [i16] <- HPCR_Run_Fuelpr_Setpoint (MPa) Output of normal run mode rail setpoint tables
+0.25 803F+0008 0x0040b8be fuel_pressure_setpoint_map_blended [i16] <- HPCR_Fuelpr_Base_Setpoint (MPa) Base fuel pressure setpoint
+0.25 805E+0004 0x0040b870 injection_schedule_cylinder_event_index [byte] <- HPCR_Stored_Cylinder_Number (UNITLESS) Cylinder number stored at static wakeup
+0.25 8085+0002 0x00409e42 injection_timing_main_combination_mode [word] <- Main_Cold_Advance_Select (UNITLESS) 0=add coolant and intake adv,1=MAX WINS,2=MIN WINS
+0.25 80CE+0010 0x0040b840 auxiliary_injection_timing_retard [i16] <- Aux_SOI_Penultimate_Dist (CRANK_DEG_BTDC) Next-to-final distance between main and pilot SOI
+0.25 80CE+001A 0x0040b84a injection_timing_auxiliary_coolant_angle [word] <- Aux_SOI_Cool_Setpoint (CRANK_DEG_BTDC) Aux quantity cool setpoint table
+0.25 8194+001A 0x00408f70 speed_setpoint_minimum [word] <- EPS_Failure_Detect_RPM (RPM) [ESFXSNTD] EPS error detection performed when rpm > this value
+0.25 8A23+0000 0x0040b328 fuel_level_first_sample_flag [word] <- Fuel_Lvl_Delay_Processing (UNITLESS) Delay First Fuel Level Message Until HW is stablized,1= set,0=clear
+0.25 8A23+0002 0x0040b32a fuel_level_fault_substitution_flag [word] <- Fuel_Lvl_Err_Condition (UNITLESS) An error condition exists within the fuel level sys, 1=set, 0=clear
+0.25 8A23+0004 0x0040b32c fuel_level_power_up_check_pending_flag [word] <- Fuel_Lvl_First_Reading (UNITLESS) Currently processing first fuel level reading, 1=set, 0=clear
+0.25 8A23+0006 0x0040b32e fuel_level_sensor_high_voltage_recovery_counter [word] <- Fuel_Lvl_Good_Readings (SEC) Seconds of good fuel A/D readings
+0.25 8A23+0008 0x0040b330 fuel_level_sensor_high_voltage_flag [word] <- Fuel_Lvl_Out_Of_Range (UNITLESS) Fuel Level out of range condition is active, 1=set, 0=clear
+0.25 8A26+0002 0x0040b1ec protection_iat_scaled [word] <- Initial_Ambient_Air_Pressure (IN_HG) Initial ambient air pressure = boost pressure at key on if boost valid
+0.25 8A38+0002 0x0040b34c intake_air_heater_ambient_temperature [i16] <- IAH_Temperature_Input1 (DEG_F) IAH Temperature Input 1; equals battery temp for Chrysler
+0.25 8C35+0012 0x00409e96 egr_delta_pressure_high_reading_check_debounce_limit [word] <- EGR_DP_Low_Time (SEC) Time needed to set DP in range high error
+0.25 8C35+0014 0x00409e98 egr_delta_pressure_low_reading_check_debounce_limit [word] <- EGR_DP_High_Time (SEC) Time needed to set DP in range low error
+0.25 8C35+0016 0x00409e9a egr_delta_pressure_pre_start_check_dwell_limit_b [word] <- EGR_DP_Wait_Time (SEC) Time needed by Delta Pressure to stabilize after key on.
+0.25 8C4E+0004 0x0040b56e output_speed_sensor_check_state [DIAGNOSTIC_MONITOR_STATE] <- OSS_Rationality_Monitor_State (UNITLESS) State of OSS Rationality monitor
+0.25 8C4F+0000 0x00408ab0 output_speed_sensor_check_fault_set_passes [word] <- OSS_Fault_Time_Max (SEC) time allowed for OSS rationality to fail
+0.25 8C5E+0000 0x00408dca wastegate_solenoid_fixed_duty_enable [byte] <- CWG_Duty_Cycle_Overide (UNITLESS) Diagnostic Tool Override while engine stopped.
+0.25 8C5F+0004 0x00408a56 engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed [word] <- Tcase_NV_MPH_Max (MPH) if vehicle speed > this, Tcase_Low_Range_Flag gets cleared
+0.25 8C60+0006 0x0040b546 engine_to_vehicle_speed_ratio_high_flag [byte] <- Tcase_Low_Range_Flag (UNITLESS) If Tcase_Low_Range_Flag = TRUE, N/V Low Range Indication
+0.25 8C74+0001 0x0040b75d cylinders_4_to_6_contribution_percent [byte] <- Cylinder_Bank_Contribution_2 (%) Cylinder bank 2 (avg. of physical cyls. 4,5,6) contribution value (0 - 200%)

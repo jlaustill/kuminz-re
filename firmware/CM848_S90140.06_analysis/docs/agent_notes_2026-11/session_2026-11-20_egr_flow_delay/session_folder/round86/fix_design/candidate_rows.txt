@@ -1,0 +1,155 @@
+# 0x26a64 cm550_memcpy - 24 call site(s); long@+4 [long]; long@+8 [long]; word@+12 [word]
+0x00026a64,cm550_memcpy,0,TBD_4,dword,+4 (long)
+0x00026a64,cm550_memcpy,1,TBD_8,dword,+8 (long)
+0x00026a64,cm550_memcpy,2,TBD_12,ushort,+12 (word)
+# 0x34bba cm550_watchdogServiceLoop - 19 call site(s); word@+4 [word]
+0x00034bba,cm550_watchdogServiceLoop,0,TBD_4,ushort,+4 (word)
+# 0x0ed34 cm550_diagnosticCodeTableSearch - 9 call site(s); word@+4 [word]
+0x0000ed34,cm550_diagnosticCodeTableSearch,0,TBD_4,ushort,+4 (word)
+# 0x31ace cm550_diagnosticSessionValidator - 9 call site(s); word@+4 [word]; word@+6 [word]
+0x00031ace,cm550_diagnosticSessionValidator,0,TBD_4,ushort,+4 (word)
+0x00031ace,cm550_diagnosticSessionValidator,1,TBD_6,ushort,+6 (word)
+# 0x202d8 setBitInArray - 8 call site(s); word@+4 [word]
+0x000202d8,setBitInArray,0,TBD_4,ushort,+4 (word)
+# 0x201d6 cm550_FUN_000201d6 - 7 call site(s); word@+4 [word]
+0x000201d6,cm550_FUN_000201d6,0,TBD_4,ushort,+4 (word)
+# 0x2024a cm550_FUN_0002024a - 7 call site(s); word@+4 [word]
+0x0002024a,cm550_FUN_0002024a,0,TBD_4,ushort,+4 (word)
+# 0x20348 cm550_FUN_00020348 - 7 call site(s); word@+4 [word]
+0x00020348,cm550_FUN_00020348,0,TBD_4,ushort,+4 (word)
+# 0x239d2 cm550_diagnosticStateInitializer - 7 call site(s); word@+4 [word]; word@+6 [word]
+0x000239d2,cm550_diagnosticStateInitializer,0,TBD_4,ushort,+4 (word)
+0x000239d2,cm550_diagnosticStateInitializer,1,TBD_6,ushort,+6 (word)
+# 0x1e79a cm550_insiteMultiFrameResponseBuilder - 6 call site(s); word@+4 [word]; word@+6 [word]
+0x0001e79a,cm550_insiteMultiFrameResponseBuilder,0,TBD_4,ushort,+4 (word)
+0x0001e79a,cm550_insiteMultiFrameResponseBuilder,1,TBD_6,ushort,+6 (word)
+# 0x333d6 cm550_FUN_000333d6 - 6 call site(s); word@+4 [word]; word@+6 [word]
+0x000333d6,cm550_FUN_000333d6,0,TBD_4,ushort,+4 (word)
+0x000333d6,cm550_FUN_000333d6,1,TBD_6,ushort,+6 (word)
+# 0x33460 cm550_FUN_00033460 - 6 call site(s); word@+4 [word]; word@+6 [word]
+0x00033460,cm550_FUN_00033460,0,TBD_4,ushort,+4 (word)
+0x00033460,cm550_FUN_00033460,1,TBD_6,ushort,+6 (word)
+# 0x03870 cm550_busyWaitDelayLoop - 5 call site(s); word@+4 [word]
+0x00003870,cm550_busyWaitDelayLoop,0,TBD_4,ushort,+4 (word)
+# 0x13616 vp44_communication_state_machine - 5 call site(s); word@+4 [word]
+0x00013616,vp44_communication_state_machine,0,TBD_4,ushort,+4 (word)
+# 0x19436 protectionStateValidator - 5 call site(s); word@+4 [word]
+0x00019436,protectionStateValidator,0,TBD_4,ushort,+4 (word)
+# 0x21f4e cm550_diagnosticGroupPositionBufferStore - 5 call site(s); word@+4 [low byte]
+0x00021f4e,cm550_diagnosticGroupPositionBufferStore,0,TBD_4,byte,+4 (low byte)
+# 0x165f2 cm550_param_address_calc - 4 call site(s); long@+4 [long]; word@+8 [word]
+0x000165f2,cm550_param_address_calc,0,TBD_4,dword,+4 (long)
+0x000165f2,cm550_param_address_calc,1,TBD_8,ushort,+8 (word)
+# 0x21fac cm550_diagnosticGroupSnapshotCapture - 4 call site(s); word@+4 [low byte]
+0x00021fac,cm550_diagnosticGroupSnapshotCapture,0,TBD_4,byte,+4 (low byte)
+# 0x229ea cm550_messageErrorHandler - 4 call site(s); word@+4 [low byte]; word@+6 [word]
+0x000229ea,cm550_messageErrorHandler,0,TBD_4,byte,+4 (low byte)
+0x000229ea,cm550_messageErrorHandler,1,TBD_6,ushort,+6 (word)
+# 0x27cd0 vp44_FUN_00027cd0 - 4 call site(s); word@+4 [low byte]
+0x00027cd0,vp44_FUN_00027cd0,0,TBD_4,byte,+4 (low byte)
+# 0x2fe38 cm550_diagnosticTableSnapshotCapture - 4 call site(s); word@+4 [word]; word@+6 [word]
+0x0002fe38,cm550_diagnosticTableSnapshotCapture,0,TBD_4,ushort,+4 (word)
+0x0002fe38,cm550_diagnosticTableSnapshotCapture,1,TBD_6,ushort,+6 (word)
+# 0x19332 protectionStateProcessor - 3 call site(s); word@+4 [word]
+0x00019332,protectionStateProcessor,0,TBD_4,ushort,+4 (word)
+# 0x20210 cm550_FUN_00020210 - 3 call site(s); word@+4 [word]
+0x00020210,cm550_FUN_00020210,0,TBD_4,ushort,+4 (word)
+# 0x20310 cm550_FUN_00020310 - 3 call site(s); word@+4 [word]
+0x00020310,cm550_FUN_00020310,0,TBD_4,ushort,+4 (word)
+# 0x21964 getJ1939MemoryServiceHeaderLength - 3 call site(s); word@+4 [word]
+0x00021964,getJ1939MemoryServiceHeaderLength,0,TBD_4,ushort,+4 (word)
+# 0x22ad8 vp44MessageTransmitter - 3 call site(s); word@+4 [low byte]; word@+6 [low byte]; word@+8 [low byte]; word@+10 [word]
+0x00022ad8,vp44MessageTransmitter,0,TBD_4,byte,+4 (low byte)
+0x00022ad8,vp44MessageTransmitter,1,TBD_6,byte,+6 (low byte)
+0x00022ad8,vp44MessageTransmitter,2,TBD_8,byte,+8 (low byte)
+0x00022ad8,vp44MessageTransmitter,3,TBD_10,ushort,+10 (word)
+# 0x23820 cm550_diagnosticMessageValidator - 3 call site(s); word@+4 [word]; word@+6 [word]; word@+8 [word]
+0x00023820,cm550_diagnosticMessageValidator,0,TBD_4,ushort,+4 (word)
+0x00023820,cm550_diagnosticMessageValidator,1,TBD_6,ushort,+6 (word)
+0x00023820,cm550_diagnosticMessageValidator,2,TBD_8,ushort,+8 (word)
+# 0x24c5a cm550_FUN_00024c5a - 3 call site(s); word@+4 [low byte]
+0x00024c5a,cm550_FUN_00024c5a,0,TBD_4,byte,+4 (low byte)
+# 0x31b22 cm550_diagnosticCanResponseSender - 3 call site(s); long@+4 [long]; word@+8 [word]
+0x00031b22,cm550_diagnosticCanResponseSender,0,TBD_4,dword,+4 (long)
+0x00031b22,cm550_diagnosticCanResponseSender,1,TBD_8,ushort,+8 (word)
+# 0x3216a cm550_diagnosticMultiPacketResponseBuilder - 3 call site(s); long@+4 [long]; word@+8 [word]
+0x0003216a,cm550_diagnosticMultiPacketResponseBuilder,0,TBD_4,dword,+4 (long)
+0x0003216a,cm550_diagnosticMultiPacketResponseBuilder,1,TBD_8,ushort,+8 (word)
+# 0x1192a cm550_FUN_0001192a - 2 call site(s); long@+4 [long]; word@+8 [word]
+0x0001192a,cm550_FUN_0001192a,0,TBD_4,dword,+4 (long)
+0x0001192a,cm550_FUN_0001192a,1,TBD_8,ushort,+8 (word)
+# 0x11da6 cm550_crc16Calculate - 2 call site(s); long@+4 [&addr@+7, byte 3 of long(rw), long]; word@+8 [word]
+0x00011da6,cm550_crc16Calculate,0,TBD_4,dword,+4 (&addr@+7, byte 3 of long(rw), long)
+0x00011da6,cm550_crc16Calculate,1,TBD_8,ushort,+8 (word)
+# 0x13ed8 cm550_FUN_00013ed8 - 2 call site(s); word@+4 [word]
+0x00013ed8,cm550_FUN_00013ed8,0,TBD_4,ushort,+4 (word)
+# 0x146b4 cm550_oldestDiagnosticTimestampSearch - 2 call site(s); word@+4 [word]
+0x000146b4,cm550_oldestDiagnosticTimestampSearch,0,TBD_4,ushort,+4 (word)
+# 0x186ae cm550_protectionThresholdCalculationHelper - 2 call site(s); long@+4 [long]; long@+8 [long]; long@+12 [long]; word@+16 [word]
+0x000186ae,cm550_protectionThresholdCalculationHelper,0,TBD_4,dword,+4 (long)
+0x000186ae,cm550_protectionThresholdCalculationHelper,1,TBD_8,dword,+8 (long)
+0x000186ae,cm550_protectionThresholdCalculationHelper,2,TBD_12,dword,+12 (long)
+0x000186ae,cm550_protectionThresholdCalculationHelper,3,TBD_16,ushort,+16 (word)
+# 0x18708 cm550_protectionPercentageCalculator - 2 call site(s); word@+4 [word]; word@+6 [word]; word@+8 [word]
+0x00018708,cm550_protectionPercentageCalculator,0,TBD_4,ushort,+4 (word)
+0x00018708,cm550_protectionPercentageCalculator,1,TBD_6,ushort,+6 (word)
+0x00018708,cm550_protectionPercentageCalculator,2,TBD_8,ushort,+8 (word)
+# 0x192f2 cm550_protectionCalculationHelper - 2 call site(s); word@+4 [word]; word@+6 [word]; word@+8 [word]
+0x000192f2,cm550_protectionCalculationHelper,0,TBD_4,ushort,+4 (word)
+0x000192f2,cm550_protectionCalculationHelper,1,TBD_6,ushort,+6 (word)
+0x000192f2,cm550_protectionCalculationHelper,2,TBD_8,ushort,+8 (word)
+# 0x1fdc0 cm550_j1939MessageTypeCounter - 2 call site(s); word@+4 [word]
+0x0001fdc0,cm550_j1939MessageTypeCounter,0,TBD_4,ushort,+4 (word)
+# 0x1ffd6 cm550_j1939TorqueControlModeParser - 2 call site(s); long@+4 [long]; word@+8 [low byte]
+0x0001ffd6,cm550_j1939TorqueControlModeParser,0,TBD_4,dword,+4 (long)
+0x0001ffd6,cm550_j1939TorqueControlModeParser,1,TBD_8,byte,+8 (low byte)
+# 0x23130 cm550_multiPacketBufferAllocator - 2 call site(s); word@+4 [word]
+0x00023130,cm550_multiPacketBufferAllocator,0,TBD_4,ushort,+4 (word)
+# 0x238ac cm550_ioControlEntryAdd - 2 call site(s); word@+4 [word]; word@+6 [low byte]; word@+8 [word]
+0x000238ac,cm550_ioControlEntryAdd,0,TBD_4,ushort,+4 (word)
+0x000238ac,cm550_ioControlEntryAdd,1,TBD_6,byte,+6 (low byte)
+0x000238ac,cm550_ioControlEntryAdd,2,TBD_8,ushort,+8 (word)
+# 0x2f606 cm550_FUN_0002f606 - 2 call site(s); word@+4 [word]
+0x0002f606,cm550_FUN_0002f606,0,TBD_4,ushort,+4 (word)
+# 0x2fddc cm550_diagnosticTableEntryClear - 2 call site(s); word@+4 [word]
+0x0002fddc,cm550_diagnosticTableEntryClear,0,TBD_4,ushort,+4 (word)
+# 0x0b688 cm550_FUN_0000b688 - 1 call site(s); word@+4 [word]
+0x0000b688,cm550_FUN_0000b688,0,TBD_4,ushort,+4 (word)
+# 0x0c80e cm550_modeBasedDataDispatcher - 1 call site(s); word@+4 [word]
+0x0000c80e,cm550_modeBasedDataDispatcher,0,TBD_4,ushort,+4 (word)
+# 0x0d1a4 cm550_diagnosticStatus2Initializer - 1 call site(s); word@+4 [word]
+0x0000d1a4,cm550_diagnosticStatus2Initializer,0,TBD_4,ushort,+4 (word)
+# 0x0d4ae cm550_FUN_0000d4ae - 1 call site(s); word@+4 [word]
+0x0000d4ae,cm550_FUN_0000d4ae,0,TBD_4,ushort,+4 (word)
+# 0x1025c cm550_retarderModeThresholdCalculator - 1 call site(s); word@+4 [word]
+0x0001025c,cm550_retarderModeThresholdCalculator,0,TBD_4,ushort,+4 (word)
+# 0x14f42 cm550_insitePidDtcHandler - 1 call site(s); word@+4 [word]
+0x00014f42,cm550_insitePidDtcHandler,0,TBD_4,ushort,+4 (word)
+# 0x14fae cm550_initHourMeterSystem: no slot layout (no argument read in the body (not a callee-argument case))
+# 0x1a95a cm550_throttleTimeAccumulatorProcessor - 1 call site(s); long@+4 [long]; word@+8 [word]
+0x0001a95a,cm550_throttleTimeAccumulatorProcessor,0,TBD_4,dword,+4 (long)
+0x0001a95a,cm550_throttleTimeAccumulatorProcessor,1,TBD_8,ushort,+8 (word)
+# 0x22a58 vp44CanFrameBuilder - 1 call site(s); word@+4 [low byte]; word@+6 [word]
+0x00022a58,vp44CanFrameBuilder,0,TBD_4,byte,+4 (low byte)
+0x00022a58,vp44CanFrameBuilder,1,TBD_6,ushort,+6 (word)
+# 0x23870 cm550_ioControlTimeoutTableLookup - 1 call site(s); word@+4 [word]
+0x00023870,cm550_ioControlTimeoutTableLookup,0,TBD_4,ushort,+4 (word)
+# 0x238ec cm550_ioControlTimeoutEntryAdd - 1 call site(s); word@+4 [low byte]
+0x000238ec,cm550_ioControlTimeoutEntryAdd,0,TBD_4,byte,+4 (low byte)
+# 0x23a3c cm550_ioControlEntryRemove - 1 call site(s); word@+4 [word]
+0x00023a3c,cm550_ioControlEntryRemove,0,TBD_4,ushort,+4 (word)
+# 0x24b4e cm550_ioControlDigitDisplaySequencer - 1 call site(s); word@+4 [word]
+0x00024b4e,cm550_ioControlDigitDisplaySequencer,0,TBD_4,ushort,+4 (word)
+# 0x24cd2 cm550_FUN_00024cd2 - 1 call site(s); word@+4 [low byte]
+0x00024cd2,cm550_FUN_00024cd2,0,TBD_4,byte,+4 (low byte)
+# 0x25806 cm550_FUN_00025806 - 1 call site(s); word@+4 [word]
+0x00025806,cm550_FUN_00025806,0,TBD_4,ushort,+4 (word)
+# 0x26272 cm550_epsOverrideChecker - 1 call site(s); word@+4 [word]
+0x00026272,cm550_epsOverrideChecker,0,TBD_4,ushort,+4 (word)
+# 0x2cf7e cm550_FUN_0002cf7e - 1 call site(s); word@+4 [word]
+0x0002cf7e,cm550_FUN_0002cf7e,0,TBD_4,ushort,+4 (word)
+# 0x2fd90 cm550_FUN_0002fd90 - 1 call site(s); word@+4 [word]
+0x0002fd90,cm550_FUN_0002fd90,0,TBD_4,ushort,+4 (word)
+# 0x0fbe4 vp44_fuelSourceOilPressureConditionChecker: no slot layout (no argument read in the body (not a callee-argument case))
+# 0x1b4c2 mc68k_phase2_slot_8_handler: no slot layout (no argument read in the body (not a callee-argument case))
+# 0x2cf52 cm550_FUN_0002cf52: no slot layout (callee reads only (no direct caller in the dump): r 4@+4, rw 1@+7, r 2@+8)

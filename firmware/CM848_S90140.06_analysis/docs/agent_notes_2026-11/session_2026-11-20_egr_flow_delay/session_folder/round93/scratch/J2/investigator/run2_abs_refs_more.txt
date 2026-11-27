@@ -1,0 +1,317 @@
+== 0x80d9e9
+  0x22036: prev words 00 80 42 12 17 79 | move.b (abs).l,<dst> (source) @0x22034
+  0x222a6: prev words 00 80 0b 14 13 f9 | move.b (abs).l,<dst> (source) @0x222a4; move.b <src>,(abs).l (destination) @0x222a4
+  0x23684: prev words da 82 66 30 10 39 | move.b (abs).l,<dst> (source) @0x23682
+  0x236ba: prev words 00 80 19 8a 13 f9 | move.b (abs).l,<dst> (source) @0x236b8; move.b <src>,(abs).l (destination) @0x236b8
+== 0x80da50
+  0xd226: prev words 66 18 0c 79 00 01 | cmpi.w #0x1,(abs).l @0xd222
+  0x1d612: prev words 00 06 0c 79 00 03 | cmpi.w #0x3,(abs).l @0x1d60e
+  0x1f500: prev words 00 80 da 76 2a 7c | ?
+  0x1f8d4: prev words 49 ee ff fc 2a 7c | ?
+  0x21454: prev words 66 38 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x21450
+  0x21ff6: prev words 00 01 00 04 35 79 | move.w (abs).l,<dst> (source) @0x21ff4
+  0x22090: prev words 67 00 02 22 30 39 | move.w (abs).l,<dst> (source) @0x2208e
+  0x220bc: prev words 67 00 00 e2 4a 79 | tst.w (abs).l @0x220ba
+  0x22134: prev words 00 00 ff ff 3b b9 | move.w (abs).l,<dst> (source) @0x22132
+  0x22152: prev words b5 cb 65 f8 3b 79 | move.w (abs).l,<dst> (source) @0x22150
+  0x2219c: prev words fd b8 54 8f 33 f9 | move.w (abs).l,<dst> (source) @0x2219a; move.w <src>,(abs).l (destination) @0x2219a
+  0x231e0: prev words 48 e7 00 30 24 7c | ?
+  0x23444: prev words 60 48 46 df 30 39 | move.w (abs).l,<dst> (source) @0x23442
+  0x2346a: prev words 19 86 67 66 30 39 | move.w (abs).l,<dst> (source) @0x23468
+  0x234e4: prev words 67 02 53 52 30 39 | move.w (abs).l,<dst> (source) @0x234e2
+  0x235bc: prev words 00 80 19 93 33 f9 | move.w (abs).l,<dst> (source) @0x235ba; move.w <src>,(abs).l (destination) @0x235ba
+  0x25b58: prev words 5c 8f 34 00 4a 79 | tst.w (abs).l @0x25b56
+  0x265e8: prev words 24 5f 4e 75 4a 79 | tst.w (abs).l @0x265e6
+  0x2f03e: prev words 66 28 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x2f03a
+  0x2f13e: prev words 00 80 da 76 2a 7c | ?
+  0x2f9b0: prev words 66 40 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x2f9ac
+  0x30c24: prev words da 62 0c 79 00 03 | cmpi.w #0x3,(abs).l @0x30c20
+  0x32c92: prev words 00 80 d3 30 4a 79 | tst.w (abs).l @0x32c90
+  0x3454e: prev words 66 18 0c 79 00 02 | cmpi.w #0x2,(abs).l @0x3454a
+== 0x80da68
+  0x1d760: prev words 66 0a 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x1d75c
+  0x1f576: prev words 4a 55 67 3a 4a 79 | tst.w (abs).l @0x1f574
+  0x1f5e0: prev words 00 80 da 66 42 79 | clr.w (abs).l @0x1f5de
+  0x1f944: prev words 4a 55 67 3a 4a 79 | tst.w (abs).l @0x1f942
+  0x1f9ae: prev words 00 80 da 66 42 79 | clr.w (abs).l @0x1f9ac
+  0x2209e: prev words 0b 12 66 1e 30 39 | move.w (abs).l,<dst> (source) @0x2209c
+  0x220fc: prev words 00 a4 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x220f8
+  0x221a6: prev words 00 80 0b 12 33 f9 | move.w (abs).l,<dst> (source) @0x221a4; move.w <src>,(abs).l (destination) @0x221a4
+  0x2325c: prev words 00 80 19 92 2a 7c | ?
+  0x2f1c4: prev words 00 b6 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x2f1c0
+  0x2f2a8: prev words 1d 54 33 fc 00 01 | ?
+== 0x80da70
+  0x1f580: prev words 66 0a 0c 39 00 4a | cmpi.b #0x4a,(abs).l @0x1f57c
+  0x1f5e8: prev words da 68 13 fc 00 4a | ?
+  0x1f94e: prev words 66 0a 0c 39 00 4f | cmpi.b #0x4f,(abs).l @0x1f94a
+  0x1f9b6: prev words da 68 13 fc 00 4f | ?
+  0x21fe4: prev words 00 80 41 f8 15 79 | move.b (abs).l,<dst> (source) @0x21fe2
+  0x220ac: prev words 0b 16 66 10 10 39 | move.b (abs).l,<dst> (source) @0x220aa
+  0x22110: prev words 42 2a 66 6a 10 39 | move.b (abs).l,<dst> (source) @0x2210e
+  0x221b0: prev words 00 80 0b 16 13 f9 | move.b (abs).l,<dst> (source) @0x221ae; move.b <src>,(abs).l (destination) @0x221ae
+  0x2345c: prev words 19 84 66 0e 10 39 | move.b (abs).l,<dst> (source) @0x2345a
+  0x23522: prev words 3f 3c 00 01 10 39 | move.b (abs).l,<dst> (source) @0x23520
+  0x23562: prev words 3f 3c 00 02 10 39 | move.b (abs).l,<dst> (source) @0x23560
+  0x235cc: prev words 00 80 19 84 13 f9 | move.b (abs).l,<dst> (source) @0x235ca; move.b <src>,(abs).l (destination) @0x235ca
+  0x2f1ce: prev words 66 00 00 80 b4 39 | ?
+  0x2f2ae: prev words 00 80 da 68 13 c2 | move.b <src>,(abs).l (destination) @0x2f2ac
+== 0x80da80
+  0x1f60a: prev words 00 80 01 16 42 79 | clr.w (abs).l @0x1f608
+  0x1f642: prev words 52 40 36 00 33 c0 | move.w <src>,(abs).l (destination) @0x1f640
+  0x1f69a: prev words 52 40 36 00 33 c0 | move.w <src>,(abs).l (destination) @0x1f698
+  0x1f72e: prev words 52 40 36 00 33 c0 | move.w <src>,(abs).l (destination) @0x1f72c
+  0x1f9d8: prev words 00 7c 01 12 42 79 | clr.w (abs).l @0x1f9d6
+  0x1fa10: prev words 52 40 36 00 33 c0 | move.w <src>,(abs).l (destination) @0x1fa0e
+  0x1fa64: prev words 52 40 36 00 33 c0 | move.w <src>,(abs).l (destination) @0x1fa62
+  0x1faf8: prev words 52 40 36 00 33 c0 | move.w <src>,(abs).l (destination) @0x1faf6
+  0x23206: prev words fd c0 54 8f 42 79 | clr.w (abs).l @0x23204
+  0x234d0: prev words 60 00 00 c0 4a 79 | tst.w (abs).l @0x234ce
+  0x234d8: prev words da 80 67 06 53 79 | ?
+  0x23506: prev words 00 80 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23502
+  0x2353e: prev words 60 52 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x2353a
+  0x2357e: prev words 60 12 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x2357a
+  0x2f2d0: prev words 00 92 01 20 42 79 | clr.w (abs).l @0x2f2ce
+  0x2f2f2: prev words 00 04 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x2f2f0
+  0x2f362: prev words 00 08 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x2f360
+  0x2f3f0: prev words 00 0c 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x2f3ee
+== 0x80da82
+  0x23232: prev words 00 80 da 84 42 79 | clr.w (abs).l @0x23230
+  0x23624: prev words 00 10 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x23622
+  0x23632: prev words 60 00 00 84 42 79 | clr.w (abs).l @0x23630
+  0x23652: prev words 00 80 da 84 4a 79 | tst.w (abs).l @0x23650
+  0x2365a: prev words da 82 67 06 53 79 | ?
+  0x2367c: prev words 60 3a 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23678
+== 0x80da84
+  0x2322c: prev words 00 80 d9 ee 42 79 | clr.w (abs).l @0x2322a
+  0x23644: prev words 00 01 60 70 4a 79 | tst.w (abs).l @0x23642
+  0x2364c: prev words da 84 67 06 53 79 | ?
+  0x23668: prev words 66 36 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23664
+  0x236a4: prev words 66 12 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x236a0
+  0x2f95e: prev words 3c 1c 4e 75 42 79 | clr.w (abs).l @0x2f95c
+  0x2f9d4: prev words 4a 43 67 1a 42 79 | clr.w (abs).l @0x2f9d2
+  0x2f9f6: prev words 00 0e 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x2f9f4
+  0x2fa70: prev words 00 12 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x2fa6e
+== 0x80da8a
+  0x1f82a: prev words 00 80 da 56 42 79 | clr.w (abs).l @0x1f828
+  0x1f83a: prev words 00 80 da 56 33 c3 | move.w <src>,(abs).l (destination) @0x1f838
+  0x2333a: prev words da 8c 76 01 4a 79 | tst.w (abs).l @0x23338
+  0x23342: prev words da 8a 67 20 53 79 | ?
+  0x23364: prev words 74 01 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23360
+  0x23372: prev words 00 80 da 56 42 79 | clr.w (abs).l @0x23370
+  0x2f0f0: prev words 81 8a 52 40 33 c0 | move.w <src>,(abs).l (destination) @0x2f0ee
+  0x2f10a: prev words 00 80 da 56 42 79 | clr.w (abs).l @0x2f108
+== 0x80da8e
+  0x1f7d4: prev words 00 80 d9 ee 33 c3 | move.w <src>,(abs).l (destination) @0x1f7d2
+  0x1f7ea: prev words 00 80 d9 ee 42 79 | clr.w (abs).l @0x1f7e8
+  0x1fb8c: prev words 00 80 d9 e4 33 c3 | move.w <src>,(abs).l (destination) @0x1fb8a
+  0x1fba2: prev words 00 80 d9 e4 42 79 | clr.w (abs).l @0x1fba0
+  0x2147e: prev words 00 80 d9 ee 42 79 | clr.w (abs).l @0x2147c
+  0x23238: prev words 00 80 da 82 42 79 | clr.w (abs).l @0x23236
+  0x2337a: prev words da 8a 76 01 4a 79 | tst.w (abs).l @0x23378
+  0x23382: prev words da 8e 67 16 53 79 | ?
+  0x2339a: prev words 74 01 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23396
+  0x233a2: prev words da 8e 66 08 42 79 | clr.w (abs).l @0x233a0
+  0x2f7fc: prev words 00 80 d9 e4 2a 7c | ?
+== 0x80da92
+  0x233be: prev words 3d 4a 66 42 4a 79 | tst.w (abs).l @0x233bc
+  0x233c6: prev words da 92 67 06 53 79 | ?
+  0x233ce: prev words da 92 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x233ca
+  0x233d6: prev words da 92 66 0c 42 79 | clr.w (abs).l @0x233d4
+== 0x80da94
+  0x2340c: prev words 66 00 00 3a 4a 79 | tst.w (abs).l @0x2340a
+  0x23414: prev words da 94 67 06 53 79 | ?
+  0x2341c: prev words da 94 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23418
+  0x23426: prev words 66 00 00 20 42 79 | clr.w (abs).l @0x23424
+== 0x80da6c
+  0x233dc: prev words 00 80 da 92 42 79 | clr.w (abs).l @0x233da
+== 0x80aa10
+  0x233e2: prev words 00 80 da 6c 4a 79 | tst.w (abs).l @0x233e0
+  0x233ea: prev words aa 10 67 16 53 79 | ?
+  0x233f2: prev words aa 10 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x233ee
+== 0x80aa08
+  0x233fa: prev words aa 10 66 06 42 79 | clr.w (abs).l @0x233f8
+== 0x80da56
+  0x1f824: prev words 00 10 67 0e 42 79 | clr.w (abs).l @0x1f822
+  0x1f834: prev words 60 14 33 fc 00 01 | ?
+  0x2334e: prev words 00 80 19 90 b0 79 | cmp.w (abs).l,d0 @0x2334c
+  0x23358: prev words 67 0c 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23354
+  0x2336c: prev words da 8a 66 0e 42 79 | clr.w (abs).l @0x2336a
+  0x23556: prev words 00 01 66 38 4a 79 | tst.w (abs).l @0x23554
+  0x235ea: prev words 00 80 19 8e 33 f9 | move.w (abs).l,<dst> (source) @0x235e8; move.w <src>,(abs).l (destination) @0x235e8
+  0x2f0e2: prev words 66 24 33 fc 00 01 | ?
+  0x2f104: prev words 1c 00 4e 75 42 79 | clr.w (abs).l @0x2f102
+== 0x80da54
+  0x1d5c0: prev words d6 46 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x1d5bc
+  0x1f7fe: prev words 67 10 33 fc 00 01 | ?
+  0x1f80c: prev words da 86 60 0c 42 79 | clr.w (abs).l @0x1f80a
+  0x23270: prev words 00 80 19 88 b0 79 | cmp.w (abs).l,d0 @0x2326e
+  0x2327a: prev words 67 1a 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x23276
+  0x232ac: prev words da 86 66 1a 42 79 | clr.w (abs).l @0x232aa
+  0x232de: prev words da 88 66 1c 42 79 | clr.w (abs).l @0x232dc
+  0x235d6: prev words 00 80 19 86 33 f9 | move.w (abs).l,<dst> (source) @0x235d4; move.w <src>,(abs).l (destination) @0x235d4
+  0x2f052: prev words 66 3c 33 fc 00 01 | ?
+  0x2f072: prev words b2 80 67 1a 42 79 | clr.w (abs).l @0x2f070
+== 0x80d9e4
+  0x1f7c6: prev words 00 04 66 16 42 79 | clr.w (abs).l @0x1f7c4
+  0x1f7de: prev words 60 14 33 fc 00 03 | ?
+  0x1fb86: prev words d9 ee 33 fc 00 03 | ?
+  0x1fb9c: prev words 00 80 d9 ee 42 79 | clr.w (abs).l @0x1fb9a
+  0x2134e: prev words d9 e0 42 02 2a 7c | ?
+  0x2142e: prev words 4e 5e 4e 75 20 7c | ?
+  0x2204c: prev words 00 01 00 04 37 79 | move.w (abs).l,<dst> (source) @0x2204a
+  0x221ba: prev words 00 80 0b 18 30 39 | move.w (abs).l,<dst> (source) @0x221b8
+  0x221de: prev words 67 00 00 c0 4a 79 | tst.w (abs).l @0x221dc
+  0x22248: prev words 00 00 ff ff 39 b9 | move.w (abs).l,<dst> (source) @0x22246
+  0x22266: prev words b5 cb 65 f8 39 79 | move.w (abs).l,<dst> (source) @0x22264
+  0x2229c: prev words fd 16 54 8f 33 f9 | move.w (abs).l,<dst> (source) @0x2229a; move.w <src>,(abs).l (destination) @0x2229a
+  0x23218: prev words 0c 00 4e 75 42 79 | clr.w (abs).l @0x23216
+  0x23250: prev words 00 80 da 7e 26 7c | ?
+  0x2f644: prev words 00 80 1e 2e 28 7c | ?
+  0x2f7f6: prev words 00 80 da 7a 28 7c | ?
+  0x2faca: prev words 00 80 d9 ee 42 79 | clr.w (abs).l @0x2fac8
+  0x35acc: prev words d9 ea 00 80 d9 ea | ?
+  0x35ad0: prev words d9 ea 00 80 d9 e4 | ?
+== 0x80d9ee
+  0x1f7ce: prev words d9 e4 33 fc 00 7d | ?
+  0x1f7e4: prev words 00 80 d9 e4 42 79 | clr.w (abs).l @0x1f7e2
+  0x1fb7e: prev words 00 10 67 16 42 79 | clr.w (abs).l @0x1fb7c
+  0x1fb96: prev words 60 14 33 fc 00 7d | ?
+  0x21478: prev words 42 50 33 fc 00 7d | ?
+  0x23226: prev words d9 e6 33 fc 00 7d | ?
+  0x2f96e: prev words d9 e6 33 fc 00 7d | ?
+  0x2f9e4: prev words d9 e6 33 fc 00 7d | ?
+  0x2fa16: prev words d9 e6 33 fc 00 7d | ?
+  0x2fa76: prev words 00 80 da 84 4a 79 | tst.w (abs).l @0x2fa74
+  0x2fa9a: prev words 33 f9 00 80 1e 2a | move.w (abs).l,(abs).l (destination) @0x2fa94
+  0x2fac4: prev words 1e 4c 33 fc 00 7d | ?
+== 0x804266
+  0x236ce: prev words 00 4a 70 00 30 39 | move.w (abs).l,<dst> (source) @0x236cc
+  0x236e2: prev words b0 81 6c 0a 52 79 | ?
+  0x23704: prev words 60 4e 46 df 42 79 | clr.w (abs).l @0x23702
+  0x2376e: prev words 00 80 19 93 42 79 | clr.w (abs).l @0x2376c
+== 0x804268
+  0x23784: prev words 66 00 00 40 30 39 | move.w (abs).l,<dst> (source) @0x23782
+  0x23792: prev words 81 fc 64 0a 52 79 | ?
+  0x237b4: prev words 60 4a 46 df 42 79 | clr.w (abs).l @0x237b2
+== 0x80d9dc
+  0x21340: prev words 20 53 13 e8 00 03 | ?
+  0x21354: prev words 00 80 d9 e4 16 39 | move.b (abs).l,<dst> (source) @0x21352
+  0x21a64: prev words 00 80 3f 9c b0 39 | ?
+  0x21a94: prev words 24 6f 00 08 22 7c | ?
+  0x21b90: prev words 24 6f 00 08 22 7c | ?
+  0x21c44: prev words 00 80 3f a6 b0 39 | ?
+  0x21c7c: prev words 24 6f 00 08 22 7c | ?
+  0x21d4c: prev words 24 6f 00 08 22 7c | ?
+== 0x80da01
+  0x212fa: prev words 10 2e ff ff b0 39 | ?
+  0x21328: prev words 10 2e ff ff b0 39 | ?
+  0x22a04: prev words 00 09 00 02 13 79 | move.b (abs).l,<dst> (source) @0x22a02
+  0x22a7a: prev words 00 09 00 02 17 79 | move.b (abs).l,<dst> (source) @0x22a78
+  0x22af4: prev words 00 09 00 02 17 79 | move.b (abs).l,<dst> (source) @0x22af2
+  0x28eca: prev words 00 e0 ea 86 1a 39 | move.b (abs).l,<dst> (source) @0x28ec8
+  0x2f4d8: prev words 10 2b 00 02 b0 39 | ?
+  0x2fb7e: prev words 14 2a 00 02 b4 39 | ?
+  0x31c58: prev words 1e d2 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x31c56
+  0x31ef8: prev words 00 e3 81 10 11 79 | move.b (abs).l,<dst> (source) @0x31ef6
+  0x3202c: prev words 1f 02 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x3202a
+  0x32132: prev words 1f 3a 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x32130
+  0x32280: prev words 1f 54 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x3227e
+  0x323f6: prev words 26 5a 00 0a 13 79 | move.b (abs).l,<dst> (source) @0x323f4
+  0x32564: prev words 2d 60 00 0a 13 79 | move.b (abs).l,<dst> (source) @0x32562
+  0x32a0c: prev words 34 48 00 0a 13 79 | move.b (abs).l,<dst> (source) @0x32a0a
+  0x32b1e: prev words 34 60 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x32b1c
+  0x32ba2: prev words 34 78 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x32ba0
+  0x32c4e: prev words 00 e3 81 11 13 79 | move.b (abs).l,<dst> (source) @0x32c4c
+  0x32e2e: prev words 00 e3 81 10 11 79 | move.b (abs).l,<dst> (source) @0x32e2c
+  0x3308c: prev words 00 e3 81 12 15 79 | move.b (abs).l,<dst> (source) @0x3308a
+  0x33146: prev words 00 e3 81 10 11 79 | move.b (abs).l,<dst> (source) @0x33144
+  0x331ec: prev words 34 f0 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x331ea
+  0x336c8: prev words 00 e3 81 12 15 79 | move.b (abs).l,<dst> (source) @0x336c6
+  0x33792: prev words 35 50 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x33790
+  0x338be: prev words 35 68 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x338bc
+  0x33a44: prev words 00 e3 81 10 11 79 | move.b (abs).l,<dst> (source) @0x33a42
+  0x33b26: prev words 35 b0 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x33b24
+  0x33c4e: prev words 00 e3 81 10 11 79 | move.b (abs).l,<dst> (source) @0x33c4c
+  0x33d1e: prev words 35 e6 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x33d1c
+  0x33e38: prev words 35 fe 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x33e36
+  0x33f2c: prev words 36 16 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x33f2a
+  0x34058: prev words 36 2e 00 0a 13 79 | move.b (abs).l,<dst> (source) @0x34056
+  0x342d6: prev words 36 6a 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x342d4
+  0x34372: prev words 36 82 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x34370
+  0x3440e: prev words 36 9a 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x3440c
+  0x3447c: prev words 36 aa 00 0a 11 79 | move.b (abs).l,<dst> (source) @0x3447a
+  0x344f4: prev words 00 e3 81 10 11 79 | move.b (abs).l,<dst> (source) @0x344f2
+== 0x80da0b
+  0x21306: prev words 10 2e ff ff b0 39 | ?
+  0x28fd0: prev words 00 e0 ea 86 1a 39 | move.b (abs).l,<dst> (source) @0x28fce
+  0x2fb96: prev words f1 28 58 8f b4 39 | ?
+  0x339d8: prev words 00 e3 81 12 15 79 | move.b (abs).l,<dst> (source) @0x339d6
+  0x34212: prev words 00 e3 81 11 13 79 | move.b (abs).l,<dst> (source) @0x34210
+== 0x80d9b6
+  0x1e61e: prev words 00 02 e6 88 20 79 | move.l (abs).l,<dst> (source) @0x1e61c
+  0x1e632: prev words 00 f0 e8 80 20 79 | move.l (abs).l,<dst> (source) @0x1e630
+  0x1e63c: prev words 31 40 00 04 20 39 | move.l (abs).l,<dst> (source) @0x1e63a
+  0x1e646: prev words 72 0a d0 81 20 79 | move.l (abs).l,<dst> (source) @0x1e644
+  0x1e650: prev words 21 40 00 06 26 79 | move.l (abs).l,<dst> (source) @0x1e64e
+  0x1e676: prev words 00 01 60 52 22 7c | ?
+  0x1e6ca: prev words 66 b4 70 12 d1 b9 | ?
+  0x1e6d0: prev words 00 80 d9 b6 20 39 | move.l (abs).l,<dst> (source) @0x1e6ce
+  0x1e6e2: prev words 23 fc 00 80 d7 2e | ?
+  0x1e6e8: prev words 00 80 d9 b6 20 39 | move.l (abs).l,<dst> (source) @0x1e6e6
+  0x21410: prev words 00 fa 6c 14 20 39 | move.l (abs).l,<dst> (source) @0x2140e
+  0x28bb6: prev words 00 80 d9 ba 23 c0 | move.l <src>,(abs).l (destination) @0x28bb4
+== 0x80d9ba
+  0x1e6ee: prev words 00 80 d9 b6 b0 b9 | ?
+  0x212d0: prev words 67 00 01 56 26 7c | ?
+  0x28bb0: prev words 00 80 d7 2e 23 c0 | move.l <src>,(abs).l (destination) @0x28bae
+== 0x80d9bf
+  0x1e5fa: prev words 34 2f 00 14 4a 39 | tst.b (abs).l @0x1e5f8
+  0x1e6f8: prev words 66 3a 13 fc 00 01 | ?
+  0x212d6: prev words 00 80 d9 ba 28 7c | ?
+== 0x80bcf6
+  0xef5e: prev words 00 c0 08 39 00 02 | ?
+  0xef6c: prev words 00 10 08 39 00 06 | ?
+  0xef7a: prev words 00 04 08 39 00 01 | ?
+  0xef92: prev words 00 cf 08 39 00 00 | ?
+  0xf1e8: prev words 42 02 08 39 00 04 | ?
+  0x159fe: prev words 00 80 bd 1a 28 7c | ?
+  0x15a26: prev words 00 07 02 39 00 7f | ?
+  0x15a42: prev words 00 07 00 39 00 80 | ?
+  0x15d44: prev words 00 80 bd 06 13 f9 | move.b (abs).l,<dst> (source) @0x15d42; move.b <src>,(abs).l (destination) @0x15d42
+  0x15dfc: prev words 00 80 bd 1a 28 7c | ?
+  0x15e02: prev words 00 80 bc f6 22 7c | ?
+  0x1ca5e: prev words 00 80 bd 1a 22 7c | ?
+  0x2073c: prev words 30 03 e6 80 20 7c | ?
+  0x21922: prev words 4e 5e 4e 75 20 7c | ?
+  0x23a9c: prev words 00 80 bd 1a 28 7c | ?
+  0x24822: prev words 42 10 02 39 00 fe | ?
+  0x248ae: prev words 30 12 e6 80 20 7c | ?
+  0x24926: prev words ff ff e6 80 20 7c | ?
+  0x26b9a: prev words 00 80 db 5c 22 7c | ?
+  0x26ba0: prev words 00 80 bc f6 20 7c | ?
+  0x3049a: prev words 00 10 4e 75 20 7c | ?
+  0x33dc4: prev words 00 fc 00 02 10 39 | move.b (abs).l,<dst> (source) @0x33dc2
+  0x3449e: prev words 00 80 36 ac 10 39 | move.b (abs).l,<dst> (source) @0x3449c
+== 0x80ded2
+  0xd0ca: prev words 33 f9 00 80 a9 76 | move.w (abs).l,(abs).l (destination) @0xd0c4
+  0x1c658: prev words 00 80 d3 3e 33 c0 | move.w <src>,(abs).l (destination) @0x1c656
+  0x21466: prev words da 4e 66 24 30 39 | move.w (abs).l,<dst> (source) @0x21464
+  0x257f6: prev words 00 80 80 0a 33 d2 | move.w <src>,(abs).l (destination) @0x257f4
+  0x2dce8: prev words 66 1a 30 92 33 f9 | move.w (abs).l,<dst> (source) @0x2dce6; move.w <src>,(abs).l (destination) @0x2dce6
+  0x2dd28: prev words 00 08 66 54 30 39 | move.w (abs).l,<dst> (source) @0x2dd26
+  0x2dd44: prev words 20 00 67 1c 33 f9 | move.w (abs).l,<dst> (source) @0x2dd42; move.w <src>,(abs).l (destination) @0x2dd42
+  0x2dda4: prev words 0c 00 4e 75 33 f9 | move.w (abs).l,<dst> (source) @0x2dda2; move.w <src>,(abs).l (destination) @0x2dda2
+  0x2f9c2: prev words da 4e 66 2c 30 39 | move.w (abs).l,<dst> (source) @0x2f9c0
+  0x3455e: prev words 33 f9 00 80 da 64 | move.w (abs).l,(abs).l (destination) @0x34558
+  0x34586: prev words 33 f9 00 80 40 4a | move.w (abs).l,(abs).l (destination) @0x34580
+  0x3561c: prev words 01 38 00 06 01 38 | ?
+  0x35620: prev words 01 38 00 80 de d2 | ?
+== 0x808182
+  0x2f058: prev words 00 80 da 54 30 39 | move.w (abs).l,<dst> (source) @0x2f056
+== 0x80818a
+  0x2f0e8: prev words 00 80 da 56 30 39 | move.w (abs).l,<dst> (source) @0x2f0e6
+== 0x80818c
+  0x1f8a8: prev words 38 bc 00 01 36 b9 | move.w (abs).l,<dst> (source) @0x1f8a6
+  0x2f0a2: prev words 00 80 da 58 30 39 | move.w (abs).l,<dst> (source) @0x2f0a0
+== 0x803f88
+  0x2919e: prev words 00 80 dd e3 33 f9 | move.w (abs).l,<dst> (source) @0x2919c; move.w <src>,(abs).l (destination) @0x2919c

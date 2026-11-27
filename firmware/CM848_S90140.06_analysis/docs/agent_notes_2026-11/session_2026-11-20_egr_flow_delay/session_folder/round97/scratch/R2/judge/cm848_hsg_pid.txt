@@ -1,0 +1,210 @@
+=== runHighSpeedGovernorPid
+void runHighSpeedGovernorPid(void)
+{
+  bool bVar1;
+  longlong lVar2;
+  word wVar3;
+  dword dVar4;
+  uint uVar5;
+  int iVar6;
+  word wVar7;
+  int iVar8;
+  sword sVar9;
+  int iVar10;
+  ushort uVar11;
+  presetHighSpeedGovernorIntegrator();
+  high_speed_governor_filtered_error_previous = high_speed_governor_filtered_error;
+  iVar8 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)
+                                (int)((uint)engine_speed_limit_arbitration.applied_speed_limit -
+                                     (uint)high_speed_governor_compensated_engine_speed) *
+                               (longlong)(int)high_speed_governor_error_filter_gain) >> 0x20),
+                         ((uint)engine_speed_limit_arbitration.applied_speed_limit -
+                         (uint)high_speed_governor_compensated_engine_speed) *
+                         (int)high_speed_governor_error_filter_gain) / 0x200);
+  if (iVar8 < 0x7fff) {
+    if (iVar8 < -0x7fff) {
+      iVar8 = -0x8000;
+    }
+  }
+  else {
+    iVar8 = 0x7fff;
+  }
+  high_speed_governor_filtered_error =
+       cm848_signedFirstOrderFilter((int)(short)iVar8,&high_speed_governor_error_filter);
+  sVar9 = high_speed_governor_filtered_error_maximum;
+  if ((high_speed_governor_filtered_error_maximum < high_speed_governor_filtered_error) ||
+     (sVar9 = high_speed_governor_filtered_error_minimum,
+     high_speed_governor_filtered_error < high_speed_governor_filtered_error_minimum)) {
+    high_speed_governor_error_filter.accumulator = (int)sVar9 << 0x10;
+    high_speed_governor_filtered_error = sVar9;
+  }
+  if ((((int)((uint)engine_speed_limit_arbitration.applied_speed_limit +
+             (int)high_speed_governor_integrator_reset_speed_offset) <
+        (int)(uint)engine_speed_state.filtered_engine_speed) &&
+      (adjusted_user_fueling < high_speed_governor_integrator_reset_fuel_demand_threshold)) &&
+     (adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR)) {
+    high_speed_governor_integrator =
+         (uint)(ushort)high_speed_governor_integrator_reset_value << 0x10;
+    high_speed_governor_integral_term = high_speed_governor_integrator_reset_value;
+    high_speed_governor_filtered_error = 0;
+    high_speed_governor_error_filter.accumulator = 0;
+  }
+  else {
+    wVar3 = high_speed_governor_derivative_gain;
+    if (high_speed_governor_derivative_gain_adjustment_enable != 0) {
+      wVar3 = high_speed_governor_filtered_error;
+      if (high_speed_governor_filtered_error < 0) {
+        wVar3 = -high_speed_governor_filtered_error;
+      }
+      wVar3 = lookupTableInterpolation
+                        (&
+                         high_speed_governor_derivative_gain_adjustment_multiplier_cached_axis_offset
+                         ,wVar3,high_speed_governor_derivative_gain_adjustment_error_axis,
+                         high_speed_governor_derivative_gain_adjustment_multiplier_values,0);
+      uVar5 = (uint)high_speed_governor_derivative_gain * (int)(short)wVar3;
+      if (((int)((ulonglong)(uint)high_speed_governor_derivative_gain *
+                 (ulonglong)(uint)(int)(short)wVar3 >> 0x20) << 0x18 | uVar5 >> 8) < 0x10000) {
+        wVar3 = (word)(uVar5 >> 8);
+      }
+      else {
+        wVar3 = 0xffff;
+      }
+    }
+    iVar6 = (int)high_speed_governor_filtered_error;
+    iVar8 = (int)(CONCAT44((int)((ulonglong)
+                                 ((longlong)iVar6 *
+                                 (longlong)(int)(uint)high_speed_governor_proportional_gain_adjusted
+                                 ) >> 0x20),
+                           iVar6 * (uint)high_speed_governor_proportional_gain_adjusted) / 0x459);
+    iVar10 = (int)high_speed_governor_proportional_term_maximum;
+    if ((iVar8 <= iVar10) && (iVar10 = iVar8, iVar8 < high_speed_governor_proportional_term_minimum)
+       ) {
+      iVar10 = (int)high_speed_governor_proportional_term_minimum;
+    }
+    wVar7 = high_speed_governor_proportional_gain;
+    high_speed_governor_derivative_gain_adjusted = wVar3;
+    if (high_speed_governor_proportional_gain_adjustment_enable != 0) {
+      wVar3 = high_speed_governor_filtered_error;
+      if (iVar6 < 0) {
+        wVar3 = -high_speed_governor_filtered_error;
+      }
+      wVar3 = lookupTableInterpolation
+                        (&
+                         high_speed_governor_proportional_gain_adjustment_multiplier_cached_axis_offset
+                         ,wVar3,high_speed_governor_proportional_gain_adjustment_error_axis,
+                         high_speed_governor_proportional_gain_adjustment_multiplier_values,0);
+      uVar5 = (uint)high_speed_governor_proportional_gain * (int)(short)wVar3;
+      if (((int)((ulonglong)(uint)high_speed_governor_proportional_gain *
+                 (ulonglong)(uint)(int)(short)wVar3 >> 0x20) << 0x18 | uVar5 >> 8) < 0xf001) {
+        wVar7 = (word)(uVar5 >> 8);
+      }
+      else {
+        wVar7 = 0xf000;
+      }
+    }
+    high_speed_governor_proportional_gain_adjusted = wVar7;
+    if (high_speed_governor_integral_gain_adjustment_enable == 0) {
+      uVar5 = (uint)high_speed_governor_integral_gain;
+    }
+    else {
+      wVar3 = high_speed_governor_filtered_error;
+      if (high_speed_governor_filtered_error < 0) {
+        wVar3 = -high_speed_governor_filtered_error;
+      }
+      wVar3 = lookupTableInterpolation
+                        (&high_speed_governor_integral_gain_adjustment_multiplier_cached_axis_offset
+                         ,wVar3,high_speed_governor_integral_gain_adjustment_error_axis,
+                         high_speed_governor_integral_gain_adjustment_multiplier_values,0);
+      uVar5 = (int)((ulonglong)(uint)high_speed_governor_integral_gain *
+                    (ulonglong)(uint)(int)(short)wVar3 >> 0x20) << 0x18 |
+              (uint)high_speed_governor_integral_gain * (int)(short)wVar3 >> 8;
+      if (0x3d70 < uVar5) {
+        uVar5 = 0x3d70;
+      }
+    }
+    high_speed_governor_integral_gain_adjusted = (word)uVar5;
+    iVar6 = (int)high_speed_governor_filtered_error;
+    lVar2 = CONCAT44((int)((ulonglong)
+                           ((longlong)iVar6 *
+                           (longlong)(int)(uint)high_speed_governor_proportional_gain_adjusted) >>
+                          0x20),iVar6 * (uint)high_speed_governor_proportional_gain_adjusted) /
+            0x459;
+    iVar8 = (int)lVar2;
+    high_speed_governor_proportional_term = high_speed_governor_proportional_term_maximum;
+    if ((iVar8 <= high_speed_governor_proportional_term_maximum) &&
+       (high_speed_governor_proportional_term = high_speed_governor_proportional_term_minimum,
+       high_speed_governor_proportional_term_minimum <= iVar8)) {
+      high_speed_governor_proportional_term = (short)lVar2;
+    }
+    lVar2 = CONCAT44((int)((ulonglong)
+                           ((longlong)(iVar6 - (short)high_speed_governor_filtered_error_previous) *
+                           (longlong)(int)((uint)high_speed_governor_derivative_gain_adjusted * 100)
+                           ) >> 0x20),
+                     (iVar6 - (short)high_speed_governor_filtered_error_previous) *
+                     (uint)high_speed_governor_derivative_gain_adjusted * 100) / 0xd96;
+    iVar8 = (int)lVar2;
+    high_speed_governor_derivative_term = high_speed_governor_derivative_term_maximum;
+    if ((iVar8 <= high_speed_governor_derivative_term_maximum) &&
+       (high_speed_governor_derivative_term = high_speed_governor_derivative_term_minimum,
+       high_speed_governor_derivative_term_minimum <= iVar8)) {
+      high_speed_governor_derivative_term = (word)lVar2;
+    }
+    dVar4 = iVar10 * 0x10000 +
+            (int)(CONCAT44((int)((ulonglong)
+                                 ((longlong)(iVar6 * 0x10000) * (longlong)(int)(uVar5 & 0xffff)) >>
+                                0x20),iVar6 * 0x10000 * (uVar5 & 0xffff)) / 0x4591) +
+            high_speed_governor_integrator + high_speed_governor_proportional_term * -0x10000;
+    high_speed_governor_integrator._0_2_ = (short)(dVar4 >> 0x10);
+    uVar11 = high_speed_governor_integrator_maximum;
+    if ((high_speed_governor_integrator_maximum <= high_speed_governor_integrator._0_2_) ||
+       (bVar1 = high_speed_governor_integrator._0_2_ < high_speed_governor_integrator_minimum,
+       uVar11 = high_speed_governor_integrator_minimum, high_speed_governor_integrator = dVar4,
+       bVar1)) {
+      high_speed_governor_integrator = (uint)uVar11 << 0x10;
+    }
+    high_speed_governor_integral_term = high_speed_governor_integrator._0_2_;
+    iVar8 = (int)high_speed_governor_proportional_term +
+            (int)(short)high_speed_governor_derivative_term +
+            (int)high_speed_governor_integrator._0_2_;
+    high_speed_governor_fueling = high_speed_governor_fueling_maximum;
+    if ((iVar8 <= (int)(uint)high_speed_governor_fueling_maximum) &&
+       (high_speed_governor_fueling = high_speed_governor_fueling_minimum,
+       (int)(uint)high_speed_governor_fueling_minimum <= iVar8)) {
+      high_speed_governor_fueling = (word)iVar8;
+    }
+  }
+  return;
+}
+=== presetHighSpeedGovernorIntegrator
+void presetHighSpeedGovernorIntegrator(void)
+{
+  int iVar1;
+  int iVar2;
+  dword dVar3;
+  if (final_fueling_state != FUELING_STATE_HIGH_SPEED_GOVERNOR) {
+    iVar2 = (int)high_speed_governor_proportional_term;
+    iVar1 = iVar2;
+    if (iVar2 < 1) {
+      iVar1 = 0;
+    }
+    high_speed_governor_integrator = (uint)final_fueling - iVar1;
+    if (0 < iVar2) {
+      iVar1 = (int)high_speed_governor_integrator_preset_offset_limit;
+      if (iVar2 < iVar1) {
+        iVar1 = iVar2;
+      }
+      high_speed_governor_integrator = iVar1 + high_speed_governor_integrator;
+    }
+    dVar3 = (dword)high_speed_governor_integrator_preset_maximum;
+    if (((int)dVar3 < (int)high_speed_governor_integrator) ||
+       (dVar3 = (dword)high_speed_governor_integrator_preset_minimum,
+       (int)high_speed_governor_integrator < (int)dVar3)) {
+      high_speed_governor_integrator = dVar3;
+    }
+    high_speed_governor_integral_term = (sword)high_speed_governor_integrator;
+    high_speed_governor_filtered_error_previous = high_speed_governor_filtered_error;
+    high_speed_governor_integrator = high_speed_governor_integrator << 0x10;
+  }
+  return;
+}

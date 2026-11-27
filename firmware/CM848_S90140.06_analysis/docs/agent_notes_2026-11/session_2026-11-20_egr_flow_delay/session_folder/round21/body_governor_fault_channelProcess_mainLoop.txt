@@ -1,0 +1,82 @@
+=== governor_fault_channelProcess_mainLoop (lines 67034-67151, 112 non-blank)
+67034: // Function: governor_fault_channelProcess_mainLoop @ 0x00509278
+67035: //
+67037: void governor_fault_channelProcess_mainLoop(void)
+67039: {
+67040:   ushort uVar1;
+67041:   short sVar2;
+67042:   bool bVar3;
+67043:   dword dVar4;
+67044:   dword dVar5;
+67045:   short sVar6;
+67046:   undefined2 uVar7;
+67047:   bool bVar8;
+67048:   undefined4 uVar9;
+67049:   undefined *puVar10;
+67051:   fault_channel_config_ptr = (dword)&fuel_temperature_derate_configuration_flags;
+67052:   fault_channel_state_ptr = (dword)&fuel_temperature_derate_input_pointer;
+67053:   PTR_engine_startup_inhibit_cal_003fbd4a =
+67054:        (undefined *)&fuel_temperature_derate_fueling_severity_index_cal;
+67055:   do {
+67056:     dVar5 = fault_channel_state_ptr;
+67057:     dVar4 = fault_channel_config_ptr;
+67058:     uVar1 = *(ushort *)fault_channel_config_ptr;
+67059:     if ((*(ushort *)(fault_channel_config_ptr + 0x16) == 0) &&
+67060:        (*(short *)(fault_channel_config_ptr + 0x18) == 0)) {
+67061: LAB_0050935c:
+67062:       *(undefined2 *)(dVar5 + 0x16) = 1;
+67063:     }
+67064:     else {
+67065:       if (*(ushort *)(fault_channel_config_ptr + 0x16) < engine_speed_state.filtered_engine_speed) {
+67066:         uVar7 = 1;
+67067: LAB_00509328:
+67068:         *(undefined2 *)(dVar5 + 0x24) = uVar7;
+67069:       }
+67070:       else if (engine_speed_state.filtered_engine_speed == 0) {
+67071:         *(undefined2 *)(fault_channel_state_ptr + 0x16) = 0;
+67072:         *(undefined2 *)(dVar5 + 0x22) = 0;
+67073:         uVar7 = 0;
+67074:         goto LAB_00509328;
+67075:       }
+67076:       if (*(short *)(dVar5 + 0x24) != 0) {
+67077:         if (*(ushort *)(dVar4 + 0x18) <= *(ushort *)(dVar5 + 0x22)) goto LAB_0050935c;
+67078:         *(short *)(dVar5 + 0x22) = *(short *)(dVar5 + 0x22) + 1;
+67079:       }
+67080:     }
+67081:     bVar8 = false;
+67082:     bVar3 = false;
+67083:     if (*(short *)(dVar5 + 0x16) == 0) {
+67084:       fault_event_timing_snapshot(0);
+67085:       fault_event_timing_snapshot(1);
+67086:     }
+67087:     else {
+67088:       if (*(short *)(dVar5 + 0x18) == 0) {
+67089:         if ((*(short *)PTR_engine_startup_inhibit_cal_003fbd4a != 0) ||
+67090:            (*(short *)(dVar5 + 0x1a) != 0)) {
+67091:           bVar8 = true;
+67092:         }
+67093:         if ((*(short *)(PTR_engine_startup_inhibit_cal_003fbd4a + 2) != 0) ||
+67094:            (*(short *)(dVar5 + 0x1c) != 0)) goto LAB_005093c4;
+67095:       }
+67096:       else {
+67097:         bVar8 = true;
+67098: LAB_005093c4:
+67099:         bVar3 = true;
+67100:       }
+67101:       if ((uVar1 & 0x1000) == 0) {
+67102:         if (bVar8) {
+67103:           *(int *)(PTR_engine_startup_inhibit_cal_003fbd4a + 0xe) =
+67104:                *(int *)(PTR_engine_startup_inhibit_cal_003fbd4a + 0xe) + 1;
+67105:           fault_snapshot_capture(0);
+67106:         }
+67107:         else {
+67108:           fault_event_timing_snapshot(0);
+67109:         }
+67110:         if (!bVar3) {
+67111:           uVar9 = 1;
+67112:           goto LAB_0050946c;
+67113:         }
+67114:         *(int *)(PTR_engine_startup_inhibit_cal_003fbd4a + 0x12) =
+67115:              *(int *)(PTR_engine_startup_inhibit_cal_003fbd4a + 0x12) + 1;
+67116:         fault_snapshot_capture(1);
+... 32 more lines

@@ -1,0 +1,77 @@
+=== cm848_testAlternatorOutputByCuttingField (lines 37817-37898, 76 non-blank)
+// Function: cm848_testAlternatorOutputByCuttingField @ 0x00038120
+//
+/* Alternator output test: in regulator state 2 with the intake air heater in phase 5
+   (INTAKE_AIR_HEATER_PHASE_OFF), engine speed above
+   alternator_field_cut_test_engine_speed_threshold, no charging fault set and
+   charging_voltage_error_slow_average above alternator_field_cut_test_error_threshold it counts
+   passes; once the count reaches alternator_field_cut_test_condition_passes a second counter starts
+   and, when it equals alternator_field_cut_test_cut_start_passes, the battery voltage is
+   snapshotted and alternator_field_cut_test_active_flag is set, which makes
+   cm848_applyAlternatorFieldDuty cut the field duty to 0. The test clears if the voltage then falls
+   by more than alternator_field_cut_test_voltage_drop_threshold; otherwise after
+   alternator_field_cut_test_hold_passes passes it counts a failed test and releases the field, and
+   fault 368 (P2502) is set when the failed tests reach alternator_field_cut_test_failed_test_limit.
+   The thresholds in the RAM dump (8000 rpm, 640, 65535) keep it from ever tripping. (was
+   cm848_processProtectionMode2) */
+void cm848_testAlternatorOutputByCuttingField(void)
+{
+  if (((((alternator_field_regulator_state == 2) &&
+        (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF)) &&
+       (alternator_field_cut_test_engine_speed_threshold < engine_speed_state.filtered_engine_speed)
+       ) && (((fault_detected_bits_368_to_383 & 1) == 0 &&
+             ((fault_detected_bits_368_to_383 & 4) == 0)))) &&
+     (((fault_detected_bits_368_to_383 & 2) == 0 &&
+      (((int)(uint)alternator_field_cut_test_error_threshold <
+        (int)(short)charging_voltage_error_slow_average && (protection_voltage_active_flag == 0)))))
+     ) {
+    alternator_field_cut_test_condition_elapsed_passes =
+         alternator_field_cut_test_condition_elapsed_passes + 1;
+  }
+  else {
+    alternator_field_cut_test_condition_elapsed_passes = 0;
+  }
+  if (alternator_field_cut_test_condition_elapsed_passes <
+      alternator_field_cut_test_condition_passes) {
+    alternator_field_cut_test_sequence_elapsed_passes = 0;
+    alternator_field_cut_test_active_flag = 0;
+    alternator_field_cut_test_failed_test_count = 0;
+    alternator_field_cut_test_hold_elapsed_passes = 0;
+  }
+  else {
+    alternator_field_cut_test_sequence_elapsed_passes =
+         alternator_field_cut_test_sequence_elapsed_passes + 1;
+    alternator_field_cut_test_condition_elapsed_passes = alternator_field_cut_test_condition_passes;
+    if (alternator_field_cut_test_cut_start_passes ==
+        alternator_field_cut_test_sequence_elapsed_passes) {
+      alternator_field_cut_test_voltage_snapshot = sensor_readings_t_0040baf2.battery_voltage;
+      alternator_field_cut_test_active_flag = 1;
+    }
+    if (alternator_field_cut_test_active_flag != 0) {
+      if ((int)(uint)alternator_field_cut_test_voltage_drop_threshold <
+          (int)((uint)alternator_field_cut_test_voltage_snapshot -
+               (uint)sensor_readings_t_0040baf2.battery_voltage)) {
+        alternator_field_cut_test_active_flag = 0;
+        alternator_field_cut_test_sequence_elapsed_passes = 0;
+        alternator_field_cut_test_failed_test_count = 0;
+        alternator_field_cut_test_hold_elapsed_passes = 0;
+      }
+      else {
+        alternator_field_cut_test_hold_elapsed_passes =
+             alternator_field_cut_test_hold_elapsed_passes + 1;
+      }
+    }
+    if (alternator_field_cut_test_hold_passes <= alternator_field_cut_test_hold_elapsed_passes) {
+      alternator_field_cut_test_failed_test_count = alternator_field_cut_test_failed_test_count + 1;
+      alternator_field_cut_test_active_flag = 0;
+      alternator_field_cut_test_sequence_elapsed_passes = 0;
+      alternator_field_cut_test_hold_elapsed_passes = 0;
+    }
+    if (alternator_field_cut_test_failed_test_limit == alternator_field_cut_test_failed_test_count)
+    {
+      fault_detected_bits_368_to_383 = fault_detected_bits_368_to_383 | 1;
+    }
+  }
+  return;
+}
+//

@@ -1,0 +1,435 @@
+=== executiveFrameInterruptHandler
+void executiveFrameInterruptHandler(void)
+{
+  int iVar1;
+  uint uVar2;
+  executive_frame_timing_t *peVar3;
+  word wVar4;
+  if ((algorithm_enable_flags_18_cal.executive_timing_enable != 0) &&
+     (executive_timing_enabled_previous_flag == 0)) {
+    executive_frame_timing_clear_pointer = executive_frame_timings;
+    do {
+      executive_frame_timing_clear_pointer->total_ticks = 0;
+      executive_frame_timing_clear_pointer->frame_count = 0;
+      executive_frame_timing_clear_pointer->minimum_ticks = 0xffff;
+      executive_frame_timing_clear_pointer->maximum_ticks = 0;
+      executive_frame_timing_clear_pointer->overflow_count = 0;
+      executive_frame_timing_clear_pointer = executive_frame_timing_clear_pointer + 1;
+    } while (executive_frame_timing_clear_pointer < &ram_refresh_enable);
+  }
+  executive_frame_start_ticks = TBLr;
+  executive_timing_enabled_previous_flag =
+       (word)(algorithm_enable_flags_18_cal.executive_timing_enable != 0);
+  wVar4 = USIU_PISCR.PISCR;
+  USIU_PISCR.PISCR = wVar4;
+  switch(executive_frame_phase) {
+  case 0:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_canTx();
+    cm848_periodicTaskGroup12_calibration1();
+    hpcr_periodicTaskGroup25_calibration7();
+    cm848_advanceHourMeters();
+    executive_frame_timing_pointer = executive_frame_timings;
+    executive_frame_phase = 1;
+    break;
+  case 1:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors2();
+    cm848_periodicTaskGroup13_calibration2();
+    cm848_periodicTaskGroup26_calibration8();
+    cm848_monitorDiscreteOutputReadBack();
+    executive_frame_phase = 2;
+    break;
+  case 2:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_protection();
+    cm848_periodicTaskGroup14_calibration3();
+    cm848_periodicTaskGroup27_calibration9();
+    cm848_updateOilChangeMonitor();
+    executive_frame_phase = 3;
+    break;
+  case 3:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_timing();
+    cm848_periodicTaskGroup15_calibration4();
+    cm848_periodicTaskGroup28_calibration10();
+    hpcr_cbdCalculateCylinderTrims();
+    cm848_runCylinderContributionTest();
+    executive_frame_phase = 4;
+    break;
+  case 4:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_outputs();
+    cm848_periodicTaskSet_protection2();
+    cm848_periodicTaskGroup29_calibration11();
+    calculateAlpha();
+    executive_frame_phase = 5;
+    break;
+  case 5:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors();
+    cm848_periodicTaskGroup17_calibration5();
+    cm848_periodicTaskGroup30_calibration12();
+    cm848_updateEngineWarningFlags();
+    executive_frame_phase = 6;
+    break;
+  case 6:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_monitoring();
+    cm848_periodicTaskGroup18_calibration6();
+    cm848_periodicTaskGroup31_calibration13();
+    cm848_monitorFuelLevelLowDistance();
+    executive_frame_phase = 7;
+    break;
+  case 7:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_communication();
+    cm848_periodicTaskGroup32_calibration14();
+    cm848_countEgrValveClosings();
+    executive_frame_phase = 8;
+    break;
+  case 8:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_canTx();
+    cm848_periodicTaskSet_protection3();
+    cm848_monitorWaterInFuel();
+    executive_frame_phase = 9;
+    break;
+  case 9:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors2();
+    cm848_periodicTaskSet_auxiliary();
+    cm848_expireSciCommand37Tests();
+    executive_frame_phase = 10;
+    break;
+  case 10:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_protection();
+    cm848_periodicTaskGroup12_calibration1();
+    periodicTaskSet_fuelDemand();
+    cm848_debounceOutputReadBackFaults();
+    executive_frame_phase = 0xb;
+    break;
+  case 0xb:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_timing();
+    cm848_periodicTaskGroup13_calibration2();
+    hpcr_periodicTaskGroup36_calibration15();
+    cm848_initColdStartTablePointers();
+    executive_frame_phase = 0xc;
+    break;
+  case 0xc:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_outputs();
+    cm848_periodicTaskGroup14_calibration3();
+    cm848_periodicTaskGroup37_calibration16();
+    cm848_processColdStartStateMachine();
+    executive_frame_phase = 0xd;
+    break;
+  case 0xd:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors();
+    cm848_periodicTaskGroup15_calibration4();
+    cm848_periodicTaskGroup38_calibration17();
+    cm848_recordLifetimeDistanceEvery8Miles();
+    executive_frame_phase = 0xe;
+    break;
+  case 0xe:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_monitoring();
+    cm848_periodicTaskSet_protection2();
+    cm848_periodicTaskSet_diagnostics2();
+    cm848_mainLoopDispatcher();
+    executive_frame_phase = 0xf;
+    break;
+  case 0xf:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_communication();
+    cm848_periodicTaskGroup17_calibration5();
+    hpcr_periodicTaskGroup20_calibration();
+    cm848_updateStackHighWaterMark();
+    executive_frame_phase = 0x10;
+    break;
+  case 0x10:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_canTx();
+    cm848_periodicTaskGroup18_calibration6();
+    cm848_periodicTaskGroup21_calibration();
+    cm848_runFaultDerateScheduler();
+    executive_frame_phase = 0x11;
+    break;
+  case 0x11:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors2();
+    cm848_periodicTaskGroup22_calibration();
+    cm848_processFuelLevelChannel();
+    cm848_updateFuelLevel();
+    cm848_checkWorkingRamEndMarker();
+    executive_frame_phase = 0x12;
+    break;
+  case 0x12:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_protection();
+    hpcr_periodicTaskSet_protection4();
+    cm848_updateMilOnRequest();
+    executive_frame_phase = 0x13;
+    break;
+  case 0x13:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_timing();
+    cm848_periodicTaskSet_outputs2();
+    cm848_calculateChiMaximumFuelAtSpeedPoints();
+    executive_frame_phase = 0x14;
+    break;
+  case 0x14:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_outputs();
+    cm848_periodicTaskGroup12_calibration1();
+    hpcr_periodicTaskGroup25_calibration7();
+    cm848_updateTurbochargerSpeedLimiter();
+    executive_frame_phase = 0x15;
+    break;
+  case 0x15:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors();
+    cm848_periodicTaskGroup13_calibration2();
+    cm848_periodicTaskGroup26_calibration8();
+    cm848_runEmissionManager();
+    executive_frame_phase = 0x16;
+    break;
+  case 0x16:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_monitoring();
+    cm848_periodicTaskGroup14_calibration3();
+    cm848_periodicTaskGroup27_calibration9();
+    cm848_selectCoolantTemperature();
+    executive_frame_phase = 0x17;
+    break;
+  case 0x17:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_communication();
+    cm848_periodicTaskGroup15_calibration4();
+    cm848_periodicTaskGroup28_calibration10();
+    cm848_updateEmissionLevelCapReference();
+    executive_frame_phase = 0x18;
+    break;
+  case 0x18:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_canTx();
+    cm848_periodicTaskSet_protection2();
+    cm848_periodicTaskGroup29_calibration11();
+    cm848_updateGeneralEngineProtection();
+    executive_frame_phase = 0x19;
+    break;
+  case 0x19:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors2();
+    cm848_periodicTaskGroup17_calibration5();
+    cm848_periodicTaskGroup30_calibration12();
+    cm848_processExhaustThrottlePositionChannel();
+    executive_frame_phase = 0x1a;
+    break;
+  case 0x1a:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_protection();
+    cm848_periodicTaskGroup18_calibration6();
+    cm848_periodicTaskGroup31_calibration13();
+    cm848_calculateWaterVaporAndSaturationTemperatures();
+    executive_frame_phase = 0x1b;
+    break;
+  case 0x1b:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_timing();
+    cm848_periodicTaskGroup32_calibration14();
+    cm848_updateVariableGeometryTurbochargerMotorTemperature();
+    executive_frame_phase = 0x1c;
+    break;
+  case 0x1c:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_outputs();
+    cm848_periodicTaskSet_protection3();
+    cm848_processEcmInternalTemperatureChannel();
+    executive_frame_phase = 0x1d;
+    break;
+  case 0x1d:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors();
+    cm848_periodicTaskSet_auxiliary();
+    executive_frame_phase = 0x1e;
+    break;
+  case 0x1e:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_monitoring();
+    cm848_periodicTaskGroup12_calibration1();
+    periodicTaskSet_fuelDemand();
+    cm848_calculateCompressorInletDensity();
+    executive_frame_phase = 0x1f;
+    break;
+  case 0x1f:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_communication();
+    cm848_periodicTaskGroup13_calibration2();
+    hpcr_periodicTaskGroup36_calibration15();
+    cm848_updateEgrValveMotorTemperature();
+    executive_frame_phase = 0x20;
+    break;
+  case 0x20:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_canTx();
+    cm848_periodicTaskGroup14_calibration3();
+    cm848_periodicTaskGroup37_calibration16();
+    executive_frame_phase = 0x21;
+    break;
+  case 0x21:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors2();
+    cm848_periodicTaskGroup15_calibration4();
+    cm848_periodicTaskGroup38_calibration17();
+    executive_frame_phase = 0x22;
+    break;
+  case 0x22:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_protection();
+    cm848_periodicTaskSet_protection2();
+    cm848_periodicTaskSet_diagnostics2();
+    executive_frame_phase = 0x23;
+    break;
+  case 0x23:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_timing();
+    cm848_periodicTaskGroup17_calibration5();
+    hpcr_periodicTaskGroup20_calibration();
+    executive_frame_phase = 0x24;
+    break;
+  case 0x24:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    hpcr_periodicTaskSet_fuelFinal();
+    cm848_periodicTaskSet_outputs();
+    cm848_periodicTaskGroup18_calibration6();
+    cm848_periodicTaskGroup21_calibration();
+    cm848_calculatePredictedIntakeManifoldTemperature();
+    executive_frame_phase = 0x25;
+    break;
+  case 0x25:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_sensorProcessing();
+    cm848_periodicTaskSet_sensors();
+    cm848_periodicTaskGroup22_calibration();
+    executive_frame_phase = 0x26;
+    break;
+  case 0x26:
+    cm848_phase_common_processing();
+    cm848_phase_group_a_processing();
+    cm848_periodicTaskSet_controlLoop();
+    cm848_periodicTaskSet_monitoring();
+    hpcr_periodicTaskSet_protection4();
+    cm848_mainLoopServiceMonitor();
+    executive_frame_phase = 0x27;
+    break;
+  case 0x27:
+    cm848_phase_common_processing();
+    cm848_phase_group_b_processing();
+    cm848_periodicTaskSet_auxiliaryControl();
+    cm848_periodicTaskSet_communication();
+    cm848_periodicTaskSet_outputs2();
+    executive_frame_phase = 0;
+    break;
+  default:
+    executive_frame_phase = 0;
+  }
+  peVar3 = executive_frame_timing_pointer;
+  if (algorithm_enable_flags_18_cal.executive_timing_enable != 0) {
+    iVar1 = TBLr;
+    wVar4 = (word)(iVar1 - executive_frame_start_ticks);
+    uVar2 = iVar1 - executive_frame_start_ticks & 0xffff;
+    executive_frame_ticks = wVar4;
+    if (executive_frame_timing_pointer->maximum_ticks < uVar2) {
+      executive_frame_timing_pointer->maximum_ticks = wVar4;
+    }
+    if (uVar2 < peVar3->minimum_ticks) {
+      peVar3->minimum_ticks = wVar4;
+    }
+    peVar3->total_ticks = peVar3->total_ticks + uVar2;
+    peVar3->frame_count = peVar3->frame_count + 1;
+    if (executive_frame_overflow_threshold_ticks < uVar2) {
+      peVar3->overflow_count = peVar3->overflow_count + 1;
+      executive_timing_overflow_count_cal = executive_timing_overflow_count_cal + 1;
+    }
+  }
+  executive_frame_timing_pointer = executive_frame_timing_pointer + 1;
+  return;
+}

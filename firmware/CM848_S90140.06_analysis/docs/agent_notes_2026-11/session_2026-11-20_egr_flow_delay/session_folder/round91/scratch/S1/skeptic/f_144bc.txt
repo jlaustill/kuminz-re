@@ -1,0 +1,137 @@
+0144bc: 48e73c3c                 movem.l d2-d5/a2-a5, -(a7)
+0144c0: 342f0024                 move.w $24(a7), d2
+0144c4: 267c008067c4             movea.l #$8067c4, a3
+0144ca: 287c00800532             movea.l #$800532, a4
+0144d0: 2a7c0080bda4             movea.l #$80bda4, a5
+0144d6: 7000                     moveq #$0, d0
+0144d8: 1002                     move.b d2, d0
+0144da: 3200                     move.w d0, d1
+0144dc: e548                     lsl.w #$2, d0
+0144de: d041                     add.w d1, d0
+0144e0: 207c00805a24             movea.l #$805a24, a0
+0144e6: 083000000200             btst.b #$0, (a0, d0.w * 2)
+0144ec: 6600017c                 bne.w $1466a
+0144f0: 7000                     moveq #$0, d0
+0144f2: 1002                     move.b d2, d0
+0144f4: 2200                     move.l d0, d1
+0144f6: d080                     add.l d0, d0
+0144f8: d081                     add.l d1, d0
+0144fa: 4a330a05                 tst.b $5(a3, d0.l) [idx scale=2 disp=5 idxsize=l]
+0144fe: 6700016a                 beq.w $1466a
+014502: 7000                     moveq #$0, d0
+014504: 1002                     move.b d2, d0
+014506: 3200                     move.w d0, d1
+014508: e548                     lsl.w #$2, d0
+01450a: d041                     add.w d1, d0
+01450c: 207c00805a25             movea.l #$805a25, a0
+014512: 4a300200                 tst.b (a0, d0.w * 2)
+014516: 67000152                 beq.w $1466a
+01451a: 7000                     moveq #$0, d0
+01451c: 1002                     move.b d2, d0
+01451e: 2200                     move.l d0, d1
+014520: d080                     add.l d0, d0
+014522: d081                     add.l d1, d0
+014524: 16330a05                 move.b $5(a3, d0.l), d3 [idx scale=2 disp=5 idxsize=l]
+014528: 7000                     moveq #$0, d0
+01452a: 1003                     move.b d3, d0
+01452c: e748                     lsl.w #$3, d0
+01452e: 207c0080654c             movea.l #$80654c, a0
+014534: d0c0                     adda.w d0, a0
+014536: 2448                     movea.l a0, a2
+014538: 2612                     move.l (a2), d3
+01453a: 2a2a0004                 move.l $4(a2), d5
+01453e: 7000                     moveq #$0, d0
+014540: 1002                     move.b d2, d0
+014542: 3200                     move.w d0, d1
+014544: e548                     lsl.w #$2, d0
+014546: d041                     add.w d1, d0
+014548: 207c00805a20             movea.l #$805a20, a0
+01454e: 4ab00200                 tst.l (a0, d0.w * 2)
+014552: 661c                     bne.b $14570
+014554: 7000                     moveq #$0, d0
+014556: 1002                     move.b d2, d0
+014558: 3200                     move.w d0, d1
+01455a: e548                     lsl.w #$2, d0
+01455c: d041                     add.w d1, d0
+01455e: 207c00805a1c             movea.l #$805a1c, a0
+014564: 20300200                 move.l (a0, d0.w * 2), d0
+014568: 2215                     move.l (a5), d1
+01456a: 9280                     sub.l d0, d1
+01456c: b681                     cmp.l d1, d3
+01456e: 6336                     bls.b $145a6
+014570: 7000                     moveq #$0, d0
+014572: 1002                     move.b d2, d0
+014574: 3200                     move.w d0, d1
+014576: e548                     lsl.w #$2, d0
+014578: d041                     add.w d1, d0
+01457a: 207c00805a20             movea.l #$805a20, a0
+014580: 4ab00200                 tst.l (a0, d0.w * 2)
+014584: 670000e4                 beq.w $1466a
+014588: 7000                     moveq #$0, d0
+01458a: 1002                     move.b d2, d0
+01458c: 3200                     move.w d0, d1
+01458e: e548                     lsl.w #$2, d0
+014590: d041                     add.w d1, d0
+014592: 207c00805a20             movea.l #$805a20, a0
+014598: 20300200                 move.l (a0, d0.w * 2), d0
+01459c: 2215                     move.l (a5), d1
+01459e: 9280                     sub.l d0, d1
+0145a0: ba81                     cmp.l d1, d5
+0145a2: 620000c6                 bhi.w $1466a
+0145a6: 7600                     moveq #$0, d3
+0145a8: 1602                     move.b d2, d3
+0145aa: 2003                     move.l d3, d0
+0145ac: e58b                     lsl.l #$2, d3
+0145ae: d680                     add.l d0, d3
+0145b0: d683                     add.l d3, d3
+0145b2: 2003                     move.l d3, d0
+0145b4: 2800                     move.l d0, d4
+0145b6: 207c00805a20             movea.l #$805a20, a0
+0145bc: 21950000                 move.l (a5), (a0, d0.w)
+0145c0: 207c00805a25             movea.l #$805a25, a0
+0145c6: 0c3000013000             cmpi.b #$1, (a0, d3.w)
+0145cc: 650a                     bcs.b $145d8
+0145ce: 207c00805a25             movea.l #$805a25, a0
+0145d4: 53304000                 subq.b #$1, (a0, d4.w)
+0145d8: 207c00805a25             movea.l #$805a25, a0
+0145de: 4a304000                 tst.b (a0, d4.w)
+0145e2: 66000086                 bne.w $1466a
+0145e6: 7000                     moveq #$0, d0
+0145e8: 1002                     move.b d2, d0
+0145ea: 3f00                     move.w d0, -(a7)
+0145ec: 4eb90002fddc             jsr $2fddc.l
+0145f2: 548f                     addq.l #$2, a7
+0145f4: 7000                     moveq #$0, d0
+0145f6: 1002                     move.b d2, d0
+0145f8: 2200                     move.l d0, d1
+0145fa: d080                     add.l d0, d0
+0145fc: d081                     add.l d1, d0
+0145fe: 4a330a04                 tst.b $4(a3, d0.l) [idx scale=2 disp=4 idxsize=l]
+014602: 671a                     beq.b $1461e
+014604: 7000                     moveq #$0, d0
+014606: 1002                     move.b d2, d0
+014608: 2200                     move.l d0, d1
+01460a: d080                     add.l d0, d0
+01460c: d081                     add.l d1, d0
+01460e: 30330a02                 move.w $2(a3, d0.l), d0 [idx scale=2 disp=2 idxsize=l]
+014612: 02402000                 andi.w #$2000, d0
+014616: 6606                     bne.b $1461e
+014618: 53790080599a             subq.w #$1, $80599a.l
+01461e: 5339008058f4             subq.b #$1, $8058f4.l
+014624: 537900805954             subq.w #$1, $805954.l
+01462a: 303900805996             move.w $805996.l, d0
+014630: 207c008058f4             movea.l #$8058f4, a0
+014636: 10300000                 move.b (a0, d0.w), d0
+01463a: 3214                     move.w (a4), d1
+01463c: 207c008058f4             movea.l #$8058f4, a0
+014642: 11801000                 move.b d0, (a0, d1.w)
+014646: 303900805996             move.w $805996.l, d0
+01464c: 537900805996             subq.w #$1, $805996.l
+014652: 207c00805954             movea.l #$805954, a0
+014658: 30300200                 move.w (a0, d0.w * 2), d0
+01465c: 3214                     move.w (a4), d1
+01465e: 207c00805954             movea.l #$805954, a0
+014664: 31801200                 move.w d0, (a0, d1.w * 2)
+014668: 5354                     subq.w #$1, (a4)
+01466a: 4cdf3c3c                 movem.l (a7)+, d2-d5/a2-a5
+01466e: 4e75                     rts 

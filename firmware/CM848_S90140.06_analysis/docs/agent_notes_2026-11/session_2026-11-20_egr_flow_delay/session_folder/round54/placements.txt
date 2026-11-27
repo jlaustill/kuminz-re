@@ -1,0 +1,43 @@
+== 8BA4 at 0x408338 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 10 releases)
+   +00 0x408338 Transmission_Oil_Temperature_Filter_Constant [N2] dump 1242: Transmission_Oil_Temperature AD Filter Constant
+        row: transmission_cold_set_temperature i16 | transmission_control_flags_t overdrive_flags bit 7 (cold) sets below this transmission temperature (1242 = 19.
+   +02 0x40833a Transmission_Oil_Temperature_Global_Default [N2] dump 2278: Transmission_Oil_Temperature AD global default value
+        row: transmission_cold_clear_temperature i16 | The cold bit clears above this (2278 = 35.6 deg F) (was protection_overtemp80_clear_threshold_cal) Typed i16 (
+   +04 0x40833c Transmission_Oil_Temperature_High_Limit [N2] dump 16000: Transmission_Oil_Temperature high limit for the raw value
+        row: overdrive_off_clear_transmission_temperature i16 | overdrive_off_flag is released below this (16000 = 250 deg F) unless the O/D OFF button selected overdrive off
+   +06 0x40833e Transmission_Oil_Temperature_Low_Limit [N2] dump 16000: Transmission_Oil_Temperature low limit for the raw value
+        row: transmission_overheat_clear_temperature i16 | transmission_overheat_flag clears below this (16000 = 250 deg F) (was protection_fault_inactive_threshold_cal)
+   +08 0x408340 Transmission_Oil_Temperature_Fault_Increment [N2] dump 18176: Transmission_Oil_Temperature increment value for setting error
+        row: transmission_overheat_set_temperature i16 | transmission_overheat_flag sets above this (18176 = 284 deg F) (was protection_fault_active_threshold_cal) Typ
+   +0A 0x408342 Transmission_Oil_Temperature_Fault_Decrement [N2] dump 6310: Transmission_Oil_Temperature decrement value for setting error
+        row: transmission_temperature_range_2_threshold i16 | transmission_temperature_range is 2 or more above this (6310 = 98.6 deg F) (was protection_status_level2_thres
+   +0C 0x408344 Transmission_Oil_Temperature_Fault_Set [N2] dump 9536: Transmission_Oil_Temperature_Fault_Count when error set
+        row: transmission_temperature_range_3_threshold i16 | Range 3 or more above this (9536 = 149 deg F) (was protection_status_level3_threshold_cal) Typed i16 (round 10
+   +0E 0x408346 Transmission_Oil_Temperature_Fault_Clear [N2] dump 12800: Transmission_Oil_Temperature_Fault_Count when error cleared
+        row: transmission_temperature_range_4_threshold i16 | Range 4 or more above this (12800 = 200 deg F) (was protection_status_level4_threshold_cal) Typed i16 (round 1
+== 158D at 0x40b5ba (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b5ba ASG_Droop_Flag [N2] dump 2: [ASDPFG] ASG droop selection flag; used to select droop source
+        row: rock_cycle_engine_speed_limit_phase word | Part of rock cycle torque management (algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable); no e
+   +02 0x40b5bc ASG_Max_RPM [N2] dump 27136: [ASMXRP] ASG reference speed for 100% throttle input -should be greate
+        row: road_speed_governor_reference_speed word | The lower of maximum_road_speed_trim_cal and fault_vehicle_speed_limit: the reference speed of the road speed 
+   +04 0x40b5be ASG_Min_RPM [N2] dump 27136: [ASMNRP] ASG reference speed for 0% throttle input -should be less tha
+        row: road_speed_governor_reference_speed_copy word | A copy of road_speed_governor_reference_speed taken each pass (no reader in this code) (was cruise_speed_limit
+   +06 0x40b5c0 Throttle_Reset [N2] dump 27136: Set to 1 during a reset to allow throttle to not have to return to 0
+== 1497 at 0x40a252 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40a252 LSG_Droop_Filter_Constant [N2] dump 973: [LSDPFTCS] Filter constant of LSG droop filter
+        row: all_speed_governor_droop_gain_2 word | Droop gain 2 (Q10) of the all-speed governor
+   +02 0x40a254 LSG_Filtered_Droop_Fueling [N2] dump 923: Feedback fueling used in LSG droop speed adjustment calculation
+        row: all_speed_governor_throttle_droop_gain_1 word | CODE: write-only (0 reads
+   +04 0x40a256 LSG_Droop_Selected [N2] dump 973: [LSDPSE] LSG Droop Selected Slope
+        row: all_speed_governor_throttle_droop_gain_2 word | CODE: write-only (0 reads) copy of all_speed_governor_droop_gain_2
+   +06 0x40a258 LSG_Droop_Speed_Adjustment [N2] dump 14333: [LSDPAJ] LSG reference speed adjustment due to droop.
+        row: all_speed_governor_droop word | Units check: cm848_calculateEffectiveFuelLimit computes fuel = all_speed_governor_no_load_fuel + (reference - 
+== 1498 at 0x40a304 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40a304 LSG_Droop_Slope_Max [N2] dump 28000: [LSDPMX] LSG droop slope upper limitation.
+        row: engine_speed_limit_droop_no_load_speed word | Code (selectEngineSpeedLimit): the no load end of the droop line: slope = (this - engine_speed_limit_reference
+   +02 0x40a306 LSG_Droop_Slope_Min [N2] dump 0: [LSDPMN] LSG droop slope lower limitation.
+        row: engine_speed_limit_droop_slope i16 | Code: FIRST half (big endian: lower address = high half) of the old dword
+   +04 0x40a308 LSG_Droop_Adjust_Fuel_Limit [N2] dump 25600: Integral fuel threshold for LSG to change from isochronous to droop
+        row: engine_speed_limit_ramped word | Code: SECOND half of the old dword
+   +06 0x40a30a LSG_Droop_Adjust_RPM_Limit [N2] dump 0: LSG droop speed adjustment limit to change from droop to isochronous
+        row: engine_speed_limit_droop_active_flag word | selectEngineSpeedLimit (cpp 19764+): written 0 on the direct-limit branch (sources 9 with ETC1 active

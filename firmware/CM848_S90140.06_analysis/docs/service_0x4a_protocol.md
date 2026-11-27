@@ -38,7 +38,7 @@ Byte 5:    Length (1-255 bytes)
 Bytes 6-7: 0x00 (unused)
 ```
 
-**Example:** Read 2 bytes from 0x0040B7BA (current_engine_rpm):
+**Example:** Read 2 bytes from 0x0040B7BA (engine_speed_state.filtered_engine_speed, e2m 819B +2C Filtered_Engine_Speed):
 ```
 4A 00 40 B7 BA 02 00 00
 ```
@@ -75,7 +75,7 @@ For larger reads, the ECU responds using J1939 Transport Protocol:
 
 | Address | Variable | Scale | Units | Verified |
 |---------|----------|-------|-------|----------|
-| 0x0040B7BA | `current_engine_rpm` | × 0.125 | RPM | ✓ |
+| 0x0040B7BA | `engine_speed_state.filtered_engine_speed` | × 0.125 | RPM | ✓ |
 | 0x0040B78E | `engine_rpm_derivative` | varies | RPM/s | |
 | 0x0040B7AC | `target_engine_rpm` | × 0.125 | RPM | |
 
@@ -94,7 +94,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 | 0x0040B2F4 | `radiator_fan_speed` | FD-80-81 RAD FAN SPEED | × 0.125 rpm |
 | 0x0040C13A | `cooling_fan_duty_command` | FD-82-83 DES RAD FAN PWM | 1/256 % |
 | 0x0040A064 | (unnamed) | FD-A0-A1 BAROMETRIC PRESSURE | DRB 0.0159 per count ("mmHg" in the DB; likely inHg) |
-| 0x0040A070 / 0x0040A06E | (unnamed) / `sensor_channel1_ram` | FD-A4-A5 AMBIENT AIR TEMP DEG / FD-A6-A7 AMBIENT AIR TEMP V | DRB 0.0156 °C / 0.0049 V |
+| 0x0040A070 / 0x0040A06E | (unnamed) / `ambient_air_temperature_sensor_channel_state` | FD-A4-A5 AMBIENT AIR TEMP DEG / FD-A6-A7 AMBIENT AIR TEMP V | DRB 0.0156 °C / 0.0049 V |
 | 0x003FDF98 + 2n | `percent_time_at_load_cal`[n] | FD-84-85 ... FD-96-97 % OF TIME @ 0-10% ... 91-100% LOAD | 1/256 % (EEPROM mirror) |
 | 0x0040B75E-63 | `cylinder_1/5/3/6/2/4_contribution_percent` | FD-E1 ... FD-E6 Cyl. #1 / 5 / 3 / 6 / 2 / 4 Contribution (firing order) | 1 % |
 | 0x0040B765 | `cylinder_contribution_test_status` | FD-EB Cylinder test status | 0 / 1 / 2 |
@@ -137,7 +137,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 
 | Address | Variable | Size |
 |---------|----------|------|
-| 0x0040B000 | `engine_operating_mode` | 2 bytes |
+| 0x0040B000 | `user_fueling_state` | 2 bytes |
 | 0x0040B008 | `fuel_control_mode_select` | 2 bytes |
 
 ### CBD (Cylinder Balance) Calibration
@@ -145,7 +145,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 | Address | Variable | Notes |
 |---------|----------|-------|
 | 0x00408EE2 | CBD calibration block base | Column3=81AE |
-| 0x00408EF6 | `cbd_enable_flag` | 1 byte, 0=disabled, 1=enabled |
+| 0x00408EF6 | `cylinder_balance_enable_flag` | 1 byte, 0=disabled, 1=enabled |
 
 ## Example: Reading RPM for Translator
 
@@ -155,7 +155,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 // CAN frame for RPM read request
 uint8_t request[8] = {
     0x4A,       // Service ID
-    0x00, 0x40, 0xB7, 0xBA,  // Address: current_engine_rpm
+    0x00, 0x40, 0xB7, 0xBA,  // Address: engine_speed_state.filtered_engine_speed
     0x02,       // Length: 2 bytes
     0x00, 0x00  // Unused
 };

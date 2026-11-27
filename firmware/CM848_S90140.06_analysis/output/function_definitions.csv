@@ -2,8 +2,16 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
 # -----------------------------------------------------------------------------
+0x000123dc,cm848_delayUnsignedSample,return,,word,The sample written delay_samples calls earlier (lhzx r3: zero-extended)
+0x000123dc,cm848_delayUnsignedSample,0,delay_line,delay_line_t *,The delay line (r3)
+0x000123dc,cm848_delayUnsignedSample,1,sample,word,The new sample (r4) - stored with sthx
+0x000123dc,cm848_delayUnsignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
+0x00012404,cm848_delaySignedSample,return,,sword,The sample written delay_samples calls earlier (lhax r3: sign-extended)
+0x00012404,cm848_delaySignedSample,0,delay_line,delay_line_t *,The delay line (r3)
+0x00012404,cm848_delaySignedSample,1,sample,sword,The new sample (r4) - stored with sthx
+0x00012404,cm848_delaySignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
 0x00055ef4,lookupTableInterpolation,return,,word,Y value at the input: linear between the two breakpoints around it (or the step value with flags bit 3) and the end value outside the axis
-0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_interp_state / *_interp_index / engine_sync_init_state_* words
+0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_cached_axis_offset words (named after their tables in PR #53 rounds 10-12)
 0x00055ef4,lookupTableInterpolation,1,input,ushort,Value looked up on the x axis (r4)
 0x00055ef4,lookupTableInterpolation,2,x_axis,word *,X axis (r5): first word = byte length of the breakpoints that follow
 0x00055ef4,lookupTableInterpolation,3,y_data,word *,Y data (r6): first word = byte length of the values that follow (one per breakpoint)
@@ -37,23 +45,18 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
 # -----------------------------------------------------------------------------
-0x00003f20,cm848_transmitCanMessage,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
-0x00003f20,cm848_transmitCanMessage,1,data_ptr,byte*,Pointer to message data bytes
 
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,1,data_ptr,byte*,Pointer to message payload data
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,2,data_length,ushort,Total length of payload to transmit
 
 # -----------------------------------------------------------------------------
 # EEPROM Operations
 # -----------------------------------------------------------------------------
-0x00000bec,mpc555_eepromWriteWords,0,dest_address,uint,EEPROM destination address
-0x00000bec,mpc555_eepromWriteWords,1,src_ptr,word*,Pointer to source data words
+0x00000bec,mpc555_eepromWriteWords,0,destination_address,uint,EEPROM destination address
+0x00000bec,mpc555_eepromWriteWords,1,source_pointer,word*,Pointer to source data words
 0x00000bec,mpc555_eepromWriteWords,2,word_count,ushort,Number of words to write
 
-0x000036f8,cm848_resetEepromCalibrationState,return,,void,Clears eeprom_calibration_pending_flag and diag_session_state_byte
+0x000036f8,cm848_resetSerialReflashState,return,,void,Clears serial_reflash_busy_flag and diag_session_state_byte
 
-0x000038f4,cm848_dispatchEepromWriteRequest,return,,void,Dispatches EEPROM write by request type - takes no params (reads global directly)
+0x000038f4,cm848_dispatchSerialReflashRequest,return,,void,Dispatches a serial reflash request by eeprom_write_request_type - takes no params (was 'Dispatches EEPROM write by request type'; PR #53 round 67)
 
 # -----------------------------------------------------------------------------
 # Boot delay helper
@@ -68,85 +71,77 @@ function_address,function_name,param_index,name,type,comment
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
 # Pattern: First param is always a pointer to the received CAN message descriptor
 # -----------------------------------------------------------------------------
-0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,0,rx_msg,j1939_rx_msg_t*,Pointer to received CAN message descriptor
 
-0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,0,rx_msg,j1939_rx_msg_t*,Pointer to received diagnostic message
+0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,0,received_message,j1939_received_message_t*,Pointer to received diagnostic message
 0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,1,service_code,byte,Diagnostic service code from message
 
 0x00005c50,mpc555_handleJ1939TransportClearToSend,0,request_type,byte,Type of queue request (0x10=start 0x11=continue)
 0x00005c50,mpc555_handleJ1939TransportClearToSend,1,connection_id,byte,Transport protocol connection ID
 
-0x00005ecc,mpc555_handleJ1939TransportRequestToSend,0,rx_msg,j1939_rx_msg_t*,Pointer to data request message
-0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,rx_msg,j1939_rx_msg_t*,Pointer to abort request message
+0x00005ecc,mpc555_handleJ1939TransportRequestToSend,0,received_message,j1939_received_message_t*,Pointer to data request message
+0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,received_message,j1939_received_message_t*,Pointer to abort request message
 
 # TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
-0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
-0x00023b38,cm848_j1939DispatchAddressHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
-0x00022870,cm848_j1939ProcessPgn61442Etc1,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message (secondary handler)
+0x00022d60,processEngineTsc1Request,0,received_message,j1939_received_message_t*,Pointer to received TSC1 message
+0x00022870,cm848_j1939ProcessPgn61442Etc1,0,received_message,j1939_received_message_t*,Pointer to received TSC1 message (secondary handler)
 
 # -----------------------------------------------------------------------------
 # Diagnostic Service Dispatchers
 # -----------------------------------------------------------------------------
-0x00006d24,cm848_dispatchDiagnosticService,0,service_code,byte,Service code (e.g. 0x22=ReadDataByID 0x2E=WriteDataByID)
-0x00006d24,cm848_dispatchDiagnosticService,1,data_ptr,byte*,Pointer to service data
-0x00006d24,cm848_dispatchDiagnosticService,2,data_length,ushort,Length of service data
+0x00006d24,cm848_dispatchDiagnosticService,0,request,j1939_received_message_t*,the received request (the boot transport receive session's message view at request_to_send_can_id: its data packet handler passes record + 8 in r3 and sets no r4 / r5 - the old rows service_code byte / data_ptr / data_length printed its low byte 0x2d as a service code; PR #53 round 36)
 
 0x0000662c,mpc555_diagnosticSubcommandDispatcher,0,subcommand,byte,Diagnostic subcommand code
-0x0000662c,mpc555_diagnosticSubcommandDispatcher,1,data_ptr,byte*,Pointer to subcommand data
+0x0000662c,mpc555_diagnosticSubcommandDispatcher,1,data_pointer,byte*,Pointer to subcommand data
 
 # -----------------------------------------------------------------------------
 # Memory Read Handlers (Diagnostic Services 0x43-0x4A)
 # Pattern: Returns response data via pointer, returns length
 # -----------------------------------------------------------------------------
-0x00001b48,cm848_diagMemoryReadHandler,0,address,uint,Memory address to read from
-0x00001b48,cm848_diagMemoryReadHandler,1,length,ushort,Number of bytes to read
-0x00001b48,cm848_diagMemoryReadHandler,2,response_ptr,byte*,Pointer to response buffer
 
 # -----------------------------------------------------------------------------
 # Handler Registration Functions
 # -----------------------------------------------------------------------------
 0x00001948,cm848_registerPgnResponseHandler,0,pgn,uint,PGN to register handler for (24-bit)
-0x00001948,cm848_registerPgnResponseHandler,1,handler_func,void*,Function pointer for handler callback
+0x00001948,cm848_registerPgnResponseHandler,1,handler,void*,Function pointer for handler callback
 
 0x00002cd8,cm848_registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
-0x00002cd8,cm848_registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
+0x00002cd8,cm848_registerPgnEf00Handler,1,handler,void*,Function pointer for handler callback
 
 # -----------------------------------------------------------------------------
 # J1939 PGN Dispatch System
 # Core message routing for all J1939 PGN requests
 # -----------------------------------------------------------------------------
 
-0x00023188,cm848_j1939RegisterPgnHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
-0x00023188,cm848_j1939RegisterPgnHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
+0x00023188,registerJ1939PgnRequestHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
+0x00023188,registerJ1939PgnRequestHandler,1,handler,j1939_pgn_request_handler_function_t*,Function pointer called when PGN matches incoming message
 
-0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
+0x00022d60,processEngineTsc1Request,0,received_message,j1939_received_message_t*,Pointer to received J1939 message
 
-0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_rx_msg_t*,Original request to acknowledge
-0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
+0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_message,j1939_received_message_t*,Original request to acknowledge
+0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
-0x00023dbc,cm848_sendJ1939NegativeAck,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
-0x00023dbc,cm848_sendJ1939NegativeAck,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
+0x00023dbc,cm848_sendJ1939AcknowledgementOfRequestedPgn,0,message,j1939_received_message_t*,Received message to NACK (accesses destination_address at +2 and data_pointer at +6)
+0x00023dbc,cm848_sendJ1939AcknowledgementOfRequestedPgn,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,dest_address,byte,Destination address for response
-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,data_ptr,byte*,Pointer to diagnostic response data
-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,2,data_length,ushort,Length of response data
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,destination_address,byte,the sender of the message just received
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,transported_pgn,ushort,the received message's PGN word (its high byte goes into the PGN bytes of the TP.CM 0x13 frame; the old rows data_ptr / data_length made the caller cast it to a pointer and pass a leftover third argument; PR #53 round 36)
 
 # -----------------------------------------------------------------------------
 # J1939 DM (Diagnostic Message) Handlers
 # Standard SAE J1939-73 diagnostic message processing
 # -----------------------------------------------------------------------------
-0x000227a0,cm848_j1939HandleDm1RequestMessage,0,request_msg,j1939_rx_msg_t*,Pointer to DM1 (Active DTC) request
+0x000227a0,cm848_j1939HandlePgn58112Dm7,0,request_message,j1939_received_message_t*,The received DM7 (PGN 58112) request
 
-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,0,dest_address,byte,Destination address for DM1 response
-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,1,fault_count,byte,Number of active DTCs to report
+0x000255c0,sendPgn65232NonContinuousMonitorTestResultMessage,0,test_identifier,byte,SPN 1224: 0 = the intake air heater monitor / 1 = the misfire monitor (was dest_address; PR #53 round 90)
+0x000255c0,sendPgn65232NonContinuousMonitorTestResultMessage,1,test_value,ushort,SPN 1226: the 16-bit monitor result (the body stores the halfword; was fault_count byte; PR #53 round 90)
 
-0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented dest_address / status_type rows
+0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented destination_address / status_type rows
 
 # -----------------------------------------------------------------------------
 # J1939 Queue/Transport Protocol
 # Multi-frame message handling (TP.CM/TP.DT)
 # -----------------------------------------------------------------------------
-0x00005fe4,mpc555_handleJ1939TransportDataPacket,0,rx_msg,j1939_rx_msg_t*,TP.DT data transfer message
+0x00005fe4,mpc555_handleJ1939TransportDataPacket,0,received_message,j1939_received_message_t*,TP.DT data transfer message
 
 0x000062fc,mpc555_sendJ1939TransportDataPackets,0,queue_entry,void*,Pointer to TX queue entry
 0x000064c4,mpc555_serviceJ1939TransportSessions,0,connection_id,byte,Transport protocol connection identifier
@@ -154,38 +149,38 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Sensor Channel Processing Functions
 # 17-channel sensor system with paired init/process functions
-# Mode 2: sensorChannelConfigInit + updateSensorChannelWithConfig (13 params)
+# Mode 2: cm848_processSignedSensorChannel + cm848_initializeSignedSensorChannel (13 params)
 # Mode 0: sensorChannelSimpleProcess (simpler processing)
 # -----------------------------------------------------------------------------
-0x00500234,sensorChannelConfigInit,return,,void,No return value (Type A periodic pass)
-0x00500234,sensorChannelConfigInit,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
-0x00500234,sensorChannelConfigInit,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
-0x00500234,sensorChannelConfigInit,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
-0x00500234,sensorChannelConfigInit,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
-0x00500234,sensorChannelConfigInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
-0x00500234,sensorChannelConfigInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
-0x00500234,sensorChannelConfigInit,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
-0x00500234,sensorChannelConfigInit,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
-0x00500234,sensorChannelConfigInit,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
-0x00500234,sensorChannelConfigInit,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
-0x00500234,sensorChannelConfigInit,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
-0x00500234,sensorChannelConfigInit,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
-0x00500234,sensorChannelConfigInit,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+0x00500234,cm848_processSignedSensorChannel,return,,void,No return value (Type A periodic pass)
+0x00500234,cm848_processSignedSensorChannel,0,configuration_pointer,sensor_channel_configuration_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x00500234,cm848_processSignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+0x00500234,cm848_processSignedSensorChannel,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x00500234,cm848_processSignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+0x00500234,cm848_processSignedSensorChannel,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x00500234,cm848_processSignedSensorChannel,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x00500234,cm848_processSignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+0x00500234,cm848_processSignedSensorChannel,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x00500234,cm848_processSignedSensorChannel,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x00500234,cm848_processSignedSensorChannel,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x00500234,cm848_processSignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x00500234,cm848_processSignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
+0x00500234,cm848_processSignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
 
-0x00500a4c,updateSensorChannelWithConfig,return,,void,No return value (Type A boot pass)
-0x00500a4c,updateSensorChannelWithConfig,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
-0x00500a4c,updateSensorChannelWithConfig,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
-0x00500a4c,updateSensorChannelWithConfig,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
-0x00500a4c,updateSensorChannelWithConfig,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
-0x00500a4c,updateSensorChannelWithConfig,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
-0x00500a4c,updateSensorChannelWithConfig,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
-0x00500a4c,updateSensorChannelWithConfig,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
-0x00500a4c,updateSensorChannelWithConfig,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
-0x00500a4c,updateSensorChannelWithConfig,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
-0x00500a4c,updateSensorChannelWithConfig,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
-0x00500a4c,updateSensorChannelWithConfig,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
-0x00500a4c,updateSensorChannelWithConfig,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
-0x00500a4c,updateSensorChannelWithConfig,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+0x00500a4c,cm848_initializeSignedSensorChannel,return,,void,No return value (Type A boot pass)
+0x00500a4c,cm848_initializeSignedSensorChannel,0,configuration_pointer,sensor_channel_configuration_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x00500a4c,cm848_initializeSignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+0x00500a4c,cm848_initializeSignedSensorChannel,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x00500a4c,cm848_initializeSignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+0x00500a4c,cm848_initializeSignedSensorChannel,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x00500a4c,cm848_initializeSignedSensorChannel,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x00500a4c,cm848_initializeSignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+0x00500a4c,cm848_initializeSignedSensorChannel,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x00500a4c,cm848_initializeSignedSensorChannel,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x00500a4c,cm848_initializeSignedSensorChannel,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x00500a4c,cm848_initializeSignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x00500a4c,cm848_initializeSignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
+0x00500a4c,cm848_initializeSignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
 
 # Sensor Channel 3 (Boost/MAP Pressure) - calls the above with specific calibration
 # (sensorChannel3_boostPressureInit + sensorChannel3_boostPressureProcess take no parameters)
@@ -199,74 +194,58 @@ function_address,function_name,param_index,name,type,comment
 0x0001392c,cm848_selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
 0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
-0x000130dc,cm848_calculatePumpingTorqueAdjustment,0,manifold_pressure,ushort,Filtered manifold pressure input
-0x000130dc,cm848_calculatePumpingTorqueAdjustment,1,rpm,ushort,Engine RPM for table lookup
 
-0x00013294,cm848_calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
-0x00013294,cm848_calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
 
-0x00012ad4,cm848_calculateVolumetricEfficiency,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
-0x00012ad4,cm848_calculateVolumetricEfficiency,1,base_fueling,ushort,Base fueling command to modify
 
 # -----------------------------------------------------------------------------
 # Parameter-by-ID Lookup System - CM848 diagnostic parameter resolution
 # Resolves firmware parameter IDs (0x0000-0x12A9) to memory addresses
 # Table at ROM 0x3CDC copied to RAM 0x3F98AC (20 entries x 6 bytes)
 # -----------------------------------------------------------------------------
-0x00003f70,cm848_lookupTableEntryByKey,0,param_id,ushort,16-bit parameter ID to resolve
+0x00003f70,cm848_lookupBootParameterIdAddress,0,parameter_id,ushort,16-bit parameter ID to resolve
 
-0x000019e8,cm848_diagService65_handler,0,request_msg,int,Pointer to EF00 request message (service 0x41)
 
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,0,request_msg,dword,Pointer to request message
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,1,param_id,ushort,Parameter ID to resolve
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,2,reserved,short,Reserved (always 0)
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,3,offset,dword,Offset to add to resolved address
 
-0x00001d5c,cm848_diagService67_memoryReadOffset,0,request_msg,int,Pointer to EF00 request message (service 0x43)
 
-0x00001dc4,cm848_diagService74_memoryRead,0,request_msg,dword,Pointer to EF00 request message (service 0x4A)
 
-0x00001e30,cm848_diagService76_memoryReadExt,0,request_msg,dword,Pointer to EF00 request message (service 0x4C)
 
 # -----------------------------------------------------------------------------
 # EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
 # Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
 # -----------------------------------------------------------------------------
-0x000220e4,cm848_processJ1939DiagnosticRequest,0,service_id,byte,EF00 service ID to register
-0x000220e4,cm848_processJ1939DiagnosticRequest,1,handler_ptr,void*,Function pointer for service handler
+0x000220e4,registerJ1939DiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte to register (was EF00 service ID to register - EF00 is the PGN in hex; PR #53 round 63)
+0x000220e4,registerJ1939DiagnosticService,1,handler,j1939_diagnostic_service_handler_function_t*,Function pointer for service handler
 
-0x00002c94,cm848_registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
-0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
+0x00002c94,cm848_registerDiagnosticService,0,service_id,BOOT_DIAGNOSTIC_SERVICE,Diagnostic service ID (0x43/0x4A/0x4C)
+0x00002c94,cm848_registerDiagnosticService,1,handler,void*,Function pointer for service handler
 
-0x00002cd8,cm848_registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
-0x00002cd8,cm848_registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
 
 # -----------------------------------------------------------------------------
 # J1939 Diagnostic Handler Return Types
 # All handlers registered via processJ1939DiagnosticRequest share the
-# DIAG_RESPONSE callback contract (ACK=0, NACK_NOT_READY=4, NACK_PROTECTED=7)
+# J1939_DIAGNOSTIC_RESULT callback contract (was DIAG_RESPONSE: ACCEPTED 0 / CANNOT_COMPLY 4 / NOT_SAFE 7 - PR #53 round 64)
 # -----------------------------------------------------------------------------
-0x00021584,cm848_advanceDiagnosticActionState,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
-0x00021668,cm848_enterDevelopmentMode,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
-0x000216e8,cm848_commandEngineShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
-0x00021904,cm848_inhibitKeyOffShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
-0x00021918,cm848_validateCalibrationMemory,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
+0x00021584,cm848_requestClearInactiveFaults,return,,J1939_DIAGNOSTIC_RESULT,Returns J1939_DIAGNOSTIC_RESULT_ACCEPTED(0) or J1939_DIAGNOSTIC_RESULT_NOT_SAFE(7)
+0x00021668,enterDevelopmentMode,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional state clear
+0x000216e8,commandEngineShutdown,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional flag set
+0x00021904,inhibitKeyOffShutdown,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional flag set
+0x00021918,cm848_commitEepromMirrorToEeprom,return,,J1939_DIAGNOSTIC_RESULT,Returns J1939_DIAGNOSTIC_RESULT_ACCEPTED(0) or J1939_DIAGNOSTIC_RESULT_NOT_SAFE(7)
 
 # -----------------------------------------------------------------------------
-# J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param
+# J1939 RX Message Handlers - all receive j1939_received_message_t* as first param
 # -----------------------------------------------------------------------------
-0x00022d60,torqueControlModeHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x000236f0,cm848_processEngineRetarderTsc1Request,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x00023b38,cm848_j1939DispatchAddressHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00022d60,processEngineTsc1Request,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x000236f0,cm848_processEngineRetarderTsc1Request,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x000231cc,cm848_dispatchJ1939PgnRequest,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00023b38,dispatchTsc1ByDestinationAddress,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 
 # -----------------------------------------------------------------------------
 # J1939 Send Dispatcher
 # -----------------------------------------------------------------------------
-0x000539fc,sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
+0x000539fc,sendJ1939Message,0,message,j1939_transmit_message_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
 
-0x00053a4c,cm848_lookupJ1939SourceAddressIndex,return,,ushort,SA table index: 1=primary(auth) 2=secondary 3=tertiary(auth) 4=unknown
-0x00053a4c,cm848_lookupJ1939SourceAddressIndex,0,source_address,uint,J1939 source address byte to look up in the 3-entry SA calibration table
+0x00053a4c,lookupJ1939ControlDevice,return,,J1939_CONTROL_DEVICE,the control device of the source address (1 transmission / 2 ABS / 3 ASR / 4 other)
+0x00053a4c,lookupJ1939ControlDevice,0,source_address,uint,the J1939 source address to classify
 
 # -----------------------------------------------------------------------------
 # Math Division Runtime Helpers - 64-bit dividend (hi:lo) / 64-bit divisor (hi:lo)
@@ -274,29 +253,29 @@ function_address,function_name,param_index,name,type,comment
 # zero-param signature and Ghidra drops the call-site arguments.
 # -----------------------------------------------------------------------------
 0x000571b0,cm848_unsignedDivision32,return,,uint,Quotient of 64-bit/32-bit unsigned division
-0x000571b0,cm848_unsignedDivision32,0,dividend_hi,uint,High 32 bits of 64-bit dividend
-0x000571b0,cm848_unsignedDivision32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
-0x000571b0,cm848_unsignedDivision32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
-0x000571b0,cm848_unsignedDivision32,3,divisor_lo,uint,Low 32 bits of divisor
+0x000571b0,cm848_unsignedDivision32,0,dividend_high,uint,High 32 bits of 64-bit dividend
+0x000571b0,cm848_unsignedDivision32,1,dividend_low,uint,Low 32 bits of 64-bit dividend
+0x000571b0,cm848_unsignedDivision32,2,divisor_high,uint,High 32 bits of divisor (usually 0)
+0x000571b0,cm848_unsignedDivision32,3,divisor_low,uint,Low 32 bits of divisor
 0x000570f0,cm848_signedDivision32,return,,int,Quotient of 64-bit/32-bit signed division
-0x000570f0,cm848_signedDivision32,0,dividend_hi,int,High 32 bits of 64-bit dividend
-0x000570f0,cm848_signedDivision32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
-0x000570f0,cm848_signedDivision32,2,divisor_hi,int,High 32 bits of divisor (usually sign-extension)
-0x000570f0,cm848_signedDivision32,3,divisor_lo,int,Low 32 bits of divisor
+0x000570f0,cm848_signedDivision32,0,dividend_high,int,High 32 bits of 64-bit dividend
+0x000570f0,cm848_signedDivision32,1,dividend_low,uint,Low 32 bits of 64-bit dividend
+0x000570f0,cm848_signedDivision32,2,divisor_high,int,High 32 bits of divisor (usually sign-extension)
+0x000570f0,cm848_signedDivision32,3,divisor_low,int,Low 32 bits of divisor
 0x00056e90,cm848_unsignedDivision64by32,return,,uint,Quotient of 64-bit/32-bit unsigned division (worker)
-0x00056e90,cm848_unsignedDivision64by32,0,dividend_hi,uint,High 32 bits of 64-bit dividend
-0x00056e90,cm848_unsignedDivision64by32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
-0x00056e90,cm848_unsignedDivision64by32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
-0x00056e90,cm848_unsignedDivision64by32,3,divisor_lo,uint,Low 32 bits of divisor
+0x00056e90,cm848_unsignedDivision64by32,0,dividend_high,uint,High 32 bits of 64-bit dividend
+0x00056e90,cm848_unsignedDivision64by32,1,dividend_low,uint,Low 32 bits of 64-bit dividend
+0x00056e90,cm848_unsignedDivision64by32,2,divisor_high,uint,High 32 bits of divisor (usually 0)
+0x00056e90,cm848_unsignedDivision64by32,3,divisor_low,uint,Low 32 bits of divisor
 
 # -----------------------------------------------------------------------------
 # Multiply-Divide helper - quotient/result returned in r4 (same shape as division)
 # -----------------------------------------------------------------------------
 0x00057498,cm848_conditionalMultiplyDivide,return,,uint,Result returned in r4
-0x00057498,cm848_conditionalMultiplyDivide,0,dividend_hi,uint,High 32 bits of 64-bit dividend
-0x00057498,cm848_conditionalMultiplyDivide,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
-0x00057498,cm848_conditionalMultiplyDivide,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
-0x00057498,cm848_conditionalMultiplyDivide,3,divisor_lo,uint,Low 32 bits of divisor
+0x00057498,cm848_conditionalMultiplyDivide,0,dividend_high,uint,High 32 bits of 64-bit dividend
+0x00057498,cm848_conditionalMultiplyDivide,1,dividend_low,uint,Low 32 bits of 64-bit dividend
+0x00057498,cm848_conditionalMultiplyDivide,2,divisor_high,uint,High 32 bits of divisor (usually 0)
+0x00057498,cm848_conditionalMultiplyDivide,3,divisor_low,uint,Low 32 bits of divisor
 
 # -----------------------------------------------------------------------------
 # Diagnostic handlers - r4 carries an updated request-buffer pointer, but unlike the
@@ -304,43 +283,43 @@ function_address,function_name,param_index,name,type,comment
 # against data flow and dropped a potentially-live value. Reverted to void; revisit
 # with explicit custom return storage (r4) if these need cleaning.
 # -----------------------------------------------------------------------------
-0x00003948,mpc555_diagServiceTransferBlock,return,,void,Reverted: r4-return needs custom storage to model safely
-0x00001ef8,cm848_diagSendResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
-0x00001ef8,cm848_diagSendResponseCode,0,response_code,byte,Response/service code to send
-0x00001ef8,cm848_diagSendResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
+0x00003948,mpc555_diagnosticServiceTransferBlock,return,,void,Reverted: r4-return needs custom storage to model safely
+0x00001ef8,cm848_sendDiagnosticResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
+0x00001ef8,cm848_sendDiagnosticResponseCode,0,response_code,byte,Response/service code to send
+0x00001ef8,cm848_sendDiagnosticResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
 
 # -----------------------------------------------------------------------------
 # Sensor Channel Type B - Config Init (13 params via PowerPC ABI: r3-r10 + 5 stack)
 # Params 4-6 (r6-r8) are passed by callers but NOT USED by function body
 # -----------------------------------------------------------------------------
-0x005012dc,sensorChannelTypeB_configInit,return,,void,No return value (Type B periodic pass)
-0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
-0x005012dc,sensorChannelTypeB_configInit,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
-0x005012dc,sensorChannelTypeB_configInit,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
-0x005012dc,sensorChannelTypeB_configInit,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
-0x005012dc,sensorChannelTypeB_configInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
-0x005012dc,sensorChannelTypeB_configInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
-0x005012dc,sensorChannelTypeB_configInit,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
-0x005012dc,sensorChannelTypeB_configInit,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
-0x005012dc,sensorChannelTypeB_configInit,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
-0x005012dc,sensorChannelTypeB_configInit,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
-0x005012dc,sensorChannelTypeB_configInit,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
-0x005012dc,sensorChannelTypeB_configInit,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
-0x005012dc,sensorChannelTypeB_configInit,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
-0x00501b4c,sensorChannelTypeB_update,return,,void,No return value (Type B boot pass)
-0x00501b4c,sensorChannelTypeB_update,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
-0x00501b4c,sensorChannelTypeB_update,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
-0x00501b4c,sensorChannelTypeB_update,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
-0x00501b4c,sensorChannelTypeB_update,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
-0x00501b4c,sensorChannelTypeB_update,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
-0x00501b4c,sensorChannelTypeB_update,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
-0x00501b4c,sensorChannelTypeB_update,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
-0x00501b4c,sensorChannelTypeB_update,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
-0x00501b4c,sensorChannelTypeB_update,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
-0x00501b4c,sensorChannelTypeB_update,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
-0x00501b4c,sensorChannelTypeB_update,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
-0x00501b4c,sensorChannelTypeB_update,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
-0x00501b4c,sensorChannelTypeB_update,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+0x005012dc,cm848_processUnsignedSensorChannel,return,,void,No return value (Type B periodic pass)
+0x005012dc,cm848_processUnsignedSensorChannel,0,configuration_pointer,sensor_channel_configuration_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x005012dc,cm848_processUnsignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+0x005012dc,cm848_processUnsignedSensorChannel,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x005012dc,cm848_processUnsignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+0x005012dc,cm848_processUnsignedSensorChannel,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x005012dc,cm848_processUnsignedSensorChannel,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x005012dc,cm848_processUnsignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+0x005012dc,cm848_processUnsignedSensorChannel,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x005012dc,cm848_processUnsignedSensorChannel,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x005012dc,cm848_processUnsignedSensorChannel,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x005012dc,cm848_processUnsignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x005012dc,cm848_processUnsignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
+0x005012dc,cm848_processUnsignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+0x00501b4c,cm848_initializeUnsignedSensorChannel,return,,void,No return value (Type B boot pass)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,0,configuration_pointer,sensor_channel_configuration_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x00501b4c,cm848_initializeUnsignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+0x00501b4c,cm848_initializeUnsignedSensorChannel,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x00501b4c,cm848_initializeUnsignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+0x00501b4c,cm848_initializeUnsignedSensorChannel,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x00501b4c,cm848_initializeUnsignedSensorChannel,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x00501b4c,cm848_initializeUnsignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+0x00501b4c,cm848_initializeUnsignedSensorChannel,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x00501b4c,cm848_initializeUnsignedSensorChannel,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x00501b4c,cm848_initializeUnsignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
 0x0002e488,cm848_checkVariableGeometryTurbochargerPositionNearOpenStop,return,,void,explicit void(void) - writes only protection_rpm_below_confirm_flag - clears phantom args at the 0x2e4cc call site
 # -----------------------------------------------------------------------------
 # QSPI job driver (reviewed 2026-11-11)
@@ -362,7 +341,7 @@ function_address,function_name,param_index,name,type,comment
 # get no rows - committed wrapper parameters made callers cast their word arguments.
 # -----------------------------------------------------------------------------
 0x00054e10,mpc555_miosCheckChannelFeedback,return,,ushort,0 = pin agrees with the command / 1 = high or toggling where it should be low / 2 = low or toggling where it should be high (16-bit: clrlwi r3 r5 16)
-0x00054e10,mpc555_miosCheckChannelFeedback,0,channel_registers,mios_mdasm_t *,MDASM register block (AR:BR read as one word / SCRD at +6)
+0x00054e10,mpc555_miosCheckChannelFeedback,0,channel_registers,mios_mdasm_t *,MDASM register block (AR:BR read as one word / SCR at +6)
 0x00054e10,mpc555_miosCheckChannelFeedback,1,commanded_duty,undefined4,Duty the output was commanded to (1/256 % per count; 25600 = 100 %) - 4 bytes: the compares use all of r4 (cmpwi r4 0 / cmpwi r4 25600) so a 2-byte type shows CONCAT22 artifacts
 0x00054eac,mpc555_miosSetChannelInputMode,return,,void,No return value
 0x00054eac,mpc555_miosSetChannelInputMode,0,channel_registers,mios_mdasm_t *,MDASM register block base
@@ -404,22 +383,22 @@ function_address,function_name,param_index,name,type,comment
 0x000553ec,mpc555_tpuASetPwmDuty,0,channel,undefined4,TPU-A channel number 0-15
 0x000553ec,mpc555_tpuASetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
 
-0x00056594,exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
-0x00056594,exponentialMovingAverage,0,value,uint,New sample (r3)
-0x00056594,exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
+0x00056594,cm848_exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
+0x00056594,cm848_exponentialMovingAverage,0,value,uint,New sample (r3)
+0x00056594,cm848_exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
 0x0005644c,cm848_signedFirstOrderFilter,return,,sword,Filtered value: the integer part of the updated accumulator (signed)
 0x0005644c,cm848_signedFirstOrderFilter,0,value,int32_t,New sample (r3) - signed
-0x0005644c,cm848_signedFirstOrderFilter,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place; coefficient 0 = no filtering (the signed twin of exponentialMovingAverage)
+0x0005644c,cm848_signedFirstOrderFilter,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place; coefficient 0 = no filtering (the signed twin of cm848_exponentialMovingAverage)
 0x000185cc,cm848_conditionalFirstOrderFilter,return,,sword,The filtered value - or with update_enable 0 the integer part of the accumulator unchanged
 0x000185cc,cm848_conditionalFirstOrderFilter,0,value,int32_t,New sample (r3)
 0x000185cc,cm848_conditionalFirstOrderFilter,1,update_enable,int32_t,0 = only read the filter output (r4)
 0x000185cc,cm848_conditionalFirstOrderFilter,2,filter_state,ema_filter_state_t *,Filter state (r5) passed to cm848_signedFirstOrderFilter
-0x00010110,cm848_initEngineOperatingMode,return,,void,
-0x00010110,cm848_initEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
-0x00503074,cm848_engineMode_reset,return,,void,
-0x00503074,cm848_engineMode_reset,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
-0x0050daac,cm848_transitionEngineOperatingMode,return,,void,
-0x0050daac,cm848_transitionEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
+0x00010110,cm848_selectVariableSpeedGovernorMode,return,,void,
+0x00010110,cm848_selectVariableSpeedGovernorMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
+0x00503074,cm848_selectTsc1SpeedControlMode,return,,void,
+0x00503074,cm848_selectTsc1SpeedControlMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
+0x0050daac,cm848_selectPedalFaultMode,return,,void,
+0x0050daac,cm848_selectPedalFaultMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
 0x00014508,cm848_selectChiSourceCode,return,,COMBUSTION_CHI_SOURCE,1 when the air density chi is not smaller than the coolant temperature chi - else 3
 0x00014508,cm848_selectChiSourceCode,0,air_density_chi_hundredths,int32_t,
 0x00014508,cm848_selectChiSourceCode,1,coolant_temperature_chi_hundredths,int32_t,
@@ -435,3 +414,468 @@ function_address,function_name,param_index,name,type,comment
 0x00047a88,cm848_calculateFilteredDerivative,0,gain,derivative_gain_t *,Derivative gain record (r3)
 0x00047a88,cm848_calculateFilteredDerivative,1,filter_state,q16_fixed_point_t *,Q16.16 filter state (r4) - updated in place
 0x00047a88,cm848_calculateFilteredDerivative,2,input,int32_t,Signed input (r5)
+0x00012ad4,cm848_calculateVolumetricEfficiency,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x12b04, clrlwi r4 @ 0x12b0c); the old boost_denominator / base_fueling rows were stale
+0x00012dc4,cm848_calculateChargeFlowEstimate,return,,void,Takes no parameters: it never reads r3 / r4 (its caller cm848_calculateChargeFlows passes none); the decompiler only showed two because cm848_calculateVolumetricEfficiency declared them
+0x000130dc,cm848_calculatePumpingTorqueAdjustment,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x130fc, lis r4 @ 0x13104); the old manifold_pressure / rpm rows were stale
+0x00012724,cm848_calculateDownstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16 @ 0x12770)
+0x00012778,cm848_calculateUpstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16)
+0x00013294,cm848_estimateChargePressure,return,,void,Takes no parameters: r4 and r3 are written before any read (lhz r4 @ 0x132b4, lis r3 @ 0x132b8); the old boost_input / rpm rows were stale
+0x0050be6c,storeJ1939ControlSessionInHistoryTable,return,,void,returns nothing
+0x0050be6c,storeJ1939ControlSessionInHistoryTable,0,session_kind,int32_t,"0 = the engine control session record, else the retarder's"
+0x0050beec,startJ1939ControlSession,return,,void,returns nothing
+0x0050beec,startJ1939ControlSession,0,session_kind,int32_t,"0 = open the engine control session record, else the retarder's"
+0x0051e624,cm848_stepSciOutputTest,return,,void,No result
+0x0051e624,cm848_stepSciOutputTest,0,timer,word *,The test's timer in sci_output_test_timers (phases left; lhz: unsigned)
+0x0051e624,cm848_stepSciOutputTest,1,logical_output,dword,The logical output the test drives (priority 5)
+0x0051e490,cm848_stopSciOutputTest,return,,void,No result
+0x0051e490,cm848_stopSciOutputTest,0,timer,word *,The test's timer in sci_output_test_timers; zeroed
+0x0051e490,cm848_stopSciOutputTest,1,logical_output,dword,The logical output the test drove; its priority 5 request is cleared
+0x0051e894,cm848_sciStartTimedOutputTest,return,,void,No result
+0x0051e894,cm848_sciStartTimedOutputTest,0,timer,word *,The test's timer in sci_output_test_timers
+0x0051e894,cm848_sciStartTimedOutputTest,1,logical_output,dword,The logical output to drive at priority 5
+0x0051e894,cm848_sciStartTimedOutputTest,2,duration,word,Phases of 141 passes to run (300 or 11)
+0x000564c0,cm848_secondOrderFilter,return,,sword,The new output's integer part (r3: (output >> 16) sign-extended)
+0x000564c0,cm848_secondOrderFilter,0,input,sword,The input (r3; signed 16-bit)
+0x000564c0,cm848_secondOrderFilter,1,filter,second_order_filter_state_t *,The filter record (r4): coefficient pointers and the two outputs
+0x00056608,cm848_secondOrderFilterUnsigned,return,,word,(output >> 16) & 0xffff of an output already shifted down 16 (r3): 0 in this build
+0x00056608,cm848_secondOrderFilterUnsigned,0,input,uint,The input (r3; the caller passes a 16-bit road speed)
+0x00056608,cm848_secondOrderFilterUnsigned,1,filter,second_order_filter_state_t *,The filter record (r4)
+0x00507d50,rampEngineProtectionSeverityIndex,return,,word,The new severity index: + the ramp rate (capped at 0x100) while the duration is past the derate start duration, else - the ramp rate (floored at 0)
+0x00507d50,rampEngineProtectionSeverityIndex,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00507d50,rampEngineProtectionSeverityIndex,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00507d50,rampEngineProtectionSeverityIndex,2,history,engine_protection_channel_history_t *,The channel's history (r5)
+0x00507d50,rampEngineProtectionSeverityIndex,3,is_engine_speed,int,0 = the fueling index, 1 = the engine speed index (r6)
+0x00507ebc,cm848_isEngineProtectionInputPastThreshold,return,,sword,1 when the input is past the selected threshold (or the switch input is active)
+0x00507ebc,cm848_isEngineProtectionInputPastThreshold,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00507ebc,cm848_isEngineProtectionInputPastThreshold,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00507ebc,cm848_isEngineProtectionInputPastThreshold,2,is_engine_speed,int,0 = the fueling thresholds, 1 = the engine speed thresholds (r5)
+0x00507ebc,cm848_isEngineProtectionInputPastThreshold,3,threshold_select,int,0 / 1 the minimum / maximum threshold pointer, 2 the shutdown duration threshold, 3 the shutdown severity threshold (r6)
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,return,,void,
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,2,history,engine_protection_channel_history_t *,The channel's history (r5)
+0x00508408,cm848_checkEngineProtectionRestartLimitation,return,,void,
+0x00508408,cm848_checkEngineProtectionRestartLimitation,0,channel_index,int,The channel number (r3); only channel 4 takes the restart limitation path
+0x00508408,cm848_checkEngineProtectionRestartLimitation,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00508408,cm848_checkEngineProtectionRestartLimitation,2,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r5)
+0x00508834,countEngineProtectionShutdownTime,return,,void,
+0x00508834,countEngineProtectionShutdownTime,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00508834,countEngineProtectionShutdownTime,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00508834,countEngineProtectionShutdownTime,2,is_engine_speed,int,0 = the fueling count, 1 = the engine speed count (r5)
+# CAN transmit mailbox writers (PR #53 round 28)
+0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the boot kernel's copy; PR #53 round 28)
+0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
+0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords) - one boot_can_transmit_frame_t; as that type the copy loop read worse (PR #53 round 70)
+0x00053b28,cm848_writeCanControllerTransmitMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the application's copy; PR #53 round 28)
+0x00053b28,cm848_writeCanControllerTransmitMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
+0x00053b28,cm848_writeCanControllerTransmitMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords)
+# The discrete output read-back check (PR #53 round 32)
+0x00537c64,cm848_checkDiscreteOutputReadBack,0,logical_output,int,the logical output the check reads back
+0x00537c64,cm848_checkDiscreteOutputReadBack,1,read_back_line,int,the switch input line wired to the output's read-back
+0x00537c64,cm848_checkDiscreteOutputReadBack,2,high_fault_bit,int,set after the retries when commanded on but reads off
+0x00537c64,cm848_checkDiscreteOutputReadBack,3,low_fault_bit,int,set when commanded off but reads on
+0x00537c64,cm848_checkDiscreteOutputReadBack,4,on_mismatch_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,5,off_mismatch_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,6,high_fault_recovery_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,7,low_fault_recovery_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,8,retry_count,word*,the output's retry count
+# The decimal text formatter (PR #53 round 33): the text buffer was an int
+0x00027bc4,cm848_formatNumberAsDecimalText,0,number,byte*,the number: 4 bytes read as one value (or one by one in the digit count 1 mode); byte* because every caller passes a byte address
+0x00027bc4,cm848_formatNumberAsDecimalText,1,text,byte*,the text buffer; the digits are written backwards from text + digit_count - 1
+0x00027bc4,cm848_formatNumberAsDecimalText,2,digit_count,int32_t,the digit count (the callers use 8); 1 selects two digits per byte
+# The application J1939 transport's senders (PR #53 round 34)
+0x0050c8ec,cm848_startJ1939TransportSession,0,message,j1939_transmit_message_t*,the transmit descriptor of a message longer than 8 bytes (from sendJ1939Message)
+0x00053858,mpc555_sendJ1939SingleFrame,0,can_id,dword,the 29-bit identifier (priority / PGN / source address)
+0x00053858,mpc555_sendJ1939SingleFrame,1,data_length,ushort,the data bytes (padded to 8 with 0xff); ushort because every caller passes a 16-bit length
+0x00053858,mpc555_sendJ1939SingleFrame,2,data,byte*,the data
+0x00053858,mpc555_sendJ1939SingleFrame,3,result,byte*,where the result goes: 0 queued / 1 zero length / 4 CAN transmit queue full
+# The boot kernel's message record senders and the diagnostic service chain (PR #53 round 35): the record senders read the data / status pointers behind the header
+0x00003dac,mpc555_canTransmitQueuePush,0,can_id,dword,the 29-bit identifier
+0x00003dac,mpc555_canTransmitQueuePush,1,data_length,dword,the data bytes (dword: the body compares the whole register; ushort printed CONCAT22 with a phantom register half)
+0x00003dac,mpc555_canTransmitQueuePush,2,data,byte*,the data
+0x00003dac,mpc555_canTransmitQueuePush,3,result,byte*,where the result goes: 0 queued / 1 no data / 4 queue full
+0x00022128,cm848_dispatchJ1939DiagnosticServiceRequest,0,received_message,j1939_received_message_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
+0x0050b634,cm848_validateJ1939DiagnosticRequest,0,received_message,j1939_received_message_t*,the received request
+0x0050b634,cm848_validateJ1939DiagnosticRequest,return,,J1939_DIAGNOSTIC_RESULT,0xff when the request may go to its handler - else J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH / _KEY_MISSING / _KEY_REFUSED (PR #53 round 64)
+0x000249c4,sendJ1939DiagnosticServiceResponse,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply)
+0x000249c4,sendJ1939DiagnosticServiceResponse,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
+0x00024afc,sendJ1939DiagnosticResponsePending,return,,void,
+0x00024afc,sendJ1939DiagnosticResponsePending,0,request,j1939_received_message_t*,The PGN 61184 request to answer (r3; passed on unchanged) (PR #53 round 98)
+0x00024afc,sendJ1939DiagnosticResponsePending,1,wait_time,ushort,The wait time (r4; sth r4 to 0x3fab50 at 0x24b0c) (PR #53 round 98)
+0x00003f20,cm848_transmitCanMessage,0,message,j1939_transmit_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,j1939_transmit_message_t*,the response record of a reply longer than 8 bytes
+# The boot kernel's diagnostic response sender (PR #53 round 36): the twin of sendJ1939DiagnosticServiceResponse
+0x000074a0,cm848_sendDiagnosticServiceResponse,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
+0x000074a0,cm848_sendDiagnosticServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)
+# The trip information power-down step takes no parameters (PR #53 round 51)
+0x00523760,cm848_flagTripInformationPowerDownDataLoss,return,,void,Takes no parameters: at its one call (0x54de0) r3 still holds 12500 = 0x30d4 from li r3 / mtdec r3 (the decrementer reload) which the decompiler showed as an argument (PR #53 round 51)
+0x005125f4,cm848_selectCruiseStateForCoastSwitch,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
+0x00512724,cm848_selectBaseCruiseState,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
+0x0051291c,cm848_selectCruiseStateForSetSwitch,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
+0x00512878,cm848_selectCruiseStateForResumeSwitch,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
+0x00512f18,cm848_selectDeniedCruiseState,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
+0x00509ce4,handleJ1939DisableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x00509d0c,handleJ1939EnableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x000218dc,handleJ1939RestartService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c318,handleJ1939GetAddressByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c640,handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b228,handleJ1939WriteByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b298,handleJ1939WriteByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c6a8,handleJ1939ReadByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b300,handleJ1939WriteByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c734,handleJ1939ReadByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b38c,handleJ1939WriteByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c7b0,handleJ1939ReadMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b408,handleJ1939WriteMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c81c,handleJ1939ReadMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b474,handleJ1939WriteMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x00509be8,updateJ1939BroadcastEnableMask,0,request,j1939_received_message_t*,The service 4 / 5 request: byte 1 the item and byte 2 the target (PR #53 round 63)
+0x00509be8,updateJ1939BroadcastEnableMask,1,enable,uint,1 sets the selected bits of datalink_broadcast_enable_flags - anything else clears them (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to read (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to write (PR #53 round 63)
+0x0050c42c,readJ1939DiagnosticMemoryAndRespond,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c42c,readJ1939DiagnosticMemoryAndRespond,1,address,uint,The first byte to read (PR #53 round 63)
+0x0050c42c,readJ1939DiagnosticMemoryAndRespond,2,length,uint,Bytes to read - at most 1764 (PR #53 round 63)
+0x0050af58,writeJ1939DiagnosticMemory,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050af58,writeJ1939DiagnosticMemory,1,address,byte*,The first byte to write (PR #53 round 63)
+0x0050af58,writeJ1939DiagnosticMemory,2,length,uint,Bytes to write - at most 1764 (PR #53 round 63)
+0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,1,address,uint,The first byte to read (was the length row; PR #53 round 63)
+0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,2,length,uint,Bytes to read - at most 1764 (was the response_ptr row; PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,1,parameter_id,ushort,The parameter ID that cm848_lookupBootParameterIdAddress resolves (PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (was named reserved; PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,3,length,uint,Bytes to read (was named offset; PR #53 round 63)
+0x00005400,cm848_writeBootDiagnosticMemory,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005400,cm848_writeBootDiagnosticMemory,1,address,uint,The first byte to write (PR #53 round 63)
+0x00005400,cm848_writeBootDiagnosticMemory,2,length,uint,Bytes to write (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,1,parameter_id,ushort,The parameter ID that cm848_lookupBootParameterIdAddress resolves (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,3,length,uint,Bytes to write (PR #53 round 63)
+0x000019e8,cm848_handleBootGetAddressByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001d5c,cm848_handleBootReadByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001dc4,cm848_handleBootReadMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001e30,cm848_handleBootReadMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005798,cm848_handleBootWriteByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005808,cm848_handleBootWriteByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005870,cm848_handleBootWriteMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x000058e8,cm848_handleBootWriteMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x0050d688,selectJ1939TransmitBuffer,return,,j1939_transmit_message_t*,j1939_single_frame_tx_message or j1939_transport_tx_message - 0 while the transport record is busy (PR #53 round 64)
+0x0050d688,selectJ1939TransmitBuffer,0,length,int32_t,The message's data bytes: up to 8 takes the single frame record (PR #53 round 64)
+0x00006508,cm848_allocateDiagnosticResponseBuffer,return,,j1939_transmit_message_t*,diagnostic_single_frame_response_message or diagnostic_transport_response_message - 0 while the transport record is busy (PR #53 round 64)
+0x00006508,cm848_allocateDiagnosticResponseBuffer,0,length,int32_t,The reply's data bytes: up to 8 takes the single frame record (PR #53 round 64)
+0x00538eb0,registerJ1939ReceiveHandler,0,pgn_key,ushort,The PGN key of the frames to hand over (see j1939_receive_handler_entry_t) (PR #53 round 65)
+0x00538eb0,registerJ1939ReceiveHandler,1,handler,j1939_receive_handler_function_t*,The handler: called with each matching j1939_received_message_t (PR #53 round 65)
+0x000223f4,cm848_processJ1939Dm13StopStartBroadcast,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x00022c5c,cm848_j1939ProcessPgn61445Etc2,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x000233a0,cm848_j1939HandlePgn56832Reset,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x00021fc4,cm848_receivePgn56576AntiTheftRequestMessage,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050b734,receivePgn57344CabMessage1,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050b77c,receivePgn61441ElectronicBrakeController1Message,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050b8a4,receivePgn61443ElectronicEngineController2Message,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050b98c,receivePgn65252ShutdownMessage,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050b9d8,receivePgn65264PowerTakeoffInformationMessage,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050bacc,receivePgn65265CruiseControlVehicleSpeedMessage,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050d250,dispatchJ1939TransportConnectionManagement,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050cfa8,handleJ1939TransportDataPacket,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050ce90,handleJ1939TransportRequestToSend,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050cc18,handleJ1939TransportClearToSend,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050d144,handleJ1939TransportEndOfMessageAcknowledge,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0050d1ac,handleJ1939TransportAbort,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0000597c,cm848_validateDiagnosticRequestLengthAndAuthorization,return,,BOOT_DIAGNOSTIC_RESULT,0xff when the request may go to its handler - else WRONG_LENGTH / KEY_REFUSED / KEY_MISSING (PR #53 round 66)
+0x0000597c,cm848_validateDiagnosticRequestLengthAndAuthorization,0,request,j1939_received_message_t*,The boot kernel's PGN 61184 request (PR #53 round 66)
+0x00001840,cm848_handleBootExecuteAtAddressService,return,,BOOT_DIAGNOSTIC_RESULT,The validator's result or the region lookup's - 0xff after the positive response and the call (PR #53 round 66)
+0x00001840,cm848_handleBootExecuteAtAddressService,0,request,j1939_received_message_t*,The boot kernel's PGN 61184 request (PR #53 round 66)
+0x000003ec,cm848_sendBootResultToJ1939Requester,return,,void,Nothing (PR #53 round 67)
+0x000003ec,cm848_sendBootResultToJ1939Requester,0,request,j1939_received_message_t*,The PGN 61184 request to answer (PR #53 round 67)
+0x000003ec,cm848_sendBootResultToJ1939Requester,1,channel,BOOT_REQUEST_CHANNEL,Only BOOT_REQUEST_CHANNEL_J1939 is answered (PR #53 round 67)
+0x000003ec,cm848_sendBootResultToJ1939Requester,2,result,BOOT_DIAGNOSTIC_RESULT,The result to send (PR #53 round 67)
+0x00000428,mpc555_verifyDownloadedCalibration,return,,void,Nothing - it answers the request itself (PR #53 round 67)
+0x00000428,mpc555_verifyDownloadedCalibration,0,request,j1939_received_message_t*,The service 7 request (0 from cm848_finishSerialReflash) (PR #53 round 67)
+0x00000428,mpc555_verifyDownloadedCalibration,1,channel,BOOT_REQUEST_CHANNEL,J1939 from service 7 / serial from cm848_finishSerialReflash (PR #53 round 67)
+0x000008d4,cm848_handleBootVerifyDownloadedCalibrationService,return,,BOOT_DIAGNOSTIC_RESULT,0xff: the verifier answered already (PR #53 round 67)
+0x000008d4,cm848_handleBootVerifyDownloadedCalibrationService,0,request,j1939_received_message_t*,The boot kernel's PGN 61184 request (PR #53 round 67)
+0x000008fc,mpc555_beginReflash,return,,short,Nonzero when both erases succeeded (PR #53 round 67)
+0x000008fc,mpc555_beginReflash,0,channel,BOOT_REQUEST_CHANNEL,J1939 from service 2 / serial from mpc555_processDiagnosticAndEepromRequests (PR #53 round 67)
+0x000009e4,cm848_handleBootBeginReflashService,return,,BOOT_DIAGNOSTIC_RESULT,FLASH_ERASE_FAILED when an erase failed else 0xff (PR #53 round 67)
+0x000009e4,cm848_handleBootBeginReflashService,0,request,j1939_received_message_t*,The boot kernel's PGN 61184 request (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,return,,byte,0xff to go on / 9 out of sequence or past the block / 0x10 no block / or cm848_updateDownloadCrc's status (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,0,data,byte*,The bytes being written (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,1,address,dword,Their first address (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,2,length,ushort*,Their length - 2 less (the trailing CRC) when they end the block (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,3,channel,BOOT_REQUEST_CHANNEL,J1939 blocks end in cm848_updateDownloadCrc / serial blocks in mpc555_diagnosticServiceTransferBlock (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,return,,byte,0xff to go on - or cm848_finishDownloadBlock's status once a J1939 block ends (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,0,data,byte*,The bytes to add to ecu_power_state_flags.transfer_crc (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,1,length,uint,How many (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,2,channel,BOOT_REQUEST_CHANNEL,Only a J1939 block is finished here (PR #53 round 67)
+0x00007840,cm848_finishDownloadBlock,return,,byte,0xff when the block is recorded / 0x14 CRC mismatch / 0x15 download_block_list full (PR #53 round 67)
+0x00007840,cm848_finishDownloadBlock,0,trailing_crc,word*,The block's 2-byte CRC that follows its data (PR #53 round 67)
+0x00002d08,cm848_lookupEepromParameterAddress,return,,byte*,The parameter's value (see the plate) - 0 for an unknown parameter (PR #53 round 68)
+0x00002d08,cm848_lookupEepromParameterAddress,0,parameter,byte,The diagnostic EEPROM parameter number (PR #53 round 68)
+0x000076c8,cm848_lookupBootMemoryRegionType,return,,MEMORY_REGION_TYPE,The first boot_memory_region_table entry holding the range - UNMAPPED for none or for Bank 2 while flash2_writes_enabled is 0 (PR #53 round 71)
+0x000076c8,cm848_lookupBootMemoryRegionType,0,range_start,uint,The range's first address - not 'address': the callers' own address made Ghidra name their temps address_00 (PR #53 round 71)
+0x000076c8,cm848_lookupBootMemoryRegionType,1,range_length,int,Its length in bytes - not 'length': the callers' own length made Ghidra name their temps length_00 (PR #53 round 71)
+0x0050d784,lookupApplicationMemoryRegionType,return,,MEMORY_REGION_TYPE,The first application_memory_region_table entry holding the range (its development-mode-off type unless development_mode is ON) - UNMAPPED for none (PR #53 round 71)
+0x0050d784,lookupApplicationMemoryRegionType,0,range_start,uint,The range's first address - not 'address': the callers' own address made Ghidra name their temps address_00 (PR #53 round 71)
+0x0050d784,lookupApplicationMemoryRegionType,1,range_length,int,Its length in bytes - not 'length': the callers' own length made Ghidra name their temps length_00 (PR #53 round 71)
+0x00005400,cm848_writeBootDiagnosticMemory,return,,byte,The result - including the region type when it is above EEPROM (the asm returns it at 0x5710); a byte so the region codes do not name the result (PR #53 round 71)
+0x0050af58,writeJ1939DiagnosticMemory,return,,char,The result - including the region type for Bank 2 / UNMAPPED / REFUSED; a char so the region codes do not name the result (PR #53 round 71)
+
+# scheduleJ1939PeriodicMessage (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,return,,byte,1 when the queue is full (li r3 1) / else 0; no caller reads it (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,0,queue_index,J1939_PERIODIC_TRANSMIT_QUEUE,The queue (r3; cmpwi r3 0): J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE = queue 0 (the engine node's 20 entries) / J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = queue 1 (the retarder node's 10 entries); any value other than 0 picks queue 1 (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,1,pgn_key,ushort,The PGN key (r4) stored with sth at the entry's +0 (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,2,interval_milliseconds,int,The transmit interval in ms (r5): divw by 10 into the entry's +2 (a full 32-bit divide) (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,3,first_send_offset_milliseconds,int,The delay of the first send in ms (r6): divw by 10 plus the queue's current tick into the entry's +4 (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,4,builder,j1939_message_builder_function_t*,The message builder (r7) stored with stw at the entry's +6: the periodic transmit code calls it when its tick comes (PR #53 round 95) (typed j1939_message_builder_function_t*; PR #53 round 98)
+0x000221f0,registerJ1939DiagnosticServiceDispatcher,return,,void,explicit void(void): the body only registers the PGN 61184 receive handler and reads no register - clears the phantom argument the last scheduleJ1939PeriodicMessage call's byte return passed it (PR #53 round 95)
+# PR #53 round 98: the output channel driver table's set period / set duty wrappers (their parameter was param_1)
+0x0004cec4,cm848_miosChannel11SetPwmDuty,return,,void,
+0x0004cec4,cm848_miosChannel11SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm11; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cef0,cm848_miosChannel11SetPwmPeriod,return,,void,
+0x0004cef0,cm848_miosChannel11SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm11; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cf44,cm848_miosChannel12SetPwmDuty,return,,void,
+0x0004cf44,cm848_miosChannel12SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm12; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cf70,cm848_miosChannel12SetPwmPeriod,return,,void,
+0x0004cf70,cm848_miosChannel12SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm12; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cfc4,cm848_miosChannel13SetPwmDuty,return,,void,
+0x0004cfc4,cm848_miosChannel13SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm13; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cff0,cm848_miosChannel13SetPwmPeriod,return,,void,
+0x0004cff0,cm848_miosChannel13SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm13; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d044,cm848_miosChannel14SetPwmDuty,return,,void,
+0x0004d044,cm848_miosChannel14SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm14; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d070,cm848_miosChannel14SetPwmPeriod,return,,void,
+0x0004d070,cm848_miosChannel14SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm14; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d0c4,cm848_miosChannel15SetPwmDuty,return,,void,
+0x0004d0c4,cm848_miosChannel15SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm15; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d0f0,cm848_miosChannel15SetPwmPeriod,return,,void,
+0x0004d0f0,cm848_miosChannel15SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm15; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d144,cm848_miosChannel27SetPwmDuty,return,,void,
+0x0004d144,cm848_miosChannel27SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm27; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d170,cm848_miosChannel27SetPwmPeriod,return,,void,
+0x0004d170,cm848_miosChannel27SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm27; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d1c4,cm848_miosChannel28SetPwmDuty,return,,void,
+0x0004d1c4,cm848_miosChannel28SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm28; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d1f0,cm848_miosChannel28SetPwmPeriod,return,,void,
+0x0004d1f0,cm848_miosChannel28SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm28; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d244,cm848_miosChannel29SetPwmDuty,return,,void,
+0x0004d244,cm848_miosChannel29SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm29; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d270,cm848_miosChannel29SetPwmPeriod,return,,void,
+0x0004d270,cm848_miosChannel29SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm29; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d2c4,cm848_miosChannel30SetPwmDuty,return,,void,
+0x0004d2c4,cm848_miosChannel30SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm30; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d2f0,cm848_miosChannel30SetPwmPeriod,return,,void,
+0x0004d2f0,cm848_miosChannel30SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm30; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d344,cm848_miosChannel31SetPwmDuty,return,,void,
+0x0004d344,cm848_miosChannel31SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm31; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d370,cm848_miosChannel31SetPwmPeriod,return,,void,
+0x0004d370,cm848_miosChannel31SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm31; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d3c4,cm848_miosPwm0SetDuty,return,,void,
+0x0004d3c4,cm848_miosPwm0SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm0; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d3f0,cm848_miosPwm0SetPeriodMicroseconds,return,,void,
+0x0004d3f0,cm848_miosPwm0SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm0; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d444,cm848_miosPwm1SetDuty,return,,void,
+0x0004d444,cm848_miosPwm1SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm1; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d470,cm848_miosPwm1SetPeriodMicroseconds,return,,void,
+0x0004d470,cm848_miosPwm1SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm1; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d4c4,cm848_miosPwm2SetDuty,return,,void,
+0x0004d4c4,cm848_miosPwm2SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm2; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d4f0,cm848_miosPwm2SetPeriodMicroseconds,return,,void,
+0x0004d4f0,cm848_miosPwm2SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm2; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d544,cm848_miosPwm3SetDuty,return,,void,
+0x0004d544,cm848_miosPwm3SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm3; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d570,cm848_miosPwm3SetPeriodMicroseconds,return,,void,
+0x0004d570,cm848_miosPwm3SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm3; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d5c4,cm848_miosPwm16SetDuty,return,,void,
+0x0004d5c4,cm848_miosPwm16SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm16; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d5f0,cm848_miosPwm16SetPeriodMicroseconds,return,,void,
+0x0004d5f0,cm848_miosPwm16SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm16; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d644,cm848_miosPwm17SetDuty,return,,void,
+0x0004d644,cm848_miosPwm17SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm17; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d670,cm848_miosPwm17SetPeriodMicroseconds,return,,void,
+0x0004d670,cm848_miosPwm17SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm17; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d6c4,cm848_miosPwm18SetDuty,return,,void,
+0x0004d6c4,cm848_miosPwm18SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm18; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d6f0,cm848_miosPwm18SetPeriodMicroseconds,return,,void,
+0x0004d6f0,cm848_miosPwm18SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm18; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d744,cm848_miosPwm19SetDuty,return,,void,
+0x0004d744,cm848_miosPwm19SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm19; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,return,,void,
+0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm19; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d7c0,cm848_tpuBChannel0SetPwmDuty,return,,void,
+0x0004d7c0,cm848_tpuBChannel0SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d7e8,cm848_tpuBChannel0SetPwmPeriodMicroseconds,return,,void,
+0x0004d7e8,cm848_tpuBChannel0SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d834,cm848_tpuBChannel1SetPwmDuty,return,,void,
+0x0004d834,cm848_tpuBChannel1SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(1; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d85c,cm848_tpuBChannel1SetPwmPeriodMicroseconds,return,,void,
+0x0004d85c,cm848_tpuBChannel1SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(1; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d8a8,cm848_tpuBChannel2SetPwmDuty,return,,void,
+0x0004d8a8,cm848_tpuBChannel2SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(2; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d8d0,cm848_tpuBChannel2SetPwmPeriodMicroseconds,return,,void,
+0x0004d8d0,cm848_tpuBChannel2SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(2; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d91c,cm848_tpuBChannel3SetPwmDuty,return,,void,
+0x0004d91c,cm848_tpuBChannel3SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(3; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d944,cm848_tpuBChannel3SetPwmPeriodMicroseconds,return,,void,
+0x0004d944,cm848_tpuBChannel3SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(3; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d990,cm848_tpuBChannel4SetPwmDuty,return,,void,
+0x0004d990,cm848_tpuBChannel4SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(4; duty) - a wrapper no driver table record uses (record 5 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004d9b8,cm848_tpuBChannel4SetPwmPeriodMicroseconds,return,,void,
+0x0004d9b8,cm848_tpuBChannel4SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(4; period_microseconds) - a wrapper no driver table record uses (record 5 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004da04,cm848_tpuBChannel5SetPwmDuty,return,,void,
+0x0004da04,cm848_tpuBChannel5SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(5; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004da2c,cm848_tpuBChannel5SetPwmPeriodMicroseconds,return,,void,
+0x0004da2c,cm848_tpuBChannel5SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(5; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004da78,cm848_tpuBChannel6SetPwmDuty,return,,void,
+0x0004da78,cm848_tpuBChannel6SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(6; duty) - a wrapper no driver table record uses (record 7 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004daa0,cm848_tpuBChannel6SetPwmPeriodMicroseconds,return,,void,
+0x0004daa0,cm848_tpuBChannel6SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(6; period_microseconds) - a wrapper no driver table record uses (record 7 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004daec,cm848_tpuBChannel7SetPwmDuty,return,,void,
+0x0004daec,cm848_tpuBChannel7SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(7; duty) - a wrapper no driver table record uses (record 8 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004db14,cm848_tpuBChannel7SetPwmPeriodMicroseconds,return,,void,
+0x0004db14,cm848_tpuBChannel7SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(7; period_microseconds) - a wrapper no driver table record uses (record 8 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004db60,cm848_tpuBChannel8SetPwmDuty,return,,void,
+0x0004db60,cm848_tpuBChannel8SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(8; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004db88,cm848_tpuBChannel8SetPwmPeriodMicroseconds,return,,void,
+0x0004db88,cm848_tpuBChannel8SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(8; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dbd4,cm848_tpuBChannel9SetPwmDuty,return,,void,
+0x0004dbd4,cm848_tpuBChannel9SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(9; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dbfc,cm848_tpuBChannel9SetPwmPeriodMicroseconds,return,,void,
+0x0004dbfc,cm848_tpuBChannel9SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(9; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dc48,cm848_tpuBChannel10SetPwmDuty,return,,void,
+0x0004dc48,cm848_tpuBChannel10SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(10; duty) - a wrapper no driver table record uses (record 11 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004dc70,cm848_tpuBChannel10SetPwmPeriodMicroseconds,return,,void,
+0x0004dc70,cm848_tpuBChannel10SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(10; period_microseconds) - a wrapper no driver table record uses (record 11 takes the read-back variant; no referrer found) (PR #53 round 98)
+0x0004dcbc,cm848_tpuBChannel11SetPwmDuty,return,,void,
+0x0004dcbc,cm848_tpuBChannel11SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xb; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dce4,cm848_tpuBChannel11SetPwmPeriodMicroseconds,return,,void,
+0x0004dce4,cm848_tpuBChannel11SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xb; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dd30,cm848_tpuBChannel12SetPwmDuty,return,,void,
+0x0004dd30,cm848_tpuBChannel12SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xc; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dd58,cm848_tpuBChannel12SetPwmPeriodMicroseconds,return,,void,
+0x0004dd58,cm848_tpuBChannel12SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xc; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dda4,cm848_tpuBChannel13SetPwmDuty,return,,void,
+0x0004dda4,cm848_tpuBChannel13SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xd; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004ddcc,cm848_tpuBChannel13SetPwmPeriodMicroseconds,return,,void,
+0x0004ddcc,cm848_tpuBChannel13SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xd; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004de18,cm848_tpuBChannel14SetPwmDuty,return,,void,
+0x0004de18,cm848_tpuBChannel14SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xe; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004de40,cm848_tpuBChannel14SetPwmPeriodMicroseconds,return,,void,
+0x0004de40,cm848_tpuBChannel14SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xe; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004de8c,cm848_tpuBChannel15SetPwmDuty,return,,void,
+0x0004de8c,cm848_tpuBChannel15SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xf; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004deb4,cm848_tpuBChannel15SetPwmPeriodMicroseconds,return,,void,
+0x0004deb4,cm848_tpuBChannel15SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xf; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004df40,cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds,return,,void,
+0x0004df40,cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(10; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004df68,cm848_tpuBReadBackChannel10SetPwmDuty,return,,void,
+0x0004df68,cm848_tpuBReadBackChannel10SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(10; duty); it stores the duty in tpu_b_channel_10_read_back_expected_duty first - an output channel driver table wrapper (PR #53 round 98)
+0x0004e124,cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds,return,,void,
+0x0004e124,cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(4; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e14c,cm848_tpuBReadBackChannel4SetPwmDuty,return,,void,
+0x0004e14c,cm848_tpuBReadBackChannel4SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(4; duty); it stores 25600 - duty in tpu_b_channel_4_read_back_expected_duty first - an output channel driver table wrapper (PR #53 round 98)
+0x0004e1e4,cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds,return,,void,
+0x0004e1e4,cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(6; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e20c,cm848_tpuBReadBackChannel6SetPwmDuty,return,,void,
+0x0004e20c,cm848_tpuBReadBackChannel6SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(6; duty); it stores 25600 - duty in tpu_b_channel_6_read_back_expected_duty first - an output channel driver table wrapper (PR #53 round 98)
+0x0004e2a4,cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds,return,,void,
+0x0004e2a4,cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(7; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e2cc,cm848_tpuBReadBackChannel7SetPwmDuty,return,,void,
+0x0004e2cc,cm848_tpuBReadBackChannel7SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(7; duty); it stores 25600 - duty in tpu_b_channel_7_read_back_expected_duty first - an output channel driver table wrapper (PR #53 round 98)
+0x0004e324,cm848_tpuAChannel0SetPwmDuty,return,,void,
+0x0004e324,cm848_tpuAChannel0SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e34c,cm848_tpuAChannel0SetPwmPeriodMicroseconds,return,,void,
+0x0004e34c,cm848_tpuAChannel0SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e398,cm848_tpuAChannel1SetPwmDuty,return,,void,
+0x0004e398,cm848_tpuAChannel1SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(1; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e3c0,cm848_tpuAChannel1SetPwmPeriodMicroseconds,return,,void,
+0x0004e3c0,cm848_tpuAChannel1SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(1; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e40c,cm848_tpuAChannel2SetPwmDuty,return,,void,
+0x0004e40c,cm848_tpuAChannel2SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(2; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e434,cm848_tpuAChannel2SetPwmPeriodMicroseconds,return,,void,
+0x0004e434,cm848_tpuAChannel2SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(2; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e480,cm848_tpuAChannel3SetPwmDuty,return,,void,
+0x0004e480,cm848_tpuAChannel3SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(3; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e4a8,cm848_tpuAChannel3SetPwmPeriodMicroseconds,return,,void,
+0x0004e4a8,cm848_tpuAChannel3SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(3; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e4f4,cm848_tpuAChannel4SetPwmDuty,return,,void,
+0x0004e4f4,cm848_tpuAChannel4SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(4; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e51c,cm848_tpuAChannel4SetPwmPeriodMicroseconds,return,,void,
+0x0004e51c,cm848_tpuAChannel4SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(4; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e568,cm848_tpuAChannel5SetPwmDuty,return,,void,
+0x0004e568,cm848_tpuAChannel5SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(5; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e590,cm848_tpuAChannel5SetPwmPeriodMicroseconds,return,,void,
+0x0004e590,cm848_tpuAChannel5SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(5; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e5dc,cm848_tpuAChannel6SetPwmDuty,return,,void,
+0x0004e5dc,cm848_tpuAChannel6SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(6; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e604,cm848_tpuAChannel6SetPwmPeriodMicroseconds,return,,void,
+0x0004e604,cm848_tpuAChannel6SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(6; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e650,cm848_tpuAChannel7SetPwmDuty,return,,void,
+0x0004e650,cm848_tpuAChannel7SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(7; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e678,cm848_tpuAChannel7SetPwmPeriodMicroseconds,return,,void,
+0x0004e678,cm848_tpuAChannel7SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(7; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e6c4,cm848_tpuAChannel8SetPwmDuty,return,,void,
+0x0004e6c4,cm848_tpuAChannel8SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(8; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e6ec,cm848_tpuAChannel8SetPwmPeriodMicroseconds,return,,void,
+0x0004e6ec,cm848_tpuAChannel8SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(8; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e738,cm848_tpuAChannel9SetPwmDuty,return,,void,
+0x0004e738,cm848_tpuAChannel9SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(9; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e760,cm848_tpuAChannel9SetPwmPeriodMicroseconds,return,,void,
+0x0004e760,cm848_tpuAChannel9SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(9; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e7ac,cm848_tpuAChannel10SetPwmDuty,return,,void,
+0x0004e7ac,cm848_tpuAChannel10SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(10; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e7d4,cm848_tpuAChannel10SetPwmPeriodMicroseconds,return,,void,
+0x0004e7d4,cm848_tpuAChannel10SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(10; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e820,cm848_tpuAChannel11SetPwmDuty,return,,void,
+0x0004e820,cm848_tpuAChannel11SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xb; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e848,cm848_tpuAChannel11SetPwmPeriodMicroseconds,return,,void,
+0x0004e848,cm848_tpuAChannel11SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xb; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e894,cm848_tpuAChannel12SetPwmDuty,return,,void,
+0x0004e894,cm848_tpuAChannel12SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xc; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e8bc,cm848_tpuAChannel12SetPwmPeriodMicroseconds,return,,void,
+0x0004e8bc,cm848_tpuAChannel12SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xc; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e908,cm848_tpuAChannel13SetPwmDuty,return,,void,
+0x0004e908,cm848_tpuAChannel13SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xd; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e930,cm848_tpuAChannel13SetPwmPeriodMicroseconds,return,,void,
+0x0004e930,cm848_tpuAChannel13SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xd; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e97c,cm848_tpuAChannel14SetPwmDuty,return,,void,
+0x0004e97c,cm848_tpuAChannel14SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xe; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e9a4,cm848_tpuAChannel14SetPwmPeriodMicroseconds,return,,void,
+0x0004e9a4,cm848_tpuAChannel14SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xe; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e9f0,cm848_tpuAChannel15SetPwmDuty,return,,void,
+0x0004e9f0,cm848_tpuAChannel15SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xf; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004ea18,cm848_tpuAChannel15SetPwmPeriodMicroseconds,return,,void,
+0x0004ea18,cm848_tpuAChannel15SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xf; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,return,,void,An exception handler: no argument and no result - it saves and restores r3 / r4 like every volatile register (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,none,,void,No parameter: the handler saves and restores r3 / r4 like every volatile register; so the decompiler showed them as two parameters (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,return,,void,An exception handler: no argument and no result - it saves and restores r3 / r4 like every volatile register (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,none,,void,No parameter: the handler saves and restores r3 / r4 like every volatile register; so the decompiler showed them as two parameters (PR #53 round 98)
+0x00038338,cm848_evaluateAlternatorFieldRegulatorIdleState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 or 1): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+0x00038384,cm848_evaluateAlternatorFieldRegulatorStartRampState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 / 1 / 2): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+0x000383f0,cm848_evaluateAlternatorFieldRegulatorRegulationState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 / 2 / 3): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+0x0003844c,cm848_evaluateAlternatorFieldRegulatorLoadResponseState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 / 2 / 3): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+# PR #53 round 98: judged prototypes
+0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,return,,void,r3: subf r11;r3;r11 at 0x20c90 (maximum fuel minus it; then slwi 3 / clrlwi 16); sth r3 at 0x20d00 and 0x20d08; r4: cmpwi r4;0 at 0x20ce0. Callers load r3 with lhz from 0x5c356 / 0x5c358 and r4 with li 1 / li 0 (0x20f04-0x20f24; 0x21094-0x210b4). No result: r3 is not set before blr and the callers do not read it. Replaces the row 'received_message j1939_received_message_t*'. (PR #53 round 98)
+0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,0,fueling,word,r3: the fueling on the droop line; stored as the point 2 and point 5 fueling (it is not a message pointer) (PR #53 round 98)
+0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,1,point_5_on_droop_line_flag,int,r4: nonzero gives point 5 the droop line speed of point 2; 0 the ROM speed j1939_engine_speed_at_point_5 (PR #53 round 98)
+0x0050ccbc,sendJ1939TransportAbort,return,,void,stb r3;26(r1) at 0x50ccd0; sth r4;12(r1) at 0x50ccf4 and lbz r11;12(r1) at 0x50cd24; r3 is not set before blr; the callers load r3 with the source address and r4 with the PGN (0x50cf04-0x50cf0c; 0x50cf7c-0x50cf84; 0x50d10c-0x50d114) and ignore r3 afterwards. No row today: the decompilation shows (undefined1 param_1; undefined2 param_2). (PR #53 round 98)
+0x0050ccbc,sendJ1939TransportAbort,0,destination_address,byte,The node the abort goes to (r3): stored as byte 2 of the identifier 0x18EC.... (PR #53 round 98)
+0x0050ccbc,sendJ1939TransportAbort,1,pgn,ushort,The aborted transfer's PGN word (r4); only its high byte is sent (PR #53 round 98)
+0x0050cd54,sendJ1939TransportEndOfMessageAcknowledge,return,,void,stb r3;30(r1) at 0x50cd68; sth r4;16(r1) at 0x50cd8c and lbz r12;16(r1) at 0x50cdd0; the caller sets r4 = lhz 2(r31) and r3 = r30 (0x50d098-0x50d0a0) and ignores r3 afterwards. (PR #53 round 98)
+0x0050cd54,sendJ1939TransportEndOfMessageAcknowledge,0,destination_address,byte,The node the acknowledgement goes to (r3) (PR #53 round 98)
+0x0050cd54,sendJ1939TransportEndOfMessageAcknowledge,1,pgn,ushort,The received message's PGN word (r4); only its high byte is sent (PR #53 round 98)
+0x0050cdfc,sendJ1939TransportClearToSend,return,,byte,stb r3;26(r1) at 0x50ce10; sth r6;12(r1) at 0x50ce34; stb r5;1(r3) at 0x50ce40; stb r4;2(r3) at 0x50ce44; lbz r3;8(r1) at 0x50ce7c (the send status); the callers set r3-r6 (0x50cf24; 0x50cf5c-0x50cf68; 0x50d0ec-0x50d0fc) and test the returned byte. Without the row the request to send handler's call decompiles with two arguments. (PR #53 round 98)
+0x0050cdfc,sendJ1939TransportClearToSend,0,destination_address,byte,The node the clear to send goes to (r3) (PR #53 round 98)
+0x0050cdfc,sendJ1939TransportClearToSend,1,next_packet_number,byte,The next packet number; data byte 2 (r4) (PR #53 round 98)
+0x0050cdfc,sendJ1939TransportClearToSend,2,packet_count,byte,The number of packets granted; data byte 1 (r5) (PR #53 round 98)
+0x0050cdfc,sendJ1939TransportClearToSend,3,pgn,ushort,The transfer's PGN word (r6); only its high byte is sent (PR #53 round 98)
+0x0050d2c0,cm848_sendJ1939BroadcastDataPacket,return,,void,mr r31;r3; slwi r11;r31;5; add r31;r12;r11 with r12 = 0x3fbd74 (0x50d2d0-0x50d2e0); the callers load li r3;0 / li r3;1 (0x50d630; 0x50d644) and ignore r3 afterwards. (PR #53 round 98)
+0x0050d2c0,cm848_sendJ1939BroadcastDataPacket,0,session_index,int32_t,The broadcast session record: 0 for j1939_source_address; 1 for the engine retarder source address (r3; shifted left 5 and added to 0x3fbd74) (PR #53 round 98)
+0x0053a108,cm848_outputChannelReadFeedbackNone,return,,word,Always 0 (li r3 0 / blr): the read-feedback result 'agree' of the 46 driver table records without a read-back (PR #53 round 98)

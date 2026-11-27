@@ -140,7 +140,12 @@ run_script() {
     local script_name="$1"
     shift
     local script_args=("$@")
+    local script_log
+    script_log="$(mktemp)"
 
+    # analyzeHeadless exits 0 when a script throws, so a stage that dies early still looks complete. Fail the build
+    # on "SCRIPT ERROR" instead: ApplyMPC555Registers.java had thrown in every CM848 build since 2026-05-23 while the
+    # build printed "Hardware register naming complete" (PR #53 round 95).
     "$GHIDRA_HEADLESS" \
         "$PROJECT_LOCATION" \
         "$PROJECT_NAME" \
@@ -148,7 +153,27 @@ run_script() {
         -noanalysis \
         -max-cpu 1 \
         -scriptPath "$SHARED_SCRIPTS_DIR" \
-        -postScript "$script_name" "${script_args[@]}"
+        -postScript "$script_name" "${script_args[@]}" 2>&1 | tee "$script_log"
+    local headless_status=${PIPESTATUS[0]}
+    if grep -q "SCRIPT ERROR" "$script_log"; then
+        rm -f "$script_log"
+        print_error "$script_name threw an exception (SCRIPT ERROR above): the stage did not complete"
+        exit 1
+    fi
+    rm -f "$script_log"
+    return "$headless_status"
+}
+
+# Apply function_definitions.csv. A firmware whose compiler packs stack arguments in slots other than the cspec's
+# (CM550: 2-byte slots, 68000.cspec: 4) describes its layout in stack_parameter_layout.csv; the script then places
+# each typed parameter itself (custom storage). Without that file (CM848) the call is the same as before.
+apply_function_definitions() {
+    local definitions_csv="$1"
+    if [ -f "$OUTPUT_DIR/stack_parameter_layout.csv" ]; then
+        run_script ApplyFunctionDefinitions.java "$definitions_csv" "$OUTPUT_DIR/stack_parameter_layout.csv"
+    else
+        run_script ApplyFunctionDefinitions.java "$definitions_csv"
+    fi
 }
 
 # ============================================================================
@@ -232,7 +257,7 @@ cmd_export() {
     # pointer types in function signatures, so these must run after structures.
     if [ -f "$OUTPUT_DIR/function_definitions.csv" ]; then
         echo "Re-applying function definitions..."
-        run_script ApplyFunctionDefinitions.java "$OUTPUT_DIR/function_definitions.csv"
+        apply_function_definitions "$OUTPUT_DIR/function_definitions.csv"
     fi
 
     if [ -f "$OUTPUT_DIR/local_variables.csv" ]; then
@@ -355,7 +380,7 @@ cmd_funcdefs() {
     echo "Source: $PARAMS_CSV"
     echo ""
 
-    run_script ApplyFunctionDefinitions.java "$PARAMS_CSV"
+    apply_function_definitions "$PARAMS_CSV"
 
     print_success "Function definitions applied"
 }
@@ -457,7 +482,7 @@ cmd_decompile() {
         print_error "Usage: $0 decompile <address|function_name>"
         print_error "Examples:"
         print_error "  $0 decompile 0x22e5e"
-        print_error "  $0 decompile vp44CanMessageDispatcher"
+        print_error "  $0 decompile dispatchJ1939TransportConnectionManagement"
         exit 1
     fi
 
@@ -604,7 +629,7 @@ cmd_deletions() {
     echo "Source: $del_csv"
     echo ""
     run_script ApplyFunctionDeletions.java "$del_csv"
-    print_success "Deletions applied — run 'import' (recovers freed globals) then 'export'."
+    print_success "Deletions applied — the build's next import stage recovers the freed globals."
 }
 
 cmd_listfuncs() {

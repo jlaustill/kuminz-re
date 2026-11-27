@@ -1,0 +1,89 @@
+1180 +0000 Automotive_Adjustable_Parameters [UNITLESS] -> EEPROM 0xa6 = 0x3fd528 (no name) (no row); [AUTO_ADJ] Adjustable parameters of the automotive interface 
+1180 +0002 Cruise_Max_Road_Speed_Trim [MPH] -> EEPROM 0xa8 = 0x3fd52a cruise_speed_high_limit_default word; [CRMXRZTN] MAXIMUM ALLOWABLE CRUISE CONTROL REFERENCE SPEED 
+1180 +0004 Max_Road_Speed_Trim [MPH] -> EEPROM 0xaa = 0x3fd52c cruise_speed_setpoint_default word; [RSMXRZTN] MAXIMUM ALLOWABLE VEHICLE SPEED FOR RSG IN TOP GEAR (ANY GEAR IF 
+1180 +0006 Rear_Axle_Ratio_Low [UNITLESS] -> EEPROM 0xac = 0x3fd52e rear_axle_ratio_low_cal word; [VSRRAXRL] Ratio of trans. to axle revs (hi gear/low numeric ratio if 2 spd. 
+1180 +0008 Set_Accel_Switch_Select [UNITLESS] -> EEPROM 0xae = 0x3fd530 j1939_ccvs1_switch_logic_option_cal word; [CRSEACSW] TRUE = SET/ACCEL and RESUME/COAST FALSE = SET/COAS
+1180 +000A Cruise_Use_Discrete_Switch_Inputs [UNITLESS] -> EEPROM 0xb0 = 0x3fd532 cruise_discrete_switch_inputs_used_cal word; [CRUSDSSW] Indicates discrete(T) or Ford multipl
+1180 +000C Rear_Axle_Ratio_High [UNITLESS] -> EEPROM 0xb2 = 0x3fd534 rear_axle_ratio_high_cal word; [VSRRAXRH] ratio of trans. to axle revs. (lo gear/hi numeric ratio if two s
+1180 +000E Rear_Axle_Ratio_Switch_Present [UNITLESS] -> EEPROM 0xb4 = 0x3fd536 two_speed_axle_enable_cal word; [VSRXRASP] indicates whether a switch is present for two spd. ra
+1180 +0010 TW_Exp_Life_Of_Tires [MI] -> EEPROM 0xb6 = 0x3fd538 (no name) (no row); [TWELFOTI] Expected life of tires in 
+1180 +0014 OCM_User_Miles [MI] -> EEPROM 0xba = 0x3fd53c (no name) (no row); [OCUOMI] NUMBER OF MILES TO TRIGGER OCM RESET IN THE MILES MANUAL MODE. CUSTOMER 
+1180 +0016 EB_Driveline_Brake_Type [UNITLESS] -> EEPROM 0xbc = 0x3fd53e engine_brake_driveline_brake_type_cal word; type of driveline brake (0=Exhaust/Engine Brake, 1= 
+1184 +0000 Cruise_Control_AR_Flag [UNITLESS] -> 0x40b68c (no name) (no row); Cruise Control Auto Resume Flag 
+1184 +0002 Cruise_Command_Mode [UNITLESS] -> 0x40b68e cruise_control_state CRUISE_CONTROL_STATE; Cruise Command Mode (off/set/resume/coast/accel/bump down/bump 
+1184 +0004 Cruise_Control_AR_Gear_Ratio [UNITLESS] -> 0x40b690 (no name) (no row); Gear Ratio in cruise before gear 
+1184 +0006 Cruise_As_Command [UNITLESS] -> 0x40b692 (no name) (no row); Cruise_As_Command. Application specific flag for enabling/disabling 
+1184 +0008 Cruise_OOG_ES_Inactivated [HEX] -> 0x40b694 (no name) (no row); indicates if cruise was inactived due to OOG or low 
+1186 +0000 Cruise_RSG_Bottom_Droop_Offset [MM3S] -> 0x408dfc cruise_bottom_droop_offset word; CRUISE/RSG BOTTOM DROOP 
+1186 +0002 Cruise_RSG_Top_Droop_OffsetX [MM3S] -> 0x408dfe cruise_top_droop_offset_intermediate_tau word; Offset of CC/RSG top droop fueling for Tau != 0 or 1 droop 
+1186 +0004 Cruise_RSG_Iso_Speed_Tol [MPH] -> 0x408e00 cruise_deadband_vehicle_speed_tolerance word; Vspeed Tolerance which helps determine if cruise droops should be 
+1186 +0006 Cruise_RSG_Proportional_Gain_Cal [MM3S/RPM] -> 0x408e02 cruise_zone_1_proportional_gain word; THE PROPORTIONAL GAIN OF THE CRUISE / RSG 
+1186 +0008 Cruise_RSG_Integral_Gain_Cal [MM3S/RPM/SEC] -> 0x408e04 (no name) (no row); THE INTEGRAL GAIN OF THE CRUISE / RSG 
+1186 +000A Cruise_RSG_Derivative_Gain_Cal [MM3S*SEC/RPM] -> 0x408e06 (no name) (no row); THE DERIVATIVE GAIN OF THE CRUISE / RSG 
+1186 +000C Cruise_RSG_Integral_Acc_Gain_Cal [MM3S/RPM] -> 0x408e08 (no name) (no row); Cruise / RSG Integral Acceleration Gain from the differential path 
+1186 +000E Cruise_RSG_Droop_Fueling_Filter_Constant [UNITLESS] -> 0x408e0a (no name) word; time constant of fueling filter used in CC/RSG droop 
+1186 +0010 Cruise_RSG_Top_Droop_Offset0 [MM3S] -> 0x408e0c cruise_speed_offset_default word; Offset of CC/RSG top droop fueling for Tau = 0 droop 
+1186 +0012 Cruise_RSG_Top_Droop_Offset1 [MM3S] -> 0x408e0e cruise_top_droop_offset_tau_1 word; Offset of CC/RSG top droop fueling for Tau = 1 droop 
+1186 +0014 Cruise_RSG_Peak_Fueling_Percent [%] -> 0x408e10 cruise_top_droop_offset_peak_fueling_percent_times_256 word; Percentage of Peak Fueling used to calc 
+1186 +0016 Cruise_RSG_Droop_Reference_Speed [MPH] -> 0x408e12 cruise_droop_reference_speed word; Reference speed used when calculating CC and RSG upper droops on 
+1186 +0018 Cruise_RSG_Error_Delta_HL [MPH] -> 0x408e14 cruise_droop_speed_error_delta_maximum word; High limit for 
+1186 +001A Cruise_RSG_Error_Delta_LL [MPH] -> 0x408e16 cruise_droop_speed_error_delta_minimum i16; Low limit for 
+1186 +001C Cruise_RSG_Proportional_Gain_Cal2 [MM3S/RPM] -> 0x408e18 cruise_zone_2_proportional_gain word; Proportional Gain for Cruise/RSG during large tracking 
+1186 +001E Cruise_RSG_Integral_Gain_Cal2 [MM3S/RPM/SEC] -> 0x408e1a (no name) (no row); Integral Gain for Cruise/RSG during large tracking 
+1186 +0020 Cruise_RSG_Derivative_Gain_Cal2 [MM3S*SEC/RPM] -> 0x408e1c (no name) (no row); Derivative Gain for Cruise/RSG during large tracking 
+1186 +0022 Cruise_RSG_Integral_Acc_Gain_Cal2 [MM3S/RPM] -> 0x408e1e (no name) (no row); Integral Acceleration Gain for Cruise/RSG during large tracking 
+1186 +0024 Cruise_RSG_Gain_Thres [MPH] -> 0x408e20 cruise_zone_2_speed_error_threshold word; Switch to Cruise/RSG gain set 2 when tracking error is > this 
+1186 +0026 Cruise_RSG_Gain_Hyster [MPH] -> 0x408e22 cruise_zone_boundary_hysteresis word; Hysteresis applied to CRGNVSTD in Cruise/RSG gain set switching 
+1186 +0028 Cruise_RSG_Gain_Hyster2 [MM3S] -> 0x408e24 cruise_zone_fuel_demand_hysteresis word; Hysteresis applied to CRBODPOF in Cruise/RSG gain set switching 
+1186 +002A Cruise_RSG_Proportional_Gain_Cal3 [MM3S/RPM] -> 0x408e26 cruise_zone_3_proportional_gain word; THE PROPORTIONAL GAIN OF THE CRUISE / RSG 
+1186 +002C Cruise_RSG_Integral_Gain_Cal3 [MM3S/RPM/SEC] -> 0x408e28 (no name) (no row); THE INTEGRAL GAIN OF THE CRUISE / RSG 
+1186 +002E Cruise_RSG_Derivative_Gain_Cal3 [MM3S*SEC/RPM] -> 0x408e2a (no name) (no row); THE DERIVATIVE GAIN OF THE CRUISE / RSG 
+1186 +0030 Cruise_RSG_Integral_Acc_Gain_Cal3 [MM3S/RPM] -> 0x408e2c (no name) (no row); Cruise / RSG Integral Acceleration Gain from the differential path 
+1186 +0032 Cruise_RSG_Gain_Thres2 [MPH] -> 0x408e2e cruise_zone_3_speed_error_threshold word; Switch to Cruise/RSG gain set 3 when tracking error is < this 
+1187 +0000 Cruise_Allow_Droops [UNITLESS] -> 0x40b696 cruise_deadband_active_flag word; STATUS OF CRUISE DROOP STATE 
+1187 +0002 Cruise_BDG [MPH/MM3S] -> 0x40b698 cruise_control_fueling_bottom_droop_gain word; SLOPE OF THE BOTTOM DROOP LINE PASSED TO THE DESIRED_CC FUELING 
+1187 +0004 Cruise_BDO [MM3S] -> 0x40b69a cruise_control_fueling_bottom_droop_offset word; CRUISE BOTTOM DROOP OFFSET PASSED TO THE DESIRED_CC FUELING 
+1187 +0006 Cruise_Bottom_Droop_Gain [MPH/MM3S] -> 0x40b69c cruise_bottom_droop_gain word; SLOPE OF THE BOTTOM DROOP LINE CALCULATED IN CC/RSG 
+1187 +0008 Cruise_RSG_Calculate_Bumpless [UNITLESS] -> 0x40b69e cruise_zone_transition_flag word; FLAG INDICATING CRUISE GOVERNOR SHALL PERFORM A BUMPLESS GAIN/DROOP 
+1187 +000A Cruise_RSG_Derivative_Gain [MM3S*SEC/RPM] -> 0x40b6a0 cruise_pid_kd_working i16; PARAMETER INDICATING THE CURRENT DERIVATIVE GAIN THE CRUISE / RSG IS 
+1187 +000C Cruise_RSG_Error_Delta [MPH] -> 0x40b6a2 cruise_droop_speed_error_delta word; AMOUNT THE CRUISE/RSG MPH ERROR SIGNAL IS MODIFIED TO FORM THE DROOP 
+1187 +000E Cruise_RSG_Gain_Adj [UNITLESS] -> 0x40b6a4 cruise_pid_rate_gain_working word; COMPUTED GAIN USED BY CC/RSG TO ADJUST ERROR BASED ON FILTERED GEAR 
+1187 +0010 Cruise_RSG_Integral_Gain [MM3S/RPM/SEC] -> 0x40b6a6 cruise_pid_ki_working i16; PARAMETER INDICATING THE CURRENT INTEGRAL GAIN THE CRUISE / RSG IS 
+1187 +0012 Cruise_RSG_Integral_Acc_Gain [MM3S/RPM] -> 0x40b6a8 cruise_pid_rate_integral_gain_working i16; Parameter indicating Cruise / RSG Integral Acceleration Gain from the
+1187 +0014 Cruise_RSG_Proportional_Gain [MM3S/RPM] -> 0x40b6aa cruise_pid_kp_working i16; PARAMETER INDICATING THE CURRENT PROPORTIONAL GAIN THE CRUISE / RSG IS 
+1187 +0016 Cruise_TDG [MPH/MM3S] -> 0x40b6ac cruise_control_fueling_top_droop_gain word; SLOPE OF THE TOP DROOP LINE PASSED TO THE DESIRED_CC FUELING 
+1187 +0018 Cruise_TDO [MM3S] -> 0x40b6ae cruise_control_fueling_top_droop_offset word; CRUISE TOP DROOP OFFSET PASSED TO THE DESIRED_CC FUELING 
+1187 +001A Cruise_Top_Droop_Gain [MPH/MM3S] -> 0x40b6b0 cruise_top_droop_gain word; SLOPE OF THE TOP DROOP LINE COMPUTED IN CC/RSG DROOP 
+1187 +001C RSG_BDG [MPH/MM3S] -> 0x40b6b2 vehicle_speed_limit_fueling_bottom_droop_gain word; SLOPE OF THE BOTTOM DROOP LINE PASSED TO THE DESIRED_RS FUELING 
+1187 +001E RSG_BDO [MM3S] -> 0x40b6b4 vehicle_speed_limit_fueling_bottom_droop_offset word; RSG BOTTOM DROOP OFFSET PASSED TO THE DESIRED_RS FUELING 
+1187 +0020 RSG_Bottom_Droop_Gain [MPH/MM3S] -> 0x40b6b6 road_speed_governor_bottom_droop_gain word; SLOPE OF THE BOTTOM DROOP LINE COMPUTED IN THE CC/RSG DROOP 
+1187 +0022 RSG_TDG [MPH/MM3S] -> 0x40b6b8 vehicle_speed_limit_fueling_top_droop_gain word; SLOPE OF THE TOP DROOP LINE PASSED TO THE DESIRED_RS FUELING 
+1187 +0024 RSG_TDO [MM3S] -> 0x40b6ba vehicle_speed_limit_fueling_top_droop_offset word; RSG TOP DROOP OFFSET PASSED TO THE DESIRED_RS FUELING 
+1187 +0026 RSG_Top_Droop_Gain [MPH/MM3S] -> 0x40b6bc road_speed_governor_top_droop_gain word; SLOPE OF THE TOP DROOP LINE COMPUTED IN THE CC/RSG DROOP 
+1187 +0028 Cruise_RSG_Top_Droop_Offset [MM3S] -> 0x40b6be cruise_top_droop_offset word; Offset of the CC/RSG top 
+118A +0000 Cruise_Control_RSG_Fueling [MM3S] -> 0x40b6c4 cruise_fuel_demand_hold word; CRUISE CONTROL RSG 
+118A +0002 Cruise_RSG_Derivative_Fuel [MM3S] -> 0x40b6c6 cruise_pid_derivative_fuel word; THE CURRENT DERIVATIVE FUELING OF THE CRUISE / 
+118A +0004 Cruise_RSG_Error [MPH] -> 0x40b6c8 governor_cruise_speed_error_working i16; CRUISE / RSG ERROR WITHOUT DROOP 
+118A +0006 Cruise_RSG_Error_After_Droop [MPH] -> 0x40b6ca governor_cruise_speed_error_net i16; CRUISE RSG ERROR AFTER 
+118A +0008 Cruise_RSG_External_Reset [UNITLESS] -> 0x40b6cc cruise_confirm_flag_a word; FLAG INDICATING CC/RSG SHALL PERFORM A 
+118A +000A Cruise_RSG_Integral_Adj_Fuel [MM3S] -> 0x40b6ce cruise_pid_integral_adjustment_fuel word; Integral Adjustment Fueling for CC/RSG 
+118A +000C Cruise_RSG_Integral_Fuel [MM3S] -> 0x40b6d0 cruise_pid_integral_fuel i16; CRUISE RSG INTEGRAL 
+118A +000E Cruise_RSG_Proportional_Fuel [MM3S] -> 0x40b6d2 cruise_pid_p_term_working word; CRUISE RSG PROPORTIONAL 
+118A +0010 Cruise_RSG_Reference_Speed [MPH] -> 0x40b6d4 cruise_governor_reference_speed word; SELECTED REFERENCE INPUT USED BY CRUISE / RSG 
+118A +0012 Cruise_RSG_Gain_Auto [R/MG] -> 0x40b6d6 cruise_pid_rate_gain_scale word; GAIN USED TO ADJUST DROOP ERROR. Can change with rear axle 
+118A +0014 Cruise_Rate_Limit_Preset [HEX] -> 0x40b6d8 cruise_confirm_flag_b word; When 1, prev rate_limited_cc_ref_speed is set to road 
+118A +0016 Cruise_EB_Minimum_Braking_Speed [MPH] -> 0x40b6da (no name) (no row); maximum preset speed for cruise used to prevent EB 
+118A +0018 CC_RS_Preset_Fueling [MM3S] -> 0x40b6dc cruise_fuel_demand_stable_ref word; CRUISE CONTROL RSG PRESET 
+118A +001A CC_RS_Sump_Fuel [MM3S] -> 0x40b6de governor_cruise_fuel_demand_delta i16; CRUISE RSG SUMP 
+118C +0000 Max_Cruise_RSG_Road_Spd_Change [MPH] -> 0x408e86 cruise_speed_setpoint_adj_offset_cal word; Maximum change allowed in cruise road 
+118D +0000 Cruise_RSG_Road_Speed [MPH] -> 0x40b6e0 vehicle_speed_rise_limited word; VEHICLE SPEED INPUT INTO THE CRUISE / RSG 
+118D +0002 Engine_VSS_Ratio [UNITLESS] -> 0x40b6e2 engine_speed_to_vss_ratio word; ratio of engine speed to 
+118F +0000 Cruise_Accel_Ramp [MPH] -> 0x408e88 protection_fuel_rate_ramp_param_cal word; RATE OF INCREMENT IN CRUISE CONTROL REFERENCE IF IN 
+118F +0002 Cruise_Bump_Down_Step [MPH] -> 0x408e8a protection_fuel_rate_step_b_param_cal word; ADJUSTMENT IN CRUISE REFERENCE THAT IS TO BE MADE IF FOR A BUMP 
+118F +0004 Cruise_Bump_Up_Step [MPH] -> 0x408e8c cruise_speed_margin_cal word; ADJUSTMENT IN CRUISE REFERENCE THAT IS TO BE MADE IF FOR A BUMP 
+118F +0006 Cruise_Coast_Ramp [MPH] -> 0x408e8e protection_fuel_rate_step_a_param_cal word; RATE IN DECREMENT IN CRUISE CONTROL REFERENCE IF CRUISE IS IN 
+118F +0008 Cruise_Min_Coast_Speed [MPH] -> 0x408e90 cruise_speed_command_min_cal word; CRUISE CONTROL REFERENCE CAN BE DECREASED TO THIS SPEED DURING COAST AND BUMP 
+118F +000A Cruise_Min_Set_Speed [MPH] -> 0x408e92 cruise_speed_min_cal word; MINIMUM ALLOWABLE CRUISE CONTROL REFERENCE 
+118F +000C Cruise_Out_Of_Gear_Disable [HEX] -> 0x408e94 (no name) (no row); If enabled then it disables cruise when an out of gear situation is 
+1190 +0000 Cruise_Control_Reference_Speed_Old [MPH] -> 0x40b6e4 cruise_speed_target_working word; CRUISE CONTROL REFERENCE SPEED USED BY CC/EBRAKE 
+1190 +0002 Cruise_Valid_Resume_Speed_Flag [UNITLESS] -> 0x40b6e6 cruise_set_speed_valid_flag word; flag to denote if valid resume speed is 

@@ -1,0 +1,76 @@
+=== cm848_applySpeedLimitConstraints (lines 28226-28306, 75 non-blank)
+// Function: cm848_applySpeedLimitConstraints @ 0x000298a0
+//
+void cm848_applySpeedLimitConstraints(void)
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  if ((((engine_state == ENGINE_STATE_RUNNING) &&
+       (governor_output_t_0040aec2.governor_output != 0xb)) && (governor_output_state_prev != 0xb))
+     && ((cold_start_governor_output_enable_cal != 0 ||
+         ((transmission_park_or_neutral_flag != 0 &&
+          (vehicle_speed <= governor_park_neutral_maximum_vehicle_speed)))))) {
+    if ((int)(short)thermal_governor_offset_cal + (int)(short)thermal_governor_cal_b < 2) {
+      uVar2 = 1;
+    }
+    else {
+      uVar2 = (int)(short)thermal_governor_offset_cal + (int)(short)thermal_governor_cal_b;
+    }
+    if ((int)(short)thermal_governor_base_cal + (int)(short)thermal_governor_cal_a < 2) {
+      uVar1 = 1;
+    }
+    else {
+      uVar1 = (int)(short)thermal_governor_base_cal + (int)(short)thermal_governor_cal_a;
+    }
+    uVar3 = (uint)governor_output_t_0040aec2.idle_reference_speed;
+    if (uVar3 + (uVar2 & 0xffff) < (uint)governor_speed_limit_active) {
+      if (thermal_governor_offset_cal != 0) {
+        uVar2 = uVar3 + uVar2 & 0xffff;
+        goto LAB_000299e8;
+      }
+    }
+    else if (((int)(uint)governor_speed_limit_active < (int)(uVar3 - (uVar1 & 0xffff))) &&
+            (thermal_governor_base_cal != 0)) {
+      uVar2 = uVar3 - uVar1 & 0xffff;
+      if (uVar3 < thermal_governor_base_cal) {
+        uVar2 = 0;
+      }
+      goto LAB_000299e8;
+    }
+  }
+  uVar2 = (uint)governor_speed_limit_active;
+LAB_000299e8:
+  if (uVar2 < governor_rpm_limit_cal) {
+    governor_output_t_0040aec2.governor_output = 7;
+    uVar2 = (uint)governor_rpm_limit_cal;
+  }
+  if ((governor_output_t_0040aec2.governor_output != 0xb) &&
+     (governor_output_mode_limit_cal < uVar2)) {
+    governor_output_t_0040aec2.governor_output = 8;
+    uVar2 = (uint)governor_output_mode_limit_cal;
+  }
+  if ((governor_output_t_0040aec2.governor_output == 0xb) &&
+     (governor_speed_limit_upper_cal < uVar2)) {
+    uVar2 = (uint)governor_speed_limit_upper_cal;
+  }
+  governor_output_t_0040aec2.idle_reference_speed = (word)uVar2;
+  governor_speed_error_computed = (word)uVar2;
+  if (((uVar2 == governor_speed_limit_value_cal) &&
+      (governor_speed_debounce_count_cal == governor_speed_debounce_count)) &&
+     (governor_speed_limit_exceeded_flag._0_2_ != 0)) {
+    governor_speed_limit_active_flag = 1;
+  }
+  else {
+    governor_speed_limit_active_flag = 0;
+  }
+  if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
+    governor_speed_debounce_timer = 0;
+  }
+  else if (governor_speed_debounce_timer < governor_speed_debounce_limit) {
+    governor_speed_debounce_timer = governor_speed_debounce_timer + 1;
+  }
+  governor_output_state_prev = governor_output_t_0040aec2.governor_output;
+  return;
+}
+//

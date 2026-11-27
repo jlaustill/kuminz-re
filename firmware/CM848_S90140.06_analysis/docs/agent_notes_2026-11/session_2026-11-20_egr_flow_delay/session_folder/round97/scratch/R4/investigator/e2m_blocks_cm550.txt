@@ -1,0 +1,208 @@
+117D +001A AIGBS2 [NONE] -> 0x80a9de (no name) (no row); BLANK SPOT~NONE
+100B +003A BKLSMXEL [SEC] -> 0x807ee2 max_eps_backup_lost_duration_0_20 word; MAX_EPS_BACKUP_LOST_DURATION~0 - 20
+105E +0004 CK4DTA [DADV] -> 0x80d09c four_d_timing_output_by_crank_0_120 word; 4D TIMING OUTPUT BY CRANK~0-120
+105E +0018 CKAJIIES [RPM] -> 0x80d0b0 crank_adjusted_initial_rpm_0_1000 word; CRANK ADJUSTED INITIAL RPM~0-1000
+105E +0016 CKAJIIFL [MM3S] -> 0x80d0ae crank_adjusted_initial_fuel_0_100 word; CRANK ADJUSTED INITIAL FUEL~0-100
+105E +000A CKCLTAIC [DADV] -> 0x80d0a2 coolant_advance_timing_output_by_crank_0_700 word; COOLANT ADVANCE TIMING OUTPUT BY CRANK~0-700
+105E +0014 CKEXES [RPM] -> 0x80d0ac crank_exit_speed word; EXIT RPM FOR CRANK ROUTINE~0-1400
+105E +001E CKEXFLAJ [MM3S] -> 0x80d0b6 crank_exit_fuel_adjustment_0_100 word; CRANK EXIT FUEL ADJUSTMENT~0-100
+105E +0020 CKEXTA [DADV] -> 0x80d0b8 crank_exit_advance_0_120 word; CRANK EXIT ADVANCE~0-120
+105E +0006 CKEXTM [SEC] -> 0x80d09e crank_exit_timer_0_13107 word; CRANK EXIT TIMER~0-13107
+105E +0000 CKFL [MM3S] -> 0x80d098 crank_fuel word; FINAL FUEL OUTPUTED BY CRANK~0-100
+105E +000E CKIIFL [MM3S] -> 0x80d0a6 (no name) (no row); CRANK INITIAL FUEL~0-100
+105E +001A CKIIFLES [RPM] -> 0x80d0b2 crank_initial_fuel_break_speed_0_1000 word; CRANK INITIAL FUEL BREAK SPEED~0-1000
+105E +0010 CKIITA [DADV] -> 0x80d0a8 crank_initial_timing_advance_0_120 word; CRANK INITIAL ADVANCE~0-120
+105E +001C CKIITAES [RPM] -> 0x80d0b4 crank_initial_advace_break_speed_0_1000 word; CRANK INITIAL ADVACE BREAK SPEED~0-1000
+105E +0024 CKINFRAJ [%FU] -> 0x80d0bc fueling_val_to_be_added_to_crank_initial_fuel_val_0_100 word; FUELING VAL. TO BE ADDED TO CRANK INITIAL FUEL VAL.~0-100
+105E +0026 CKINRPAJ [RPM] -> 0x80d0be eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 word; ENG. SPD. VAL. TO BE ADDED TO CRK INIT FUEL BRK SPD.~0-1000
+105E +0008 CKJSTM [SEC] -> 0x80d0a0 crank_jump_start_timer word; TIMER USED TO DICTATE A JUMPSTART CONDITION~0-13107
+105E +0012 CKREES [RPM] -> 0x80d0aa crank_reentry_speed word; RE-ENTRY RPM FOR CRANK ROUTINE~0-1000
+11C5 +0000 CKSYERTT [  ] -> 0x80d292 tooth_count_at_which_error_was_found_by_pmm_0_255 byte; TOOTH COUNT AT WHICH ERROR WAS FOUND BY PMM~0 - 255
+11C5 +0001 CKSYERTY [HEX] -> 0x80d293 pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff byte; PMM_ERROR_TYPE:SIGNIFIES THE TYPE OF SYNC ERROR FOUND BY PMMA~0 - FF
+105E +0002 CKTA [DADV] -> 0x80d09a (no name) (no row); FINAL TIMING ADVANCE UNDER CRANKING CONDITIONS~0-120
+11C9 +0001 CKTTCUER [CNT] -> 0x80d2bf crank_tooth_count_error_incremented_when_eps_tooth_count_wro_0_65535 byte; CRANK_TOOTH_COUNT_ERROR:INCREMENTED WHEN EPS TOOTH COUNT WRO~0 - 65535
+11C8 +000A CKTTERMX [CNT] -> 0x807f9e if_crank_tooth_count_error_count_this_then_set_error_0_255 byte; IF CRANK_TOOTH_COUNT_ERROR_COUNT >= THIS THEN SET ERROR~0 - 255
+105E +000C CKWSTA [DADV] -> 0x80d0a4 wet_stack_timing_outputed_by_crank_0_120 word; WET STACK TIMING OUTPUTED BY CRANK~0-120
+100C +0364 CMLSEL [SEC] -> 0x80d056 cam_sync_lost_duration_0_20 word; CAM_SYNC_LOST_DURATION~0 - 20
+100B +0034 CMLSMXEL [SEC] -> 0x807edc max_cam_sync_lost_duration_0_20 word; MAX_CAM_SYNC_LOST_DURATION~0 - 20
+11C8 +0004 CMSNCU01 [CNT] -> 0x807f98 wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24 word; WIDE_CI_COUNT:EXPECTED EPS TEETH DURING WIDE CI PULSE~0 - 24
+11C8 +0006 CMSNCU02 [CNT] -> 0x807f9a narrow_ci_count_expected_eps_teeth_during_narrow_ci_pulse_0_24 word; NARROW_CI_COUNT:EXPECTED EPS TEETH DURING NARROW CI PULSE~0 - 24
+11C9 +0002 CMSNCUER [CNT] -> 0x80d2c0 ci_tooth_count_error_incremented_when_ci_pulse_width_is_wrong_0_255 byte; CI_TOOTH_COUNT_ERROR:INCREMENTED WHEN CI PULSE WIDTH IS WRONG~0 - 255
+11C8 +000B CMSNERMX [CNT] -> 0x807f9f if_ci_tooth_count_error_count_this_then_set_error_0_255 byte; IF CI_TOOTH_COUNT_ERROR_COUNT >= THIS THEN SET ERROR~0 - 255
+11C9 +0003 CMSNFXER [CNT] -> 0x80d2c1 ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 byte; CI_SIGNAL_ERROR:INCREMENTED WHEN CI PULSE IS MISSING~0 - 255
+11C8 +000C CMSNFXMX [CNT] -> 0x807fa0 if_ci_signal_error_count_this_then_set_error_0_255 byte; IF CI_SIGNAL_ERROR_COUNT >= THIS THEN SET ERROR~0 - 255
+11C8 +0008 CMSNTMCU [CNT] -> 0x807f9c ci_lost_count_max_reset_value_for_ci_timeout_counter_0_100 undefined; CI_LOST_COUNT_MAX:RESET VALUE FOR CI TIMEOUT COUNTER~0 - 100
+11C9 +0000 CMSNTTCU [CNT] -> 0x80d2be ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24 byte; CI_TOOTH_COUNT:NUMBER OF EPS TEETH DURING CI PULSE~0 - 24
+100C +0366 CRLSEL [SEC] -> 0x80d058 dzg_pressure_threshold_high word; CRANK_SYNC_LOST_DURATION~0 - 20
+100C +0378 CRLSELBK [SEC] -> 0x80d06a crank_sync_backup_lost_duration_amount_of_time_crank_sync_lost_1_20 word; CRANK_SYNC_BACKUP_LOST_DURATION: AMOUNT OF TIME CRANK SYNC LOST~1 - 20
+100B +0040 CRLSMXBK [SEC] -> 0x807ee8 max_crank_sync_backup_lost_duration_amount_of_time_crank_lost_1_20 word; MAX_CRANK_SYNC_BACKUP_LOST_DURATION: AMOUNT OF TIME CRANK LOST ~1 - 20
+100B +0036 CRLSMXEL [SEC] -> 0x807ede max_crank_sync_lost_duration_0_20 word; MAX_CRANK_SYNC_LOST_DURATION~0 - 20
+117D +0002 CRRF [MPH] -> 0x80a9c6 (no name) (no row); CRUISE CONTROL REFERENCE SPEED INPUT~0 - 255.9961
+117D +0000 CRSS [T/F] -> 0x80a9c4 cruise_control_active_flag word; STATUS OF THE CRUISE CONTROL AS DICTATED BY THE SWIT~ACTIVE / INACTIVE
+100B +0030 CSCKES [RPM] -> 0x807ed8 crank_sync_running_speed_threshold word; RPM ABOVE WHICH THE ENGINE IS CONSIDERED RUNNING (NOT CRANKIN~0 - 8000
+121D +0004 CSCKFXCU [CNT] -> 0x807fa6 threshold_at_which_crank_sensor_no_longer_used_0_65535 word; THRESHOLD AT WHICH CRANK SENSOR NO LONGER USED~0 - 65535
+121D +0006 CSCKMXCU [CNT] -> 0x807fa8 limit_on_crank_sync_error_count_0_65535 word; LIMIT ON CRANK SYNC ERROR COUNT~0 - 65535
+121D +0009 CSCKTTCM [TTH] -> 0x807fab expected_number_of_ess_teeth_between_eps_addtnl_0_255 byte; EXPECTED NUMBER OF ESS TEETH BETWEEN EPS ADDTNL~0 - 255
+121D +0008 CSCMCYCU [CNT] -> 0x807faa eps_sync_count_threshold_to_determine_cam_phase_0_7 byte; EPS_SYNC_COUNT THRESHOLD TO DETERMINE CAM PHASE~0 - 7
+121D +0000 CSCMFXCU [CNT] -> 0x807fa2 threshold_at_which_cam_sensor_no_longer_used_0_65535 word; THRESHOLD AT WHICH CAM SENSOR NO LONGER USED~0 - 65535
+121D +0002 CSCMMXCU [CNT] -> 0x807fa4 limit_on_cam_sync_error_count_0_65535 word; LIMIT ON CAM SYNC ERROR COUNT~0 - 65535
+121E +0007 CSCMPSCU [CNT] -> 0x80d2cb count_of_eps_pulses_since_ess_missing_tooth_0_255 byte; COUNT OF EPS PULSES SINCE ESS MISSING TOOTH~0 - 255
+121E +0008 CSCMSYCU [CNT] -> 0x80d2cc eps_pulse_count_since_addtnl_eps_pulse_0_255 byte; EPS PULSE COUNT SINCE ADDTNL EPS PULSE~0 - 255
+121E +0009 CSSYSSCM [NLH] -> 0x80d2cd CSSYSSCM byte; 0-NO SYNC  1-LOST SYNC  2-HAVE SYNC~0, 1, 2
+117D +0016 EB39CNID [NONE] -> 0x80a9da engine_retarder_j1939_control_device word; J1939 DEVICE CONTROLLING ENGINE BRAKES: 0=NONE,1=TRANS,2=ABS,3=ASR~0-4
+117D +0008 EBCOAG [  ] -> 0x80a9cc (no name) (no row); EB CMD SRC. 0=NOT_COMM,1=J_COMM,2=CRUISE,3=SWITCH,4=JC_LIM,5=NOT_S~0-4
+117D +0004 EBSS [T/F] -> 0x80a9c8 engine_retarder_active_flag word; STATUS OF WHETHER OPERATING CONDITIONS INDICATE DESIRE~ACTIVE/INACTIVE
+117D +002C EBSWLV [%] -> 0x80a9f0 (no name) (no row); COMMANDED BRAKE LEVEL FROM OPERATOR SWITCHES.~0-100
+117D +0006 EBSWSS [  ] -> 0x80a9ca (no name) (no row); INDICATOR OF DESIRED ENGINE RETARDER DRIVER CONTROL~0 - 3
+1300 +004E ED03TY [TYPE] -> 0x807dcc (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0002 EDBWPEFT [SEC] -> 0x807d80 time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7d80 dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +0000 EDBWTMFT [SEC] -> 0x807d7e time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7d7e word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +0008 EDBWTY [TYPE] -> 0x807d86 (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0016 EDCPPEFT [SEC] -> 0x807d94 time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7d94 dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +0014 EDCPTMFT [SEC] -> 0x807d92 time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7d92 word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +001C EDCPTY [TYPE] -> 0x807d9a (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0020 EDCQPEFT [SEC] -> 0x807d9e time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7d9e dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +001E EDCQTMFT [SEC] -> 0x807d9c time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7d9c word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +0026 EDCQTY [TYPE] -> 0x807da4 (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +000C EDCVPEFT [SEC] -> 0x807d8a time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7d8a dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +000A EDCVTMFT [SEC] -> 0x807d88 time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7d88 word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +0012 EDCVTY [TYPE] -> 0x807d90 dzg_threshold_level_2 word; DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0034 EDIMPEFT [SEC] -> 0x807db2 time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7db2 dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +0032 EDIMTMFT [SEC] -> 0x807db0 time_abuse_event_must_be_continuously_present_before_it_will_0_100 word; : TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL~0 - 100
+1300 +003A EDIMTY [TYPE] -> 0x807db8 (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0006 EDMNMXBW [HEX] -> 0x807d84 EDMNMXBW word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +001A EDMNMXCP [HEX] -> 0x807d98 EDMNMXCP word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +0024 EDMNMXCQ [HEX] -> 0x807da2 EDMNMXCQ word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +0010 EDMNMXCV [HEX] -> 0x807d8e EDMNMXCV word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +0038 EDMNMXIM [HEX] -> 0x807db6 EDMNMXIM word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +0042 EDMNMXO2 [HEX] -> 0x807dc0 EDMNMXO2 word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +004C EDMNMXO3 [HEX] -> 0x807dca EDMNMXO3 word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +002E EDMNMXOS [HEX] -> 0x807dac EDMNMXOS word; DETERMINES DIRECTION FOR SEVERITY LEVELS 0 = MAX, 1 = MIN~0 - 1
+1300 +003E EDO2PEFT [SEC] -> 0x807dbc time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7dbc dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +003C EDO2TMFT [SEC] -> 0x807dba time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7dba word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +0044 EDO2TY [TYPE] -> 0x807dc2 (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0048 EDO3PEFT [SEC] -> 0x807dc6 time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7dc6 dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +0046 EDO3TMFT [SEC] -> 0x807dc4 time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7dc4 word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +002A EDOSPEFT [SEC] -> 0x807da8 time_that_must_elasp_since_last_event_to_consider_an_abuse_0_100000_7da8 dword; TIME THAT MUST ELASP SINCE LAST EVENT TO CONSIDER AN ABUSE ~0 - 100000
+1300 +0028 EDOSTMFT [SEC] -> 0x807da6 time_abuse_event_must_be_continuously_present_before_it_will_b_0_100_7da6 word; TIME ABUSE EVENT MUST BE CONTINUOUSLY PRESENT BEFORE IT WILL B~0 - 100
+1300 +0030 EDOSTY [TYPE] -> 0x807dae (no name) (no row); DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+1300 +0052 EDPLRVBK [CNT] -> 0x807dd0 of_backup_interrupts_cam_rev_used_for_total_revs_and_total_wor_1_255 word; # OF BACKUP INTERRUPTS/CAM REV USED FOR TOTAL REVS AND TOTAL WOR~1-255
+1300 +0050 EDPLRVMN [CNT] -> 0x807dce of_main_interrupts_cam_rev_used_for_total_revs_and_total_work_1_255 word; # OF MAIN INTERRUPTS/CAM REV USED FOR TOTAL REVS AND TOTAL WORK~1-255
+11CB +0002 EGPIBKCU [CNT] -> 0x80ccec eps_pulse_number_backup_eps_backup_tooth_counter_0_24 word; EPS_PULSE_NUMBER_BACKUP: EPS BACKUP TOOTH COUNTER~0 - 24
+11C8 +0002 EGPICU02 [CNT] -> 0x807f96 eps_count_at_narrow_ci_expected_eps_tooth_count_at_narrow_erp_f_0_24 word; EPS_COUNT_AT_NARROW_CI:EXPECTED EPS TOOTH COUNT AT NARROW ERP F~0 - 24
+11CB +0000 EGPITTCU [CNT] -> 0x80ccea eps_pulse_number_eps_tooth_counter_0_24 word; EPS_PULSE_NUMBER:EPS TOOTH COUNTER~0 - 24
+11C8 +0000 EGPSCU01 [CNT] -> 0x807f94 eps_count_at_wide_ci_expected_eps_tooth_count_at_wide_ci_fallin_0_24 word; EPS_COUNT_AT_WIDE_CI:EXPECTED EPS TOOTH COUNT AT WIDE CI FALLIN~0 - 24
+100C +0004 ENGRPM [RPM] -> 0x80ccf6 engine_rpm_primary word; FILTERED_ENGINE_SPEED: VARIABLE 2^N PULSE AVERAGED AND FILTER~0 - 4500
+11CA +0003 EPCMTY [  ] -> 0x807e9d engine_position_signal_configuration byte; ENGINE_POSITION_SIGNAL_CONFIG:DEFINES CURRENTLY CONFIGURE WHEEL ~0 - 1
+100C +0350 ESACBKGR [TCNT] -> 0x80d042 accumulated_backup_eps_period_between_vss_interrupts_0_65535 (no row); ACCUMULATED BACKUP EPS PERIOD BETWEEN VSS INTERRUPTS~0 - 65535
+100C +034C ESACGR [TCNT] -> 0x80d03e accumulated_main_engine_position_sensor_period dword; ACCUMULATED MAIN EPS PERIOD BETWEEN VSS INTERRUPTS~0 - 65535
+100C +0000 ESAVES [RPM] -> 0x80ccf2 average_engine_speed word; AVERAGE_ENGINE_SPEED: ENGINE SPEED BASED ON THE 2^N PULSE AVE~0 - 4500
+100C +036A ESBKLSEL [SEC] -> 0x80d05c (no name) (no row); EPS_BACKUP_LOST_DURATION~0 - 20
+100C +0362 ESBUEGTM [CNTS] -> 0x80d054 backup_signal_edge_time_stamp_0_65535 word; BACKUP SIGNAL EDGE TIME STAMP~0 - 65535
+12A2 +0001 ESBUIPER [NONE] -> 0x80d297 eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false byte; EPS_BACKUP_IN_PHASE: IF FLASE EPS BACKUP LAGS MAIN~TRUE / FALSE
+117D +0032 ESBUISCT [CNT] -> 0x80a9f6 unsigned_roll_over_counter_of_ess_backup_isr_occurances_0_65535 word; UNSIGNED ROLL-OVER COUNTER OF ESS BACKUP ISR OCCURANCES.~0 - 65535
+121E +0006 ESBUUPEN [1-T] -> 0x80d2ca enables_input_of_eps_period_data_to_pptb_0_1 byte; ENABLES INPUT OF EPS PERIOD DATA TO PPTB~0 - 1
+100C +000E ESCKSM01 [DEG] -> 0x80cd00 sample_crank_degrees_crank_degrees_between_vss_interrupts_0_36000 dword; SAMPLE_CRANK_DEGREES: CRANK DEGREES BETWEEN VSS INTERRUPTS -~0 - 36000
+100C +0028 ESCKSM02 [DEG] -> 0x80cd1a sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 undefined; SAMPLE_CRANK_DEGREES_BACKUP: CRANK DEGREES BETWEEN VSS INTER~0 - 36000
+121E +0004 ESCKSNOF [1-T] -> 0x80d2c8 flag_indicates_ess_sensor_is_not_being_used_0_1 byte; FLAG INDICATES ESS SENSOR IS NOT BEING USED~0 - 1
+100C +0376 ESCMBULS [SEC] -> 0x80d068 cam_sync_backup_lost_duration_duration_in_no_sync_state_0_20 word; CAM_SYNC_BACKUP_LOST_DURATION:DURATION IN NO SYNC STATE.~0 - 20
+100C +0002 ESCMES [RPM] -> 0x80ccf4 current_engine_rpm_filtered word; ENGINE_SPEED: ENGINE SPEED BASED FROM PERIOD OF ONE CAM REV~0, 56-8000
+11CA +0008 ESCMPIIC [  ] -> 0x807ea2 base_number_of_speed_pulses_per_cam_1_254 byte; BASE NUMBER OF SPEED PULSES PER CAM~1 - 254
+121E +0005 ESCMSNOF [1-T] -> 0x80d2c9 flag_indicating_eps_sensor_not_used_0_1 byte; FLAG INDICATING EPS SENSOR NOT USED~0 - 1
+100B +0020 ESCMTT [TT] -> 0x807ec8 (no name) (no row); TEETH_PER_CAM_REV:NUMBER OF TEETH SEEN BY INPUT IN ONE CAM REV~1 - 512
+100B +0022 ESCMTTBU [TT] -> 0x807eca teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 word; TEETH_PER_CAM_REV_BACKUP:NUMBER OF TEETH SEEN BY BACKUP INPUT ~1 - 512
+100C +0356 ESCTBKGR [CNT] -> 0x80d048 number_of_backup_eps_interrupts_between_vss_interrupts_0_65535 word; NUMBER OF BACKUP EPS INTERRUPTS BETWEEN VSS INTERRUPTS~0 - 65535
+100C +0354 ESCTGR [CNT] -> 0x80d046 main_engine_position_sensor_interrupt_count word; NUMBER OF MAIN EPS INTERRUPTS BETWEEN VSS INTERRUPTS~0 - 65535
+100B +0004 ESCUCF01 [  ] -> 0x807eac engine_speed_constant_1_conversion_factor_from_tcnts_to_rpm_0_2_29 dword; ENGINE_SPEED_CONSTANT_1: CONVERSION FACTOR FROM TCNTS TO RPM ~0 - 2^29
+100B +0008 ESCUCF02 [  ] -> 0x807eb0 engine_speed_constant_1_backup_conversion_factor_from_tcnts_0_2_29 dword; ENGINE_SPEED_CONSTANT_1_BACKUP: CONVERSION FACTOR FROM TCNTS ~0 - 2^29
+100B +000C ESCUCF03 [  ] -> 0x807eb4 engine_speed_constant_2_conversion_factor_from_tcnts_to_rpm_0_2_29 dword; ENGINE_SPEED_CONSTANT_2: CONVERSION FACTOR FROM TCNTS TO RPM ~0 - 2^29
+100C +0014 ESES01 [RPM] -> 0x80cd06 (no name) (no row); MAIN_RPM: ENGINE SPEED CALCULATED FROM PRIMARY SPEED SENS~0, 56 - 4500
+100C +0012 ESES02 [RPM] -> 0x80cd04 (no name) (no row); BACKUP_RPM: ENGINE SPEED CALCULATED FROM SECONDARY SPEED ~0, 56 - 4500
+100C +0024 ESES03 [RPM] -> 0x80cd16 (no name) (no row); EXTERNAL_RPM:RPM VALUE PROVIDED BY ALT SOURCE TO MAIN AND~0, 56 - 4500
+11CA +000C ESESBKRA [TTH] -> 0x807ea6 eps_backup_ratio_threshold_for_detection_of_missing_ext_0_1_9921875 word; EPS_BACKUP_RATIO: THRESHOLD FOR DETECTION OF MISSING/EXT~0 - 1.9921875
+100B +0000 ESESFTTC [2^16] -> 0x807ea8 engine_speed_filter_coefficient word; TIME CONSTANT FOR THE FILTER USED ON THE 2^N PULSE AVERAGE~0 - 1
+11CA +000A ESESRA [TTH] -> 0x807ea4 (no name) (no row); EPS_RATIO: THRESHOLD FOR DETECTION OF MISSING/EXTRA TOOT~0 - 1.9921875
+100C +036C ESEXLSEL [SEC] -> 0x80d05e eps_external_lost_duration_0_20 word; EPS_EXTERNAL_LOST_DURATION~0 - 20
+100B +0032 ESFXSNTD [RPM] -> 0x807eda eps_error_detection_performed_when_rpm_this_value_0_4500 word; EPS ERROR DETECTION PERFORMED WHEN RPM > THIS VALUE~0 - 4500
+100B +0010 ESIITB01 [TCNT] -> 0x807eb8 initialization_pulse_period_initial_value_for_pulse_period_table_2_32 dword; INITIALIZATION_PULSE_PERIOD: INITIAL VALUE FOR PULSE PERIOD TABLE~2^32
+100B +0014 ESIITB02 [TCNT] -> 0x807ebc initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32 dword; INITIALIZATION_PULSE_PERIOD_BACKUP: INITIAL VALUE FOR PULSE PERIO~2^32
+100C +035C ESIPBKPE [CNTS] -> 0x80d04e eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 undefined; EPS_PERIOD_BACKUP: TIME BETWEEN THE TWO MOST RECENT EPS~200 - 16777216
+100C +0358 ESIPPE [CNTS] -> 0x80d04a main_engine_position_sensor_period dword; EPS_PERIOD: TIME BETWEEN THE TWO MOST RECENT EPS INTERR~200 - 16777216
+100C +0360 ESMNEGTM [CNTS] -> 0x80d052 main_signal_edge_time_stamp_0_65535 word; MAIN SIGNAL EDGE TIME STAMP~0 - 65535
+12A2 +0000 ESMNIPER [NONE] -> 0x80d296 eps_main_in_phase_if_flase_eps_main_lags_backup_true_false byte; EPS_MAIN_IN_PHASE: IF FLASE EPS MAIN LAGS BACKUP~TRUE / FALSE
+117D +0030 ESMNISCT [CNT] -> 0x80a9f4 unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 word; UNSIGNED ROLL-OVER COUNTER OF ESS MAIN ISR OCCURANCES.~0 - 65535
+100C +0368 ESMNLSEL [SEC] -> 0x80d05a eps_main_lost_duration_0_20 word; EPS_MAIN_LOST_DURATION~0 - 20
+100B +003E ESMXBULS [SEC] -> 0x807ee6 max_cam_sync_backup_lost_duration_amount_of_time_cam_lost_back_1_20 word; MAX_CAM_SYNC_BACKUP_LOST_DURATION: AMOUNT OF TIME CAM LOST BACK~1 - 20
+12A1 +0008 ESMXPHCU [TETH] -> 0x807f5c eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535 word; EPS_OUT_OF_PHASE_PERSISTENCE: CNTS INPUT IS BAD BEFORE A FLAG ~0-65535
+100B +0002 ESMXTM01 [MSEC] -> 0x807eaa maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140 word; MAXIMUM_PULSE_PERIOD_TIMEOUT: MAX RESET VALUE FOR MAIN_LOST_CO~0 - 140
+100B +0026 ESMXTM02 [MSEC] -> 0x807ece maximum_pulse_period_timeout_backup_max_reset_value_for_back_0_10000 word; MAXIMUM_PULSE_PERIOD_TIMEOUT_BACKUP:MAX RESET VALUE FOR BACK~0 - 10000
+100B +0028 ESMXTM03 [CNT] -> 0x807ed0 reset_value_for_external_input_timeout_counter_0_10000 word; RESET VALUE FOR EXTERNAL INPUT TIMEOUT COUNTER~0 - 10000
+11C4 +0002 ESMXTTCU [TTH] -> 0x807f50 tooth_count_at_which_missing_tooth_not_detct_err_0_255 byte; TOOTH COUNT AT WHICH MISSING TOOTH NOT DETCT ERR~0 - 255
+12A2 +0006 ESNGPHCU [TETH] -> 0x80d29c eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 word; EPS_NEGATIVE_OUT_OF_PHASE_COUNT:TEETH PHASE SHIFT > -THRESHO~0 - 65535
+12A1 +0006 ESNGPHTD [TCNT] -> 0x807f5a eps_negative_out_of_phase_threshold_flag_thres_for_dif_32768_32767 i16; EPS_NEGATIVE_OUT_OF_PHASE_THRESHOLD: FLAG THRES FOR DIF~-32768 - 32767
+11C4 +0004 ESNMTTMS [  ] -> 0x807f52 eps_missing_teeth_width_of_missing_tooth_gap_in_teeth_1_2 word; EPS_MISSING_TEETH: WIDTH OF MISSING TOOTH GAP IN TEETH~1 - 2
+11C4 +0000 ESNOTTCU [TTH] -> 0x807f4e pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 byte; PMM_NUM_OF_TEETH:CORRECT TOOTH COUNT AT MISSING TOOTH~0 - 255
+11C4 +0001 ESNOTTRA [TTH] -> 0x807f4f pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875 byte; PMM_RATIO:TOOTH SPACING AT WHICH MISSING TOOTH IS FOUND~0 - 1.9921875
+100C +0016 ESNXPS01 [HEX] -> 0x80cd08 next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff undefined; NEXT_TABLE_POSITION: POINTER TO NEXT SPOT IN PULSE_PER~800000 - 83FFFF
+100C +001A ESNXPS02 [HEX] -> 0x80cd0c next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff dword; NEXT_TABLE_POSITION_BACKUP: POINTER TO NEXT SPOT IN BA~800000 - 83FFFF
+100B +001C ESPECK01 [DEG] -> 0x807ec4 crank_deg_per_period_meas_crank_degrees_between_primary_speed_0_720 word; CRANK_DEG_PER_PERIOD_MEAS: CRANK DEGREES BETWEEN PRIMARY SPEED~0 - 720
+100B +001E ESPECK02 [DEG] -> 0x807ec6 crank_deg_per_period_meas_backup_crank_degrees_between_backup_0_720 word; CRANK_DEG_PER_PERIOD_MEAS_BACKUP: CRANK DEGREES BETWEEN BACKUP~0 - 720
+100B +0018 ESPECM01 [  ] -> 0x807ec0 period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 byte; PERIOD_MEAS_PER_CAM: NUMBER OF PRIMARY SPEED PULSE PERIODS MEA~0 - 255
+100B +0019 ESPECM02 [  ] -> 0x807ec1 period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 byte; PERIOD_MEAS_PER_CAM_BACKUP: NUMBER OF BACKUP SPEED PULSE PERIO~0 - 255
+100B +001A ESPECY01 [  ] -> 0x807ec2 period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 byte; PERIOD_MEAS_PER_AVERAGE:NUM OF PRIMARY SPEED PULSE PERIODS MEA~0 - 255
+100B +001B ESPECY02 [  ] -> 0x807ec3 period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 byte; PERIOD_MEAS_PER_AVERAGE_BACKUP:NUM OF BACKUP SPEED PULSE PERIO~0 - 255
+12A2 +0002 ESPHDF [CNTS] -> 0x80d298 eps_main_backup_time_delta i16; EPS_PHASE_DIFFERENCE: EPS_BACKUP_EDGE_TIME - EPS_MAIN_E~-32767 - 32767
+12A1 +0000 ESPHTD [CNTS] -> 0x807f54 (no name) (no row); DIFFERENCE VALUE TO DETERMINE AN OPEN SENSOR~0 - 65535
+100C +000A ESPLAVBU [TCNT] -> 0x80ccfc average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 dword; AVERAGE_PULSE_PERIOD_BACKUP: TIME PERIOD OVER 1 CYL OF SECONDARY ~2^32
+12A2 +0004 ESPLPHCU [TETH] -> 0x80d29a eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 word; EPS_POSITIVE_OUT_OF_PHASE_COUNT:TEETH PHASE SHIFT > +THRESHO~0 - 65535
+12A1 +0004 ESPLPHTD [TCNT] -> 0x807f58 eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 i16; EPS_POSITIVE_OUT_OF_PHASE_THRESHOLD: FLAG THRES FOR DIF~-32768 - 32767
+100C +0006 ESPLTMAV [TCNT] -> 0x80ccf8 average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 dword; AVERAGE_PULSE_PERIOD: TIME PERIOD OVER 1 CYL OF PRIMARY S~1000 - 65535
+11C4 +0003 ESPSCURS [  ] -> 0x807f51 ess_pulse_count_reset_reset_val_at_missed_tooth_for_period_mea_0_255 byte; ESS_PULSE_COUNT_RESET:RESET VAL AT MISSED TOOTH FOR PERIOD MEA~0 - 255
+100C +002C ESPSTB01 [TCNT] -> 0x80cd1e pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 undefined; PULSE_PERIOD_TABLE: TABLE CONTAINING MAIN SPEED PULSE PER~1000 - 65535
+100C +01BC ESPSTB02 [TCNT] -> 0x80ceae pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 undefined; PULSE_PERIOD_TABLE_BACKUP: TABLE CONTAINING MAIN SPEED PULSE PERI~2^32
+100B +002A ESRP0103 [RPM] -> 0x807ed2 permissible_difference_between_main_and_ext_speed_0_4500 word; PERMISSIBLE DIFFERENCE BETWEEN MAIN AND EXT SPEED~0 - 4500
+100C +036E ESRWPE [HEX] -> 0x80d060 governor_pid_proportional_term_d060 undefined; EPS_RAW_PERIOD: RAW TIME BETWEEN TEETH NOT NORM'D TO 30 DEG~1 - 200000
+100C +0372 ESRWPEBK [HEX] -> 0x80d064 eps_raw_period_backup_raw_time_between_teeth_not_norm_d_to_1_200000 dword; EPS_RAW_PERIOD_BACKUP: RAW TIME BETWEEN TEETH NOT NORM'D TO~1 - 200000
+100C +0026 ESSNSE [MBE] -> 0x80cd18 engine_speed_source_select word; SPEED_SENSOR_SELECT: SPECIFIES SOURCE FOR SPEED CALCULATIONS~0 - 2
+121E +0000 ESSW0001 [HEX] -> 0x80d2c4 dummy_variable_0_65535_d2c4 word; DUMMY VARIABLE~0 - 65535
+121E +0002 ESSW0002 [HEX] -> 0x80d2c6 dummy_variable_0_65535_d2c6 word; DUMMY VARIABLE~0 - 65535
+100B +002C ESSXSNEN [HEX] -> 0x807ed4 engine_speed_sensor_enable_flags word; ENGINE_SPEED_SENSOR_ENABLES: BITWISE 0=DISABLED,1=ENABLED~0X00 - 0XFF
+100B +002E EST2CY [CYLS] -> 0x807ed6 (no name) (no row); NO. OF CYLINDERS FOR CURRENT ENGINE~4, 6, 8, 12, 16
+11CA +0000 ESTDCU01 [CNT] -> 0x807e9a main_consec_error_thresh_threshold_count_at_which_ess_is_lost_0_255 byte; MAIN_CONSEC_ERROR_THRESH:THRESHOLD COUNT AT WHICH ESS IS LOST.~0 - 255
+11CA +0001 ESTDCU02 [NONE] -> 0x807e9b backup_consec_error_thresh_threshold_count_at_which_eps_is_los_0_255 byte; BACKUP_CONSEC_ERROR_THRESH:THRESHOLD COUNT AT WHICH EPS IS LOS~0 - 255
+11CA +0002 ESTDCU03 [  ] -> 0x807e9c external_consec_error_thresh_threshold_count_at_which_external_0_255 byte; EXTERNAL_CONSEC_ERROR_THRESH:THRESHOLD COUNT AT WHICH EXTERNAL~0 - 255
+100C +001E ESTMCU01 [CNT] -> 0x80cd10 main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 word; MAIN_LOST_COUNTER: TIMEOUT COUNTER FOR PRIMARY SPEED SENSOR~0 - 10000
+100C +0020 ESTMCU02 [CNT] -> 0x80cd12 backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 word; BACKUP_LOST_COUNTER: TIMEOUT COUNTER FOR SECONDARY SPEED INP~0 - 10000
+100C +0022 ESTMCU03 [CNT] -> 0x80cd14 external_lost_counter_timeout_counter_for_external_speed_inp_0_10000 word; EXTERNAL_LOST_COUNTER:TIMEOUT COUNTER FOR EXTERNAL SPEED INP~0 - 10000
+100B +0024 ESTTIP [TT] -> 0x807ecc primary_speed_sensor_teeth_per_period_measurement byte; TEETH_PER_PERIOD_MEAS:NUMBER OF TEETH COUNTED PER SAMPLE MEASU~1 - 200
+1008 +0004 ESVSAVPE [TICK] -> 0x80deda eps_period_between_vss_interrupts_0_4294967295 dword; EPS PERIOD BETWEEN VSS INTERRUPTS~0 - 4294967295
+100B +003C EXLSMXEL [SEC] -> 0x807ee4 max_eps_external_lost_duration_0_20 word; MAX_EPS_EXTERNAL_LOST_DURATION~0 - 20
+117D +002E FCST [ST] -> 0x80a9f2 (no name) (no row); COMBINED FAN STATE~1 - 10
+11FE +0000 FLCYCUII [CYL] -> 0x807838 index_of_first_tdc_after_missed_pulse_1_6 byte; INDEX OF FIRST TDC AFTER MISSED PULSE~1 - 6
+11FE +0001 FLCYCUPZ [CYL#] -> 0x807839 current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16 byte; CURRENT CYLINDER COUNTER RESETS TO THIS WHEN EPS REF PULSE OCCU~0 - 16
+11CA +0004 FLTACYOF [DEG] -> 0x807e9e engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 i32; ENGINE_POSITION_OFFSET:DISTANCE BETWEEN TOOTH 0 AND TDC #1.~-100 - 100
+11FE +0002 FLTAPSOF [DEG] -> 0x80783a dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 i32; DZG_ANGLE_AFTER_CYL_TDC:ANGLE AFTER CYL TDC TO PUT DZG FIRST ~-60 - 60
+11FE +0006 FLTAPSTT [DEG] -> 0x80783e dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 undefined; DZG_ANGULAR_DURATION:ANGULAR HIGH DURATION OF DZG PULSE (AT TPU~0 - 60
+117D +0024 FSPKESHI [RPM] -> 0x80a9e8 speed_assoc_w_maximum_fueling_of_all_the_tau_1_fueling_curves_0_8000 word; SPEED ASSOC. W. MAXIMUM FUELING OF ALL THE TAU 1 FUELING CURVES~0-8000
+117D +0028 FSPKESLO [RPM] -> 0x80a9ec speed_assoc_w_maximum_fueling_of_all_the_tau_0_fueling_curves_0_8000 word; SPEED ASSOC. W. MAXIMUM FUELING OF ALL THE TAU 0 FUELING CURVES~0-8000
+117D +0020 FSPKESMX [RPM] -> 0x80a9e4 speed_assoc_w_maximum_fueling_of_all_the_fueling_curves_in_th_0_8000 word; SPEED ASSOC. W. MAXIMUM FUELING OF ALL THE FUELING CURVES IN TH~0-8000
+117D +0022 FSPKFLHI [MM3S] -> 0x80a9e6 maximum_fueling_of_all_the_tau_1_fueling_curves_in_the_ecm_0_100 word; MAXIMUM FUELING OF ALL THE TAU 1 FUELING CURVES IN THE ECM~0-100
+117D +0026 FSPKFLLO [MM3S] -> 0x80a9ea maximum_fueling_of_all_the_tau_0_fueling_curves_in_the_ecm_0_100 word; MAXIMUM FUELING OF ALL THE TAU 0 FUELING CURVES IN THE ECM~0-100
+117D +001E FSPKFLMX [MM3S] -> 0x80a9e2 maximum_fueling_of_all_the_fueling_curves_in_the_ecm_0_100 word; MAXIMUM FUELING OF ALL THE FUELING CURVES IN THE ECM~0-100
+117D +000E GRFTGRRA [  ] -> 0x80a9d2 filtered_transmission_gear_ratio_0_1_15_999 word; FILTERED TRANSMISSION GEAR RATIO~0.1 - 15.999
+117D +0010 GROGSS [T/F] -> 0x80a9d4 (no name) (no row); INDICATOR SET WHEN AN OUT OF GEAR CONDITION IS DETECTED~TRUE / FALSE
+100B +0038 MNLSMXEL [SEC] -> 0x807ee0 max_eps_main_lost_duration_0_20 word; MAX_EPS_MAIN_LOST_DURATION~0 - 20
+117D +001C PPAESE [NONE] -> 0x80a9e0 (no name) (no row); CURRENT TORQUE CURVE AS SPECIFIED BY THE PROGRAMMABLE POWER FEATU~0-15
+117D +0018 RSMXRZ [MPH] -> 0x80a9dc maximum_road_speed word; MAX. VEHICLE SPEED IN TG (ANY GEAR W/O GD) AFTER DRIVER R~0 - 255.9961
+11CA +0009 SWPAD000 [NONE] -> 0x807ea3 software_padding_0_7ea3 byte; SOFTWARE PADDING.~0
+100B +0025 SWPAD001 [NONE] -> 0x807ecd software_padding_0_7ecd byte; SOFTWARE PADDING.~0
+11C8 +000D SWPAD003 [NONE] -> 0x807fa1 (no name) (no row); SW PADDING, IGNORE~0
+117D +0038 TICTST [HEX] -> 0x80a9fc (no name) (no row); STATE OF THE ACCELERATOR~0 - 5
+117D +0036 TIEGDRFG [T/F] -> 0x80a9fa bit_3_of_0_15_indicator_of_engine_usage_1_means_driving_true_false word; BIT 3 OF 0-15 INDICATOR OF ENGINE USAGE 1 MEANS DRIVING  ~TRUE / FALSE
+105E +0022 TSBECKTA [DADV] -> 0x80d0ba timing_command_before_cranking_is_envoked_0_120 word; TIMING COMMAND BEFORE CRANKING IS ENVOKED~0-120
+117D +0014 VSBKRVRT [RPM] -> 0x80a9d8 vss_tamper_derate_rpm_0_3000 word; VSS TAMPER DERATE RPM~0 - 3000
+117D +000C VSFTAVVS [MPH] -> 0x80a9d0 sampled_road_speed_after_it_has_been_filtered_0_255_9961 word; SAMPLED ROAD SPEED AFTER IT HAS BEEN FILTERED~0 - 255.9961
+1008 +0000 VSPSPD [CONT] -> 0x80ded6 (no name) (no row); TIME THAT HAS ELAPSED OVER ONE TAILSHAFT REVOLUTION (VSS~2918 - 875520
+117D +0034 VSRRAXRA [GR] -> 0x80a9f8 (no name) (no row); RATIO OF TRANS TO AXLE REVS - (CAN VARY FOR 2 SPD APPS)~1.0 - 20.0
+117D +002A VSSVF [NONE] -> 0x80a9ee (no name) (no row); TRUE WHEN NO VSS_SIGNAL_LOST_ERROR AND VSS SENSOR EXISTS, ELSE F~0 - 1
+117D +0012 ZVLMES [RPM] -> 0x80a9d6 engine_speed_limit_source_2 word; OUTPUT ENGINE SPEED LIMIT GOING TO HSG REFERENCE SPEED ALG~1400 - 4500

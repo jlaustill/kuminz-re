@@ -1,0 +1,37 @@
+cm848: round 48 stage A - the OBD cooling monitors: thermostat (e2m 8A8B / 8A8C) and coolant temperature in-range (8A9D / 8A9E)
+
+Two leads from the unread gaps turn out to be the two cooling system monitors:
+- 8A8B (22 bytes, tiled into the gap between 1901 and 18F1) holds the thermostat monitor (P0128) calibrations.
+  - +4 / +6 / +8 match the three rows named from code: cold soak 10 F, battery drop 10 F, the 170 F target.
+  - The other eight records are the eight unnamed addresses cm848_runThermostatMonitor reads: the 20-130 F start
+    window, the predicted-fuel coefficient and alpha, the start delay, the maximum idle time, the abort percentage
+    and the fan-inhibit start temperature.
+- 8A8C (anchored at its end by 18F0; 11 / 13 records land on named rows) holds the monitor state.
+  - Cited throughout. New rows: +4 Tstat_Total_Stop_Energy (thermostat_monitor_fuel_total) and +12
+    Tstat_Test_Timer_Rate.
+  - cssc_initial_warmup_budget -> thermostat_monitor_initial_test_timer (+16).
+  - cssc_conditioning_cycle_count -> thermostat_monitor_idle_timer (+18).
+  - cssc_oiltemp_cooling_rate_fraction -> thermostat_monitor_test_timer_rate_accumulator, by code membership.
+- 8A9D (20 bytes, tiled into the ROM gap between 1631 and 164A) holds the coolant temperature in-range (CTIR)
+  calibrations.
+  - The test timer's limit DAT_000642d8 is +A CTIR_Max_Test_Time.
+  - Nine new rows: the 80 F intake / 140 F coolant start limits, the -39..150 F start window, the 6 F minimum span,
+    600 s maximum test time, the start delay, the 10 F intake-battery difference and the key-on delay.
+  - coolant_temperature_check_minimum_engine_off_time -> coolant_temperature_sensor_performance_minimum_engine_off_time
+    (+E, 480 min).
+- 8A9E (+0..+4, a field match; its +6 would collide with 1AEA's base) holds the CTIR state.
+  - cssc_coolant_monitoring_cycle_count -> coolant_temperature_sensor_performance_test_timer (+0 CTIR_Test_Timer).
+  - The span and state rows are cited.
+  - The dumped table's 1632 +4 BIR_Ratio at 0x40b9a2 is drift.
+- Types: every signed record is loaded with lha and every unsigned one with lhz, so the signed ones are i16.
+  - This includes retyping the thermostat calibrations +4 / +6 / +8 from word to i16.
+  - 'cssc_' was an invented abbreviation; it is gone.
+
+Proof (prove_r48a.sh: prove_caches.py on copies of both .cpp files with the scalar casts stripped):
+- 1966 of 1968 functions match. The other two differ only in the order of their local declarations.
+- Without the strip, the three thermostat functions differ, and only in casts.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

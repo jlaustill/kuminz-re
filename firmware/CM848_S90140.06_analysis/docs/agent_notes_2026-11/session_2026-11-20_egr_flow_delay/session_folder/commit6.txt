@@ -1,0 +1,28 @@
+cm848: type the CHP family - 2-D lookup caches, void prototypes, signed pumping torque words
+
+- The three 2-D lookup caches are word[2]:
+  upstream_egr_corrected_flow_cached_axis_offsets /
+  downstream_egr_corrected_flow_cached_axis_offsets /
+  nominal_engine_delta_pressure_cached_axis_offsets (were
+  diag_state_group5_a..d / group7_a..b; the second words had no reader
+  of their own). The calls pass the arrays and the initializers read
+  cache[0] = 2 / cache[1] = 2.
+- void(void) for cm848_calculateVolumetricEfficiency (0x12ad4),
+  cm848_calculateChargeFlowEstimate (0x12dc4) and
+  cm848_calculatePumpingTorqueAdjustment (0x130dc): the asm writes r3 /
+  r4 before any read, so the old two-parameter rows were stale (their
+  two build warnings are gone). The control loop no longer passes the
+  fault-handling function's return value into the pumping torque.
+- word returns for cm848_calculateDownstreamEgrFlowSource /
+  ...UpstreamEgrFlowSource (clrlwi r3,r4,16).
+- i16 for the e2m 'S' pumping torque words (lha): maximum, minimum,
+  multiplier, offset, deadband, nominal engine delta pressure, the
+  adjustment and its no-offset value - the (short) casts are gone.
+
+Changed functions vs stage 3: the 10 predicted (the two
+pumping_torque_adjustment readers needed no cast, so they did not
+change) plus 1 whose declarations only reorder. Pieces 508 -> 508,
+lookup_tables.py clean, headers regenerated (g++ clean), the four
+Python test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

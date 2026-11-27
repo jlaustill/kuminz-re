@@ -1,0 +1,27 @@
+cm848: round 30 stage A - the watchdog fueling monitor named from e2m 8A70 / 8B3B / 8B3D (labels)
+
+A setter-name scan (setter_name_scan.py: functions whose name shares no content word with the fault bits they set)
+flagged fuel_quantity_demand_monitor, which sets fault 388 (e2m 1036 Watchdog_Fueling_Error, "fueling is high when
+it should not be").
+- The Chrysler e2m block 8A70 lines up at 0x40894c by offset, and each of its four words matches its code use:
+  - +0 Watchdog_Duration_Threshold: the on-time sum limit (new row watchdog_fueling_duration_threshold);
+  - +2 Watchdog_Fueling_Error_Debounce: the pass limit (watchdog_fueling_error_debounce_limit);
+  - +4 Watchdog_Speed_Threshold: the engine speed gate (watchdog_fueling_minimum_engine_speed);
+  - +6 Watchdog_Min_Duration_Offset: the per-event offset (watchdog_fueling_minimum_duration_offset, was
+    fuel_demand_active_correction_increment).
+- 8B3B Watchdog_Coolant_Axis / 8B3D Watchdog_Coolant_Duration_Table are the coolant allowance table
+  (watchdog_coolant_duration_adjustment_axis / _values, were fuel_quantity_demand_excess_cold_allowance_*), with its
+  lookup result and cache (new rows; they rendered DAT_003fce30 / &DAT_003fce32).
+- The working words: watchdog_fueling_duration_offset_sum / watchdog_fueling_debounce_count.
+- Functions: cm848_monitorWatchdogFueling (was fuel_quantity_demand_monitor) and cm848_initializeWatchdogFueling
+  (was fuel_quantity_demand_initialize: it clears fault 388, logical output request 54 and the cache).
+- Checked and left as they were:
+  - A unit-domain scan (unit_domain_scan.py) found five rows whose name names another domain than their e2m unit.
+    Three are e2m layout drift CLAUDE.md already records (8A2B +24, the 8C34 tail). 0x4086c6 scales barometric
+    pressure in the code, though 8A14 +2C calls it an A/C timer (8A14 drifts there).
+  - The EC1 payload struct (the send-on-change function's DAT_ / CONCAT11 renders) is left as a lead: the
+    cross-reference tool misses the base-register accesses its field widths depend on.
+
+Proof: reverse_names.py EQUIVALENT. Headers regenerated, lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,9 @@
+names 31  rendered 31  underscore variants 0 []
+old WORD_ARRAY_ labels of named tables still in the new .cpp: 0 []
+NOT EQUIVALENT: 1969 vs 1969 function chunks
+DIFF in //Function:cm848_allocateDiagnosticResponseBuffer@
+   old ...ngth=(word)param_1;diagnostic_single_frame_response_message.status_pointer=&diagn
+   new ...ngth=(word)param_1;diagnostic_single_frame_response_message.data_end_pointer=&diag
+DIFF in //Function:j1939_transport_singleFrame_send@0x0050
+   old ...=0;iVar4=(uVar3&0xff)-1;if(0<iVar4){do{pcVar5=(&PTR_DAT_003fbd7c)[param_1*8];pcV
+   new ...=0;iVar4=(uVar3&0xff)-1;if(0<iVar4){do{pcVar5=(&PTR_DAT_003faeaf_003fbd7c)[param_1*8];pcV

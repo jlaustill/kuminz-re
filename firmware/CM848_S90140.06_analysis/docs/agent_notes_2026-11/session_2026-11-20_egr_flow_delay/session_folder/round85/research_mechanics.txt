@@ -1,0 +1,171 @@
+2-BYTE STACK PARAMETERS ON CM550 (68000:BE:32:CPU32, 68000.cspec "__stdcall"): GHIDRA SOURCE FACTS AND PIPELINE OPTIONS
+
+Cite base. 12.2 PUBLIC is what the build runs, so it is the primary cite:
+  J  = ~/code/ghidra-12.2/ghidra_12.2_PUBLIC/Ghidra/Framework/SoftwareModeling/lib/SoftwareModeling-src.zip!ghidra/
+  D  = ~/code/ghidra-12.2/ghidra_12.2_PUBLIC/Ghidra/Features/Decompiler/lib/Decompiler-src.zip!ghidra/app/decompiler/
+  B  = ~/code/ghidra-12.2/ghidra_12.2_PUBLIC/Ghidra/Features/Base/lib/Base-src.zip!ghidra/
+  C  = ~/code/ghidra-12.2/ghidra_12.2_PUBLIC/Ghidra/Features/Decompiler/src/decompile/cpp/
+  CS = ~/code/ghidra-12.2/ghidra_12.2_PUBLIC/Ghidra/Processors/68000/data/languages/68000.cspec
+[fork:N] = the same code in ~/code/ghidra (12.0-DEV, 4fcc1febdd). Line numbers differ. The behavior is the same, except that 12.2 added a getAddrBySlot overload with a justifyRight argument (J program/model/lang/ParamEntry.java:340-342, 355-356; C fspec.cc:433-437, 450). The task's Java path is wrong: these files are under Ghidra/Framework/SoftwareModeling/src/main/java, not Features/Base. Nothing below was executed in Ghidra. Behavior is derived from source. ROM counts come from opcode-pattern scans, not from a disassembly.
+
+1. PENTRY ALIGNMENT AND JUSTIFICATION
+
+align="4" puts a word at +6, as Stack[0x6]:2.
+- Java dynamic path. FunctionVariables.updateParametersAndReturn calls model.getStorageLocations (J program/database/function/FunctionVariables.java:135-145; J program/model/lang/PrototypeModel.java:437-460). That reaches ParamListStandard.assignAddressFallback, which calls entry.getAddrBySlot(status, tp.getAlignedLength(), tp.getAlignment(), param) (J program/model/lang/ParamListStandard.java:101-102 [fork:102]).
+- getAddrBySlot (J ParamEntry.java:355-415 [fork:340-399]):
+  - slotsused = ceil(sz/align), spaceused = slotsused*align (386-393)
+  - offset = base + slot*align (403)
+  - if justifyRight, offset += spaceused - sz (406-408 [fork:390-392])
+  - justifyRight = !isLeftJustified() (340-342). isLeftJustified = !BIG_ENDIAN || FORCE_LEFT_JUSTIFY (110-112).
+- FORCE_LEFT_JUSTIFY is set only for a stack pentry when !cspec.isStackRightJustified() (restoreXml 614-617 sets BIG_ENDIAN, 623-625 sets FORCE_LEFT_JUSTIFY [fork:598-601, 607-609]).
+  - isStackRightJustified() = bigEndian && !reverseJustifyStack (J program/model/lang/BasicCompilerSpec.java:353-356 [fork:361-364]).
+  - reverseJustifyStack is set only by <stackpointer reversejustify=...> (995-998 [fork:1003-1006]).
+  - CS:30 is <stackpointer register="SP" space="ram"/>, so the stack is right-justified.
+- Result: word 1 = 4+(4-2) = Stack[0x6]:2, word 2 = Stack[0xa]:2, word 3 = Stack[0xe]:2. A byte goes to Stack[0x7]:1.
+- The decompiler's C++ is the same:
+  - C fspec.cc:450-492 [fork:434-476], with the justify step at 489-490. isLeftJustified is at C fspec.hh:123.
+  - force_left_justify is set only if the stack space isReverseJustified() (C fspec.cc:558-563 [fork:543-548]). That flag comes only from <stackpointer reversejustify> (C architecture.cc:987-993, 578-579 [fork:991, 567]).
+  - The C++ fallback is at C fspec.cc:748.
+- Locked functions. The decompiler takes each parameter's storage from Java (J program/model/pcode/LocalSymbolMap.java:206-245; the type lock is set when the signature source != DEFAULT, lines 207 and 245). Callee shells use the same path (D DecompileCallback.java:717-722). So the real read of Stack[4]:2 renders as in_stack_00000004. Example: exponentialMovingAverage 0x34e9a has 3 word rows, at 6/a/e.
+- Unlocked functions. A trial is accepted only if justifiedContain()==0 (C fspec.cc:661-680, 858-862). Stack[4]:2 inside a right-justified 4-byte slot gives 2 (C fspec.cc:267-279).
+  - At call sites the pushed word is dropped. A stale word at Stack[6]:2 can be taken in its place. mc68k_portPinTestSequence2 (0x388a) pushes 4x "3f3c 0001" and pops all of them once with "508f" (addq.l #8). Its calls render as cm550_busyWaitDelayLoop() / (uVar6).
+  - In the callee, ActionUnjustifiedParams widens Stack[4]:2 to the 4-byte container (C coreaction.cc:5153-5198; FuncProto::unjustifiedInputParam fspec.cc:4359-4386; unjustifiedContainer 1411-1424). The result is undefined4 param_1 / param_1._0_2_.
+
+What can change the justification.
+- (a) <stackpointer reversejustify="true">. This is cspec-wide, and a spec extension cannot change it, because extension types are only prototype/resolve/callfixup/callotherfixup (J program/database/SpecExtension.java:82-87). Left-justified with align 4 still puts word 2 at 8, not 6.
+- (b) 12.2 rule actions: <join reversejustify="true"> (J program/model/lang/protorules/MultiSlotAssign.java:278-281, applied to the stack spill at 233) and <join_dual_class reversejustify> (MultiSlotDualAssign.java:291).
+- <pentry> has no justification attribute. The grammar allows only maxsize/minsize/align/storage/metatype/extension (~/code/ghidra-12.2/ghidra_12.2_PUBLIC/Ghidra/Framework/SoftwareModeling/data/languages/compiler_spec.rxg:289-300). The parsers reject anything else (J ParamEntry.java:554-594 [fork:538-578]; C fspec.cc:513-543).
+
+align="2", same right justification, base 4:
+- A word takes slot 0: Stack[0x4]:2.
+- A byte takes slot 1 (6..7) and is right-justified: Stack[0x7]:1.
+- A long sits at slot 2. typeAlign 4 > 2, but (2*2)%4 = 0, so no slot is wasted: Stack[0x8]:4.
+- So the sequence word, byte, long lands at 4/7/8, which matches this compiler. It pushes a byte as a word, with the value in the low half:
+  - A whole-ROM opcode scan found 396 move.w and 291 move.l pushes before calls. Its 3 "move.b" hits are operand words, not instructions: 0x320e8 and 0x32238 are the low address words of pea $801f04 / pea $801f3e, and 0x32158 is the low word of the address in move.w d0,$801f3c. So the scan found no byte pushes at all.
+  - Callees read bytes at the odd offset. J90350.00.ghidra.cpp has 105 param_N._1_1_ lines (in 32 unlocked functions) and 35 in_stack_00000005 lines. It has 0 param_N._0_1_, 0 param_N._3_1_ and 0 in_stack_00000007 lines.
+- The problem: the typeAlign rule (J ParamEntry.java:380-385 [fork:364-369]; C fspec.cc:467-471) wastes a slot when a 4-byte parameter follows an odd number of 2-byte slots.
+  - (word, long) puts the long at Stack[0x8]. The compiler puts it at 6.
+  - (long, word, long) puts the last long at 12. The compiler puts it at 10.
+  - typeAlign = DataType.getAlignment() = DataOrganizationImpl.getSizeAlignment(4) = 4, from CS:21 <entry size="4" alignment="4"/> (J program/model/data/DataTypeImpl.java:129-135; DataOrganizationImpl.java:502-537, 414-421). Pointers get the same value (531-536).
+  - No rule action avoids this. Each passes dt.getAlignment(): GotoStack.java:84, MultiSlotAssign.java:198/233, MultiSlotDualAssign.java:248/291, ExtraStack.java:132. The data organization cannot be extended.
+- Opcode-pattern scan of the ROM (scan_callees_fullrom.py). It covers the whole ROM except the boot block image copy (0x291F4-0x2CE63) and the TPU microcode (0x30C9C-0x31527). It walks back over the listed push encodings before each JSR/BSR and resolves 4ebb-8170 / 4eb9 / 4eba / bsr targets. The walk stops at any push encoding it does not know, so all counts are lower bounds.
+  - 121 callees receive pushed arguments. 89 get at least one 1- or 2-byte argument, which today's align=4 misplaces.
+  - 11 get a 4-byte argument at an offset that is 2 mod 4, which align=2 would misplace: 0x103ba cm550_sendCanSingleFrame (4@4 2@8 4@10 4@14), 0x10e16 cm550_diagnosticMemoryAddressResolver, 0x16cd8, 0x18dae, 0x21272, 0x21642, 0x224f4, 0x2ee62, 0x2f47e, 0x34e9a exponentialMovingAverage (2@4 4@6), 0x34f8a cm550_coreTableInterpolation (2@4 4@6).
+  - Example call at 0xb248: "2f0d" move.l a5,-(sp); "3f39 0080a292" move.w (abs).l,-(sp); "4eb9 00034e9a".
+  - 8 of the 11 have no CSV rows. All 3 that do have rows disagree with their call sites:
+    - 0x10e16 declares 1 ushort. Its calls push "2f0a" move.l a2, then "3f30 2000" move.w, then pop "5c8f" (addq.l #6), so the real layout is a word and then a long at 6.
+    - 0x34e9a declares 3 ushorts. The real layout is a word and then a pointer at 6.
+    - 0x34f8a declares void*, ushort, ushort. Its calls push "2f0b" move.l a3, then "3f2b 000a" move.w (10,a3), then pop "5c8f", so the real layout is a word and then a pointer at 6.
+
+2. PROTOTYPE EXTENSIONS
+
+- API: new SpecExtension(program).addReplaceCompilerSpecExtension(String xml, TaskMonitor) (J program/database/SpecExtension.java:770-783 [fork:760-773]).
+  - Call it inside a transaction. A script's run() already has one, because GhidraScript.executeNormal calls start()/end(true) (B app/script/GhidraScript.java:457-466; B program/flatapi/FlatProgramAPI.java:138-143).
+  - It needs exclusive access (SpecExtension.java:772). A local unversioned project passes, because hasExclusiveAccess() = domainFile==null || !isCheckedOut() || exclusive (Project-src.zip!ghidra/framework/data/DomainObjectAdapter.java:346-355), and a private item is not checked out (FileSystem-src.zip!ghidra/framework/store/local/LocalFolderItem.java:521-527). Verified from source, not executed.
+  - In-tree caller: J app/util/sourcelanguage/SourceLanguageService.java:143-148.
+- XML: one <prototype name=".." extrapop=".." stackshift="..">...</prototype> element (or <resolveprototype>), with the same body as in a .cspec. Example: the CS:33-76 __stdcall body under a new name, with align="2" on the input pentry.
+  - It is validated by wrapping it in a dummy <compiler_spec> after a <default_proto> (J app/plugin/processors/sleigh/SleighLanguageValidator.java:159-182; compiler_spec.rxg:249-253).
+  - It is parsed by PrototypeModel.restoreXml (SpecExtension.java:427-470).
+  - The name may use letters, digits and _ . - / (366-377).
+- Persistence:
+  - It is stored as the String option "prototype_<name>" in the "Specification Extensions" option list, and a version counter is bumped (SpecExtension.java:72, 109-111, 776-781).
+  - It is installed at once: program.installExtensions() at 782 goes to ProgramDB.java:2477-2486, then ProgramCompilerSpec.installExtensions (J program/database/ProgramCompilerSpec.java:260-299).
+  - It is installed again on every open (ProgramDB.java:413).
+  - It persists in the .rep. The build makes a fresh .rep every time, so the install must be a build step that runs every time from a versioned file.
+- Visibility in the same process:
+  - The model is added to getCallingConventions() and to the convention map (BasicCompilerSpec.java:430-460, 485-513, 306-308).
+  - installExtensions calls getDataTypeManager().invalidateCache() (ProgramDB.java:2484). That clears the known and defined convention-name sets (J program/database/data/DataTypeManagerDB.java:3473-3477), and they are rebuilt from the compiler spec (3984-3995). So setCallingConvention(newName) passes the "Unknown calling convention name" check (3944-3971). Verified from source, not executed.
+  - The decompiler receives the model because DecompInterface encodes the program's compiler spec with all models (D DecompInterface.java:280-285; BasicCompilerSpec.encode 542-552). Open the DecompInterface only after the install. ApplyFunctionDefinitions opens its own at :186.
+- Giving a function the convention:
+  - Function.setCallingConvention(name) (J program/database/function/FunctionDB.java:1347-1389; it reassigns dynamic storage at 1372-1377), or updateFunction(name, ...) (823-855, which sets it at 837-839).
+  - Java marks any named convention other than "unknown" as model-locked (J program/model/pcode/FunctionPrototype.java:129-136, encoded at 327-329).
+  - The decompiler then keeps that model for the function itself (C coreaction.cc:4828-4832) and at its call sites (C coreaction.cc:2424-2437).
+- The default prototype cannot be replaced. Only new names can be added.
+  - checkPrototype throws "Extension cannot replace prototype" for a core name (SpecExtension.java:599-610 [fork:589-596]).
+  - installPrototypeExtensions warns and skips such a model (ProgramCompilerSpec.java:131-136).
+  - The default stays the cspec's (ProgramCompilerSpec.java:142-155; BasicCompilerSpec.java:500).
+- The program-level knob is the option Decompiler / "Prototype Evaluation" (EVAL_CURRENT; ProgramCompilerSpec.java:328-341, 361-365). It goes through <protoeval> to evalfp_current (D DecompileOptions.java:624-641, 991; C options.cc:821-838). It applies only to a function that is not model-locked and is being decompiled.
+  - There is no option for EVAL_CALLED (ProgramCompilerSpec.java:342-343).
+  - This pipeline ignores the option anyway: ExportAnalysis.java:88-89 uses new DecompileOptions(), whose protoeval is "default" (D DecompileOptions.java:533).
+  - Java dynamic storage for a function without a convention uses the default model (FunctionVariables.java:135-138).
+- Side effect: a non-default model name prints in the declaration.
+  - PrintC::emitFunctionDeclaration prints it when printModelInDecl() is true (C printc.cc:2709-2714). Only the default model is marked "do not print" (C architecture.cc:323-330). Every other model prints (C fspec.cc:2343, 2356).
+  - Convention printing is on by default (D DecompileOptions.java:216, 513), and ExportAnalysis uses the defaults.
+  - So each function moved to the extension renders as "void __<name> f(...)". generate_headers.py copies that token verbatim into firmware_*.hpp (scripts/generate_headers.py:440-512).
+  - Today no output has any convention token: 0 matches in J90350.00.ghidra.cpp, cm848_rom.ghidra.cpp and bank2_functions.cpp.
+  - DecompileOptions.setConventionPrint(false) (D DecompileOptions.java:1375) in ExportAnalysis would hide it.
+
+3. CUSTOM STORAGE
+
+- Custom storage can put a word at Stack[4]:2. Call updateFunction("__stdcall", null, params, FunctionUpdateType.CUSTOM_STORAGE, true, SourceType.USER_DEFINED) with one of these parameters:
+  - new ParameterImpl(name, WordDataType.dataType, new VariableStorage(currentProgram, 4, 2), currentProgram) (J program/model/listing/ParameterImpl.java:198-201; VariableStorage.java:106-110)
+  - ParameterImpl(name, dt, 4, program), which builds stack storage at offset 4 with the type's length (ParameterImpl.java:88-92; VariableImpl.java:180-187)
+- How the storage is kept:
+  - FunctionDB.updateFunction sets the custom flag first (FunctionDB.java:835-836).
+  - FunctionVariables.updateFunction keeps each storage as given (FunctionVariables.java:430-432, 486, 509-513, 533-541).
+  - updateParametersAndReturn returns early for custom storage (116-120).
+  - The conflict check runs at 490-492 and is implemented at 674-694. If two of the new parameters overlap, it throws VariableSizeException. With force=true (the script passes true), it deletes any local variable that overlaps a new parameter.
+  - The Undefined4 gap filler for a missing index (ApplyFunctionDefinitions.java:336) also needs a derived offset: 4 bytes at the running offset.
+- It is not re-justified when the size matches the type:
+  - getResolvedVariable resizes only if the resolved type length != the storage size (FunctionVariables.java:384-397).
+  - checkStorage returns the storage unchanged when the sizes match (J program/model/listing/VariableUtilities.java:217-253).
+  - A size mismatch goes to resizeStackVarnode, which right-aligns the value inside the convention's stack cells (496-531, 555-576). So give each storage a size equal to its type length.
+- Return storage:
+  - Switching to custom freezes the current return storage (FunctionVariables.java:1011-1016). returnVar==null keeps the existing return value (422-424).
+  - ApplyFunctionDefinitions.java:242 calls setReturnType before updateFunction at :351, while the function is still dynamic. So the model's D0 / D0:D1 / FP0 storage is computed first and then frozen. Keep that order, or pass an explicit return Variable.
+  - On an already-custom function, setReturnType resizes the frozen storage (J program/database/function/ReturnParameterDB.java:115-138).
+- What the decompiler does:
+  - The custom flag only travels as an attribute (FunctionPrototype.java:161, 342-344; C fspec.cc:4657-4659), and it changes one warning text (C coreaction.cc:5275).
+  - For both custom and dynamic functions, storage comes from the parameter symbols (LocalSymbolMap.java:231-245).
+  - In the callee, the locked Stack[4]:2 counts as "contained, not improperly", so it is not widened (C fspec.cc:4362-4383). The read renders as the parameter.
+  - At each call site, funcLinkInput registers every locked parameter as an active trial and inserts a stack LOAD at its storage (C coreaction.cc:1552-1575 [fork:1474-]). So the call at 0x3990 should render as cm550_busyWaitDelayLoop(2), and each of the four deferred-pop calls in 0x388a should get its own 1. This is derived from funcLinkInput, not executed.
+  - The model stays "__stdcall", so no convention token prints.
+
+4. COMPARISON, BY POPULATION
+
+Measured:
+- Narrow match, counting only in_stack_00000004 and param_N._0_2_: 40 functions.
+  - 11 show in_stack_00000004, and all 11 have CSV rows (locked).
+  - 29 show param_N._0_2_, and none has rows (unlocked).
+- Wider match, counting in_stack_00000004..1f and param_N._0_2_ / _1_1_ / _2_2_ (symptom_functions_wide.py): 85 functions, 24 locked and 61 unlocked. This is probably the "about 60".
+- function_definitions.csv has 58 functions with parameter rows. 25 of them have a 1- or 2-byte parameter, for 41 parameter rows.
+- By the declared types, no CSV function puts a long at 2 mod 4. That is only because the rows are wrong: all 3 of the 11 problem callees that have rows disagree with their call sites (section 1).
+
+Call-site arguments:
+- Exact arguments come only from locking (funcLinkInput), for both options.
+- Extension: correct for locked functions unless a 4-byte parameter follows an odd number of words. The 11 callees fail, because their long lands 2 bytes too high: at 8 instead of 6, or at 12 instead of 10.
+- Extension on unlocked functions: it reaches a function only after its convention is set, by a setCallingConvention loop or a CSV list. Then the body gets a 2-byte parameter, and call sites use heuristic trials under align 2. Stale deferred-pop words are then likely to appear as extra arguments. This is inferred from today's (uVar6) rendering, not executed.
+- Custom storage: can express any layout, but only for functions with rows, and only where those rows are right. The unlocked functions need rows.
+
+Determinism:
+- Both are deterministic.
+- Extension: storage is recomputed from the model XML and the types on every update and open (FunctionVariables.java:114-179). It must be installed every build, before ApplyFunctionDefinitions opens its decompiler.
+- Custom storage: storage is persisted per parameter (FUNCTION_CUSTOM_PARAM_STORAGE_FLAG, FunctionVariables.java:984-985) and does not depend on any model. Only the return storage depends on the call order. ApplyFunctionDefinitions runs once per build, from cmd_export (scripts/common.sh:235).
+
+CSV rows for about 60 functions:
+- Extension: one model definition, plus either 0 per-function rows (the script uses the new name for every CM550 function it types) or about 60 convention cells. Unlocked functions still need rows to get exact call sites.
+- Custom storage: 0 new rows or columns if ApplyFunctionDefinitions derives the offsets from the declared types:
+  - start at 4
+  - a 1- or 2-byte type takes a 2-byte slot, with a byte at +1 (the low half). The evidence is the 105 param_N._1_1_ and 35 in_stack_00000005 reads, against 0 reads at slot+0, and no real move.b pushes.
+  - a 4-byte type takes 4 bytes at the running offset, with no padding
+  - an 8-byte type takes 8 bytes
+- Custom storage otherwise needs one storage value per parameter row (41 rows for the 25 functions with small parameters).
+
+CM848 stays unchanged in both cases:
+- Extension: install and use it only when a CM550-only input exists (for example an XML file in CM550's output/) or when the language is 68000. Use the name only if SpecExtension.getCompilerSpecExtension(program, Type.PROTOTYPE_MODEL, name) != null (SpecExtension.java:304-308). CM848 keeps passing "__stdcall" (ApplyFunctionDefinitions.java:243/325/351).
+- Custom storage: branch applyCsvParams on the same opt-in. CM848 (PowerPC, register parameters) keeps DYNAMIC_STORAGE_ALL_PARAMS.
+
+Verdict: custom storage, with offsets computed by ApplyFunctionDefinitions from the declared types and gated to CM550.
+- The packing rule can express every layout seen, including the 11 callees with a long after an odd number of words. An align="2" model cannot express those 11.
+- The result is exact only where the rows are right. Derived offsets reproduce whatever the declared types say. The 3 wrong prototypes (0x10e16, 0x34e9a, 0x34f8a) must be corrected under either option.
+- It needs no install step and puts no convention token in the .cpp or the .hpp.
+- It is deterministic and adds no CSV column.
+- The unlocked functions (29 by the narrow match, 61 by the wide match) still need parameter rows to get exact call sites, under either option.
+The extension is simpler only for the callees without a long at 2 mod 4, and it costs a "__<name>" token on every affected signature.
+
+Scratch scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/stack-param-align/scripts/
+- scan_callees_fullrom.py: the 121/89/11 counts.
+- scan_callees.py (per callee) and scan_call_arg_layouts.py (pattern tally): earlier versions limited to call sites below 0x30000. That range still includes the boot block image copy.
+- scan_pushes.py: whole ROM.
+- call_sites_of.py: dumps a callee's call-site bytes.
+- csv_layouts.py, symptom_functions.py, symptom_functions_wide.py, scan_stack_reads.py.

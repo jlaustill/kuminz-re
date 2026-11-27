@@ -1,0 +1,18 @@
+=== cm848_initializeFaultCruiseSpeedLimit (lines 42406-42428, 17 non-blank)
+// Function: cm848_initializeFaultCruiseSpeedLimit @ 0x0003e520
+//
+/* Resets the fault cruise speed limit: cruise_speed_limit_working, j1939_cruise_speed_setpoint and
+   the 0x40b5c0 copy to cruise_speed_setpoint_default, cruise_maximum_road_speed_cal to its default,
+   drivetrain_gear_range to 1 and the previous fault reaction request to 0. (was
+   cm848_initTorqueCurveState) */
+void cm848_initializeFaultCruiseSpeedLimit(void)
+{
+  cruise_speed_limit_working = cruise_speed_setpoint_default;
+  drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
+  j1939_cruise_speed_setpoint = cruise_speed_setpoint_default;
+  cruise_maximum_road_speed_cal = cruise_speed_high_limit_default;
+  DAT_0040b5c0 = cruise_speed_setpoint_default;
+  fault_reaction_request_bits_previous = 0;
+  return;
+}
+//

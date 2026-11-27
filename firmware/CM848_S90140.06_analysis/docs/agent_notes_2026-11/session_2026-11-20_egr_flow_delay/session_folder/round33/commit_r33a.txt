@@ -1,0 +1,35 @@
+cm848: round 33 stage A - the J1939 transmit status pointer and status bytes (labels)
+
+j1939_tx_msg_t's third field was named data_end_pointer ("one past the last payload byte"). It is the pointer to
+the message's status byte:
+- mpc555_sendJ1939SingleFrame stores its result through it: 0 queued / 1 zero length / 4 CAN transmit queue full.
+- initiateJ1939TransportProtocol copies it into j1939_multiframe_tx_status_ptr, and the transport writes its
+  session codes there: 0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send
+  failed / 8 another session busy / 3 source address not ours.
+- The five multi-frame builders (EC1, DM1, DM2, DM4, RC) rebuild their payload only while the 0xf0 nibble is
+  clear, i.e. while no transport session is still sending it.
+- The boot kernel's twin, diagnostic_response_message_t, already called the field status_pointer. The field now
+  has that name too.
+- The old reading came from the layout: the status byte often sits right after the payload. The ACK record's
+  "data_end_ptr = &control_byte + 8" is exactly its status byte 0x3faab2.
+
+Names:
+- 29 status bytes become j1939_<message>_transmit_status byte rows (were DAT_). All accesses are lbz.
+- DM1's j1939_dm1_fault_data_channel_byte (0x3fabca) is j1939_dm1_transmit_status.
+- PGN 65259's status byte (0x3fab4e) waits for stage B: it renders inside code units that the payload struct
+  clears.
+- j1939_ackm_msg is j1939_pgn59392_tx_message. Its header is 0xe8ff00 = PGN 59392, with the priority from
+  j1939_pgn59392_priority_cal.
+- Five stale flat rows inside it become dotted documentation rows. They came from a reading of the record as a
+  second PGN 56320 descriptor (j1939_dm1_cmd_word_b, j1939_ackm_msg.can_id+3, j1939_pgn56320_alternate_data_*).
+- The three initializer plates that said "end pointer", the template's comment block, the ACK payload comment and
+  the firmware/CLAUDE.md descriptor bullet are refreshed (factual corrections).
+
+Proof: reverse_names.py with the stage map is EQUIVALENT once the old .cpp has the field rename applied forward.
+A reverse map cannot be used for the field, because the boot twin already has a status_pointer. One proof-only
+row is needed: the derived label PTR_DAT_003fbd7c is now PTR_j1939_pgn65242_transmit_status_003fbd7c (the pointer
+at 0x3fbd7c in the RAM dump targets PGN 65242's status byte). Two functions differ only in the order of their
+local declarations. Thunks 19 / call overrides 13 and "1 failed (in code)" are unchanged. Headers regenerated
+(0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

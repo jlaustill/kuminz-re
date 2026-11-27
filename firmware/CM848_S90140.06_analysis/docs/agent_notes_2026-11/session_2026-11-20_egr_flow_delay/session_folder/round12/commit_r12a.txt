@@ -1,0 +1,29 @@
+cm848: round 12 stage A - nine scalar rows typed as the arrays they are, the fuel pressure setpoint caches split
+
+Each row's own comment already said it starts an N-element block; array_candidates.py found no other row inside each
+range, and the DAT_ words inside are its elements.
+- **The arrays:**
+  - switch_input_debounce_history byte[16] (4 samples x 4 bytes: the scanner now reads history[i + 4 / 8 / 12]
+    where it had DAT_003fb904 / 908 / 90c)
+  - fuel_demand_timing_demand_ring_buf word[150]
+  - cold_start_coolant_bucket_thresholds word[5]
+  - j1939_receive_source_address_whitelist byte[4] (its end test reads &whitelist + 3, where it had (byte*)4238681)
+  - intake_air_heater_level_duration_table word[4]
+  - fuel_pressure_sensor_plausibility_expected_fuel_demand_table word[5]
+  - misfire_monitor_cylinder_attempt_counts word[6]
+  - misfire_monitor_cylinder_misfire_flags byte[6]
+- **The fuel pressure setpoint caches:** the 16 words at 0x3fd0ca are eight 2-D lookup caches (2 words each), one per
+  setpoint table. word[16] was tried first and rendered `x + 8` where the code had the distinct &DAT_003fd0da.
+  - fuel_pressure_setpoint_map_cached_axis_offsets is word[2], shared by the four setpoint maps (stage 11A's
+    comment said every map lookup used its first word: corrected).
+  - Seven new word[2] rows for the other tables: cold_start, ambient_factor, ambient_limit, base_map, coolant_limit,
+    coolant_factor, offset.
+- **Not done:** switch_input_hardware_line_cal ('base of 32 words') stays a word: its range holds the boot kernel's
+  time-shared words.
+- **Proof:** array_normalize.py maps each array back to the scalar rendering (x[k] -> the old label, x[expr] ->
+  (&x)[expr], the decayed array -> &x), then cast_normalized_diff.py runs. Four functions changed; two still differ,
+  both the same addresses (history[i + 4] = DAT_003fb904[i]; &whitelist + 3 = 0x40ad59). lookup_tables.py: 0 sizing
+  problems.
+- **Also archived:** round 11's last commit message (round11/commit_r11_closing2.txt).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

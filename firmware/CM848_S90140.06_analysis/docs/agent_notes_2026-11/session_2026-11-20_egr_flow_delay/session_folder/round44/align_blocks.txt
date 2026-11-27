@@ -1,0 +1,91 @@
+== 8C30 at 0x3ff6ca
+   +00 0x3ff6ca Vac_Throttle_PWM_Override_Threshold [2S x0.00390625] dump -10240 = -40
+        row: (no row)  | 
+   +02 0x3ff6cc Vac_Throttle_Error_Override_Threshold [2S x0.25] dump -20 = -5
+        row: (no row)  | 
+   +04 0x3ff6ce Vac_Throttle_ASG_Delta [2U x0.06793600000] dump 44 = 2.98918
+        row: all_speed_governor_vacuum_cruise_fueling_reduction word | cm848_runOperatingModeSpeedGovernor (lhz @ 0xf738
+== 8B12 at 0x408e96
+   +00 0x408e96 Cruise_Throttle_Transition_Threshold [2U x0.25] dump 0 = 0
+        row: cruise_accelerator_override_throttle_threshold word | cm848_selectCruiseOrUserFueling (lhz @ 0x41270
+   +02 0x408e98 Cruise_Bump_Up_Step_Adjust [2U x0.00390625] dump 256 = 1
+        row: cruise_bump_up_step_margin_scale word | ROM (no e2m record): cm848_selectCruiseOrUserFueling uses the cruise f
+== 8B4E at 0x408a66
+   +00 0x408a66 OCM_Gallons_Threshold [4U x0.01] dump 250000 = 2500
+        row: oil_change_monitor_fuel_threshold_hundredth_gallons dword | Compared with the fuel counter at 0x3fee36 in cm848_updateOilChangeMon
+   +04 0x408a6a OCM_Miles_Threshold [4U x0.000125] dump 120000000 = 15000
+        row: oil_change_monitor_distance_threshold_pulses dword | Compared with the distance since reset (0x3fee3a); value 120000000 = 1
+   +08 0x408a6e OCM_Soot_Percentage_Threshold [4U x2.351589501e-8] dump 89301300 = 2.1
+        row: oil_change_monitor_engine_power_accumulator_threshold dword | Compared with oil_change_monitor_engine_power_accumulator_cal (0x3fee3
+== 8BAC at 0x408a72
+   +00 0x408a72 PPS_Auto_Zero_Debounce_Delay [2U x100.0] dump 15 = 1500
+        row: accelerator_pedal_idle_learning_debounce_limit word | Debounce limit for both channels in the learning function (2 reads). R
+   +02 0x408a74 PPS_Deviation_Debounce_Delay [2U x20.0] dump 40 = 800
+        row: accelerator_pedal_channel_disagreement_debounce_limit word | Limit of the disagreement debounce counter (1 read). ROM address
+   +04 0x408a76 PPS_Test_Cell_Threshold_Auto_Zero [2U x0.2500] dump 68 = 17
+        row: accelerator_pedal_single_channel_minimum_idle_threshold word | cm848_calculateAcceleratorPedalDemandFromChannels (lhz @ 0x3d358
+   +06 0x408a78 Highest_PPS_Min [2U x0.25] dump 88 = 22
+        row: accelerator_pedal_idle_position_initial word | ROM initial value of both learned idle positions (1 read in cm848_init
+   +08 0x408a7a PPS_Auto_Zero_Offset [2U x0.25] dump 8 = 2
+        row: accelerator_pedal_idle_threshold_offset word | Added to the idle position to give the idle threshold (2 reads in the 
+   +0A 0x408a7c PPS_Throttle_Range [2U x0.25] dump 296 = 74
+        row: accelerator_pedal_travel_span word | Divisor in (reading - idle threshold) x 400 / this: the counts of full
+   +0C 0x408a7e PPS_Confidence_Band [2U x0.25] dump 8 = 2
+        row: accelerator_pedal_idle_learning_deadband word | The reading must be below idle position + this for a learning step (1 
+   +0E 0x408a80 PPS_Deviation_Limit [2U x0.25] dump 13 = 3.25
+        row: accelerator_pedal_channel_disagreement_threshold word | Absolute channel difference above which the disagreement debounce coun
+   +10 0x408a82 PPS_Idle_Threshold [2U x0.25] dump 33 = 8.25
+        row: accelerator_pedal_off_idle_threshold word | commanded_throttle_state_t.accelerator_off_idle = (this < accelerator_
+   +12 0x408a84 Accelerator_Position_Sensor_Type [1U x1.0] dump 0 = 0
+        row: accelerator_pedal_dual_channel_enable_flag byte | ROM byte tested first by all five pedal block functions (each does not
+   +13 0x408a85 PPS_Use_Auto_Zero_On_Conformance_Check [1U x1.0] dump 0 = 0
+        row: accelerator_pedal_compare_relative_to_idle_flag byte | Byte read once in the agreement check: when nonzero each channel is co
+   +14 0x408a86 PPS_Auto_Zero_Prop_Adjust [2U x0.0039062500] dump 51 = 0.199219
+        row: accelerator_pedal_idle_learning_gain word | Multiplier / 256 on the difference of reading and idle position in the
+   +16 0x408a88 PPS_Conformance_Error_Zero_Throttle_Lock [2U x1.0] dump 0 = 0
+        row: accelerator_pedal_disagreement_zero_demand_enable word | Read once in cm848_calculateAcceleratorPedalDemandFromChannels: with a
+   +18 0x408a8a PPS_AZ_Time_Limit [2U x100.0] dump 299 = 29900
+        row: accelerator_pedal_idle_learning_total_step_limit word | Learning only runs while the total step counter is at or below it (1 r
+   +1A 0x408a8c PPS_AZ_Update_Limit [2U x1.0] dump 249 = 249
+        row: accelerator_pedal_idle_learning_channel_step_limit word | Per-channel limit of learning steps (2 reads). ROM address
+== 8B50 at 0x3fee34
+   +00 0x3fee34 OCM_Fault_Status [2U x1.0] dump 0 = 0
+        row: oil_change_monitor_fault_event_bits_cal dword | TIME-SHARED with the boot ROM (0x3fee34-0x3fee3d): mpc555_eepromValida
+   +02 0x3fee36 OCM_Gallons_Since_Last_Reset [4U x0.01] dump 0 = 0
+        row: oil_change_monitor_fuel_hundredth_gallons_cal  | TIME-SHARED with the boot ROM (0x3fee34-0x3fee3d): mpc555_eepromValida
+   +06 0x3fee3a OCM_Miles_Since_Last_Reset [4U x0.000125] dump 0 = 0
+        row: oil_change_monitor_distance_pulses_cal word | TIME-SHARED with the boot ROM (0x3fee34-0x3fee3d): mpc555_eepromValida
+   +0A 0x3fee3e OCM_Soot_Percentage_Since_Last_Reset [4U x2.351589501e-8] dump 0 = 0
+        row: oil_change_monitor_engine_power_accumulator_cal dword | Named for the table that feeds it (engine_power_accumulator_increment)
+   +0E 0x3fee42 Total_Distance_At_Reset [4U x0.000125] dump 0 = 0
+        row: oil_change_monitor_reset_distance_pulses_cal dword | lifetime_distance_pulses_cal captured at the oil change monitor reset 
+== 8B4F at 0x40b54a
+   +00 0x40b54a OCM_Oil_Severity_Factor [2U x0.01] dump 0 = 0
+        row: oil_change_monitor_fuel_weight_percent word | Output of the coolant x target rpm grid fuel_accumulation_weight_by_co
+== 8BAD at 0x40b54c
+   +00 0x40b54c Calculated_PPS_Throttle [2U x0.25] dump 0 = 0
+        row: accelerator_pedal_dual_channel_validated_demand word | accelerator_pedal_dual_channel_demand
+   +02 0x40b54e PPS_Throttle [2U x0.25] dump 0 = 0
+        row: accelerator_pedal_dual_channel_demand word | The dual channel pedal's demand
+   +04 0x40b550 PPS_Conformance_Failed [1U x1.0] dump 0 = 0
+        row: accelerator_pedal_channel_disagreement_flag byte | Set after the channel difference exceeded the threshold for the deboun
+   +05 0x40b551 PPS_OOR_Limp_Home [1U x1.0] dump 0 = 0
+        row: accelerator_pedal_sensor_fault_latched_flag byte | Set while either channel has a circuit fault
+   +06 0x40b552 PPS1_OOR_Condition [1U x1.0] dump 0 = 0
+        row: accelerator_pedal_channel97_circuit_fault_flag byte | Byte: false when none of faults 347 / 348 / 196 / 197 is detected and 
+   +07 0x40b553 PPS2_OOR_Condition [1U x1.0] dump 0 = 0
+        row: accelerator_pedal_channel98_circuit_fault_flag byte | Byte: true when one of faults 349 / 350 / 377 / 378 is detected
+   +08 0x40b554 PPS1_Throttle_Min [2U x0.25] dump 88 = 22
+        row: accelerator_pedal_idle_position_a word | Channel A learned closed pedal position (initialised by cm848_initiali
+   +0A 0x40b556 PPS2_Throttle_Min [2U x0.25] dump 88 = 22
+        row: accelerator_pedal_idle_position_b word | The name fits neither address. 0x0040b556 is channel B of the same dua
+   +0C 0x40b558 PPS_Limp_Home_Active [2U x1.0] dump 0 = 0
+        row: accelerator_pedal_input_fault_flag word | Not TSC1: written only by cm848_calculateAcceleratorPedalDemandFromCha
+== 8B59 at 0x3fd8ec
+   +00 0x3fd8ec OCM_Interval_Warning_Min_Miles [4U x0.000125] dump 16000000 = 2000
+        row: oil_change_monitor_minimum_distance_pulses_cal dword | Minimum distance since reset before the change-due flag can be set (th
+== 8BAE at 0x3fee46
+   +00 0x3fee46 PPS1_Auto_Zero [2U x0.25] dump 78 = 19.5
+        row: accelerator_pedal_idle_threshold_a_cal word | 0x0040b6e4 keeps cruise_resume_speed: it is the real cruise target (wr
+   +02 0x3fee48 PPS2_Auto_Zero [2U x0.25] dump 78 = 19.5
+        row: accelerator_pedal_idle_threshold_b_cal word | Channel B idle threshold = idle position B + offset

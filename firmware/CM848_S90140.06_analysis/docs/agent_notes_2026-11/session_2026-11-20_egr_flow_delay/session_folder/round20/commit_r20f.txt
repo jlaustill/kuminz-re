@@ -1,0 +1,22 @@
+cm848: round 20 stage F - algorithm_enable_flags_11_t, word 11's dump value, word 19 bit 7 (review)
+
+The advisor's review of round 20:
+- Word 11 (0x3fd5b2, e2m 106B +18) is algorithm_enable_flags_11_t: proprietary / J1587 / J1922 / J1939
+  communication enables. It was the one directly read flags word left untyped, because stage C found its reader (the
+  unnamed DAT_003fd5b2 & 8 in the J1939 transmit queues and receive dispatch) after stage D's list was fixed. Bit 3 is
+  named from that reader; bits 0-2 from their records.
+- Stage C's comment said word 11 is 0x0000 in the dump. That was written without reading the dump: the word is
+  0x000b (bits 0, 1 and 3), so J1939 communication is enabled, as the truck's J1939 traffic says. Corrected.
+- Word 19 bit 7's two e2m records (COT_Estimation_Enable, T_TPE_COT_Estimation_Enable) are one enable under two
+  names. The generated comment said the reader rules one out; it now says the e2m also names the enable the second
+  way (the generator's SAME_ENABLE case).
+- Correction to stage D's message: its "50 unread bits ... whose description spells the words out" is too strong.
+  Some abbreviations in those names are expanded from a sibling record or the repo's vocabulary, not that record's
+  own description: AC (air conditioning, except word 18's AC_Smart_Enable, 'Smart Air Compressor'), IMT, EB, WG, RSG,
+  AH, CT. The names stand; task 046 states the rule as applied.
+
+Proof: with word 11's field rewritten back to its mask, the new .cpp equals the old one (0 differing lines besides the
+timestamp); normalize_r20d.py's count gate passes for word 11 (2 reads); pieces 464 -> 464. Headers regenerated (0 g++
+errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

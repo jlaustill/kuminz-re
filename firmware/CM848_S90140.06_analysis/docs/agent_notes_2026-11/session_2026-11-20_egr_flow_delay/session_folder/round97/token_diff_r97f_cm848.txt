@@ -1,0 +1,5 @@
+0x00042d78: 2 token changes: ( & =>  | ) => 
+0x00043a5c: 2 token changes: ( & =>  | ) => 
+---- census of distinct changes
+   2 ( & => 
+   2 ) => 

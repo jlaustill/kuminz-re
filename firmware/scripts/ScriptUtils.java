@@ -169,6 +169,27 @@ public class ScriptUtils {
                                              : ParamReconciliation.WARN_MISMATCH;
     }
 
+    /**
+     * The param_index literal of a function_definitions.csv row that declares an EMPTY parameter list.
+     *
+     * A return-only row keeps the parameters the decompiler recovers (PRESERVE_DETECTED), which is right for a
+     * function nobody has studied. It is wrong for a function that is known to take none but reads its argument
+     * registers anyway: an exception handler saves r3 / r4 like every volatile register, and the decompiler shows
+     * that as two parameters. The 'none' row commits the empty list.
+     */
+    public static final String NO_PARAMETERS_ROW = "none";
+
+    /**
+     * A 'none' row and positional rows contradict each other. Returns the problem text for the build log, or null
+     * when the rows of one function agree ({@code definedCount} = highest positional index + 1; 0 without any).
+     */
+    public static String noParametersRowProblem(boolean hasNoParametersRow, int definedCount) {
+        if (hasNoParametersRow && definedCount > 0) {
+            return "a '" + NO_PARAMETERS_ROW + "' row (no parameters) next to " + definedCount + " parameter row(s)";
+        }
+        return null;
+    }
+
     // ── CSV row parsers ──────────────────────────────────────────────────────
 
     /**
@@ -250,6 +271,140 @@ public class ScriptUtils {
         }
         if (count <= 0) return null;
         return new ArrayTypeSpec(m.group(1), count);
+    }
+
+    // ── Function type syntax ─────────────────────────────────────────────────
+
+    /** The return type and the parameters ({type, name} each) of a structure_definitions.csv function type row. */
+    public static final class FunctionTypeSpec {
+        public final String returnType;
+        public final List<String[]> parameters;
+
+        FunctionTypeSpec(String returnType, List<String[]> parameters) {
+            this.returnType = returnType;
+            this.parameters = parameters;
+        }
+    }
+
+    private static final java.util.regex.Pattern FUNCTION_TYPE = java.util.regex.Pattern.compile(
+            "^\\s*function:\\s*([A-Za-z_][A-Za-z0-9_]*)((?:\\s*\\*)*)\\s*\\((.*)\\)\\s*$");
+    // "<type> <name>": the type and the name are apart by white space or by the type's '*'
+    private static final java.util.regex.Pattern FUNCTION_PARAMETER = java.util.regex.Pattern.compile(
+            "^\\s*([A-Za-z_][A-Za-z0-9_]*)(?:((?:\\s*\\*)+)\\s*|\\s+)([A-Za-z_][A-Za-z0-9_]*)\\s*$");
+
+    /**
+     * Parses a function type {@code function:<return>(<type> <name>;<type> <name>)} - the type column of a
+     * structure_definitions.csv row that defines a function type named like the row, which a field or a prototype
+     * parameter then holds as {@code <name>*}. Parameters are separated by ';' (the CSV splits on ','), each needs
+     * a type and a name, and {@code ()} or {@code (void)} means none. A '*' belongs to the type wherever it is
+     * written. Returns null when the string is not a function type or is malformed, so the caller can warn.
+     */
+    public static FunctionTypeSpec parseFunctionType(String typeStr) {
+        if (typeStr == null) return null;
+        java.util.regex.Matcher m = FUNCTION_TYPE.matcher(typeStr);
+        if (!m.matches()) return null;
+        String returnType = m.group(1) + m.group(2).replaceAll("\\s+", "");
+        List<String[]> parameters = new ArrayList<>();
+        String list = m.group(3).trim();
+        if (!list.isEmpty() && !list.equals("void")) {
+            for (String part : list.split(";", -1)) {
+                java.util.regex.Matcher p = FUNCTION_PARAMETER.matcher(part);
+                if (!p.matches()) return null;
+                String stars = p.group(2) == null ? "" : p.group(2).replaceAll("\\s+", "");
+                parameters.add(new String[] { p.group(1) + stars, p.group(3) });
+            }
+        }
+        return new FunctionTypeSpec(returnType, parameters);
+    }
+
+    // ── Stack parameter layout ───────────────────────────────────────────────
+
+    /** A firmware's stack parameter layout (output/stack_parameter_layout.csv). */
+    public static final class StackParameterLayout {
+        public final String language;
+        public final int firstOffset;
+        public final int slotSize;
+
+        public StackParameterLayout(String language, int firstOffset, int slotSize) {
+            this.language = language;
+            this.firstOffset = firstOffset;
+            this.slotSize = slotSize;
+        }
+    }
+
+    /**
+     * Parses stack_parameter_layout.csv: blank and '#' lines are skipped, the first other line is the header, and each
+     * later row is setting,value[,comment]. It needs language, first_stack_offset (even, not negative) and slot_size
+     * (2 or 4). An unknown setting is an error, so a typo cannot pass silently.
+     */
+    public static StackParameterLayout parseStackParameterLayout(List<String> lines) {
+        String language = null;
+        Integer first = null;
+        Integer slot = null;
+        boolean header = true;
+        for (String raw : lines) {
+            String line = raw.trim();
+            if (line.isEmpty() || line.startsWith("#")) continue;
+            if (header) { header = false; continue; }
+            String[] parts = parseCSVLine(line);
+            if (parts.length < 2) throw new IllegalArgumentException("bad row: " + line);
+            String setting = parts[0].trim();
+            String value = parts[1].trim();
+            switch (setting) {
+                case "language": language = value; break;
+                case "first_stack_offset": first = Integer.parseInt(value); break;
+                case "slot_size": slot = Integer.parseInt(value); break;
+                default: throw new IllegalArgumentException("unknown setting '" + setting + "'");
+            }
+        }
+        if (language == null || first == null || slot == null)
+            throw new IllegalArgumentException("needs language, first_stack_offset and slot_size");
+        if (slot != 2 && slot != 4) throw new IllegalArgumentException("slot_size must be 2 or 4");
+        if (first < 0 || first % 2 != 0) throw new IllegalArgumentException("first_stack_offset must be even");
+        return new StackParameterLayout(language, first, slot);
+    }
+
+    /**
+     * Stack offsets for parameters of the given byte lengths, in parameter order: the first starts at firstOffset,
+     * each takes ceil(length / slotSize) slots and sits right-justified in them (big-endian: a byte in a 2-byte slot is
+     * at slot + 1). There is no padding for a type's alignment (the CM550 compiler puts a long at +6 after a word).
+     * slotSize 4 gives 68000.cspec __stdcall's layout (align 4, right-justified) for 1 / 2 / 4 / 8-byte types.
+     */
+    public static int[] packStackParameters(int[] lengths, int firstOffset, int slotSize) {
+        int[] offsets = new int[lengths.length];
+        int next = firstOffset;
+        for (int i = 0; i < lengths.length; i++) {
+            if (lengths[i] <= 0) throw new IllegalArgumentException("parameter " + i + " has no fixed length");
+            int space = (lengths[i] + slotSize - 1) / slotSize * slotSize;
+            offsets[i] = next + space - lengths[i];
+            next += space;
+        }
+        return offsets;
+    }
+
+    // ── Dumps with gaps ──────────────────────────────────────────────────────
+
+    /**
+     * Builds a memory image from a dump that is missing some ranges. A dump tool that skipped a failed chunk without
+     * padding (clip-core's ECUReader before PR #53 round 88) shifts every later byte down by that chunk; this puts each
+     * byte back at its own offset. The image is imageLength bytes: each gap {imageOffset, length} holds fill, and the
+     * dump's bytes from dumpStart on fill every other image byte in order. Dump bytes beyond the image are dropped;
+     * image bytes the dump does not reach stay fill. A gap that reaches outside the image is clipped.
+     */
+    public static byte[] imageFromDumpWithGaps(byte[] dump, int dumpStart, int imageLength, int[][] gaps, byte fill) {
+        if (dumpStart < 0 || imageLength < 0) throw new IllegalArgumentException("negative dump start or image length");
+        byte[] image = new byte[imageLength];
+        java.util.Arrays.fill(image, fill);
+        boolean[] inGap = new boolean[imageLength];
+        for (int[] gap : gaps) {
+            if (gap.length != 2 || gap[1] < 0) throw new IllegalArgumentException("a gap is {imageOffset, length}");
+            for (int i = Math.max(0, gap[0]); i < Math.min(imageLength, gap[0] + gap[1]); i++) inGap[i] = true;
+        }
+        int source = dumpStart;
+        for (int i = 0; i < imageLength && source < dump.length; i++) {
+            if (!inGap[i]) image[i] = dump[source++];
+        }
+        return image;
     }
 
     // ── Firmware name ────────────────────────────────────────────────────────

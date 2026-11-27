@@ -1,0 +1,216 @@
+=== cm848_diagnoseFuelPressureGovernor (lines 48455-48676, 215 non-blank)
+48455: // Function: cm848_diagnoseFuelPressureGovernor @ 0x00049264
+48456: //
+48458: /* Rail pressure diagnostics, run in cm848_phase_group_b_processing right after
+48459:    cm848_calculateFuelMeteringCommand while engine_state is ENGINE_STATE_RUNNING and the pressure
+48460:    sensor has no confirmed fault: it sets up to seven bits of fuel_pressure_diagnostic_flags
+48461:    (pressure above the too-high threshold for 150 passes, above a second range limit, below the rpm
+48462:    table minimum, above or below the setpoint while the governor demand is low or high, below the
+48463:    leak-down model or demand above its limit with no fuel, demand above 283 with governor mode 11 at
+48464:    its target speed), debounces them into fuel_pressure_diagnostic_snapshot (150 passes) and sets
+48465:    the fault bits. Only the too-high bit (fault 303, P0088) has an OBD code; the other six go to
+48466:    fault bits 315, 323, 316, 317, 290 and 324, which have no OBD slot. (was
+48467:    cm848_processEnginePositionDiagnostics) */
+48469: void cm848_diagnoseFuelPressureGovernor(void)
+48471: {
+48472:   bool bVar1;
+48473:   word wVar2;
+48474:   word wVar3;
+48475:   short sVar4;
+48477:   if ((engine_state == ENGINE_STATE_RUNNING) && (fuel_pressure_sensor_confirmed_code == 0)) {
+48478:     sVar4 = fuel_pressure_setpoint - fuel_pressure_sensor;
+48479:     fuel_pressure_diagnostic_flags = 0;
+48480:     if ((engine_speed_state.filtered_engine_speed == 0) ||
+48481:        ((protection_feature_flags & 0x2000) == 0)) {
+48482: LAB_00049380:
+48483:       fuel_pressure_too_high_pending_flag = 0;
+48484:       fuel_pressure_too_high_count = 0;
+48485:     }
+48486:     else if (fuel_pressure_sensor_too_high_threshold < (short)fuel_pressure_sensor) {
+48487:       if (fuel_pressure_too_high_count < fuel_pressure_too_high_count_limit._0_1_) {
+48488:         fuel_pressure_too_high_count = fuel_pressure_too_high_count + 1;
+48489:       }
+48490:       else {
+48491:         fuel_pressure_too_high_pending_flag = fuel_pressure_too_high_pending_flag | 1;
+48492:       }
+48493:       fuel_pressure_too_high_recovery_count = 0;
+48494:     }
+48495:     else {
+48496:       fuel_pressure_too_high_count = 0;
+48497:       if (fuel_pressure_too_high_recovery_limit <= fuel_pressure_too_high_recovery_count)
+48498:       goto LAB_00049380;
+48499:       fuel_pressure_too_high_recovery_count = fuel_pressure_too_high_recovery_count + 1;
+48500:     }
+48501:     if (fuel_pressure_sensor_second_too_high_threshold < (short)fuel_pressure_sensor) {
+48502:       fuel_pressure_diagnostic_flags = 2;
+48503:     }
+48504:     wVar2 = lookupTableInterpolation
+48505:                       (&fuel_pressure_diagnostic_interpolation_state_0,average_engine_speed,
+48506:                        fuel_pressure_minimum_expected_by_rpm_axis,
+48507:                        fuel_pressure_minimum_expected_by_rpm_values,2);
+48508:     if (((short)fuel_pressure_sensor < (short)wVar2) &&
+48509:        (fuel_pressure_minimum_expected_check_floor < (short)fuel_pressure_sensor)) {
+48510:       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 4;
+48511:     }
+48512:     bVar1 = final_fueling != 0;
+48513:     wVar2 = lookupTableInterpolation
+48514:                       (&fuel_pressure_diagnostic_interpolation_state_1,average_engine_speed,
+48515:                        fuel_pressure_above_setpoint_error_limit_by_rpm_axis,
+48516:                        fuel_pressure_above_setpoint_error_limit_by_rpm_values,2);
+48517:     wVar3 = lookupTableInterpolation
+48518:                       (&fuel_pressure_diagnostic_interpolation_state_4,average_engine_speed,
+48519:                        fuel_pressure_above_setpoint_demand_limit_by_rpm_axis,
+48520:                        fuel_pressure_above_setpoint_demand_limit_by_rpm_values,2);
+48521:     if (((sVar4 < (short)wVar2) &&
+48522:         ((short)fuel_pressure_governor_state.fuel_pressure_governor_demand < (short)wVar3)) &&
+48523:        (bVar1)) {
+48524:       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 8;
+48525:     }
+48526:     wVar2 = lookupTableInterpolation
+48527:                       (&fuel_pressure_diagnostic_interpolation_state_2,average_engine_speed,
+48528:                        fuel_pressure_below_setpoint_error_limit_by_rpm_axis,
+48529:                        fuel_pressure_below_setpoint_error_limit_by_rpm_values,2);
+48530:     wVar3 = lookupTableInterpolation
+48531:                       (&fuel_pressure_diagnostic_interpolation_state_3,average_engine_speed,
+48532:                        fuel_pressure_below_setpoint_demand_limit_by_rpm_axis,
+48533:                        fuel_pressure_below_setpoint_demand_limit_by_rpm_values,2);
+48534:     if (((short)wVar2 < sVar4) &&
+48535:        ((short)wVar3 < (short)fuel_pressure_governor_state.fuel_pressure_governor_demand)) {
+48536:       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 0x10;
+48537:     }
+48538:     if ((fuel_pressure_governor_state.fuel_pressure_governor_demand != 0) || (bVar1)) {
+48539:       fuel_pressure_expected_decay_model = fuel_pressure_sensor;
+48540:     }
+48541:     else {
+48542:       wVar2 = lookupTableInterpolation
+48543:                         (&fuel_pressure_diagnostic_interpolation_state_5,
+48544:                          fuel_pressure_expected_decay_model_previous,
+48545:                          fuel_pressure_expected_decay_by_pressure_axis,
+48546:                          fuel_pressure_expected_decay_by_pressure_values,3);
+48547:       fuel_pressure_expected_decay_model = fuel_pressure_expected_decay_model - wVar2;
+48548:       if ((short)fuel_pressure_sensor < (short)fuel_pressure_expected_decay_model) {
+48549:         fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 0x20;
+48550:       }
+48551:     }
+48552:     fuel_pressure_expected_decay_model_previous = fuel_pressure_expected_decay_model;
+48553:     wVar2 = lookupTableInterpolation
+48554:                       (&fuel_pressure_diagnostic_interpolation_state_6,fuel_pressure_sensor,
+48555:                        fuel_pressure_governor_demand_limit_without_fuel_axis,
+48556:                        fuel_pressure_governor_demand_limit_without_fuel_values,3);
+48557:     if (((short)wVar2 < (short)fuel_pressure_governor_state.fuel_pressure_governor_demand) &&
+48558:        (!bVar1)) {
+48559:       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 0x20;
+48560:     }
+48561:     if (((((((int)((uint)governor_output_t_0040aec2.idle_reference_speed -
+48562:                   (uint)governor_integrator_hysteresis_cal) < (int)(uint)average_engine_speed) &&
+48563:            ((uint)average_engine_speed <
+48564:             (uint)governor_output_t_0040aec2.idle_reference_speed +
+48565:             (uint)governor_integrator_hysteresis_cal)) && (vehicle_speed_sensor_ok_flag == 1)) &&
+48566:          ((vehicle_speed_copy == 0 &&
+48567:           ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 1) == 0)))) &&
+48568:         (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 2) == 0 &&
+48569:          ((fuel_pressure_governor_demand_check_minimum_coolant_temperature <
+48570:            (short)sensor_readings_t_0040baf2.coolant_temp &&
+48571:           (fuel_pressure_governor_demand_limit_at_governed_speed <
+48572:            (short)fuel_pressure_governor_state.fuel_pressure_governor_demand)))))) &&
+48573:        (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)) {
+48574:       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 0x40;
+48575:     }
+48576:   }
+48577:   else {
+48578:     fuel_pressure_diagnostic_flags = 0;
+48579:   }
+48580:   if (fuel_pressure_diagnostic_flags == 0) {
+48581:     fuel_pressure_diagnostic_set_debounce_count = 0;
+48582:     if (fuel_pressure_diagnostic_clear_debounce_count <=
+48583:         fuel_pressure_diagnostic_clear_debounce_limit) goto LAB_00049720;
+48584:   }
+48585:   else {
+48586:     fuel_pressure_diagnostic_clear_debounce_count = 0;
+48587:     if (fuel_pressure_diagnostic_set_debounce_count <= fuel_pressure_diagnostic_set_debounce_limit)
+48588:     goto LAB_00049720;
+48589:   }
+48590:   fuel_pressure_diagnostic_snapshot = fuel_pressure_diagnostic_flags;
+48591: LAB_00049720:
+48592:   fuel_pressure_diagnostic_snapshot =
+48593:        fuel_pressure_diagnostic_snapshot | fuel_pressure_too_high_pending_flag;
+48594:   if ((fuel_pressure_diagnostic_snapshot & 1) == 0) {
+48595:     if ((fault_registered_bits_288_to_303 & 0x8000) != 0) {
+48596:       system_status_flags_t_003fe974.fault_detected_bits_288_to_303 =
+48597:            system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x7fff;
+48598:       fault_registered_bits_288_to_303 = fault_registered_bits_288_to_303 & 0x7fff;
+48599:     }
+48600:   }
+48601:   else {
+48602:     system_status_flags_t_003fe974.fault_detected_bits_288_to_303 =
+48603:          system_status_flags_t_003fe974.fault_detected_bits_288_to_303 | 0x8000;
+48604:   }
+48605:   if ((fuel_pressure_diagnostic_snapshot & 2) == 0) {
+48606:     if ((fault_registered_bits_304_to_319 & 0x800) != 0) {
+48607:       system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+48608:            system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0xf7ff;
+48609:       fault_registered_bits_304_to_319 = fault_registered_bits_304_to_319 & 0xf7ff;
+48610:     }
+48611:   }
+48612:   else {
+48613:     system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+48614:          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 | 0x800;
+48615:   }
+48616:   if ((fuel_pressure_diagnostic_snapshot & 4) == 0) {
+48617:     if ((fault_registered_bits_320_to_335 & 8) != 0) {
+48618:       system_status_flags_t_003fe974.fault_detected_bits_320_to_335 =
+48619:            system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0xfff7;
+48620:       fault_registered_bits_320_to_335 = fault_registered_bits_320_to_335 & 0xfff7;
+48621:     }
+48622:   }
+48623:   else {
+48624:     system_status_flags_t_003fe974.fault_detected_bits_320_to_335 =
+48625:          system_status_flags_t_003fe974.fault_detected_bits_320_to_335 | 8;
+48626:   }
+48627:   if ((fuel_pressure_diagnostic_snapshot & 8) == 0) {
+48628:     if ((fault_registered_bits_304_to_319 & 0x1000) != 0) {
+48629:       system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+48630:            system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0xefff;
+48631:       fault_registered_bits_304_to_319 = fault_registered_bits_304_to_319 & 0xefff;
+48632:     }
+48633:   }
+48634:   else {
+48635:     system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+48636:          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 | 0x1000;
+48637:   }
+48638:   if ((fuel_pressure_diagnostic_snapshot & 0x10) == 0) {
+48639:     if ((fault_registered_bits_304_to_319 & 0x2000) != 0) {
+48640:       system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+48641:            system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0xdfff;
+48642:       fault_registered_bits_304_to_319 = fault_registered_bits_304_to_319 & 0xdfff;
+48643:     }
+48644:   }
+48645:   else {
+48646:     system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+48647:          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 | 0x2000;
+48648:   }
+48649:   if ((fuel_pressure_diagnostic_snapshot & 0x20) == 0) {
+48650:     if ((fault_registered_bits_288_to_303 & 4) != 0) {
+48651:       system_status_flags_t_003fe974.fault_detected_bits_288_to_303 =
+48652:            system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0xfffb;
+48653:       fault_registered_bits_288_to_303 = fault_registered_bits_288_to_303 & 0xfffb;
+48654:     }
+48655:   }
+48656:   else {
+48657:     system_status_flags_t_003fe974.fault_detected_bits_288_to_303 =
+48658:          system_status_flags_t_003fe974.fault_detected_bits_288_to_303 | 4;
+48659:   }
+48660:   if ((fuel_pressure_diagnostic_snapshot & 0x40) == 0) {
+48661:     if ((fault_registered_bits_320_to_335 & 0x10) != 0) {
+48662:       system_status_flags_t_003fe974.fault_detected_bits_320_to_335 =
+48663:            system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0xffef;
+48664:       fault_registered_bits_320_to_335 = fault_registered_bits_320_to_335 & 0xffef;
+48665:     }
+48666:   }
+48667:   else {
+48668:     system_status_flags_t_003fe974.fault_detected_bits_320_to_335 =
+48669:          system_status_flags_t_003fe974.fault_detected_bits_320_to_335 | 0x10;
+48670:   }
+48671:   return;
+48672: }
+48676: //

@@ -1,0 +1,304 @@
+0x2fc000 USIU_SIUMCR                              dword                    renders    5 manual SIUMCR
+0x2fc004 USIU_SYPCR                               dword                    renders    4 manual SYPCR
+0x2fc00e USIU_SWSR                                word                     renders    0 manual SWSR
+0x2fc010 USIU_SIPEND                              dword                    renders    3 manual SIPEND / SIPEND
+0x2fc014 USIU_SIMASK                              dword                    renders   26 manual SIMASK / SIU
+0x2fc018 USIU_SIEL                                dword                    renders    2 manual SIEL / SIU
+0x2fc01c USIU_SIVEC                               dword                    renders    3 manual SIVEC / SIU
+0x2fc020 USIU_TESR                                dword                    renders    0 manual TESR
+0x2fc024 SIU_SGPIODT1                             siu_gpio_data_register_t renders   31 manual SGPIODT1
+0x2fc028 SIU_SGPIODT2                             siu_gpio_data_register_t renders   25 manual SGPIODT2
+0x2fc02c USIU_INITCFG                             dword                    renders    4 manual SGPIOCR
+0x2fc030 USIU_SGPIODT1                            byte                     renders    0 manual EMCR
+0x2fc034 USIU_SGPIODT2                            byte                     renders    0 manual -
+0x2fc038 USIU_SGPIOCR                             byte                     renders    0 manual -
+0x2fc03c USIU_EMCR                                byte                     renders    3 manual PDMCR
+0x2fc044 USIU_PDMCR                               byte                     renders    0 manual -
+0x2fc100 USIU_BR0                                 usiu_memc_t              renders   17 manual BR0
+0x2fc104 USIU_OR0                                                          renders    0 manual OR0
+0x2fc108 USIU_BR1                                                          renders    0 manual BR1
+0x2fc10c USIU_OR1                                                          renders    0 manual OR1
+0x2fc110 USIU_BR2                                                          renders    0 manual BR2
+0x2fc114 USIU_OR2                                                          renders    0 manual OR2
+0x2fc118 USIU_BR3                                                          renders    0 manual BR3
+0x2fc11c USIU_OR3                                                          renders    0 manual OR3
+0x2fc140 USIU_DMBR                                dword                    renders    0 manual DMBR
+0x2fc144 USIU_DMOR                                dword                    renders    0 manual DMOR
+0x2fc200 USIU_TBSCR                               word                     renders    4 manual TBSCR
+0x2fc204 USIU_TBREFF0                             dword                    renders    0 manual TBREF0
+0x2fc208 USIU_TBREFF1                             byte                     renders    0 manual TBREF1
+0x2fc220 USIU_RTCSC                               byte                     renders    0 manual RTCSC
+0x2fc224 USIU_RTC                                 byte                     renders    0 manual RTC
+0x2fc228 USIU_RTSEC                               byte                     renders    0 manual RTSEC
+0x2fc240 USIU_PISCR                               usiu_pit_t               renders   16 manual PISCR
+0x2fc244 USIU_PITC                                                         renders    0 manual PITC
+0x2fc280 USIU_SCCR                                usiu_clock_t             renders   32 manual SCCR
+0x2fc284 USIU_PLPRCR                                                       renders    0 manual PLPRCR
+0x2fc288 USIU_RSR                                                          renders    0 manual RSR
+0x2fc28c USIU_COLIR                                                        renders    0 manual COLIR
+0x2fc290 USIU_VSRMCR                                                       renders    0 manual VSRMCR
+0x2fc300 USIU_TBSCRK                              byte                     renders    0 manual TBSCRK
+0x2fc304 USIU_TBREFF0K                            byte                     renders    0 manual TBREF0K
+0x2fc308 USIU_TBREFF1K                            byte                     renders    0 manual TBREF1K
+0x2fc30c USIU_TBK                                 byte                     renders    0 manual TBK
+0x2fc310 USIU_TBREF1K                             byte                     renders    0 manual TBK
+0x2fc314 USIU_TBREF1                              byte                     renders    0 manual -
+0x2fc320 USIU_RTCSK                               byte                     renders    0 manual RTCSCK
+0x2fc324 USIU_RTCK                                byte                     renders    0 manual RTCK
+0x2fc328 USIU_RTSECK                              byte                     renders    0 manual RTSECK
+0x2fc32c USIU_RTCALK                              byte                     renders    0 manual RTCALK
+0x2fc340 USIU_PISCRK                              byte                     renders    0 manual PISCRIK
+0x2fc344 USIU_PITCK                               byte                     renders    0 manual PITCK
+0x2fc380 USIU_SCCRK                               byte                     renders    0 manual SCCRK
+0x2fc384 USIU_PLPRCK                              byte                     renders    0 manual PLPRCRK
+0x2fc388 USIU_RSRK                                byte                     renders    0 manual RSRK
+0x2fc800 CMFMCR_A                                 dword                    renders    3 manual CMFMCR
+0x2fc804 CMFTST_A                                 dword                    renders    6 manual CMFTST
+0x2fc808 CMFCTL_A                                 dword                    renders   12 manual CMFCTL
+0x2fc840 CMFMCR_B                                 dword                    renders    3 manual CMFMCR
+0x2fc844 CMFTST_B                                 dword                    renders    6 manual CMFTST
+0x2fc848 CMFCTL_B                                 dword                    renders   12 manual CMFCTL
+0x300004 DPTRAM_RAMBAR                            word                     renders    3 manual RAMBAR
+0x304000 tpu_a_mcr                                tpua_module_regs_t       renders  521 manual TPUMCR_A
+0x304008 tpu_a_dscr                                                        renders    0 manual TICR_A
+0x30400a tpu_a_dssr                                                        renders    0 manual CIER_A
+0x30400c tpu_a_ticr                                                        renders    0 manual CFSR0_A
+0x30400e tpu_a_cier                                                        renders    0 manual CFSR1_A
+0x304010 tpu_a_cfsr0                                                       renders    0 manual CFSR2_A
+0x304012 tpu_a_cfsr1                                                       renders    0 manual CFSR3_A
+0x304014 tpu_a_cfsr2                                                       renders    0 manual HSQR0_A
+0x304016 tpu_a_cfsr3                                                       renders    0 manual HSQR1_A
+0x304018 tpu_a_hsqr0                                                       renders    0 manual HSRR0_A
+0x30401a tpu_a_hsqr1                                                       renders    0 manual HSRR1_A
+0x30401c tpu_a_hsrr0                                                       renders    0 manual CPR0_A
+0x30401e tpu_a_hsrr1                                                       renders    0 manual CPR1_A
+0x304020 tpu_a_cpr0                                                        renders    0 manual CISR_A
+0x304028 tpu_a_cpr1                                                        renders    0 manual TPUMCR2_A
+0x30402a tpu_a_cisr                                                        renders    0 manual TPUMCR3_A
+0x304100 tpu_a_ch0_param0                         tpu3_ch_params_t         renders   43 manual ISCR_A / TPU_A
+0x304108 tpu_a_ch0_param4                                                  renders    0 manual -
+0x30410c tpu_a_ch1_param0                                                  renders    0 manual -
+0x30410e TPUA_CH0_PARAM7                                                   renders    0 manual -
+0x304110 tpu_a_ch1_param2                         tpua_ch1_params_t        renders   22 manual TPU_A
+0x304112 TPUA_CH1_PARAM1                                                   renders    0 manual -
+0x304118 TPUA_CH1_PARAM4                                                   renders    0 manual -
+0x30411c tpu_a_ch2_param0                                                  renders    0 manual -
+0x30411e TPUA_CH1_PARAM7                                                   renders    0 manual -
+0x304120 TPUA_CH2_PARAM0                          word                     renders    2 manual TPU_A
+0x304126 TPUA_CH2_PARAM3                          word                     renders    4 manual -
+0x304128 TPUA_CH2_PARAM4                          word                     renders    7 manual -
+0x304130 TPUA_CH3_PARAM0                          word                     renders    2 manual TPU_A
+0x304134 TPUA_CH3_PARAM2                          word                     renders    2 manual -
+0x304136 TPUA_CH3_PARAM3                          word                     renders    1 manual -
+0x304140 TPUA_CH4_PARAM0                          word                     renders   12 manual TPU_A
+0x304150 TPUA_CH5_PARAM0                          word                     renders    6 manual TPU_A
+0x304160 TPUA_CH6_PARAM0                          word                     renders    8 manual TPU_A
+0x304170 TPUA_CH7_PARAM0                          word                     renders    2 manual TPU_A
+0x304176 TPUA_CH7_PARAM3                          word                     renders    4 manual -
+0x304178 TPUA_CH7_PARAM4                          word                     renders    7 manual -
+0x304180 TPUA_CH8_PARAM0                          word                     renders    2 manual TPU_A
+0x304190 tpu_channel_control                      tpua_ch9_params_t        renders   12 manual TPU_A
+0x3041a0 TPUA_CH10_PARAM0                         word                     renders    3 manual TPU_A
+0x3041b0 TPUA_CH11_PARAM0                         word                     renders    5 manual TPU_A
+0x3041b2 TPUA_CH11_PARAM1                         word                     renders    2 manual -
+0x3041b4 TPUA_CH11_PARAM2                         word                     renders    2 manual -
+0x3041b6 TPUA_CH11_PARAM3                         word                     renders    2 manual -
+0x3041b8 TPUA_CH11_PARAM4                         word                     renders    2 manual -
+0x3041ba TPUA_CH11_PARAM5                         word                     renders    2 manual -
+0x3041bc TPUA_CH11_PARAM6                         word                     renders    2 manual -
+0x3041be TPUA_CH11_PARAM7                         word                     renders    2 manual -
+0x3041c0 TPUA_CH12_PARAM0                         tpua_ch12_params_t       renders   20 manual TPU_A
+0x3041c4 TPUA_CH12_PARAM2                                                  renders    0 manual -
+0x3041c6 TPUA_CH12_PARAM3                                                  renders    0 manual -
+0x3041c8 TPUA_CH12_PARAM4                                                  renders    0 manual -
+0x3041ca TPUA_CH12_PARAM5                                                  renders    0 manual -
+0x3041cc TPUA_CH12_PARAM6                                                  renders    0 manual -
+0x3041ce tpu_a_ch_param_end                                                renders    0 manual -
+0x3041d0 TPUA_CH13_PARAM0                         word                     renders    2 manual TPU_A
+0x3041d6 TPUA_CH13_PARAM3                         word                     renders    1 manual -
+0x3041d8 TPUA_CH13_PARAM4                         word                     renders    1 manual -
+0x3041da TPUA_CH13_PARAM5                         word                     renders    1 manual -
+0x3041dc TPUA_CH13_PARAM6                         word                     renders    1 manual -
+0x3041de TPUA_CH13_PARAM7                         word                     renders    1 manual -
+0x3041e0 TPUA_CH14_PARAM0                         tpua_ch14_params_t       renders   13 manual TPU_A
+0x3041e6 TPUA_CH14_PARAM3                                                  renders    0 manual -
+0x3041ea TPUA_CH14_PARAM5                                                  renders    0 manual -
+0x3041ec TPUA_CH14_PARAM6                                                  renders    0 manual -
+0x3041ee TPUA_CH14_PARAM7                                                  renders    0 manual -
+0x3041f0 TPUA_CH15_PARAM0                         word                     renders    2 manual TPU_A
+0x304400 tpu_b_mcr                                tpub_module_regs_t       renders  527 manual -
+0x304408 tpu_b_dscr                                                        renders    0 manual TICR_B / TPU3_B
+0x30440a tpu_b_dssr                                                        renders    0 manual CIER_B / TPU3_B
+0x30440c tpu_b_ticr                                                        renders    0 manual CFSR0_B
+0x30440e tpu_b_cier                                                        renders    0 manual CFSR1_B
+0x304410 tpu_b_cfsr0                                                       renders    0 manual CFSR2_B
+0x304412 tpu_b_cfsr1                                                       renders    0 manual CFSR3_B
+0x304414 tpu_b_cfsr2                                                       renders    0 manual HSQR0_B / TPU_B
+0x304416 tpu_b_cfsr3                                                       renders    0 manual HSQR1_B / TPU_B
+0x304418 tpu_b_hsqr0                                                       renders    0 manual HSRR0_B / TPU_B
+0x30441a tpu_b_hsqr1                                                       renders    0 manual HSRR1_B / TPU_B
+0x30441c tpu_b_hsrr0                                                       renders    0 manual CPR0_B / TPU_B
+0x30441e tpu_b_hsrr1                                                       renders    0 manual CPR1_B / TPU_B
+0x304420 tpu_b_cpr0                                                        renders    0 manual CISR_B / TPU_B
+0x304428 tpu_b_cpr1                                                        renders    0 manual TPUMCR2_B / TPU_B
+0x30442a tpu_b_cisr                                                        renders    0 manual TPUMCR3_B / TPU_B
+0x304500 tpu_b_ch0_param0                         tpub_ch0_params_t        renders   28 manual ISCR_B / TPU_B
+0x304510 TPUB_CH1_PARAM0                          word                     renders    3 manual TPU_B
+0x304520 TPUB_CH2_PARAM0                          word                     renders    4 manual TPU_B
+0x304530 TPUB_CH3_PARAM0                          word                     renders    2 manual TPU_B
+0x304540 TPUB_CH4_PARAM0                          word                     renders    2 manual TPU_B
+0x304550 TPUB_CH5_PARAM0                          word                     renders    2 manual TPU_B
+0x304560 TPUB_CH6_PARAM0                          word                     renders    2 manual TPU_B
+0x304570 TPUB_CH7_PARAM0                          word                     renders    2 manual TPU_B
+0x304580 TPUB_CH8_PARAM0                          word                     renders    2 manual TPU_B
+0x304590 TPUB_CH9_PARAM0                          word                     renders    5 manual TPU_B
+0x3045a0 TPUB_CH10_PARAM0                         word                     renders    2 manual TPU_B
+0x3045b0 TPUB_CH11_PARAM0                         tpub_ch11_params_t       renders    5 manual TPU_B
+0x3045c0 TPUB_CH12_PARAM0                         word                     renders    2 manual TPU_B
+0x3045d0 TPUB_CH13_PARAM0                         word                     renders    2 manual TPU_B
+0x3045e0 TPUB_CH14_PARAM0                         tpub_ch14_params_t       renders    9 manual TPU_B
+0x3045e2 TPUB_CH14_PARAM0.PARAM1                                           renders    0 manual -
+0x3045e6 TPUB_CH14_PARAM0.PARAM3                                           renders    0 manual -
+0x3045e8 TPUB_CH14_PARAM4                                                  renders    0 manual -
+0x3045f0 TPUB_CH15_PARAM0                         word                     renders    2 manual TPU_B
+0x304800 QADC64A_MCR                              qadc64_regs_t            renders   17 manual QADC64MCR_A
+0x304802 QADC64A_TEST                                                      renders    0 manual -
+0x304804 QADC64A_INTC                                                      renders    0 manual QADC64INT_A
+0x304806 QADC64A_PORTQA                                                    renders    0 manual PORTQB_A
+0x304807 QADC64A_PORTQB                                                    renders    0 manual -
+0x304808 QADC64A_DDRQA                                                     renders    0 manual DDRQB_A
+0x304809 QADC64A_DDRQB                                                     renders    0 manual -
+0x30480a QADC64A_CCW                                                       renders    0 manual QACR0_A
+0x30480c QADC64A_RJURR                                                     renders    0 manual QACR1_A
+0x30480e QADC64A_LJSRR                                                     renders    0 manual QACR2_A
+0x304810 QADC64A_LJURR                                                     renders    0 manual QASR0_A
+0x304812 QADC64A_SR                               byte                     renders    0 manual QASR1_A
+0x304814 QADC64A_CCW_TBL                          byte                     renders    0 manual QASR1_A
+0x304a00 QADC64A_RESULT0                          byte                     renders    0 manual CCW_A
+0x304a02 QADC64A_RESULT1                          byte                     renders    0 manual -
+0x304a04 QADC64A_RESULT2                          byte                     renders    0 manual -
+0x304a06 QADC64A_RESULT3                          byte                     renders    0 manual -
+0x304a08 QADC64A_RESULT4                          byte                     renders    0 manual -
+0x304a0a QADC64A_RESULT5                          byte                     renders    0 manual -
+0x304a0c QADC64A_RESULT6                          byte                     renders    0 manual -
+0x304a0e QADC64A_RESULT7                          byte                     renders    0 manual -
+0x304a10 QADC64A_RESULT8                          byte                     renders    0 manual -
+0x304a12 QADC64A_RESULT9                          byte                     renders    0 manual -
+0x304a14 QADC64A_RESULT10                         byte                     renders    0 manual -
+0x304a16 QADC64A_RESULT11                         byte                     renders    0 manual -
+0x304c00 QADC64B_MCR                              qadc64b_regs_t           renders   18 manual QADC64MCR_B
+0x304c02 QADC64B_TEST                                                      renders    0 manual QADC64MCR_B
+0x304c04 QADC64B_INTC                                                      renders    0 manual QADC64INT_B
+0x304c06 QADC64B_PORTQA                                                    renders    0 manual PORTQB_B
+0x304c07 QADC64B_PORTQB                                                    renders    0 manual -
+0x304c08 QADC64B_DDRQA                                                     renders    0 manual DDRQB_B
+0x304c09 QADC64B_DDRQB                                                     renders    0 manual -
+0x304c0a QADC64B_CCW                                                       renders    0 manual QACR0_B
+0x304c0c QADC64B_RJURR                                                     renders    0 manual QACR1_B
+0x304c0e QADC64B_LJSRR                                                     renders    0 manual QACR2_B
+0x304c10 QADC64B_LJURR                                                     renders    0 manual QASR0_B
+0x304c12 QADC64B_SR                               byte                     renders    0 manual QASR1_B
+0x304c14 QADC64B_CCW_TBL                          word                     renders    0 manual QASR1_B
+0x304e00 QADC64B_RESULT0                          byte                     renders    0 manual CCW_B
+0x304e02 QADC64B_RESULT1                          byte                     renders    0 manual -
+0x304e04 QADC64B_RESULT2                          byte                     renders    0 manual -
+0x304e06 QADC64B_RESULT3                          byte                     renders    0 manual -
+0x305000 QSMCM_MCR                                byte                     renders    0 manual QSMCMMCR
+0x305002 QSMCM_TEST                               byte                     renders    0 manual QTEST
+0x305004 qsmcm_sccr0                              byte                     renders    3 manual QDSCI_IL
+0x305006 QSMCM_IDSPI                              byte                     renders    0 manual QSPI_IL
+0x305007 QSMCM_IDSPI+1                            byte                     renders    0 manual -
+0x305008 qsmcm_sccr1                              qsmcm_sci1_regs_t        renders   68 manual SCC1R0
+0x30500a qsmcm_scsr                                                        renders    0 manual SCC1R1
+0x30500c qsmcm_scdr                                                        renders    0 manual SC1SR
+0x30500e qsmcm_qspi_portqs                                                 renders    0 manual SC1DR
+0x305010 QSMCM_SPCR0                              byte                     renders    0 manual SC1DR
+0x305012 QSMCM_SPCR1                              byte                     renders    0 manual PORTQS
+0x305014 QSMCM_SPCR2                              byte                     renders    0 manual PORTQS
+0x305015 qsmcm_portqs_low                         byte                     renders    9 manual -
+0x305016 QSMCM_PQSPAR                             byte                     renders    2 manual DDRQST
+0x305017 QSMCM_DDRQS                              byte                     renders    2 manual -
+0x305018 qsmcm_qspi                               qsmcm_qspi_ctrl_t        renders   91 manual SPCR0
+0x30501a _qspi_spcr1                                                       renders    0 manual SPCR1
+0x30501c eeprom_status_register                                            renders    0 manual SPCR2
+0x305020 QSMCM_SCC2R0                             byte                     renders    0 manual SCC2R0 / SCI2
+0x305022 QSMCM_SCC2R1                             byte                     renders    0 manual SCC2R1 / SCI2
+0x305024 QSMCM_SC2SR                              byte                     renders    0 manual SC2SR / SCI2
+0x305026 QSMCM_SC2DR                              byte                     renders    0 manual SC2DR / SCI2
+0x305030 QSMCM_COMD0                              byte                     renders    0 manual -
+0x305040 QSMCM_RECRAM0                            byte                     renders    0 manual -
+0x305060 QSMCM_TRANRAM0                           byte                     renders    0 manual -
+0x305140 qsmcm_recram                             qsmcm_recram_t           renders   12 manual RECRAM / RAM
+0x305142 qsmcm_recram.RX1                                                  renders    0 manual -
+0x305144 qsmcm_recram.RX2                                                  renders    0 manual -
+0x305148 qsmcm_recram.RX4                                                  renders    0 manual -
+0x30514a qsmcm_recram.RX5                                                  renders    0 manual -
+0x305180 qsmcm_tranram                            qsmcm_txram_t            renders   30 manual TRAN / RAM
+0x305182 eeprom_address_register                                           renders    0 manual -
+0x305184 eeprom_data_register                                              renders    0 manual -
+0x305186 eeprom_command_register.TX3                                       renders    0 manual -
+0x305188 eeprom_command_register.TX4                                       renders    0 manual -
+0x30518a eeprom_command_register.TX5                                       renders    0 manual -
+0x3051c0 qsmcm_comdram_0                          byte                     renders    8 manual COMD / RAM
+0x3051c1 qsmcm_comdram_1                          byte                     renders    8 manual -
+0x3051c2 qsmcm_comdram_2                          byte                     renders    5 manual -
+0x3051c3 qsmcm_comdram_3                          byte                     renders    4 manual -
+0x3051c4 qsmcm_comdram_4                          byte                     renders    3 manual -
+0x3051c5 qsmcm_comdram_5                          byte                     renders    1 manual -
+0x306000 mios_mpwmsm0                             mios_mpwmsm_t            renders   10 manual MPWMSMPERR
+0x306002 MIOS_MPWMSM0_PULR                                                 renders    0 manual MPWMSMPULR
+0x306004 MIOS_MPWMSM0_CNTR                                                 renders    0 manual MPWMSMCNTR
+0x306008 mios_mpwmsm1                             mios_mpwmsm_t            renders   10 manual MPWMSMPERR
+0x30600a MIOS_MPWMSM1_PULR                                                 renders    0 manual MPWMSMPULR
+0x30600c MIOS_MPWMSM1_CNTR                                                 renders    0 manual MPWMSMCNTR
+0x306010 mios_mpwmsm2                             mios_mpwmsm_t            renders    9 manual MPWMSMPERR
+0x306012 MIOS_MPWMSM2_PULR                                                 renders    0 manual MPWMSMPULR
+0x306014 MIOS_MPWMSM2_CNTR                                                 renders    0 manual MPWMSMCNTR
+0x306018 mios_mpwmsm3                             mios_mpwmsm_t            renders    9 manual MPWMSMPERR
+0x30601a MIOS_MPWMSM3_PULR                                                 renders    0 manual MPWMSMPULR
+0x30601c MIOS_MPWMSM3_CNTR                                                 renders    0 manual MPWMSMCNTR
+0x306030 mios_mmcsm_cnt                           mios_mmcsm_b_t           renders   30 manual MMCSMCNT
+0x306032 mios_mmcsm_ml                                                     renders    0 manual MMCSMML
+0x306036 mios_mmcsm_scrd                                                   renders    0 manual MMCSMSCR
+0x306058 mios_mdasm11                             mios_mdasm_t             renders    7 manual MDASMAR
+0x30605a MIOS_MDASM11_BR                                                   renders    0 manual MDASMBR
+0x30605e MIOS_MDASM11_SCRD                                                 renders    0 manual MDASMSCR
+0x306060 mios_mdasm12                             mios_mdasm_t             renders    7 manual MDASMAR
+0x306062 MIOS_MDASM12_BR                                                   renders    0 manual MDASMBR
+0x306066 MIOS_MDASM12_SCRD                                                 renders    0 manual MDASMSCR
+0x306068 mios_mdasm13                             mios_mdasm_t             renders    5 manual MDASMAR
+0x30606a MIOS_MDASM13_BR                                                   renders    0 manual MDASMBR
+0x30606e MIOS_MDASM13_SCRD                                                 renders    0 manual MDASMSCR
+0x306070 mios_mdasm14                             mios_mdasm_t             renders    5 manual MDASMAR
+0x306072 MIOS_MDASM14_BR                                                   renders    0 manual MDASMBR
+0x306076 MIOS_MDASM14_SCRD                                                 renders    0 manual MDASMSCR
+0x306078 mios_mdasm15                             mios_mdasm_t             renders    9 manual MDASMAR
+0x30607a MIOS_MDASM15_BR                                                   renders    0 manual MDASMBR
+0x306080 mios_mpwmsm16                            mios_mpwmsm_t            renders    9 manual MPWMSMPERR
+0x306088 mios_mpwmsm17                            mios_mpwmsm_t            renders    9 manual MPWMSMPERR
+0x306090 mios_mpwmsm18                            mios_mpwmsm_t            renders   11 manual MPWMSMPERR
+0x306098 mios_mpwmsm19                            mios_mpwmsm_t            renders   11 manual MPWMSMPERR
+0x3060b0 mios_mmcsm22                             mios_mmcsm_b_t           renders    3 manual MMCSMCNT
+0x3060d8 mios_mdasm27                             mios_mdasm_t             renders    9 manual MDASMAR
+0x3060de mios_dasm_ctrl                                                    renders    0 manual MDASMSCR
+0x3060e0 mios_mdasm28                             mios_mdasm_t             renders    5 manual MDASMAR
+0x3060e8 mios_mdasm29                             mios_mdasm_t             renders   14 manual MDASMAR
+0x3060f0 mios_mdasm30                             mios_mdasm_t             renders   31 manual MDASMAR
+0x3060f8 mios_mdasm31                             mios_mdasm_t             renders    3 manual MDASMAR
+0x306100 mios_mpiosm32                            mios_mpiosm_t            renders   27 manual MPIOSMDR
+0x306816 mios1_ext_816                            word                     renders    5 manual MCPSMSCR
+0x306c00 mios1_isr                                mios1_isr_t              renders    4 manual MIOS1SR0
+0x306c04 mios1_isr.EN                                                      renders    0 manual MIOS1ER0
+0x306c30 mios1_sched_ctrl                         word                     renders    2 manual MIOS1LVL0
+0x307080 toucan_a                                 toucan_module_registers_t renders   54 manual TCNMCR_A
+0x307100 toucan_a_message_buffers                 toucan_message_buffer_t[16] renders    1 manual -
+0x307400 TOUCAN_B_MCR                             byte                     renders    0 manual -
+0x307402 TOUCAN_B_TCR                             byte                     renders    0 manual -
+0x307404 TOUCAN_B_CANICR                          byte                     renders    0 manual -
+0x307406 TOUCAN_B_CANCTRL0                        byte                     renders    0 manual -
+0x307407 TOUCAN_B_CANCTRL1                        byte                     renders    0 manual -
+0x307420 TOUCAN_B_ESR                             byte                     renders    0 manual -
+0x307422 TOUCAN_B_IMASK                           byte                     renders    0 manual -
+0x307424 TOUCAN_B_IFLAG                           byte                     renders    0 manual -
+0x307f80 toucan_can_ext_ctrl                      word                     renders    0 manual UMCR
+0x303800 dual_port_tpu_ram_end                    byte                     renders    2 manual -

@@ -34,5 +34,50 @@ if os.path.exists(m.DEFAULTS["flash2"]):
         check(f"real block {block:04X}", real.get(block), expected)
     check("real Crank_Exit_Speed_Switch", m.ram_address(real[0x1254]) + 0x38, 0x3FD872)
 
+# CM550 (PR #53 round 90): cm550_lookupParameterIdAddress's three id ranges over 1806 entries
+for pid, expected in [(0x0000, 0), (0x002E, 46), (0x002F, None), (0x0FFF, None), (0x1000, 47), (0x1478, 1191),
+                      (0x1479, None), (0x7FFF, None), (0x8000, 1192), (0x8265, 1805), (0x8266, None)]:
+    check(f"cm550 index 0x{pid:04X}", m.cm550_table_index(pid), expected)
+rom = bytearray(m.CM550_TABLE + 8 * 1806)
+for pid, address in [(0x0001, 0x0100000C), (0x1003, 0x806AE2), (0x8008, 0x806DA2)]:
+    off = m.CM550_TABLE + 8 * m.cm550_table_index(pid)
+    rom[off:off + 8] = struct.pack(">II", address, address)
+check("cm550 synthetic table", m.parse_cm550_table(bytes(rom)), {0x0001: 0x0100000C, 0x1003: 0x806AE2, 0x8008: 0x806DA2})
+off = m.CM550_TABLE + 8 * m.cm550_table_index(0x1004)
+rom[off:off + 8] = struct.pack(">II", 0x80A2AA, 0x80A2AC)
+try:
+    m.parse_cm550_table(bytes(rom))
+    failures.append("cm550: an entry with two different addresses was accepted")
+except ValueError:
+    pass
+check("cm550 EEPROM mirror", m.cm550_ram_address(0x0100003A), 0x803B44)
+check("cm550 EEPROM past the committed part", m.cm550_ram_address(0x01000720), 0x80422A)
+check("cm550 freeze frame block (e2m 107F DGFUSITB)", m.cm550_ram_address(0x01000760), 0x80426A)
+check("cm550 EEPROM above 4 KB (the image is 0x148a bytes)", m.cm550_ram_address(0x01001000), 0x804B0A)
+check("cm550 last byte of the EEPROM image", m.cm550_ram_address(0x01001489), 0x804F93)
+check("cm550 past the EEPROM image", m.cm550_ram_address(0x0100148A), 0x0100148A)
+check("cm550 RAM passes through", m.cm550_ram_address(0x806AE2), 0x806AE2)
+check("cm550 ROM past the dump", m.cm550_region(0x611A0), "ROM")
+if os.path.exists(m.CM550_DEFAULTS["rom"]):
+    real = m.parse_cm550_table(open(m.CM550_DEFAULTS["rom"], "rb").read())
+    check("cm550 real entries", len(real), 723)
+    for pid, expected in [(0x000E, 0x80BCCE), (0x000F, 0x80654C), (0x001B, 0x80A38E), (0x1000, 0x0100008E),
+                          (0x1003, 0x806AE2), (0x1004, 0x80A2AA), (0x8008, 0x806DA2)]:
+        check(f"cm550 real 0x{pid:04X}", real.get(pid), expected)
+    # the committed table CSV must be what --write-table writes now (a rename at a table address needs a rewrite)
+    committed = os.path.join(m.CM550, "output", "parameter_id_lookup_table.csv")
+    if os.path.exists(m.CM550_DEFAULTS["e2m"]) and os.path.exists(committed):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            fresh = os.path.join(tmp, "table.csv")
+            m.write_cm550_table(fresh, real, m.load_globals(m.CM550_DEFAULTS["globals"]),
+                                m.load_structures(m.CM550_DEFAULTS["structures"]),
+                                list(m.parse_e2m_storage(m.CM550_DEFAULTS["e2m"])))
+            ours = open(fresh, newline="").read().replace("\r\n", "\n")
+            theirs = open(committed, newline="").read().replace("\r\n", "\n")
+            if ours != theirs:
+                failures.append("cm550: output/parameter_id_lookup_table.csv is stale - run "
+                                "e2m_block_addresses.py --firmware cm550 --write-table <it>")
+
 print("\n".join(failures) if failures else "ALL PASS")
 sys.exit(1 if failures else 0)

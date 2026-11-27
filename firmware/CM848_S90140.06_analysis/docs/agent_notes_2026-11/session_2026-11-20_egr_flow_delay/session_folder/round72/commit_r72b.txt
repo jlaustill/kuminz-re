@@ -1,0 +1,65 @@
+cm848+cm550: round 72 stage B1 - the PGN 61184 memory write service and its security key check are shared code: six twin functions share one name in both firmwares; the key and header tables are named in both
+
+Each pair below is the same function in CM848 and CM550 (both bodies were read in full; tables compared byte for byte
+in both ROMs):
+- writeJ1939DiagnosticMemory (CM848 0x50af58 cm848_writeJ1939DiagnosticMemory / CM550 0x2148a
+  cm550_memoryOperationDispatcher). Both have:
+  - the 1764 length cap and the 8 / header + data / + 10 key length checks;
+  - the region switch: 0 copied / 3 after the key / 4 -> 10 / 5 EEPROM with 7 / 0x1a / 3 / 0x0b and the mirror copy /
+    the other codes passed back.
+  Method versioning:
+  - a type 3 write without the key returns 0x1a in CM848 and 3 in CM550;
+  - CM848 also refuses (10) type 3 writes into 0x3fd481-0x40a046 while RAM refresh is on;
+  - CM550 has no Bank 2.
+- handleJ1939WriteMemoryService (0x50b408 / 0x217de cm550_memoryOperationFromMessageExtended): service 0x4b.
+  handleJ1939WriteMemoryLongLengthService (0x50b474 / 0x21826 cm550_FUN_00021826): service 0x4d, with a 4-byte length.
+  CM550's notes had called it an '8-byte message variant / for shorter messages'.
+- getJ1939MemoryServiceHeaderLength (0x50b610 / 0x21964 cm550_addressLookupFunction): the 14-byte table is
+  byte-identical (03 07 07 04 07 06 06 0b 0b 06 06 09 09 03).
+- validateSecurityKey (0x5573c cm848_processSecurityCodeConversion / 0x2fcdc sensorRangeValidation).
+  - It returns 0 when the key byte is 0xff, and 1 once the failure count reaches 0x11 (a lockout after 17 misses).
+  - Otherwise the key is unscrambled, its hour meter stamp checked and its 6 characters compared. A match clears the
+    count and returns 0; a miss adds one and returns 1.
+  - The firmware's own vocabulary is KEY_MISSING / KEY_REFUSED.
+- unscrambleSecurityKey (0x555cc cm848_copyDataBuffer - it is no copy / 0x2fbd8 cm550_FUN_0002fbd8).
+  - Its bits are routed by a mask, XOR-mixed and reordered by a byte order.
+  - Both tables are byte-identical in both ROMs.
+
+Prototypes and locals:
+- The CM550 writer:
+  - Its prototype is char (request, dword address, dword length). It read the address as a short 'operation_size'
+    plus a stack word, and called the length 'operation_flags'.
+  - Its jump-table switch now names its MEMORY_REGION_TYPE cases, and 'return 0' replaces 'return uVar4 & 0xffffff00'.
+  - The lookup gets the plain address.
+- Both handlers in both firmwares get an address and a length local, so both read writeJ1939DiagnosticMemory(request,
+  address, length).
+  - CM550's address was a 2-byte auStack_8 plus a word 'operation_size'. The writer's dword address merged them.
+  - Its rows name local_8, the name at apply time; the decompiler shows auStack_8.
+
+Tables:
+- j1939_memory_service_header_lengths: CM848 0x53a322 byte[14] / CM550 0x21956. Both lookups still read them from a
+  base 0x41 below: CM848 through j1939 input descriptor 10's reserved_5, CM550 through 0x21915. The rows document the
+  tables; the renders keep that form.
+- security_key_scramble_mask (0x5839a / 0x2fbc4) and security_key_byte_order (0x583a4 / 0x2fbce), byte[10] each.
+  CM848's XOR loop pointer starts one byte before the byte-order table, so it reads security_key_scramble_mask + 9;
+  the plate says so.
+
+CM550's other CSVs: the bare old names in comments and name columns use the shared names; history is kept. 5 function
+name mismatch warnings are gone. Docs:
+- README.md: the diagram's 4 boxes, and the table section, which now gives the CSV names and CM848's matching bytes.
+- firmware/docs/service_0x4b_analysis.md: a name map.
+- firmware/feature_comparison.csv: a j1939_memory_write_service row (shared code + the version differences), and
+  auth_security names the shared key functions.
+
+Proof (prove_r72b.py / prove_r72b_cm550.py): CM848 4 of 1968 functions differ after the renames: both handlers
+(writeJ1939DiagnosticMemory(request, address, length) - their locals named), unscrambleSecurityKey
+(security_key_scramble_mask[i]; the XOR loop pointer reads security_key_scramble_mask + 9) and
+mpc555_tickTransferTimeoutAndRuntimeCounter (one declaration reordered - nothing else). CM550 5 of 775 differ: the
+writer (its char (request, address, length) prototype - the jump-table switch names its MEMORY_REGION_TYPE cases and
+'return 0' replaces 'uVar4 & 0xffffff00'), both handlers (one dword address / length each), unscrambleSecurityKey (both
+tables named) and cm550_diagnosticServiceSecurityValidator (one declaration reordered); 21 MEMORY_REGION_TYPE member
+renders. Both verifies byte-identical; CM848's warnings are stage A's; CM550 lost 5 function name mismatch warnings and
+gained none. Headers regenerated for both (0 g++ errors), tests pass, lookup tables 0 sizing problems,
+audit_cal_suffixes.py CM848 HARD 0 / MISSING 210 and CM550 0 / 0 / 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

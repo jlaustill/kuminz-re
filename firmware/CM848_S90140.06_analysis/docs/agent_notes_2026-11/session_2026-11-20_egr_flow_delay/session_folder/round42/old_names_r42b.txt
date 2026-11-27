@@ -1,0 +1,9 @@
+engine_retarder_stage_1_weight
+engine_retarder_stage_2_weight
+engine_retarder_stage_3_weight
+engine_retarder_stage_4_weight
+engine_retarder_stage_5_weight
+engine_retarder_stage_6_weight
+engine_retarder_engaged_stage_count
+fault_status_array
+fault_status_word_array

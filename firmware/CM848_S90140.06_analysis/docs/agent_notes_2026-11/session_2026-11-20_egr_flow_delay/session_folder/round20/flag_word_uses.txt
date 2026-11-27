@@ -1,0 +1,308 @@
+word  0 0x3fd59c algorithm_enable_flags_0_cal [word] dump 0x9c12
+    & 0x0002 x1: AFC_Low_Boost_Derate_Enable
+    & 0x0100 x1: Collector_Enable
+    & 0x0400 x1: Alpha_LSG_Enable
+    & 0x0800 x1: Alpha_AFC_Enable
+    & 0x1000 x1: Alpha_Fuel_Rate_Enable
+    & 0x2000 x1: Alpha_On_Governor_Enable
+    & 0x8000 x1: Alpha_Turbo_Protection_Enable
+    OTHER cm848_calculateAirFuelControlFuelLimit: grid by a ramp while algorithm_enable_flags_0_cal bit 1 is set (was
+    OTHER calculateAlphaFuelRateResult: Called by calculateAlphaBase when bit 0x1000 of algorithm_enable_flags_0_cal (algorithm en
+    OTHER calculateAlphaOnGovernorResult: calculateAlphaBase when bit 0x2000 of algorithm_enable_flags_0_cal (algorithm enable flags
+    OTHER calculateAlphaLowSpeedGovernorResult: flag and returns 1. Called by calculateAlphaBase when bit 0x400 of algorithm_enable_flags_
+    OTHER calculateAlphaAirFuelControlResult: when bit 0x800 of algorithm_enable_flags_0_cal (algorithm enable flags word 0) is set; the
+    OTHER calculateAlphaLowAmbientAirPressureResult: algorithm_enable_flags_0_cal (algorithm enable flags word 0) is set; the result is stored 
+    OTHER ... 17 more
+word  1 0x3fd59e algorithm_enable_flags_1_cal [word] dump 0x1020
+    & 0x0001 x2: Alpha_User_Override_Enable
+    & 0x0002 x1: User_Override_Fueling_Enable
+    & 0x0004 x2: Test_Cell_Throttle_Switch_Override_Enable
+    & 0x0010 x2: Torque_Derate_Override_Enable
+    & 0x0020 x1: Altitude_Derate_Enable
+    & 0x1000 x1: LSG_Aggressive_Gain_Set_Enable
+    & 0x2000 x1: LSG_High_Gear_Gain_Set_Enable
+    & 0x4000 x1: LSG_Mid_Gear_Gain_Set_Enable
+    & 0x8000 x1: LSG_Jcomm_Gain_Set_Enable
+    OTHER calculateAlpha: and electronic_smart_power_tau = 0x4000 -> 5; mask 0x01 of algorithm_enable_flags_1_cal se
+    OTHER cm848_arbitrateRequestedFueling: calibrated fixed limit 13 while algorithm_enable_flags_1_cal bit 0x10 is set), takes the s
+    OTHER cm848_selectLowSpeedGovernorTsc1GainSet: algorithm_enable_flags_1_cal bit 0x8000: final gain state 4 and the TSC1 gain set; returns
+    OTHER cm848_calculateAltitudeDerateFuelLimit: /* Sets altitude_derate_fuel_limit (e2m ALTDERAT): while algorithm_enable_flags_1_cal bit 
+word  2 0x3fd5a0 algorithm_enable_flags_2_cal [word] dump 0x3e10
+    & 0x0001 x4: Engine_Protection_Shutdown_Enable
+    & 0x0010 x2: Engine_Protection_Enable
+    & 0x0020 x2: Engine_Protection_Restart_Enable
+    & 0x0040 x2: EB_Clutch_Enable
+    & 0x0800 x1: J1939_Monitor_Enable
+    & 0x1000 x2: J1939_Retarder_Shift_Assist_Enable
+    & 0x2000 x1: PTO_Throttle_Override_Enable
+    & 0x4000 x1: User_Commanded_Timing_Increment_Enable
+    OTHER cm848_calculateFourDimensionalInjectionTiming: injection_timing_increment_flags to 1 when algorithm_enable_flags_2_cal bit 0x4000 is set,
+    OTHER cm848_calculateFourDimensionalInjectionTiming: injection_timing_increment_flags to 1 when algorithm_enable_flags_2_cal bit 0x4000 is set,
+    OTHER cm848_selectPowerTakeOffOrUserFueling: algorithm_enable_flags_2_cal bit 0x2000 lets the throttle override - then
+    OTHER cm848_runFaultDerateScheduler: /* Fault derate scheduler: with the derate feature bit 0x10 of algorithm_enable_flags_2_ca
+    OTHER cm848_examineEngineProtectionBeforeCranking: are set (algorithm_enable_flags_2_cal, e2m 106B +6: 0x10 Engine_Protection_Enable, 0x1
+    OTHER cm848_examineEngineProtectionBeforeCranking: this calibration (15888 = 0x3e10 in algorithm_enable_flags_2_cal), so it does nothing here
+    OTHER ... 3 more
+word  3 0x3fd5a2 algorithm_enable_flags_3_cal [algorithm_enable_flags_3_t] dump 0x00d0
+    .cruise_control_enable x6
+    .cruise_save_set_speed_at_power_down_enable x1
+    .power_take_off_enable x5
+    .road_speed_governor_enable x2
+    .road_speed_governor_without_droops_below_top_gear x2
+    OTHER cm848_selectPowerTakeOffOrUserFueling: algorithm_enable_flags_3_cal bit 0x10 is set, power_take_off_governor_fuel_demand with
+    OTHER cm848_buildPgn65264PowerTakeOffInformationMessage: power_take_off_requested_engine_speed (byte-swapped) when algorithm_enable_flags_3_cal bit
+    OTHER cm848_saveCruiseSetSpeedForPowerDown: cruise_speed_command, or 0 while algorithm_enable_flags_3_cal bit 0x8000 is clear (was
+    OTHER cm848_calculateRoadSpeedGovernorFueling: the RSG droop gains / offsets (0x1700 = no limit while algorithm_enable_flags_3_cal bit 0x
+    OTHER cm848_calculateRoadSpeedGovernorFueling: (5888 = no limit while algorithm_enable_flags_3_cal bit 0x80 is clear, fault 29 (P0500 veh
+word  4 0x3fd5a4 algorithm_enable_flags_4_cal [algorithm_enable_flags_4_t] dump 0x0000
+    .user_commanded_fueling_enable x1
+    .user_commanded_timing_enable x1
+    OTHER cm848_calculateFourDimensionalInjectionTiming: user_commanded_injection_timing_cal while algorithm_enable_flags_4_cal bit 8
+    OTHER cm848_calculateFourDimensionalInjectionTiming: algorithm_enable_flags_4_cal bit 8 is set (injection_timing_intermediate_source_code is 0 
+word  5 0x3fd5a6 algorithm_enable_flags_5_cal [word] dump 0x0000
+    & 0x0001 x1: T_CBL_EGR_Frac_User_Override
+    & 0x0002 x1: T_CBL_Fuel_User_Override
+    & 0x0004 x1: T_CBL_MCF_User_Override
+    & 0x0008 x1: T_CBL_SOI_Increment_Enable
+    & 0x0010 x1: T_CBL_SOI_User_Override
+    & 0x0020 x1: T_CBR_Alpha_User_Override
+    & 0x0040 x1: T_CBR_Chi_Selective_Override
+    & 0x0080 x1: T_CBR_Chi_User_Override
+    & 0x0100 x1: T_CBR_EGR_Off_User_Override
+    & 0x0200 x1: T_CBR_Fuel_Ref_User_Override
+    & 0x0400 x1: T_CBR_Gross_Fuel_User_Override
+    & 0x0800 x1: T_OFC_Equiv_Ratio_User_Override
+    & 0x1000 x1: T_OFC_Fuel_Limit_User_Override
+    & 0x2000 x1: T_TPE_Exhaust_Press_Est_Enable
+    & 0x4000 x2: T_Charge_Tmptr_Estimate_Enable
+    & 0x8000 x1: T_Charge_Press_Estimate_Enable
+    OTHER cm848_estimateChargePressure: charge_pressure_estimate_state) is 0x80 while algorithm_enable_flags_5_cal bit 0x8000 is c
+    OTHER cm848_applyCombustionTimingLimits: algorithm_enable_flags_5_cal bit 3 (8) is set; injection_timing_user_increment_active_flag
+    OTHER cm848_selectCombustionFuelCommand: calibrated override value (0x405236) when algorithm_enable_flags_5_cal bit 1 (2) is set. I
+    OTHER cm848_selectMainBaseTimingOverride: injection_timing_main_base_override_value when algorithm_enable_flags_5_cal bit 4 (16) is 
+    OTHER cm848_selectMassChargeFlowCommand: flow reference, or the calibrated override value (0x405238) when algorithm_enable_flags_5_
+    OTHER cm848_selectEgrFractionCommand: when algorithm_enable_flags_5_cal bit 0 (1) is set. Its only reader is
+    OTHER ... 5 more
+word  6 0x3fd5a8 algorithm_enable_flags_6_cal [word] dump 0x801f
+    & 0x0001 x1: T_Turbo_Speed_Estimation_Enable
+    & 0x0002 x1: Low_Fuelpr_Derate_Enable
+    & 0x0004 x10: RE_Trans_Enable
+    & 0x0008 x9: RE_2Lock_Enable
+    & 0x0010 x2: Alt_Not_Brake_Switch_Enable
+    & 0x0020 x1: Enhanced_Diagnostics_Enable
+    & 0x8000 x1: Cruise_Brake_Enable
+    OTHER cm848_checkPressureSensorAgreement: pressure_sensor_check_delay_time while algorithm_enable_flags_6_cal bit 0x20 is set. It co
+    OTHER cm848_updateTransmissionControlState: (algorithm_enable_flags_6_cal bit 2) it updates the inputs, and in normal operation the ti
+    OTHER cm848_runTransmissionControlWhenEnabled: (algorithm_enable_flags_6_cal bit 2) and transmission_normal_operation_flag is set (was
+    OTHER cm848_deriveSecondBrakeSwitchSignal: only while algorithm_enable_flags_6_cal mask 0x10 and cruise_control_switches_learned_flag
+    OTHER cm848_monitorBrakeSwitchPairAgreement: hardware line, or switch 2 without a hardware line unless algorithm_enable_flags_6_cal mas
+    OTHER cm848_limitFuelQuantityOnRailPressureShortfall: algorithm_enable_flags_6_cal): once final_fueling is above the rpm table limit
+    OTHER ... 2 more
+word 12 0x3fd5b4 algorithm_enable_flags_12_cal [algorithm_enable_flags_12_t] dump 0x2e06
+    .accelerator_interlock_enable x2
+    .air_fuel_control_override_enable x1
+    .electronic_smart_power_enable x1
+    .low_speed_governor_droop_enable x2
+    .obd_fault_handler_enable x13
+    .oil_change_monitor_enable x1
+    .power_take_off_brake_override_enable x4
+    .power_take_off_clutch_override_enable x2
+    .vehicle_speed_sensor_signal_loss_enable x2
+    .vehicle_speed_sensor_zero_under_load_enable x2
+    .water_in_fuel_enable x2
+    OTHER calculateAlpha: algorithm_enable_flags_12_cal (ESP enable) is set. Caller main_loop. Shared name with CM55
+    OTHER cm848_calculateThrottle100Fuelings: algorithm_enable_flags_12_cal (ESP enable) is set. Caller cm848_periodicTaskSet_controlLoo
+    OTHER cm848_monitorWaterInFuel: /* Water-in-fuel monitor (fault 56, P2269): while algorithm_enable_flags_12_cal bit 2 is s
+    OTHER cm848_detectVehicleSpeedSensorSignalLoss: 0 set / monitor_battery_voltage_error_latch bit 0 clear / algorithm_enable_flags_12_cal bi
+    OTHER cm848_detectVehicleSpeedSensorZeroUnderLoad: / algorithm_enable_flags_12_cal bit 0x200 is set (set in this calibration: EEPROM 0x132 =
+    OTHER cm848_clearHealedVehicleSpeedSensorFault: (algorithm_enable_flags_12_cal bits 0x200 and 0x100 clear) or the sensor reads non-zero wi
+word 13 0x3fd5b6 algorithm_enable_flags_13_cal [word] dump 0x0024
+    & 0x0001 x3: EB_Switch_Level_Override
+    & 0x0004 x2: Net_Torque_Derate_Enable
+    & 0x0020 x1: Fuel_Press_Idle_Diag_Enable
+    OTHER cm848_calculateNetTorqueFuelLimit: /* Sets net_torque_fuel_limit (e2m NETTORQ for its code 59): while algorithm_enable_flags_
+    OTHER cm848_applyNetTorqueFuelLimit: it is lower and algorithm_enable_flags_13_cal bit 2 is set (was cm848_trackFuelDemandMinim
+    OTHER cm848_calculateEngineRetarderSelectionPercent: algorithm_enable_flags_13_cal bit 0 is set; 100 while
+    OTHER cm848_processJ1939EngineRetarderSelection: when algorithm_enable_flags_13_cal bit 0 is set (0x0024 in this calibration = off) (was
+    OTHER cm848_runFuelPressureSensorPlausibilityMonitor: cm848_periodicTaskGroup26_calibration8: when bit 5 of algorithm_enable_flags_13_cal is set
+word 18 0x3fd5c0 algorithm_enable_flags_18_cal [algorithm_enable_flags_18_t] dump 0x0008
+    .engine_retarder_service_brake_activate_enable x1
+    .executive_timing_enable x3
+    .high_speed_governor_gain_scheduling_enable x1
+    .high_speed_governor_gear_ratio_gain_enable x1
+    .programmable_power_enable x9
+    .remote_throttle_enable x4
+    .reserved_bit_13 x1
+    .reserved_bit_3 x1
+    OTHER selectHighSpeedGovernorGainSet: (code 16) when algorithm_enable_flags_18_cal bit 0 is clear; otherwise a transient set (co
+    OTHER cm848_initializeJ1939ReferenceEngineFuelingAndTorque: while the algorithm flag programmable_power_enable (algorithm_enable_flags_18_cal) is 0 it
+    OTHER cm848_buildPgn61443ElectronicEngineController2Message: at current speed / byte 4 remote accelerator position (0xFF unless algorithm_enable_flags_
+    OTHER cm848_loadHighSpeedGovernorWorkingGainSet: /* With algorithm_enable_flags_18_cal bit 0x100 set and
+    OTHER cm848_updateDutyCycleMonitorLoadHistogram: algorithm_enable_flags_18_cal), one sample per call of cm848_periodicTaskSet_outputs2 (1 c
+word 19 0x3fd5c2 algorithm_enable_flags_19_cal [word] dump 0x8488
+    & 0x0008 x1: CWG_Monitor_Enable
+    & 0x0020 x1: Alpha_Altitude_Derate_Override_Enable
+    & 0x0080 x1: T_TPE_COT_Estimation_Enable
+    & 0x0200 x1: T_EMO_Condensation_AECD_Enable
+    & 0x2000 x1: T_VGT_Pneumatic_Control_Enable
+    OTHER cm848_calculateAlphaAltitudeDerateLatch: Altitude_Derate_Alpha), else 0. With bit 0x20 of algorithm_enable_flags_19_cal clear it cl
+    OTHER calculateAlpha: alpha_altitude_derate_timer is nonzero while mask 0x20 of algorithm_enable_flags_19_cal is
+    OTHER cm848_selectCompressorOutletTemperature: disabled (bit 0x80 of algorithm_enable_flags_19_cal clear) or both source states are 2, ot
+    OTHER cm848_updateEgrCoolerFoulingFaultCounter: 0 while bit 0x2000 of algorithm_enable_flags_19_cal is clear or
+    OTHER cm848_updateCondensationProtection: algorithm_enable_flags_19_cal bit 0x200 and engine_is_active_flag; scales the four condens
+    OTHER cm848_monitorWastegateBoostPressure: algorithm_enable_flags_19_cal mask 0x8, monitor_enabling_conditions_met mask 0x1000000 and
+word 20 0x3fd5c4 algorithm_enable_flags_20_cal [word] dump 0x0100
+    & 0x0100 x2: T_EMO_Air_Handling_AECD_Enable
+    & 0x0200 x1: T_EMO_Extreme_Amb_AECD_Enable
+    & 0x0400 x1: T_EMO_White_Smoke_AECD_Enable
+    & 0x0800 x1: T_EMO_Extended_Idle_AECD_Enable
+    & 0x1000 x1: T_EMO_Engine_Start_AECD_Enable
+    & 0x4000 x2: T_INM_ICT_Lead_Enable
+    & 0x8000 x2: T_INM_EGRT_Lead_Enable
+    OTHER cm848_filterAndSelectIntakeManifoldTemperature: algorithm_enable_flags_20_cal is clear), runs
+    OTHER cm848_filterAndSelectIntakeManifoldTemperature: status 0, bypass cal 0 and mask 0x4000 of algorithm_enable_flags_20_cal set); otherwise
+    OTHER cm848_updateAirHandlingSystemProtection: /* The e2m EMO air handling system protection AECD (blocks 1990-1997; algorithm_enable_fla
+    OTHER cm848_updateEngineStartWarmupProtection: engine_start_warmup_protection_active_flag is 1 while algorithm_enable_flags_20_cal bit 0x
+    OTHER cm848_updateExtendedIdleProtection: algorithm_enable_flags_20_cal bit 0x800 is set, engine_is_active_flag is 1 and
+    OTHER cm848_updateExtremeAmbientOverheatProtection: algorithm_enable_flags_20_cal bit 0x200 it makes extreme_ambient_overheat_protection_activ
+    OTHER ... 2 more
+word 21 0x3fd5c6 algorithm_enable_flags_21_cal [word] dump 0x0008
+    & 0x0008 x1: Trbo_Spd_Limiter_Enable
+    & 0x0010 x1: T_Charge_Press_IR_Enable
+    & 0x0040 x1: T_EMO_Gen_Protect_AECD_Enable
+    & 0x8000 x1: (no e2m record)
+    OTHER calculateAlpha: master_slave_override_enable_flag nonzero -> 4; bit 0x8000 of algorithm_enable_flags_21_ca
+    OTHER cm848_updateChargePressureInRangeFaultCount: algorithm_enable_flags_21_cal clear, or air_handling_compensation_and_diagnostic_bypass_ca
+    OTHER cm848_updateGeneralEngineProtection: /* The e2m EMO general engine protection AECD (blocks 1A41 / 1A42; algorithm_enable_flags_
+    OTHER cm848_updateTurbochargerSpeedLimiter: (algorithm_enable_flags_21_cal bit 8), the start coolant temperature, fault 29, park / neu
+word 25 0x3fd5ce algorithm_enable_flags_25_cal [word] dump 0x0000
+    & 0x0001 x1: EB_Rate_Limit_Defeat_Enable
+    & 0x0008 x1: J1939_Mux_Limphome_On_AD_Enable
+    & 0x8000 x1: Manual_Fan_Level_Override
+    OTHER cm848_processJ1939EngineFanRequestedSpeed: algorithm_enable_flags_25_cal bit 15 is set (0 in this calibration); the output has no rea
+    OTHER cm848_updateIdleSwitchesFromLocalInputs: /* Fallback used when the J1939 accelerator pedal message is lost: algorithm_enable_flags_
+word 27 0x3fd5d2 algorithm_enable_flags_27_cal [word] dump 0x0010
+    & 0x0004 x1: EB_Fuel_to_Brake_Delay_Enable
+    & 0x0008 x2: STCG_ASG_Droop_Select
+    & 0x0010 x1: Boost_In_Range_Enable
+    & 0x0800 x2: AT_AUTO_Anti_Theft_Enable
+    OTHER cm848_blendAllSpeedGovernorReferenceSpeeds: 'select droop source') when algorithm_enable_flags_27_cal bit 0x08 is set. It runs only wh
+    OTHER cm848_blendAllSpeedGovernorReferenceSpeeds: governor_tuning_set_default_blend_weight_cal when algorithm_enable_flags_27_cal mask 0x08 
+    OTHER cm848_updateVariableSpeedGovernorSelection: algorithm_enable_flags_27_cal bit 3 (0 here) + switch 31 invert
+    OTHER cm848_monitorBoostPressureSensorAndUnderboost: ms per phase) when algorithm_enable_flags_27_cal bit 0x10 is set (it is, 0x0010). While
+word 28 0x3fd5d4 algorithm_enable_flags_28_cal [word] dump 0x0000
+    & 0x0400 x3: J1939_Multiplex_Enable
+    OTHER cm848_processJ1939SwitchAndRequestInputs: /* J1939 input task (from cm848_phase_group_a_processing): when algorithm_enable_flags_28_
+    OTHER cm848_processJ1939AcceleratorInputs: algorithm_enable_flags_28_cal bit 10 is set runs the low idle switch (input 6) / idle swit
+word 29 0x3fd5d6 algorithm_enable_flags_29_cal [word] dump 0x0000
+    & 0x0001 x1: SS_Ambient_Adv_Enable
+    & 0x0002 x1: SS_Ambient_Derate_Enable
+    & 0x0020 x1: Trip_Reset_Enable
+    & 0x0040 x1: Service_Component_Reset_Enable
+    & 0x0100 x2: DM13_Enable
+    & 0x0200 x1: EPF_Shutdown_Override_Enable
+    & 0x0400 x2: Throttle_Diagnostic_Switch_Enable
+    & 0x0800 x1: Throttle_Related_Error_Handler_Enable
+    & 0x1000 x1: (no e2m record)
+    OTHER cm848_processJ1939Dm13StopStartBroadcast: /* J1939 DM13 (PGN 57088) handler - needs DM13EN (algorithm_enable_flags_29_cal bit 8 - 0 
+    OTHER cm848_j1939HandlePgn56832Reset: sets feature-enable and ascii-detect flags gated by algorithm_enable_flags_29_cal - regist
+    OTHER cm848_buildPgn65269AmbientConditionsMessage: algorithm_enable_flags_29_cal bits 0 and 1) / the rest not available (was
+    OTHER cm848_buildPgn65263EngineFluidLevelPressure1Message: 4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless algorithm_enable_flags
+    OTHER cm848_checkAcceleratorPedalSensorFaults: /* accelerator_pedal_sensor_fault_hold_flag = 1 when algorithm_enable_flags_29_cal bit 11 
+    OTHER cm848_updateSwitch31FromAcceleratorPedal: /* Key on (switch 0) + engine stopped (engine_state 1) + algorithm_enable_flags_29_cal bit
+    OTHER ... 1 more
+word 31 0x3fd5da algorithm_enable_flags_31_cal [word] dump 0x0001
+    & 0x0001 x2: Hybrid_Governor_Enable
+    OTHER cm848_calculateFuelLimitByRpmAndDemand: /* In the variable speed governor (engine_operating_mode 7) while algorithm_enable_flags_3
+word 32 0x3fd5dc algorithm_enable_flags_32_cal [word] dump 0x0007
+    & 0x0001 x2: IAH_Control_Enable
+    & 0x0002 x1: EOI_Limit_Algorithm_Enable
+    & 0x0004 x1: (no e2m record)
+    & 0x0010 x13: IAH_24V_Enable
+    OTHER cm848_initIntakeAirHeaterControl: algorithm_enable_flags_32_cal bit 4 is clear) and zeroes its state and counters (was
+    OTHER cm848_updateIntakeAirHeaterControl: /* grid heater control top level gated by algorithm_enable_flags_32_cal bit 0 - advances c
+    OTHER cm848_updateIntakeAirHeaterAmbientTemperature: /* Periodic if algorithm_enable_flags_32_cal bit 0: captures the start temperature once / 
+word 40 0x3fd5ec algorithm_enable_flags_40_cal [word] dump 0x27ef
+    & 0x0001 x5: EVR_Enable
+    & 0x0002 x1: CT_Derate_Enable
+    & 0x0004 x2: OPG_Enable
+    & 0x0008 x2: AC_Control_Enable
+    & 0x0020 x1: Fuel_Lvl_Process_Enable
+    & 0x0040 x5: J1850_Communication_Enable
+    & 0x0080 x1: Ambient_Air_Pressure_Monitor_Enable
+    & 0x0100 x1: Misfire_Timing_Limit_Enable
+    & 0x0200 x1: PTO_MUX_Enable
+    & 0x0400 x4: PTO_Park_Neutral_Enable
+    & 0x0800 x1: DDT_Is_Unmanaged_Torque_Enable
+    & 0x1000 x2: Torque_Mgmt_Enable
+    & 0x2000 x1: Trip_Info_Enable
+    & 0x4000 x1: (no e2m record)
+    & 0x8000 x2: (no e2m record)
+    OTHER cm848_calculateChargingVoltageTarget: /* Calculates the alternator charging voltage target when algorithm_enable_flags_40_cal bi
+    OTHER cm848_calculateChargingVoltageError: /* Charging regulator error: when algorithm_enable_flags_40_cal bit 0 is set, saves the pr
+    OTHER cm848_updateAlternatorFieldRegulatorState: /* Steps the 4-state charging (alternator field) regulator when algorithm_enable_flags_40_
+    OTHER cm848_calculateAlternatorFieldDutyByRegulatorState: algorithm_enable_flags_40_cal bit 0 is set and writes alternator_field_duty_target (25600 
+    OTHER cm848_applyAlternatorFieldDuty: algorithm_enable_flags_40_cal bit 0x1 is set: alternator_field_duty_target with overrides 
+    OTHER cm848_checkPciMessageTimeouts: /* J1850 PCI message-timeout monitor (not J1939): gated on algorithm_enable_flags_40_cal b
+    OTHER ... 10 more
+word 41 0x3fd5ee algorithm_enable_flags_41_cal [algorithm_enable_flags_41_t] dump 0x7ca6
+    .brake_switch_diagnostic_enable x1
+    .coolant_temperature_in_range_monitor_enable x1
+    .electronic_voltage_regulator_pid_enable x1
+    .engine_retarder_extended_idle_enable x3
+    .fuel_level_rationality_diagnostic_enable x1
+    .fuel_temperature_in_range_monitor_enable x1
+    .intake_air_heater_monitor_enable x4
+    .misfire_monitor_enable x1
+    .reserved_bit_11 x2
+    .reserved_bit_12 x1
+    .reserved_bit_13 x1
+    .thermostat_system_monitor_enable x2
+    .turbocharger_monitor_enable x1
+    OTHER cm848_calculateThrottle100Fuelings: algorithm_enable_flags_41_cal (reserved_bit_12) is set, the first two are raised to at lea
+    OTHER cm848_calculateJ1939ReferenceEngineFueling: algorithm_enable_flags_41_cal is set (guessed e2m Torque_Normalization_Enable; set in this
+    OTHER cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings: torque normalization (algorithm_enable_flags_41_cal bit 11) is off, otherwise that maximum
+    OTHER cm848_calculateAlternatorFieldDutyByRegulatorState: alternator_field_duty_slow_average. When algorithm_enable_flags_41_cal mask 0x20 is set (i
+    OTHER cm848_calculateAlternatorFieldDutyByPid: /* Charging-voltage PID loop, run only when algorithm_enable_flags_41_cal mask 0x20 is set
+    OTHER cm848_calculateEngineRetarderSelectionPercent: low_speed_governor_extended_idle_active_flag is set and algorithm_enable_flags_41_cal bit 
+    OTHER ... 7 more
+word 42 0x3fd5f0 algorithm_enable_flags_42_cal [word] dump 0x67be
+    & 0x0001 x1: Misfire_Relative_Enable
+    & 0x0002 x1: Actual_Sensor_Values_Enable
+    & 0x0004 x1: HPCR_Fuelpr_Crank_Mode_Enable
+    & 0x0008 x1: FSS_Derate_Cold_Increment_Enable
+    & 0x0010 x1: HPSV_Test_Enable
+    & 0x0020 x1: TC_Stall_Enable
+    & 0x0040 x2: J1939_Lost_TSC_No_Broadcast_Enable
+    & 0x0080 x1: Altitude_Derate_Cold_Increment_Enable
+    & 0x0100 x1: Hybrid_Governor_Cold_Increment_Enable
+    & 0x0200 x1: Torque_Mgmt_Cold_Increment_Enable
+    & 0x1000 x2: (no e2m record)
+    & 0x2000 x1: HPCR_Pressure_Too_High_Monitor_Enable
+    & 0x4000 x2: HPCR_Cusum_Monitor_Enable
+    & 0x8000 x2: HPCR_Cusum_Leak_Monitor_Enable
+    OTHER cm848_selectSensorValuesInUse: algorithm_enable_flags_42_cal bit 1 set each one is replaced by its low or high substitute
+    OTHER cm848_evaluateTorqueManagementRequired: algorithm_enable_flags_42_cal bit 0x1000, the three stage thresholds; type 1 uses the manu
+    OTHER cm848_calculateTorqueManagementFuelTableLimit: algorithm_enable_flags_42_cal bit 0x200 is set. (was cm848_calculateThermalLimitValue) */
+    OTHER cm848_runTorqueManagement: (algorithm_enable_flags_40_cal, algorithm_enable_flags_42_cal) is set, or transmission_typ
+    OTHER cm848_applyFuelLimitsForFuelPressureFaults: fuel limit when algorithm_enable_flags_42_cal bit 3 is set and requests logical output 54 
+    OTHER cm848_monitorFuelPressureTrackingError: /* Rail pressure tracking monitor, enabled by algorithm_enable_flags_42_cal bit 0x4000: ea
+    OTHER ... 3 more
+word 43 0x3fd5f2 algorithm_enable_flags_43_cal [word] dump 0x11dc
+    & 0x0001 x2: HB_Fault_Discrete_Feedback_Enable
+    & 0x0002 x1: EGR_Orifice_Temp_Rationality_Enable
+    & 0x0004 x1: TTSR_Monitor_Enable
+    & 0x0008 x2: TC_Rock_Cycle_Enable
+    & 0x0010 x5: Vac_Throttle_Cruise_Enable
+    & 0x0020 x1: Tcase_Trans_Low_Range_Enable
+    & 0x0040 x1: Chi_Cold_Increment_Enable
+    & 0x0080 x1: Density_Cold_Increment_Enable
+    & 0x0100 x1: Net_Torque_Fueling_Cold_Increment_Enable
+    & 0x1000 x1: CWG_LS_Pressure_Driver_Enable
+    OTHER cm848_calculateCombustionGrossFuel: fuel_demand_offset_correction when algorithm_enable_flags_43_cal bits 0x80 / 0x40 are set)
+    OTHER cm848_processEgrValveHBridgeFaults: both take bit 0 of switch_input_state_bits[2] when bit 0 of algorithm_enable_flags_43_cal 
+    OTHER cm848_processVariableGeometryTurbochargerHBridgeFaults: switch_input_state_bits[2] instead when bit 0 of algorithm_enable_flags_43_cal is set), ru
+    OTHER cm848_calculateParkNeutralExitEngineSpeedLimit: /* Engine speed limit source 15 for automatic transmissions (algorithm_enable_flags_43_cal
+    OTHER cm848_applyWastegateSolenoidDuty: calibration: TPU-B 7 with MDASM12 read-back), only while algorithm_enable_flags_43_cal bit
+    OTHER cm848_updateParkNeutralExitEngineSpeedLimitWindow: /* Park/neutral exit engine speed limit timing (algorithm_enable_flags_43_cal bit 3): whil
+    OTHER ... 3 more

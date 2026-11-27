@@ -1,0 +1,205 @@
+=== selectEngineSpeedLimit
+void selectEngineSpeedLimit(void)
+{
+  word wVar1;
+  word wVar2;
+  int iVar3;
+  ushort uVar4;
+  uint uVar5;
+  engine_speed_limit_reference_lower_bound_snapshot = engine_speed_limit_reference_lower_bound;
+  engine_speed_limit_reference_upper_bound_snapshot = engine_speed_limit_reference_upper_bound;
+  engine_speed_limit_arbitrated_snapshot = engine_speed_limit_arbitrated;
+  engine_speed_limit_reference = engine_speed_limit_reference_stored;
+  engine_speed_limit_reference_clamp_state_code = 1;
+  if (engine_speed_limit_reference_stored < engine_speed_limit_reference_lower_bound) {
+    engine_speed_limit_reference = engine_speed_limit_reference_lower_bound;
+    engine_speed_limit_reference_clamp_state_code = 2;
+  }
+  else if (engine_speed_limit_reference_upper_bound < engine_speed_limit_reference_stored) {
+    engine_speed_limit_reference = engine_speed_limit_reference_upper_bound;
+    engine_speed_limit_reference_clamp_state_code = 3;
+  }
+  engine_speed_limit_reference_lower_bound = 0;
+  engine_speed_limit_reference_upper_bound = engine_speed_limit_default_cal;
+  if (engine_speed_limit_droop_no_load_offset_enable_flag == 1) {
+    engine_speed_limit_droop_no_load_speed =
+         engine_speed_limit_droop_no_load_offset + engine_speed_limit_reference;
+  }
+  if (turbocharger_speed_limiter_active_flag != 0) {
+    engine_speed_limit_reference_lower_bound = 0;
+    engine_speed_limit_droop_active_flag = 0;
+    engine_speed_limit_arbitration.applied_speed_limit = engine_speed_limit_source_16;
+    engine_speed_limit_arbitration.limiting_source_number = 0x10;
+    engine_speed_limit_limiting_source_number_snapshot = 0x10;
+    return;
+  }
+  if (j1939_powertrain_control_state.high_idle_override_active_flag == 1) {
+    engine_speed_limit_arbitration.limiting_source_number = 8;
+    engine_speed_limit_arbitration.applied_speed_limit = j1939_high_idle_override_speed;
+    engine_speed_limit_droop_active_flag = 0;
+    engine_speed_limit_limiting_source_number_snapshot = 8;
+    engine_speed_limit_reference_upper_bound = engine_speed_limit_default_cal;
+    engine_speed_limit_reference_lower_bound = 0;
+    engine_speed_limit_arbitrated_snapshot = engine_speed_limit_arbitrated;
+    return;
+  }
+  if (engine_speed_limit_fault_derate < engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_fault_derate;
+    engine_speed_limit_arbitration.limiting_source_number = 5;
+  }
+  if (engine_speed_limit_reference < engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_reference;
+    engine_speed_limit_arbitration.limiting_source_number = 6;
+  }
+  if (engine_speed_limit_pedal_fault_mode < engine_speed_limit_arbitration.lowest_source_speed_limit
+     ) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_pedal_fault_mode;
+    engine_speed_limit_arbitration.limiting_source_number = 0xe;
+  }
+  if ((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) &&
+     (j1939_powertrain_control_state.tsc1_speed_limit <=
+      engine_speed_limit_arbitration.lowest_source_speed_limit)) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit =
+         j1939_powertrain_control_state.tsc1_speed_limit;
+    engine_speed_limit_arbitration.limiting_source_number = 9;
+  }
+  if (engine_speed_limit_source_4 <= engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_source_4;
+    engine_speed_limit_arbitration.limiting_source_number = 4;
+  }
+  if ((engine_speed_limit_source_2 <= engine_speed_limit_arbitration.lowest_source_speed_limit) &&
+     ((engine_speed_limit_source_2_mode_cal == 0 || (engine_speed_limit_source_2_mode_cal == 1)))) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_source_2;
+    engine_speed_limit_arbitration.limiting_source_number = 2;
+  }
+  if ((engine_speed_limit_source_2 <= engine_speed_limit_droop_cap) &&
+     ((engine_speed_limit_source_2_mode_cal == 2 || (engine_speed_limit_source_2_mode_cal == 3)))) {
+    engine_speed_limit_droop_cap = engine_speed_limit_source_2;
+    engine_speed_limit_droop_cap_source_code = 2;
+  }
+  if (fuel_pressure_fault_engine_speed_limit_working <=
+      engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit =
+         fuel_pressure_fault_engine_speed_limit_working;
+    engine_speed_limit_arbitration.limiting_source_number = 7;
+  }
+  if (power_take_off_throttle_override_engine_speed_limit <=
+      engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit =
+         power_take_off_throttle_override_engine_speed_limit;
+    engine_speed_limit_arbitration.limiting_source_number = 0xb;
+  }
+  if (engine_speed_limit_source_10 <= engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_droop_slope = 0;
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_source_10;
+    engine_speed_limit_arbitration.limiting_source_number = 10;
+  }
+  if (engine_speed_limit_converter_slip <= engine_speed_limit_arbitration.lowest_source_speed_limit)
+  {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_converter_slip;
+    engine_speed_limit_arbitration.limiting_source_number = 0xd;
+  }
+  if (engine_speed_limit_rock_cycle <= engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_rock_cycle;
+    engine_speed_limit_arbitration.limiting_source_number = 0xf;
+  }
+  if (engine_speed_limit_maximum < engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_maximum;
+  }
+  if ((engine_speed_limit_arbitration.limiting_source_number == 9) ||
+     (engine_speed_limit_arbitration.limiting_source_number == 0x10)) {
+    uVar4 = low_speed_governor_reference.reference_speed + low_speed_governor_reference_offset;
+    if (uVar4 <= engine_speed_limit_arbitration.lowest_source_speed_limit) goto LAB_0002012c;
+    if (36000 < uVar4) {
+      uVar4 = 36000;
+    }
+  }
+  else {
+    uVar4 = engine_speed_limit_minimum;
+    if (engine_speed_limit_minimum <= engine_speed_limit_arbitration.lowest_source_speed_limit)
+    goto LAB_0002012c;
+  }
+  engine_speed_limit_arbitration.lowest_source_speed_limit = uVar4;
+LAB_0002012c:
+  if (engine_speed_limit_ramped < engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_ramped = engine_speed_limit_ramped + engine_speed_limit_ramp_up_step;
+  }
+  if (engine_speed_limit_arbitration.lowest_source_speed_limit < engine_speed_limit_ramped) {
+    engine_speed_limit_ramped = engine_speed_limit_arbitration.lowest_source_speed_limit;
+  }
+  if ((((engine_speed_limit_arbitration.limiting_source_number == 9) &&
+       (j1939_powertrain_control_state.tsc1_controlling_data_link == CONTROL_NETWORK_J1939)) ||
+      (engine_speed_limit_arbitration.limiting_source_number == 0xb)) ||
+     ((((engine_speed_limit_arbitration.limiting_source_number == 0xd ||
+        (engine_speed_limit_arbitration.limiting_source_number == 0xf)) &&
+       (engine_speed_limit_torque_converter_droop_enable == 0)) ||
+      (engine_speed_limit_arbitration.limiting_source_number == 0x10)))) {
+    engine_speed_limit_arbitration.applied_speed_limit = engine_speed_limit_ramped;
+    engine_speed_limit_droop_active_flag = 0;
+  }
+  else {
+    engine_speed_limit_droop_active_flag = 1;
+    if (engine_speed_limit_droop_slope_bypass_flag == 0) {
+      wVar1 = lookupTableInterpolation
+                        (&friction_fuel_by_engine_speed_cached_axis_offset,
+                         engine_speed_limit_droop_no_load_speed,friction_fuel_by_engine_speed_axis,
+                         friction_fuel_by_engine_speed_values,0);
+      wVar2 = lookupTableInterpolation
+                        (coolant_temperature_cached_axis_offsets,coolant_temperature_sensor_filtered
+                         ,friction_fuel_correction_by_coolant_temperature_axis,
+                         friction_fuel_correction_by_coolant_temperature_values,1);
+      engine_speed_limit_droop_no_load_fuel_quantity = wVar2 + wVar1;
+      engine_speed_limit_droop_slope =
+           cm848_clampedDivisionWithBounds
+                     (((uint)engine_speed_limit_droop_no_load_speed -
+                      (uint)engine_speed_limit_reference) * 0x1111,
+                      (int)(short)(engine_speed_limit_reference_maximum_fuel_quantity -
+                                  engine_speed_limit_droop_no_load_fuel_quantity),0x7fd6,0);
+    }
+    if (engine_speed_limit_droop_slope < 1) {
+      engine_speed_limit_arbitration.applied_speed_limit = engine_speed_limit_ramped;
+      engine_speed_limit_droop_active_flag = 0;
+    }
+    else {
+      iVar3 = (int)high_speed_governor_integral_term;
+      if ((int)(uint)engine_speed_limit_droop_fuel_clamp_maximum < iVar3) {
+        iVar3 = (int)(short)engine_speed_limit_droop_fuel_clamp_maximum;
+      }
+      else if (iVar3 < (int)(uint)engine_speed_limit_droop_fuel_clamp_minimum) {
+        iVar3 = (int)(short)engine_speed_limit_droop_fuel_clamp_minimum;
+      }
+      uVar5 = (uint)engine_speed_limit_ramped +
+              (int)(CONCAT44((int)((ulonglong)
+                                   ((longlong)(int)engine_speed_limit_droop_slope *
+                                   (longlong)
+                                   (int)((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
+                                        iVar3)) >> 0x20),
+                             (int)engine_speed_limit_droop_slope *
+                             ((uint)engine_speed_limit_ramped_maximum_fuel_quantity - iVar3)) /
+                   0x1111);
+      if ((int)uVar5 < 0) {
+        uVar5 = 0;
+      }
+      else if (0xffff < (int)uVar5) {
+        uVar5 = 0xffff;
+      }
+      engine_speed_limit_after_droop = (word)uVar5;
+      engine_speed_limit_arbitration.applied_speed_limit = engine_speed_limit_after_droop;
+      if ((uVar5 & 0xffff) <= (uint)engine_speed_limit_ramped) {
+        engine_speed_limit_arbitration.applied_speed_limit = engine_speed_limit_ramped;
+      }
+    }
+    if (engine_speed_limit_droop_cap < engine_speed_limit_arbitration.applied_speed_limit) {
+      engine_speed_limit_arbitration.applied_speed_limit = engine_speed_limit_droop_cap;
+    }
+  }
+  engine_speed_limit_droop_cap_source_code_snapshot = engine_speed_limit_droop_cap_source_code;
+  engine_speed_limit_droop_cap_snapshot = engine_speed_limit_droop_cap;
+  engine_speed_limit_arbitrated = engine_speed_limit_arbitration.lowest_source_speed_limit;
+  engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_default_cal;
+  engine_speed_limit_droop_cap = engine_speed_limit_default_cal;
+  engine_speed_limit_droop_cap_source_code = 0;
+  engine_speed_limit_limiting_source_number_snapshot =
+       engine_speed_limit_arbitration.limiting_source_number;
+  return;
+}

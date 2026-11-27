@@ -1,0 +1,27 @@
+cm848: round 11 stage B - the logical output request bytes as bitfield structs from e2m 1577, the lift pump types
+
+- **Six bitfield structs** for the request array's bytes 1 / 4 / 5 / 6 / 8 / 9, like byte 2's
+  logical_output_request_bits_16_to_23_t. Each bit comes from its e2m 1577 record (output N = byte N/8, mask
+  1 << N%8; 12A7 +N names the same outputs, and the DRB actuator tests agree for the tested ones). A bit the code
+  tests gets a descriptive name:
+  - engine_brake_driver_1..5_request (outputs 11-15)
+  - air_conditioning_clutch_request (38)
+  - intake_air_heater_1 / 2_request (43 / 44)
+  - lift_pump_request (53)
+  - injector_driver_asic_shutoff_request (54, ASIC_FS_Shutoff_Driver)
+  - egr_valve_pwm_enable_request / egr_valve_motor_opening_direction_request (67 / 68)
+  - variable_geometry_turbocharger_motor_closing_direction_request / ..._pwm_enable_request (71 / 72)
+  The others stay reserved_bit_N with their record in the comment.
+- **Byte 0 stays a byte:** cm848_setLogicalOutputRequest / cm848_clearLogicalOutputRequest index the array from it.
+  Its comment gets the 1577 +0 map (4 = wait to start lamp, 5 = warning lamp).
+- **Byte 2's fields** carry their 1577 / 12A7 record names. Output 16 is Transmission_VFS_Battery_Driver, the battery
+  feed of the transmission solenoids.
+- **Every access is a masked read**, so the structs add no ._N_1_ pieces (183 before and after).
+- **The lift pump:** LIFT_PUMP_RUN_REASON (KEY_ON / ENGINE_RUNNING / ENGINE_CRANKING, size 2) on
+  lift_pump_run_reason, and word types for the five calibrations and sci_output_status_word.
+- **Proof:** bitfield_normalize.py rewrites each instance.field as (instance & mask) and each enum member as its
+  value, then cast_normalized_diff.py runs. 16 functions changed and 2 still differ:
+  - bVar1 = x & 1 vs x.field (the same bit-0 value);
+  - cm848_controlLiftPump's local, now typed LIFT_PUMP_RUN_REASON.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

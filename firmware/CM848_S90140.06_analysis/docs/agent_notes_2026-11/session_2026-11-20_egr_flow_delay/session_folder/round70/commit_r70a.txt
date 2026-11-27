@@ -1,0 +1,41 @@
+cm848: round 70 stage A - the 6 KB dual-port TPU RAM: the boot CAN rings typed, a stale TPU3 register map removed, the TPU RAM load table
+
+- cm848_clearRamRegions clears 0x302000-0x3037ff, 6 KB. That is the MPC555's only RAM of that size (its SRAM is
+  0x3f9800 on), so it is the dual-port TPU RAM; dual_port_tpu_ram_start / _end name its bounds.
+- The boot kernel keeps all its variables there: 39 named rows, none rendered by an application function.
+- An early campaign had laid a TPU3 register map over it: 30 TPU3_* rows, while the TPU3 registers are tpu_a_mcr /
+  tpu_b_mcr at 0x304000 / 0x304400.
+  - TPU3_TPUMCR was the clear's start (now dual_port_tpu_ram_start).
+  - TPU3_HSQR1 named the receive ring.
+  - The other 28 (27 name-only rows and a junk '+1' row) rendered nowhere and are removed.
+- The CAN rings tile the RAM:
+  - boot_can_receive_ring: j1939_rx_msg_t[40] at 0x302016. The wrap bound 0x3022d4 is the 40th record.
+  - boot_can_transmit_ring: a new boot_can_transmit_frame_t[40] at 0x3022e6. A frame is the 12 bytes
+    mpc555_canTransmitQueuePush builds: a TouCAN ID_HIGH / ID_LOW image, then 8 data bytes padded with 0xff. The
+    wrap bound 0x3024ba is the 40th frame, and the ring ends at boot_can_ring_state (0x3024c6).
+  - can_ring_state_t's four ring pointers are typed to match. The receive path now fills pjVar1->pgn_pf /
+    data_length / data_pointer = inline_data, advances pjVar1 + 1 and wraps at boot_can_receive_ring + 0x27.
+- ecu_power_state_flags (keyon_flags_t, 20 bytes, 0x302002-0x302015) had three stale flat rows inside it.
+  keyon_state_machine_phase / qadc_a_portqa / ecm_runtime_accumulator became its state / transfer_crc /
+  runtime_counter field rows.
+- dual_port_tpu_ram_load_table (0x5862e, word[1508]) holds three variable-length {offset / word count / words}
+  records: 994 / 348 / 160 words to 0x302000 / 0x302800 / 0x302ec0.
+  - mpc555_initTpuConfiguration copies them into the dual-port TPU RAM before it sets both TPU module configuration
+    registers, so TPU microcode by that use.
+  - They overwrite the boot kernel's variables there; by then the application owns the RAM.
+- first_checksum_region_start_marker / _end_marker: the 0xa1a1 words at 0xb76a / 0x591f6 that bracket
+  checksum_region_table.first_region.
+- Plates for cm848_clearRamRegions and mpc555_initTpuConfiguration.
+
+Proof (prove_r70.py): 8 of 1968 functions differ, with 9 casts fewer:
+- the four ring functions (mpc555_processCanReceiveBuffer fills record fields and advances by a record);
+- mpc555_initDiagnosticSubsystem (it points the rings at boot_can_receive_ring / boot_can_transmit_ring);
+- cm848_handleBootExecuteAtAddressService (typed transmit pointers);
+- mpc555_initTpuConfiguration (dual_port_tpu_ram_load_table);
+- one local declaration-order move.
+The 28 removed rows change no render. verify is byte-identical with round 69's WARNING lines; thunks 18 / 14;
+prototype and local rows 0 failed; locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++
+errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211, no piece renders of
+the new names, and no raw ring address left.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

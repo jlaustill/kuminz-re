@@ -1,0 +1,10 @@
+cm848: round 8 stage F closing (2) - the logs and the archive; the .cpp timestamp restored
+
+The previous commit went in while the step before it was refused, so it missed the archive and carried a
+timestamp-only .cpp change:
+- the .cpp gets its earlier "Generated:" line back, so the two commits leave the decompile unchanged;
+- the large-files tarball gets the stage F build and verify logs (62 entries);
+- the session folder gets the stage F closing files (close_r8f.py, the sweep results, commit messages,
+  update_large_tar_r8f.sh) and the current PR body.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

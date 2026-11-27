@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x003feb92,fault_status_records_cal,fault_status_array,global,1
+0x003feb93,fault_status_records_cal.status_word,fault_status_word_array,global,1

@@ -1,0 +1,16 @@
+cm848: round 59 stage B - round 58's "2 of 6 stores" scan claim corrected
+
+Round 58's follow-up (570af92) said scan_accesses_v2.py found 2 of the 6 stores to the P0116 countdown (0x3fd188) and
+2 of the 6 to the injector driver booster counter (0x3fd0b8), and called the scan an under-report. That compared a
+decompile line count with a machine store count.
+- The machine code has exactly 2 stores to each word in those functions: 0x52deac / 0x52df64 through r4 =
+  &0x3fd188, and 0x5290dc / 0x529140 through r6 = &0x3fd0b8.
+- The other 0(r4) / 0(r6) stores nearby hit other words (0x40b9a2, 0x3fd18a-0x3fd190).
+- The decompile prints 6 lines because it repeats a shared store in each branch's return path.
+
+The scan's real limit is unchanged: it does not see computed pointers, and it forgets volatile bases at each call in
+address order, so it cannot prove absence. fix_r59b.py rewords the seven "no other access" rows (comments only), task
+046's round 58 lines and the memory note. No rebuild: the comments do not render, and the headers regenerate
+unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

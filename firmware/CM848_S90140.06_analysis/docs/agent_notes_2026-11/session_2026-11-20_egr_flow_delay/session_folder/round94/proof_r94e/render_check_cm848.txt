@@ -1,0 +1,20 @@
+22 rows checked, 19 not clean
+   0x005067bc cm848_loadHourMetersFromEeprom -> loadHourMetersFromEeprom: new renders True, old renders True
+   0x00538c8c cm848_scheduleJ1939PeriodicMessage -> scheduleJ1939PeriodicMessage: new renders True, old renders True
+   0x0000bb68 cm848_periodicTaskSet_protection -> cm848_runEvery8FramesTaskSetPhase2: new renders True, old renders True
+   0x0000bce8 cm848_periodicTaskSet_protection2 -> cm848_runEvery10FramesTaskSetPhase4: new renders True, old renders True
+   0x0000beb4 cm848_periodicTaskSet_protection3 -> cm848_runEvery20FramesTaskSetPhase8: new renders True, old renders True
+   0x0000c050 hpcr_periodicTaskSet_protection4 -> cm848_runEvery20FramesTaskSetPhase18: new renders True, old renders True
+   0x0001e4e8 cm848_calculateProtectionRateLimited -> cm848_convertTorqueDerateTorqueLimitToFuelLimit: new renders True, old renders True
+   0x0001ea6c cm848_initProtectionTableSizes -> cm848_initializeFourDimensionalInjectionTimingLookupCaches: new renders True, old renders True
+   0x00020b84 cm848_updateProtectionParameters -> cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling: new renders True, old renders True
+   0x00020bfc cm848_updateProtectionInputs -> cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling: new renders True, old renders True
+   0x00021c3c cm848_updateProtectionThresholdsIfLow -> cm848_setThrottle100J1939TorqueCurveSpeedPoints: new renders True, old renders True
+   0x00023a9c cm848_initGovernorProtectionState -> cm848_initializeEngineRetarderTsc1RequestState: new renders True, old renders True
+   0x00029e24 cm848_initProtectionFilterAccumulators -> cm848_initializeInjectionTimingMainMisfireLimit: new renders True, old renders True
+   0x0002c100 cm848_initProtectionLimitVariables -> cm848_initializeAllSpeedGovernorTuningSetBlendWeight: new renders True, old renders True
+   0x00038a98 cm848_initProtectionFilterLimits -> cm848_initializeFuelPressureGovernorFaultBlend: new renders True, old renders True
+   0x0003eccc cm848_setThermalProtectionMode5 -> cm848_setTorqueManagementTransmissionType3Code: new renders True, old renders True
+   0x0004280c cm848_processProtectionLimits -> cm848_runFuelLimitChains: new renders True, old renders True
+   0x0004eeb8 hpcr_initProtectionAndOutputCycle -> cm848_initializeSwitchInputStates: new renders True, old renders True
+   0x0050e000 cm848_validateFuelDemandRelativeToTiming -> cm848_calculateEngineLoadLowHorsepowerCurvePercent: new renders True, old renders True

@@ -1,0 +1,5836 @@
+[
+ {
+  "address": "0x00408ea8",
+  "block": "1071",
+  "offset": "000E",
+  "record": "EB_Max_Fuel_Threshold",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Fueling threshold above which engine brakes may not be enabled",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_computed_min_cal",
+  "references": 5,
+  "dump_raw": "59",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 5} -> 2 byte",
+  "code": [
+   "cm848_updateEngineRetarderEnableState: (final_fueling <= fuel_demand_computed_min_cal)) ||",
+   "cm848_updateEngineRetarderEnableState: (((uint)final_fueling <= (uint)fuel_demand_computed_min_cal ||",
+   "cm848_updateEngineRetarderEnableState: ((fuel_demand_computed_min_cal < adjusted_user_fueling &&",
+   "cm848_updateEngineRetarderEnableState: ((uint)fuel_demand_computed_min_cal < (uint)final_fueling)))))) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Engine_Brake_Minimum_Engage_RPM",
+    "engine_retarder_enter_minimum_engine_speed_warm_oil",
+    "0.60"
+   ],
+   [
+    "0002",
+    "EB_Brake_to_Fuel_Delay",
+    "engine_retarder_release_passes",
+    "0.25"
+   ],
+   [
+    "0004",
+    "EB_Boost_Sensor_Error_Delay",
+    "engine_retarder_boost_sensor_fault_hold_passes",
+    "0.50"
+   ],
+   [
+    "0006",
+    "EB_Maximum_Boost_Pressure",
+    "engine_retarder_enter_maximum_boost_pressure",
+    "0.80"
+   ],
+   [
+    "000C",
+    "EB_Fuel_to_Brake_Delay_RPM",
+    "engine_retarder_engage_delay_speed_boundary_low",
+    "0.60"
+   ],
+   [
+    "000E",
+    "EB_Max_Fuel_Threshold",
+    "fuel_demand_computed_min_cal",
+    "0.20"
+   ],
+   [
+    "0010",
+    "EB_Service_Brake_Delay_Time",
+    "service_brake_release_delay_passes",
+    "0.60"
+   ],
+   [
+    "0012",
+    "EB_Fuel_to_Brake_Delay_RPM_2",
+    "engine_retarder_engage_delay_speed_boundary_middle",
+    "0.50"
+   ],
+   [
+    "0014",
+    "EB_Fuel_to_Brake_Delay_RPM_3",
+    "engine_retarder_engage_delay_speed_boundary_high",
+    "0.50"
+   ],
+   [
+    "0016",
+    "EB_Cold_Minimum_Engage_RPM",
+    "engine_retarder_enter_minimum_engine_speed_cold_oil",
+    "0.67"
+   ],
+   [
+    "0018",
+    "EB_Cold_Minimum_Disengage_RPM",
+    "engine_retarder_exit_engine_speed_cold_oil",
+    "0.50"
+   ],
+   [
+    "001A",
+    "EB_Cold_Oil_Temperature",
+    "engine_retarder_oil_temperature_threshold",
+    "0.60"
+   ],
+   [
+    "001C",
+    "EB_Shift_In_Process_TL",
+    "engine_retarder_shift_hold_passes",
+    "0.40"
+   ],
+   [
+    "001E",
+    "EB_Max_Fuel_Idle_Threshold",
+    "engine_retarder_fuel_demand_threshold_governor_mode_11",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040ae7c",
+  "block": "10ED",
+  "offset": "0006",
+  "record": "LSG_User_Gain_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[LSUSGNST] IDENTIFIES THE CURRENT LSG PID GAIN SET",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_operational_mode_request",
+  "references": 12,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'sth': 4, 'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processGovernorLoadCondition: governor_operational_mode_request = 1;",
+   "cm848_processGovernorLoadCondition: governor_operational_mode_request = 0;",
+   "cm848_updateGovernorSetpointParameters: (governor_operational_mode = governor_operational_mode_request,",
+   "cm848_updateGovernorSetpointParameters: governor_operational_mode_request == 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "LSG_Proportional_Gain",
+    "governor_speed_setpoint_raw",
+    "0.40"
+   ],
+   [
+    "0002",
+    "LSG_Integral_Gain",
+    "governor_d_gain_from_table",
+    "0.40"
+   ],
+   [
+    "0004",
+    "LSG_Derivative_Gain",
+    "governor_p_gain_from_table",
+    "0.40"
+   ],
+   [
+    "0006",
+    "LSG_User_Gain_State",
+    "governor_operational_mode_request",
+    "0.17"
+   ],
+   [
+    "0008",
+    "LSG_Final_Gain_State",
+    "governor_operational_mode",
+    "0.17"
+   ],
+   [
+    "000A",
+    "FSS_LSG_Override_Gain_State",
+    "governor_j1939_mode_override",
+    "0.33"
+   ],
+   [
+    "000C",
+    "FSS_LSG_Proportional_Gain",
+    "governor_j1939_speed_target",
+    "0.40"
+   ],
+   [
+    "000E",
+    "FSS_LSG_Integral_Gain",
+    "governor_j1939_d_gain_stored",
+    "0.40"
+   ],
+   [
+    "0010",
+    "FSS_LSG_Derivative_Gain",
+    "governor_j1939_p_gain_stored",
+    "0.40"
+   ],
+   [
+    "0012",
+    "FSS_LSG_Jerk_Gain",
+    "governor_j1939_i_gain_stored",
+    "0.40"
+   ],
+   [
+    "0014",
+    "LSG_Jerk_Gain",
+    "governor_j1939_gain_extra_working",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Requested governor operating mode: cm848_processGovernorLoadCondition sets 1 / 0 and cm848_processGovernorSpeedSetpoint 0 / 2 / 3; cm848_updateGovernorSetpointParameters copies it into governor_operational_mode (0x40ae7e) (was governor_mode_state - the same name as the word at 0x40ad5a; it was declared byte though every access is a word sth, so it rendered as _governor_mode_state)"
+ },
+ {
+  "address": "0x0040ae7e",
+  "block": "10ED",
+  "offset": "0008",
+  "record": "LSG_Final_Gain_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "9",
+  "description": "[LSFNGNST] Indicator of the lsg gain set currently being used",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_operational_mode",
+  "references": 5,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'sth': 3, 'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_selectGovernorSetpointSource: governor_operational_mode = governor_j1939_mode_override;",
+   "cm848_updateGovernorSetpointParameters: (governor_operational_mode = governor_operational_mode_request,",
+   "cm848_getGovernorOverrideSource: governor_operational_mode = 4;",
+   "cm848_calculateGovernorCompensation: if ((governor_operational_mode != 0) && (governor_operational_mode != 1)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "LSG_Proportional_Gain",
+    "governor_speed_setpoint_raw",
+    "0.40"
+   ],
+   [
+    "0002",
+    "LSG_Integral_Gain",
+    "governor_d_gain_from_table",
+    "0.40"
+   ],
+   [
+    "0004",
+    "LSG_Derivative_Gain",
+    "governor_p_gain_from_table",
+    "0.40"
+   ],
+   [
+    "0006",
+    "LSG_User_Gain_State",
+    "governor_operational_mode_request",
+    "0.17"
+   ],
+   [
+    "0008",
+    "LSG_Final_Gain_State",
+    "governor_operational_mode",
+    "0.17"
+   ],
+   [
+    "000A",
+    "FSS_LSG_Override_Gain_State",
+    "governor_j1939_mode_override",
+    "0.33"
+   ],
+   [
+    "000C",
+    "FSS_LSG_Proportional_Gain",
+    "governor_j1939_speed_target",
+    "0.40"
+   ],
+   [
+    "000E",
+    "FSS_LSG_Integral_Gain",
+    "governor_j1939_d_gain_stored",
+    "0.40"
+   ],
+   [
+    "0010",
+    "FSS_LSG_Derivative_Gain",
+    "governor_j1939_p_gain_stored",
+    "0.40"
+   ],
+   [
+    "0012",
+    "FSS_LSG_Jerk_Gain",
+    "governor_j1939_i_gain_stored",
+    "0.40"
+   ],
+   [
+    "0014",
+    "LSG_Jerk_Gain",
+    "governor_j1939_gain_extra_working",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c36a",
+  "block": "10FC",
+  "offset": "0000",
+  "record": "Jcomm_Reference_Retarder_Torque",
+  "unit": "N_M",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0000",
+  "min": "0",
+  "max": "64255",
+  "description": "[JCRFRDTQ] Jcomm Reference Retarder Torque reference ret torque that corresponds to Jcomm_",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_protocol_mode_speed_cal",
+  "references": 2,
+  "dump_raw": "350",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;",
+   "cm848_buildPgn65249RetarderConfigurationMessage: local_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c36e",
+  "block": "10FC",
+  "offset": "0004",
+  "record": "Jcomm_Retarder_Speed_at_Idle",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125000",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCRDISRP] Jcomm Retarder Speed at Idle - RPM at idle of retarder config map",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65249_cal_a",
+  "references": 2,
+  "dump_raw": "8000",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: uStack_7 = (undefined1)j1939_pgn65249_cal_a;",
+   "cm848_buildPgn65249RetarderConfigurationMessage: local_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c370",
+  "block": "10FC",
+  "offset": "0006",
+  "record": "Jcomm_Retarder_Speed_at_Peak_Torque",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125000",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCRDPTRP] Jcomm Retarder Speed at Peak Torque - RPM at peak torque of retarder config ma",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_protocol_mode_fuel_cal_b",
+  "references": 2,
+  "dump_raw": "24000",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;",
+   "cm848_buildPgn65249RetarderConfigurationMessage: local_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c372",
+  "block": "10FC",
+  "offset": "0008",
+  "record": "Jcomm_Retarder_Speed_at_Point_3",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125000",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCRDP3RP] Jcomm Retarder Speed at Pt 3 - RPM at pt 3 of retarder config map",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_protocol_mode_fuel_cal_c",
+  "references": 2,
+  "dump_raw": "9200",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;",
+   "cm848_buildPgn65249RetarderConfigurationMessage: local_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c374",
+  "block": "10FC",
+  "offset": "000A",
+  "record": "Jcomm_Retarder_Speed_at_Point_4",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1250",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCRDP4RP] Jcomm Retarder Speed at Pt 4 - RPM at pt 4 of retarder config map",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_protocol_mode_fuel_cal_d",
+  "references": 2,
+  "dump_raw": "14000",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;",
+   "cm848_buildPgn65249RetarderConfigurationMessage: local_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c378",
+  "block": "10FC",
+  "offset": "000E",
+  "record": "Jcomm_Retarder_Torque_at_Max_Speed",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "3.90625E-3",
+  "min": "0",
+  "max": "125",
+  "description": "[JCRDMSTQ] Jcomm Retarder Torque at Max Speed available torque that retarder can provide a",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_dtc_spn_cal_a",
+  "references": 1,
+  "dump_raw": "23552",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c37a",
+  "block": "10FC",
+  "offset": "0010",
+  "record": "Jcomm_Retarder_Torque_at_Point_3",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "3.90625E-3",
+  "min": "0",
+  "max": "125",
+  "description": "[JCRDP3TQ] Jcomm Retarder Torque at Pt 3 available torque that retarder can provide at p",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_dtc_spn_cal_b",
+  "references": 1,
+  "dump_raw": "16640",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c37c",
+  "block": "10FC",
+  "offset": "0012",
+  "record": "Jcomm_Retarder_Torque_at_Point_4",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "3.90625E-3",
+  "min": "0",
+  "max": "125",
+  "description": "[JCRDP4TQ] Jcomm Retarder Torque at Pt 4 available torque that retarder can provide at p",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_dtc_spn_cal_c",
+  "references": 1,
+  "dump_raw": "21504",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c380",
+  "block": "10FC",
+  "offset": "0016",
+  "record": "Jcomm_Retarder_Torque_at_Point_5",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "3.90625E-3",
+  "min": "0",
+  "max": "125",
+  "description": "[JCRDP5TQ] Available torque that retarder can provide at pt 5",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_dtc_spn_cal_d",
+  "references": 1,
+  "dump_raw": "25600",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Retarder_Shift_Assist_Limit",
+    "engine_retarder_shift_assist_fuel_demand_limit",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Retarder_Torque_at_Idle",
+    "engine_retarder_configuration_idle_torque_percent",
+    "0.75"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c28c",
+  "block": "117E",
+  "offset": "0002",
+  "record": "Inc_Dec_Separate_Switch_Select",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "[IDSPSWSL] Indicates sep. inc/dec sw.(TRUE) or inc/dec from multi-purp. sw.(FALSE)",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "switch_31_on_time_fault_enable",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkSwitch31OnTimeFault: gated blocks (no-ops here); with switch_31_on_time_fault_enable (ROM 0) counts passes with switch",
+   "cm848_checkSwitch31OnTimeFault: if (((protection_system_init_flag == 0) || (switch_31_on_time_fault_enable != 0)) &&",
+   "cm848_checkSwitch31OnTimeFault: if (((switch_31_on_time_fault_enable == 0) || ((switch_input_state_bits[3] & 0x80) == 0)) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Min_Road_Speed",
+    "cruise_speed_low_limit",
+    "0.50"
+   ],
+   [
+    "0002",
+    "Inc_Dec_Separate_Switch_Select",
+    "switch_31_on_time_fault_enable",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM constant 0: nonzero enables the switch 31 on-time fault in cm848_checkSwitch31OnTimeFault (fault bit 73 after 1 s on) and one of its switch copies; 0 in S90140.06 so the fault never sets (was DAT_0005c28c) (Medium confidence)"
+ },
+ {
+  "address": "0x003fddac",
+  "block": "11BF",
+  "offset": "0000",
+  "record": "Industrial_Idle_Switch_Save_State",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "[CTIVSWSS] IVS switch status when Throttle_Validation_Process_Error became active",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_mode_80_enable_flag",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandSmoothingController: protection_mode_80_enable_flag = (word)((switch_input_state_bits[0] & 0x80) != 0);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Industrial_Idle_Switch_Save_State",
+    "protection_mode_80_enable_flag",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd802",
+  "block": "125E",
+  "offset": "0000",
+  "record": "Torque_Derate_Override",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FSTQDQUO] Engineering torque derate fueling override",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_fuel_limit_c_working",
+  "references": 1,
+  "dump_raw": "5888",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_arbitrateRequestedFueling: torque_derate_fuel_quantity = protection_fuel_limit_c_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Torque_Derate_Override",
+    "protection_fuel_limit_c_working",
+    "0.00"
+   ],
+   [
+    "0002",
+    "User_Override_Fueling",
+    "fuel_timing_target_working",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd804",
+  "block": "125E",
+  "offset": "0002",
+  "record": "User_Override_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FSUOFL] Engineering fueling override",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_timing_target_working",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_selectFinalFueling: total_fueling_selected = fuel_timing_target_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Torque_Derate_Override",
+    "protection_fuel_limit_c_working",
+    "0.00"
+   ],
+   [
+    "0002",
+    "User_Override_Fueling",
+    "fuel_timing_target_working",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd8b4",
+  "block": "125F",
+  "offset": "0000",
+  "record": "User_Commanded_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FSUCFL] User commanded fuel value for development",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_proportional_gain_cal",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_setEngineOperatingMode5: engine_operating_mode_fuel_demand = governor_proportional_gain_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "User_Commanded_Fueling",
+    "governor_proportional_gain_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd810",
+  "block": "12EA",
+  "offset": "0006",
+  "record": "HSG_Isochronous_Speed_2",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "1400",
+  "max": "4500",
+  "description": "[HSISRF02] Alternate HSG isochronous speed",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_speed_limit_droop_cap_alternate_cal",
+  "references": 2,
+  "dump_raw": "30000",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_applySwitchSelectedEngineSpeedLimit: rpm in the dump), or to engine_speed_limit_droop_cap_alternate_cal while a switch input",
+   "cm848_applySwitchSelectedEngineSpeedLimit: wVar1 = engine_speed_limit_droop_cap_alternate_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "HSG_No_Load_RPM",
+    "engine_speed_limit_droop_no_load_speed_default_cal",
+    "0.60"
+   ],
+   [
+    "0004",
+    "HSG_Isochronous_Speed",
+    "engine_speed_limit_droop_cap_cal",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HSG_Isochronous_Speed_2",
+    "engine_speed_limit_droop_cap_alternate_cal",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EEPROM-backed (inside the range, dump 30000), the alternative cap of cm848_applySwitchSelectedEngineSpeedLimit chosen by the switch input; xref_addr.py: 1 read / 0 writes, that function only. Time-shared window: immediate scan of 0..0x7F5F for 0xd810: 0 hits. (was protection_fuel_limit_param)"
+ },
+ {
+  "address": "0x004062d2",
+  "block": "1735",
+  "offset": "0000",
+  "record": "C_CBP_Residual_Mass_Max",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.13586956500",
+  "min": "0.000000",
+  "max": "8000.000000",
+  "description": "Max limit on residual mass estimation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_ratio_upper_limit",
+  "references": 2,
+  "dump_raw": "1104",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateResidualGasMass: cylinder_residual_gas_mass = boost_pressure_ratio_upper_limit;",
+   "cm848_calculateResidualGasMass: if ((uVar1 <= boost_pressure_ratio_upper_limit) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_CBP_Residual_Mass_Max",
+    "boost_pressure_ratio_upper_limit",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_CBP_Residual_Mass_Min",
+    "cylinder_residual_gas_mass_lower_limit",
+    "0.67"
+   ],
+   [
+    "0004",
+    "C_CBP_Mass_Density_Constant",
+    "cylinder_residual_gas_mass_density_constant",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM ceiling for cylinder_residual_gas_mass",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"1735\", \"offset\": \"0000\", \"record\": \"C_CBP_Residual_Mass_Max\", \"unit\": \"MM3S\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.13586956500\", \"min\": \"0.000000\", \"max\": \"8000.000000\", \"address\": \"0x00"
+  ]
+ },
+ {
+  "address": "0x0040a60e",
+  "block": "175F",
+  "offset": "0000",
+  "record": "TPE_Corrected_Air_Flow",
+  "unit": "KG*SQR(K)/S/MPa",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.03125",
+  "min": "0",
+  "max": "2047.96875",
+  "description": "Air flow input to compressor map in corporate units",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_pressure_normalized",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_estimateCompressorOutletTemperature: boost_pressure_normalized = (word)uVar2;",
+   "cm848_estimateCompressorOutletTemperature: (&DAT_003fa706,boost_pressure_normalized,fuel_timing_boost_scale_axis1_cal,"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TPE_Corrected_Air_Flow",
+    "boost_pressure_normalized",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TPE_Corrected_Turbo_Speed",
+    "compressor_map_corrected_turbocharger_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "TPE_COT_To_Inlet_Tmptr_Ratio",
+    "fuel_timing_boost_scale_lookup",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TPE_CIT_Sqrt",
+    "compressor_inlet_temperature_square_root",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Compressor_Outlet_Tmptr",
+    "compressor_outlet_temperature",
+    "1.00"
+   ],
+   [
+    "000C",
+    "TPE_COT_Est_Enable",
+    "compressor_outlet_temperature_estimation_active_flag",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"175F\", \"offset\": \"0000\", \"record\": \"TPE_Corrected_Air_Flow\", \"unit\": \"KG*SQR(K)/S/MPa\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.03125\", \"min\": \"0\", \"max\": \"2047.96875\", \"address\": \"0x0040a6"
+  ]
+ },
+ {
+  "address": "0x0040a612",
+  "block": "175F",
+  "offset": "0004",
+  "record": "TPE_COT_To_Inlet_Tmptr_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000488281",
+  "min": "0",
+  "max": "2.5",
+  "description": "Compressor map output in corporate units",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_timing_boost_scale_lookup",
+  "references": 2,
+  "dump_raw": "2117",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_estimateCompressorOutletTemperature: fuel_timing_boost_scale_lookup =",
+   "cm848_estimateCompressorOutletTemperature: uVar2 = (uint)fuel_timing_boost_scale_lookup *"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TPE_Corrected_Air_Flow",
+    "boost_pressure_normalized",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TPE_Corrected_Turbo_Speed",
+    "compressor_map_corrected_turbocharger_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "TPE_COT_To_Inlet_Tmptr_Ratio",
+    "fuel_timing_boost_scale_lookup",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TPE_CIT_Sqrt",
+    "compressor_inlet_temperature_square_root",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Compressor_Outlet_Tmptr",
+    "compressor_outlet_temperature",
+    "1.00"
+   ],
+   [
+    "000C",
+    "TPE_COT_Est_Enable",
+    "compressor_outlet_temperature_estimation_active_flag",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"175F\", \"offset\": \"0004\", \"record\": \"TPE_COT_To_Inlet_Tmptr_Ratio\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.000488281\", \"min\": \"0\", \"max\": \"2.5\", \"address\": \"0x0040a612\","
+  ]
+ },
+ {
+  "address": "0x0040bab4",
+  "block": "191B",
+  "offset": "000C",
+  "record": "Compressor_Outlet_Temperature",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.03125",
+  "min": "0",
+  "max": "2045",
+  "description": "Compressor_Outlet_Temperature virtual sensor value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_flow_rate_snapshot",
+  "references": 1,
+  "dump_raw": "1662",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_selectCompressorOutletTemperature: fuel_flow_rate_snapshot = compressor_outlet_temperature;"
+  ],
+  "block_named_rows": [
+   [
+    "000C",
+    "Compressor_Outlet_Temperature",
+    "fuel_flow_rate_snapshot",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Charge_Flow",
+    "charge_mass_flow_filtered",
+    "1.00"
+   ],
+   [
+    "0012",
+    "EGR_Flow",
+    "egr_mass_flow_delayed_filtered",
+    "1.00"
+   ],
+   [
+    "0014",
+    "Exhaust_Temperature",
+    "exhaust_temperature_virtual_sensor_copy",
+    "1.00"
+   ],
+   [
+    "0016",
+    "EGR_Valve_Position",
+    "egr_valve_position_virtual_sensor_copy",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040bdfc",
+  "block": "1966",
+  "offset": "007C",
+  "record": "Booster_Cap_1_Volt_Sensor",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.976525E-3",
+  "min": "0",
+  "max": "40",
+  "description": "Booster_Cap_1_Voltage linearized and filtered value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "sensor_channel54_value",
+  "references": 2,
+  "dump_raw": "640",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initProtectionParameter1: 0x36,0x148,0x149,&sensor_channel54_value,&sensor_channel54_default_value,",
+   "cm848_processProtectionParameter1: 0x36,0x148,0x149,&sensor_channel54_value,&sensor_channel54_default_value,"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Air_Press_Sensor",
+    "barometric_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0004",
+    "EGR_Delta_Press_Sensor",
+    "sensor_channel105_value",
+    "0.25"
+   ],
+   [
+    "0006",
+    "Charge_Tmptr_Sensor",
+    "sensor_channel9_pressure_value",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Coolant_Tmptr_Sensor",
+    "coolant_temperature_sensor_value",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Exhaust_Press_Sensor",
+    "exhaust_pressure_sensor_value",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Oil_Press_Sensor",
+    "sensor_channel10_value",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Charge_Press_Sensor",
+    "boost_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0010",
+    "Compressor_Inlet_Tmptr_Sensor",
+    "sensor_channel20_value",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Battery_Tmptr_Sensor",
+    "sensor_channel69_value",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EGR_Orifice_Tmptr_Sensor",
+    "sensor_channel108_value",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_Position_Sensor",
+    "egr_valve_position_sensor_value",
+    "1.00"
+   ],
+   [
+    "001A",
+    "Air_Press_Default",
+    "barometric_pressure_sensor_default_value",
+    "0.67"
+   ],
+   [
+    "001C",
+    "Compressor_Inlet_Tmptr_Default",
+    "sensor_channel20_default_value",
+    "0.25"
+   ],
+   [
+    "001E",
+    "Charge_Tmptr_Default",
+    "sensor_channel9_pressure_default_value",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "(was sensor_channel54_raw)"
+ },
+ {
+  "address": "0x0040bdfe",
+  "block": "1966",
+  "offset": "007E",
+  "record": "Booster_Cap_1_Volt_Default",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.976525E-3",
+  "min": "0",
+  "max": "40",
+  "description": "Booster_Cap_1_Voltage Default value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "sensor_channel54_default_value",
+  "references": 2,
+  "dump_raw": "640",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initProtectionParameter1: 0x36,0x148,0x149,&sensor_channel54_value,&sensor_channel54_default_value,",
+   "cm848_processProtectionParameter1: 0x36,0x148,0x149,&sensor_channel54_value,&sensor_channel54_default_value,"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Air_Press_Sensor",
+    "barometric_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0004",
+    "EGR_Delta_Press_Sensor",
+    "sensor_channel105_value",
+    "0.25"
+   ],
+   [
+    "0006",
+    "Charge_Tmptr_Sensor",
+    "sensor_channel9_pressure_value",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Coolant_Tmptr_Sensor",
+    "coolant_temperature_sensor_value",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Exhaust_Press_Sensor",
+    "exhaust_pressure_sensor_value",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Oil_Press_Sensor",
+    "sensor_channel10_value",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Charge_Press_Sensor",
+    "boost_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0010",
+    "Compressor_Inlet_Tmptr_Sensor",
+    "sensor_channel20_value",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Battery_Tmptr_Sensor",
+    "sensor_channel69_value",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EGR_Orifice_Tmptr_Sensor",
+    "sensor_channel108_value",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_Position_Sensor",
+    "egr_valve_position_sensor_value",
+    "1.00"
+   ],
+   [
+    "001A",
+    "Air_Press_Default",
+    "barometric_pressure_sensor_default_value",
+    "0.67"
+   ],
+   [
+    "001C",
+    "Compressor_Inlet_Tmptr_Default",
+    "sensor_channel20_default_value",
+    "0.25"
+   ],
+   [
+    "001E",
+    "Charge_Tmptr_Default",
+    "sensor_channel9_pressure_default_value",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "(was sensor_channel54_filtered)"
+ },
+ {
+  "address": "0x0040be00",
+  "block": "1966",
+  "offset": "0080",
+  "record": "Booster_Cap_2_Volt_Sensor",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.976525E-3",
+  "min": "0",
+  "max": "40",
+  "description": "Booster_Cap_2_Voltage linearized and filtered value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "sensor_channel55_value",
+  "references": 2,
+  "dump_raw": "640",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initProtectionParameter2: 0x37,0x14a,0x14b,&sensor_channel55_value,&sensor_channel55_default_value,",
+   "cm848_processProtectionParameter2: 0x37,0x14a,0x14b,&sensor_channel55_value,&sensor_channel55_default_value,"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Air_Press_Sensor",
+    "barometric_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0004",
+    "EGR_Delta_Press_Sensor",
+    "sensor_channel105_value",
+    "0.25"
+   ],
+   [
+    "0006",
+    "Charge_Tmptr_Sensor",
+    "sensor_channel9_pressure_value",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Coolant_Tmptr_Sensor",
+    "coolant_temperature_sensor_value",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Exhaust_Press_Sensor",
+    "exhaust_pressure_sensor_value",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Oil_Press_Sensor",
+    "sensor_channel10_value",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Charge_Press_Sensor",
+    "boost_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0010",
+    "Compressor_Inlet_Tmptr_Sensor",
+    "sensor_channel20_value",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Battery_Tmptr_Sensor",
+    "sensor_channel69_value",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EGR_Orifice_Tmptr_Sensor",
+    "sensor_channel108_value",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_Position_Sensor",
+    "egr_valve_position_sensor_value",
+    "1.00"
+   ],
+   [
+    "001A",
+    "Air_Press_Default",
+    "barometric_pressure_sensor_default_value",
+    "0.67"
+   ],
+   [
+    "001C",
+    "Compressor_Inlet_Tmptr_Default",
+    "sensor_channel20_default_value",
+    "0.25"
+   ],
+   [
+    "001E",
+    "Charge_Tmptr_Default",
+    "sensor_channel9_pressure_default_value",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "(was sensor_channel55_raw)"
+ },
+ {
+  "address": "0x0040be02",
+  "block": "1966",
+  "offset": "0082",
+  "record": "Booster_Cap_2_Volt_Default",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.976525E-3",
+  "min": "0",
+  "max": "40",
+  "description": "Booster_Cap_2_Voltage Default value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "sensor_channel55_default_value",
+  "references": 2,
+  "dump_raw": "640",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initProtectionParameter2: 0x37,0x14a,0x14b,&sensor_channel55_value,&sensor_channel55_default_value,",
+   "cm848_processProtectionParameter2: 0x37,0x14a,0x14b,&sensor_channel55_value,&sensor_channel55_default_value,"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Air_Press_Sensor",
+    "barometric_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0004",
+    "EGR_Delta_Press_Sensor",
+    "sensor_channel105_value",
+    "0.25"
+   ],
+   [
+    "0006",
+    "Charge_Tmptr_Sensor",
+    "sensor_channel9_pressure_value",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Coolant_Tmptr_Sensor",
+    "coolant_temperature_sensor_value",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Exhaust_Press_Sensor",
+    "exhaust_pressure_sensor_value",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Oil_Press_Sensor",
+    "sensor_channel10_value",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Charge_Press_Sensor",
+    "boost_pressure_sensor_value",
+    "0.67"
+   ],
+   [
+    "0010",
+    "Compressor_Inlet_Tmptr_Sensor",
+    "sensor_channel20_value",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Battery_Tmptr_Sensor",
+    "sensor_channel69_value",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EGR_Orifice_Tmptr_Sensor",
+    "sensor_channel108_value",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_Position_Sensor",
+    "egr_valve_position_sensor_value",
+    "1.00"
+   ],
+   [
+    "001A",
+    "Air_Press_Default",
+    "barometric_pressure_sensor_default_value",
+    "0.67"
+   ],
+   [
+    "001C",
+    "Compressor_Inlet_Tmptr_Default",
+    "sensor_channel20_default_value",
+    "0.25"
+   ],
+   [
+    "001E",
+    "Charge_Tmptr_Default",
+    "sensor_channel9_pressure_default_value",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "(was sensor_channel55_filtered)"
+ },
+ {
+  "address": "0x00409ef4",
+  "block": "1B2C",
+  "offset": "0008",
+  "record": "Fuel_Pressure_Keyon_Rat_Run_Time",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65534",
+  "description": "Maximum amount of time allowed between keyon and engine start",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cam_sync_validation_crank_tick_min",
+  "references": 2,
+  "dump_raw": "20",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "hpcr_checkRailPressureSensorBeforeStart: else if (cam_sync_validation_crank_tick_count < cam_sync_validation_crank_tick_min) {",
+   "hpcr_checkRailPressureSensorBeforeStart: if (cam_sync_validation_crank_tick_count < cam_sync_validation_crank_tick_min) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Pressure_Keyon_Rat_Max_Count_Limit",
+    "fuel_pressure_sensor_pre_start_high_sample_limit",
+    "0.43"
+   ],
+   [
+    "0002",
+    "Fuel_Pressure_Keyon_Rat_Max_Voltage",
+    "fuel_pressure_sensor_pre_start_high_volts_threshold",
+    "0.33"
+   ],
+   [
+    "0004",
+    "Fuel_Pressure_Keyon_Rat_Min_Count_Limit",
+    "fuel_pressure_sensor_pre_start_low_sample_limit",
+    "0.43"
+   ],
+   [
+    "0006",
+    "Fuel_Pressure_Keyon_Rat_Min_Voltage",
+    "fuel_pressure_sensor_pre_start_low_volts_threshold",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Fuel_Pressure_Keyon_Rat_Run_Time",
+    "cam_sync_validation_crank_tick_min",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Fuel_Pressure_Rat_Min_Off_Time",
+    "rail_pressure_check_minimum_engine_off_time",
+    "0.67"
+   ],
+   [
+    "000C",
+    "Fuel_Pressure_Rationality_Start_Delay",
+    "cam_sync_validation_dwell_limit",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Fuel_Pressure_Keyon_Rat_Enable",
+    "fuel_pressure_sensor_pre_start_check_enable_flag",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM min crank ticks for cam-sync validation"
+ },
+ {
+  "address": "0x00409ef8",
+  "block": "1B2C",
+  "offset": "000C",
+  "record": "Fuel_Pressure_Rationality_Start_Delay",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65533",
+  "description": "Delay after keyon before reading Chry_Dat42 from cluster",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cam_sync_validation_dwell_limit",
+  "references": 2,
+  "dump_raw": "30",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_checkRailPressureSensorBeforeStart: if (cam_sync_validation_dwell_counter <= cam_sync_validation_dwell_limit) {",
+   "hpcr_checkRailPressureSensorBeforeStart: if (cam_sync_validation_dwell_counter <= cam_sync_validation_dwell_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Pressure_Keyon_Rat_Max_Count_Limit",
+    "fuel_pressure_sensor_pre_start_high_sample_limit",
+    "0.43"
+   ],
+   [
+    "0002",
+    "Fuel_Pressure_Keyon_Rat_Max_Voltage",
+    "fuel_pressure_sensor_pre_start_high_volts_threshold",
+    "0.33"
+   ],
+   [
+    "0004",
+    "Fuel_Pressure_Keyon_Rat_Min_Count_Limit",
+    "fuel_pressure_sensor_pre_start_low_sample_limit",
+    "0.43"
+   ],
+   [
+    "0006",
+    "Fuel_Pressure_Keyon_Rat_Min_Voltage",
+    "fuel_pressure_sensor_pre_start_low_volts_threshold",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Fuel_Pressure_Keyon_Rat_Run_Time",
+    "cam_sync_validation_crank_tick_min",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Fuel_Pressure_Rat_Min_Off_Time",
+    "rail_pressure_check_minimum_engine_off_time",
+    "0.67"
+   ],
+   [
+    "000C",
+    "Fuel_Pressure_Rationality_Start_Delay",
+    "cam_sync_validation_dwell_limit",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Fuel_Pressure_Keyon_Rat_Enable",
+    "fuel_pressure_sensor_pre_start_check_enable_flag",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM dwell cap for cam-sync validation"
+ },
+ {
+  "address": "0x004090fe",
+  "block": "8000",
+  "offset": "0004",
+  "record": "HPCR_Wait_Time_Deflate",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "10",
+  "min": "0",
+  "max": "655350",
+  "description": "Waiting time to start deflation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_governor_low_pressure_entry_count",
+  "references": 1,
+  "dump_raw": "500",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: if (fuel_pressure_governor_low_pressure_entry_count <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Passes inside the low-pressure window before FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED starts (500). Was cam_sync_confirm_count_threshold_cal",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8000\", \"offset\": \"0004\", \"record\": \"HPCR_Wait_Time_Deflate\", \"unit\": \"MSEC\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"10\", \"min\": \"0\", \"max\": \"655350\", \"address\": \"0x004090fe\", \"status\": \"name"
+  ]
+ },
+ {
+  "address": "0x00409100",
+  "block": "8000",
+  "offset": "0006",
+  "record": "HPCR_Min_Time_Deflate",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "10",
+  "min": "0",
+  "max": "655350",
+  "description": "Minimum time duration of deflation process",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_governor_low_pressure_fixed_limit",
+  "references": 1,
+  "dump_raw": "1000",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: if ((((fuel_pressure_governor_low_pressure_fixed_limit <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Most passes spent in FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED (1000). Was cam_sync_phase_count_limit_cal",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8000\", \"offset\": \"0006\", \"record\": \"HPCR_Min_Time_Deflate\", \"unit\": \"MSEC\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"10\", \"min\": \"0\", \"max\": \"655350\", \"address\": \"0x00409100\", \"status\": \"named"
+  ]
+ },
+ {
+  "address": "0x00409102",
+  "block": "8000",
+  "offset": "0008",
+  "record": "HPCR_Count_Rev",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Number of revolutions to wait for a change from precontrol to control mode",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_governor_start_revolution_limit",
+  "references": 2,
+  "dump_raw": "1000",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: if (fuel_pressure_governor_start_revolution_limit < fuel_pressure_governor_start_revolutions",
+   "cm848_calculateFuelMeteringCommand: fuel_pressure_governor_start_revolution_limit >="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Revolutions in FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START before FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP (1000). Was cam_sync_tooth_match_threshold_cal",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8000\", \"offset\": \"0008\", \"record\": \"HPCR_Count_Rev\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"65535\", \"address\": \"0x00409102\", \"status\": \"named\", \"r"
+  ]
+ },
+ {
+  "address": "0x00409104",
+  "block": "8000",
+  "offset": "000A",
+  "record": "HPCR_Min_Pressure_Switch_Closedloop",
+  "unit": "MPa",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "200",
+  "description": "Minimum pressure required to switch to closed loop control",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_governor_closed_loop_entry_pressure",
+  "references": 1,
+  "dump_raw": "2254",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (fuel_pressure_governor_closed_loop_entry_pressure <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Pressure (fuel_pressure_feedback_filtered counts) above which the start mode goes closed loop (2254). Was cam_sync_timing_advance_threshold_cal | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00409106",
+  "block": "8000",
+  "offset": "000C",
+  "record": "HPCR_Min_RPM_Switch_Closedloop",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "8190",
+  "description": "Minimum engine speed required to switch to closed loop control",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_governor_closed_loop_entry_rpm",
+  "references": 1,
+  "dump_raw": "400",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: if (((fuel_pressure_governor_closed_loop_entry_rpm < average_engine_speed) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START -> CLOSED_LOOP_AFTER_START above this (average_engine_speed counts (1/8 rpm); 400 = 50 rpm) or above fuel_pressure_governor_closed_loop_entry_pressure. Was cam_sync_speed_advance_threshold_cal"
+ },
+ {
+  "address": "0x00409108",
+  "block": "8000",
+  "offset": "000E",
+  "record": "HPCR_Min_Pressure_Stay_Closedloop",
+  "unit": "MPa",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "200",
+  "description": "Minimum pressure required to stay in closed loop control",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_governor_closed_loop_exit_pressure",
+  "references": 2,
+  "dump_raw": "2049",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: fuel_pressure_governor_closed_loop_exit_pressure)) {",
+   "cm848_calculateFuelMeteringCommand: fuel_pressure_governor_closed_loop_exit_pressure)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Pressure (fuel_pressure_feedback_filtered counts) below which a stopped engine leaves closed loop (2049). Was cam_sync_timing_lower_threshold_cal | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040910a",
+  "block": "8000",
+  "offset": "0010",
+  "record": "HPCR_Min_RPM_Stay_Closedloop",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "8190",
+  "description": "Minimum engine speed required to stay in closed loop control",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_governor_closed_loop_exit_rpm",
+  "references": 2,
+  "dump_raw": "320",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: if ((average_engine_speed < fuel_pressure_governor_closed_loop_exit_rpm) &&",
+   "cm848_calculateFuelMeteringCommand: (average_engine_speed < fuel_pressure_governor_closed_loop_exit_rpm)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Closed loop -> FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START below this (average_engine_speed counts (1/8 rpm); 320 = 40 rpm) together with fuel_pressure_governor_closed_loop_exit_pressure. Was cam_sync_speed_lower_threshold_cal"
+ },
+ {
+  "address": "0x0040910e",
+  "block": "8000",
+  "offset": "0014",
+  "record": "HPCR_Dutycycle_Shutoff",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0244",
+  "min": "0",
+  "max": "100",
+  "description": "Duty cycle during shut off",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_governor_key_off_command",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: wVar6 = fuel_pressure_governor_key_off_command;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Governor_Mode",
+    "fuel_pressure_governor_gain_mode",
+    "0.67"
+   ],
+   [
+    "0001",
+    "HPCR_Precontrol",
+    "fuel_pressure_governor_feed_forward_enable",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Testbench",
+    "fuel_pressure_governor_disable",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Wait_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_entry_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Min_Time_Deflate",
+    "fuel_pressure_governor_low_pressure_fixed_limit",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Count_Rev",
+    "fuel_pressure_governor_start_revolution_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Min_Pressure_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_pressure",
+    "0.20"
+   ],
+   [
+    "000C",
+    "HPCR_Min_RPM_Switch_Closedloop",
+    "fuel_pressure_governor_closed_loop_entry_rpm",
+    "0.20"
+   ],
+   [
+    "000E",
+    "HPCR_Min_Pressure_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_pressure",
+    "0.20"
+   ],
+   [
+    "0010",
+    "HPCR_Min_RPM_Stay_Closedloop",
+    "fuel_pressure_governor_closed_loop_exit_rpm",
+    "0.20"
+   ],
+   [
+    "0014",
+    "HPCR_Dutycycle_Shutoff",
+    "fuel_pressure_governor_key_off_command",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Min_Dutycycle_Start",
+    "fuel_pressure_governor_demand_minimum_when_not_running",
+    "0.25"
+   ],
+   [
+    "0018",
+    "HPCR_Min_Dutycycle_Normal",
+    "fuel_pressure_governor_demand_minimum_when_running",
+    "0.25"
+   ],
+   [
+    "001A",
+    "HPCR_Min_Pressure_Deflate_Start",
+    "fuel_pressure_governor_low_pressure_threshold",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Demand in FUEL_PRESSURE_GOVERNOR_KEY_OFF (0). Was cam_sync_ref_count_state10_cal | retyped word -> i16 2026-11-20 (e2m signed, every load lha)",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8000\", \"offset\": \"0014\", \"record\": \"HPCR_Dutycycle_Shutoff\", \"unit\": \"%\", \"size\": \"2\", \"signed\": \"S\", \"scale\": \"0.0244\", \"min\": \"0\", \"max\": \"100\", \"address\": \"0x0040910e\", \"status\": \"named\""
+  ]
+ },
+ {
+  "address": "0x00409516",
+  "block": "801A",
+  "offset": "0000",
+  "record": "HPCR_Fuelpr_Monitor_Max",
+  "unit": "MPa",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "200",
+  "description": "Fuel pressure upper limit (within sensor range)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_sensor_too_high_threshold",
+  "references": 1,
+  "dump_raw": "3688",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_diagnoseFuelPressureGovernor: else if (fuel_pressure_sensor_too_high_threshold < (short)fuel_pressure_sensor) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "3688 counts (180 MPa; the sensor full scale is 3689). RAM copy of ROM at 0x4095xx, outside the EEPROM mirror 0x3fd482-0x3feec1, so no _cal. Only the diagnostics read it. (was cam_sync_position_upper_threshold_cal) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00409518",
+  "block": "801A",
+  "offset": "0002",
+  "record": "HPCR_Current_Max",
+  "unit": "mA",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "1.2218",
+  "min": "0",
+  "max": "5000",
+  "description": "Maximum current through pressure regulator valve",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_metering_feedback_circuit_high_threshold",
+  "references": 1,
+  "dump_raw": "4092",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: if ((((fuel_metering_feedback_circuit_high_threshold < fuel_metering_feedback_input) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM copy (0x409518 is not in the EEPROM range, so no _cal), value 4092; fuel_metering_feedback_input above it is the high condition. (was engine_sync_fault_word_threshold_hi_cal) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00409522",
+  "block": "801A",
+  "offset": "000C",
+  "record": "HPCR_Lowidle_Dutycycle",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0244",
+  "min": "0",
+  "max": "100",
+  "description": "Dutycycle for monitoring defect during low idle",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_governor_demand_limit_at_governed_speed",
+  "references": 1,
+  "dump_raw": "283",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_diagnoseFuelPressureGovernor: (fuel_pressure_governor_demand_limit_at_governed_speed <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Applies in governor mode 11, the governed-speed mode (probably idle; not proven). 283 (6.9 % of 4095): flag 0x40 needs fuel_pressure_governor_demand above it with governor mode 11 near its target speed, the vehicle stopped and the coolant above 0x409526 (the 'idle' in the name assumes governor mode 11 is idle, which the repo only calls probable). Same value as fuel_pressure_governed_speed_check_demand_limit (0x409ad0). RAM copy of ROM: no _cal. (was cam_sync_ref_count_diag_threshold_cal) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00409524",
+  "block": "801A",
+  "offset": "000E",
+  "record": "HPCR_Lowidle_Window",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "RPM window for monitoring defect during low idle",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_integrator_hysteresis_cal",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_diagnoseFuelPressureGovernor: (uint)governor_integrator_hysteresis_cal) < (int)(uint)average_engine_speed) &&",
+   "cm848_diagnoseFuelPressureGovernor: (uint)governor_integrator_hysteresis_cal)) && (vehicle_speed_sensor_ok_flag == 1)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x00409528",
+  "block": "801A",
+  "offset": "0012",
+  "record": "HPCR_Fuelpr_OK_Test_Samples",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "511",
+  "description": "Number of OK pressure readings before Complete_Pass",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_too_high_recovery_limit",
+  "references": 1,
+  "dump_raw": "500",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_diagnoseFuelPressureGovernor: if (fuel_pressure_too_high_recovery_limit <= fuel_pressure_too_high_recovery_count)"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "500 passes below the threshold reset the pending flag. RAM copy of ROM: no _cal. (was engine_sync_event_counter_threshold_cal)"
+ },
+ {
+  "address": "0x0040952a",
+  "block": "801A",
+  "offset": "0014",
+  "record": "HPCR_Current_Min",
+  "unit": "mA",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "1.2218",
+  "min": "0",
+  "max": "5000",
+  "description": "Current level at which open-circuit is declared.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_metering_feedback_circuit_low_threshold",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: if ((((fuel_metering_feedback_input < fuel_metering_feedback_circuit_low_threshold) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM copy, value 0; fuel_metering_feedback_input below it is the low condition. (was engine_sync_fault_word_threshold_lo_cal) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00409530",
+  "block": "801A",
+  "offset": "001A",
+  "record": "HPCR_Fuelpr_Test_Samples",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Number of overpressure readings before shutdown",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_too_high_count_limit",
+  "references": 1,
+  "dump_raw": "150",
+  "token_overlap": 0.0,
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "code": [
+   "cm848_diagnoseFuelPressureGovernor: if (fuel_pressure_too_high_count < fuel_pressure_too_high_count_limit._0_1_) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Read as a byte in the diagnostics (._0_1_): the value is 150 (the word 0x9600 includes the next byte); typed word, see the type note. RAM copy of ROM: no _cal. (was engine_sync_timeout_count_b_max_cal)"
+ },
+ {
+  "address": "0x00409538",
+  "block": "801A",
+  "offset": "0022",
+  "record": "HPCR_CP3_Min_Dutycycle_Limit",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0244",
+  "min": "0",
+  "max": "100",
+  "description": "Min Dutycycle output to enable CP3 low current diagnostics",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_metering_feedback_circuit_low_check_command_limit",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: (fuel_metering_feedback_circuit_low_check_command_limit <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM copy, value 0; the low check needs fuel_metering_command above it. (was engine_sync_speed_fault_lower_cal) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040953a",
+  "block": "801A",
+  "offset": "0024",
+  "record": "HPCR_CP3_Max_Dutycycle_Limit",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0244",
+  "min": "0",
+  "max": "100",
+  "description": "Max Dutycycle output to enable CP3 high current diagnostics",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_metering_feedback_circuit_high_check_command_limit",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: fuel_metering_feedback_circuit_high_check_command_limit)))) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM copy, value 0; the high check needs fuel_pressure_governor_state_t.fuel_metering_command below it (a command, not a speed). (was engine_sync_speed_fault_upper_cal) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040953e",
+  "block": "801A",
+  "offset": "0028",
+  "record": "HPCR_Leak_Fuelpr_Limit",
+  "unit": "MPa",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "200",
+  "description": "Fuel pressure limit during leak detection",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_setpoint_fault_reaction_cap",
+  "references": 2,
+  "dump_raw": "4095",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelPressureSetpoint: (fuel_pressure_setpoint_fault_reaction_cap < fuel_pressure_setpoint)) {",
+   "cm848_calculateFuelPressureSetpoint: fuel_pressure_setpoint = fuel_pressure_setpoint_fault_reaction_cap;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "cap of fuel_pressure_setpoint while fault_reaction_request_bits bit 2 is set (4095 = no cap here); winning term code 15. xref: word (1 read, signed compare). (new row 2026-11-16)"
+ },
+ {
+  "address": "0x00409542",
+  "block": "801A",
+  "offset": "002C",
+  "record": "HPCR_High_Fuelpr_Shutdown_N",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "Enable for high fuelpr engine shutdown",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_too_high_logical_output_request_enable",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_applyFuelLimitsForFuelPressureFaults: (fuel_pressure_too_high_logical_output_request_enable != 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM copy (0 here): when non-zero, a too-high bit (1 or 2) of fuel_pressure_diagnostic_snapshot requests logical output 54. (was engine_position_fault_enable_cal)"
+ },
+ {
+  "address": "0x00409598",
+  "block": "801E",
+  "offset": "0000",
+  "record": "HPCR_MAX_Fuelpr_Voltage",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0012218",
+  "min": "0",
+  "max": "5",
+  "description": "Maximum allowed ADC voltage for fuel pressure sensor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_sensor_volts_high_limit",
+  "references": 2,
+  "dump_raw": "3929",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_processFuelPressureSensor: Above fuel_pressure_sensor_volts_high_limit is code 4 (fault 304 = P0193), below the low limit",
+   "cm848_processFuelPressureSensor: if (fuel_pressure_sensor_volts_high_limit < fuel_pressure_sensor_volts) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_MAX_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_high_limit",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_MIN_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_low_limit",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Fuelpr_Time_Intact",
+    "fuel_pressure_sensor_recovery_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Fuelpr_Time_Defect",
+    "fuel_pressure_sensor_fault_debounce_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Fuelpr_Filter_Constant",
+    "fuel_pressure_feedback_filter_coefficient",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Fuel_Pressure_Override_Switch_N",
+    "fuel_pressure_sensor_override_enable",
+    "0.50"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_Override_Value",
+    "fuel_pressure_sensor_override_value",
+    "0.80"
+   ],
+   [
+    "000F",
+    "HPCR_Choose_Fuel_Pressure_Switch_N",
+    "fuel_pressure_feedback_source_select",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_Fuelpr_Default",
+    "fuel_pressure_sensor_fault_default",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "fuel_pressure_sensor_volts above this (3929 = 4.80 V) is code 4 -> fault 304 = P0193 (rail pressure sensor circuit high). Was engine_timing_diag_upper_threshold_cal"
+ },
+ {
+  "address": "0x0040959a",
+  "block": "801E",
+  "offset": "0002",
+  "record": "HPCR_MIN_Fuelpr_Voltage",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0012218",
+  "min": "0",
+  "max": "5",
+  "description": "Minimum allowed ADC voltage for fuel pressure sensor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_sensor_volts_low_limit",
+  "references": 1,
+  "dump_raw": "164",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_processFuelPressureSensor: else if (fuel_pressure_sensor_volts < fuel_pressure_sensor_volts_low_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_MAX_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_high_limit",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_MIN_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_low_limit",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Fuelpr_Time_Intact",
+    "fuel_pressure_sensor_recovery_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Fuelpr_Time_Defect",
+    "fuel_pressure_sensor_fault_debounce_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Fuelpr_Filter_Constant",
+    "fuel_pressure_feedback_filter_coefficient",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Fuel_Pressure_Override_Switch_N",
+    "fuel_pressure_sensor_override_enable",
+    "0.50"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_Override_Value",
+    "fuel_pressure_sensor_override_value",
+    "0.80"
+   ],
+   [
+    "000F",
+    "HPCR_Choose_Fuel_Pressure_Switch_N",
+    "fuel_pressure_feedback_source_select",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_Fuelpr_Default",
+    "fuel_pressure_sensor_fault_default",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "fuel_pressure_sensor_volts below this (164 = 0.20 V) is code 8 -> fault 305 = P0192 (rail pressure sensor circuit low). Was engine_timing_diag_lower_threshold_cal"
+ },
+ {
+  "address": "0x0040959c",
+  "block": "801E",
+  "offset": "0004",
+  "record": "HPCR_Fuelpr_Time_Intact",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "50",
+  "min": "0",
+  "max": "12750",
+  "description": "Time for intact classification of fuel pressure sensor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_sensor_recovery_debounce_limit",
+  "references": 1,
+  "dump_raw": "40",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processFuelPressureSensor: fuel_pressure_sensor_recovery_debounce_limit) goto LAB_0004a5f0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_MAX_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_high_limit",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_MIN_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_low_limit",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Fuelpr_Time_Intact",
+    "fuel_pressure_sensor_recovery_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Fuelpr_Time_Defect",
+    "fuel_pressure_sensor_fault_debounce_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Fuelpr_Filter_Constant",
+    "fuel_pressure_feedback_filter_coefficient",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Fuel_Pressure_Override_Switch_N",
+    "fuel_pressure_sensor_override_enable",
+    "0.50"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_Override_Value",
+    "fuel_pressure_sensor_override_value",
+    "0.80"
+   ],
+   [
+    "000F",
+    "HPCR_Choose_Fuel_Pressure_Switch_N",
+    "fuel_pressure_feedback_source_select",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_Fuelpr_Default",
+    "fuel_pressure_sensor_fault_default",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Good samples (40) before a confirmed rail pressure sensor code clears. Was engine_sync_timeout_b_threshold_cal | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040959e",
+  "block": "801E",
+  "offset": "0006",
+  "record": "HPCR_Fuelpr_Time_Defect",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "50",
+  "min": "0",
+  "max": "12750",
+  "description": "Time for defect classification of fuel pressure sensor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_pressure_sensor_fault_debounce_limit",
+  "references": 1,
+  "dump_raw": "40",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processFuelPressureSensor: fuel_pressure_sensor_fault_debounce_limit) goto LAB_0004a5f0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_MAX_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_high_limit",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_MIN_Fuelpr_Voltage",
+    "fuel_pressure_sensor_volts_low_limit",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Fuelpr_Time_Intact",
+    "fuel_pressure_sensor_recovery_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Fuelpr_Time_Defect",
+    "fuel_pressure_sensor_fault_debounce_limit",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Fuelpr_Filter_Constant",
+    "fuel_pressure_feedback_filter_coefficient",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Fuel_Pressure_Override_Switch_N",
+    "fuel_pressure_sensor_override_enable",
+    "0.50"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_Override_Value",
+    "fuel_pressure_sensor_override_value",
+    "0.80"
+   ],
+   [
+    "000F",
+    "HPCR_Choose_Fuel_Pressure_Switch_N",
+    "fuel_pressure_feedback_source_select",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_Fuelpr_Default",
+    "fuel_pressure_sensor_fault_default",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Faulty samples (40) before a rail pressure sensor code is confirmed. Was engine_sync_timeout_a_threshold_cal | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x004090f1",
+  "block": "805C",
+  "offset": "0009",
+  "record": "HPCR_TPU_RPM_To_Skip_Cylinder",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "RPM threshold to skip cylinder while switching to cam based injection",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_sequence_speed_threshold",
+  "references": 2,
+  "dump_raw": "3200",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: if (average_engine_speed < injection_timing_sequence_speed_threshold) {",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: if (average_engine_speed < injection_timing_sequence_speed_threshold) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Total_Increments",
+    "injection_timing_tooth_count",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_TPU_Latency_Min_Engine_Speed",
+    "injection_wakeup_duration_speed_breakpoint",
+    "0.17"
+   ],
+   [
+    "0003",
+    "HPCR_TPU_Latency_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_below_breakpoint",
+    "0.33"
+   ],
+   [
+    "0005",
+    "HPCR_Regular_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_above_breakpoint",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_TPU_Minimum_Ratio",
+    "injection_timing_tooth_phase_threshold",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_1st_Wakeup_Increment_Cyl0",
+    "injection_timing_tooth_base_offset_cylinder_0",
+    "0.29"
+   ],
+   [
+    "0009",
+    "HPCR_TPU_RPM_To_Skip_Cylinder",
+    "injection_timing_sequence_speed_threshold",
+    "0.20"
+   ],
+   [
+    "000B",
+    "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_angle_threshold",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_tooth_base_index",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Aux_SOI_End_Of_Main_Adjust",
+    "injection_timing_auxiliary_relative_to_main_end_flag",
+    "0.60"
+   ],
+   [
+    "0010",
+    "EOI_Aux_Separation_Limit",
+    "auxiliary_injection_end_limit_separation",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM speed threshold for injection sequence advance"
+ },
+ {
+  "address": "0x0040b204",
+  "block": "8A0F",
+  "offset": "0000",
+  "record": "Cruise_N_V_Ratio_Int",
+  "unit": "RPM/SEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.125",
+  "min": "-100",
+  "max": "100",
+  "description": "Engine Speed/Vehicle Speed ratio integrator for cruise control",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "cruise_speed_error_integral",
+  "references": 5,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'sth': 2, 'lha': 1} -> 2 byte",
+  "code": [
+   "governor_fuel_mode_initialization: cruise_speed_error_integral = 0;",
+   "governor_cruise_speedError_integrate: cruise_speed_error_integral = 0;",
+   "governor_cruise_speedError_integrate: cruise_speed_error_integral =",
+   "governor_cruise_speedError_integrate: cruise_speed_error_integral + (cruise_rpm_ratio_ema_prev - cruise_rpm_ratio_ema);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_N_V_Ratio_Int",
+    "cruise_speed_error_integral",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Cruise_N_V_Ratio",
+    "cruise_rpm_ratio_ema",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_On_Switch_Mux",
+    "cruise_control_on_flag",
+    "0.33"
+   ],
+   [
+    "0006",
+    "Cruise_Cutout_Status",
+    "cruise_control_last_cutout_reason",
+    "0.67"
+   ],
+   [
+    "0008",
+    "Cruise_Denied_Status",
+    "cruise_control_denied_status",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "accumulator in governor_cruise_speedError_integrate; integrates signed (prev-current) cruise_rpm_ratio_ema change, reset to 0 when steady. Working RAM so never _cal | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00409e92",
+  "block": "8C35",
+  "offset": "000E",
+  "record": "EGR_DP_Low_Stabilized_Time_Threshold",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "120",
+  "description": "Time required for high error conditions to exist before in range test",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_delta_pressure_high_reading_check_dwell_limit",
+  "references": 1,
+  "dump_raw": "100",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: egr_delta_pressure_high_reading_check_dwell_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_DP_High_Engine_Speed_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0002",
+    "EGR_DP_Low_Engine_Speed_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "EGR_DP_High_Load_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_load",
+    "0.40"
+   ],
+   [
+    "0006",
+    "EGR_DP_Low_Load_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_load",
+    "0.40"
+   ],
+   [
+    "0008",
+    "EGR_DP_Low_Valve_Position_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000A",
+    "EGR_DP_High_Valve_Position_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000C",
+    "EGR_DP_Startup_Valve_Position_Threshold",
+    "egr_delta_pressure_pre_start_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000E",
+    "EGR_DP_Low_Stabilized_Time_Threshold",
+    "egr_delta_pressure_high_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0010",
+    "EGR_DP_High_Stabilized_Time_Threshold",
+    "egr_delta_pressure_low_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "EGR_DP_Low_Time",
+    "egr_delta_pressure_high_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0014",
+    "EGR_DP_High_Time",
+    "egr_delta_pressure_low_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_DP_Wait_Time",
+    "egr_delta_pressure_pre_start_check_dwell_limit_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "EGR_DP_Low_Pass_Time",
+    "egr_delta_pressure_high_reading_check_recovery_limit",
+    "0.20"
+   ],
+   [
+    "001A",
+    "EGR_DP_Low_Pressure_Threshold",
+    "egr_delta_pressure_high_reading_check_threshold",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "RAM word initialized from the ROM image at 0x6fa9a (no code stores to it) = 100: passes of the high-reading check conditions before its counts start (lhz @ 0x52e5b4). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x00409e94",
+  "block": "8C35",
+  "offset": "0010",
+  "record": "EGR_DP_High_Stabilized_Time_Threshold",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "120",
+  "description": "Time required for low error conditions to exist before in range test",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_delta_pressure_low_reading_check_dwell_limit",
+  "references": 1,
+  "dump_raw": "100",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: egr_delta_pressure_low_reading_check_dwell_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_DP_High_Engine_Speed_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0002",
+    "EGR_DP_Low_Engine_Speed_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "EGR_DP_High_Load_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_load",
+    "0.40"
+   ],
+   [
+    "0006",
+    "EGR_DP_Low_Load_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_load",
+    "0.40"
+   ],
+   [
+    "0008",
+    "EGR_DP_Low_Valve_Position_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000A",
+    "EGR_DP_High_Valve_Position_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000C",
+    "EGR_DP_Startup_Valve_Position_Threshold",
+    "egr_delta_pressure_pre_start_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000E",
+    "EGR_DP_Low_Stabilized_Time_Threshold",
+    "egr_delta_pressure_high_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0010",
+    "EGR_DP_High_Stabilized_Time_Threshold",
+    "egr_delta_pressure_low_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "EGR_DP_Low_Time",
+    "egr_delta_pressure_high_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0014",
+    "EGR_DP_High_Time",
+    "egr_delta_pressure_low_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_DP_Wait_Time",
+    "egr_delta_pressure_pre_start_check_dwell_limit_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "EGR_DP_Low_Pass_Time",
+    "egr_delta_pressure_high_reading_check_recovery_limit",
+    "0.20"
+   ],
+   [
+    "001A",
+    "EGR_DP_Low_Pressure_Threshold",
+    "egr_delta_pressure_high_reading_check_threshold",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "RAM word initialized from the ROM image at 0x6fa9a (no code stores to it) = 100: passes of the low-reading check conditions before its counts start (lhz @ 0x52e81c). (new row 2026-11-18)"
+ },
+ {
+  "address": "0x00409e9c",
+  "block": "8C35",
+  "offset": "0018",
+  "record": "EGR_DP_Low_Pass_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "120",
+  "description": "Time required for low side DP rationality test to pass",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_delta_pressure_high_reading_check_recovery_limit",
+  "references": 3,
+  "dump_raw": "100",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: egr_delta_pressure_high_reading_check_recovery_limit) {",
+   "cm848_checkEgrDeltaPressureSensorPerformance: if (egr_delta_pressure_high_reading_check_recovery_limit <=",
+   "cm848_checkEgrDeltaPressureSensorPerformance: (egr_delta_pressure_high_reading_check_recovery_limit <="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_DP_High_Engine_Speed_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0002",
+    "EGR_DP_Low_Engine_Speed_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "EGR_DP_High_Load_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_load",
+    "0.40"
+   ],
+   [
+    "0006",
+    "EGR_DP_Low_Load_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_load",
+    "0.40"
+   ],
+   [
+    "0008",
+    "EGR_DP_Low_Valve_Position_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000A",
+    "EGR_DP_High_Valve_Position_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000C",
+    "EGR_DP_Startup_Valve_Position_Threshold",
+    "egr_delta_pressure_pre_start_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000E",
+    "EGR_DP_Low_Stabilized_Time_Threshold",
+    "egr_delta_pressure_high_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0010",
+    "EGR_DP_High_Stabilized_Time_Threshold",
+    "egr_delta_pressure_low_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "EGR_DP_Low_Time",
+    "egr_delta_pressure_high_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0014",
+    "EGR_DP_High_Time",
+    "egr_delta_pressure_low_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_DP_Wait_Time",
+    "egr_delta_pressure_pre_start_check_dwell_limit_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "EGR_DP_Low_Pass_Time",
+    "egr_delta_pressure_high_reading_check_recovery_limit",
+    "0.20"
+   ],
+   [
+    "001A",
+    "EGR_DP_Low_Pressure_Threshold",
+    "egr_delta_pressure_high_reading_check_threshold",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "lhz @ 0x52e648 = 100: cap of the high-reading recovery count; reaching it clears fault 775. (was boost_corr_diag_neg_accum_limit) | earlier note: ROM limit for egr_delta_pressure_high_reading_check_recovery_count"
+ },
+ {
+  "address": "0x00409ea6",
+  "block": "8C35",
+  "offset": "0022",
+  "record": "EGR_DP_High_Pass_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "120",
+  "description": "Time required for high side DP rationality test to pass",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_delta_pressure_low_reading_check_recovery_limit",
+  "references": 3,
+  "dump_raw": "100",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: egr_delta_pressure_low_reading_check_recovery_limit) {",
+   "cm848_checkEgrDeltaPressureSensorPerformance: if (egr_delta_pressure_low_reading_check_recovery_limit <=",
+   "cm848_checkEgrDeltaPressureSensorPerformance: (egr_delta_pressure_low_reading_check_recovery_limit <="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_DP_High_Engine_Speed_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0002",
+    "EGR_DP_Low_Engine_Speed_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "EGR_DP_High_Load_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_load",
+    "0.40"
+   ],
+   [
+    "0006",
+    "EGR_DP_Low_Load_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_load",
+    "0.40"
+   ],
+   [
+    "0008",
+    "EGR_DP_Low_Valve_Position_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000A",
+    "EGR_DP_High_Valve_Position_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000C",
+    "EGR_DP_Startup_Valve_Position_Threshold",
+    "egr_delta_pressure_pre_start_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000E",
+    "EGR_DP_Low_Stabilized_Time_Threshold",
+    "egr_delta_pressure_high_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0010",
+    "EGR_DP_High_Stabilized_Time_Threshold",
+    "egr_delta_pressure_low_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "EGR_DP_Low_Time",
+    "egr_delta_pressure_high_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0014",
+    "EGR_DP_High_Time",
+    "egr_delta_pressure_low_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_DP_Wait_Time",
+    "egr_delta_pressure_pre_start_check_dwell_limit_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "EGR_DP_Low_Pass_Time",
+    "egr_delta_pressure_high_reading_check_recovery_limit",
+    "0.20"
+   ],
+   [
+    "001A",
+    "EGR_DP_Low_Pressure_Threshold",
+    "egr_delta_pressure_high_reading_check_threshold",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "lhz @ 0x52e8b0 = 100: cap of the low-reading recovery count; reaching it clears fault 776. (was boost_corr_diag_neg_accum_b_limit) | earlier note: ROM limit for egr_delta_pressure_low_reading_check_recovery_count"
+ },
+ {
+  "address": "0x00409eaa",
+  "block": "8C35",
+  "offset": "0026",
+  "record": "EGR_DP_Startup_Stabilized_Time_Threshold",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "120",
+  "description": "Time required for EGR delta pressure to stabilize before startup test",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_delta_pressure_pre_start_check_dwell_limit_a",
+  "references": 2,
+  "dump_raw": "100",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: egr_delta_pressure_pre_start_check_dwell_limit_a) {",
+   "cm848_checkEgrDeltaPressureSensorPerformance: if ((egr_delta_pressure_pre_start_check_dwell_limit_a <="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_DP_High_Engine_Speed_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0002",
+    "EGR_DP_Low_Engine_Speed_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_speed",
+    "0.50"
+   ],
+   [
+    "0004",
+    "EGR_DP_High_Load_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_engine_load",
+    "0.40"
+   ],
+   [
+    "0006",
+    "EGR_DP_Low_Load_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_engine_load",
+    "0.40"
+   ],
+   [
+    "0008",
+    "EGR_DP_Low_Valve_Position_Threshold",
+    "egr_delta_pressure_high_reading_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000A",
+    "EGR_DP_High_Valve_Position_Threshold",
+    "egr_delta_pressure_low_reading_check_minimum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000C",
+    "EGR_DP_Startup_Valve_Position_Threshold",
+    "egr_delta_pressure_pre_start_check_maximum_egr_valve_position",
+    "0.50"
+   ],
+   [
+    "000E",
+    "EGR_DP_Low_Stabilized_Time_Threshold",
+    "egr_delta_pressure_high_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0010",
+    "EGR_DP_High_Stabilized_Time_Threshold",
+    "egr_delta_pressure_low_reading_check_dwell_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "EGR_DP_Low_Time",
+    "egr_delta_pressure_high_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0014",
+    "EGR_DP_High_Time",
+    "egr_delta_pressure_low_reading_check_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0016",
+    "EGR_DP_Wait_Time",
+    "egr_delta_pressure_pre_start_check_dwell_limit_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "EGR_DP_Low_Pass_Time",
+    "egr_delta_pressure_high_reading_check_recovery_limit",
+    "0.20"
+   ],
+   [
+    "001A",
+    "EGR_DP_Low_Pressure_Threshold",
+    "egr_delta_pressure_high_reading_check_threshold",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "lhz @ 0x52e2d8 = 100: passes of the pre-start conditions needed (together with limit b) before the zero check decides. (was boost_corr_crank_dwell_a_limit) | earlier note: ROM cap for egr_delta_pressure_pre_start_check_dwell_count_a"
+ },
+ {
+  "address": "0x0005c668",
+  "block": "8C5D",
+  "offset": "0000",
+  "record": "Wastegate_Pressure_Control_Driver_Error_Count",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "Nnumber of consecutive errors for error bit set.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "wastegate_solenoid_read_back_fault_debounce_limit",
+  "references": 1,
+  "dump_raw": "100",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_debounceOutputReadBackFaults: wastegate_solenoid_read_back_fault_debounce_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Wastegate_Pressure_Control_Driver_Error_Count",
+    "wastegate_solenoid_read_back_fault_debounce_limit",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM constant 100: cm848_debounceOutputReadBackFaults sets P0243 (fault 403) once the wastegate solenoid read-back fault bit has stayed set past this many passes"
+ },
+ {
+  "address": "0x00408a52",
+  "block": "8C5F",
+  "offset": "0000",
+  "record": "Tcase_NV_Launch_MPH",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255",
+  "description": "Tcase_Launch_Flag may get set if vehicle speed > this",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed",
+  "references": 2,
+  "dump_raw": "1280",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorEngineToVehicleSpeedRatio: engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed &&",
+   "cm848_monitorEngineToVehicleSpeedRatio: (engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Tcase_NV_Launch_MPH",
+    "engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tcase_NV_Launch_Min_MPH",
+    "engine_to_vehicle_speed_ratio_minimum_vehicle_speed",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Tcase_NV_MPH_Max",
+    "engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Tcase_NV_Avg_Change_Max",
+    "engine_to_vehicle_speed_ratio_stable_maximum_deviation",
+    "0.20"
+   ],
+   [
+    "000A",
+    "Tcase_NV_Declutch_Percent_Change",
+    "engine_to_vehicle_speed_ratio_invalid_minimum_deviation",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Tcase_NV_Low",
+    "engine_to_vehicle_speed_ratio_high_threshold",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Tcase_NV_Min_TPS",
+    "engine_to_vehicle_speed_ratio_high_minimum_accelerator_pedal",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "1280 = 5 mph: below this vehicle speed EMA a ratio deviation EMA above 8960 (35 percent) sets the engine to vehicle speed ratio invalid flag (0x40b547) - an EMA above this clears it (was fuel_temp_trim_comp_ema_fault_threshold)"
+ },
+ {
+  "address": "0x00408a5a",
+  "block": "8C5F",
+  "offset": "0008",
+  "record": "Tcase_NV_Avg_Change_Max",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "100",
+  "description": "Tcase_NV_Inst_Percent_Change < this, clear Tcase_Launch_Flag",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_to_vehicle_speed_ratio_stable_maximum_deviation",
+  "references": 2,
+  "dump_raw": "5120",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_monitorEngineToVehicleSpeedRatio: else if ((uVar2 < engine_to_vehicle_speed_ratio_stable_maximum_deviation) ||",
+   "cm848_monitorEngineToVehicleSpeedRatio: (uVar2 < engine_to_vehicle_speed_ratio_stable_maximum_deviation)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Tcase_NV_Launch_MPH",
+    "engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tcase_NV_Launch_Min_MPH",
+    "engine_to_vehicle_speed_ratio_minimum_vehicle_speed",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Tcase_NV_MPH_Max",
+    "engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Tcase_NV_Avg_Change_Max",
+    "engine_to_vehicle_speed_ratio_stable_maximum_deviation",
+    "0.20"
+   ],
+   [
+    "000A",
+    "Tcase_NV_Declutch_Percent_Change",
+    "engine_to_vehicle_speed_ratio_invalid_minimum_deviation",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Tcase_NV_Low",
+    "engine_to_vehicle_speed_ratio_high_threshold",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Tcase_NV_Min_TPS",
+    "engine_to_vehicle_speed_ratio_high_minimum_accelerator_pedal",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "5120 = 20 percent (1/256 percent): a ratio deviation EMA below this counts as a stable engine to vehicle speed ratio - it clears the invalid flag (0x40b547) and allows the high ratio flag (0x40b546) (was fuel_temp_trim_deviation_ema_clear_threshold)"
+ },
+ {
+  "address": "0x00408a60",
+  "block": "8C5F",
+  "offset": "000E",
+  "record": "Tcase_NV_Low",
+  "unit": "RPM/MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "2000",
+  "description": "if Tcase_NV_Average > this, set Tcase_Low_range_Flag",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_to_vehicle_speed_ratio_high_threshold",
+  "references": 1,
+  "dump_raw": "2400",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorEngineToVehicleSpeedRatio: (engine_to_vehicle_speed_ratio_high_threshold < engine_to_vehicle_speed_ratio_filtered)))))"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Tcase_NV_Launch_MPH",
+    "engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tcase_NV_Launch_Min_MPH",
+    "engine_to_vehicle_speed_ratio_minimum_vehicle_speed",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Tcase_NV_MPH_Max",
+    "engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Tcase_NV_Avg_Change_Max",
+    "engine_to_vehicle_speed_ratio_stable_maximum_deviation",
+    "0.20"
+   ],
+   [
+    "000A",
+    "Tcase_NV_Declutch_Percent_Change",
+    "engine_to_vehicle_speed_ratio_invalid_minimum_deviation",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Tcase_NV_Low",
+    "engine_to_vehicle_speed_ratio_high_threshold",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Tcase_NV_Min_TPS",
+    "engine_to_vehicle_speed_ratio_high_minimum_accelerator_pedal",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM constant 2400 = 300 rpm per mph (8 counts per rpm per mph): engine_to_vehicle_speed_ratio_filtered above it below 44 mph with a stable ratio and fuel demand above 8 sets engine_to_vehicle_speed_ratio_high_flag (was DAT_00408a60) (Medium confidence)"
+ },
+ {
+  "address": "0x00408982",
+  "block": "8D37",
+  "offset": "0002",
+  "record": "Low_Fuelpr_Neg_Slew_Rate",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Amount by which fuel will be reduced every 40 ms when low fuelpr active",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_quantity_limit_rail_pressure_shortfall_ramp_step",
+  "references": 1,
+  "dump_raw": "1",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_limitFuelQuantityOnRailPressureShortfall: fuel_quantity_limit_rail_pressure_shortfall_ramp_step;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Low_Fuelpr_Debounce_Time_Limit",
+    "fuel_quantity_limit_rail_pressure_shortfall_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0002",
+    "Low_Fuelpr_Neg_Slew_Rate",
+    "fuel_quantity_limit_rail_pressure_shortfall_ramp_step",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Low_Fuelpr_Offset_For_Derate",
+    "fuel_quantity_limit_rail_pressure_shortfall_threshold",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ramp decrement per pass (1). xref: word (1 read). (new row 2026-11-16)"
+ },
+ {
+  "address": "0x00408984",
+  "block": "8D37",
+  "offset": "0004",
+  "record": "Low_Fuelpr_Offset_For_Derate",
+  "unit": "MPa",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "200",
+  "description": "Fuel Pressure delta setpoint minus measure where low fuelpr derate activates",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_quantity_limit_rail_pressure_shortfall_threshold",
+  "references": 1,
+  "dump_raw": "512",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_limitFuelQuantityOnRailPressureShortfall: && ((int)fuel_quantity_limit_rail_pressure_shortfall_threshold <="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Low_Fuelpr_Debounce_Time_Limit",
+    "fuel_quantity_limit_rail_pressure_shortfall_debounce_limit",
+    "0.40"
+   ],
+   [
+    "0002",
+    "Low_Fuelpr_Neg_Slew_Rate",
+    "fuel_quantity_limit_rail_pressure_shortfall_ramp_step",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Low_Fuelpr_Offset_For_Derate",
+    "fuel_quantity_limit_rail_pressure_shortfall_threshold",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "setpoint minus sensor pressure that counts as a shortfall (512 counts = 25 MPa). xref: word (1 read). (new row 2026-11-16)"
+ }
+]

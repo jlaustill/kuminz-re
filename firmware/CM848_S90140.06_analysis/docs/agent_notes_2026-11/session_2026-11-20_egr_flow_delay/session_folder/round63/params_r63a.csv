@@ -1,0 +1,5 @@
+function,old,new
+cm848_j1939DiagnosticServiceHandler,bVar1,service
+cm848_j1939DiagnosticServiceHandler,bVar2,entry_index
+cm848_j1939DiagnosticServiceHandler,pjVar3,entry
+cm848_j1939DiagnosticServiceHandler,uVar4,result_code

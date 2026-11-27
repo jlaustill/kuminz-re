@@ -1,0 +1,18 @@
+cm848: round 18 stage D - one prefix rule for the main timing, the misfire limit table, the power-up source (label-only, review)
+
+- The rule (task 046): main_injection_timing* names the final value and what describes it (its copies, selection
+  and source; 9 rows); injection_timing_main_* (60 rows) names its inputs, components and limits. Stage B's two
+  limit words become injection_timing_main_misfire_limit / _extended_idle_minimum, and the misfire limit's table
+  and cache follow (were injection_timing_demand_floor_*).
+- MAIN_INJECTION_TIMING_SOURCE 8 is MAIN_INJECTION_TIMING_SOURCE_POWER_UP (was _ENGINE_STOPPED): its only store is
+  the power-up initializer, and the dump with the engine stopped reads 20. The e2m label 08 STOP stays in its
+  comment.
+- The plates of cm848_calculateMainInjectionTiming / cm848_calculatePilotInjectionTimingOffset and one global comment
+  lost the retired 'floor / governor-limit minimum / working minimum / cold-start map' words.
+- Task 046 and the PR body: stage B's members were 'each checked at its store' except 8 (power-up only) and 25 (the
+  dump's value, its function a lead); the leads gain Crank_4D_Timing and two row-count caches.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT. Headers regenerated (0 g++
+errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

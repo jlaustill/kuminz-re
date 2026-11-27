@@ -52,9 +52,9 @@ to the function there. Snapshot of the current set (RAM,ROM,ROM-function-name):
 
 ```
 0x003fa5a0,0x0049d0,mpc555_initFlashMemoryConfig
-0x003faafc,0x004f2c,cm848_writeCan2ControllerTxMailbox
+0x003faafc,0x004f2c,cm848_writeBootKernelCanTransmitMailbox
 0x003fae3c,0x00526c,mpc555_dispatchCanMessageHandlers
-0x003fb528,0x005958,cm848_getServiceDataOffset
+0x003fb528,0x005958,cm848_getBootMemoryServiceHeaderLength
 0x003fb54c,0x00597c,cm848_validateDiagnosticRequestLengthAndAuthorization
 0x003fb6ac,0x005adc,mpc555_sendJ1939TransportRequestToSend
 0x003fc094,0x0064c4,mpc555_serviceJ1939TransportSessions

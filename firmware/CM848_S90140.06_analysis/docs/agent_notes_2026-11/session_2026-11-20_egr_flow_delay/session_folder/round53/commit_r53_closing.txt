@@ -1,0 +1,14 @@
+cm848: round 53 closing - task 046, a firmware/CLAUDE.md correction, the session archive, the PR body
+
+- task 046, round 53:
+  - the meaning-ranked matcher (a ranking, not a verdict: 8A71's best-scoring base was wrong);
+  - stage A (eleven blocks) and stage B (the coolant temperature derate);
+  - the proof;
+  - leads: the time-shared level-timer totals, the unapplied matcher hits.
+- firmware/CLAUDE.md: one factual correction, no new rule. The read-back bullet called the 0x5139b8-0x513ba4 helpers
+  unidentified; they are the coolant temperature derate.
+- HARD stays 0 and MISSING 221.
+- PR body, README, todo, memory, and the round 53 session folder (the matcher, its score and output, the placements,
+  the shared helpers, both stage scripts and maps, the proof script, the closing scripts, both verify logs).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

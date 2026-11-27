@@ -1,0 +1,13 @@
+diff --git a/firmware/CLAUDE.md b/firmware/CLAUDE.md
+index 82bc2518..de485000 100644
+--- a/firmware/CLAUDE.md
++++ b/firmware/CLAUDE.md
+@@ -474 +474 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
+-- **Four channel functions, one prototype (2026-11-16):** Type A `cm848_processSignedSensorChannel` (0x500234, periodic) / `cm848_initializeSignedSensorChannel` (0x500a4c, boot) and Type B `cm848_processUnsignedSensorChannel` (0x5012dc) / `cm848_initializeUnsignedSensorChannel` (0x501b4c) run the same algorithm and take the same 13 parameters. Type A is the signed pair (lookup flags 2, `lha` loads, `cm848_signedFirstOrderFilter`), Type B the unsigned pair (flags 0, `lhz` loads, `exponentialMovingAverage`). Type B also skips the threshold faults of channel 47 until `cruise_control_switches_learned_flag_cal`, of channel 71 until its learned flag, and of channel 10 while `oil_pressure_switch_only_cal` is set (round 27, from the machine code diff):
++- **Four channel functions, one prototype (2026-11-16):** Type A `cm848_processSignedSensorChannel` (0x500234, periodic) / `cm848_initializeSignedSensorChannel` (0x500a4c, boot) and Type B `cm848_processUnsignedSensorChannel` (0x5012dc) / `cm848_initializeUnsignedSensorChannel` (0x501b4c) run the same algorithm and take the same 13 parameters. Type A is the signed pair (lookup flags 2, `lha` loads, `cm848_signedFirstOrderFilter`), Type B the unsigned pair (flags 0, `lhz` loads, `cm848_exponentialMovingAverage`). Type B also skips the threshold faults of channel 47 until `cruise_control_switches_learned_flag_cal`, of channel 71 until its learned flag, and of channel 10 while `oil_pressure_switch_only_cal` is set (round 27, from the machine code diff):
+@@ -480 +480 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
+-  - `ema_filter_state_t` (`exponentialMovingAverage`'s state, 45 callers): `coefficient` points at a `filter_coefficient`, and `accumulator` is Q16.16. Each pass moves the value (65536 - coefficient) / 65536 of the way, and 0 means no filtering.
++  - `ema_filter_state_t` (`cm848_exponentialMovingAverage`'s state, 45 callers): `coefficient` points at a `filter_coefficient`, and `accumulator` is Q16.16. Each pass moves the value (65536 - coefficient) / 65536 of the way, and 0 means no filtering.
+@@ -866 +866 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
+-    `exponentialMovingAverage` reads the same {`word*` coefficient, Q16.16 accumulator} record.
++    `cm848_exponentialMovingAverage` reads the same {`word*` coefficient, Q16.16 accumulator} record.

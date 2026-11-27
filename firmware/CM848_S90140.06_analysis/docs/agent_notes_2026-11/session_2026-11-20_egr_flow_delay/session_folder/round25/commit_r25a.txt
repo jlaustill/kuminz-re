@@ -1,0 +1,19 @@
+cm848: round 25 stage A - TRANSMISSION_SELECTED_GEAR (J1939 SPN 524) replaces the junk PROTECTION_OVERRIDE enum (types)
+
+A round 24 lead. The gear words hold the J1939 Transmission Selected Gear coding: one gear per bit with a -125
+offset, as for SPN 523 in the local J1939 database, and 251 = park. The words are:
+- transmission_selected_gear, from cm848_updateSelectedGearFromShiftLever (the PCI 0x37 shift lever: 1 park,
+  2 reverse, 3 neutral, drive by transmission type / overdrive);
+- its copies _previous and _last_valid;
+- j1939_powertrain_control_state.etc2_transmission_selected_gear (ETC2 byte 1).
+
+- TRANSMISSION_SELECTED_GEAR (byte) has a member for every literal the code compares with or assigns to them:
+  0x7c REVERSE .. 0x82 FIFTH, 0xfb PARK and 0xff NOT_AVAILABLE, plus 0xfe ERROR. The four carriers are typed with it,
+  and the members render 54 times.
+- The old PROTECTION_OVERRIDE enum goes. No variable used it, and its members (OVERRIDE_ACTIVE_126 / _127, "(~)" /
+  "(DEL)") were named after the ASCII glyphs of 0x7e / 0x7f.
+
+Proof: check_enum_proof3.py - 0 functions differ beyond the enum substitution; no value renders as an OR of members.
+Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

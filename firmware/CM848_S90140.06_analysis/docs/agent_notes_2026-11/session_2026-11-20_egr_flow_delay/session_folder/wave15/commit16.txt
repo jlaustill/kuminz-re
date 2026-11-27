@@ -1,0 +1,35 @@
+cm848: wave 15 follow-up 1 - the LSG / HSG / ASG / net torque families completed, the compressor inlet vocabulary
+
+The agents' out-of-bin siblings and function leads, verified in the main session (the functions read are
+listed in each worklist) and applied through the same gate as the wave (old = current, name free as a
+global / function / field / parameter / local / enum / .cpp identifier, _cal = EEPROM mirror, no banned
+abbreviation, not shared with CM550, a .cpp line using the old name). Label-only (reverse_names.py
+EQUIVALENT): 107 globals, 17 functions.
+
+- Low speed governor (bins 2, 4, 5): the working proportional / integral / derivative / jerk gains (the
+  old names crossed the roles), the override gain state, the gain set pointers, the P / D / jerk terms, the
+  clamps and adjustments of 1065, the 1064 constants (ten with a wrong _cal), the aggressive gain logic
+  (10EE / 10EF) and the gear gain logic (10EA), the accumulator and the logic's counters; nine functions:
+  cm848_updateLowSpeedGovernorAggressiveGainLogic, cm848_selectLowSpeedGovernorGearGainSet,
+  cm848_loadLowSpeedGovernorGainSet, cm848_presetLowSpeedGovernorIntegrator, ... .
+- High speed governor compensator (bins 1, 6): the three working coefficients and the previous speed /
+  output (were cruise_speed_*).
+- All speed governor: the 107D derivative / prefilter / deceleration limit rows, the PID accumulator, the
+  9-word gain set pointer; cm848_initializeAllSpeedGovernorVariables,
+  cm848_calculateAllSpeedGovernorThrottleReference, cm848_calculateAllSpeedGovernorEquivalentThrottle.
+- Net torque fuel limit (8C68 / 8C6A-8C6C): override value, slew rates, the table and its axes, the
+  working words. The engine speed filter's EMA record.
+- TPE: the ECU's table names the channel 20 sensor Compressor_Inlet_Tmptr_Sensor (1966 +10), its selected
+  value Compressor_Inlet_Tmptr (1A0C +0) and the density Compressor_Inlet_Density (18E8 +0), and the
+  ambient air temperature (1921 +6) is the compressor inlet temperature minus its rise: so
+  ambient_air_temperature_selected -> compressor_inlet_temperature (and its source, back from round 3's
+  rename), ambient_air_density -> compressor_inlet_density, ambient_air_temperature_reference ->
+  ambient_air_temperature, the sensor channel 20 / 9 values and defaults; the sensor diagnostics and the
+  overrides keep their e2m ambient names. The IMT lag filters and lead table, the charge temperature
+  estimate's status and filter, the compressor map table and its axes, the square root table; functions
+  cm848_estimateChargeTemperature, cm848_calculateCompressorInletDensity, ... .
+
+Stale comment references fixed on lines this commit touched: two enum comments, a wastegate PWM period
+reference and a shorthand of mine.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

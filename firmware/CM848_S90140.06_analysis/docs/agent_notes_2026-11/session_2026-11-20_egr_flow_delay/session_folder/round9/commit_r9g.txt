@@ -1,0 +1,15 @@
+cm848: round 9 closing (2) - the review's doc corrections, stage F in the docs, the logs, verify
+
+- **Counts:** the first table walk matched 88 tables (86 blocks + 2 inline axes), not 58, plus 30 after 8C18. About
+  156 tables are placed in all, the exhaust brake set and a few others by the walk's order and their code users.
+- **A size match alone is not proof:** 0B99 / 0B9A matched by size but are the manual 2nd pair in 11.46. The method
+  notes in task 046, firmware/CLAUDE.md and the PR body now say so.
+- **Stage F (fb2426c)** is in task 046 (with the round 9 leads: the 43 untyped label rows, 8BB1-8BB4, 8BB9 / 8BBA,
+  the limp-home bits, signedness), the PR body and the README.
+- **firmware/CLAUDE.md:** the stale fourth_gear_tcc_lockup_* mention now carries the new grid names, and the mode list
+  includes Cruise.
+- **The PR test plan:** the stage D split was normalized to 0 differences, not read by hand.
+- **Verify:** ./analyze.sh verify, the two builds are byte-identical. The large-files tarball gets the stage F build
+  and verify logs.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,18 @@
+cm848: round 67 follow-up closing - task 046 and the PR body record 09ade9c9; the proof breakdown recounted
+
+- task 046:
+  - The round 67 proof breakdown is recounted. It said "the 10 retyped reflash functions", but only 7 of the 10
+    renamed functions got prototypes; the other 3 are pure renames that do not differ. b3ec6fa7's message keeps the
+    first count.
+  - The section gains the follow-up bullet (09ade9c9).
+  - New leads:
+    - 0x3fedee / 0x3fedf4, where e2m RE_Two_Three_Lag renders as &serial_reflash_busy_flag + range * 2 in three
+      transmission functions;
+    - DAT_01000000;
+    - mpc555_beginReflash's result_code local.
+- docs/engine_hours_and_odometer.md: keyon_duration_counter is eeprom_block_tracking.key_off_duration_ticks.
+- The PR body: the recount and a follow-up line.
+- session_folder/round67/: the follow-up's script, map and messages, apply_r67a.py's docstring (not replayable after
+  fix_r67a2.py), and its verify log in the tarball.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

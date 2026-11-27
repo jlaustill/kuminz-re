@@ -1,0 +1,55 @@
+112E +00 Fuel_Temperature_EPF_Configuration [HEX] size=2 type=NU scale=1 | [EPFTCG] Configuration word for fuel temperature EPF input
+112E +02 Fuel_Temperature_Fueling_Derate_Start_Duration [SEC] size=2 type=NU scale=1 | [EPFTFLDD] Time from fuel temperature overlimit reached to start of fuel derate
+112E +04 Fuel_Temperature_RPM_Derate_Start_Duration [SEC] size=2 type=NU scale=1 | [EPFTRPDD] Time from fuel temperature overlimit reached to start of RPM derate
+112E +06 Fuel_Temperature_Fueling_Ramp_Rate [SEC] size=2 type=NU scale=/0.00390625 | [EPFTFLIC] Time to reach full derate w/ fuel temperature engine protect. fueling flt
+112E +08 Fuel_Temperature_RPM_Ramp_Rate [SEC] size=2 type=NU scale=/0.00390625 | [EPFTRPIC] Time to reach full derate w/ fuel temperature engine protection RPM fault
+112E +0A Fuel_Temperature_Fueling_Min_Threshold [DEG_F] size=2 type=NU scale=0.015625 | [EPFTMNTD] Minimum temperature threshold for fuel temperature fuel limiting
+112E +0C Fuel_Temperature_Fueling_Max_Threshold [DEG_F] size=2 type=NU scale=0.015625 | [EPFTMXTD] Maximum threshold for fuel temperature fuel limiting
+112E +0E Fuel_Temperature_RPM_Lower_Limit [DEG_F] size=2 type=NS scale=0.015625 | [EPFTRPLL] Minimum threshold for fuel temperature RPM limiting
+112E +10 Fuel_Temperature_Fueling_Shutdown_Duration_Thres [SEC] size=2 type=NU scale=1.0 | [EPFTFLSD] Threshold for fuel temperature fuel limiting to initiate shutdown
+112E +12 Fuel_Temperature_RPM_Shutdown_Duration_Thres [SEC] size=2 type=NU scale=1.0 | [EPFTRPSD] Threshold for fuel temperature RPM limiting to initiate shutdown
+112E +14 Fuel_Temperature_Shutdown_Delay [SEC] size=2 type=NU scale=1 | [EPFTFSDY] Shutdown delay for fuel temperature shutdown
+112E +16 Fuel_Temperature_Start_Monitor_RPM [RPM] size=2 type=NU scale=0.125 | [EPFTSRRP] RPM threshold that must be crossed in order to log fuel temp fault
+112E +18 Fuel_Temperature_Start_Monitor_Time [SEC] size=2 type=NU scale=1.0 | [EPFTSRTM] Time threshold that must be crossed in order to log fuel temperature fault
+112E +1A EPF_Input_Source_0_Fueling_Index_Fault [HEX] size=2 type=NU scale=1 | [EP00FLFU] Fault index indicating Input source 0 fueling error detected
+112E +1A Fuel_Temperature_Fueling_Error [HEX] size=2 type=NU scale=1 | [EPFTFLFU] Fault index indicating temperature fueling error detected
+112E +1C EPF_Input_Source_0_RPM_Index_Fault [HEX] size=2 type=NU scale=1 | [EP00RPFU] Fault index indicating Input source 0 RPM error detected
+112E +1C Fuel_Temperature_RPM_Error [HEX] size=2 type=NU scale=1 | [EPFTRPFU] Fault index indicating Fuel temperature RPM error detected
+112E +1E Fuel_Temperature_Shutdown_Warning_Time [SEC] size=2 type=NU scale=1 | [EPFTWNTM] time duration to warn driver before shutdown due to fuel temperature
+112E +20 Fuel_Temperature_Fueling_Shutdown_Severity_Thres [DEG_F] size=2 type=NS scale=0.015625 | [EPFTFLSS] Threshold for fuel temperature fuel limiting to initiate shutdown
+112E +22 Fuel_Temperature_RPM_Shutdown_Severity_Thres [DEG_F] size=2 type=NS scale=0.015625 | [EPFTRPSS] Threshold for fuel temperature RPM limiting to initiate shutdown
+1143 +00 Fuel_Temperature_Fueling_Index [UNITLESS] size=2 type=NU scale=0.00390625 | [EPFTFLIX] Fuel temperature fueling severity index.
+1143 +02 Fuel_Temperature_RPM_Index [UNITLESS] size=2 type=NU scale=0.00390625 | [EPFTRPIX] Fuel temperature RPM severity index.
+1143 +04 Fuel_Temperature_Fueling_Restart_Index [UNITLESS] size=2 type=NU scale=0.00390625 | [EPFTRYIX] Fuel temperature fueling restart severity index.
+1143 +06 Fuel_Temperature_RPM_Restart_Index [UNITLESS] size=2 type=NU scale=0.00390625 | [EPFTRRIX] Fuel temperature RPM restart severity index.
+1143 +08 Fuel_Temperature_Extremity [DEG_F] size=2 type=NS scale=0.015625 | [EPFTEX] Fuel temperature extremity (max)
+1143 +0A Fuel_Temperature_Extremity_Time [UNITLESS] size=4 type=NU scale=1 | [EPFTEXTM] Fuel temperature extremity time
+1143 +0E Fuel_Temperature_Fueling_Fault_Elapse_Time [SEC] size=4 type=NU scale=1.0 | [EPFTFFET] Total time fuel pres. fuel fault has been active
+1143 +12 Fuel_Temperature_RPM_Fault_Elapse_Time [SEC] size=4 type=NU scale=1.0 | [EPFTRFET] Total time fuel temperature. rpm fault has been active
+1143 +16 Fuel_Temperature_Fueling_Fault_Log_Flag [UNITLESS] size=2 type=NU scale=1.0 | [EPFTFLFG] Fault log recording flag for fuel temperature fueling
+1143 +18 Fuel_Temperature_Fueling_Fault_Log_Index [UNITLESS] size=2 type=NU scale=1.0 | [EPFTFLIN] Index into EPF fault log for Fuel temperature fueling
+1143 +1A Fuel_Temperature_RPM_Fault_Log_Flag [UNITLESS] size=2 type=NU scale=1.0 | [EPFTRPFG] Fault log recording flag for fuel temperature RPM
+1143 +1C Fuel_Temperature_RPM_Fault_Log_Index [UNITLESS] size=2 type=NU scale=1.0 | [EPFTRPIN] Index into EPF fault log for fuel temperature RPM
+1152 +00 Fuel_Temperature_Input_Source [HEX] size=4 type=NU scale=1.0 | [EPFTSA] Pointer to source of fuel temperature
+1152 +04 Fuel_Temperature_Input_Mask [HEX] size=2 type=NU scale=1.0 | [EPFTSAMK] Mask for source of fuel temperature
+1152 +06 Fuel_Temperature_Fuel_Duration [SEC] size=2 type=NU scale=1.0 | [EPFTFLTM] Amount of time since fuel temperature failure was detected
+1152 +08 Fuel_Temperature_RPM_Duration [SEC] size=2 type=NU scale=1.0 | [EPFTRPTM] Amount of time since fuel temperature failure was detected
+1152 +0A Fuel_Temperature_Min_Threshold_Pointer [HEX] size=4 type=NU scale=1.0 | [EPFTMNSA] Pointer to fuel temperature min threshold
+1152 +0E Fuel_Temperature_Max_Threshold_Pointer [HEX] size=4 type=NU scale=1.0 | [EPFTMXSA] Pointer to fuel temperature max threshold
+1152 +12 Fuel_Temperature_RPM_Lower_Limit_Pointer [HEX] size=4 type=NU scale=1.0 | [EPFTRLSA] Pointer to fuel temperature RPM limit threshold
+1152 +16 Fuel_Temperature_Errors_Allowed [UNITLESS] size=2 type=NU scale=1.0 | [EPFTEREN] TRUE = fuel temperature error allowed, FALSE = not allowed
+1152 +18 Fuel_Temperature_Precrank_Error [HEX] size=2 type=NU scale=1.0 | [EPFTPKER] Fuel temperature system error detected before cranking in restart
+1152 +1A Fuel_Temperature_Fuel_Shutdown_Time_Count [SEC] size=2 type=NU scale=1.0 | [EPFTFSCU] Amount of time over fuel temperature fuel shutdown threshold
+1152 +1C Fuel_Temperature_RPM_Shutdown_Time_Count [SEC] size=2 type=NU scale=1.0 | [EPFTRSCU] Amount of time over fuel temperature RPM shutdown threshold
+1152 +1E Fuel_Temperature_Fuel_Start_Warning_Time [SEC] size=2 type=NU scale=1.0 | [EPFTFLWN] Time to start of warning after fuel temp fuel error declared
+1152 +20 Fuel_Temperature_RPM_Start_Warning_Time [SEC] size=2 type=NU scale=1.0 | [EPFTRPWN] Time to start of warning after fuel temp RPM error declared
+1152 +22 Fuel_Temperature_Errors_Allowed_Timer [SEC] size=2 type=NU scale=1.0 | [EPFTERTM] Time since RPM crossed fuel temperature start threshold
+1152 +24 Fuel_Temperature_Errors_Allowed_Timer_Running [UNITLESS] size=2 type=NU scale=1.0 | [EPFTERFG] Flag indicating fuel temp. errors allowed timer is running
+1152 +26 Fuel_Temperature_Fuel_Fault_Log_Pointer [HEX] size=4 type=NU scale=1.0 | [EPFTFLSA] Pointer to Fuel Temperature Fuel Fault Log Data
+1152 +2A Fuel_Temperature_RPM_Fault_Log_Pointer [HEX] size=4 type=NU scale=1.0 | [EPFTRPSA] Pointer to Fuel Temperature RPM Fault Log Data
+1152 +2E EPF_Input_Source_0_Fueling_Fault_Occurrence_Time [SEC] size=4 type=NU scale=0.2 | [EP00FFTM] Input source 0 fueling fault occurrence time
+1152 +32 EPF_Input_Source_0_Fueling_Fault_Log_Value [UNITLESS] size=2 type=NU scale=1.0 | [EP00FLVU] Keeps value of input source 0 at time of fueling fault
+1152 +34 EPF_Input_Source_0_Fueling_Fault_Log_Duration [SEC] size=2 type=NU scale=0.2 | [EP00FLFD] Input source 0 fueling fault log duration
+1152 +36 EPF_Input_Source_0_RPM_Fault_Occurrence_Time [SEC] size=4 type=NU scale=0.2 | [EP00RFFT] Input source 0 RPM fault occurrence time
+1152 +3A EPF_Input_Source_0_RPM_Fault_Log_Value [UNITLESS] size=2 type=NU scale=1.0 | [EP00RPVU] Keeps value of input source 0 at time of RPM fault
+1152 +3C EPF_Input_Source_0_RPM_Fault_Log_Duration [SEC] size=2 type=NU scale=0.2 | [EP00RPFD] Input source 0 RPM fault log duration

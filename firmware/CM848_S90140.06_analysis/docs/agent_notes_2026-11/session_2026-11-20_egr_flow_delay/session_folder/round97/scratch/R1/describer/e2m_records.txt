@@ -1,0 +1,110 @@
+== 0x00803b9e
+0008 +0002 LSBPRFES [RPM] -> 0x803b9e lsg_base_reference_speed_calibration word; LSG BASE REFERENCE SPEED~300 - 1000
+== 0x00803fca
+131E +0002 LSMNRFTN [RPM] -> 0x803fca lsg_operator_adjust_minimum_speed word; TRIM FOR MINIMUM ALLOWABLE LSG IDLE SPEED RANGE LIMIT~300 - 1000
+== 0x00803fcc
+131E +0004 LSMXRFTN [RPM] -> 0x803fcc lsg_operator_adjust_maximum_speed word; TRIM FOR MAXIMUM ALLOWABLE LSG IDLE SPEED RANGE LIMIT~300 - 1000
+== 0x00805f0a
+1073 +0000 LSICBKRF [RPM] -> 0x805f0a rpm_added_to_lsg_reference_300_300 i16; RPM ADDED TO LSG REFERENCE~-300 - 300
+== 0x00807aae
+104B +000E APLSTMTR [SEC] -> 0x807aae time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900 word; TIME THAT MUST EXPIRE WITHOUT LSG COMMANDING FUEL BEFORE ALPHA~0 - 900
+== 0x00807bf2
+11A3 +0000 LSRFOF02 [RPM] -> 0x807bf2 offset_to_low_idle_reference_speed_used_in_lsg_to_no_adjust_t_0_4500 word; OFFSET TO LOW IDLE REFERENCE SPEED USED IN LSG-TO-NO ADJUST T~0 - 4500
+== 0x0080817c
+1104 +001E LSRFESDC [RPM] -> 0x80817c difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000 word; DIFFERENCE BETWEEN THE LSG BREAKPOINT AND THE LSG REFERENCE S~0 - 5000
+== 0x00808236
+1064 +0000 LSMXFLOF [MM3S] -> 0x808236 added_to_4d_fueling_at_lsg_adjusted_reference_speed_to_det_max_5_5 i16; ADDED TO 4D FUELING AT LSG_ADJUSTED_REFERENCE_SPEED TO DET. MAX~-5 - 5
+== 0x00808238
+1064 +0002 LSMNLMFL [MM3S] -> 0x808238 lsg_fueling_clamp_min_0_100 word; LSG FUELING CLAMP MIN~0 - 100
+== 0x0080823a
+1064 +0004 LSMXPZOF [MM3S] -> 0x80823a added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_823a i16; ADDED TO 4D FUELING AT LSG ADJ REF SPEED TO DETERMINE LSG_INTEG~-5 - 5
+== 0x00808242
+1064 +000C LSFTMX [RPM] -> 0x808242 lsg_filtered_speed_error_upper_limit i16; LSG MAXIMUM FILTERED ENGINE SPEED ERROR~0 - 1000
+== 0x00808244
+1064 +000E LSFTMN [RPM] -> 0x808244 lsg_filtered_speed_error_lower_limit i16; LSG MINIMUM FILTERED ENGINE SPEED ERROR~-1000 - 0
+== 0x00808246
+1064 +0010 LSMXITOF [MM3S] -> 0x808246 added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_8246 i16; ADDED TO 4D FUELING AT LSG ADJ REF SPEED TO DETERMINE LSG_INTEG~-5 - 5
+== 0x0080824c
+1064 +0016 LSITRSES [RPM] -> 0x80824c offset_to_lsg_reference_speed_over_which_lsg_integrator_m_1000_1000 i16; OFFSET TO LSG REFERENCE SPEED OVER WHICH LSG INTEGRATOR M~-1000 - 1000
+== 0x0080824e
+1064 +0018 LSITRSFL [MM3S] -> 0x80824e engine_fueling_below_which_the_lsg_integrator_may_be_reset_0_72_46 word; ENGINE FUELING BELOW WHICH THE LSG INTEGRATOR MAY BE RESET~0 - 72.46
+== 0x00808250
+1064 +001A LSDEITGN [NONE] -> 0x808250 blank_spot_after_removal_of_lsg_db_int_gain_0_0_100_0 word; BLANK SPOT AFTER REMOVAL OF LSG_DB_INT_GAIN~0.0 - 100.0
+== 0x00808252
+1064 +001C LSDEPPGN [NONE] -> 0x808252 blank_spot_after_removal_of_lsg_db_prop_gain_0_0_100_0 word; BLANK SPOT AFTER REMOVAL OF LSG_DB_PROP_GAIN~0.0 - 100.0
+== 0x00808256
+1064 +0020 LSRFESUL [RPM] -> 0x808256 the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 word; THE UPPER LIMIT CLAMP FOR POSSIBLE LSG REFERENCE SPEED.~300 - 2000
+== 0x0080825c
+1064 +0026 LSDVFTCF [NONE] -> 0x80825c lsg_derivative_filter_coefficient_1_to_1 undefined; LSG DERIVATIVE FILTER COEFFICIENT~-1 TO 1
+== 0x0080825e
+1064 +0028 LSDVAJEN [T/F] -> 0x80825e flag_to_enable_disable_the_lsg_derivative_gain_adjustment_scheme_0_1 word; FLAG TO ENABLE/DISABLE THE LSG DERIVATIVE GAIN ADJUSTMENT SCHEME~0 - 1
+== 0x00808260
+1064 +002A LSPPAJEN [T/F] -> 0x808260 flag_to_enable_disable_the_lsg_proportional_gain_adjustment_sche_0_1 word; FLAG TO ENABLE/DISABLE THE LSG PROPORTIONAL GAIN ADJUSTMENT SCHE~0 - 1
+== 0x00808262
+1064 +002C LSITAJEN [T/F] -> 0x808262 flag_to_enable_disable_the_lsg_integral_gain_adjustment_scheme_0_1 word; FLAG TO ENABLE/DISABLE THE LSG INTEGRAL GAIN ADJUSTMENT SCHEME.~0 - 1
+== 0x00808266
+1064 +0030 LSMXDVFL [%FU] -> 0x808266 lsg_derivative_filter_clamp i16; MAXIMUM AND -MINIMUM LIMIT FOR LSG_DERIVATIVE_TERM~0 - 556.5
+== 0x00808268
+1064 +0032 LSPP02GN [%F/R] -> 0x808268 lsg_proportional_gain_2_calibration_2_to_2 i16; LSG PROPORTIONAL GAIN 2 CALIBRATION~-2 TO 2
+== 0x0080826a
+1064 +0034 LSDV02GN [FS/R] -> 0x80826a lsg_derivative_gain_2_calibration_0_043_to_0_043 i16; LSG DERIVATIVE GAIN 2 CALIBRATION~-0.043 TO 0.043
+== 0x00808334
+10EB +0000 LSJCPPGN [M/R] -> 0x808334 lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_8334 undefined; LSG P GAIN PASSED FROM FUEL SYSTEM SPECIFIC ALGORITHM.~0 - 0.4348
+== 0x00808336
+10EB +0002 LSJCITGN [M/RS] -> 0x808336 lsg_i_gain_passed_from_fuel_system_specific_algorithm_0_0_217_8336 i16; LSG I GAIN PASSED FROM FUEL SYSTEM SPECIFIC ALGORITHM~0 - 0.217
+== 0x00808338
+10EB +0004 LSJCDVGN [MS/R] -> 0x808338 lsg_d_gain_passed_from_fuel_system_specific_algorithm_0_0_0144_8338 i16; LSG D GAIN PASSED FROM FUEL SYSTEM SPECIFIC ALGORITHM~0 - 0.0144
+== 0x00808340
+1066 +0006 LSCIRMRT [RP/S] -> 0x808340 lsg_idle_ramp_rate_0_1000 word; LSG IDLE RAMP RATE~0 - 1000
+== 0x00808342
+1066 +0008 LSMNRF [RPM] -> 0x808342 datalink_commanded_lsg_breakpoint_speed word; MINIMUM ALLOWABLE LSG REFERENCE SPEED~300 - 1000
+== 0x0080a90e
+== 0x0080a910
+104A +0018 APLSTR [SEC] -> 0x80a910 trace_the_time_since_fueling_state_has_left_lsg_state_0_900 word; TRACE THE TIME SINCE FUELING STATE HAS LEFT LSG STATE~0 - 900
+== 0x0080dac4
+10ED +0000 LSPPGN [M/R] -> 0x80dac4 lsg_proportional_gain_active i16; LSG PID PROPORTIONAL GAIN~0 - 0.4348
+== 0x0080daca
+10ED +0006 LSUSGNST [NONE] -> 0x80daca identifies_the_current_lsg_pid_gain_set_0_7 word; IDENTIFIES THE CURRENT LSG PID GAIN SET~0 - 7
+== 0x0080dacc
+10ED +0008 LSFNGNST [NONE] -> 0x80dacc indicator_of_the_lsg_gain_set_currently_being_used_0_9 word; INDICATOR OF THE LSG GAIN SET CURRENTLY BEING USED~0-9
+== 0x0080dad0
+10ED +000C LSAPPPGN [M/R] -> 0x80dad0 lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 undefined; LSG P GAIN PASSED FROM FUEL SYSTEM SPECIFIC ALGORITHM.~0 - 0.4348
+== 0x0080dad2
+10ED +000E LSAPITGN [M/RS] -> 0x80dad2 lsg_i_gain_passed_from_fuel_system_specific_algorithm_0_0_217_dad2 i16; LSG I GAIN PASSED FROM FUEL SYSTEM SPECIFIC ALGORITHM~0 - 0.217
+== 0x0080dad4
+10ED +0010 LSAPDVGN [MS/R] -> 0x80dad4 lsg_d_gain_passed_from_fuel_system_specific_algorithm_0_0_0144_dad4 i16; LSG D GAIN PASSED FROM FUEL SYSTEM SPECIFIC ALGORITHM~0 - 0.0144
+== 0x0080dada
+== 0x0080dade
+1065 +0000 LSFL [MM3S] -> 0x80dade lsg_fuel_output_clamped word; FUELING OUTPUT OF THE LSG~0 - 100
+== 0x0080dae0
+1065 +0002 LSER [RPM] -> 0x80dae0 lsg_filtered_speed_error i16; LSG ENGINE SPEED ERROR~- 3000 - 1000
+== 0x0080dae4
+1065 +0006 LSDVFL [MM3S] -> 0x80dae4 lsg_derivative_filter_output i16; LSG PID DERIVATIVE FUELING CONTRIBUTION~-80.6 - 80.6
+== 0x0080dae8
+1065 +000A LSMXLMFL [MM3S] -> 0x80dae8 lsg_fueling_clamp_max_0_100 word; LSG FUELING CLAMP MAX~0 - 100
+== 0x0080daea
+1065 +000C LSMXITFL [MM3S] -> 0x80daea lsg_maximum_integrator_fuel_output_0_100 i16; LSG MAXIMUM INTEGRATOR FUEL OUTPUT~0 - 100
+== 0x0080daec
+1065 +000E LSMXITPZ [MM3S] -> 0x80daec lsg_integrator_preset_max_0_100 i16; LSG INTEGRATOR PRESET MAX~0 - 100
+== 0x0080daee
+1065 +0010 LSAJRFES [RPM] -> 0x80daee lsg_reference_speed_adjusted_with_throttle_position_300_2000 word; LSG REFERENCE SPEED ADJUSTED WITH THROTTLE POSITION~300 - 2000
+== 0x0080daf0
+1065 +0012 LSDPGN01 [NONE] -> 0x80daf0 lsg_droop_gain_1_at_integrator_feedback_2_to_2 i16; LSG DROOP GAIN 1 AT INTEGRATOR FEEDBACK~-2 TO 2
+== 0x0080daf2
+1065 +0014 LSDPGN02 [NONE] -> 0x80daf2 lsg_droop_gain_2_at_lsg_fueling_output_2_to_2 i16; LSG DROOP GAIN 2 AT LSG FUELING OUTPUT~-2 TO 2
+== 0x0080daf6
+1065 +0018 LSEXFL [NONE] -> 0x80daf6 lsg_active_flag word; FLAG WHICH INDICATES THE LSG ALG. IS RUNNING  ~0 - 1
+== 0x0080daf8
+1065 +001A LSPPAJGN [F/R] -> 0x80daf8 lsg_adjusted_proportional_gain_0_4348 i16; LSG ADJUSTED PROPORTIONAL GAIN.~0 - .4348
+== 0x0080dafa
+1065 +001C LSDVAJGN [FS/R] -> 0x80dafa lsg_adjusted_derivative_gain_0_0159 i16; LSG ADJUSTED DERIVATIVE GAIN.~0 - .0159
+== 0x0080dafc
+1065 +001E LSITAJGN [F/RS] -> 0x80dafc lsg_adjusted_integral_gain_0_0_238 i16; LSG ADJUSTED INTEGRAL GAIN.~0 - 0.238
+== 0x0080dafe
+1065 +0020 LSDV02FL [%FU] -> 0x80dafe lsg_pid_speed_derivative_2_fueling_contribution_200_to_200 i16; LSG PID SPEED DERIVATIVE 2 FUELING CONTRIBUTION~-200 TO 200
+== 0x0080db00
+1065 +0022 LSPP02FL [%FU] -> 0x80db00 lsg_pid_speed_proportional_2_fueling_contribution_200_to_200 i16; LSG PID SPEED PROPORTIONAL 2 FUELING CONTRIBUTION~-200 TO 200
+== 0x0080db02
+1067 +0000 LSRF [RPM] -> 0x80db02 lsg_breakpoint_speed word; CURRENT REFERENCE SPEED BEING USED BY THE LSG FEATURE~300 - 1400
+== 0x0080db06
+1049 +0004 LSDSRFRP [RPM] -> 0x80db06 operator_adjusted_lsg_breakpoint_speed_300_1000 word; OPERATOR ADJUSTED LSG BREAKPOINT SPEED~300 - 1000

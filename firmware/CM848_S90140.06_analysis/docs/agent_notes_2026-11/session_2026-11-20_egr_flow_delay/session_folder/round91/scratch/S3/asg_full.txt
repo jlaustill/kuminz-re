@@ -1,0 +1,456 @@
+00c962: 4e 56 ff fc                    link.w	%a6, #65532
+00c966: 48 e7 3c 3c                    movem.l	%d2-%d5/%a2-%a5, -(%sp)
+00c96a: 49 ee ff fc                    lea	(65532,%a6), %a4
+00c96e: 4b ee ff fc                    lea	(65532,%a6), %a5
+00c972: 4e b9 00 00 d2 3c              jsr	$d23c
+00c978: 0c 79 00 07 00 80 de d4        cmpi.w	#7, $80ded4
+00c980: 67 20                          beq	$20
+00c982: 0c 79 00 03 00 80 de d4        cmpi.w	#3, $80ded4
+00c98a: 67 16                          beq	$16
+00c98c: 0c 79 00 02 00 80 de d4        cmpi.w	#2, $80ded4
+00c994: 67 0c                          beq	$c
+00c996: 0c 79 00 1e 00 80 de d4        cmpi.w	#30, $80ded4
+00c99e: 66 00 07 2e                    bne	$72e
+00c9a2: 30 39 00 80 de d4              move.w	$80ded4, %d0
+00c9a8: b0 79 00 80 00 fe              cmp.w $8000fe, %d0   [manual decode]
+00c9ae: 67 00 01 10                    beq	$110
+00c9b2: 20 79 00 80 a9 a8              move.l	$80a9a8, %a0
+00c9b8: 30 28 00 04                    move.w	(4,%a0), %d0
+00c9bc: 48 c0                          ext.l	%d0
+00c9be: 20 79 00 80 a9 a8              move.l	$80a9a8, %a0
+00c9c4: 32 28 00 06                    move.w	(6,%a0), %d1
+00c9c8: 48 c1                          ext.l	%d1
+00c9ca: d0 81                          add.l	%d1, %d0
+00c9cc: 72 00                          moveq #0, %d1   [manual decode]
+00c9ce: 32 39 00 80 a9 94              move.w	$80a994, %d1
+00c9d4: 4c 01 00 00                    mulu.l	%d1, %d0
+00c9d8: 24 00                          move.l	%d0, %d2
+00c9da: 66 0e                          bne	$e
+00c9dc: 33 f9 00 80 cc f6 00 80 a9 72  move.w	$80ccf6, $80a972
+00c9e6: 60 00 00 90                    bra	$90
+00c9ea: 70 00                          moveq #0, %d0   [manual decode]
+00c9ec: 30 39 00 80 a9 92              move.w	$80a992, %d0
+00c9f2: 22 3c 00 00 04 00              move.l	#1024, %d1
+00c9f8: 92 80                          sub.l	%d0, %d1
+00c9fa: 20 01                          move.l	%d1, %d0
+00c9fc: 72 00                          moveq #0, %d1   [manual decode]
+00c9fe: 32 39 00 80 d3 2e              move.w	$80d32e, %d1
+00ca04: 76 00                          moveq #0, %d3   [manual decode]
+00ca06: 36 39 00 80 91 de              move.w	$8091de, %d3
+00ca0c: 92 83                          sub.l	%d3, %d1
+00ca0e: 4c 01 00 00                    mulu.l	%d1, %d0
+00ca12: 26 00                          move.l	%d0, %d3
+00ca14: ef 88                          lsl.l	#7, %d0
+00ca16: 22 02                          move.l	%d2, %d1
+00ca18: 4c 41 08 00                    divs.l	%d1, %d0
+00ca1c: 24 00                          move.l	%d0, %d2
+00ca1e: 0c 82 00 00 30 d4              cmpi.l	#12500, %d2
+00ca24: 6d 08                          blt	$8
+00ca26: 24 3c 00 00 7d 00              move.l	#32000, %d2
+00ca2c: 60 1c                          bra	$1c
+00ca2e: 0c 82 ff ff cf 2c              cmpi.l	#4294954796, %d2
+00ca34: 6e 08                          bgt	$8
+00ca36: 24 3c ff ff 83 00              move.l	#4294935296, %d2
+00ca3c: 60 0c                          bra	$c
+00ca3e: 20 02                          move.l	%d2, %d0
+00ca40: e1 88                          lsl.l	#0, %d0
+00ca42: 72 64                          moveq #100, %d1   [manual decode]
+00ca44: 4c 41 08 00                    divs.l	%d1, %d0
+00ca48: 24 00                          move.l	%d0, %d2
+00ca4a: 70 00                          moveq #0, %d0   [manual decode]
+00ca4c: 30 39 00 80 cc f6              move.w	$80ccf6, %d0
+00ca52: d4 80                          add.l	%d0, %d2
+00ca54: 0c 82 00 00 ff ff              cmpi.l	#65535, %d2
+00ca5a: 6f 0a                          ble	$a
+00ca5c: 33 fc ff ff 00 80 a9 72        move.w	#65535, $80a972
+00ca64: 60 12                          bra	$12
+00ca66: 4a 82                          tst.l %d2   [manual decode]
+00ca68: 6c 08                          bge	$8
+00ca6a: 42 79 00 80 a9 72              clr.w $80a972   [manual decode]
+00ca70: 60 06                          bra	$6
+00ca72: 33 c2 00 80 a9 72              move.w	%d2, $80a972
+00ca78: 70 00                          moveq #0, %d0   [manual decode]
+00ca7a: 30 39 00 80 a9 72              move.w	$80a972, %d0
+00ca80: 72 10                          moveq #16, %d1   [manual decode]
+00ca82: e3 a8                          lsl.l	%d1, %d0
+00ca84: 23 c0 00 80 a9 88              move.l	%d0, $80a988
+00ca8a: 70 00                          moveq #0, %d0   [manual decode]
+00ca8c: 30 39 00 80 a9 72              move.w	$80a972, %d0
+00ca92: 72 00                          moveq #0, %d1   [manual decode]
+00ca94: 32 39 00 80 cc f6              move.w	$80ccf6, %d1
+00ca9a: 90 81                          sub.l	%d1, %d0
+00ca9c: 28 80                          move.l	%d0, (%a4)
+00ca9e: 0c 94 00 00 7d 00              cmpi.l	#32000, (%a4)
+00caa4: 6d 06                          blt	$6
+00caa6: 36 3c 7d 00                    move.w	#32000, %d3
+00caaa: 60 1a                          bra	$1a
+00caac: 0c 94 ff ff 83 00              cmpi.l	#4294935296, (%a4)
+00cab2: 6e 06                          bgt	$6
+00cab4: 36 3c 83 00                    move.w	#33536, %d3
+00cab8: 60 0c                          bra	$c
+00caba: 36 2d 00 02                    move.w	(2,%a5), %d3
+00cabe: 60 06                          bra	$6
+00cac0: 36 39 00 80 a9 78              move.w	$80a978, %d3
+00cac6: 0c 79 00 07 00 80 de d4        cmpi.w	#7, $80ded4
+00cace: 67 32                          beq	$32
+00cad0: 48 79 00 80 a9 84              pea $80a984   [manual decode]
+00cad6: 3f 39 00 80 a9 90              move.w	$80a990, -(%sp)
+00cadc: 4e b9 00 03 4f 8a              jsr	$34f8a
+00cae2: 5c 8f                          addq.l #6, %a7   [manual decode]
+00cae4: 33 c0 00 80 a9 72              move.w	%d0, $80a972
+00caea: 20 79 00 80 a9 84              move.l	$80a984, %a0
+00caf0: 30 10                          move.w	(%a0), %d0
+00caf2: 02 80 00 00 ff ff              andi.l #65535, %d0   [manual decode]
+00caf8: e4 80                          asr.l	#2, %d0
+00cafa: 33 c0 00 80 01 10              move.w	%d0, $800110
+00cb00: 60 04                          bra	$4
+00cb02: 61 00 fd 9c                    bsr.w	$fd9c
+00cb06: 70 00                          moveq #0, %d0   [manual decode]
+00cb08: 30 39 00 80 a9 72              move.w	$80a972, %d0
+00cb0e: 72 00                          moveq #0, %d1   [manual decode]
+00cb10: 32 39 00 80 cc f6              move.w	$80ccf6, %d1
+00cb16: 90 81                          sub.l	%d1, %d0
+00cb18: 28 80                          move.l	%d0, (%a4)
+00cb1a: 0c 94 00 00 7d 00              cmpi.l	#32000, (%a4)
+00cb20: 6d 0a                          blt	$a
+00cb22: 33 fc 7d 00 00 80 a9 78        move.w	#32000, $80a978
+00cb2a: 60 1a                          bra	$1a
+00cb2c: 0c 94 ff ff 83 00              cmpi.l	#4294935296, (%a4)
+00cb32: 6e 0a                          bgt	$a
+00cb34: 33 fc 83 00 00 80 a9 78        move.w	#33536, $80a978
+00cb3c: 60 08                          bra	$8
+00cb3e: 33 ed 00 02 00 80 a9 78        move.w	(2,%a5), $80a978
+00cb46: 0c 79 00 01 00 80 a9 a0        cmpi.w	#1, $80a9a0
+00cb4e: 66 48                          bne	$48
+00cb50: 33 fc 00 01 00 80 a9 74        move.w	#1, $80a974
+00cb58: 36 39 00 80 a9 32              move.w	$80a932, %d3
+00cb5e: 33 f9 00 80 a9 34 00 80 00 fa  move.w	$80a934, $8000fa
+00cb68: 42 79 00 80 00 fc              clr.w $8000fc   [manual decode]
+00cb6e: 33 f9 00 80 a9 36 00 80 00 f4  move.w	$80a936, $8000f4
+00cb78: 38 39 00 80 a9 38              move.w	$80a938, %d4
+00cb7e: 34 39 00 80 a9 3a              move.w	$80a93a, %d2
+00cb84: 3a 39 00 80 a9 3c              move.w	$80a93c, %d5
+00cb8a: 33 f9 00 80 91 de 00 80 01 12  move.w	$8091de, $800112
+00cb94: 60 00 01 62                    bra	$162
+00cb98: 30 39 00 80 01 00              move.w	$800100, %d0
+00cb9e: b0 79 00 80 d3 2e              cmp.w $80d32e, %d0   [manual decode]
+00cba4: 66 10                          bne	$10
+00cba6: 30 39 00 80 de d4              move.w	$80ded4, %d0
+00cbac: b0 79 00 80 00 fe              cmp.w $8000fe, %d0   [manual decode]
+00cbb2: 67 00 01 2c                    beq	$12c
+00cbb6: 33 fc 00 01 00 80 a9 74        move.w	#1, $80a974
+00cbbe: 20 79 00 80 a9 a8              move.l	$80a9a8, %a0
+00cbc4: 30 28 00 0c                    move.w	(12,%a0), %d0
+00cbc8: 20 79 00 80 a9 a8              move.l	$80a9a8, %a0
+00cbce: b0 68 00 0e                    cmp.w	(14,%a0), %d0
+00cbd2: 66 12                          bne	$12
+00cbd4: 42 79 00 80 00 fc              clr.w $8000fc   [manual decode]
+00cbda: 42 79 00 80 00 fa              clr.w $8000fa   [manual decode]
+00cbe0: 42 42                          clr.w %d2   [manual decode]
+00cbe2: 60 00 00 d8                    bra	$d8
+00cbe6: 30 39 00 80 d3 2e              move.w	$80d32e, %d0
+00cbec: b0 79 00 80 91 de              cmp.w $8091de, %d0   [manual decode]
+00cbf2: 24 79 00 80 a9 a8              move.l	$80a9a8, %a2
+00cbf8: 63 5e                          bls	$5e
+00cbfa: 30 2a 00 0c                    move.w	(12,%a2), %d0
+00cbfe: 48 c0                          ext.l	%d0
+00cc00: 32 2a 00 0e                    move.w	(14,%a2), %d1
+00cc04: 48 c1                          ext.l	%d1
+00cc06: 90 81                          sub.l	%d1, %d0
+00cc08: 2f 00                          move.l	%d0, -(%sp)
+00cc0a: 30 2a 00 10                    move.w	(16,%a2), %d0
+00cc0e: 48 c0                          ext.l	%d0
+00cc10: 22 3c 00 00 01 00              move.l	#256, %d1
+00cc16: 92 80                          sub.l	%d0, %d1
+00cc18: 2f 01                          move.l	%d1, -(%sp)
+00cc1a: 70 00                          moveq #0, %d0   [manual decode]
+00cc1c: 30 39 00 80 d3 2e              move.w	$80d32e, %d0
+00cc22: 72 00                          moveq #0, %d1   [manual decode]
+00cc24: 32 39 00 80 91 de              move.w	$8091de, %d1
+00cc2a: 90 81                          sub.l	%d1, %d0
+00cc2c: 2f 00                          move.l	%d0, -(%sp)
+00cc2e: 4e b9 00 03 50 76              jsr	$35076
+00cc34: 4f ef 00 0c                    lea	(12,%sp), %sp
+00cc38: 24 00                          move.l	%d0, %d2
+00cc3a: 0c 82 00 00 17 00              cmpi.l	#5888, %d2
+00cc40: 6f 06                          ble	$6
+00cc42: 24 3c 00 00 17 00              move.l	#5888, %d2
+00cc48: 42 79 00 80 00 fc              clr.w $8000fc   [manual decode]
+00cc4e: 30 02                          move.w	%d2, %d0
+00cc50: 33 c0 00 80 00 fa              move.w	%d0, $8000fa
+00cc56: 60 64                          bra	$64
+00cc58: 30 2a 00 0c                    move.w	(12,%a2), %d0
+00cc5c: 48 c0                          ext.l	%d0
+00cc5e: 32 2a 00 0e                    move.w	(14,%a2), %d1
+00cc62: 48 c1                          ext.l	%d1
+00cc64: 90 81                          sub.l	%d1, %d0
+00cc66: 2f 00                          move.l	%d0, -(%sp)
+00cc68: 30 2a 00 10                    move.w	(16,%a2), %d0
+00cc6c: 48 c0                          ext.l	%d0
+00cc6e: 22 3c 00 00 01 00              move.l	#256, %d1
+00cc74: 92 80                          sub.l	%d0, %d1
+00cc76: 2f 01                          move.l	%d1, -(%sp)
+00cc78: 70 00                          moveq #0, %d0   [manual decode]
+00cc7a: 30 39 00 80 91 de              move.w	$8091de, %d0
+00cc80: 72 00                          moveq #0, %d1   [manual decode]
+00cc82: 32 39 00 80 d3 2e              move.w	$80d32e, %d1
+00cc88: 90 81                          sub.l	%d1, %d0
+00cc8a: 2f 00                          move.l	%d0, -(%sp)
+00cc8c: 4e b9 00 03 50 76              jsr	$35076
+00cc92: 4f ef 00 0c                    lea	(12,%sp), %sp
+00cc96: 24 00                          move.l	%d0, %d2
+00cc98: 0c 82 00 00 17 00              cmpi.l	#5888, %d2
+00cc9e: 6f 06                          ble	$6
+00cca0: 24 3c 00 00 17 00              move.l	#5888, %d2
+00cca6: 42 79 00 80 00 fc              clr.w $8000fc   [manual decode]
+00ccac: 30 02                          move.w	%d2, %d0
+00ccae: 33 c0 00 80 00 fa              move.w	%d0, $8000fa
+00ccb4: 44 79 00 80 00 fa              neg.w $8000fa   [manual decode]
+00ccba: 44 42                          neg.w	%d2
+00ccbc: 33 f9 00 80 cc f6 00 80 00 f4  move.w	$80ccf6, $8000f4
+00ccc6: 42 44                          clr.w %d4   [manual decode]
+00ccc8: 3a 39 00 80 d3 2e              move.w	$80d32e, %d5
+00ccce: 9a 79 00 80 91 de              sub(opmode 1).w $8091de, d5   [manual decode]
+00ccd4: 33 f9 00 80 91 de 00 80 01 12  move.w	$8091de, $800112
+00ccde: 60 18                          bra	$18
+00cce0: 38 39 00 80 a9 7c              move.w	$80a97c, %d4
+00cce6: 34 39 00 80 a9 7e              move.w	$80a97e, %d2
+00ccec: 3a 39 00 80 a9 80              move.w	$80a980, %d5
+00ccf2: 42 79 00 80 a9 74              clr.w $80a974   [manual decode]
+00ccf8: 70 00                          moveq #0, %d0   [manual decode]
+00ccfa: 30 39 00 80 cc f6              move.w	$80ccf6, %d0
+00cd00: 72 00                          moveq #0, %d1   [manual decode]
+00cd02: 32 39 00 80 00 f4              move.w	$8000f4, %d1
+00cd08: 90 81                          sub.l	%d1, %d0
+00cd0a: 28 80                          move.l	%d0, (%a4)
+00cd0c: 0c 94 00 00 1f 40              cmpi.l	#8000, (%a4)
+00cd12: 6d 0a                          blt	$a
+00cd14: 33 fc 1f 40 00 80 a9 70        move.w	#8000, $80a970
+00cd1c: 60 1a                          bra	$1a
+00cd1e: 0c 94 ff ff e0 c0              cmpi.l	#4294959296, (%a4)
+00cd24: 6e 0a                          bgt	$a
+00cd26: 33 fc e0 c0 00 80 a9 70        move.w	#57536, $80a970
+00cd2e: 60 08                          bra	$8
+00cd30: 33 ed 00 02 00 80 a9 70        move.w	(2,%a5), $80a970
+00cd38: 33 f9 00 80 cc f6 00 80 00 f4  move.w	$80ccf6, $8000f4
+00cd42: 30 39 00 80 a9 78              move.w	$80a978, %d0
+00cd48: 90 43                          sub.w	%d3, %d0
+00cd4a: 33 c0 00 80 a9 6e              move.w	%d0, $80a96e
+00cd50: 0c 79 7d 00 00 80 a9 6e        cmpi.w	#32000, $80a96e
+00cd58: 6d 0a                          blt	$a
+00cd5a: 33 fc 7d 00 00 80 a9 6e        move.w	#32000, $80a96e
+00cd62: 60 18                          bra	$18
+00cd64: 30 39 00 80 a9 6e              move.w	$80a96e, %d0
+00cd6a: 48 c0                          ext.l	%d0
+00cd6c: 0c 80 ff ff 83 00              cmpi.l	#4294935296, %d0
+00cd72: 6e 08                          bgt	$8
+00cd74: 33 fc 83 00 00 80 a9 6e        move.w	#33536, $80a96e
+00cd7c: 26 79 00 80 a9 a8              move.l	$80a9a8, %a3
+00cd82: 24 4b                          move.l	%a3, %a2
+00cd84: 58 8a                          addq.l #4, %a2   [manual decode]
+00cd86: 30 13                          move.w	(%a3), %d0
+00cd88: 48 c0                          ext.l	%d0
+00cd8a: 32 12                          move.w	(%a2), %d1
+00cd8c: 48 c1                          ext.l	%d1
+00cd8e: d0 81                          add.l	%d1, %d0
+00cd90: 32 39 00 80 a9 6e              move.w	$80a96e, %d1
+00cd96: 48 c1                          ext.l	%d1
+00cd98: 4c 01 00 00                    mulu.l	%d1, %d0
+00cd9c: 23 c0 00 80 00 f6              move.l	%d0, $8000f6
+00cda2: 30 12                          move.w	(%a2), %d0
+00cda4: 48 c0                          ext.l	%d0
+00cda6: 32 2b 00 06                    move.w	(6,%a3), %d1
+00cdaa: 48 c1                          ext.l	%d1
+00cdac: d0 81                          add.l	%d1, %d0
+00cdae: 32 03                          move.w	%d3, %d1
+00cdb0: 48 c1                          ext.l	%d1
+00cdb2: 4c 01 00 00                    mulu.l	%d1, %d0
+00cdb6: d1 b9 00 80 00 f6              add(opmode 6).l $8000f6, d0   [manual decode]
+00cdbc: 30 39 00 80 a9 70              move.w	$80a970, %d0
+00cdc2: c1 eb 00 02                    and(opmode 7).l (2,%a3), d0   [manual decode]
+00cdc6: 91 b9 00 80 00 f6              sub(opmode 6).l $8000f6, d0   [manual decode]
+00cdcc: 20 39 00 80 00 f6              move.l	$8000f6, %d0
+00cdd2: 72 09                          moveq #9, %d1   [manual decode]
+00cdd4: e2 a0                          asr.l	%d1, %d0
+00cdd6: 23 c0 00 80 00 f6              move.l	%d0, $8000f6
+00cddc: 0c b9 00 0e 60 00 00 80 00 f6  cmpi.l	#942080, $8000f6
+00cde6: 6d 0c                          blt	$c
+00cde8: 23 fc 00 0e 60 00 00 80 00 f6  move.l	#942080, $8000f6
+00cdf2: 60 16                          bra	$16
+00cdf4: 0c b9 ff f1 a0 00 00 80 00 f6  cmpi.l	#4294025216, $8000f6
+00cdfe: 6e 0a                          bgt	$a
+00ce00: 23 fc ff f1 a0 00 00 80 00 f6  move.l	#4294025216, $8000f6
+00ce0a: 20 79 00 80 a9 a8              move.l	$80a9a8, %a0
+00ce10: 30 39 00 80 a9 6e              move.w	$80a96e, %d0
+00ce16: c1 e8 00 08                    and(opmode 7).l (8,%a0), d0   [manual decode]
+00ce1a: 28 80                          move.l	%d0, (%a4)
+00ce1c: 20 79 00 80 a9 a8              move.l	$80a9a8, %a0
+00ce22: 30 39 00 80 a9 70              move.w	$80a970, %d0
+00ce28: c1 e8 00 0a                    and(opmode 7).l (10,%a0), d0   [manual decode]
+00ce2c: 91 94                          sub.l	%d0, (%a4)
+00ce2e: 20 14                          move.l	(%a4), %d0
+00ce30: 72 0d                          moveq #13, %d1   [manual decode]
+00ce32: e2 a0                          asr.l	%d1, %d0
+00ce34: 28 80                          move.l	%d0, (%a4)
+00ce36: 30 2d 00 02                    move.w	(2,%a5), %d0
+00ce3a: b0 79 00 80 7a be              cmp.w $807abe, %d0   [manual decode]
+00ce40: 6d 2c                          blt	$2c
+00ce42: 30 39 00 80 7a be              move.w	$807abe, %d0
+00ce48: 91 6d 00 02                    sub.w	%d0, (2,%a5)
+00ce4c: 30 2d 00 02                    move.w	(2,%a5), %d0
+00ce50: b0 79 00 80 7a c2              cmp.w $807ac2, %d0   [manual decode]
+00ce56: 6d 0c                          blt	$c
+00ce58: 33 f9 00 80 7a c2 00 80 a9 6c  move.w	$807ac2, $80a96c
+00ce62: 60 56                          bra	$56
+00ce64: 33 ed 00 02 00 80 a9 6c        move.w	(2,%a5), $80a96c
+00ce6c: 60 4c                          bra	$4c
+00ce6e: 30 2d 00 02                    move.w	(2,%a5), %d0
+00ce72: 48 c0                          ext.l	%d0
+00ce74: 32 39 00 80 7a be              move.w	$807abe, %d1
+00ce7a: 48 c1                          ext.l	%d1
+00ce7c: 44 81                          neg.l	%d1
+00ce7e: b0 81                          cmp.l	%d1, %d0
+00ce80: 6e 32                          bgt	$32
+00ce82: 30 39 00 80 7a be              move.w	$807abe, %d0
+00ce88: d1 6d 00 02                    add.w	%d0, (2,%a5)
+00ce8c: 30 2d 00 02                    move.w	(2,%a5), %d0
+00ce90: 48 c0                          ext.l	%d0
+00ce92: 32 39 00 80 7a c2              move.w	$807ac2, %d1
+00ce98: 48 c1                          ext.l	%d1
+00ce9a: 44 81                          neg.l	%d1
+00ce9c: 26 01                          move.l	%d1, %d3
+00ce9e: b0 81                          cmp.l	%d1, %d0
+00cea0: 6e 08                          bgt	$8
+00cea2: 33 c3 00 80 a9 6c              move.w	%d3, $80a96c
+00cea8: 60 10                          bra	$10
+00ceaa: 33 ed 00 02 00 80 a9 6c        move.w	(2,%a5), $80a96c
+00ceb2: 60 06                          bra	$6
+00ceb4: 42 79 00 80 a9 6c              clr.w $80a96c   [manual decode]
+00ceba: 30 39 00 80 a9 6c              move.w	$80a96c, %d0
+00cec0: 48 c0                          ext.l	%d0
+00cec2: 72 00                          moveq #0, %d1   [manual decode]
+00cec4: 32 39 00 80 a9 94              move.w	$80a994, %d1
+00ceca: 4c 01 00 00                    mulu.l	%d1, %d0
+00cece: 72 0a                          moveq #10, %d1   [manual decode]
+00ced0: e2 a0                          asr.l	%d1, %d0
+00ced2: 28 80                          move.l	%d0, (%a4)
+00ced4: 30 04                          move.w	%d4, %d0
+00ced6: c1 f9 00 80 7a c0              and(opmode 7).l $807ac0, d0   [manual decode]
+00cedc: 72 0a                          moveq #10, %d1   [manual decode]
+00cede: e2 a0                          asr.l	%d1, %d0
+00cee0: d1 94                          add.l	%d0, (%a4)
+00cee2: 0c 6d 17 00 00 02              cmpi.w	#5888, (2,%a5)
+00cee8: 6d 0a                          blt	$a
+00ceea: 33 fc 17 00 00 80 a9 7c        move.w	#5888, $80a97c
+00cef2: 60 20                          bra	$20
+00cef4: 30 2d 00 02                    move.w	(2,%a5), %d0
+00cef8: 48 c0                          ext.l	%d0
+00cefa: 0c 80 ff ff e9 00              cmpi.l	#4294961408, %d0
+00cf00: 6e 0a                          bgt	$a
+00cf02: 33 fc e9 00 00 80 a9 7c        move.w	#59648, $80a97c
+00cf0a: 60 08                          bra	$8
+00cf0c: 33 ed 00 02 00 80 a9 7c        move.w	(2,%a5), $80a97c
+00cf14: 70 00                          moveq #0, %d0   [manual decode]
+00cf16: 30 39 00 80 a9 94              move.w	$80a994, %d0
+00cf1c: 4c 39 00 00 00 80 00 f6        mulu.l $8000f6, %d0 (ext 0000)   [manual decode]
+00cf24: e2 80                          asr.l	#1, %d0
+00cf26: 28 80                          move.l	%d0, (%a4)
+00cf28: 20 39 00 80 00 fa              move.l	$8000fa, %d0
+00cf2e: 72 09                          moveq #9, %d1   [manual decode]
+00cf30: e2 a0                          asr.l	%d1, %d0
+00cf32: 72 00                          moveq #0, %d1   [manual decode]
+00cf34: 32 39 00 80 a9 92              move.w	$80a992, %d1
+00cf3a: 4c 01 00 00                    mulu.l	%d1, %d0
+00cf3e: e6 80                          asr.l	#3, %d0
+00cf40: d1 94                          add.l	%d0, (%a4)
+00cf42: 70 00                          moveq #0, %d0   [manual decode]
+00cf44: 30 39 00 80 a9 92              move.w	$80a992, %d0
+00cf4a: 04 80 00 00 04 00              subi.l #1024, %d0   [manual decode]
+00cf50: 32 04                          move.w	%d4, %d1
+00cf52: 48 c1                          ext.l	%d1
+00cf54: 4c 01 00 00                    mulu.l	%d1, %d0
+00cf58: e9 88                          lsl.l	#4, %d0
+00cf5a: d1 94                          add.l	%d0, (%a4)
+00cf5c: 0c 94 fa 40 00 00              cmpi.l	#4198498304, (%a4)
+00cf62: 6c 16                          bge	$16
+00cf64: 33 fc 17 00 00 80 00 fa        move.w	#5888, $8000fa
+00cf6c: 42 79 00 80 00 fc              clr.w $8000fc   [manual decode]
+00cf72: 44 b9 00 80 00 fa              neg.l $8000fa   [manual decode]
+00cf78: 60 22                          bra	$22
+00cf7a: 0c 94 05 c0 00 00              cmpi.l	#96468992, (%a4)
+00cf80: 6d 10                          blt	$10
+00cf82: 33 fc 17 00 00 80 00 fa        move.w	#5888, $8000fa
+00cf8a: 42 79 00 80 00 fc              clr.w $8000fc   [manual decode]
+00cf90: 60 0a                          bra	$a
+00cf92: 20 14                          move.l	(%a4), %d0
+00cf94: e5 88                          lsl.l	#2, %d0
+00cf96: 23 c0 00 80 00 fa              move.l	%d0, $8000fa
+00cf9c: 33 f9 00 80 00 fa 00 80 a9 7a  move.w	$8000fa, $80a97a
+00cfa6: 30 39 00 80 a9 7a              move.w	$80a97a, %d0
+00cfac: d0 79 00 80 a9 7c              add(opmode 1).w $80a97c, d0   [manual decode]
+00cfb2: 33 c0 00 80 a9 7e              move.w	%d0, $80a97e
+00cfb8: 48 c0                          ext.l	%d0
+00cfba: 0c 80 ff ff e9 00              cmpi.l	#4294961408, %d0
+00cfc0: 6e 0a                          bgt	$a
+00cfc2: 33 fc e9 00 00 80 a9 7e        move.w	#59648, $80a97e
+00cfca: 60 12                          bra	$12
+00cfcc: 0c 79 17 00 00 80 a9 7e        cmpi.w	#5888, $80a97e
+00cfd4: 6f 08                          ble	$8
+00cfd6: 33 fc 17 00 00 80 a9 7e        move.w	#5888, $80a97e
+00cfde: 24 79 00 80 a9 a8              move.l	$80a9a8, %a2
+00cfe4: 30 39 00 80 a9 7e              move.w	$80a97e, %d0
+00cfea: c1 ea 00 0c                    and(opmode 7).l (12,%a2), d0   [manual decode]
+00cfee: 28 80                          move.l	%d0, (%a4)
+00cff0: 30 02                          move.w	%d2, %d0
+00cff2: c1 ea 00 0e                    and(opmode 7).l (14,%a2), d0   [manual decode]
+00cff6: 91 94                          sub.l	%d0, (%a4)
+00cff8: 30 05                          move.w	%d5, %d0
+00cffa: c1 ea 00 10                    and(opmode 7).l (16,%a2), d0   [manual decode]
+00cffe: d1 94                          add.l	%d0, (%a4)
+00d000: 20 14                          move.l	(%a4), %d0
+00d002: e0 80                          asr.l	#0, %d0
+00d004: 28 80                          move.l	%d0, (%a4)
+00d006: 0c 94 ff ff e9 00              cmpi.l	#4294961408, (%a4)
+00d00c: 6e 0a                          bgt	$a
+00d00e: 33 fc e9 00 00 80 a9 80        move.w	#59648, $80a980
+00d016: 60 1a                          bra	$1a
+00d018: 0c 94 00 00 17 00              cmpi.l	#5888, (%a4)
+00d01e: 6d 0a                          blt	$a
+00d020: 33 fc 17 00 00 80 a9 80        move.w	#5888, $80a980
+00d028: 60 08                          bra	$8
+00d02a: 33 ed 00 02 00 80 a9 80        move.w	(2,%a5), $80a980
+00d032: 70 00                          moveq #0, %d0   [manual decode]
+00d034: 30 39 00 80 01 10              move.w	$800110, %d0
+00d03a: 22 3c 00 00 40 00              move.l	#16384, %d1
+00d040: 92 80                          sub.l	%d0, %d1
+00d042: 20 01                          move.l	%d1, %d0
+00d044: 72 00                          moveq #0, %d1   [manual decode]
+00d046: 32 39 00 80 91 de              move.w	$8091de, %d1
+00d04c: 4c 01 00 00                    mulu.l	%d1, %d0
+00d050: 32 39 00 80 01 12              move.w	$800112, %d1
+00d056: c2 f9 00 80 01 10              and(opmode 3).w $800110, d1   [manual decode]
+00d05c: d0 81                          add.l	%d1, %d0
+00d05e: 72 0e                          moveq #14, %d1   [manual decode]
+00d060: e2 a0                          asr.l	%d1, %d0
+00d062: 33 c0 00 80 01 12              move.w	%d0, $800112
+00d068: 0c 79 17 00 00 80 01 12        cmpi.w	#5888, $800112
+00d070: 63 08                          bls	$8
+00d072: 33 fc 17 00 00 80 01 12        move.w	#5888, $800112
+00d07a: 30 39 00 80 a9 80              move.w	$80a980, %d0
+00d080: d0 79 00 80 01 12              add(opmode 1).w $800112, d0   [manual decode]
+00d086: 33 c0 00 80 01 00              move.w	%d0, $800100
+00d08c: b0 79 00 80 a9 9c              cmp.w $80a99c, %d0   [manual decode]
+00d092: 6d 0c                          blt	$c
+00d094: 33 f9 00 80 a9 9c 00 80 a9 76  move.w	$80a99c, $80a976
+00d09e: 60 24                          bra	$24
+00d0a0: 30 39 00 80 01 00              move.w	$800100, %d0
+00d0a6: b0 79 00 80 a9 9e              cmp.w $80a99e, %d0   [manual decode]
+00d0ac: 6e 0c                          bgt	$c
+00d0ae: 33 f9 00 80 a9 9e 00 80 a9 76  move.w	$80a99e, $80a976
+00d0b8: 60 0a                          bra	$a
+00d0ba: 33 f9 00 80 01 00 00 80 a9 76  move.w	$800100, $80a976
+00d0c4: 33 f9 00 80 a9 76 00 80 de d2  move.w	$80a976, $80ded2
+00d0ce: 33 f9 00 80 de d4 00 80 00 fe  move.w	$80ded4, $8000fe
+00d0d8: 4c ee 3c 3c ff dc              movem.l	(65500,%a6), %d2-%d5/%a2-%a5
+00d0de: 4e 5e                          unlk	%a6
+00d0e0: 4e 75                          rts

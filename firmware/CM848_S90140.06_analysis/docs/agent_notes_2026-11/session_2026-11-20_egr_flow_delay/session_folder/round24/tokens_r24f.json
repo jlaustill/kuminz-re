@@ -1,0 +1,25 @@
+{
+ "old": {
+  "sensor_readings_t_0040baf2.intake_manifold_pressure": "SENSOR1",
+  "sensor_readings_t_0040baf2.coolant_temp": "SENSOR2",
+  "sensor_readings_t_0040baf2.barometric_pressure": "SENSOR3",
+  "sensor_readings_t_0040baf2.battery_voltage": "SENSOR4",
+  "sensor_readings_t_0040baf2": "SENSOR1",
+  "throttle_fuel_enable_flag._0_2_": "THROTTLE0",
+  "throttle_fuel_enable_flag._2_2_": "THROTTLE2"
+ },
+ "new": {
+  "intake_manifold_pressure_sensor_filtered": "SENSOR1",
+  "coolant_temperature_sensor_filtered": "SENSOR2",
+  "barometric_pressure_sensor_filtered": "SENSOR3",
+  "battery_voltage_sensor_filtered": "SENSOR4",
+  "throttle_sensor_fault_flag": "THROTTLE0",
+  "commanded_throttle_previous": "THROTTLE2"
+ },
+ "old_regex": [
+  [
+   "\\(\\(sensor_readings_t \\*\\)(\\w+)\\)->intake_manifold_pressure",
+   "*\\1"
+  ]
+ ]
+}

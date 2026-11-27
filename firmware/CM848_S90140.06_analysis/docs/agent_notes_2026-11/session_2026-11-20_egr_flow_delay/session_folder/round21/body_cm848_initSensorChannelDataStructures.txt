@@ -1,0 +1,10 @@
+=== cm848_initSensorChannelDataStructures (lines 66337-66350, 9 non-blank)
+66337: // Function: cm848_initSensorChannelDataStructures @ 0x005082f0
+66338: //
+66340: void cm848_initSensorChannelDataStructures(void)
+66342: {
+66343:   engine_protection_precrank_shutdown_command_flag = 0;
+66344:   fuel_temperature_derate_precrank_error_flag = 0;
+66345:   return;
+66346: }
+66350: //

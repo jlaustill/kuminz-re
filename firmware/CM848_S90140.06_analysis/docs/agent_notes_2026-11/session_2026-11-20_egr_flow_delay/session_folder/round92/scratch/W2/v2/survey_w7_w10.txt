@@ -1,0 +1,148 @@
++0x10 EPCQFLEN   types={'S': 76, 'N': 45} masks={'10': 76} files=59 labels=['Coolant_Temperature_Fueling_Limiting_Enable', 'EPCQFLEN']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 4 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO COOLANT TEMPERATURE.
+      [ 6 files e.g. 42t9_rls.e2m] BIT 4 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO COOLANT TEMP
++0x10 EPCQRPEN   types={'S': 76, 'N': 45} masks={'20': 76} files=59 labels=['Coolant_Temperature_RPM_Limiting_Enable', 'EPCQRPEN']
+      [22 files e.g. 42t9_rls.e2m] BIT 5 OF 5-15. EPF COOLANT TEMPERATURE RPM LIMITING ENABLE.
+      [21 files e.g. 74be62rls.e2m] BIT 5 OF 5-15. EPF COOLANT TEMPERATURE RPM LIMITING EN
++0x10 EPCQRYEN   types={'S': 76, 'N': 45} masks={'80': 76} files=59 labels=['Coolant_Temperature_Restart_Enable', 'EPCQRYEN']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 7 OF 0-15. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DUE
+      [ 6 files e.g. 42t9_rls.e2m] BIT 7 OF 0-15. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTD
++0x10 EPCQSOEN   types={'S': 76, 'N': 45} masks={'40': 76} files=59 labels=['Coolant_Temperature_Shutdown_Enable', 'EPCQSOEN']
+      [22 files e.g. 42t9_rls.e2m] BIT 6 OF 0-15. ENABLE SHUTDOWN ON COOLANT TEMPERATURE ERRORS.
+      [21 files e.g. 74be62rls.e2m] BIT 6 OF 0-15. ENABLE SHUTDOWN ON COOLANT TEMPERATURE
++0x10 EPCVFLEN   types={'S': 76, 'N': 45} masks={'1': 76} files=59 labels=['Coolant_Level_Fueling_Limiting_Enable', 'EPCVFLEN']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 0 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO COOLANT LEVEL.
+      [ 6 files e.g. 42t9_rls.e2m] BIT 0 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO COOLANT LEVE
++0x10 EPCVRPEN   types={'S': 76, 'N': 45} masks={'2': 76} files=59 labels=['Coolant_Level_RPM_Limiting_Enable', 'EPCVRPEN']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 1 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING DUE TO COOLANT LEVEL.
+      [ 6 files e.g. 42t9_rls.e2m] BIT 1 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING DUE TO COOLANT LEVEL
++0x10 EPCVRYEN   types={'S': 76, 'N': 45} masks={'8': 76} files=59 labels=['Coolant_Level_Restart_Enable', 'EPCVRYEN']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] B3. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DUE TO CLT LEV
+      [ 6 files e.g. 42t9_rls.e2m] B3. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DUE T
++0x10 EPCVSOEN   types={'S': 76, 'N': 45} masks={'4': 76} files=59 labels=['Coolant_Level_Shutdown_Enable', 'EPCVSOEN']
+      [22 files e.g. 42t9_rls.e2m] BIT 2 OF 0-15. ENABLE SHUTDOWN ON COOLANT LEVEL ERRORS.
+      [21 files e.g. 74be62rls.e2m] BIT 2 OF 0-15. ENABLE SHUTDOWN ON COOLANT LEVEL ERRORS
++0x10 EPIMFLEN   types={'S': 76, 'N': 45} masks={'100': 76} files=59 labels=['EPIMFLEN', 'IMT_Fueling_Limiting_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 8 OF 0-15 ENABLE FOR TVO LIMITING DUE TO INTAKE MANIFOLD TEMP. (BIT 6)
+      [ 6 files e.g. 42t9_rls.e2m] BIT 8 OF 0-15 ENABLE FOR TVO LIMITING DUE TO INTAKE MANIFOLD TEMP. (BI
++0x10 EPIMRPEN   types={'S': 76, 'N': 45} masks={'200': 76} files=59 labels=['EPIMRPEN', 'IMT_RPM_Limiting_Enable']
+      [22 files e.g. 42t9_rls.e2m] BIT 9 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING DUE TO IMT
+      [21 files e.g. 74be62rls.e2m] BIT 9 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING DUE TO
++0x10 EPIMRYEN   types={'S': 76, 'N': 45} masks={'800': 76} files=59 labels=['EPIMRYEN', 'IMT_Restart_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 11 OF 0-15. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DU
+      [ 6 files e.g. 42t9_rls.e2m] BIT 11 OF 0-15. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUT
++0x10 EPIMSOEN   types={'S': 76, 'N': 45} masks={'400': 76} files=59 labels=['EPIMSOEN', 'IMT_Shutdown_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 10 OF 0-15. ENABLE SHUTDOWN ON INTAKE MANIFOLD TEMPERATURE ERRORS.
+      [ 6 files e.g. 42t9_rls.e2m] BIT 10 OF 0-15. ENABLE SHUTDOWN ON INTAKE MANIFOLD TEMPERATURE ERRORS
++0x10 EPO2FLEN   types={'S': 76, 'N': 45} masks={'1000': 76} files=59 labels=['EPO2FLEN', 'Oil_Pressure_Fueling_Limiting_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 12 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO OIL PRESSURE.
+      [ 6 files e.g. 42t9_rls.e2m] BIT 12 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO OIL PRESSUR
++0x10 EPO2RPEN   types={'S': 76, 'N': 45} masks={'2000': 76} files=59 labels=['EPO2RPEN', 'Oil_Pressure_RPM_Limiting_Enable']
+      [22 files e.g. 42t9_rls.e2m] BIT 13 OF 0-15. EPF OIL PRESSURE FAULT ENABLE PARAMETER.
+      [21 files e.g. 74be62rls.e2m] BIT 13 OF 0-15. EPF OIL PRESSURE FAULT ENABLE PARAMETE
++0x10 EPO2RYEN   types={'S': 76, 'N': 45} masks={'8000': 76} files=59 labels=['EPO2RYEN', 'Oil_Pressure_Restart_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 15 OF 0-15. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DU
+      [ 6 files e.g. 42t9_rls.e2m] BIT 15 OF 0-15. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUT
++0x10 EPO2SOEN   types={'S': 76, 'N': 45} masks={'4000': 76} files=59 labels=['EPO2SOEN', 'Oil_Pressure_Shutdown_Enable']
+      [22 files e.g. 42t9_rls.e2m] BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE ERRORS.
+      [21 files e.g. 74be62rls.e2m] BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE ERRORS
++0x12 C_Out_Temperature_Fueling_Limiting_Enable types={'S': 16} masks={'10': 16} files=16 labels=['C_Out_Temperature_Fueling_Limiting_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 4 OF 0-15 ENABLES FUEL LIMITING DUE TO C_OUT_TEMPERATURE ERRORS
++0x12 C_Out_Temperature_RPM_Limiting_Enable types={'S': 16} masks={'20': 16} files=16 labels=['C_Out_Temperature_RPM_Limiting_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 5 OF 0-15 ENABLES RPM LIMITING DUE TO C_OUT_TEMPERATURE ERRORS
++0x12 C_Out_Temperature_Restart_Enable types={'S': 16} masks={'80': 16} files=16 labels=['C_Out_Temperature_Restart_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 7 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DUE
++0x12 C_Out_Temperature_Shutdown_Enable types={'S': 16} masks={'40': 16} files=16 labels=['C_Out_Temperature_Shutdown_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 6 OF 0-15 ENABLES SHUTDOWN ON C_OUT_TEMPERATURE ERRORS
++0x12 EPBSFLEN   types={'S': 73} masks={'10': 73} files=33 labels=['EPBSFLEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC
++0x12 EPBSRPEN   types={'S': 73} masks={'20': 73} files=33 labels=['EPBSRPEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO BOOS
++0x12 EPBSRYEN   types={'S': 73} masks={'80': 73} files=33 labels=['EPBSRYEN']
+      [33 files e.g. 63c5.e2m] PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD
++0x12 EPBSSOEN   types={'S': 73} masks={'40': 73} files=33 labels=['EPBSSOEN']
+      [33 files e.g. 63c5.e2m] ENABLE SHUTDOWN ON BOOST PRESSURE ERRORS
++0x12 EPCBFLEN   types={'N': 5} masks={} files=5 labels=['EPCBFLEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 4 OF 0-15 ENABLES FUEL LIMITING DUE TO CRANK BLOWBY PRESSURE ERROR
++0x12 EPCBRPEN   types={'N': 5} masks={} files=5 labels=['EPCBRPEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 5 OF 0-15 ENABLES RPM LIMITING DUE TO CRANK BLOWBY PRESSURE ERRORS
++0x12 EPCBRYEN   types={'N': 5} masks={} files=5 labels=['EPCBRYEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 7 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN
++0x12 EPCBSOEN   types={'N': 5} masks={} files=5 labels=['EPCBSOEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 6 OF 0-15 ENABLES SHUTDOWN ON CRANK BLOWBY PRESSURE ERRORS
++0x12 EPCPFLEN   types={'N': 5} masks={} files=5 labels=['EPCPFLEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 8 OF 0-15 ENABLES FUEL LIMITING DUE TO COOLANT PRESSURE ERRORS
++0x12 EPCPRPEN   types={'N': 5} masks={} files=5 labels=['EPCPRPEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 9 OF 0-15 ENABLES RPM LIMITING DUE TO COOLANT PRESSURE ERRORS
++0x12 EPCPRYEN   types={'N': 5} masks={} files=5 labels=['EPCPRYEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 11 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTD
++0x12 EPCPSOEN   types={'N': 5} masks={} files=5 labels=['EPCPSOEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 10 OF 0-15 ENABLES SHUTDOWN ON COOLANT PRESSURE ERRORS
++0x12 EPFPFLEN   types={'S': 73} masks={'100': 73} files=33 labels=['EPFPFLEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC
++0x12 EPFPRPEN   types={'S': 73} masks={'200': 73} files=33 labels=['EPFPRPEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO ENG
++0x12 EPFPRYEN   types={'S': 73} masks={'800': 73} files=33 labels=['EPFPRYEN']
+      [33 files e.g. 63c5.e2m] PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD
++0x12 EPFPSOEN   types={'S': 73} masks={'400': 73} files=33 labels=['EPFPSOEN']
+      [33 files e.g. 63c5.e2m] ENABLE SHUTDOWN ON ENGINE SYNC FUEL PRESSURE ERRORS
++0x12 EPFTFLEN   types={'S': 16, 'N': 82} masks={'1': 16} files=59 labels=['EPFTFLEN', 'Fuel_Temperature_Fueling_Limiting_Enable']
+      [ 6 files e.g. 42t9_rls.e2m] BIT 12 OF 0-15 ENABLES FUEL LIMITING DUE TO FUEL TEMPERATURE ERRORS
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 0 OF 0-15 ENABLES FUEL LIMITING DUE TO FUEL TEMPERATURE ERRORS
++0x12 EPFTRPEN   types={'S': 16, 'N': 82} masks={'2': 16} files=59 labels=['EPFTRPEN', 'Fuel_Temperature_RPM_Limiting_Enable']
+      [ 6 files e.g. 42t9_rls.e2m] BIT 13 OF 0-15 ENABLES RPM LIMITING DUE TO FUEL TEMPERATURE ERRORS
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 1 OF 0-15 ENABLES RPM LIMITING DUE TO FUEL TEMPERATURE ERRORS
++0x12 EPFTRYEN   types={'S': 16, 'N': 82} masks={'8': 16} files=59 labels=['EPFTRYEN', 'Fuel_Temperature_Restart_Enable']
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 3 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DUE
+      [ 6 files e.g. 42t9_rls.e2m] BIT 15 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTD
++0x12 EPFTSOEN   types={'S': 16, 'N': 82} masks={'4': 16} files=59 labels=['EPFTSOEN', 'Fuel_Temperature_Shutdown_Enable']
+      [ 6 files e.g. 42t9_rls.e2m] BIT 14 OF 0-14 ENABLES SHUTDOWN ON FUEL TEMPERATURE ERRORS
+      [16 files e.g. CHR_CC_11.10.22.00.e2m] BIT 2 OF 0-15 ENABLES SHUTDOWN ON FUEL TEMPERATURE ERRORS
++0x12 EPO3FLEN   types={'N': 5} masks={} files=5 labels=['EPO3FLEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 0 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITING DUE TO OIL TEMPERAT
++0x12 EPO3RPEN   types={'N': 5} masks={} files=5 labels=['EPO3RPEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 1 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING DUE TO OIL TEMPERATU
++0x12 EPO3RYEN   types={'N': 5} masks={} files=5 labels=['EPO3RYEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 3 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN
++0x12 EPO3SOEN   types={'N': 5} masks={} files=5 labels=['EPO3SOEN']
+      [ 5 files e.g. 42t9_rls.e2m] BIT 2 OF 0-15. ENABLE SHUTDOWN ON OIL TEMPERATURE ERRORS.
++0x12 EPWFFLEN   types={'S': 74} masks={'1': 74} files=33 labels=['EPWFFLEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT LIMITING DUE TO WATER IN
++0x12 EPWFRPEN   types={'S': 74} masks={'2': 74} files=33 labels=['EPWFRPEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO WATE
++0x12 EPWFRYEN   types={'S': 74} masks={'8': 74} files=33 labels=['EPWFRYEN']
+      [33 files e.g. 63c5.e2m] PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD
++0x12 EPWFSOEN   types={'S': 74} masks={'4': 74} files=33 labels=['EPWFSOEN']
+      [33 files e.g. 63c5.e2m] ENABLE SHUTDOWN ON WATER IN FUEL ERRORS
++0x12 T_In_Temperature_Fueling_Limiting_Enable types={'S': 12} masks={'100': 12} files=12 labels=['T_In_Temperature_Fueling_Limiting_Enable']
+      [12 files e.g. CHR_CC_11.10.22.00.e2m] BIT 8 OF 0-15 ENABLES FUEL LIMITING DUE TO TURBINE INLET TEMPERATURE ERRORS
++0x12 T_In_Temperature_RPM_Limiting_Enable types={'S': 12} masks={'200': 12} files=12 labels=['T_In_Temperature_RPM_Limiting_Enable']
+      [12 files e.g. CHR_CC_11.10.22.00.e2m] BIT 9 OF 0-15 ENABLES RPM LIMITING DUE TO TURBINE INLET TEMPERATURE ERRORS
++0x12 T_In_Temperature_Restart_Enable types={'S': 12} masks={'800': 12} files=12 labels=['T_In_Temperature_Restart_Enable']
+      [12 files e.g. CHR_CC_11.10.22.00.e2m] BIT 11 OF 0-15 PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > MAX SHUTDN CNT DUE
++0x12 T_In_Temperature_Shutdown_Enable types={'S': 12} masks={'400': 12} files=12 labels=['T_In_Temperature_Shutdown_Enable']
+      [12 files e.g. CHR_CC_11.10.22.00.e2m] BIT 10 OF 0-15 ENABLES SHUTDOWN ON TURBINE INLET TEMPERATURE ERRORS
++0x14 EPAAFLEN   types={'S': 74} masks={'1': 74} files=33 labels=['EPAAFLEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT LIMITING DUE TO AMBIENT
++0x14 EPAARPEN   types={'S': 74} masks={'2': 74} files=33 labels=['EPAARPEN']
+      [33 files e.g. 63c5.e2m] ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO AMBI
++0x14 EPAARYEN   types={'S': 74} masks={'8': 74} files=33 labels=['EPAARYEN']
+      [33 files e.g. 63c5.e2m] PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD
++0x14 EPAASOEN   types={'S': 74} masks={'4': 74} files=33 labels=['EPAASOEN']
+      [33 files e.g. 63c5.e2m] ENABLE SHUTDOWN ON AMBIENT AIR PRESSURE ERRORS
++0x14 EPOEFLEN   types={'S': 42} masks={'10': 42} files=20 labels=['EPOEFLEN']
+      [20 files e.g. 63t10r4.e2m] ENABLE PARAMETER FOR FAULT LIMITING DUE TO OEM PRES
++0x14 EPOERPEN   types={'S': 42} masks={'20': 42} files=20 labels=['EPOERPEN']
+      [20 files e.g. 63t10r4.e2m] ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO OEM
++0x14 EPOERYEN   types={'S': 42} masks={'80': 42} files=20 labels=['EPOERYEN']
+      [20 files e.g. 63t10r4.e2m] PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD
++0x14 EPOESOEN   types={'S': 42} masks={'40': 42} files=20 labels=['EPOESOEN']
+      [20 files e.g. 63t10r4.e2m] ENABLE SHUTDOWN ON OEM PRESSURE ERRORS
++0x14 EPOSFLEN   types={'S': 42} masks={'100': 42} files=20 labels=['EPOSFLEN']
+      [20 files e.g. 63t10r4.e2m] ENABLE PARAMETER FOR FAULT LIMITING DUE TO OEM SWIT
++0x14 EPOSRPEN   types={'S': 42} masks={'200': 42} files=20 labels=['EPOSRPEN']
+      [20 files e.g. 63t10r4.e2m] ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO OEM
++0x14 EPOSRYEN   types={'S': 42} masks={'800': 42} files=20 labels=['EPOSRYEN']
+      [20 files e.g. 63t10r4.e2m] PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD
++0x14 EPOSSOEN   types={'S': 42} masks={'400': 42} files=20 labels=['EPOSSOEN']
+      [20 files e.g. 63t10r4.e2m] ENABLE SHUTDOWN ON OEM SWITCH ERRORS

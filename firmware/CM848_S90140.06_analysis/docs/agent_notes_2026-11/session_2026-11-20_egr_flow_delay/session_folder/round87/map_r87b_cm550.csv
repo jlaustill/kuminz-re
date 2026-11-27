@@ -1,0 +1,2 @@
+address,name,old_label,kind,dims
+0x00015dd0,cm550_initializeDiscreteInputs,vp44_initVP44StatusMonitoring,function,1

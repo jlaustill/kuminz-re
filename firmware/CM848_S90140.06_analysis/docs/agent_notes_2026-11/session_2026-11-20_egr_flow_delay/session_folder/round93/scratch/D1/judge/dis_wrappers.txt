@@ -1,0 +1,189 @@
+01b4d0: 4eb9000159ee             jsr (0x159ee).l
+01b4d6: 4e75                     rts
+01b4d8: 4eb9000212b2             jsr (0x212b2).l
+01b4de: 4eb900023244             jsr (0x23244).l
+01b4e4: 4eb900022070             jsr (0x22070).l
+01b4ea: 4eb9000230ee             jsr (0x230ee).l
+01b4f0: 4eb900021edc             jsr (0x21edc).l
+01b4f6: 4eb900021070             jsr (0x21070).l
+01b4fc: 4eb9000420bc             jsr (0x420bc).l
+01b502: 4e75                     rts
+01b504: 4eb90002142c             jsr (0x2142c).l
+01b50a: 4eb90001ff38             jsr (0x1ff38).l
+01b510: 4eb900023920             jsr (0x23920).l
+01b516: 4e75                     rts
+01b518: 4267                     clr.w -(a7)
+01b51a: 4eb900013616             jsr (0x13616).l
+01b520: 548f                     addq.l #2,a7
+01b522: 4eb900047850             jsr (0x47850).l
+01b528: 4eb9000473b2             jsr (0x473b2).l
+01b52e: 4eb900048b28             jsr (0x48b28).l
+01b534: 4eb900014dc6             jsr (0x14dc6).l
+01b53a: 4eb9000171be             jsr (0x171be).l
+01b540: 4eb90000b210             jsr (0xb210).l
+01b546: 4eb900026e8e             jsr (0x26e8e).l
+01b54c: 4eb900049f06             jsr (0x49f06).l
+01b552: 4eb90004245e             jsr (0x4245e).l
+01b558: 4eb90002ec50             jsr (0x2ec50).l
+01b55e: 4eb900010568             jsr (0x10568).l
+01b564: 4eb900017f7c             jsr (0x17f7c).l
+01b56a: 4eb9000269f2             jsr (0x269f2).l
+01b570: 4e75                     rts
+01b572: 4eb90000d2be             jsr (0xd2be).l
+01b578: 4eb90003458c             jsr (0x3458c).l
+01b57e: 4eb90000c962             jsr (0xc962).l
+01b584: 4eb90001c640             jsr (0x1c640).l
+01b58a: 4eb90002dbde             jsr (0x2dbde).l
+01b590: 4eb90002d3c6             jsr (0x2d3c6).l
+01b596: 4eb90002dcb0             jsr (0x2dcb0).l
+01b59c: 4eb90000c326             jsr (0xc326).l
+01b5a2: 4eb900044c76             jsr (0x44c76).l
+01b5a8: 4eb90001d5a0             jsr (0x1d5a0).l
+01b5ae: 4eb90004da56             jsr (0x4da56).l
+01b5b4: 4eb90001d392             jsr (0x1d392).l
+01b5ba: 4eb90001ce7c             jsr (0x1ce7c).l
+01b5c0: 4eb900042496             jsr (0x42496).l
+01b5c6: 4eb90001cc72             jsr (0x1cc72).l
+01b5cc: 4e75                     rts
+01b5ce: 4eb9000171be             jsr (0x171be).l
+01b5d4: 4eb900025b1c             jsr (0x25b1c).l
+01b5da: 4eb900026340             jsr (0x26340).l
+01b5e0: 4eb90000c180             jsr (0xc180).l
+01b5e6: 4eb900017d2a             jsr (0x17d2a).l
+01b5ec: 4eb900026ab8             jsr (0x26ab8).l
+01b5f2: 4eb900017eba             jsr (0x17eba).l
+01b5f8: 4eb9000177c2             jsr (0x177c2).l
+01b5fe: 4eb90001c152             jsr (0x1c152).l
+01b604: 4eb90004094c             jsr (0x4094c).l
+01b60a: 4eb90001277c             jsr (0x1277c).l
+01b610: 4e75                     rts
+01b612: 4eb90001c65e             jsr (0x1c65e).l
+01b618: 4eb900017a06             jsr (0x17a06).l
+01b61e: 4eb900034d52             jsr (0x34d52).l
+01b624: 4eb90000c2be             jsr (0xc2be).l
+01b62a: 4eb900030b62             jsr (0x30b62).l
+01b630: 4eb900016d4c             jsr (0x16d4c).l
+01b636: 4eb900040988             jsr (0x40988).l
+01b63c: 4eb90001ca54             jsr (0x1ca54).l
+01b642: 4eb900040ace             jsr (0x40ace).l
+01b648: 4eb9000488e8             jsr (0x488e8).l
+01b64e: 4eb900048b1a             jsr (0x48b1a).l
+01b654: 4eb900014fca             jsr (0x14fca).l
+01b65a: 4eb90000b7bc             jsr (0xb7bc).l
+01b660: 4eb900048c66             jsr (0x48c66).l
+01b666: 4e75                     rts
+01b668: 4e75                     rts
+01b66a: 4eb900045d60             jsr (0x45d60).l
+01b670: 4eb900044338             jsr (0x44338).l
+01b676: 4e75                     rts
+01b678: 4eb9000449f4             jsr (0x449f4).l
+01b67e: 4eb9000451fa             jsr (0x451fa).l
+01b684: 4e75                     rts
+01b686: 4eb90004dafa             jsr (0x4dafa).l
+01b68c: 4eb900047496             jsr (0x47496).l
+01b692: 4e75                     rts
+01b694: 4eb900045f88             jsr (0x45f88).l
+01b69a: 4eb90004444a             jsr (0x4444a).l
+01b6a0: 4e75                     rts
+01b6a2: 4eb900043a74             jsr (0x43a74).l
+01b6a8: 4e75                     rts
+01b6aa: 4eb900045270             jsr (0x45270).l
+01b6b0: 4e75                     rts
+01b6b2: 4e75                     rts
+01b6b4: 4eb90000b2aa             jsr (0xb2aa).l
+01b6ba: 4eb900044980             jsr (0x44980).l
+01b6c0: 4eb900016dd4             jsr (0x16dd4).l
+01b6c6: 4e75                     rts
+01b6c8: 4eb90000b4f2             jsr (0xb4f2).l
+01b6ce: 4eb90000b3d0             jsr (0xb3d0).l
+01b6d4: 4e75                     rts
+01b6d6: 4eb90001fd6c             jsr (0x1fd6c).l
+01b6dc: 4eb9000138b6             jsr (0x138b6).l
+01b6e2: 4e75                     rts
+01b6e4: 4eb900027998             jsr (0x27998).l
+01b6ea: 4eb900013a5c             jsr (0x13a5c).l
+01b6f0: 4e75                     rts
+01b6f2: 4eb90002dde8             jsr (0x2dde8).l
+01b6f8: 4eb900042218             jsr (0x42218).l
+01b6fe: 4eb900042276             jsr (0x42276).l
+01b704: 4eb90004204c             jsr (0x4204c).l
+01b70a: 4e75                     rts
+01b70c: 4eb9000254b6             jsr (0x254b6).l
+01b712: 4e75                     rts
+01b714: 4eb900024804             jsr (0x24804).l
+01b71a: 4eb900021146             jsr (0x21146).l
+01b720: 4e75                     rts
+01b722: 4eb90000c66a             jsr (0xc66a).l
+01b728: 4e75                     rts
+01b72a: 4eb900015f8e             jsr (0x15f8e).l
+01b730: 4e75                     rts
+01b732: 4eb90000eba4             jsr (0xeba4).l
+01b738: 4e75                     rts
+01b73a: 4eb90001abb2             jsr (0x1abb2).l
+01b740: 4eb900040f3c             jsr (0x40f3c).l
+01b746: 4eb900041050             jsr (0x41050).l
+01b74c: 4eb90004965a             jsr (0x4965a).l
+01b752: 4e75                     rts
+01b754: 4eb90000e998             jsr (0xe998).l
+01b75a: 4eb90004115a             jsr (0x4115a).l
+01b760: 4eb900041256             jsr (0x41256).l
+01b766: 4e75                     rts
+01b768: 4eb90004cc5a             jsr (0x4cc5a).l
+01b76e: 4eb90004c64e             jsr (0x4c64e).l
+01b774: 4eb90004172c             jsr (0x4172c).l
+01b77a: 4eb9000417f2             jsr (0x417f2).l
+01b780: 4eb90004190c             jsr (0x4190c).l
+01b786: 4e75                     rts
+01b788: 4eb9000491b4             jsr (0x491b4).l
+01b78e: 4eb90000ac3c             jsr (0xac3c).l
+01b794: 4eb900026cc8             jsr (0x26cc8).l
+01b79a: 4eb900026e2c             jsr (0x26e2c).l
+01b7a0: 4e75                     rts
+01b7a2: 4eb9000266d2             jsr (0x266d2).l
+01b7a8: 4eb900026616             jsr (0x26616).l
+01b7ae: 4e75                     rts
+01b7b0: 4eb900031496             jsr (0x31496).l
+01b7b6: 4eb9000472ae             jsr (0x472ae).l
+01b7bc: 4eb900041aee             jsr (0x41aee).l
+01b7c2: 4eb900041b80             jsr (0x41b80).l
+01b7c8: 4e75                     rts
+01b7ca: 4eb900026b3a             jsr (0x26b3a).l
+01b7d0: 4e75                     rts
+01b7d2: 4eb90004d238             jsr (0x4d238).l
+01b7d8: 4eb900044e48             jsr (0x44e48).l
+01b7de: 4e75                     rts
+01b7e0: 4e75                     rts
+01b7e2: 4eb90002571e             jsr (0x2571e).l
+01b7e8: 4e75                     rts
+01b7ea: 4eb900010822             jsr (0x10822).l
+01b7f0: 4e75                     rts
+01b7f2: 4eb900046aac             jsr (0x46aac).l
+01b7f8: 4eb90001d9b4             jsr (0x1d9b4).l
+01b7fe: 4eb900040b30             jsr (0x40b30).l
+01b804: 4eb9000422b4             jsr (0x422b4).l
+01b80a: 4e75                     rts
+01b80c: 4eb900041528             jsr (0x41528).l
+01b812: 4eb900044954             jsr (0x44954).l
+01b818: 4e75                     rts
+01b81a: 4eb90004579e             jsr (0x4579e).l
+01b820: 4eb9000490b8             jsr (0x490b8).l
+01b826: 4e75                     rts
+01b828: 4eb90001c8a0             jsr (0x1c8a0).l
+01b82e: 4eb900045a6c             jsr (0x45a6c).l
+01b834: 4e75                     rts
+01b836: 4eb9000491b4             jsr (0x491b4).l
+01b83c: 4e75                     rts
+01b83e: 4eb90004dedc             jsr (0x4dedc).l
+01b844: 4e75                     rts
+01b846: 4eb90004c192             jsr (0x4c192).l
+01b84c: 4eb90004874a             jsr (0x4874a).l
+01b852: 4eb9000479fa             jsr (0x479fa).l
+01b858: 4e75                     rts
+01b85a: 4eb90004dc52             jsr (0x4dc52).l
+01b860: 4e75                     rts
+01b862: 4eb90004e672             jsr (0x4e672).l
+01b868: 4eb9000306ca             jsr (0x306ca).l
+01b86e: 4eb9000464f2             jsr (0x464f2).l
+01b874: 4e75                     rts
+01b876: 48e7c0fc                 movem.l a5/a4/a3/a2/a1/a0/d1/d0,-(a7)
+01b87a: 287c0080068c             movea.l #0x80068c,a4

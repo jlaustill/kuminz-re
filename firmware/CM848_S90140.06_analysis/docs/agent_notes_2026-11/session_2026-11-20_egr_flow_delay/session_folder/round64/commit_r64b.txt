@@ -1,0 +1,28 @@
+cm848: round 64 stage B - the boot kernel's transmit records use j1939_tx_msg_t; its two data buffers named
+
+diagnostic_response_message_t was j1939_tx_msg_t field for field: header j1939_msg_hdr_t / data_pointer /
+status_pointer, 14 bytes. The boot kernel already takes the receive side as j1939_rx_msg_t
+(cm848_dispatchDiagnosticService).
+- The type is merged into j1939_tx_msg_t:
+  - its two records (diagnostic_single_frame_response_message / diagnostic_transport_response_message) and the
+    two boot transmit functions that take one (cm848_transmitCanMessage / mpc555_sendJ1939TransportRequestToSend)
+    use j1939_tx_msg_t now;
+  - its 3 rows go, with the two stale "diagnostic buffer A / B control state" comment blocks around them ("end_ptr"
+    was the status pointer);
+  - its status note (the boot transport writes 0x12 while it sends, 6 on a timeout) moves onto
+    j1939_tx_msg_t.status_pointer.
+- cm848_allocateDiagnosticResponseBuffer gets the application selector's full prototype (returns j1939_tx_msg_t *;
+  length int32_t). Its two callers lose their casts.
+- diagnostic_transport_response_data (0x30293f byte[1800]) and diagnostic_single_frame_response_data (0x303065
+  byte[8]):
+  - the transport buffer is 1800 bytes up to its record at 0x303047, the size of the application's;
+  - unlike the application's RAM, this RAM holds no boot thunks, so it is a real array;
+  - no other row lies inside either buffer.
+
+Proof (prove_r64.sh): 6 of 1968 functions differ: the 5 predicted (the allocator, its 2 callers, the 2 transmit
+functions) and one local declaration-order move (cm848_checkPciMessageTimeouts). The callers lose 1 cast each, the
+allocator names its buffers, and no artifact count changed. verify is byte-identical; thunks 18 / 14; prototype
+rows 0 failed. Headers regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219,
+lookup_tables.py 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

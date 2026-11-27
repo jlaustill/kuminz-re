@@ -1,0 +1,39 @@
+cm848: round 44 stage A - round 39's unverified rows named from their code, the last typed junk row
+
+Round 39 left three ROM constants unverified. The e2m cannot name them:
+- The parameter ID table resolves none of the three.
+- None of the 68 e2m files has a record at 107D +0x44..+0x49 or 118F +0x0D..+0x11. The search reads offsets as
+  numbers, because some files zero-pad them.
+- The pedal block 0x408a72-0x408a7e lies past the dumped table, and no e2m record describes dual-channel pedal idle
+  learning or disagreement.
+So each name below comes from its code:
+- governor_override_fuel_decay -> all_speed_governor_vacuum_cruise_fueling_reduction. While vacuum-throttle cruise
+  is engaged, cm848_runOperatingModeSpeedGovernor subtracts it from all_speed_governor_fueling, with a floor of 0
+  (44 here).
+- governor_override_fuel_threshold -> cruise_accelerator_override_throttle_threshold. On the accelerator path of
+  cm848_selectCruiseOrUserFueling, the commanded throttle must be above it (0 here) before the operating mode
+  governor takes the fueling from cruise.
+  - The function's plate cited fuel_demand_control.calculated. It now names the operands the code compares: the
+    governor's fuel demand and the commanded throttle.
+- cruise_speed_target_min -> accelerator_pedal_single_channel_minimum_idle_threshold. With the pedal fault latched,
+  the demand stays valid only for P2127 (sensor 2 = channel 98, low), and only while channel 97's learned idle
+  threshold is at least this value (68; the dump holds 78).
+
+The typed junk row:
+- 0x3fb52a fuel_demand_enable_sync_flag_shadow+2 (undefined2) -> cruise_control_engaged_flag_previous_arbitration
+  (word: lhz @ 0x406d4, sth @ 0x407cc).
+- It holds cruise_control_engaged_flag from the previous cm848_arbitrateGovernedFueling pass. Its falling edge starts
+  the cruise fuel ramp-down.
+
+A documentation row:
+- 0x408e94 cruise_out_of_gear_disable, from e2m 118F +0x0C Cruise_Out_Of_Gear_Disable (1 here).
+- No instruction in the ROM or the live flash2 forms its address, so no code reads it.
+
+Evidence:
+- A raw lis + displacement scan of both images finds exactly the accesses the .cpp shows.
+- The dump values agree with ROM through the copy rule (RAM = ROM + 0x39a3e6).
+
+Proof: prove_caches.py matches all 1968 functions; the retype changes no statement. verify is byte-identical.
+Thunks 18 / 14. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
