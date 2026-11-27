@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:04:19 UTC 2026
+// Generated: Fri Nov 27 03:07:08 UTC 2026
 
 
 //
@@ -25587,10 +25587,11 @@ void cm848_sendPgn56320AntiTheftStatus(void)
       (j1939_anti_theft_send_status_report_cal != 0)) &&
      (j1939_anti_theft_status_transmit_state == 2)) {
     j1939_anti_theft_send_status_report_cal = 0;
-    DAT_003faa84 = (byte)((int)(short)j1939_anti_theft_status_of_request_cal << 6) |
-                   (byte)((int)(short)j1939_anti_theft_component_status_cal << 4) |
-                   (char)j1939_anti_theft_password_valid_cal << 2 |
-                   (byte)j1939_anti_theft_encryption_seed_present_cal;
+    j1939_pgn56320_anti_theft_status_byte =
+         (byte)((int)(short)j1939_anti_theft_status_of_request_cal << 6) |
+         (byte)((int)(short)j1939_anti_theft_component_status_cal << 4) |
+         (char)j1939_anti_theft_password_valid_cal << 2 |
+         (byte)j1939_anti_theft_encryption_seed_present_cal;
     j1939_pgn56320_encryption_seed = j1939_anti_theft_encryption_seed_cal;
     j1939_pgn56320_tx_message.header.can_id._3_1_ = j1939_pgn56320_source_address;
     j1939_pgn56320_tx_message.header.can_id._2_1_ = j1939_pgn56320_destination_address;
@@ -25617,11 +25618,11 @@ void cm848_initializePgn56320AntiTheftStatusBuffer(void)
   j1939_pgn56320_tx_message.header.can_id =
        CONCAT31(j1939_pgn56320_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn56320_tx_message.header.data_length = 8;
-  j1939_pgn56320_tx_message.data_pointer = &DAT_003faa84;
+  j1939_pgn56320_tx_message.data_pointer = &j1939_pgn56320_anti_theft_status_byte;
   j1939_pgn56320_tx_message.status_pointer = &j1939_pgn56320_transmit_status;
-  DAT_003faa85 = 0xff;
-  DAT_003faa86 = 0xff;
-  DAT_003faa87 = 0xff;
+  j1939_pgn56320_unused_payload_bytes[0] = 0xff;
+  j1939_pgn56320_unused_payload_bytes[1] = 0xff;
+  j1939_pgn56320_unused_payload_bytes[2] = 0xff;
   return;
 }
 
@@ -27683,15 +27684,15 @@ void initializePgn65270InletExhaustConditions1Buffer(void)
   j1939_pgn65270_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65270_priority_cal & 7) << 2,0xfef600);
   j1939_pgn65270_tx_message.header.data_length = 8;
-  j1939_pgn65270_tx_message.data_pointer = &DAT_003fae46;
+  j1939_pgn65270_tx_message.data_pointer = &j1939_ic1_particulate_trap_inlet_pressure;
   j1939_pgn65270_tx_message.status_pointer = &j1939_pgn65270_transmit_status;
   j1939_pgn65270_tx_message.header.can_id =
        CONCAT31(j1939_pgn65270_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fae46 = 0xff;
-  DAT_003fae49 = 0xff;
-  DAT_003fae4a = 0xff;
-  DAT_003fae4b = 0xffff;
-  DAT_003fae4d = 0xff;
+  j1939_ic1_particulate_trap_inlet_pressure = 0xff;
+  j1939_ic1_air_inlet_pressure = 0xff;
+  j1939_ic1_air_filter_differential_pressure = 0xff;
+  j1939_ic1_exhaust_gas_temperature = 0xffff;
+  j1939_ic1_coolant_filter_differential_pressure = 0xff;
   return;
 }
 
@@ -84165,14 +84166,18 @@ void cm848_sciPackOutputStatusWord(void)
 void cm848_sciPackEventHistoryWords(void)
 
 {
-  DAT_003fcf28 = engine_start_count_since_fault_logged_cal[0] << 8 |
-                 engine_start_count_since_fault_logged_cal[1] & 0xff;
-  DAT_003fcf2a = engine_start_count_since_fault_logged_cal[2] << 8 |
-                 engine_start_count_since_fault_logged_cal[3] & 0xff;
-  DAT_003fcf2c = engine_start_count_since_fault_logged_cal[4] << 8 |
-                 engine_start_count_since_fault_logged_cal[5] & 0xff;
-  DAT_003fcf2e = engine_start_count_since_fault_logged_cal[6] << 8 |
-                 engine_start_count_since_fault_logged_cal[7] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[0] =
+       engine_start_count_since_fault_logged_cal[0] << 8 |
+       engine_start_count_since_fault_logged_cal[1] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[1] =
+       engine_start_count_since_fault_logged_cal[2] << 8 |
+       engine_start_count_since_fault_logged_cal[3] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[2] =
+       engine_start_count_since_fault_logged_cal[4] << 8 |
+       engine_start_count_since_fault_logged_cal[5] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[3] =
+       engine_start_count_since_fault_logged_cal[6] << 8 |
+       engine_start_count_since_fault_logged_cal[7] & 0xff;
   return;
 }
 
