@@ -41,3 +41,9 @@ address,comment
 0x00001228,flash2 chip erase: unlock (0xaa / 0x55) then 0x80 then unlock again then 0x10
 0x000012d8,flash2 unlock bypass: unlock (0xaa / 0x55) then 0x20; each word is then programmed with 0xa0 to flash2_command_register
 0x000028a0,flash2 autoselect: unlock (0xaa / 0x55) then 0x90; flash2_command_register._0_2_ then reads the manufacturer ID and ._2_2_ the device ID
+0x00002a0c,"The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the code / length byte) of each of toucan_a_message_buffers[0-15]"
+0x00539904,"The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the code / length byte) of each of toucan_a_message_buffers[0-15]"
+0x00002ac4,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00005154,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00053740,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00539570,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"

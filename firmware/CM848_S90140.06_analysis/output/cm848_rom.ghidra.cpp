@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:22:46 UTC 2026
+// Generated: Fri Nov 27 03:25:39 UTC 2026
 
 
 //
@@ -2167,6 +2167,8 @@ void mpc555_initializeCanController(void)
   toucan_a.RX14MSK = 0x1feffe00;
   toucan_a.CANICR = 0x400;
   bVar3 = 0;
+                    /* The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the
+                       code / length byte) of each of toucan_a_message_buffers[0-15] */
   puVar2 = &DAT_003070f1;
   do {
     puVar2 = puVar2 + 0x10;
@@ -2214,6 +2216,9 @@ void mpc555_initializeDiagnosticSubsystem(void)
   can_mailbox_counter.slot_start = (word)iVar5;
   can_mailbox_counter.slot_end = wVar2 + 5;
   ecu_power_state_flags.mailbox_index = wVar2 + 5;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
   boot_can_ring_state.transmit_message_buffer_pointer =
        (dword)(&UNK_003070f0 + (iVar5 * 0x10 & 0xffff0));
   uVar4 = 0;
@@ -4164,6 +4169,9 @@ void mpc555_processCanReceiveBuffer(int param_1)
   bVar3 = boot_can_ring_state.receive_ring_full_flag;
   if (bVar3 == 0) {
     param_1 = param_1 * 0x10;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
     pjVar1 = boot_can_ring_state.receive_write_pointer;
     uVar9 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
             *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
@@ -11000,12 +11008,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
-  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -59165,6 +59173,9 @@ void mpc555_queueCanReceiveMessage(int param_1)
   pjVar2 = can_receive_queue_write_pointer;
   if (can_receive_queue_full_flag == 0) {
     param_1 = param_1 * 0x10;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
     uVar6 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
             *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
     pjVar2->priority_dp_flags = (char)(uVar6 >> 0x18);
@@ -69738,7 +69749,8 @@ void cm848_initializeExhaustPressure(void)
 
 /* The e2m EMO general engine protection AECD (blocks 1A41 / 1A42; algorithm_enable_flags_21_cal bit
    0x40, clear on this truck): general_engine_protection_state from egr_system_failure_flag (0x100),
-   DAT_0040a43c (8) and DAT_0040a43e (4), and its cap (was cm848_updateSensorValidationFlags) */
+   general_engine_protection_condition_8_input (8) and general_engine_protection_condition_4_input
+   (4), and its cap (was cm848_updateSensorValidationFlags) */
 
 void cm848_updateGeneralEngineProtection(void)
 
@@ -69749,13 +69761,13 @@ void cm848_updateGeneralEngineProtection(void)
   else {
     egr_system_failure_validation_bit = 0x100;
   }
-  if (DAT_0040a43c == 0) {
+  if (general_engine_protection_condition_8_input == 0) {
     general_engine_protection_condition_bit_8 = 0;
   }
   else {
     general_engine_protection_condition_bit_8 = 8;
   }
-  if (DAT_0040a43e == 0) {
+  if (general_engine_protection_condition_4_input == 0) {
     general_engine_protection_condition_bit_4 = 0;
   }
   else {
@@ -88128,8 +88140,8 @@ void cm848_buildPciTransmitMessage9ImmobilizerSecretKey(void)
   if (pci_transmit_message_9_timer == 0) {
     if (immobilizer_secret_key_frame_toggle != 0) {
       pci_transmit_message_9_immobilizer_command = 2;
-      pci_transmit_message_9_immobilizer_data_1 = DAT_003fcfcb;
-      pci_transmit_message_9_immobilizer_data_2 = DAT_003fcfcc;
+      pci_transmit_message_9_immobilizer_data_1 = immobilizer_secret_key_frame_2_byte_3;
+      pci_transmit_message_9_immobilizer_data_2 = immobilizer_secret_key_frame_2_byte_4;
       pci_transmit_message_9_immobilizer_data_3 = 0;
       immobilizer_secret_key_send_enable = 0;
     }
@@ -88138,8 +88150,8 @@ void cm848_buildPciTransmitMessage9ImmobilizerSecretKey(void)
       pci_transmit_message_9_immobilizer_data_1 = eeprom_write_buffer._2_1_;
       pci_transmit_message_9_immobilizer_data_2 = (byte)eeprom_write_buffer;
       pci_transmit_message_9_immobilizer_data_3 = eeprom_config_write_triggered_flag;
-      DAT_003fcfcb = immobilizer_secret_key_byte_3_cal;
-      DAT_003fcfcc = flash2_operation_active_flag._0_1_;
+      immobilizer_secret_key_frame_2_byte_3 = immobilizer_secret_key_byte_3_cal;
+      immobilizer_secret_key_frame_2_byte_4 = flash2_operation_active_flag._0_1_;
     }
     immobilizer_secret_key_frame_toggle = immobilizer_secret_key_frame_toggle == 0;
     pci_transmit_message_9_timer = 1;
@@ -90334,7 +90346,8 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
     vehicle_speed_sensor_period._2_2_ =
          (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM5;
     (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM4 = 0;
-    vehicle_speed_sensor_pulse_total = vehicle_speed_sensor_pulse_total + DAT_003fd07a;
+    vehicle_speed_sensor_pulse_total =
+         vehicle_speed_sensor_pulse_total + vehicle_speed_sensor_pulses_per_interrupt;
   }
   if ((engine_speed_from_backup_sensor_flag == 0) &&
      (engine_speed_state.main_speed_pulse_count_between_vss_pulses != 0)) {
@@ -90423,7 +90436,7 @@ void cm848_initializeVehicleSpeedSensorChannel(void)
     wVar1 = tpu_b.CIER;
     tpu_b.CIER = wVar1 | 4;
     wVar1 = tpu_b_channel_2_parameters.PARAM1;
-    DAT_003fd07a = (undefined1)(wVar1 >> 8);
+    vehicle_speed_sensor_pulses_per_interrupt = (byte)(wVar1 >> 8);
   }
   vehicle_speed_sensor_tpu_channel = 2;
   return;
@@ -101446,6 +101459,9 @@ void cm848_j1939_system_init(void)
   j1939_transmit_message_object_number = (word)iVar2;
   j1939_last_receive_message_object_number = can_last_message_object_used + 0xf;
   uVar5 = iVar2 * 0x10 & 0xffff0;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
   can_transmit_mailbox_pointer = &UNK_003070f0 + uVar5;
   iVar2 = (int)&toucan_a_message_buffers[0].CONTROL_STATUS + uVar5;
   uVar5 = 0;
@@ -101588,6 +101604,8 @@ void cm848_initializeCanHardware(void)
   toucan_a.RX14MSK = 0x1feffe00;
   toucan_a.CANICR = 0x400;
   bVar3 = 0;
+                    /* The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the
+                       code / length byte) of each of toucan_a_message_buffers[0-15] */
   puVar2 = &DAT_003070f1;
   do {
     puVar2 = puVar2 + 0x10;
