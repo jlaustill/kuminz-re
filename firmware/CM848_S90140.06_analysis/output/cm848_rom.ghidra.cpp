@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:14:09 UTC 2026
+// Generated: Fri Nov 27 03:17:08 UTC 2026
 
 
 //
@@ -10930,14 +10930,14 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  uint entry_time_base_low;
+  dword exit_time_base_low;
+  int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
   word current_interrupt_mask;
   byte interrupt_code;
-  uint entry_time_base_low;
-  dword exit_time_base_low;
-  int entry_time_base_high;
   
   do {
     entry_time_base_high = TBUr;
@@ -41254,8 +41254,8 @@ void cm848_initializePciMessagePayloads(void)
 
 {
   int iVar1;
-  byte announcement_byte;
   byte *vin_payload_cursor;
+  byte announcement_byte;
   byte *source_cursor;
   byte *payload_cursor;
   byte *vehicle_information_cursor;
@@ -64796,13 +64796,13 @@ void cm848_calculateAirFuelRatioAndIntakeOxygenFraction(void)
   else {
     fuel_air_equivalence_ratio = 0xffff;
   }
-  DAT_003fba00 = stoichiometric_oxygen_fuel_ratio + 0x1d;
-  DAT_003fba02 = (short)(uVar3 + 0x80);
+  intake_charge_oxygen_ratio_numerator = stoichiometric_oxygen_fuel_ratio + 0x1d;
+  intake_charge_oxygen_ratio_denominator = (word)(uVar3 + 0x80);
   uVar1 = (ulonglong)
           ((uint)egr_flow_estimate_terms.egr_fraction_actual *
           (uint)(ushort)(stoichiometric_oxygen_fuel_ratio + 0x1d)) /
           (ulonglong)(uVar3 + 0x80 & 0xffff);
-  DAT_003fba04 = (int)uVar1;
+  intake_charge_oxygen_depletion_term = (dword)uVar1;
   intake_charge_oxygen_fraction = 0x76b - (short)uVar1;
   return;
 }
@@ -65219,8 +65219,8 @@ void cm848_initializeOxygenLimitLookupCaches(void)
 
 /* Converts exhaust_temperature (twice the intake manifold temperature in degF plus the combustion
    temperature rise from cm848_estimateExhaustTemperature) with x 8542 + 7858640 / 1000 into
-   DAT_003fba18, divides cylinder_residual_gas_mass_density_constant x exhaust_pressure by it into
-   cylinder_residual_gas_mass_unclamped and clamps that between
+   residual_gas_temperature_divisor, divides cylinder_residual_gas_mass_density_constant x
+   exhaust_pressure by it into cylinder_residual_gas_mass_unclamped and clamps that between
    cylinder_residual_gas_mass_lower_limit and _upper_limit into cylinder_residual_gas_mass.
    cm848_calculateCylinderOxygenMasses multiplies the clamped value by the residual oxygen fraction.
    (was cm848_sensorProcessing_periodic) */
@@ -65231,7 +65231,7 @@ void cm848_calculateResidualGasMass(void)
   uint uVar1;
   
   uVar1 = ((uint)exhaust_temperature * 0x215e + 0x77e9d0) / 1000;
-  DAT_003fba18 = (short)uVar1;
+  residual_gas_temperature_divisor = (word)uVar1;
   uVar1 = ((uint)cylinder_residual_gas_mass_density_constant * (uint)exhaust_pressure) /
           (uVar1 & 0xffff);
   cylinder_residual_gas_mass_unclamped = (word)uVar1;
@@ -65304,7 +65304,7 @@ void cm848_checkAirHandlingSystemProtectionLevelConditions(void)
   else if (0x7fff < iVar2) {
     iVar2 = 0x7fff;
   }
-  DAT_003fba22 = (short)iVar2;
+  air_handling_system_protection_level_1_ambient_temperature_limit = (short)iVar2;
   if ((air_handling_system_protection_level_1_altitude_limit < iVar1) ||
      ((short)iVar2 < ambient_air_temperature)) {
     air_handling_system_protection_level_1_condition_flag = 0;
@@ -65327,7 +65327,7 @@ void cm848_checkAirHandlingSystemProtectionLevelConditions(void)
   else if (0x7fff < iVar2) {
     iVar2 = 0x7fff;
   }
-  DAT_003fba24 = (short)iVar2;
+  air_handling_system_protection_level_2_ambient_temperature_limit = (short)iVar2;
   if (((air_handling_system_protection_level_2_altitude_limit < iVar1) ||
       ((short)iVar2 < ambient_air_temperature)) ||
      (air_handling_system_protection_level_1_condition_flag != 0)) {
@@ -65526,7 +65526,7 @@ void cm848_calculateEmissionLevelCapCommand(void)
   if (uVar1 < air_handling_system_protection_emission_level_cap) {
     uVar1 = (uint)air_handling_system_protection_emission_level_cap;
   }
-  uVar2 = (uint)DAT_003fba26;
+  uVar2 = (uint)emission_level_cap_unwritten_input;
   if (uVar2 < uVar1) {
     uVar2 = uVar1;
   }
@@ -66011,7 +66011,8 @@ void cm848_packAuxiliaryEmissionControlState(void)
        condensation_protection_active_flag << 2 |
        (ushort)(white_smoke_and_misfire_protection_state != 0) << 3 |
        extended_idle_protection_active_flag << 4 | engine_start_warmup_protection_active_flag << 5 |
-       (ushort)(general_engine_protection_state != 0) << 6 | DAT_003fba36 << 7;
+       (ushort)(general_engine_protection_state != 0) << 6 |
+       auxiliary_emission_control_unwritten_bit_7_input << 7;
   return;
 }
 
