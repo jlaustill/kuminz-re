@@ -2811,3 +2811,13 @@ j1939_periodic_transmit_entry_t,,interval_ticks,word,2,The transmit interval in 
 j1939_periodic_transmit_entry_t,,next_tick,word,2,The tick of the next transmission: the runner calls the builder when the queue's current tick equals it and adds interval_ticks,,verified
 j1939_periodic_transmit_entry_t,,builder,j1939_message_builder_function_t*,4,The message's builder function,,verified
 j1939_message_builder_function_t,,,function:void(),0,A periodic J1939 message builder: cm848_runJ1939PeriodicTransmitQueues calls it with no argument (PR #53 round 98),,verified
+# TSC1 ignored request lists (cm848_add / remove / processTsc1IgnoredRequestTimeouts)
+engine_tsc1_ignored_request_entry_t,0x003fb916,request_type,word,2,Entry type (param_1 of cm848_addEngineTsc1IgnoredRequestEntry; type 1 + mode 1 + the primary authorized source clears the high idle override when it expires),,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,source_address,byte,1,J1939 source address whose TSC1 requests are ignored,,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,reserved,byte,1,Padding (never written),,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,override_control_mode,word,2,TSC1 override control mode that is ignored,,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,remaining_time,word,2,Countdown from j1939_time_limited_node_recovery_time; the entry is removed at 0,,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,source_address,byte,1,J1939 source address whose retarder TSC1 requests are ignored,,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,reserved,byte,1,Padding (never written),,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,override_control_mode,word,2,TSC1 override control mode that is ignored,,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,remaining_time,word,2,Countdown from j1939_time_limited_node_recovery_time; the entry is removed at 0,,verified

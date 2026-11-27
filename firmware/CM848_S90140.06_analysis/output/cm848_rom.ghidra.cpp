@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:50:54 UTC 2026
+// Generated: Fri Nov 27 02:53:19 UTC 2026
 
 
 //
@@ -10929,14 +10929,14 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  int entry_time_base_high_check;
+  int exit_time_base_high_check;
   word saved_interrupt_mask;
   word current_interrupt_mask;
   byte interrupt_code;
   uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
-  int entry_time_base_high_check;
-  int exit_time_base_high_check;
   
   do {
     entry_time_base_high = TBUr;
@@ -40290,8 +40290,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -49018,7 +49018,7 @@ LAB_00045154:
      (wVar3 = crank_speed_count + 1, wVar2 = wVar3, wVar3 == crank_tooth_position_target)) {
     wVar2 = tpu_a_channel_0_parameters.PARAM0;
     uVar6 = -((short)wVar2 >> 0xf);
-    DAT_003fb5b8 = (byte)(wVar2 >> 0xf);
+    crank_signal_window_tpu_snapshot = (byte)(wVar2 >> 0xf);
     wVar5 = tpu_a_channel_0_parameters.PARAM4;
     if (uVar6 != 0) {
       wVar5 = wVar5 - crank_signal_tooth_count;
@@ -49112,7 +49112,7 @@ void mpc555_updateCrankSyncState(void)
   word wVar3;
   
   wVar3 = tpu_a_channel_0_parameters.PARAM0;
-  DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+  crank_signal_window_tpu_snapshot = (byte)(wVar3 >> 0xf);
   wVar3 = tpu_a_channel_0_parameters.PARAM4;
   uVar2 = wVar3 >> 8;
   wVar3 = tpu_a_channel_0_parameters.PARAM4;
@@ -49337,7 +49337,7 @@ LAB_00045970:
               (crank_lost_resync_cam_tooth_threshold < cam_crank_plausibility_count_2)))))) &&
            (firing_detection_count == 0)) {
           wVar3 = tpu_a_channel_0_parameters.PARAM0;
-          DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+          crank_signal_window_tpu_snapshot = (byte)(wVar3 >> 0xf);
           if (wVar3 >> 0xf != (ushort)crank_signal_window_with_added_tooth) {
             tpu_a.HSRR1 = 1;
             iVar1 = TBLr;
@@ -59514,18 +59514,18 @@ undefined4 refreshEngineTsc1IgnoredRequestEntry(int param_1,uint param_2,int par
 
 {
   byte bVar1;
-  word *pwVar2;
+  engine_tsc1_ignored_request_entry_t *peVar2;
   
-  pwVar2 = &engine_tsc1_ignored_request_entries;
+  peVar2 = engine_tsc1_ignored_request_entries;
   bVar1 = 0;
   if (engine_tsc1_ignored_request_count != 0) {
     do {
-      if ((((short)*pwVar2 == param_1) && (*(byte *)(pwVar2 + 1) == param_2)) &&
-         ((short)pwVar2[2] == param_3)) {
-        pwVar2[3] = j1939_time_limited_node_recovery_time;
+      if ((((short)peVar2->request_type == param_1) && (peVar2->source_address == param_2)) &&
+         ((short)peVar2->override_control_mode == param_3)) {
+        peVar2->remaining_time = j1939_time_limited_node_recovery_time;
         return 1;
       }
-      pwVar2 = pwVar2 + 4;
+      peVar2 = peVar2 + 1;
       bVar1 = bVar1 + 1;
     } while (bVar1 < engine_tsc1_ignored_request_count);
   }
@@ -59549,17 +59549,18 @@ undefined4 cm848_refreshRetarderTsc1IgnoredRequestEntry(uint param_1,int param_2
 
 {
   byte bVar1;
-  byte *pbVar2;
+  retarder_tsc1_ignored_request_entry_t *prVar2;
   
-  pbVar2 = &retarder_tsc1_ignored_request_entries;
+  prVar2 = retarder_tsc1_ignored_request_entries;
   bVar1 = 0;
   if (retarder_tsc1_ignored_request_count != 0) {
     do {
-      if ((*pbVar2 == param_1) && (*(short *)(pbVar2 + 2) == param_2)) {
-        *(word *)(pbVar2 + 4) = j1939_time_limited_node_recovery_time;
+      if ((prVar2->source_address == param_1) && ((short)prVar2->override_control_mode == param_2))
+      {
+        prVar2->remaining_time = j1939_time_limited_node_recovery_time;
         return 1;
       }
-      pbVar2 = pbVar2 + 6;
+      prVar2 = prVar2 + 1;
       bVar1 = bVar1 + 1;
     } while (bVar1 < retarder_tsc1_ignored_request_count);
   }
@@ -59581,7 +59582,7 @@ undefined4 cm848_refreshRetarderTsc1IgnoredRequestEntry(uint param_1,int param_2
    activity timing fault (cm848_updateParkNeutralFlagAndTsc1Activity) (was
    cm848_addCoolantCalEntry). */
 
-void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,undefined1 param_2,undefined2 param_3)
+void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,byte param_2,word param_3)
 
 {
   uint uVar1;
@@ -59589,10 +59590,11 @@ void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,undefined1 param_2,unde
   uVar1 = (uint)engine_tsc1_ignored_request_count;
   if (uVar1 < 10) {
     engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count + 1;
-    (&engine_tsc1_ignored_request_entries)[uVar1 * 4] = param_1;
-    (&DAT_003fb918)[uVar1 * 8] = param_2;
-    (&DAT_003fb91a)[uVar1 * 4] = param_3;
-    (&DAT_003fb91c)[uVar1 * 4] = j1939_time_limited_node_recovery_time;
+    engine_tsc1_ignored_request_entries[uVar1].request_type = param_1;
+    engine_tsc1_ignored_request_entries[uVar1].source_address = param_2;
+    engine_tsc1_ignored_request_entries[uVar1].override_control_mode = param_3;
+    engine_tsc1_ignored_request_entries[uVar1].remaining_time =
+         j1939_time_limited_node_recovery_time;
   }
   return;
 }
@@ -59611,7 +59613,7 @@ void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,undefined1 param_2,unde
    cm848_runJ1939PowertrainControlTimeouts when the retarder torque control request times out (was
    cm848_addCoolantCalEntryAlt). */
 
-void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
+void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,word param_2)
 
 {
   uint uVar1;
@@ -59619,9 +59621,10 @@ void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
   uVar1 = (uint)retarder_tsc1_ignored_request_count;
   if (uVar1 < 10) {
     retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count + 1;
-    (&retarder_tsc1_ignored_request_entries)[uVar1 * 6] = param_1;
-    (&DAT_003fb968)[uVar1 * 3] = param_2;
-    (&DAT_003fb96a)[uVar1 * 3] = j1939_time_limited_node_recovery_time;
+    retarder_tsc1_ignored_request_entries[uVar1].source_address = param_1;
+    retarder_tsc1_ignored_request_entries[uVar1].override_control_mode = param_2;
+    retarder_tsc1_ignored_request_entries[uVar1].remaining_time =
+         j1939_time_limited_node_recovery_time;
   }
   return;
 }
@@ -59642,71 +59645,78 @@ void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
 void cm848_processTsc1IgnoredRequestTimeouts(void)
 
 {
-  word wVar1;
-  short sVar2;
-  word *pwVar3;
-  byte *pbVar4;
-  uint uVar5;
-  word *pwVar6;
-  byte *pbVar7;
-  int iVar8;
-  uint uVar9;
+  engine_tsc1_ignored_request_entry_t *peVar1;
+  retarder_tsc1_ignored_request_entry_t *prVar2;
+  uint uVar3;
+  engine_tsc1_ignored_request_entry_t *peVar4;
+  retarder_tsc1_ignored_request_entry_t *prVar5;
+  word wVar8;
+  int iVar6;
+  uint uVar7;
   
-  uVar5 = (uint)engine_tsc1_ignored_request_count;
-  if (uVar5 != 0) {
-    pwVar3 = &engine_tsc1_ignored_request_entries + uVar5 * 4;
-    for (; uVar5 != 0; uVar5 = uVar5 + 0xff & 0xff) {
-      pwVar6 = pwVar3 + -4;
-      wVar1 = pwVar3[-1];
-      pwVar3[-1] = wVar1 - 1;
-      if ((word)(wVar1 - 1) == 0) {
-        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_transmission_source_address)) &&
-           (pwVar3[-2] == 1)) {
+  uVar3 = (uint)engine_tsc1_ignored_request_count;
+  if (uVar3 != 0) {
+    peVar1 = engine_tsc1_ignored_request_entries + uVar3;
+    for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
+      peVar4 = peVar1 + -1;
+      wVar8 = peVar1[-1].remaining_time - 1;
+      peVar1[-1].remaining_time = wVar8;
+      if (wVar8 == 0) {
+        if (((peVar4->request_type == 1) &&
+            (peVar1[-1].source_address == j1939_transmission_source_address)) &&
+           (peVar1[-1].override_control_mode == 1)) {
           j1939_powertrain_control_state.high_idle_override_active_flag = 0;
           j1939_powertrain_control_state.j1939_blocked_message_bits =
                j1939_powertrain_control_state.j1939_blocked_message_bits & 6;
         }
-        if (engine_tsc1_ignored_request_count == uVar5) {
+        if (engine_tsc1_ignored_request_count == uVar3) {
           engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count - 1;
         }
         else {
-          iVar8 = engine_tsc1_ignored_request_count + 0xff;
-          engine_tsc1_ignored_request_count = (byte)iVar8;
-          uVar9 = iVar8 * 8 & 0x7f8;
-          *pwVar6 = *(word *)((int)&engine_tsc1_ignored_request_entries + uVar9);
-          *(undefined1 *)(pwVar3 + -3) = (&DAT_003fb918)[uVar9];
-          pwVar3[-2] = *(word *)((int)&DAT_003fb91a + uVar9);
-          pwVar3[-1] = *(word *)((int)&DAT_003fb91c + uVar9);
+          iVar6 = engine_tsc1_ignored_request_count + 0xff;
+          engine_tsc1_ignored_request_count = (byte)iVar6;
+          uVar7 = iVar6 * 8 & 0x7f8;
+          peVar4->request_type =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].request_type + uVar7);
+          peVar1[-1].source_address =
+               (&engine_tsc1_ignored_request_entries[0].source_address)[uVar7];
+          peVar1[-1].override_control_mode =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].override_control_mode + uVar7)
+          ;
+          peVar1[-1].remaining_time =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].remaining_time + uVar7);
         }
       }
-      pwVar3 = pwVar6;
+      peVar1 = peVar4;
     }
   }
-  uVar5 = (uint)retarder_tsc1_ignored_request_count;
-  if (uVar5 != 0) {
-    pbVar4 = &retarder_tsc1_ignored_request_entries + uVar5 * 6;
-    for (; uVar5 != 0; uVar5 = uVar5 + 0xff & 0xff) {
-      pbVar7 = pbVar4 + -6;
-      sVar2 = *(short *)(pbVar4 + -2);
-      *(short *)(pbVar4 + -2) = sVar2 + -1;
-      if ((short)(sVar2 + -1) == 0) {
-        if ((*pbVar7 == j1939_transmission_source_address) && (*(short *)(pbVar4 + -4) == 2)) {
+  uVar3 = (uint)retarder_tsc1_ignored_request_count;
+  if (uVar3 != 0) {
+    prVar2 = retarder_tsc1_ignored_request_entries + uVar3;
+    for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
+      prVar5 = prVar2 + -1;
+      wVar8 = prVar2[-1].remaining_time - 1;
+      prVar2[-1].remaining_time = wVar8;
+      if (wVar8 == 0) {
+        if ((prVar5->source_address == j1939_transmission_source_address) &&
+           (prVar2[-1].override_control_mode == 2)) {
           j1939_powertrain_control_state.j1939_blocked_message_bits =
                j1939_powertrain_control_state.j1939_blocked_message_bits & 5;
         }
-        if (retarder_tsc1_ignored_request_count == uVar5) {
+        if (retarder_tsc1_ignored_request_count == uVar3) {
           retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count - 1;
         }
         else {
-          uVar9 = retarder_tsc1_ignored_request_count + 0xff;
-          retarder_tsc1_ignored_request_count = (byte)uVar9;
-          uVar9 = uVar9 & 0xff;
-          *pbVar7 = (&retarder_tsc1_ignored_request_entries)[uVar9 * 6];
-          *(undefined2 *)(pbVar4 + -4) = (&DAT_003fb968)[uVar9 * 3];
-          *(undefined2 *)(pbVar4 + -2) = (&DAT_003fb96a)[uVar9 * 3];
+          uVar7 = retarder_tsc1_ignored_request_count + 0xff;
+          retarder_tsc1_ignored_request_count = (byte)uVar7;
+          uVar7 = uVar7 & 0xff;
+          prVar5->source_address = retarder_tsc1_ignored_request_entries[uVar7].source_address;
+          prVar2[-1].override_control_mode =
+               retarder_tsc1_ignored_request_entries[uVar7].override_control_mode;
+          prVar2[-1].remaining_time = retarder_tsc1_ignored_request_entries[uVar7].remaining_time;
         }
       }
-      pbVar4 = pbVar7;
+      prVar2 = prVar5;
     }
   }
   return;
@@ -59728,18 +59738,18 @@ void cm848_processTsc1IgnoredRequestTimeouts(void)
 void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
 
 {
-  word *pwVar1;
-  word *pwVar2;
+  engine_tsc1_ignored_request_entry_t *peVar1;
+  engine_tsc1_ignored_request_entry_t *peVar2;
   uint uVar3;
   uint uVar4;
   int iVar5;
   
   uVar4 = (uint)engine_tsc1_ignored_request_count;
   if (uVar4 != 0) {
-    pwVar1 = &engine_tsc1_ignored_request_entries + uVar4 * 4;
+    peVar1 = engine_tsc1_ignored_request_entries + uVar4;
     for (; uVar4 != 0; uVar4 = uVar4 + 0xff & 0xff) {
-      pwVar2 = pwVar1 + -4;
-      if (((short)*pwVar2 == param_1) && (*(byte *)(pwVar1 + -3) == param_2)) {
+      peVar2 = peVar1 + -1;
+      if (((short)peVar2->request_type == param_1) && (peVar1[-1].source_address == param_2)) {
         if (engine_tsc1_ignored_request_count == uVar4) {
           engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count - 1;
         }
@@ -59747,13 +59757,18 @@ void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
           iVar5 = engine_tsc1_ignored_request_count + 0xff;
           engine_tsc1_ignored_request_count = (byte)iVar5;
           uVar3 = iVar5 * 8 & 0x7f8;
-          *pwVar2 = *(word *)((int)&engine_tsc1_ignored_request_entries + uVar3);
-          *(undefined1 *)(pwVar1 + -3) = (&DAT_003fb918)[uVar3];
-          pwVar1[-2] = *(word *)((int)&DAT_003fb91a + uVar3);
-          pwVar1[-1] = *(word *)((int)&DAT_003fb91c + uVar3);
+          peVar2->request_type =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].request_type + uVar3);
+          peVar1[-1].source_address =
+               (&engine_tsc1_ignored_request_entries[0].source_address)[uVar3];
+          peVar1[-1].override_control_mode =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].override_control_mode + uVar3)
+          ;
+          peVar1[-1].remaining_time =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].remaining_time + uVar3);
         }
       }
-      pwVar1 = pwVar2;
+      peVar1 = peVar2;
     }
   }
   return;
@@ -59772,17 +59787,17 @@ void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
 void cm848_removeRetarderTsc1IgnoredRequestEntry(uint param_1)
 
 {
-  byte *pbVar1;
-  byte *pbVar2;
+  retarder_tsc1_ignored_request_entry_t *prVar1;
+  retarder_tsc1_ignored_request_entry_t *prVar2;
   uint uVar3;
   uint uVar4;
   
   uVar3 = (uint)retarder_tsc1_ignored_request_count;
   if (uVar3 != 0) {
-    pbVar1 = &retarder_tsc1_ignored_request_entries + uVar3 * 6;
+    prVar1 = retarder_tsc1_ignored_request_entries + uVar3;
     for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
-      pbVar2 = pbVar1 + -6;
-      if (*pbVar2 == param_1) {
+      prVar2 = prVar1 + -1;
+      if (prVar2->source_address == param_1) {
         if (retarder_tsc1_ignored_request_count == uVar3) {
           retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count - 1;
         }
@@ -59790,12 +59805,13 @@ void cm848_removeRetarderTsc1IgnoredRequestEntry(uint param_1)
           uVar4 = retarder_tsc1_ignored_request_count + 0xff;
           retarder_tsc1_ignored_request_count = (byte)uVar4;
           uVar4 = uVar4 & 0xff;
-          *pbVar2 = (&retarder_tsc1_ignored_request_entries)[uVar4 * 6];
-          *(undefined2 *)(pbVar1 + -4) = (&DAT_003fb968)[uVar4 * 3];
-          *(undefined2 *)(pbVar1 + -2) = (&DAT_003fb96a)[uVar4 * 3];
+          prVar2->source_address = retarder_tsc1_ignored_request_entries[uVar4].source_address;
+          prVar1[-1].override_control_mode =
+               retarder_tsc1_ignored_request_entries[uVar4].override_control_mode;
+          prVar1[-1].remaining_time = retarder_tsc1_ignored_request_entries[uVar4].remaining_time;
         }
       }
-      pbVar1 = pbVar2;
+      prVar1 = prVar2;
     }
   }
   return;
@@ -74391,7 +74407,7 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
 {
   ushort uVar1;
   uint uVar2;
-  ushort *puVar3;
+  word *pwVar3;
   uint uVar4;
   uint uVar5;
   
@@ -74424,12 +74440,13 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
   turbocharger_speed_filtered_limited = (word)uVar2;
   uVar4 = (uint)turbocharger_speed_envelope_filter_buffer_size;
   if (uVar4 != 0) {
-    for (puVar3 = &DAT_003fcc20; puVar3 < &DAT_003fcc20 + uVar4; puVar3 = puVar3 + 1) {
-      if ((uVar2 & 0xffff) < (uint)*puVar3) {
-        uVar2 = (uint)*puVar3;
+    for (pwVar3 = turbocharger_speed_envelope_ring;
+        pwVar3 < turbocharger_speed_envelope_ring + uVar4; pwVar3 = pwVar3 + 1) {
+      if ((uVar2 & 0xffff) < (uint)*pwVar3) {
+        uVar2 = (uint)*pwVar3;
       }
     }
-    (&DAT_003fcc20)[turbocharger_speed_envelope_ring_write_index] =
+    turbocharger_speed_envelope_ring[turbocharger_speed_envelope_ring_write_index] =
          turbocharger_speed_filtered_limited;
     uVar5 = turbocharger_speed_envelope_ring_write_index + 1;
     turbocharger_speed_envelope_ring_write_index = (word)uVar5;
