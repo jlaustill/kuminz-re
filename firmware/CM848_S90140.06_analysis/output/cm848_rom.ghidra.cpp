@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:23:52 UTC 2026
+// Generated: Fri Nov 27 02:26:50 UTC 2026
 
 
 //
@@ -13832,7 +13832,6 @@ void cm848_initializeChargeTemperatureEstimate(void)
 // Function: cm848_calculateIntakeManifoldTemperatureLeadCompensation @ 0x00013d14
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Lead compensation of the intake manifold temperature sensor lag (sensor channel 9, e2m 18D9):
    intake_manifold_temperature_lead_term (+2 TPE_IMT_Lead_Term) =
    intake_manifold_temperature_lead_time_constant (+4 TPE_IMT_Lead_Time_Constant) x
@@ -13855,7 +13854,7 @@ void cm848_calculateIntakeManifoldTemperatureLeadCompensation(void)
   iVar2 = (uint)intake_manifold_temperature_lead_time_constant *
           ((int)(short)intake_manifold_temperature_sensor_value -
           (int)(short)intake_manifold_temperature_sensor_value_previous);
-  _fuel_demand_limit_b_working = iVar2;
+  intake_manifold_temperature_lead_term_unclamped = iVar2;
   if (iVar2 < 0x7d01) {
     if (iVar2 < -32000) {
       iVar2 = -32000;
@@ -26586,7 +26585,7 @@ void cm848_initializePgn65229Dm4Handler(void)
 {
   j1939_pgn65229_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65229_priority_cal & 7) << 2,0xfecd00);
-  j1939_pgn65229_tx_message.data_pointer = &j1939_dm4_tx_record_size_byte;
+  j1939_pgn65229_tx_message.data_pointer = j1939_pgn65229_payload;
   j1939_pgn65229_tx_message.status_pointer = &j1939_pgn65229_transmit_status;
   j1939_pgn65229_tx_message.header.can_id =
        CONCAT31(j1939_pgn65229_tx_message.header.can_id._0_3_,(char)j1939_source_address);
@@ -26619,16 +26618,16 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
   undefined4 local_18;
   
   if (param_1 == 0) {
-    pbVar6 = &j1939_dm4_tx_record_size_byte;
-    j1939_dm4_tx_record_size_byte = 0x13;
+    pbVar6 = j1939_pgn65229_payload;
+    j1939_pgn65229_payload[0] = 0x13;
     uVar9 = 0;
     do {
-      (&DAT_003fac49)[uVar9] = (&j1939_dm4_manufacturer_specific_parameters)[uVar9];
+      j1939_pgn65229_payload[uVar9 + 0xd] = (&j1939_dm4_manufacturer_specific_parameters)[uVar9];
       uVar9 = uVar9 + 1 & 0xff;
     } while (uVar9 < 6);
   }
   else {
-    pbVar6 = &DAT_003fac42 + param_1 * 0xd;
+    pbVar6 = j1939_pgn65229_payload + param_1 * 0xd + 6;
     *pbVar6 = 0xd;
   }
   if (fault_freeze_frame_entries_cal[param_1].fault_code != 0xaa) {
@@ -26695,7 +26694,6 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
 // Function: cm848_j1939HandlePgn65229Dm4FreezeFrame @ 0x00025390
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* handles the J1939 request for PGN 65229 DM4 freeze frame via j1939_pgn_dispatch_table
    (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
@@ -26708,11 +26706,14 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
   if ((j1939_pgn65229_transmit_status & 0xf0) == 0) {
     j1939_pgn65229_tx_message.header.data_length = 0;
     if ((active_dtc_list_cal.count == 0) && (previously_active_dtc_list_cal.count == 0)) {
-      j1939_dm4_tx_record_size_byte = 0;
-      _diag_init_byte_b = 0;
-      DAT_003fac41 = 0xff;
-      DAT_003fac42 = 0xff;
-      DAT_003fac43 = 0xff;
+      j1939_pgn65229_payload[0] = 0;
+      j1939_pgn65229_payload[1] = 0;
+      j1939_pgn65229_payload[2] = 0;
+      j1939_pgn65229_payload[3] = 0;
+      j1939_pgn65229_payload[4] = 0;
+      j1939_pgn65229_payload[5] = 0xff;
+      j1939_pgn65229_payload[6] = 0xff;
+      j1939_pgn65229_payload[7] = 0xff;
       j1939_pgn65229_tx_message.header.data_length = 8;
     }
     else {
