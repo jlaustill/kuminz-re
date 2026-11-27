@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:44:13 UTC 2026
+// Generated: Fri Nov 27 03:46:56 UTC 2026
 
 
 //
@@ -11008,12 +11008,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
+  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -26440,7 +26440,7 @@ void cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void)
             uStack_12 = (undefined1)(uVar1 >> 8);
             *(uint *)((int)&j1939_dm1_tx_message.status_pointer + uVar3 * 4 + 2) =
                  ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_14),uStack_12) |
-                 (byte)(&DAT_0005a4ac)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
+                 (&fault_j1939_data_fmi_byte)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
             j1939_dm1_tx_message.header.data_length = j1939_dm1_tx_message.header.data_length + 4;
           }
           uVar3 = uVar3 + 1 & 0xff;
@@ -26551,7 +26551,7 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
             uStack_a = (undefined1)(uVar1 >> 8);
             *(uint *)((int)&j1939_dm2_tx_message.status_pointer + uVar3 * 4 + 2) =
                  ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_c),uStack_a) |
-                 (byte)(&DAT_0005a4ac)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
+                 (&fault_j1939_data_fmi_byte)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
             j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
           }
           uVar3 = uVar3 + 1 & 0xff;
@@ -26660,7 +26660,8 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
       local_18._2_1_ = (undefined1)(uVar1 >> 8);
       uVar2 = (uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_18._0_1_),local_18._2_1_);
       local_1c = uVar2 << 8;
-      *(uint *)(pbVar6 + 1) = (uVar2 | (byte)(&DAT_0005a4ac)[uVar7 * 4] & 0x1f) << 8 | uVar3 | 0x80;
+      *(uint *)(pbVar6 + 1) =
+           (uVar2 | (&fault_j1939_data_fmi_byte)[uVar7 * 4] & 0x1f) << 8 | uVar3 | 0x80;
       local_18 = uVar1;
     }
     pbVar6[5] = 0xff;
@@ -76516,7 +76517,7 @@ void cm848_initializeCruiseControl(void)
   cruise_engine_to_vehicle_speed_ratio_filter_state.accumulator = 0;
   cruise_engine_to_vehicle_speed_ratio_filter_state.coefficient =
        &cruise_engine_to_vehicle_speed_ratio_filter_coefficient;
-  DAT_003fcd90 = 0;
+  cruise_control_unused_word = 0;
   cruise_engine_speed_previous = 0;
   cruise_engine_to_vehicle_speed_ratio_previous = 0;
   cruise_engine_to_vehicle_speed_ratio_integral = 0;
@@ -87999,7 +88000,7 @@ void cm848_updateTripAndLifetimeCounters(void)
 void initializeGovernorFlagsAuxiliary(void)
 
 {
-  DAT_003fcfba = 0;
+  governor_auxiliary_unused_word = 0;
   return;
 }
 
@@ -88282,14 +88283,15 @@ void cm848_calculateImmobilizerExpectedKey(void)
    sensor_checksum_verify_session) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
 
-uint cm848_generateImmobilizerSeed(void)
+dword cm848_generateImmobilizerSeed(void)
 
 {
   undefined4 uVar1;
   uint uVar2;
   uint uVar3;
   
-  if ((DAT_003fcfcd == 0) || (uVar2 = DAT_003fcfd0, ram_refresh_enable != RAM_REFRESH_DISABLED)) {
+  if ((immobilizer_fixed_seed_enable == 0) ||
+     (uVar2 = immobilizer_fixed_seed, ram_refresh_enable != RAM_REFRESH_DISABLED)) {
     immobilizer_seed_counter = immobilizer_seed_counter + 1;
     uVar1 = TBLr;
     uVar3 = (uint)immobilizer_seed_counter;
@@ -100091,9 +100093,9 @@ void cm848_resetFuelPressureSetpointNotReachedAccumulator(void)
 void cm848_monitorFuelPressureSetpointNotReached(void)
 
 {
-  undefined1 *puVar1;
-  undefined1 *extraout_r4;
-  undefined1 uVar2;
+  byte *pbVar1;
+  byte *extraout_r4;
+  byte bVar2;
   
   if (switch_input_state_bits.key_switch == 0) {
     fuel_pressure_setpoint_not_reached_monitor_active_flag = 0;
@@ -100144,7 +100146,7 @@ void cm848_monitorFuelPressureSetpointNotReached(void)
         diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x20;
       }
     }
-    puVar1 = &DAT_003fd265;
+    pbVar1 = &fuel_pressure_setpoint_not_reached_conditions_unmet_flag;
     if ((((((fault_detected_cal.cp3_pump_regulator_control_error == 0) &&
            (fault_detected_cal.high_pressure_common_rail_cp3_high_current_error == 0)) &&
           (fault_detected_cal.high_pressure_common_rail_cp3_low_current_error == 0)) &&
@@ -100167,18 +100169,18 @@ void cm848_monitorFuelPressureSetpointNotReached(void)
           ((fuel_pressure_setpoint_not_reached_minimum_engine_speed <=
             engine_speed_state.engine_speed && (supervisor_register_36_bit_1_low_held_flag == 0)))))
          ))))) {
-      if (DAT_003fd265 == '\x01') {
+      if (fuel_pressure_setpoint_not_reached_conditions_unmet_flag == 1) {
         fuel_pressure_setpoint_not_reached_monitor_state = 1;
       }
-      uVar2 = 0;
+      bVar2 = 0;
     }
     else {
       cm848_resetFuelPressureSetpointNotReachedAccumulator();
       fuel_pressure_setpoint_not_reached_monitor_state = 0;
-      uVar2 = 1;
-      puVar1 = extraout_r4;
+      bVar2 = 1;
+      pbVar1 = extraout_r4;
     }
-    *puVar1 = uVar2;
+    *pbVar1 = bVar2;
   }
   return;
 }
@@ -101369,7 +101371,7 @@ void cm848_j1939_system_init(void)
   can_receive_queue_read_pointer = can_receive_queue_buffer;
   can_receive_queue_write_pointer = can_receive_queue_buffer;
   initializeJ1939Transport();
-  DAT_0040ad54 = 4;
+  j1939_transport_unused_init_word = 4;
   uVar5 = 0;
   do {
     j1939_source_address_blocking_table[uVar5] = 0xfe;
