@@ -34,3 +34,6 @@ address,comment
 0x0003a900,RX[8] 6C pci_receive_message_8_byte_1: zero 5 bytes
 0x0003a950,RX[11] 72 pci_receive_message_11_odometer: zero 4 bytes
 0x0003a980,RX[14] 42 pci_receive_message_14_engine_off_time: zero 2 bytes
+# mpc555_cmfEraseBlocks: after CMFCTL PE and SES are set (| 6), each store of 0xffffffff is an erase interlock write to one 32 KB block; Ghidra warns because ROM is mapped read-only.
+0x00004af0,CMF_A erase interlock writes: blocks 1-7 (0x8000-0x38000); block 0 (0x0-0x7fff - the boot kernel) is not written
+0x00004b84,CMF_B erase interlock writes: blocks 0-5 (0x40000-0x68000)

@@ -1168,6 +1168,10 @@ j1939_receive_handler_entry_t,,handler,j1939_receive_handler_function_t*,4,The r
 boot_diagnostic_service_entry_t,,service_id,BOOT_DIAGNOSTIC_SERVICE,1,The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads),,verified
 boot_diagnostic_service_entry_t,,handler,boot_diagnostic_service_handler_function_t*,4,The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it,,verified
 
+# Boot SCI command entry (5 bytes - packed): boot_sci_command_dispatch_table (ROM 0x7f7a) - cm848_dispatchBootSciDiagnosticCommand compares command to the received byte and calls handler
+boot_sci_command_entry_t,,command,byte,1,The boot SCI command byte (0x2a / 0x2b / 0x2c / 0x31 / 0x32),,verified
+boot_sci_command_entry_t,,handler,boot_sci_command_handler_function_t*,4,The command handler at offset 1 (unaligned),,verified
+
 # ============================================================================
 # Scheduler Task Statistics - per-task timing and execution counters
 # 40 entries at 0x0040be6a, 12 bytes each, ending at 0x0040c04a (output_enable_bitmap)
@@ -2786,6 +2790,7 @@ j1939_pgn_request_handler_function_t,,,function:void(j1939_received_message_t* m
 j1939_receive_handler_function_t,,,function:void(j1939_received_message_t* message),0,A J1939 receive handler: cm848_dispatchJ1939ReceivedMessages calls it with the receive ring's record (PR #53 round 98),,verified
 boot_diagnostic_service_handler_function_t,,,function:BOOT_DIAGNOSTIC_RESULT(j1939_received_message_t* request),0,"A boot kernel PGN 61184 service handler: the request in, the result out (PR #53 round 98)",,verified
 qspi_completion_callback_function_t,,,function:void(),0,A QSPI job's completion callback: cm848_completeQspiJob calls it with no argument (PR #53 round 98),,verified
+boot_sci_command_handler_function_t,,,function:void(),0,A boot SCI command handler: cm848_dispatchBootSciDiagnosticCommand calls it with no argument,,verified
 sci_command_handler_function_t,,,function:void(),0,An SCI command's handler: cm848_dispatchSciCommand calls it with no argument (PR #53 round 98),,verified
 interrupt_handler_function_t,,,function:void(),0,An interrupt handler: its dispatcher calls it with no argument (PR #53 round 98),,verified
 sci_next_byte_handler_function_t,,,function:void(),0,The handler of the next received SCI byte: cm848_sciCallbackDispatcher calls it with no argument (PR #53 round 98),,verified

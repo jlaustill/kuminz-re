@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:00:23 UTC 2026
+// Generated: Fri Nov 27 02:07:54 UTC 2026
 
 
 //
@@ -1908,10 +1908,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -2214,7 +2214,8 @@ void mpc555_initializeDiagnosticSubsystem(void)
   cVar3 = can_rx_channel_filter;
   puVar1 = &UNK_003070f0 + (iVar5 * 0x10 & 0xffff0);
   do {
-    *(uint *)(puVar1 + 0x12) = (&DAT_00007f6a)[uVar4 & 0xff] | (cVar3.channel_id & 0xff) << 9;
+    *(dword *)(puVar1 + 0x12) =
+         boot_can_receive_mailbox_id_templates[uVar4 & 0xff] | (cVar3.channel_id & 0xff) << 9;
     uVar4 = uVar4 + 1;
     puVar1[0x11] = 0x40;
     bVar6 = bVar6 + 1;
@@ -2409,8 +2410,9 @@ void cm848_dispatchBootSciDiagnosticCommand(void)
   bVar1 = false;
   uVar2 = 0;
   do {
-    if (*boot_sci_session_state.response_cursor_pointer == (&DAT_00007f7a)[uVar2 * 5]) {
-      (**(code **)((int)&eepromStatusHandler_ptr0 + uVar2 * 5))();
+    if (*boot_sci_session_state.response_cursor_pointer ==
+        boot_sci_command_dispatch_table[uVar2].command) {
+      (*boot_sci_command_dispatch_table[uVar2].handler)();
       bVar1 = true;
     }
     uVar2 = uVar2 + 1 & 0xff;
@@ -2875,7 +2877,7 @@ void cm848_sendDiagnosticResponse(void)
   
   uVar1 = 0;
   do {
-    diag_serial_buffer[uVar1] = (&DAT_00007f94)[uVar1];
+    diag_serial_buffer[uVar1] = boot_sci_command_50_reply_template[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 6);
   boot_sci_session_state.response_write_index = 6;
@@ -3074,10 +3076,10 @@ void cm848_verifySerialResponse(void)
 
 {
   diag_serial_crc_match_flag =
-       ((crc16_working_value ^ *(ushort *)(&DAT_00007f9a + (crc16_working_value >> 0xc & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 8 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 4 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value & 0xf) * 2) ^ 0x1911) & 0xffff) ==
+       ((crc16_working_value ^ boot_sci_security_key_nibble_table[crc16_working_value >> 0xc & 0xf]
+         ^ (uint)boot_sci_security_key_nibble_table[crc16_working_value >> 8 & 0xf] ^
+         (uint)boot_sci_security_key_nibble_table[crc16_working_value >> 4 & 0xf] ^
+         (uint)boot_sci_security_key_nibble_table[crc16_working_value & 0xf] ^ 0x1911) & 0xffff) ==
        (uint)serial_response_crc_expected;
   return;
 }
@@ -3852,6 +3854,8 @@ bool mpc555_cmfEraseBlocks(uint param_1)
     }
     CMFCTL_A = uVar8 | cmf_erase_control_bits | 4;
     CMFCTL_A = uVar8 | cmf_erase_control_bits | 6;
+                    /* CMF_A erase interlock writes: blocks 1-7 (0x8000-0x38000); block 0
+                       (0x0-0x7fff - the boot kernel) is not written */
     DAT_00008000 = 0xffffffff;
                     /* WARNING: Read-only address (ram,0x00010000) is written */
     uRam00010000 = 0xffffffff;
@@ -3876,6 +3880,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
     CMFCTL_B = uVar9 | cmf_erase_control_bits | 4;
     CMFCTL_B = uVar9 | cmf_erase_control_bits | 6;
                     /* WARNING: Read-only address (ram,0x00040000) is written */
+                    /* CMF_B erase interlock writes: blocks 0-5 (0x40000-0x68000) */
     uRam00040000 = 0xffffffff;
                     /* WARNING: Read-only address (ram,0x00048000) is written */
     uRam00048000 = 0xffffffff;
@@ -6337,9 +6342,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -10984,12 +10989,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
-  dword exit_time_base_low;
-  int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
+  uint entry_time_base_low;
+  dword exit_time_base_low;
+  int entry_time_base_high;
   
   do {
     entry_time_base_high = TBUr;
@@ -41236,8 +41241,8 @@ void cm848_initializePciMessagePayloads(void)
 
 {
   int iVar1;
-  byte *vin_payload_cursor;
   byte announcement_byte;
+  byte *vin_payload_cursor;
   byte *source_cursor;
   byte *payload_cursor;
   byte *vehicle_information_cursor;
@@ -89615,12 +89620,12 @@ void cm848_updateDrivetrainRatio(void)
           (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) &&
          (drivetrain_ratio_engine_period_valid_flag == 1)) {
         if ((drivetrain_ratio_engine_period_average == 0) ||
-           (&DAT_00007ffd <
-            (undefined *)
-            (CONCAT44((int)((ulonglong)vehicle_speed_sensor_period *
-                            (ulonglong)drivetrain_ratio_period_scale_cal * 0x10 >> 0x20),
-                      vehicle_speed_sensor_period * (uint)drivetrain_ratio_period_scale_cal * 0x10)
-            / (ulonglong)drivetrain_ratio_engine_period_average))) {
+           (0x7ffd < (uint)(CONCAT44((int)((ulonglong)vehicle_speed_sensor_period *
+                                           (ulonglong)drivetrain_ratio_period_scale_cal * 0x10 >>
+                                          0x20),
+                                     vehicle_speed_sensor_period *
+                                     (uint)drivetrain_ratio_period_scale_cal * 0x10) /
+                           (ulonglong)drivetrain_ratio_engine_period_average))) {
           drivetrain_ratio_raw = 0x7ffd;
         }
         else {
@@ -89773,17 +89778,17 @@ void cm848_initializeDrivetrainRatio(void)
 void cm848_calculateDrivetrainRatioFromGearRatio(void)
 
 {
-  undefined *puVar1;
+  uint uVar1;
   
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
       (etc2_gear_ratio_valid_flag == 1)) &&
      ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO ||
       (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)))) {
-    puVar1 = (undefined *)(((ulonglong)etc2_actual_gear_ratio << 0xb) / 1000);
-    if (&DAT_00007ffd < puVar1) {
-      puVar1 = &DAT_00007ffd;
+    uVar1 = (uint)(((ulonglong)etc2_actual_gear_ratio << 0xb) / 1000);
+    if (0x7ffd < uVar1) {
+      uVar1 = 0x7ffd;
     }
-    drivetrain_ratio_raw = (word)puVar1;
+    drivetrain_ratio_raw = (word)uVar1;
   }
   return;
 }
@@ -89836,7 +89841,6 @@ void cm848_calculateDrivetrainRatioFromVehicleSpeed(void)
   undefined4 uVar1;
   uint uVar2;
   uint uVar3;
-  undefined *puVar4;
   
   if (vehicle_speed < vehicle_speed_minimum) {
     return;
@@ -89863,14 +89867,13 @@ void cm848_calculateDrivetrainRatioFromVehicleSpeed(void)
     uVar1 = (undefined4)((ulonglong)uVar2 * 0x1e000 >> 0x20);
     if (((uint)(CONCAT44(uVar1,uVar2 * 0x1e000) / 0xffffffff) <=
          uVar3 * tire_revolutions_per_mile_cal) &&
-       (puVar4 = (undefined *)
-                 (CONCAT44(uVar1,uVar2 * 0x1e000) /
-                 (ulonglong)(uVar3 * tire_revolutions_per_mile_cal)), puVar4 <= &DAT_00007ffd))
+       (uVar3 = (uint)(CONCAT44(uVar1,uVar2 * 0x1e000) /
+                      (ulonglong)(uVar3 * tire_revolutions_per_mile_cal)), uVar3 < 0x7ffe))
     goto LAB_005266e0;
   }
-  puVar4 = &DAT_00007ffd;
+  uVar3 = 0x7ffd;
 LAB_005266e0:
-  drivetrain_ratio_raw = (word)puVar4;
+  drivetrain_ratio_raw = (word)uVar3;
   return;
 }
 
@@ -89890,18 +89893,18 @@ void cm848_calculateTransmissionRatioFromOutputShaft(void)
 
 {
   uint uVar1;
-  undefined *puVar2;
+  uint uVar2;
   
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
       (etc2_gear_ratio_valid_flag == 0)) &&
      (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO)) {
     uVar1 = (uint)output_shaft_speed_saved + (uint)output_shaft_speed_current >> 1;
     output_shaft_speed_avg = (word)uVar1;
-    puVar2 = (undefined *)(((ulonglong)engine_speed_state.engine_speed << 0xb) / (ulonglong)uVar1);
-    if ((uVar1 == 0) || ((undefined *)0x7ffc < puVar2)) {
-      puVar2 = &DAT_00007ffd;
+    uVar2 = (uint)(((ulonglong)engine_speed_state.engine_speed << 0xb) / (ulonglong)uVar1);
+    if ((uVar1 == 0) || (0x7ffc < uVar2)) {
+      uVar2 = 0x7ffd;
     }
-    drivetrain_ratio_raw = (word)puVar2;
+    drivetrain_ratio_raw = (word)uVar2;
     output_shaft_speed_saved = output_shaft_speed_current;
   }
   return;
