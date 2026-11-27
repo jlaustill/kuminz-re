@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 04:56:55 UTC 2026
+// Generated: Fri Nov 27 05:08:17 UTC 2026
 
 
 //
@@ -41130,15 +41130,15 @@ void cm848_pulsePciControllerLine124(void)
 
 
 //
-// Function: hpcr_initializePciMessageTimers @ 0x0003a100
+// Function: cm848_initializePciMessageTimers @ 0x0003a100
 //
 
 /* Initializes every PCI message timer: RX timers to 0xff37 (never received) and TX timers to
    staggered start values so the broadcasts do not all fire together; also arms the 0x26 diagnostic
-   response (timer 1) (link-event action bit 0x10) (was hpcr_initPciMessageTimers; PR #53 round 97)
-    */
+   response (timer 1) (link-event action bit 0x10) (was hpcr_initializePciMessageTimers - before
+   that hpcr_initPciMessageTimers; PR #53 round 97) */
 
-void hpcr_initializePciMessageTimers(void)
+void cm848_initializePciMessageTimers(void)
 
 {
   pci_transmit_message_8_timer = 0;
@@ -41253,7 +41253,7 @@ undefined4 cm848_handlePciLinkEvent(void)
       action_mask = action_mask | 0x20;
     }
     if ((action_mask & 0x10) != 0) {
-      hpcr_initializePciMessageTimers();
+      cm848_initializePciMessageTimers();
     }
     if ((action_mask & 0x20) != 0) {
       return 1;
@@ -41268,7 +41268,7 @@ undefined4 cm848_handlePciLinkEvent(void)
 // Function: cm848_initializePciMessagePayloads @ 0x0003a450
 //
 
-/* Power-up fill of every PCI RX / TX payload buffer (cm848_initializeJ1939CommunicationSystem from
+/* Power-up fill of every PCI RX / TX payload buffer (cm848_initializePciDatalink from
    cm848_applicationMain): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED
    from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string_cal / RX[0] source 0xF0 (was
    hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-26 - Readability High
@@ -41682,10 +41682,16 @@ void cm848_initializePciInFrameResponseBytes(void)
 
 
 //
-// Function: cm848_clearCanMessageBuffers @ 0x0003ab20
+// Function: cm848_resetPciFrameBuffersAndLinkState @ 0x0003ab20
 //
 
-void cm848_clearCanMessageBuffers(void)
+/* Power-up step of cm848_initializePciDatalink: clears the pci_link_state rx / tx match indexes and
+   receive_byte_count and pci_frame_match_flags - loads pci_normal_transmit_disabled /
+   pci_receive_processing_disabled from their _initial_cal bytes - zeroes pci_receive_frame_buffer
+   (22 bytes) and pci_transmit_frame_buffer (12 bytes) - sets pci_transmit_state to 4 (idle) and
+   pci_transmit_frame_length to 0 (was cm848_clearCanMessageBuffers: it touches no CAN state) */
+
+void cm848_resetPciFrameBuffersAndLinkState(void)
 
 {
   byte *pbVar1;
@@ -41765,19 +41771,24 @@ void cm848_initializePciControllerInterface(void)
 
 
 //
-// Function: cm848_initializeJ1939CommunicationSystem @ 0x0003ad04
+// Function: cm848_initializePciDatalink @ 0x0003ad04
 //
 
-/* (was cm848_initJ1939CommunicationSystem; PR #53 round 97) */
+/* Power-up init of the J1850 PCI datalink (from cm848_applicationMain): payloads / message timers /
+   status and in-frame response bytes / frame buffers / TX[3] and OBD service state / transmit state
+   / the j1850_system_bus_fault bits / the external PCI controller - then sets
+   pci_link_state.initialization_complete_marker. J1939 is set up separately by
+   cm848_j1939_system_init (was cm848_initializeJ1939CommunicationSystem - before that
+   cm848_initJ1939CommunicationSystem; PR #53 round 97) */
 
-void cm848_initializeJ1939CommunicationSystem(void)
+void cm848_initializePciDatalink(void)
 
 {
   cm848_initializePciMessagePayloads();
-  hpcr_initializePciMessageTimers();
+  cm848_initializePciMessageTimers();
   cm848_initializePciMessageStatusBytes();
   cm848_initializePciInFrameResponseBytes();
-  cm848_clearCanMessageBuffers();
+  cm848_resetPciFrameBuffersAndLinkState();
   cm848_initializePciTransmitMessage3State();
   cm848_initializeObdServiceState();
   cm848_resetPciTransmitState();
@@ -60232,7 +60243,7 @@ void cm848_applicationMain(void)
   cm848_initializeAirConditioningClutchControl();
   cm848_initializeCruiseSwitchChannel();
   cm848_initializeFuelLevelFilter();
-  cm848_initializeJ1939CommunicationSystem();
+  cm848_initializePciDatalink();
   mpc555_enableSchedulerMiosOutput();
   mpc555_resetEngineTimingAccumulators();
   cm848_enableSensorFilterUpdate();
@@ -81054,9 +81065,9 @@ switchD_00518c0c_default:
 // Function: cm848_initializeObdServiceState @ 0x005196f0
 //
 
-/* Called by cm848_initializeJ1939CommunicationSystem: zeroes the OBD-II service state -
-   obd_stored_dtc_count / obd_dtc_scan_index / obd_dtc_scan_more_flag / obd_dtc_copy_index and the
-   VIN / calibration ID frame indexes (was j1939_fault_processor_initialize; PR #53 round 54) */
+/* Called by cm848_initializePciDatalink: zeroes the OBD-II service state - obd_stored_dtc_count /
+   obd_dtc_scan_index / obd_dtc_scan_more_flag / obd_dtc_copy_index and the VIN / calibration ID
+   frame indexes (was j1939_fault_processor_initialize; PR #53 round 54) */
 
 void cm848_initializeObdServiceState(void)
 

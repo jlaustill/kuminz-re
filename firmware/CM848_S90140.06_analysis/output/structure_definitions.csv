@@ -139,7 +139,7 @@ low_speed_governor_reference_t,0x0040aec2,altitude_speed,dword,4,e2m 1496 +16 LS
 pci_link_state_t,0x0040b34e,rx_match_index,byte,1,pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte),,verified
 pci_link_state_t,0x0040b34e,tx_match_index,byte,1,pci_transmit_message_table entry whose header matches (own transmission echoed back),,verified
 pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receive_frame_buffer for the current frame,,verified
-pci_link_state_t,0x0040b34e,initialization_complete_marker,byte,1,Set to 1 at the end of cm848_initializeJ1939CommunicationSystem; no reader found,,verified
+pci_link_state_t,0x0040b34e,initialization_complete_marker,byte,1,Set to 1 at the end of cm848_initializePciDatalink; no reader found,,verified
 pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
