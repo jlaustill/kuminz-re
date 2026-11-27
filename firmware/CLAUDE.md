@@ -738,7 +738,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       - **The fault words (PR #53 round 27).** Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault
         n = bit n % 16 of word n / 16). Bits are named from e2m 1036 where the code resolves the abbreviation; the
         others are `fault_<n>`.
-        - **Pieces:** 948 piece tokens on the three fault instances before the export rewrite, 56 after. The 56 are
+        - **Pieces:** 948 piece tokens on the three fault instances before the export rewrite, 49 after. The 49 are
           the shapes listed above that stay as Ghidra printed them.
         - **Word 0 stays the plain word `faults_0_to_15`.** It is the base of the 200 indexed accesses, which print
           `*(undefined2 *)(&fault_detected_cal.field_0x0 + i)` once word 0 holds bitfields.
