@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:34:15 UTC 2026
+// Generated: Fri Nov 27 03:36:34 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -5447,7 +5447,7 @@ void mpc555_sciSendServiceResponse(byte param_1,int param_2)
   }
   diag_serial_buffer[3] = 0;
   boot_sci_session_state.response_write_index = 4;
-  diagnostic_callback_ptr = &DAT_003fc1fc;
+  diagnostic_callback_ptr = &mpc555_diagnosticSubcommandDispatcher_ram;
   diag_serial_buffer[2] = param_1;
   mpc555_sciStartResponseTransmit();
   return;
@@ -5490,7 +5490,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_pointer)
     }
     if (eeprom_diag_state == EEPROM_DIAGNOSTIC_SEND_VERSION) {
       cm848_sendSerialDownloadStatusResponse();
-      diagnostic_callback_ptr = &DAT_003fc1fc;
+      diagnostic_callback_ptr = &mpc555_diagnosticSubcommandDispatcher_ram;
       diag_request_pending_flag = 0;
       return;
     }
@@ -44726,7 +44726,7 @@ void cm848_initializeConverterSlipEngineSpeedLimit(void)
 
 {
   engine_speed_limit_converter_slip_cached_axis_offset = 2;
-  DAT_003fb4ea = 2;
+  engine_speed_limit_unused_cached_axis_offset = 2;
   engine_speed_limit_converter_slip = engine_speed_limit_default_cal;
   return;
 }
@@ -50000,8 +50000,8 @@ void cm848_initializeAuxiliaryInjectionQuantityState(void)
   injection_timing_boost_blend_cached_axis_offsets[1] = 2;
   injection_quantity_auxiliary_coolant_factor_cached_axis_offsets[0] = 2;
   injection_quantity_auxiliary_coolant_factor_cached_axis_offsets[1] = 2;
-  DAT_003fb60a = 2;
-  DAT_003fb60c = 2;
+  injection_quantity_unused_cached_axis_offset_a = 2;
+  injection_quantity_unused_cached_axis_offset_b = 2;
   injection_quantity_auxiliary_coolant_limit_cached_axis_offsets[0] = 2;
   injection_quantity_auxiliary_coolant_limit_cached_axis_offsets[1] = 2;
   return;
@@ -65526,10 +65526,11 @@ void cm848_initialization_step_5(void)
 
 /* The emission manager's cap: the maximum of nine inputs (the air handling, condensation, engine
    start and warmup, extended idle, extreme ambient overheat, general engine protection and white
-   smoke and misfire AECD caps, DAT_003fba26 and emission_level_cap_reference), slew-limited by
-   emission_level_cap_rate_limit_increase / _decrease, then emission_level_cap_override_value
-   instead while emission_level_cap_user_override_enable_cal is set, into emission_level_cap_command
-   (was fuel_demandMin_maxSelect_rateLimit) */
+   smoke and misfire AECD caps, emission_level_cap_unwritten_input and
+   emission_level_cap_reference), slew-limited by emission_level_cap_rate_limit_increase /
+   _decrease, then emission_level_cap_override_value instead while
+   emission_level_cap_user_override_enable_cal is set, into emission_level_cap_command (was
+   fuel_demandMin_maxSelect_rateLimit) */
 
 void cm848_calculateEmissionLevelCapCommand(void)
 
@@ -66293,7 +66294,8 @@ void cm848_updateExtremeAmbientOverheatProtection(void)
                  (&extreme_ambient_overheat_protection_cap_cached_axis_offset,
                   coolant_temperature_selected,extreme_ambient_overheat_protection_cap_axis,
                   extreme_ambient_overheat_protection_cap_values,1);
-  DAT_003fbca0 = extreme_ambient_overheat_protection_emission_level_cap;
+  extreme_ambient_overheat_protection_cap_lookup =
+       extreme_ambient_overheat_protection_emission_level_cap;
   if (extreme_ambient_overheat_protection_active_flag == 0) {
     extreme_ambient_overheat_protection_emission_level_cap = 0;
   }
@@ -67398,7 +67400,7 @@ void cm848_calculateCombustionTemperatureRise(void)
           (uint)engine_speed_state.filtered_engine_speed) / 0x400 +
           ((uint)exhaust_temperature_estimate_boost_pressure_coefficient * (uint)charge_pressure) /
           0x4000 + (uint)exhaust_temperature_estimate_offset;
-  DAT_003fbcf2 = uVar1;
+  exhaust_temperature_estimate_unclamped = uVar1;
   if ((int)uVar1 < 15000) {
     uVar1 = 15000;
   }
