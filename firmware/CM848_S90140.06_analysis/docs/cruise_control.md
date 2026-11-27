@@ -257,7 +257,6 @@ The CCVS1 state reports 6 (override) when cruise is active but `cruise_governor_
 - Which ECM pin carries sensor channel 47.
 - Which pins carry logical output 21 and raw switch 28. `ecu_pinout.md` lists circuit V32 on C2 pins 7 and 36 in the 2004 automatic wiring, but nobody has proven the mapping.
 - What the firmware does with cruise engaged: nobody has captured data yet. See [Truck tests](#truck-tests).
-- Whether a service tool can supply the security key that a write to channel 47's override needs (see below).
 
 ## Truck tests
 
@@ -317,8 +316,16 @@ The code can't answer these. Each needs the truck, a CLIP 0x4A reader (`kuminz-c
 ## Channel 47's diagnostic override [code]
 
 - **The override.** `cm848_checkCruiseSwitchLearnCondition` reads `cruise_switch_adc_override` (0x40bcde, element 47 of `sensor_channel_diag_override`) instead of the QADC result when `adc_forced_reading_enable_bits_cal[2]` bit 0x8000 is set. EEPROM 0x6f6 to 0x705 (the enable bits) is all zero in every dump, so the override is off.
-- **Writing it over J1939.** `writeJ1939DiagnosticMemory` (0x50af58) takes its region from `application_memory_region_table`. RAM 0x3fa000 to 0x40c26e is `MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED`, so both RAM words need the 10-byte key (`validateSecurityKey`) unless `calibration_download_security_key_cal` (EEPROM 0x8e) is 0xff. It is `0x0000` in every dump.
-- **The enable bits are also refused while RAM refresh is on.** Their RAM copy (0x3fdb7c) sits in the protected window above 0x3fd480 and below `sensor_channel_ram_start` (0x40a046), so the write answers 10 unless `ram_refresh_enable` is off (development mode). The override word (0x40bcde) is outside that window.
+- **Writing it over J1939.** `writeJ1939DiagnosticMemory` (0x50af58) takes its region from `application_memory_region_table`. RAM 0x3fa000 to 0x40c26e is `MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED`, so both RAM words need the 10-byte key (`validateSecurityKey`) unless `calibration_download_security_key_cal` (EEPROM 0x8e) is 0xff, and it is `0x0000` in every dump.
+- **The enable bit is also refused while RAM refresh is on.** The enable-bit RAM copy (0x3fdb7c) sits in the protected window above 0x3fd480 and below `sensor_channel_ram_start` (0x40a046), so the write answers 10 unless `ram_refresh_enable` is off, i.e. development mode. The override word (0x40bcde) is above that window, so the key alone is enough for it.
+
+### How OCT can do it [code]
+
+Since we own [OCT](https://github.com/jlaustill/oct), the key is not a blocker. `validateSecurityKey` (0x5573c) accepts a 10-byte key appended after the write data when `calibration_download_security_key_cal` isn't 0xff:
+
+- **The key.** `unscrambleSecurityKey` (0x555cc) routes the 10 bytes' bits by `security_key_scramble_mask` (0x5839a = `46 58 9a 32 70 87 23 99 85 64`) and reorders/XORs them by `security_key_byte_order` (0x583a4 = `06 08 01 02 00 07 03 09 05 04`), yielding 6 password characters plus a 4-byte hour stamp. The 6 characters must equal `security_master_password_cal` (6 bytes at EEPROM 0x2 = `41 42 43 44 46`, ASCII "ABCDEF"), and the stamp's top 3 bytes must be within 0x1a of `key_on_hour_meter` (0x40a64c, 0.2 s counts). 17 straight misses latch `security_key_failure_count` (0x3fb9a8) and refuse every key until one matches. So OCT reads `key_on_hour_meter` over CLIP 0x4A, builds the key as the inverse of that scramble over "ABCDEF" + the current hour stamp, and appends it to each secured PGN 61184 write.
+- **Forcing the switch.** Enter development mode first (`enterDevelopmentMode`, 0x21668, the diagnostic-session service that sets RUN_LOC 0xEA and `ram_refresh_enable` off) so the protected-window refusal is lifted; then write 0x3fdb7c with bit 0x8000 set and 0x40bcde with the desired ADC counts, both with the key. Leave with service 7 (`exitDevelopmentMode`, 0x21624) or, engine stopped, service 22 (`forceExitDevelopmentMode`, 0x21694). Writing only the RAM copies forces it for the key cycle; writing the EEPROM originals (0x6f6, with the key and RAM refresh on) would persist it.
+- **A blunter option.** One secured EEPROM write of `0x8e` = 0xffff with the key disables the check for all future diagnostic writes. It persists, so it's a security downgrade, not recommended for a test truck.
 
 ## Turning the servo off
 
