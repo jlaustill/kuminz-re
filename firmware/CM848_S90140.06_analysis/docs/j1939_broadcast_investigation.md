@@ -33,7 +33,7 @@ Broadcasts are registered at boot via `initDiagnosticBufferPointers @ Flash2[0x5
 called once from the boot-init chain:
 
 ```
-cm848_applicationMain (was hpcr_exceptionHandler) @ ROM[0x544C4]
+run_power_cycle (was hpcr_exceptionHandler) @ ROM[0x544C4]
   └─ cm848_dataTable_00539868 @ Flash2[0x539868]  (bad instructions - Ghidra can't decode)
        └─ [indirect] → mpc555_calculatePressureDropOffset @ Flash2[0x5383D0]
             └─ initDiagnosticBufferPointers @ Flash2[0x537CF8]
@@ -51,8 +51,8 @@ from binary analysis.
 Separately, the ISR loop calls the broadcast dispatcher every tick:
 
 ```
-executiveFrameInterruptHandler @ ROM[0xC0A0]  — 8-phase MIOS ISR
-  └─ cm848_runEvery2FramesTaskSetPhase1 @ ROM[0xB854] (was cm848_phase_group_b_processing)
+main_loop @ ROM[0xC0A0]  — 8-phase MIOS ISR
+  └─ cm848_runEvery2PassesTaskSetPhase1 @ ROM[0xB854] (was cm848_phase_group_b_processing)
        └─ cm848_processJ1939DiagnosticMessages()   ← receives incoming J1939
           cm848_processJ1939ReceivedMessages()
           cm848_processProtectionParameterData(0)  ← EEPROM scatter engine (NOT J1939 TX)
@@ -160,7 +160,7 @@ command or targeted write support re-added.
 Function has floating-point save/restore opcodes (`stfd`/`lfd`) that Ghidra can't decode.
 First 48 bytes suggest MPC555 TouCAN peripheral init (0x003070xx registers).
 Full decode may reveal additional broadcast control initialization.
-Called once at boot: `cm848_applicationMain @ ROM[0x544C4]` → this function → `initDiagnosticBufferPointers`.
+Called once at boot: `run_power_cycle @ ROM[0x544C4]` → this function → `initDiagnosticBufferPointers`.
 
 ---
 

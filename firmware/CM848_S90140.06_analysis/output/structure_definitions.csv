@@ -1178,11 +1178,11 @@ boot_sci_command_entry_t,,handler,boot_sci_command_handler_function_t*,4,The com
 # Init loop zeros all fields with min_time set to 0xFFFF
 # Runtime: mainLoopIteration updates max/min time, accumulates ticks and call count
 # Code evidence: init at line 6882 (stride +3 as undefined4*), update at line 7285 (+0xC byte stride)
-executive_frame_timing_t,,total_ticks,dword,4,Sum of the frame's pass times in timebase ticks (was total_ticks; PR #53 round 25),,verified
-executive_frame_timing_t,,frame_count,word,2,Passes of the frame counted (was call_count; PR #53 round 25),,verified
-executive_frame_timing_t,,minimum_ticks,word,2,Shortest pass time (0xffff after a clear) (was min_time; PR #53 round 25),,verified
-executive_frame_timing_t,,maximum_ticks,word,2,Longest pass time (was max_time; PR #53 round 25),,verified
-executive_frame_timing_t,,overflow_count,word,2,Passes longer than executive_frame_overflow_threshold_ticks (each also counts executive_timing_overflow_count_cal) (was overrun_count; PR #53 round 25),,verified
+main_loop_phase_timing_t,,total_ticks,dword,4,Sum of the phase's pass times in timebase ticks (was total_ticks; PR #53 round 25),,verified
+main_loop_phase_timing_t,,pass_count,word,2,Passes of the phase counted (was call_count; PR #53 round 25),,verified
+main_loop_phase_timing_t,,minimum_ticks,word,2,Shortest pass time (0xffff after a clear) (was min_time; PR #53 round 25),,verified
+main_loop_phase_timing_t,,maximum_ticks,word,2,Longest pass time (was max_time; PR #53 round 25),,verified
+main_loop_phase_timing_t,,overflow_count,word,2,Passes longer than main_loop_pass_overflow_threshold_ticks (each also counts main_loop_pass_overflow_count_cal) (was overrun_count; PR #53 round 25),,verified
 
 # Governor Channel Array - 3-channel governor derivative control
 # 3 entries at 0x0040addc, 6 bytes each (18 bytes total)
@@ -2060,7 +2060,7 @@ algorithm_enable_flags_18_t,,duty_cycle_monitor_enable,bitfield:1@3,0,"duty cycl
 algorithm_enable_flags_18_t,,reserved_bit_4,bitfield:1@4,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
 algorithm_enable_flags_18_t,,reserved_bit_5,bitfield:1@5,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
 algorithm_enable_flags_18_t,,smart_air_compressor_enable,bitfield:1@6,0,"e2m AC_Smart_Enable (ACEN, smart air compressor). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). (was reserved_bit_6; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t)",,verified
-algorithm_enable_flags_18_t,,executive_timing_enable,bitfield:1@7,0,"e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). executiveFrameInterruptHandler (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,main_loop_timing_enable,bitfield:1@7,0,"e2m Executive_Timing_Enable (SSECTMEA, main loop timing data gatherer). main_loop (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008).",,verified
 algorithm_enable_flags_18_t,,high_speed_governor_gear_ratio_gain_enable,bitfield:1@8,0,e2m HSG_Gear_Ratio_Gain_Enable (HSGRGSEN). cm848_loadHighSpeedGovernorWorkingGainSet (lhz at 0x4248c); the reader agrees by name. Clear in this calibration (0x0008).,,verified
 algorithm_enable_flags_18_t,,programmable_power_enable,bitfield:1@9,0,"e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateFourDimensionalFueling (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), cm848_updateCruiseAndRoadSpeedGovernorDroops (0x524bdc), cm848_presetCruiseAndRoadSpeedGovernor (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008).",,verified
 algorithm_enable_flags_18_t,,reserved_bit_10,bitfield:1@10,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
