@@ -8655,3 +8655,4 @@ address,name,type,comment
 0x003fb2c7,supervisor_watchdog_receive_words,word,"Receive buffer of supervisor_watchdog_job (odd address); supervisor_watchdog_start_reply (0x3fb2cb) and supervisor_watchdog_reply (0x3fb2cf) are words in it"
 0x003fd1d2,fuel_pressure_sensor_plausibility_unused_byte_a,byte,"stb at 0x530984: cleared by the plausibility test init; no reader found"
 0x003fd1d3,fuel_pressure_sensor_plausibility_unused_byte_b,byte,"stb at 0x53097c: cleared by the plausibility test init; no reader found"
+0x003fd480,ram_refresh_protected_region_lower_bound,byte,"Exclusive lower bound of the RAM window (up to sensor_channel_ram_start, i.e. the EEPROM mirror and calibration RAM) that service-tool memory writes may not touch while a RAM refresh is in progress"

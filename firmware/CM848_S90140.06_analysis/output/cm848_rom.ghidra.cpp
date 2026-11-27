@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:55:12 UTC 2026
+// Generated: Fri Nov 27 03:57:46 UTC 2026
 
 
 //
@@ -42211,7 +42211,7 @@ LAB_0003b37c:
         }
         else if (MVar2 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
           if (((ram_refresh_enable != RAM_REFRESH_DISABLED) &&
-              (&DAT_003fd480 < pci_diagnostic_memory_address)) &&
+              (&ram_refresh_protected_region_lower_bound < pci_diagnostic_memory_address)) &&
              (pci_diagnostic_memory_address < &sensor_channel_ram_start)) goto LAB_0003b608;
           cm848_memcpyBytes(pci_diagnostic_memory_address,pci_diagnostic_write_data_pointer,1);
           pci_diagnostic_write_result = 0;
@@ -63371,7 +63371,7 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
    review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
    Confidence High. configuration_pointer typed as sensor_channel_configuration_t* (7
-   default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
+   default/threshold/debounce fields render); 0x3fd8e8 -> governor_temp_protection_disable (now
    oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
    prototype; params 4-6 passed but unused. */
 
@@ -70979,7 +70979,8 @@ byte writeJ1939DiagnosticMemory(j1939_received_message_t *request,byte *address,
         return 3;
       }
     }
-    if (((ram_refresh_enable != RAM_REFRESH_DISABLED) && (&DAT_003fd480 < address)) &&
+    if (((ram_refresh_enable != RAM_REFRESH_DISABLED) &&
+        (&ram_refresh_protected_region_lower_bound < address)) &&
        (address < &sensor_channel_ram_start)) {
       return 10;
     }
