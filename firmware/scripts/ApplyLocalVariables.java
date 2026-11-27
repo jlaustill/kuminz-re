@@ -374,15 +374,22 @@ public class ApplyLocalVariables extends GhidraScript {
         if (var.oldName.contains("@")) {
             String[] pin = var.oldName.split("@");
             ghidra.program.model.lang.Register register = currentProgram.getRegister(pin[0].trim());
-            Address address = toAddr(ScriptUtils.parseAddress(pin[1].trim()));
+            Address address = null;
+            try {
+                address = pin.length == 2 ? toAddr(ScriptUtils.parseAddress(pin[1].trim())) : null;
+            } catch (Exception e) {
+                address = null;
+            }
+            if (register == null || address == null) {
+                println("  Warning: bad register@address pin '" + var.oldName + "' in " + var.functionName);
+                return false;
+            }
             Varnode written = null;
-            if (register != null) {
-                java.util.Iterator<PcodeOpAST> ops = highFunc.getPcodeOps(address);
-                while (ops.hasNext()) {
-                    Varnode out = ops.next().getOutput();
-                    if (out != null && out.getAddress().equals(register.getAddress()) && out.getHigh() != null) {
-                        written = out;
-                    }
+            java.util.Iterator<PcodeOpAST> ops = highFunc.getPcodeOps(address);
+            while (ops.hasNext()) {
+                Varnode out = ops.next().getOutput();
+                if (out != null && out.getAddress().equals(register.getAddress()) && out.getHigh() != null) {
+                    written = out;
                 }
             }
             if (written == null) {
