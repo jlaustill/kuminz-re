@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:07:08 UTC 2026
+// Generated: Fri Nov 27 03:09:49 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -70365,7 +70365,7 @@ void cm848_updateIdleSwitchesFromLocalInputs(void)
     }
   }
   else {
-    idle_check_accelerator_pedal_raw = DAT_0040bc9a;
+    idle_check_accelerator_pedal_raw = accelerator_pedal_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x2000) == 0) {
       if (qadc_channel_index_table[0xd] < 0x81) {
         uVar3 = (uint)qadc_channel_index_table[0xd];
@@ -75726,7 +75726,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   bool bVar5;
   uint uVar6;
   
-  uVar1 = DAT_0040bd0e;
+  uVar1 = air_conditioning_pressure_adc_forced_reading;
   if ((adc_forced_reading_enable_bits_cal[4] & 0x80) == 0) {
     if (qadc_channel_index_table[0x47] < 0x81) {
       uVar6 = (uint)qadc_channel_index_table[0x47];
@@ -85046,7 +85046,7 @@ void cm848_sciCommand20Callback(void)
     }
     break;
   case 6:
-    uVar1 = DAT_0040bc84;
+    uVar1 = coolant_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 4) == 0) {
       if (qadc_channel_index_table[2] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[2];
@@ -85061,7 +85061,7 @@ void cm848_sciCommand20Callback(void)
     break;
   case 7:
     if (accelerator_pedal_dual_channel_enable_flag == 0) {
-      uVar1 = DAT_0040bc9a;
+      uVar1 = accelerator_pedal_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[0] & 0x2000) == 0) {
         if (qadc_channel_index_table[0xd] < 0x81) {
           uVar5 = (uint)qadc_channel_index_table[0xd];
@@ -85159,7 +85159,7 @@ void cm848_sciCommand20Callback(void)
     }
     break;
   case 0x1c:
-    uVar1 = DAT_0040bc92;
+    uVar1 = intake_manifold_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x200) == 0) {
       if (qadc_channel_index_table[9] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[9];
@@ -85283,7 +85283,7 @@ LAB_0051f804:
     }
     break;
   case 0x2e:
-    uVar1 = DAT_0040bc9e;
+    uVar1 = water_in_fuel_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x8000) == 0) {
       if (qadc_channel_index_table[0xf] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0xf];
@@ -85303,7 +85303,7 @@ LAB_0051f804:
   case 0x31:
     break;
   case 0x32:
-    uVar1 = DAT_0040bd0e;
+    uVar1 = air_conditioning_pressure_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[4] & 0x80) == 0) {
       if (qadc_channel_index_table[0x47] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0x47];
@@ -85339,7 +85339,7 @@ LAB_0051f804:
     break;
   case 0x3c:
     if (oil_pressure_switch_only_cal == 0) {
-      uVar1 = DAT_0040bc94;
+      uVar1 = oil_pressure_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[0] & 0x400) == 0) {
         if (qadc_channel_index_table[10] < 0x81) {
           uVar5 = (uint)qadc_channel_index_table[10];
@@ -85364,7 +85364,7 @@ LAB_0051f804:
   case 0x3f:
     break;
   case 0x40:
-    uVar1 = DAT_0040bc82;
+    uVar1 = intake_manifold_pressure_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 2) == 0) {
       if (qadc_channel_index_table[1] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[1];
@@ -85417,7 +85417,7 @@ LAB_0051f804:
   case 0x4d:
     break;
   case 0x4e:
-    uVar1 = DAT_0040bd08;
+    uVar1 = fuel_level_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[4] & 0x10) == 0) {
       if (qadc_channel_index_table[0x44] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0x44];
@@ -85539,7 +85539,7 @@ LAB_0051f804:
     break;
   case 0x72:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
-      uVar1 = DAT_0040bd42;
+      uVar1 = accelerator_pedal_channel97_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[6] & 2) == 0) {
         if (DAT_003fdb3a < 0x81) {
           uVar5 = (uint)DAT_003fdb3a;
@@ -85557,7 +85557,7 @@ LAB_0051f804:
     break;
   case 0x74:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
-      uVar1 = DAT_0040bd44;
+      uVar1 = accelerator_pedal_channel98_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[6] & 4) == 0) {
         if (DAT_003fdb3c < 0x81) {
           uVar5 = (uint)DAT_003fdb3c;
@@ -85613,7 +85613,7 @@ LAB_0051f804:
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x81:
-    uVar1 = DAT_0040bc8e;
+    uVar1 = fuel_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x80) == 0) {
       if (qadc_channel_index_table[7] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[7];
@@ -85648,7 +85648,7 @@ LAB_0051f804:
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x85:
-    uVar1 = DAT_0040bca8;
+    uVar1 = ambient_air_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[1] & 0x10) == 0) {
       if (qadc_channel_index_table[0x14] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0x14];
@@ -85674,7 +85674,7 @@ LAB_0051f804:
     }
     break;
   case 0x87:
-    uVar1 = DAT_0040bc86;
+    uVar1 = barometric_pressure_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 8) == 0) {
       if (qadc_channel_index_table[3] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[3];
@@ -91617,7 +91617,7 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
     injector_driver_booster_recharge_off_delay_counter = 0xffff;
     if (engine_state == ENGINE_STATE_SHUTDOWN) {
       if ((fuel_system_hardware_shutdown_check_enable_flag == 1) && (cylinder_cutout_mask == 0)) {
-        uVar1 = DAT_0040bcec;
+        uVar1 = injector_driver_booster_capacitor_a_voltage_adc_forced_reading;
         if ((adc_forced_reading_enable_bits_cal[3] & 0x40) == 0) {
           if (qadc_channel_index_table[0x36] < 0x81) {
             uVar4 = (uint)qadc_channel_index_table[0x36];
@@ -91627,7 +91627,7 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
           }
           uVar1 = *qadc_channel_dispatch_table[uVar4].result_register;
         }
-        uVar2 = DAT_0040bcee;
+        uVar2 = injector_driver_booster_capacitor_b_voltage_adc_forced_reading;
         if ((adc_forced_reading_enable_bits_cal[3] & 0x80) == 0) {
           if (qadc_channel_index_table[0x37] < 0x81) {
             uVar4 = (uint)qadc_channel_index_table[0x37];
