@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:57:46 UTC 2026
+// Generated: Fri Nov 27 04:56:55 UTC 2026
 
 
 //
@@ -10951,7 +10951,6 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
@@ -10959,6 +10958,7 @@ void mpc555_dispatchExternalInterrupt(void)
   word saved_interrupt_mask;
   word current_interrupt_mask;
   byte interrupt_code;
+  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -10998,7 +10998,6 @@ void mpc555_dispatchExternalInterrupt(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* WARNING: Unable to use type for symbol entry_time_base_low */
 /* The decrementer exception handler: the application's exception table at ROM 0x8000 branches here
    from slot 9 (vector 0x900). In order: it reads the time base; adds 1 to
    throughput_window_decrementer_count; while power_down_start_flag is set it saves and clears
@@ -11019,12 +11018,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
+  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -40307,7 +40306,6 @@ void cm848_initializeFuelPressureGovernorFaultBlend(void)
 // Function: cm848_checkPciMessageTimeouts @ 0x00038ac8
 //
 
-/* WARNING: Unable to use type for symbol receive_interval */
 /* J1850 PCI message-timeout monitor (not J1939): gated on algorithm_enable_flags_40_cal bit 0x40;
    ages every pci_transmit_message_table / pci_receive_message_table timer by 10 (interrupts masked
    via EID/EIE around each entry) and sets status bit 0x10 once timer exceeds interval +
@@ -63362,7 +63360,6 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
 // Function: cm848_processUnsignedSensorChannel @ 0x005012dc
 //
 
-/* WARNING: Unable to use type for symbol recovery_decrement */
 /* The periodic pass of the unsigned sensor channels (lookup flags 0,
    cm848_exponentialMovingAverage; lhz loads). Unlike the signed twin it skips the threshold faults
    of channel 47 (cruise switch) until cruise_control_switches_learned_flag_cal, of channel 71 (A/C
@@ -77004,7 +77001,6 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
 // Function: cm848_checkCruiseSwitchLearnCondition @ 0x00512e70
 //
 
-/* WARNING: Unable to use type for symbol cruise_switch_adc_value */
 /* Returns 1 for a fresh cruise ON / OFF press (cruise_switch_request CRUISE_SWITCH_ON_OFF after
    IDLE) while the cruise switch ADC (channel 47, or its forced reading) is inside
    cruise_switch_sensor_config's window; cm848_cruiseControlPeriodicUpdate then sets
@@ -91144,8 +91140,8 @@ LAB_00528338:
     uVar2 = 10;
   }
   else {
-    uVar2 = (ushort)*(byte *)((int)&DAT_0053ac42 +
-                             (&injector_bank_by_cylinder)[cylinder_event_index] + 2);
+    uVar2 = (ushort)end_of_injection_limit_param0_high_nibble_by_bank
+                    [(&injector_bank_by_cylinder)[cylinder_event_index]];
   }
   tpu_a_channel_10_parameters.PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_period_parameter_address
   ;
