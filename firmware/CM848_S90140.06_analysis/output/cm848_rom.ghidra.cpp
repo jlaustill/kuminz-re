@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 05:53:24 UTC 2026
+// Generated: Fri Nov 27 06:00:59 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -20654,7 +20654,7 @@ void cm848_processFaultScanGroup(void)
                 }
               } while (!bVar2);
               if (previously_active_dtc_list_cal.count != 0x1f) {
-                active_fault_added_flag._0_2_ = 1;
+                active_fault_added_flag = 1;
                 previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count + 1;
                 previously_active_dtc_cummins_fault_codes_cal[0] =
                      previously_active_dtc_cummins_fault_codes_cal[0] + 1;
@@ -27615,8 +27615,8 @@ void cm848_buildPgn65213FanDrive1Message(void)
 {
   j1939_fan_drive_1_estimated_fan_speed_byte =
        (byte)((uint)fan_drive_estimated_speed_percent_times_256 * 5 >> 9);
-  if (fan_drive_state_code._0_2_ < 0x10) {
-    j1939_fd1_fan_drive_state_byte = (byte)fan_drive_state_code._0_2_ | 0xf0;
+  if (fan_drive_state_code < 0x10) {
+    j1939_fd1_fan_drive_state_byte = (byte)fan_drive_state_code | 0xf0;
   }
   else {
     j1939_fd1_fan_drive_state_byte = 0xfe;
@@ -31564,8 +31564,8 @@ void cm848_blendAllSpeedGovernorReferenceSpeeds(void)
         (uint)friction_fuel_adjustment_for_coolant_temperature +
         (uint)all_speed_governor_switch_droop_fueling_offset)) &&
       (all_speed_governor_tuning_set_default_blend_weight_cal < 0x100)) ||
-     ((high_idle_override_reset_enable != 0 && (high_idle_override_flag._0_2_ != 0)))) {
-    high_idle_override_flag._0_2_ = 0;
+     ((high_idle_override_reset_enable != 0 && (high_idle_override_flag != 0)))) {
+    high_idle_override_flag = 0;
     wVar1 = all_speed_governor_tuning_set_default_blend_weight_cal;
     if (algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) {
       uVar2 = 1;
@@ -32858,32 +32858,32 @@ void cm848_updateVariableGeometryTurbochargerHBridgeFaultRetryTimer(int param_1)
   ushort uVar1;
   
   if (param_1 == 0) {
-    if (variable_geometry_turbocharger_h_bridge_fault_retry_timer._0_2_ < 2) {
+    if (variable_geometry_turbocharger_h_bridge_fault_retry_timer < 2) {
       uVar1 = 0;
     }
     else {
-      uVar1 = variable_geometry_turbocharger_h_bridge_fault_retry_timer._0_2_ - 1;
+      uVar1 = variable_geometry_turbocharger_h_bridge_fault_retry_timer - 1;
     }
   }
   else {
     uVar1 = variable_geometry_turbocharger_h_bridge_fault_retry_time;
     if (((uint)variable_geometry_turbocharger_h_bridge_fault_retry_increment <=
          (uint)variable_geometry_turbocharger_h_bridge_fault_retry_time) &&
-       ((int)(uint)variable_geometry_turbocharger_h_bridge_fault_retry_timer._0_2_ <=
+       ((int)(uint)variable_geometry_turbocharger_h_bridge_fault_retry_timer <=
         (int)((uint)variable_geometry_turbocharger_h_bridge_fault_retry_time -
              (uint)variable_geometry_turbocharger_h_bridge_fault_retry_increment))) {
-      uVar1 = variable_geometry_turbocharger_h_bridge_fault_retry_timer._0_2_ +
+      uVar1 = variable_geometry_turbocharger_h_bridge_fault_retry_timer +
               variable_geometry_turbocharger_h_bridge_fault_retry_increment;
     }
   }
-  variable_geometry_turbocharger_h_bridge_fault_retry_timer._0_2_ = uVar1;
+  variable_geometry_turbocharger_h_bridge_fault_retry_timer = uVar1;
   if (uVar1 == 0) {
-    variable_geometry_turbocharger_h_bridge_fault_retry_timer._2_2_ = 0;
+    variable_geometry_turbocharger_h_bridge_fault_retry_latch = 0;
   }
   else if (variable_geometry_turbocharger_h_bridge_fault_retry_time <= uVar1) {
-    variable_geometry_turbocharger_h_bridge_fault_retry_timer._2_2_ = 1;
+    variable_geometry_turbocharger_h_bridge_fault_retry_latch = 1;
   }
-  if ((param_1 == 0) && (variable_geometry_turbocharger_h_bridge_fault_retry_timer._2_2_ == 0)) {
+  if ((param_1 == 0) && (variable_geometry_turbocharger_h_bridge_fault_retry_latch == 0)) {
     variable_geometry_turbocharger_h_bridge_fault_retry_trigger_flag = 1;
   }
   else {
@@ -32991,32 +32991,32 @@ void cm848_updateVariableGeometryTurbochargerHBridgeInrushRetryTimer(int param_1
   ushort uVar1;
   
   if (param_1 == 0) {
-    if (variable_geometry_turbocharger_h_bridge_inrush_retry_timer._0_2_ < 2) {
+    if (variable_geometry_turbocharger_h_bridge_inrush_retry_timer < 2) {
       uVar1 = 0;
     }
     else {
-      uVar1 = variable_geometry_turbocharger_h_bridge_inrush_retry_timer._0_2_ - 1;
+      uVar1 = variable_geometry_turbocharger_h_bridge_inrush_retry_timer - 1;
     }
   }
   else {
     uVar1 = variable_geometry_turbocharger_h_bridge_inrush_retry_time;
     if (((uint)variable_geometry_turbocharger_h_bridge_inrush_retry_increment <=
          (uint)variable_geometry_turbocharger_h_bridge_inrush_retry_time) &&
-       ((int)(uint)variable_geometry_turbocharger_h_bridge_inrush_retry_timer._0_2_ <=
+       ((int)(uint)variable_geometry_turbocharger_h_bridge_inrush_retry_timer <=
         (int)((uint)variable_geometry_turbocharger_h_bridge_inrush_retry_time -
              (uint)variable_geometry_turbocharger_h_bridge_inrush_retry_increment))) {
-      uVar1 = variable_geometry_turbocharger_h_bridge_inrush_retry_timer._0_2_ +
+      uVar1 = variable_geometry_turbocharger_h_bridge_inrush_retry_timer +
               variable_geometry_turbocharger_h_bridge_inrush_retry_increment;
     }
   }
-  variable_geometry_turbocharger_h_bridge_inrush_retry_timer._0_2_ = uVar1;
+  variable_geometry_turbocharger_h_bridge_inrush_retry_timer = uVar1;
   if (uVar1 == 0) {
-    variable_geometry_turbocharger_h_bridge_inrush_retry_timer._2_2_ = 0;
+    variable_geometry_turbocharger_h_bridge_inrush_retry_latch = 0;
   }
   else if (variable_geometry_turbocharger_h_bridge_inrush_retry_time <= uVar1) {
-    variable_geometry_turbocharger_h_bridge_inrush_retry_timer._2_2_ = 1;
+    variable_geometry_turbocharger_h_bridge_inrush_retry_latch = 1;
   }
-  if ((param_1 == 0) && (variable_geometry_turbocharger_h_bridge_inrush_retry_timer._2_2_ == 0)) {
+  if ((param_1 == 0) && (variable_geometry_turbocharger_h_bridge_inrush_retry_latch == 0)) {
     variable_geometry_turbocharger_h_bridge_inrush_retry_trigger_flag = 1;
   }
   else {
@@ -33186,10 +33186,10 @@ void cm848_processVariableGeometryTurbochargerHBridgeFaults(void)
     }
     if ((variable_geometry_turbocharger_h_bridge_fault_retry_active_flag == 0) ||
        (variable_geometry_turbocharger_h_bridge_inrush_retry_active_flag == 0)) {
-      variable_geometry_turbocharger_driver_fault_pending_flag._0_2_ = 1;
+      variable_geometry_turbocharger_driver_fault_pending_flag = 1;
     }
     else {
-      variable_geometry_turbocharger_driver_fault_pending_flag._0_2_ = 0;
+      variable_geometry_turbocharger_driver_fault_pending_flag = 0;
     }
   }
   return;
@@ -33230,10 +33230,10 @@ void cm848_clearVariableGeometryTurbochargerHBridgeFaultState(void)
   variable_geometry_turbocharger_h_bridge_inrush_retry_active_previous_2_flag = 0;
   variable_geometry_turbocharger_h_bridge_fault_counter = 0;
   variable_geometry_turbocharger_h_bridge_inrush_fault_counter = 0;
-  variable_geometry_turbocharger_h_bridge_fault_retry_timer._0_2_ = 0;
-  variable_geometry_turbocharger_h_bridge_fault_retry_timer._2_2_ = 0;
-  variable_geometry_turbocharger_h_bridge_inrush_retry_timer._0_2_ = 0;
-  variable_geometry_turbocharger_h_bridge_inrush_retry_timer._2_2_ = 0;
+  variable_geometry_turbocharger_h_bridge_fault_retry_timer = 0;
+  variable_geometry_turbocharger_h_bridge_fault_retry_latch = 0;
+  variable_geometry_turbocharger_h_bridge_inrush_retry_timer = 0;
+  variable_geometry_turbocharger_h_bridge_inrush_retry_latch = 0;
   return;
 }
 
@@ -33244,19 +33244,19 @@ void cm848_clearVariableGeometryTurbochargerHBridgeFaultState(void)
 //
 
 /* Counts passes (limit 200) while the position sensor status is above 0 or the position control
-   error is set, and clears the count otherwise; the second word of
-   variable_geometry_turbocharger_fault_holdoff_flags is 0 only during the first 200 passes of such
-   a fault and 1 otherwise. Read by cm848_sequenceVariableGeometryTurbochargerPositionAdjustment,
-   which drops the logical output 72 request during that hold-off. (was
-   cm848_updateLoadProtectionStartupCounter) */
+   error is set, and clears the count otherwise;
+   variable_geometry_turbocharger_not_in_fault_holdoff_flag is 0 only during the first 200 passes of
+   such a fault and 1 otherwise. Read by
+   cm848_sequenceVariableGeometryTurbochargerPositionAdjustment, which drops the logical output 72
+   request during that hold-off. (was cm848_updateLoadProtectionStartupCounter) */
 
 void cm848_updateVariableGeometryTurbochargerFaultHoldoff(void)
 
 {
-  if (variable_geometry_turbocharger_fault_holdoff_flags._0_2_ == 0) {
+  if (variable_geometry_turbocharger_position_fault_present_flag == 0) {
     variable_geometry_turbocharger_fault_holdoff_counter = 0;
   }
-  else if (variable_geometry_turbocharger_fault_holdoff_flags._0_2_ != 0) {
+  else if (variable_geometry_turbocharger_position_fault_present_flag != 0) {
     if (variable_geometry_turbocharger_fault_holdoff_counter < 200) {
       variable_geometry_turbocharger_fault_holdoff_counter =
            variable_geometry_turbocharger_fault_holdoff_counter + 1;
@@ -33266,11 +33266,11 @@ void cm848_updateVariableGeometryTurbochargerFaultHoldoff(void)
     }
   }
   if ((variable_geometry_turbocharger_fault_holdoff_counter < 200) &&
-     (variable_geometry_turbocharger_fault_holdoff_flags._0_2_ != 0)) {
-    variable_geometry_turbocharger_fault_holdoff_flags._2_2_ = 0;
+     (variable_geometry_turbocharger_position_fault_present_flag != 0)) {
+    variable_geometry_turbocharger_not_in_fault_holdoff_flag = 0;
   }
   else {
-    variable_geometry_turbocharger_fault_holdoff_flags._2_2_ = 1;
+    variable_geometry_turbocharger_not_in_fault_holdoff_flag = 1;
   }
   return;
 }
@@ -33470,8 +33470,8 @@ void cm848_runVariableGeometryTurbochargerOpenStopSeek(void)
   word *pwVar6;
   uint uVar7;
   
-  if ((variable_geometry_turbocharger_position_fault_flags._0_2_ == 0) &&
-     (variable_geometry_turbocharger_position_fault_flags._2_2_ == 0)) {
+  if ((variable_geometry_turbocharger_position_control_fault_flag == 0) &&
+     (variable_geometry_turbocharger_span_adjustment_error_flag == 0)) {
     bVar1 = false;
   }
   else {
@@ -33500,7 +33500,7 @@ void cm848_runVariableGeometryTurbochargerOpenStopSeek(void)
   else {
     bVar1 = false;
   }
-  if ((variable_geometry_turbocharger_position_fault_flags._0_2_ == 0) &&
+  if ((variable_geometry_turbocharger_position_control_fault_flag == 0) &&
      (variable_geometry_turbocharger_closed_stop_diagnostic_drive_flag == 0)) {
     uVar7 = 0;
   }
@@ -33596,10 +33596,9 @@ void cm848_sequenceVariableGeometryTurbochargerPositionAdjustment(void)
 {
   byte bVar1;
   word wVar2;
-  short sVar3;
-  uint uVar4;
+  uint uVar3;
   
-  sVar3 = variable_geometry_turbocharger_driver_fault_pending_flag._0_2_;
+  wVar2 = variable_geometry_turbocharger_driver_fault_pending_flag;
   if (variable_geometry_turbocharger_enable_flag != 0) {
     variable_geometry_turbocharger_drive_duty_limit_working =
          variable_geometry_turbocharger_drive_duty_limit_over_temperature;
@@ -33619,31 +33618,31 @@ void cm848_sequenceVariableGeometryTurbochargerPositionAdjustment(void)
       variable_geometry_turbocharger_motor_fault_flag = 1;
     }
     if ((variable_geometry_turbocharger_motor_fault_flag == 0) &&
-       (variable_geometry_turbocharger_driver_fault_pending_flag._0_2_ == 0)) {
+       (variable_geometry_turbocharger_driver_fault_pending_flag == 0)) {
       variable_geometry_turbocharger_motor_ok_flag = 1;
     }
     else {
       variable_geometry_turbocharger_motor_ok_flag = 0;
     }
-    uVar4 = (uint)(short)variable_geometry_turbocharger_position_sensor_fault_status;
-    if (((int)uVar4 < 2) &&
+    uVar3 = (uint)(short)variable_geometry_turbocharger_position_sensor_fault_status;
+    if (((int)uVar3 < 2) &&
        (fault_detected_cal.variable_geometry_turbocharger_actuator_control_error == 0)) {
-      variable_geometry_turbocharger_position_fault_flags._0_2_ = 0;
+      variable_geometry_turbocharger_position_control_fault_flag = 0;
     }
     else {
-      variable_geometry_turbocharger_position_fault_flags._0_2_ = 1;
+      variable_geometry_turbocharger_position_control_fault_flag = 1;
     }
     variable_geometry_turbocharger_position_sensor_fault_present_flag =
-         (word)((-uVar4 & ~uVar4) >> 0x1f);
-    if ((variable_geometry_turbocharger_position_fault_flags._0_2_ == 0) &&
-       (-1 < (int)(-uVar4 & ~uVar4))) {
-      variable_geometry_turbocharger_fault_holdoff_flags._0_2_ = 0;
+         (word)((-uVar3 & ~uVar3) >> 0x1f);
+    if ((variable_geometry_turbocharger_position_control_fault_flag == 0) &&
+       (-1 < (int)(-uVar3 & ~uVar3))) {
+      variable_geometry_turbocharger_position_fault_present_flag = 0;
     }
     else {
-      variable_geometry_turbocharger_fault_holdoff_flags._0_2_ = 1;
+      variable_geometry_turbocharger_position_fault_present_flag = 1;
     }
     cm848_updateVariableGeometryTurbochargerFaultHoldoff();
-    if ((sVar3 == 0) && (variable_geometry_turbocharger_fault_holdoff_flags._2_2_ != 0)) {
+    if ((wVar2 == 0) && (variable_geometry_turbocharger_not_in_fault_holdoff_flag != 0)) {
       cm848_setLogicalOutputRequest(0x48,0);
     }
     else {
@@ -33661,7 +33660,7 @@ void cm848_sequenceVariableGeometryTurbochargerPositionAdjustment(void)
     else {
       variable_geometry_turbocharger_closed_adjustment_enable_flag = 1;
     }
-    variable_geometry_turbocharger_position_fault_flags._2_2_ = fault_detected_cal._82_2_ & 0x8000;
+    variable_geometry_turbocharger_span_adjustment_error_flag = fault_detected_cal._82_2_ & 0x8000;
     wVar2 = fault_detected_cal.variable_geometry_turbocharger_closed_adjustment_error;
     variable_geometry_turbocharger_closed_adjustment_error_snapshot =
          fault_detected_cal._82_2_ & 0x4000;
@@ -33694,8 +33693,8 @@ void cm848_clearVariableGeometryTurbochargerStopSeekState(void)
 {
   variable_geometry_turbocharger_motor_fault_flag = 0;
   variable_geometry_turbocharger_engine_spinning_flag = 0;
-  variable_geometry_turbocharger_position_fault_flags._0_2_ = 0;
-  variable_geometry_turbocharger_position_fault_flags._2_2_ = 0;
+  variable_geometry_turbocharger_position_control_fault_flag = 0;
+  variable_geometry_turbocharger_span_adjustment_error_flag = 0;
   variable_geometry_turbocharger_closed_adjustment_error_snapshot = 0;
   variable_geometry_turbocharger_position_sensor_fault_present_flag = 0;
   variable_geometry_turbocharger_engine_spinning_previous_flag = 0;
@@ -60129,7 +60128,7 @@ void run_power_cycle(void)
         if (4999 < uVar3) break;
       } while (incomplete_power_down_count_cal != local_20[0]);
     }
-    high_idle_override_flag._0_2_ = 1;
+    high_idle_override_flag = 1;
     if (consecutive_incomplete_power_down_limit < consecutive_incomplete_power_down_count_cal) {
       fault_detected_cal._10_2_ = fault_detected_cal._10_2_ | 0x200;
     }
