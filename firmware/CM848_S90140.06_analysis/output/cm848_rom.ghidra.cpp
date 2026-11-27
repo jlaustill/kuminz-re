@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:55:56 UTC 2026
+// Generated: Fri Nov 27 02:58:38 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -92552,17 +92552,18 @@ void cm848_checkFuelPressureGovernorDemandAtGovernedSpeed(void)
               (injector_diagnostic_bits_short_to_ground == 0)) &&
              (injector_diagnostic_bits_short_to_battery == 0)))))) &&
           (((total_injection_quantity <
-             fuel_pressure_governed_speed_check_injection_quantity_maximum && (DAT_00409ac6 < 0x44))
-           && ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
-               ((((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
-                  (fault_detected_cal.crank_sync_error == 0)) &&
-                 (((fault_detected_cal.faults_0_to_15 & 0x20) == 0 &&
-                  (((fault_detected_cal.cam_crank_sync_mismatch_error == 0 &&
-                    (fault_detected_cal.speed_limp_home_error == 0)) &&
-                   (fault_detected_cal.coolant_temperature_high_error == 0)))))) &&
-                ((fault_detected_cal.coolant_temperature_low_error == 0 &&
-                 (fault_detected_cal.high_pressure_common_rail_cp3_high_current_error == 0))))))))))
-         && (fault_detected_cal.high_pressure_common_rail_cp3_low_current_error == 0)))) &&
+             fuel_pressure_governed_speed_check_injection_quantity_maximum &&
+            (fuel_pressure_monitors_gate_word < 0x44)) &&
+           ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
+            ((((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
+               (fault_detected_cal.crank_sync_error == 0)) &&
+              (((fault_detected_cal.faults_0_to_15 & 0x20) == 0 &&
+               (((fault_detected_cal.cam_crank_sync_mismatch_error == 0 &&
+                 (fault_detected_cal.speed_limp_home_error == 0)) &&
+                (fault_detected_cal.coolant_temperature_high_error == 0)))))) &&
+             ((fault_detected_cal.coolant_temperature_low_error == 0 &&
+              (fault_detected_cal.high_pressure_common_rail_cp3_high_current_error == 0)))))))))) &&
+         (fault_detected_cal.high_pressure_common_rail_cp3_low_current_error == 0)))) &&
        (((fault_detected_cal.cp3_pump_regulator_control_error == 0 &&
          (fault_detected_cal.fuel_pressure_key_on_rationality_error == 0)) &&
         (vehicle_speed_sensor_ok_flag != 0)))) {
@@ -92640,7 +92641,7 @@ void cm848_checkFuelPressureWithoutInjection(void)
        (((((injector_diagnostic_bits_open_circuit == 0 &&
            (injector_diagnostic_bits_short_to_ground == 0)) &&
           (injector_diagnostic_bits_short_to_battery == 0)) &&
-         (((DAT_00409ac6 < 0x44 &&
+         (((fuel_pressure_monitors_gate_word < 0x44 &&
            (fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0)) &&
           ((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
            ((fault_detected_cal.crank_sync_error == 0 &&
@@ -92821,10 +92822,10 @@ void cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand(void)
            )))))) && (fuel_metering_feedback_fault_code == 0)) &&
        (((injector_diagnostic_bits_fast_decay == 0 && (injector_diagnostic_bits_open_circuit == 0))
         && (injector_diagnostic_bits_short_to_ground == 0)))) &&
-      (((injector_diagnostic_bits_short_to_battery == 0 && (DAT_00409ac6 < 0x44)) &&
-       ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
-        ((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
-         (fault_detected_cal.crank_sync_error == 0)))))))) &&
+      (((injector_diagnostic_bits_short_to_battery == 0 && (fuel_pressure_monitors_gate_word < 0x44)
+        ) && ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
+              ((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
+               (fault_detected_cal.crank_sync_error == 0)))))))) &&
      ((((fault_detected_cal.faults_0_to_15 & 0x20) == 0 &&
        ((((fault_detected_cal.cam_crank_sync_mismatch_error == 0 &&
           (fault_detected_cal.speed_limp_home_error == 0)) &&
