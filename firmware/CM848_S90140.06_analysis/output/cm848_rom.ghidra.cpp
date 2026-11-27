@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:25:39 UTC 2026
+// Generated: Fri Nov 27 03:29:01 UTC 2026
 
 
 //
@@ -13649,11 +13649,11 @@ void cm848_monitorChargePressureInRange(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.boost_in_range_high_error == 0) ||
-       (((&fault_status_records_cal)[DAT_000598da].flags & 0x10) == 0)) ||
-      ((charge_pressure_sensor_fault_gate_bits >> 2 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x40]].flags & 0x10) == 0))
+      || ((charge_pressure_sensor_fault_gate_bits >> 2 & 1) == 0)) &&
      (((fault_detected_cal.boost_in_range_low_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059e0c].flags & 0x10) == 0)) ||
-      ((charge_pressure_sensor_fault_gate_bits >> 3 & 1) == 0)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x2d9]].flags & 0x10) == 0))
+      || ((charge_pressure_sensor_fault_gate_bits >> 3 & 1) == 0)))) {
     bVar1 = false;
   }
   else {
@@ -13962,11 +13962,11 @@ void cm848_filterAndSelectIntakeManifoldTemperature(void)
     uVar4 = intake_manifold_temperature_sensor_fault_status | charge_temperature_estimate_status;
   }
   if ((((fault_detected_cal.intake_manifold_temperature_key_on_rationality_error == 0) ||
-       (((&fault_status_records_cal)[DAT_00059b26].flags & 0x10) == 0)) ||
-      ((fuel_pressure_phase_fault_gate_enable >> 5 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x166]].flags & 0x10) == 0))
+      || ((fuel_pressure_phase_fault_gate_enable >> 5 & 1) == 0)) &&
      (((fault_detected_cal.intake_manifold_temperature_rationality_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059b1e].flags & 0x10) == 0)) ||
-      ((fuel_pressure_phase_fault_gate_enable >> 6 & 1) == 0)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x162]].flags & 0x10) == 0))
+      || ((fuel_pressure_phase_fault_gate_enable >> 6 & 1) == 0)))) {
     uVar3 = 0;
   }
   else {
@@ -20608,7 +20608,8 @@ void cm848_processFaultScanGroup(void)
     if ((wVar6 & uVar7) == 0) {
       uVar8 = (uint)fault_scan_index;
       if ((uVar7 & (&fault_previous_pass_cal.faults_0_to_15)[uVar8]) != 0) {
-        uVar1 = *(ushort *)(&fault_code_assignment_table + ((uVar8 * 0x10 + uVar5) * 2 & 0x1fffe));
+        uVar1 = *(ushort *)
+                 ((int)fault_code_assignment_table + ((uVar8 * 0x10 + uVar5) * 2 & 0x1fffe));
         uVar9 = (uint)uVar1;
         if (((uVar9 < 0xaa) && ((uVar7 & (&DAT_0005a296)[uVar8]) != 0)) &&
            (*(char *)(uVar9 + 0x3fe124) != '\0')) {
@@ -20678,7 +20679,8 @@ void cm848_processFaultScanGroup(void)
     }
     else {
       uVar9 = (uint)fault_scan_index;
-      uVar1 = *(ushort *)(&fault_code_assignment_table + ((uVar9 * 0x10 + uVar5) * 2 & 0x1fffe));
+      uVar1 = *(ushort *)((int)fault_code_assignment_table + ((uVar9 * 0x10 + uVar5) * 2 & 0x1fffe))
+      ;
       uVar8 = (uint)uVar1;
       if (((uVar8 < 0xaa) && ((uVar7 & (&fault_previous_pass_cal.faults_0_to_15)[uVar9]) == 0)) &&
          (active_dtc_list_cal.count != 0x1f)) {
@@ -63902,11 +63904,11 @@ void cm848_selectBarometricPressure(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.ambient_air_pressure_in_range_error == 0) ||
-       (((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) == 0)) ||
-      ((fuel_boost_final_fault_gate_enable >> 4 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x154]].flags & 0x10) == 0))
+      || ((fuel_boost_final_fault_gate_enable >> 4 & 1) == 0)) &&
      (((fault_detected_cal.boost_ambient_delta_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) == 0)) ||
-      (-1 < (char)fuel_boost_final_fault_gate_enable)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x30a]].flags & 0x10) == 0))
+      || (-1 < (char)fuel_boost_final_fault_gate_enable)))) {
     uVar1 = 0;
   }
   else {
@@ -63979,12 +63981,12 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
      (wVar1 = fuel_demand_maximum, engine_state == ENGINE_STATE_RUNNING)) {
     wVar1 = altitude_derate_turbocharger_overspeed_ambient_pressure;
     if (turbocharger_overspeed_immediate_derate_flag != 1) {
-      if ((((((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) != 0) &&
-           (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
+      if ((((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x154]].flags & 0x10)
+             != 0) && (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
           ((altitude_derate_air_handling_fault_enable_a >> 4 & 1) != 0)) ||
          (((wVar1 = barometric_pressure_sensor_filtered,
-           ((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) != 0 &&
-           (fault_detected_cal.boost_ambient_delta_error != 0)) &&
+           ((&fault_status_records_cal)[(short)fault_code_assignment_table[0x30a]].flags & 0x10) !=
+           0 && (fault_detected_cal.boost_ambient_delta_error != 0)) &&
           ((char)altitude_derate_air_handling_fault_enable_a < '\0')))) {
         wVar1 = barometric_pressure_sensor_config.default_value;
       }
@@ -64009,14 +64011,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) != 0) &&
-          (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x154]].flags & 0x10) !=
+            0) && (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_a >> 4 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) != 0) &&
-          (fault_detected_cal.boost_ambient_delta_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x30a]].flags & 0x10) !=
+            0) && (fault_detected_cal.boost_ambient_delta_error != 0)) &&
          ((char)altitude_derate_air_handling_fault_enable_a < '\0')) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -64031,14 +64033,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b2a].flags & 0x10) != 0) &&
-          (fault_detected_cal.ambient_air_temperature_key_on_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x168]].flags & 0x10) !=
+            0) && (fault_detected_cal.ambient_air_temperature_key_on_rationality_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_b >> 5 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b00].flags & 0x10) != 0) &&
-          (fault_detected_cal.ambient_air_temperature_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x153]].flags & 0x10) !=
+            0) && (fault_detected_cal.ambient_air_temperature_rationality_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_b >> 6 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -64053,14 +64055,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_000598da].flags & 0x10) != 0) &&
-          (fault_detected_cal.boost_in_range_high_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x40]].flags & 0x10) !=
+            0) && (fault_detected_cal.boost_in_range_high_error != 0)) &&
          ((fuel_correction_limit_enable_c >> 2 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059e0c].flags & 0x10) != 0) &&
-          (fault_detected_cal.boost_in_range_low_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x2d9]].flags & 0x10) !=
+            0) && (fault_detected_cal.boost_in_range_low_error != 0)) &&
          ((fuel_correction_limit_enable_c >> 3 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -64075,14 +64077,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b26].flags & 0x10) != 0) &&
-          (fault_detected_cal.intake_manifold_temperature_key_on_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x166]].flags & 0x10) !=
+            0) && (fault_detected_cal.intake_manifold_temperature_key_on_rationality_error != 0)) &&
          ((fuel_correction_limit_enable_d >> 5 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b1e].flags & 0x10) != 0) &&
-          (fault_detected_cal.intake_manifold_temperature_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x162]].flags & 0x10) !=
+            0) && (fault_detected_cal.intake_manifold_temperature_rationality_error != 0)) &&
          ((fuel_correction_limit_enable_d >> 6 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -66447,11 +66449,11 @@ void cm848_selectCompressorInletTemperature(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.ambient_air_temperature_key_on_rationality_error == 0) ||
-       (((&fault_status_records_cal)[DAT_00059b2a].flags & 0x10) == 0)) ||
-      ((fuel_timing_demand_fault_gate_enable >> 5 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x168]].flags & 0x10) == 0))
+      || ((fuel_timing_demand_fault_gate_enable >> 5 & 1) == 0)) &&
      (((fault_detected_cal.ambient_air_temperature_rationality_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059b00].flags & 0x10) == 0)) ||
-      ((fuel_timing_demand_fault_gate_enable >> 6 & 1) == 0)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x153]].flags & 0x10) == 0))
+      || ((fuel_timing_demand_fault_gate_enable >> 6 & 1) == 0)))) {
     uVar1 = 0;
   }
   else {
@@ -74014,7 +74016,8 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
   }
   ambient_saturation_vapor_pressure =
        lookupTableInterpolation
-                 (&DAT_003fcbf4,input,water_saturation_vapor_pressure_by_temperature_axis,
+                 (&ambient_saturation_vapor_pressure_cached_axis_offset,input,
+                  water_saturation_vapor_pressure_by_temperature_axis,
                   water_saturation_vapor_pressure_by_temperature_values,1);
   uVar3 = (uint)barometric_pressure_reference;
   if (uVar3 == 0) {
@@ -74045,7 +74048,8 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
        (word)((uint)charge_pressure * (uint)exhaust_water_vapor_fraction >> 8);
   exhaust_saturation_temperature =
        lookupTableInterpolation
-                 (&DAT_003fcbf8,exhaust_water_vapor_partial_pressure_times_4,
+                 (&exhaust_saturation_temperature_cached_axis_offset,
+                  exhaust_water_vapor_partial_pressure_times_4,
                   fuel_demand_compensation_target_by_pressure_axis,
                   fuel_demand_compensation_target_by_pressure_values,2);
   if (((charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
@@ -74071,9 +74075,9 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
 void cm848_initializeBoostControlInterpolationState(void)
 
 {
-  DAT_003fcbf4 = 2;
+  ambient_saturation_vapor_pressure_cached_axis_offset = 2;
   fuel_demand_compensation_target_by_pressure_cached_axis_offset = 2;
-  DAT_003fcbf8 = 2;
+  exhaust_saturation_temperature_cached_axis_offset = 2;
   return;
 }
 
@@ -74446,15 +74450,17 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
   uVar2 = (uint)uVar1;
   turbocharger_speed_unfiltered_step = (uint)uVar1 - (uint)turbocharger_speed_unfiltered_previous;
   uVar4 = (uint)turbocharger_speed_first_stage_rate_limited;
-  DAT_003fcc18 = turbocharger_speed_first_stage_rate_limited;
+  turbocharger_speed_first_stage_rate_limited_previous = turbocharger_speed_first_stage_rate_limited
+  ;
   if ((int)(uint)turbocharger_speed_rate_limit_threshold < (int)turbocharger_speed_unfiltered_step)
   {
     uVar2 = (uint)turbocharger_speed_rate_limit_value + (uint)turbocharger_speed_unfiltered_previous
     ;
   }
   turbocharger_speed_first_stage_rate_limited = (word)uVar2;
-  DAT_003fcc14 = (uVar2 & 0xffff) - uVar4;
-  if ((int)(uint)turbocharger_speed_rate_limit_threshold < DAT_003fcc14) {
+  turbocharger_speed_first_stage_rate_limited_step = (uVar2 & 0xffff) - uVar4;
+  if ((int)(uint)turbocharger_speed_rate_limit_threshold <
+      turbocharger_speed_first_stage_rate_limited_step) {
     uVar2 = turbocharger_speed_rate_limit_value + uVar4;
   }
   turbocharger_speed_rate_limited = (word)uVar2;
@@ -79559,7 +79565,7 @@ void cm848_initializeIntakeAirHeaterControl(void)
   intake_air_heater_shutdown_reason = 0;
   intake_air_heater_relay_action_code_previous = 0;
   intake_air_heater_control_state_previous = INTAKE_AIR_HEATER_PHASE_KEY_ON;
-  DAT_003fce68 = 10;
+  intake_air_heater_crank_standby_cycle_limit = 10;
   intake_air_heater_postheat_active_flag = 0;
   intake_air_heater_postheat_schedule_level_cached_axis_offset = 2;
   intake_air_heater_preheat_total_ticks_cached_axis_offsets[0] = 2;
@@ -79602,7 +79608,8 @@ void cm848_computeIntakeAirHeaterPreheatDuration(void)
   else {
     intake_air_heater_preheat_remaining_ticks = intake_air_heater_preheat_total_ticks;
     if (((intake_air_heater_saved_values_cal.redundant_preheat_request == 1) ||
-        (intake_air_heater_preheat_depleted_flag == 1)) && (DAT_003fce53 == '\0')) {
+        (intake_air_heater_preheat_depleted_flag == 1)) &&
+       (intake_air_heater_crank_heat_done_flag == 0)) {
       intake_air_heater_preheat_remaining_ticks = intake_air_heater_redundant_preheat_time;
     }
     if ((algorithm_enable_flags_41_cal.intake_air_heater_monitor_enable == 0) ||
@@ -79743,7 +79750,7 @@ void cm848_updateIntakeAirHeaterCrankPhase(void)
   }
   intake_air_heater_status_flags = intake_air_heater_status_flags & 0xef | 0x10;
   intake_air_heater_preheat_remaining_ticks = 0;
-  DAT_003fce53 = 1;
+  intake_air_heater_crank_heat_done_flag = 1;
   return;
 }
 
@@ -80169,7 +80176,8 @@ void cm848_updateIntakeAirHeaterControl(void)
       else {
         intake_air_heater_crank_standby_cycle_count = 0;
       }
-      if ((DAT_003fce68 <= intake_air_heater_crank_standby_cycle_count) &&
+      if ((intake_air_heater_crank_standby_cycle_limit <=
+           intake_air_heater_crank_standby_cycle_count) &&
          ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK ||
           (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_POSTHEAT)))) {
         intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_PREHEAT;
@@ -91031,8 +91039,8 @@ void cm848_armTpuChannel10AtEndOfInjectionLimit(void)
     injection_end_limit_angle =
          injection_end_limit_angle + injection_end_limit_speed_limp_home_adjustment;
   }
-  uVar5 = (uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] + (int)injection_timing_table_offset +
-          (int)injection_end_limit_angle;
+  uVar5 = (uint)injection_end_limit_cylinder_offsets[cylinder_event_index] +
+          (int)injection_timing_table_offset + (int)injection_end_limit_angle;
   if (0x77ff < (int)uVar5) {
     uVar5 = uVar5 - 0x7800;
   }
@@ -91195,7 +91203,8 @@ void cm848_writeInjectionAngleToTpuChannel5(int param_1,int param_2,undefined2 p
   uint uVar4;
   uint uVar5;
   
-  uVar1 = (uint)(ushort)(&DAT_0005fbb2)[param_1] + param_2 + (int)injection_timing_table_offset;
+  uVar1 = (uint)injection_end_limit_cylinder_offsets[param_1] + param_2 +
+          (int)injection_timing_table_offset;
   if (0x77ff < (int)uVar1) {
     uVar1 = uVar1 - 0x7800;
   }
@@ -91730,8 +91739,8 @@ void cm848_loadInjectionStartAnglesOnTpuChannel6(void)
     sVar2 = pilot_injection_timing_for_cylinder_event * -5;
   }
   injection_angle_ch6_crank_position =
-       (((uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] + (int)injection_timing_table_offset) -
-       uVar6) + (int)sVar2;
+       (((uint)injection_end_limit_cylinder_offsets[cylinder_event_index] +
+        (int)injection_timing_table_offset) - uVar6) + (int)sVar2;
   injection_angle_ch6_normalized = injection_angle_ch6_crank_position + uVar6;
   if (0x77ff < (int)injection_angle_ch6_normalized) {
     injection_angle_ch6_normalized = injection_angle_ch6_normalized - 0x7800;
@@ -93957,7 +93966,7 @@ void cm848_calculatePilotInjectionTiming(void)
     uVar1 = injection_wakeup_duration_below_breakpoint;
   }
   injection_timing_static_wakeup_location =
-       DAT_0005fbb2 / 5 -
+       injection_end_limit_cylinder_offsets[0] / 5 -
        (short)(((uint)injection_timing_tooth_base_offset_cylinder_0 * 0x600) / 0x1e);
   uVar2 = CONCAT44((int)((ulonglong)((uint)uVar1 * 6) *
                          (ulonglong)engine_speed_state.filtered_engine_speed * 0x100 >> 0x20),
@@ -95452,7 +95461,7 @@ undefined4 cm848_isDtcStoredOtherThanFault(int param_1)
   
   if ((recent_fault_dtc_codes_cal[0] == 0) ||
      ((recent_fault_dtc_codes_cal[0] ==
-       obd_dtc_code_table[*(short *)(&fault_code_assignment_table + param_1 * 2)] &&
+       obd_dtc_code_table[(short)fault_code_assignment_table[param_1]] &&
       (recent_fault_dtc_codes_cal[1] == 0)))) {
     uVar1 = 0;
   }
@@ -101470,7 +101479,8 @@ void cm848_j1939_system_init(void)
   if (j1939_engine_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_source_address;
     do {
-      *(uint *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
+      *(dword *)(iVar2 + 2) =
+           j1939_receive_message_object_id_templates[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101481,7 +101491,7 @@ void cm848_j1939_system_init(void)
   uVar6 = 0;
   if (j1939_engine_destination_non_specific_receive_message_object_count != 0) {
     do {
-      *(undefined4 *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff];
+      *(dword *)(iVar2 + 2) = j1939_receive_message_object_id_templates[uVar5 & 0xff];
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101493,7 +101503,8 @@ void cm848_j1939_system_init(void)
   if (j1939_retarder_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_engine_retarder_source_address;
     do {
-      *(uint *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
+      *(dword *)(iVar2 + 2) =
+           j1939_receive_message_object_id_templates[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101504,7 +101515,7 @@ void cm848_j1939_system_init(void)
   uVar6 = 0;
   if (j1939_retarder_destination_non_specific_receive_message_object_count != 0) {
     do {
-      *(undefined4 *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff];
+      *(dword *)(iVar2 + 2) = j1939_receive_message_object_id_templates[uVar5 & 0xff];
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
