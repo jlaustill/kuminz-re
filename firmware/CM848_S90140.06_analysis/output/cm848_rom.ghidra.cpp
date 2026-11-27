@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:29:01 UTC 2026
+// Generated: Fri Nov 27 03:34:15 UTC 2026
 
 
 //
@@ -1605,8 +1605,8 @@ void mpc555_initializeDiagnosticResponseHandlers(void)
        boot_j1939_transport_transmit_frame_buffer;
   boot_j1939_transport_receive_session.receive_buffer_pointer = &boot_j1939_transport_receive_buffer
   ;
-  cm848_registerPgnResponseHandler(0xec00,&DAT_003fbe5c);
-  cm848_registerPgnResponseHandler(0xeb00,&DAT_003fbbb4);
+  cm848_registerPgnResponseHandler(0xec00,&mpc555_dispatchJ1939TransportConnectionManagement_ram);
+  cm848_registerPgnResponseHandler(0xeb00,&mpc555_handleJ1939TransportDataPacket_ram);
   return;
 }
 
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -2325,7 +2325,7 @@ bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *ha
 void cm848_registerPgnEf00Handler(byte sub_id,void *handler)
 
 {
-  cm848_registerPgnResponseHandler(0xef00,&DAT_003fc8f4);
+  cm848_registerPgnResponseHandler(0xef00,&cm848_dispatchDiagnosticService_ram);
   return;
 }
 
@@ -26528,7 +26528,7 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
   
   if ((j1939_dm2_transmit_status & 0xf0) == 0) {
     j1939_dm2_tx_message.header.data_length = 2;
-    DAT_003fabda = cm848_buildJ1939LampStatusByte();
+    j1939_dm2_lamp_status_byte = cm848_buildJ1939LampStatusByte();
     if (previously_active_dtc_list_cal.count == 0) {
       j1939_dm2_dtc_mask_working = 0xffffffff;
       j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
@@ -26577,11 +26577,11 @@ void initializePgn65227Dm2Handler(void)
 {
   j1939_dm2_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65227_priority_cal & 7) << 2,0xfecb00);
-  j1939_dm2_tx_message.data_pointer = &DAT_003fabda;
+  j1939_dm2_tx_message.data_pointer = &j1939_dm2_lamp_status_byte;
   j1939_dm2_tx_message.status_pointer = &j1939_dm2_transmit_status;
   j1939_dm2_tx_message.header.can_id =
        CONCAT31(j1939_dm2_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fabdb = 0xff;
+  j1939_dm2_flash_lamp_status_byte = 0xff;
   j1939_dm2_dtc_mask_working._3_1_ = (byte)j1939_dm2_dtc_mask_working & 0x7f | 0x80;
   registerJ1939PgnRequestHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
   return;
@@ -31490,13 +31490,13 @@ void initializePgn65264PowerTakeOffInformationBuffer(void)
   j1939_pgn65264_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65264_priority_cal & 7) << 2,0xfef000);
   j1939_pgn65264_tx_message.header.data_length = 8;
-  j1939_pgn65264_tx_message.data_pointer = &DAT_003fb002;
+  j1939_pgn65264_tx_message.data_pointer = &j1939_pgn65264_payload_byte_1;
   j1939_pgn65264_tx_message.status_pointer = &j1939_pgn65264_transmit_status;
   j1939_pgn65264_tx_message.header.can_id =
        CONCAT31(j1939_pgn65264_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fb002 = 0xff;
+  j1939_pgn65264_payload_byte_1 = 0xff;
   j1939_pgn65264_payload_bytes_2_to_3 = 0xffff;
-  DAT_003fb009 = 0xff;
+  j1939_pgn65264_payload_byte_8 = 0xff;
   return;
 }
 
@@ -47627,13 +47627,13 @@ void hpcr_fillCylinderBalanceAccelerationBuffers(void)
       wVar2 = tpu_a_channel_0_parameters.PARAM4;
       if (((wVar2 & 0xff) == (ushort)bVar1) && (cylinder_event_seq_counter == 0xff)) {
         wVar2 = tpu_a_channel_12_parameters.PARAM7;
-        DAT_003fb57c = (byte)wVar2;
+        cylinder_timing_tpu_param7_snapshot = (byte)wVar2;
         cylinder_timing_tpu_capture_snapshot = tpu_a_channel_14_parameters._6_4_;
         cylinder_event_seq_counter = 0;
       }
       else if (((uint)cylinder_event_seq_counter < (uint)cylinder_event_count_max) &&
-              (wVar2 = tpu_a_channel_12_parameters.PARAM7, (wVar2 & 0xff) == (ushort)DAT_003fb57c))
-      {
+              (wVar2 = tpu_a_channel_12_parameters.PARAM7,
+              (wVar2 & 0xff) == (ushort)cylinder_timing_tpu_param7_snapshot)) {
         iVar3 = tpu_a_channel_14_parameters._6_4_;
         (&cylinder_balance_acceleration_buffer_1)[cylinder_event_seq_counter] =
              (sword)(iVar3 - cylinder_timing_tpu_capture_snapshot >> 2);
@@ -48212,7 +48212,7 @@ void cm848_runCylinderContributionTest(void)
       ram_refresh_enable = RAM_REFRESH_DISABLED;
       uVar5 = 0;
       do {
-        (&DAT_003fb598)[uVar5] = (&cylinder_balance_fueling_trim_cal)[uVar5];
+        cylinder_balance_fueling_trim_backup[uVar5] = (&cylinder_balance_fueling_trim_cal)[uVar5];
         uVar5 = uVar5 + 1 & 0xff;
       } while (uVar5 < 6);
       cylinder_balance_fueling_trim_maximum_snapshot = cylinder_balance_fueling_trim_maximum;
@@ -48250,7 +48250,7 @@ void cm848_runCylinderContributionTest(void)
     cylinder_balance_fueling_trim_minimum = cylinder_balance_fueling_trim_minimum_snapshot;
     uVar5 = 0;
     do {
-      (&cylinder_balance_fueling_trim_cal)[uVar5] = (&DAT_003fb598)[uVar5];
+      (&cylinder_balance_fueling_trim_cal)[uVar5] = cylinder_balance_fueling_trim_backup[uVar5];
       uVar5 = uVar5 + 1 & 0xff;
     } while (uVar5 < 6);
     ram_refresh_enable = RAM_REFRESH_ENABLED;
@@ -66126,11 +66126,13 @@ void cm848_updateNotToExceedAverages(void)
            (uint)emission_level_cap_command;
       fuel_demand_timing_demand_ring_buf[uVar3] = emission_level_cap_command;
       fuel_demand_timing_correction_window_sum =
-           fuel_demand_timing_correction_window_sum - (ushort)(&DAT_003fbb64)[uVar3];
+           fuel_demand_timing_correction_window_sum -
+           (&nitrogen_oxide_target_off_nominal_ring_buf)[uVar3];
     }
     uVar2 = fuel_demand_timing_correction_window_sum + nitrogen_oxide_target_off_nominal_adjusted;
     fuel_demand_timing_correction_window_sum = uVar2;
-    (&DAT_003fbb64)[uVar3] = nitrogen_oxide_target_off_nominal_adjusted;
+    (&nitrogen_oxide_target_off_nominal_ring_buf)[uVar3] =
+         nitrogen_oxide_target_off_nominal_adjusted;
     fuel_demand_timing_rolling_avg_index = fuel_demand_timing_rolling_avg_index + 1;
     if (wVar1 == 0) {
       emission_level_cap_average = 0;
@@ -66393,8 +66395,8 @@ void cm848_calculateCompressorInletDensity(void)
     uVar2 = 0xffff;
   }
   wVar3 = (word)uVar2;
-  if (DAT_003fbca4 == 0) {
-    DAT_003fbca4 = 1;
+  if (compressor_inlet_density_rate_limit_initialized_flag == 0) {
+    compressor_inlet_density_rate_limit_initialized_flag = 1;
   }
   else {
     iVar1 = (uVar2 & 0xffff) - (uint)compressor_inlet_density;
@@ -66830,7 +66832,8 @@ void cm848_runDataCollector(int param_1)
     iVar4 = 0x8000 - uVar3 * uVar2;
     data_collector_buffer_end_address = data_collector_buffer_start_address + (0x7fff - iVar4);
     data_collector_sample_capacity = (word)uVar2;
-    DAT_003fbcb4 = data_collector_table_entry_count * data_collector_sample_capacity;
+    data_collector_total_sample_bytes =
+         data_collector_table_entry_count * data_collector_sample_capacity;
     data_collector_end_address = data_collector_buffer_start_address;
     data_collector_start_address = data_collector_buffer_start_address;
     data_collector_buffer_has_data_flag = 0;
@@ -66890,7 +66893,8 @@ void cm848_runDataCollector(int param_1)
                   (uint)data_collector_table_entry_count *
                   (uint)(data_collector_sample_capacity >> 1));
       if (data_collector_buffer_end_address < data_collector_fill_stop_address) {
-        data_collector_fill_stop_address = data_collector_fill_stop_address - DAT_003fbcb4;
+        data_collector_fill_stop_address =
+             data_collector_fill_stop_address - data_collector_total_sample_bytes;
       }
       cm848_fillDataCollectorRingBuffer();
       goto LAB_00506360;
@@ -67522,7 +67526,8 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
   int iVar3;
   
   iVar3 = (uint)egr_orifice_temperature_lead_time_constant *
-          ((uint)egr_orifice_temperature_sensor_value - (uint)DAT_003fbcfa);
+          ((uint)egr_orifice_temperature_sensor_value -
+          (uint)egr_orifice_temperature_sensor_value_previous);
   if (iVar3 < 32000) {
     if (iVar3 < -31999) {
       iVar3 = -32000;
@@ -67539,7 +67544,7 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
     uVar1 = (uint)egr_orifice_temperature_estimate_minimum_limit;
   }
   egr_orifice_temperature_after_lead = (word)uVar1;
-  DAT_003fbcfa = egr_orifice_temperature_sensor_value;
+  egr_orifice_temperature_sensor_value_previous = egr_orifice_temperature_sensor_value;
   return;
 }
 
