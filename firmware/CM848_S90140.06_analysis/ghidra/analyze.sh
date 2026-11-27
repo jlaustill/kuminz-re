@@ -79,6 +79,7 @@ cmd_build() {
     cmd_hwregs       # MPC555 hardware register names
     cmd_labels       # code labels
     cmd_constants    # magic-number constants
+    cmd_comments     # PRE comments on instructions (comments.csv)
     cmd_arrays       # array definitions
     cmd_callfixups   # fold compiler-RTL division helpers into / and s/ operators
     cmd_export       # re-applies funcdefs+localvars, then ExportAnalysis -> .cpp (only)

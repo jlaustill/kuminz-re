@@ -1,0 +1,36 @@
+address,comment
+# PRE comments: the decompiler prints each above the statement at that instruction address.
+# cm848_initializePciMessagePayloads: every loop pointer starts one byte before its buffer (stbu/lbzu pre-increment), so Ghidra shows the byte before it (the previous message timer); each comment names the buffer the loop really fills.
+0x0003a450,TX[8] 48 6B OBD response payload (obd_response_source_address..): zero 9 bytes 0x40b47f-0x40b487
+0x0003a470,TX[10] 26 diagnostic response pci_transmit_message_10: pci_ecm_address then pci_diagnostic_power_up_announcement (9 bytes 0x40b492-0x40b49a)
+0x0003a4b8,TX[0] 10 pci_transmit_message_0_payload: zero 5 bytes
+0x0003a4d8,Spare TX 16 pci_spare_transmit_message_payload: zero 3 bytes
+0x0003a4f8,TX[2] 35 pci_transmit_message_2_payload: zero 2 bytes
+0x0003a518,TX[3] B0 pci_transmit_message_3_payload: zero 3 bytes
+0x0003a544,TX[4] D1 03 pci_transmit_message_4_engine_load: zero 3 bytes
+0x0003a564,TX[5] 53 pci_transmit_message_5_payload: zero 2 bytes
+0x0003a584,TX[7] 3F pci_transmit_message_7_payload: zero 4 bytes
+0x0003a5a4,TX[9] 4F 10 pci_transmit_message_9_immobilizer_command: zero 4 bytes
+0x0003a5c4,TX[11] 5D pci_transmit_message_11_payload: zero 5 bytes
+0x0003a5e4,RX[13] 92 pci_receive_message_13_payload: zero 2 bytes
+0x0003a614,TX[14] C0 pci_transmit_message_14_payload: zero 4 bytes
+0x0003a644,TX[16] D2 pci_transmit_message_16_byte_1: zero 4 bytes
+0x0003a664,TX[17] D1 01 pci_transmit_message_17_byte_1: zero 4 bytes
+0x0003a684,TX[19] ED pci_transmit_message_19_payload: copy 5 bytes of pci_transmit_message_19_initial_payload
+0x0003a6ec,TX[21] F0 02 pci_transmit_message_21_payload: VIN characters 2-5
+0x0003a714,TX[22] F0 06 pci_transmit_message_22_payload: VIN characters 6-9
+0x0003a744,TX[23] F0 0A pci_transmit_message_23_payload: VIN characters 10-13
+0x0003a774,TX[24] F0 0E pci_transmit_message_24_payload: VIN characters 14-17
+0x0003a7a4,RX[0] 68 6A OBD request payload (obd_request_source_address..): zero 8 bytes
+0x0003a7d0,RX[2] 0E pci_receive_message_2_idle_speed_request: zero 2 bytes
+0x0003a7f0,RX[3] 1A pci_receive_message_3_payload: zero 4 bytes
+0x0003a810,RX[1] 24 diagnostic request (pci_diagnostic_request_target_address..): zero 7 bytes
+0x0003a830,RX[4] 2D pci_receive_message_4_module_address: zero 2 bytes
+0x0003a850,RX[5] 37 pci_receive_message_5_shift_lever_position: zero 2 bytes
+0x0003a880,TX[1] 1E pci_transmit_message_1_payload: zero 7 bytes
+0x0003a8a0,RX[6] 4F C0 pci_receive_message_6_immobilizer_command: zero 4 bytes
+0x0003a8c0,RX[7] 63 pci_receive_message_7_payload: zero 2 bytes
+0x0003a8e0,TX[12] 98 pci_transmit_message_12_status_bits: zero 3 bytes
+0x0003a900,RX[8] 6C pci_receive_message_8_byte_1: zero 5 bytes
+0x0003a950,RX[11] 72 pci_receive_message_11_odometer: zero 4 bytes
+0x0003a980,RX[14] 42 pci_receive_message_14_engine_off_time: zero 2 bytes

@@ -328,10 +328,11 @@ All firmwares use the same CSV structure in `output/`:
 | `labels.csv` | Code labels for control flow |
 | `structure_definitions.csv` | C structure definitions |
 | `constants.csv` | Magic number documentation |
+| `comments.csv` | `address,comment` - PRE comment on the instruction at `address`; the decompiler prints it above that statement (e.g. to name the buffer a loop really fills) |
 | `arrays.csv` | Array/buffer definitions |
 | `deleted_functions.csv` | Addresses of spurious functions to remove after `analyze` (the deletion delta) |
 | `function_definitions.csv` | Function parameter types and return types |
-| `local_variables.csv` | Local variable names/types |
+| `local_variables.csv` | Local variable names/types. Optional 7th column `keep_merged=yes`: commit every use the decompiler had merged into the variable as `name`, `name$1`, ... so naming a reused register does not split the other uses off as new placeholders. `old_name` may be `register@address` (`r6@0x0003a6e8`) to name only the value that instruction writes; rows with the same `new_name` join one variable. Quote a comment that holds a comma |
 | `call_fixups.csv` | Maps a runtime-helper address → a call-fixup (folds the opaque call into inline p-code, e.g. division → `/`). CM848 only; p-code bodies in `firmware/scripts/callfixups/*.xml` |
 
 ---

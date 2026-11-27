@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 21:32:04 MST 2026
+// Generated: Fri Nov 27 01:52:36 UTC 2026
 
 
 //
@@ -41249,282 +41249,328 @@ undefined4 cm848_handlePciLinkEvent(void)
 void cm848_initializePciMessagePayloads(void)
 
 {
-  byte *pbVar1;
-  undefined1 uVar2;
-  undefined1 *puVar3;
-  byte *pbVar4;
-  undefined1 *puVar5;
-  int iVar6;
-  int iVar7;
-  int iVar8;
+  int iVar1;
+  byte *vin_payload_cursor;
+  byte announcement_byte;
+  byte *source_cursor;
+  byte *payload_cursor;
+  byte *vehicle_information_cursor;
+  int next_vin_index;
+  int last_vin_index;
+  int byte_index;
+  int vin_characters_copied;
   
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_7_timer + 1);
+                    /* TX[8] 48 6B OBD response payload (obd_response_source_address..): zero 9
+                       bytes 0x40b47f-0x40b487 */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_7_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 9);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_9_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 9);
+                    /* TX[10] 26 diagnostic response pci_transmit_message_10: pci_ecm_address then
+                       pci_diagnostic_power_up_announcement (9 bytes 0x40b492-0x40b49a) */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_9_timer + 1);
   do {
-    if (iVar7 == 0) {
-      uVar2 = (undefined1)pci_ecm_address;
+    if (byte_index == 0) {
+      announcement_byte = (byte)pci_ecm_address;
     }
     else {
-      uVar2 = *(undefined1 *)(iVar7 + 0x57bb5);
+      announcement_byte = *(byte *)(byte_index + 0x57bb5);
     }
-    puVar3 = puVar3 + 1;
-    *puVar3 = uVar2;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 9);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = announcement_byte;
+    byte_index = byte_index + 1;
+  } while (byte_index < 9);
   pci_transmit_message_10_length = 5;
-  iVar7 = 0;
-  pbVar4 = &pci_transmit_message_10_length;
+                    /* TX[0] 10 pci_transmit_message_0_payload: zero 5 bytes */
+  byte_index = 0;
+  payload_cursor = &pci_transmit_message_10_length;
   do {
-    pbVar4 = pbVar4 + 1;
-    *pbVar4 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_24_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
+                    /* Spare TX 16 pci_spare_transmit_message_payload: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_24_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_5_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
+                    /* TX[2] 35 pci_transmit_message_2_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_5_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_2_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* TX[3] B0 pci_transmit_message_3_payload: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_2_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
   pci_transmit_message_3_payload = 0x80;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_0_timer + 1);
+                    /* TX[4] D1 03 pci_transmit_message_4_engine_load: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_0_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_4_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
+                    /* TX[5] 53 pci_transmit_message_5_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_4_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_11_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* TX[7] 3F pci_transmit_message_7_payload: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_11_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_8_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[9] 4F 10 pci_transmit_message_9_immobilizer_command: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_8_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_10.transmit_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[11] 5D pci_transmit_message_11_payload: zero 5 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_10.transmit_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_11_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
+                    /* RX[13] 92 pci_receive_message_13_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_11_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
   pci_transmit_message_13_fuel_level = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_13_timer + 1);
+                    /* TX[14] C0 pci_transmit_message_14_payload: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_13_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
   pci_transmit_message_15_payload = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_15_timer + 1);
+                    /* TX[16] D2 pci_transmit_message_16_byte_1: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_15_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_16_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[17] D1 01 pci_transmit_message_17_byte_1: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_16_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar5 = (undefined1 *)((int)&pci_transmit_message_17_timer + 1);
-  puVar3 = (undefined1 *)0x57baf;
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[19] ED pci_transmit_message_19_payload: copy 5 bytes of
+                       pci_transmit_message_19_initial_payload */
+  byte_index = 0;
+  vehicle_information_cursor = (byte *)((int)&pci_transmit_message_17_timer + 1);
+  source_cursor = (byte *)0x57baf;
   do {
-    puVar3 = puVar3 + 1;
-    puVar5 = puVar5 + 1;
-    *puVar5 = *puVar3;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
+    source_cursor = source_cursor + 1;
+    vehicle_information_cursor = vehicle_information_cursor + 1;
+    *vehicle_information_cursor = *source_cursor;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
   pci_transmit_message_19_byte_4 = vehicle_engine_type_sales_code;
   pci_transmit_message_19_body_style = vehicle_body_style_code;
   pci_transmit_message_20_payload = vehicle_vin_string_cal[0];
-  iVar8 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_20_timer + 1);
-  pbVar4 = vehicle_vin_string_cal;
-  iVar7 = 1;
+  next_vin_index = 1;
+                    /* TX[21] F0 02 pci_transmit_message_21_payload: VIN characters 2-5 */
+  vin_characters_copied = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_20_timer + 1);
+  source_cursor = vehicle_vin_string_cal;
+  iVar1 = next_vin_index;
   do {
-    iVar6 = iVar7;
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar7 = iVar6 + 1;
-    iVar8 = iVar8 + 1;
-  } while (iVar8 < 4);
-  iVar8 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_21_timer + 1);
-  pbVar4 = vehicle_vin_string_cal + iVar6;
+    last_vin_index = iVar1;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    next_vin_index = last_vin_index + 1;
+    vin_characters_copied = vin_characters_copied + 1;
+    iVar1 = next_vin_index;
+  } while (vin_characters_copied < 4);
+                    /* TX[22] F0 06 pci_transmit_message_22_payload: VIN characters 6-9 */
+  vin_characters_copied = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_21_timer + 1);
+  source_cursor = vehicle_vin_string_cal + last_vin_index;
+  iVar1 = next_vin_index;
   do {
-    iVar6 = iVar7;
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar7 = iVar6 + 1;
-    iVar8 = iVar8 + 1;
-  } while (iVar8 < 4);
-  iVar8 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_22_timer + 1);
-  pbVar4 = vehicle_vin_string_cal + iVar6;
+    last_vin_index = iVar1;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    next_vin_index = last_vin_index + 1;
+    vin_characters_copied = vin_characters_copied + 1;
+    iVar1 = next_vin_index;
+  } while (vin_characters_copied < 4);
+                    /* TX[23] F0 0A pci_transmit_message_23_payload: VIN characters 10-13 */
+  vin_characters_copied = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_22_timer + 1);
+  source_cursor = vehicle_vin_string_cal + last_vin_index;
+  iVar1 = next_vin_index;
   do {
-    iVar6 = iVar7;
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar8 = iVar8 + 1;
-    iVar7 = iVar6 + 1;
-  } while (iVar8 < 4);
-  iVar7 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_23_timer + 1);
-  pbVar4 = vehicle_vin_string_cal + iVar6;
+    last_vin_index = iVar1;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    next_vin_index = last_vin_index + 1;
+    vin_characters_copied = vin_characters_copied + 1;
+    iVar1 = next_vin_index;
+  } while (vin_characters_copied < 4);
+                    /* TX[24] F0 0E pci_transmit_message_24_payload: VIN characters 14-17 */
+  byte_index = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_23_timer + 1);
+  source_cursor = vehicle_vin_string_cal + last_vin_index;
   do {
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  pbVar4 = &pci_frame_match_flags;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* RX[0] 68 6A OBD request payload (obd_request_source_address..): zero 8 bytes
+                        */
+  byte_index = 0;
+  payload_cursor = &pci_frame_match_flags;
   do {
-    pbVar4 = pbVar4 + 1;
-    *pbVar4 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 8);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 8);
   obd_request_source_address = 0xf0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_1_timer + 1);
+                    /* RX[2] 0E pci_receive_message_2_idle_speed_request: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_1_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  pbVar4 = pci_transmit_message_1_payload + 6;
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* RX[3] 1A pci_receive_message_3_payload: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = pci_transmit_message_1_payload + 6;
   do {
-    pbVar4 = pbVar4 + 1;
-    *pbVar4 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_0_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* RX[1] 24 diagnostic request (pci_diagnostic_request_target_address..): zero 7
+                       bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_0_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 7);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_2_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 7);
+                    /* RX[4] 2D pci_receive_message_4_module_address: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_2_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_4_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* RX[5] 37 pci_receive_message_5_shift_lever_position: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_4_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
   pci_transmit_message_6_payload = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_1_timer + 1);
+                    /* TX[1] 1E pci_transmit_message_1_payload: zero 7 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_1_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 7);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_6_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 7);
+                    /* RX[6] 4F C0 pci_receive_message_6_immobilizer_command: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_6_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_6_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* RX[7] 63 pci_receive_message_7_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_6_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_7_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* TX[12] 98 pci_transmit_message_12_status_bits: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_7_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_12_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
+                    /* RX[8] 6C pci_receive_message_8_byte_1: zero 5 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_12_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
   pci_receive_message_9_payload = 0;
   pci_transmit_message_18_payload = 0;
   pci_receive_message_10_climate_control_bits = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_3_timer + 1);
+                    /* RX[11] 72 pci_receive_message_11_odometer: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_3_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
   pci_receive_message_12_immobilizer_status_bits = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_12_timer + 1);
+                    /* RX[14] 42 pci_receive_message_14_engine_off_time: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_12_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
   return;
 }
 

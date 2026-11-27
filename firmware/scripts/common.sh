@@ -453,6 +453,28 @@ cmd_constants() {
     print_success "Constant definitions applied"
 }
 
+cmd_comments() {
+    print_header "APPLYING CODE COMMENTS: $FIRMWARE_NAME"
+
+    check_ghidra
+    check_project
+
+    COMMENTS_CSV="$OUTPUT_DIR/comments.csv"
+
+    if [ ! -f "$COMMENTS_CSV" ]; then
+        print_warning "comments.csv not found — skipping"
+        return 0
+    fi
+
+    echo "Applying code comments..."
+    echo "Source: $COMMENTS_CSV"
+    echo ""
+
+    run_script ApplyComments.java "$COMMENTS_CSV"
+
+    print_success "Code comments applied"
+}
+
 cmd_arrays() {
     print_header "APPLYING ARRAY DEFINITIONS: $FIRMWARE_NAME"
 
