@@ -400,7 +400,11 @@ All 3+, 2+, and 1-occurrence unnamed `_DAT_003Fxxxx` variables have been named (
 | `_param_id_lookup_table` | No longer stuck: it already rendered without the `_` (as `param_id_lookup_table`) before PR #53 round 60. It is the boot kernel's parameter ID table, typed since round 60 as `boot_parameter_id_table` (a `parameter_id_entry_t[20]` array, which applies over the ROM-to-RAM window) |
 | `_pad2` | A struct field whose `structure_definitions.csv` name starts with `_`: naming the field clears the warning once its use is known. `_pad5` was the boot J1939 transport session's frame queue status (`frame_queue_status`, PR #53 round 24). `_pad16` was the boot CAN ring's two full flags, now `boot_can_ring_state.transmit_ring_full_flag` (`mpc555_canTransmitQueuePush` sets it when its write pointer reaches the read pointer and returns 4 while it is set; `mpc555_manageCan1TransmitBuffer` clears it) and `.receive_ring_full_flag` (`mpc555_processCanReceiveBuffer` / `mpc555_dispatchCanMessageHandlers`) (PR #53 round 28). The two `_pad2` fields are named since PR #53 round 35: `j1939_tp_pause_t._pad2` was the boot J1939 transport receive session's next packet number and granted packet count (that struct is now `j1939_transport_receive_session_t`, shared with the application's twin), and `eeprom_block_tracking._pad2` is `failed_write_authorization_count` (`cm848_validateBootSecurityKey`) |
 
-**Remaining unnamed:** ~5 Bank-2 ROM constants (`_DAT_0005xxxx`, `_DAT_00008104`, `_DAT_00022c86`) with no RAM neighbor context — low value to name.
+**Remaining unnamed (PR #55):** no `_DAT_` is left, and 9 `DAT_` are left on purpose:
+- `DAT_00008000` / `DAT_00068000`: CMF erase interlock writes (commented in `comments.csv`).
+- `DAT_003070f1` / `DAT_003070f2`: 1-based TouCAN mailbox bases, one buffer before `toucan_a_message_buffers`.
+- `DAT_000575dd`, `DAT_00057d2e` / `DAT_00057d32`, `DAT_0053ac42`: computed bases 0x41 entries or one row before their tables.
+- `DAT_01000000` (EEPROM word 0): naming it retypes the EEPROM write callback's pointer.
 
 ### Batch `_DAT_` Naming Workflow
 
