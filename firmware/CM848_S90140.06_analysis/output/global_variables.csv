@@ -2463,14 +2463,14 @@ address,name,type,comment
 0x003fecc8,crc16_working_value,dword,
 0x003feccd,boot_sci_failed_key_count,byte,Wrong boot SCI security keys so far (cm848_bootSciCheckSecurityKey; reset by a correct key and by mpc555_initializeDiagnosticSession); a key request when it is 3 or more locks the boot SCI security out (boot_sci_security_state 2). Was diag_keep_alive_counter
 0x003fecce,boot_sci_key_retry_delay,word,Set to 1000 after a wrong boot SCI security key and counted down by cm848_decrementDiagnosticTimeout; while it is non-zero a key request is answered 2 (try later). Was diagnostic_cooldown_counter
-0x003fecd0,diag_serial_buffer,byte[33],
+0x003fecd0,diag_serial_buffer,byte[33],"Boot kernel SCI buffer: replies are built from index 0; mpc555_sciReceiveDataByte stores the received request from index 0x20 (0x3fecf0: service, subfunction = eeprom_diag_state, then parameters) for up to 254 bytes, over the time-shared EEPROM mirror, so only the first 33 bytes are typed"
 0x003fecd1,diag_serial_buffer[1],,
 0x003fecd2,diag_serial_buffer[2],,
 0x003fecd3,diag_serial_buffer[3],,
 0x003fecef,diag_serial_buffer[31],,
 0x003fecf1,eeprom_diag_state,EEPROM_DIAGNOSTIC_STATE,EEPROM diagnostic handler state machine
-0x003fecf2,eeprom_write_request_type,byte,EEPROM write operation type: 1=begin cal write 2=update magic
-0x003fecf6,eeprom_block_length_cal,word,
+0x003fecf2,eeprom_write_request_type,byte,"Boot kernel: byte 2 of the received serial request (diag_serial_buffer[0x22]): the EEPROM write operation type (1=begin cal write 2=update magic) for the byte readers; mpc555_sciHandleDownloadStart reads bytes 2-5 as the download start address (lwz) and mpc555_diagnosticServiceTransferBlock compares bytes 2-3 as a word, which is why it renders with a leading _ there"
+0x003fecf6,boot_sci_download_block_length,dword,"Boot kernel: bytes 6-9 of the received serial request (diag_serial_buffer[0x26]); mpc555_sciHandleDownloadStart (service 0x34 / 0x03) copies this length to eeprom_xfer_state.block_length (lwz) (was eeprom_block_length_cal - it is not calibration data)"
 0x003fed92,fault_entry_pointer_queue_count_cal,byte,Count of fault_entry_pointer_queue_cal (byte) - freed by narrowing 0x3fed91 to a byte (new row 2026-11-18) | e2m: e2m 1211 +2 Number_Of_OBD_Snapshots '[DGNOOBSN] Number of Snapshots that are OBDII in Fault_Snapshot_Table' (EEPROM 0x1910; count of the freeze frame pointers in the queue)
 0x003fed94,monitor_readiness_code_cal,dword,e2m 1211 +4 Readiness_Code '[DGRDCD] All non continuous monitors have run if value = 0000' (EEPROM 0x1912; 0xFFFFF7FF here). OBD readiness: all bits set at init, each monitor clears its bit when it completes; bit 0x100 feeds OBD PID 1 byte B bit 4 (misfire incomplete); the engine-off MIL blink compares it with mil_blink_inhibit_fault_pending_value. Width dword (lwz / stw r12,0(r5) @ 0x52d634). Distinct from system_switch_status / system_switch_status_2 (0x40a813 / 0x40a815). (was fault_pending_flags)
 0x003fed9c,fault_entry_pointer_queue_cal,fault_entry_t *[8],8 pointers into fault_freeze_frame_entries_cal (count in fault_entry_pointer_queue_count_cal); the SCI high speed tables 248 / 249 read freeze frames through it (4 entries of 50 bytes + a bank offset). Typed as a pointer array 2026-11-18 (was fault_entry_ptr_queue)

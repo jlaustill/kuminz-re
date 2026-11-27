@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:26:50 UTC 2026
+// Generated: Fri Nov 27 02:31:06 UTC 2026
 
 
 //
@@ -5962,7 +5962,7 @@ void mpc555_sciHandleDownloadStart(void)
     if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
       ram0x003fedfd = 0;
       ram0x003fee01 = _eeprom_write_request_type;
-      eeprom_xfer_state.block_length = _eeprom_block_length_cal;
+      eeprom_xfer_state.block_length = boot_sci_download_block_length;
       MVar2 = cm848_lookupBootMemoryRegionType(_eeprom_write_request_type,1);
       if (MVar2 != MEMORY_REGION_TYPE_UNMAPPED) {
         uVar1 = 0x73;
