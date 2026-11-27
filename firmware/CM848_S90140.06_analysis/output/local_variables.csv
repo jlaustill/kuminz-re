@@ -1,4 +1,4 @@
-function_address,function_name,old_name,new_name,type,comment
+function_address,function_name,old_name,new_name,type,comment,keep_merged
 # Format: old_name is the decompiler's generated name (e.g., puVar1)
 # Run ./analyze.sh localvars to apply, then ./analyze.sh export to see changes
 #
@@ -36,7 +36,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,wVar1,erase_result,short,mpc555_beginReflash(serial)'s result - nonzero when both erases succeeded (0x73 into diag_session_state_byte; 0 gives 0x22) (was eeprom_init_result whose note said 0=success; PR #53 round 67)
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diagnostic_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
 # cm848_checkCruiseSwitchLearnCondition @ 0x00512e70 (was governor_cruise_engage_check) - cruise-engage gate (reviewed via review-function-readability)
-0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar1,cruise_switch_adc_value,ushort,Live or overridden cruise-switch ADC reading compared against the valid window (ushort emits a benign Unable-to-use-type warning, same as message_data_length on main)
+0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar1,cruise_switch_adc_value,undefined2,"Live or overridden cruise-switch ADC reading compared against the valid window (typed undefined2 so the decompiler keeps its own ushort; a committed word type emitted an Unable-to-use-type warning)"
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar3,learn_condition_met,undefined4,Return flag - 1 for a fresh ON / OFF request with the cruise switch ADC inside its window (was engage_allowed)
 # cm848_processUnsignedSensorChannel @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
@@ -45,7 +45,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00038ac8,cm848_checkPciMessageTimeouts,bVar2,all_transmits_overdue,byte,True until any timed TX entry is still within interval + grace; when it stays true link_event_code = 7
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
 0x00038ac8,cm848_checkPciMessageTimeouts,puVar3,transmit_timer,ushort *,Cached pci_transmit_message_table[message_index].timer
-0x00038ac8,cm848_checkPciMessageTimeouts,uVar1,receive_interval,word,Cached pci_receive_message_table[message_index].interval (receive timeout)
+0x00038ac8,cm848_checkPciMessageTimeouts,uVar1,receive_interval,undefined2,Cached pci_receive_message_table[message_index].interval (receive timeout)
 0x0003adcc,cm848_schedulePciTransmit,pbVar1,payload_length,byte *,data_length pointer of the overdue TX entry
 0x0003adcc,cm848_schedulePciTransmit,pbVar2,payload,byte *,data_buffer pointer of the overdue TX entry
 0x0003adcc,cm848_schedulePciTransmit,uVar3,transmit_index,uint,pci_transmit_message_table entry being checked
@@ -109,7 +109,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x005012dc,cm848_processUnsignedSensorChannel,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
 0x005012dc,cm848_processUnsignedSensorChannel,dVar4,ema_result,undefined4,cm848_exponentialMovingAverage output written to sensor_channel_filtered_output
 0x005012dc,cm848_processUnsignedSensorChannel,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
-0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,configuration_pointer->recovery_decrement copy
+0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,undefined2,configuration_pointer->recovery_decrement copy
 0x005012dc,cm848_processUnsignedSensorChannel,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
@@ -159,7 +159,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00007370,cm848_validateBootSecurityKey,pbVar4,timestamp_source_pointer,byte*,Source of the timestamp byte copy (PR #53 round 94)
 0x00007370,cm848_validateBootSecurityKey,pbVar5,timestamp_destination_pointer,byte*,Destination of the timestamp byte copy (PR #53 round 94)
 0x00538ef4,cm848_dispatchJ1939ReceivedMessages,local_20,pgn_key,ushort,The key the receive handler table is searched with: the record's PDU format and PDU specific bytes; for a destination-specific PGN (format below 0xf0) the format byte alone (shifted to the high byte) when the message is for this ECM or global (PR #53 round 98)
-0x00010274,mpc555_dispatchExternalInterrupt,uVar1,entry_time_base_low,uint,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,uVar1,entry_time_base_low,undefined4,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,uVar2,exit_time_base_low,uint,TBL at exit: exit - entry is the handler's run time in time base counts (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
@@ -168,9 +168,29 @@ function_address,function_name,old_name,new_name,type,comment
 0x00010274,mpc555_dispatchExternalInterrupt,uVar7,current_interrupt_mask,ushort,SIMASK read again: ANDed with the nesting mask of the interrupt code and written back (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,bVar8,interrupt_code,byte,The SIVEC interrupt code byte (4 x the source number) (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,bVar9,low_sum_carry,bool,Carry of the low word's add into the high word (PR #53 round 98)
-0x0001041c,mpc555_handleDecrementerException,uVar1,entry_time_base_low,uint,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,uVar1,entry_time_base_low,undefined4,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,uVar2,exit_time_base_low,uint,TBL at exit: exit - entry is the handler's run time in time base counts (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
+0x0003a450,cm848_initializePciMessagePayloads,iVar7,byte_index,int32_t,"Loop counter of each buffer fill",yes
+0x0003a450,cm848_initializePciMessagePayloads,iVar8,vin_characters_copied,int32_t,"Counts the 4 VIN characters copied into each of TX[21]-TX[23]",yes
+0x0003a450,cm848_initializePciMessagePayloads,iVar6,last_vin_index,int32_t,"Index of the VIN character copied last; the next copy reads vehicle_vin_string_cal[last_vin_index + 1]",yes
+0x0003a450,cm848_initializePciMessagePayloads,uVar2,announcement_byte,byte,"TX[10] byte: pci_ecm_address first then the bytes of pci_diagnostic_power_up_announcement",yes
+0x0003a450,cm848_initializePciMessagePayloads,puVar5,vehicle_information_cursor,byte *,"Write cursor in pci_transmit_message_19_payload",yes
+0x0003a450,cm848_initializePciMessagePayloads,puVar3,payload_cursor,byte *,"Write cursor of each fill. stbu pre-increments it, so it starts one byte before the buffer and Ghidra names that byte (the previous message timer); comments.csv names the real buffer",yes
+0x0003a450,cm848_initializePciMessagePayloads,pbVar4,payload_cursor,byte *,"The same write cursor in the register the compiler used for the TX[0] / RX[0] / RX[3] fills",yes
+0x0003a450,cm848_initializePciMessagePayloads,r6@0x0003a6e8,next_vin_index,int32_t,"Index of the next VIN character to copy (r6): 1 after TX[20] took character 0. Pinned - the decompiler had merged it into the loop counter",yes
+0x0003a450,cm848_initializePciMessagePayloads,r6@0x0003a704,next_vin_index,int32_t,"The VIN index after the TX[21] loop increment",yes
+0x0003a450,cm848_initializePciMessagePayloads,r6@0x0003a734,next_vin_index,int32_t,"The VIN index after the TX[22] loop increment",yes
+0x0003a450,cm848_initializePciMessagePayloads,r6@0x0003a764,next_vin_index,int32_t,"The VIN index after the TX[23] loop increment",yes
+0x0003a450,cm848_initializePciMessagePayloads,r5@0x0003a694,source_cursor,byte *,"Read cursor in pci_transmit_message_19_initial_payload (lbzu: starts one byte before it)",yes
+0x0003a450,cm848_initializePciMessagePayloads,r3@0x0003a6f8,source_cursor,byte *,"Read cursor in vehicle_vin_string_cal for TX[21]",yes
+0x0003a450,cm848_initializePciMessagePayloads,r5@0x0003a728,source_cursor,byte *,"Read cursor in vehicle_vin_string_cal for TX[22]",yes
+0x0003a450,cm848_initializePciMessagePayloads,r4@0x0003a758,source_cursor,byte *,"Read cursor in vehicle_vin_string_cal for TX[23]",yes
+0x0003a450,cm848_initializePciMessagePayloads,r4@0x0003a788,source_cursor,byte *,"Read cursor in vehicle_vin_string_cal for TX[24]",yes
+0x0003a450,cm848_initializePciMessagePayloads,r4@0x0003a6f4,vin_payload_cursor,byte *,"TX[21] VIN write cursor",yes
+0x0003a450,cm848_initializePciMessagePayloads,r4@0x0003a71c,vin_payload_cursor,byte *,"TX[22] VIN write cursor",yes
+0x0003a450,cm848_initializePciMessagePayloads,r5@0x0003a74c,vin_payload_cursor,byte *,"TX[23] VIN write cursor",yes
+0x0003a450,cm848_initializePciMessagePayloads,r5@0x0003a77c,vin_payload_cursor,byte *,"TX[24] VIN write cursor",yes

@@ -1,0 +1,59 @@
+address,comment
+# PRE comments: the decompiler prints each above the statement at that instruction address.
+# cm848_initializePciMessagePayloads: every loop pointer starts one byte before its buffer (stbu/lbzu pre-increment), so Ghidra shows the byte before it (the previous message timer); each comment names the buffer the loop really fills.
+0x0003a450,TX[8] 48 6B OBD response payload (obd_response_source_address..): zero 9 bytes 0x40b47f-0x40b487
+0x0003a470,TX[10] 26 diagnostic response pci_transmit_message_10: pci_ecm_address then pci_diagnostic_power_up_announcement (9 bytes 0x40b492-0x40b49a)
+0x0003a4b8,TX[0] 10 pci_transmit_message_0_payload: zero 5 bytes
+0x0003a4d8,Spare TX 16 pci_spare_transmit_message_payload: zero 3 bytes
+0x0003a4f8,TX[2] 35 pci_transmit_message_2_payload: zero 2 bytes
+0x0003a518,TX[3] B0 pci_transmit_message_3_payload: zero 3 bytes
+0x0003a544,TX[4] D1 03 pci_transmit_message_4_engine_load: zero 3 bytes
+0x0003a564,TX[5] 53 pci_transmit_message_5_payload: zero 2 bytes
+0x0003a584,TX[7] 3F pci_transmit_message_7_payload: zero 4 bytes
+0x0003a5a4,TX[9] 4F 10 pci_transmit_message_9_immobilizer_command: zero 4 bytes
+0x0003a5c4,TX[11] 5D pci_transmit_message_11_payload: zero 5 bytes
+0x0003a5e4,RX[13] 92 pci_receive_message_13_payload: zero 2 bytes
+0x0003a614,TX[14] C0 pci_transmit_message_14_payload: zero 4 bytes
+0x0003a644,TX[16] D2 pci_transmit_message_16_byte_1: zero 4 bytes
+0x0003a664,TX[17] D1 01 pci_transmit_message_17_byte_1: zero 4 bytes
+0x0003a684,TX[19] ED pci_transmit_message_19_payload: copy 5 bytes of pci_transmit_message_19_initial_payload
+0x0003a6ec,TX[21] F0 02 pci_transmit_message_21_payload: VIN characters 2-5
+0x0003a714,TX[22] F0 06 pci_transmit_message_22_payload: VIN characters 6-9
+0x0003a744,TX[23] F0 0A pci_transmit_message_23_payload: VIN characters 10-13
+0x0003a774,TX[24] F0 0E pci_transmit_message_24_payload: VIN characters 14-17
+0x0003a7a4,RX[0] 68 6A OBD request payload (obd_request_source_address..): zero 8 bytes
+0x0003a7d0,RX[2] 0E pci_receive_message_2_idle_speed_request: zero 2 bytes
+0x0003a7f0,RX[3] 1A pci_receive_message_3_payload: zero 4 bytes
+0x0003a810,RX[1] 24 diagnostic request (pci_diagnostic_request_target_address..): zero 7 bytes
+0x0003a830,RX[4] 2D pci_receive_message_4_module_address: zero 2 bytes
+0x0003a850,RX[5] 37 pci_receive_message_5_shift_lever_position: zero 2 bytes
+0x0003a880,TX[1] 1E pci_transmit_message_1_payload: zero 7 bytes
+0x0003a8a0,RX[6] 4F C0 pci_receive_message_6_immobilizer_command: zero 4 bytes
+0x0003a8c0,RX[7] 63 pci_receive_message_7_payload: zero 2 bytes
+0x0003a8e0,TX[12] 98 pci_transmit_message_12_status_bits: zero 3 bytes
+0x0003a900,RX[8] 6C pci_receive_message_8_byte_1: zero 5 bytes
+0x0003a950,RX[11] 72 pci_receive_message_11_odometer: zero 4 bytes
+0x0003a980,RX[14] 42 pci_receive_message_14_engine_off_time: zero 2 bytes
+# mpc555_cmfEraseBlocks: after CMFCTL PE and SES are set (| 6), each store of 0xffffffff is an erase interlock write to one 32 KB block; Ghidra warns because ROM is mapped read-only.
+0x00004af0,CMF_A erase interlock writes: blocks 1-7 (0x8000-0x38000); block 0 (0x0-0x7fff - the boot kernel) is not written
+0x00004b84,CMF_B erase interlock writes: blocks 0-5 (0x40000-0x68000)
+# flash2 command cycles (0xaa to 0x500aaa, 0x55 to 0x500554, command to 0x500aaa). Flash2 is mapped read-only, so the decompiler treats each first 0xaa store to 0x500aaa as dead (the command overwrites it) and does not print it; the comment lists every cycle the code really writes.
+0x00001228,flash2 chip erase: unlock (0xaa / 0x55) then 0x80 then unlock again then 0x10
+0x000012d8,flash2 unlock bypass: unlock (0xaa / 0x55) then 0x20; each word is then programmed with 0xa0 to flash2_command_register
+0x000028a0,flash2 autoselect: unlock (0xaa / 0x55) then 0x90; flash2_command_register._0_2_ then reads the manufacturer ID and ._2_2_ the device ID
+0x00002a0c,"The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the code / length byte) of each of toucan_a_message_buffers[0-15]"
+0x00539904,"The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the code / length byte) of each of toucan_a_message_buffers[0-15]"
+0x00002ac4,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00005154,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00053740,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00539570,"Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length byte and ID word"
+0x00055584,"The sthu pre-increments by 2 from 0x3049fe, so the loop fills QADC64A_CCW0 onward (the 64 QADC-A conversion command words at 0x304a00)"
+0x000555b4,"The sthu pre-increments by 2 from 0x304dfe, so the loop fills QADC64B_CCW0 onward (the 64 QADC-B conversion command words at 0x304e00)"
+0x0003d9a4,"The sthu pre-increments by 2 from 0x30517e, so the loop copies the job's transmit words into qsmcm_tranram (0x305180)"
+0x0003d9ac,"The stbu pre-increments by 1 from 0x3051bf, so the loop copies the job's command bytes into qsmcm_comdram_0 onward (0x3051c0)"
+0x0003dc28,"The lhzu pre-increments by 2 from 0x30513e, so the loop reads qsmcm_recram (0x305140) into the job's receive words"
+0x000051a0,"The lbzu pre-increments from 0x3070f5 + mailbox offset; mailbox numbers are 1-based, so it reads the data bytes (offset 6) of toucan_a_message_buffers[n - 1]"
+0x00006ee8,"Boot kernel, time-shared RAM: ram0x003fedfd is a dword at an odd address (inside the application's diag_clear_flags_t_003fedfc) that the download start zeroes; the Bank-2 flash2_write_callback gets it as its second argument"
+0x00006efc,"Boot kernel, time-shared RAM: ram0x003fee01 is the download start address, the dword at bytes 2-5 of the request (read here as _eeprom_write_request_type); later blocks write at it + eeprom_xfer_state.bytes_transferred"
+0x000204ec,"0x575dd is the table base minus 0x41: the echo lengths of services 0x41-0x4e are the bytes at 0x5761e-0x5762b"
+0x0004a96c,"Rows are 1-based: row n's 8-byte mask record is at 0x57d2e + 8 x n (row 1 at 0x57d36); its second dword (0x57d32 + 8 x n) is the fast-decay flag mask"

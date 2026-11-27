@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 21:32:04 MST 2026
+// Generated: Fri Nov 27 04:56:55 UTC 2026
 
 
 //
@@ -899,6 +899,8 @@ short cm848_flashEraseChip(void)
     reflash_transfer_state.flash2_erase_state = 2;
     do {
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
+                    /* flash2 chip erase: unlock (0xaa / 0x55) then 0x80 then unlock again then 0x10
+                        */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
@@ -932,6 +934,8 @@ undefined2 cm848_flashWriteWord(undefined2 *param_1,undefined2 *param_2)
   
   if (flash2_operation_active_flag == 0) {
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
+                    /* flash2 unlock bypass: unlock (0xaa / 0x55) then 0x20; each word is then
+                       programmed with 0xa0 to flash2_command_register */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
     uRam00500554 = 0x55;
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
@@ -1601,8 +1605,8 @@ void mpc555_initializeDiagnosticResponseHandlers(void)
        boot_j1939_transport_transmit_frame_buffer;
   boot_j1939_transport_receive_session.receive_buffer_pointer = &boot_j1939_transport_receive_buffer
   ;
-  cm848_registerPgnResponseHandler(0xec00,&DAT_003fbe5c);
-  cm848_registerPgnResponseHandler(0xeb00,&DAT_003fbbb4);
+  cm848_registerPgnResponseHandler(0xec00,&mpc555_dispatchJ1939TransportConnectionManagement_ram);
+  cm848_registerPgnResponseHandler(0xeb00,&mpc555_handleJ1939TransportDataPacket_ram);
   return;
 }
 
@@ -2101,6 +2105,9 @@ void mpc555_hardwareInitialization(void)
   mpc555_initializeQspiRegisters();
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
+                    /* flash2 autoselect: unlock (0xaa / 0x55) then 0x90;
+                       flash2_command_register._0_2_ then reads the manufacturer ID and ._2_2_ the
+                       device ID */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
   uRam00500554 = 0x55;
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
@@ -2160,6 +2167,8 @@ void mpc555_initializeCanController(void)
   toucan_a.RX14MSK = 0x1feffe00;
   toucan_a.CANICR = 0x400;
   bVar3 = 0;
+                    /* The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the
+                       code / length byte) of each of toucan_a_message_buffers[0-15] */
   puVar2 = &DAT_003070f1;
   do {
     puVar2 = puVar2 + 0x10;
@@ -2207,6 +2216,9 @@ void mpc555_initializeDiagnosticSubsystem(void)
   can_mailbox_counter.slot_start = (word)iVar5;
   can_mailbox_counter.slot_end = wVar2 + 5;
   ecu_power_state_flags.mailbox_index = wVar2 + 5;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
   boot_can_ring_state.transmit_message_buffer_pointer =
        (dword)(&UNK_003070f0 + (iVar5 * 0x10 & 0xffff0));
   uVar4 = 0;
@@ -2214,7 +2226,8 @@ void mpc555_initializeDiagnosticSubsystem(void)
   cVar3 = can_rx_channel_filter;
   puVar1 = &UNK_003070f0 + (iVar5 * 0x10 & 0xffff0);
   do {
-    *(uint *)(puVar1 + 0x12) = (&DAT_00007f6a)[uVar4 & 0xff] | (cVar3.channel_id & 0xff) << 9;
+    *(dword *)(puVar1 + 0x12) =
+         boot_can_receive_mailbox_id_templates[uVar4 & 0xff] | (cVar3.channel_id & 0xff) << 9;
     uVar4 = uVar4 + 1;
     puVar1[0x11] = 0x40;
     bVar6 = bVar6 + 1;
@@ -2312,7 +2325,7 @@ bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *ha
 void cm848_registerPgnEf00Handler(byte sub_id,void *handler)
 
 {
-  cm848_registerPgnResponseHandler(0xef00,&DAT_003fc8f4);
+  cm848_registerPgnResponseHandler(0xef00,&cm848_dispatchDiagnosticService_ram);
   return;
 }
 
@@ -2336,7 +2349,6 @@ byte * cm848_lookupEepromParameterAddress(byte parameter)
   int iVar1;
   intake_air_heater_saved_values_t *piVar2;
   
-  piVar2 = (intake_air_heater_saved_values_t *)&DAT_003fee38;
   if (parameter - 1 < 4) {
     piVar2 = (intake_air_heater_saved_values_t *)
              (eeprom_shadow_header.security_master_password + parameter + 0xb);
@@ -2358,7 +2370,8 @@ byte * cm848_lookupEepromParameterAddress(byte parameter)
       }
       iVar1 = 4;
     }
-    mpc555_eepromReadWords(parameter + 0x1000010 + iVar1,&DAT_003fee38,2);
+    mpc555_eepromReadWords(parameter + 0x1000010 + iVar1,&boot_eeprom_parameter_lookup_buffer,2);
+    piVar2 = (intake_air_heater_saved_values_t *)&boot_eeprom_parameter_lookup_buffer;
   }
   return (byte *)piVar2;
 }
@@ -2409,8 +2422,9 @@ void cm848_dispatchBootSciDiagnosticCommand(void)
   bVar1 = false;
   uVar2 = 0;
   do {
-    if (*boot_sci_session_state.response_cursor_pointer == (&DAT_00007f7a)[uVar2 * 5]) {
-      (**(code **)((int)&eepromStatusHandler_ptr0 + uVar2 * 5))();
+    if (*boot_sci_session_state.response_cursor_pointer ==
+        boot_sci_command_dispatch_table[uVar2].command) {
+      (*boot_sci_command_dispatch_table[uVar2].handler)();
       bVar1 = true;
     }
     uVar2 = uVar2 + 1 & 0xff;
@@ -2762,7 +2776,8 @@ void cm848_bootSciCheckSecurityKey(void)
   uVar1 = oil_change_monitor_distance_pulses_cal._0_1_ + 1;
   oil_change_monitor_distance_pulses_cal._0_1_ = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
-    if ((char)((char)oil_change_monitor_distance_pulses_cal + DAT_003fee3c + ',') == DAT_003fee3d) {
+    if ((byte)((char)oil_change_monitor_distance_pulses_cal + boot_sci_security_key_low_byte + 0x2c)
+        == boot_sci_security_key_checksum) {
       if (boot_sci_security_state == 1) {
         diag_serial_buffer[boot_sci_session_state.response_write_index] = 0;
         boot_sci_session_state.response_write_index =
@@ -2771,7 +2786,8 @@ void cm848_bootSciCheckSecurityKey(void)
       else if ((boot_sci_failed_key_count < 3) && (boot_sci_security_state != 2)) {
         if (boot_sci_key_retry_delay == 0) {
           serial_response_crc_expected =
-               CONCAT11((char)oil_change_monitor_distance_pulses_cal,DAT_003fee3c);
+               CONCAT11((char)oil_change_monitor_distance_pulses_cal,boot_sci_security_key_low_byte)
+          ;
           cm848_verifySerialResponse();
           if (diag_serial_crc_match_flag == 0) {
             boot_sci_failed_key_count = boot_sci_failed_key_count + 1;
@@ -2875,7 +2891,7 @@ void cm848_sendDiagnosticResponse(void)
   
   uVar1 = 0;
   do {
-    diag_serial_buffer[uVar1] = (&DAT_00007f94)[uVar1];
+    diag_serial_buffer[uVar1] = boot_sci_command_50_reply_template[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 6);
   boot_sci_session_state.response_write_index = 6;
@@ -3074,10 +3090,10 @@ void cm848_verifySerialResponse(void)
 
 {
   diag_serial_crc_match_flag =
-       ((crc16_working_value ^ *(ushort *)(&DAT_00007f9a + (crc16_working_value >> 0xc & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 8 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 4 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value & 0xf) * 2) ^ 0x1911) & 0xffff) ==
+       ((crc16_working_value ^ boot_sci_security_key_nibble_table[crc16_working_value >> 0xc & 0xf]
+         ^ (uint)boot_sci_security_key_nibble_table[crc16_working_value >> 8 & 0xf] ^
+         (uint)boot_sci_security_key_nibble_table[crc16_working_value >> 4 & 0xf] ^
+         (uint)boot_sci_security_key_nibble_table[crc16_working_value & 0xf] ^ 0x1911) & 0xffff) ==
        (uint)serial_response_crc_expected;
   return;
 }
@@ -3365,7 +3381,7 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
   byte bVar1;
   undefined4 uVar2;
   uint uVar3;
-  undefined1 *puVar4;
+  byte *pbVar4;
   
   if (reflash_transfer_state.buffer_write_enabled_flag == 0) {
     data_transfer_buffer_status = 0;
@@ -3384,10 +3400,10 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
     reflash_transfer_state.byte_count = (word)(uVar3 + param_3);
     if (((uVar3 + param_3 & 0xffff) < 0x1001) &&
        (cm848_serviceSupervisorWatchdog(), (param_3 & 0xffff) != 0)) {
-      puVar4 = (undefined1 *)(param_1 + -1);
+      pbVar4 = (byte *)(param_1 + -1);
       do {
-        puVar4 = puVar4 + 1;
-        (&DAT_003fdc3a)[data_transfer_write_index] = *puVar4;
+        pbVar4 = pbVar4 + 1;
+        (&boot_data_transfer_ring_buffer)[data_transfer_write_index] = *pbVar4;
         uVar3 = data_transfer_write_index + 1;
         data_transfer_write_index = (short)uVar3 + (short)((int)(uVar3 & 0xffff) >> 0xc) * -0x1000;
         param_3 = param_3 + 0xffff;
@@ -3453,13 +3469,14 @@ void cm848_fillFlashProgramPageBuffer(void)
   if ((uVar2 & 0xff) != 0x40) {
     uVar4 = 0;
     do {
-      (&DAT_003fec3a)[uVar4] = 0xff;
+      boot_flash_program_page_buffer[uVar4] = 0xff;
       mpc555_sciPollDuringEepromWrite();
       uVar4 = uVar4 + 1 & 0xff;
     } while (uVar4 < 0x40);
   }
   for (; uVar1 < uVar3; uVar1 = uVar1 + 1 & 0xff) {
-    (&DAT_003fec3a)[uVar1] = (&DAT_003fdc3a)[data_transfer_read_index];
+    boot_flash_program_page_buffer[uVar1] =
+         (&boot_data_transfer_ring_buffer)[data_transfer_read_index];
     uVar4 = data_transfer_read_index + 1;
     data_transfer_read_index = (short)uVar4 + (short)((int)(uVar4 & 0xffff) >> 0xc) * -0x1000;
     mpc555_sciPollDuringEepromWrite();
@@ -3852,6 +3869,8 @@ bool mpc555_cmfEraseBlocks(uint param_1)
     }
     CMFCTL_A = uVar8 | cmf_erase_control_bits | 4;
     CMFCTL_A = uVar8 | cmf_erase_control_bits | 6;
+                    /* CMF_A erase interlock writes: blocks 1-7 (0x8000-0x38000); block 0
+                       (0x0-0x7fff - the boot kernel) is not written */
     DAT_00008000 = 0xffffffff;
                     /* WARNING: Read-only address (ram,0x00010000) is written */
     uRam00010000 = 0xffffffff;
@@ -3876,6 +3895,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
     CMFCTL_B = uVar9 | cmf_erase_control_bits | 4;
     CMFCTL_B = uVar9 | cmf_erase_control_bits | 6;
                     /* WARNING: Read-only address (ram,0x00040000) is written */
+                    /* CMF_B erase interlock writes: blocks 0-5 (0x40000-0x68000) */
     uRam00040000 = 0xffffffff;
                     /* WARNING: Read-only address (ram,0x00048000) is written */
     uRam00048000 = 0xffffffff;
@@ -4149,6 +4169,9 @@ void mpc555_processCanReceiveBuffer(int param_1)
   bVar3 = boot_can_ring_state.receive_ring_full_flag;
   if (bVar3 == 0) {
     param_1 = param_1 * 0x10;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
     pjVar1 = boot_can_ring_state.receive_write_pointer;
     uVar9 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
             *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
@@ -4163,6 +4186,9 @@ void mpc555_processCanReceiveBuffer(int param_1)
     puVar8 = (undefined1 *)((int)&pjVar1->data_pointer + 3);
     do {
       puVar7 = puVar7 + 1;
+                    /* The lbzu pre-increments from 0x3070f5 + mailbox offset; mailbox numbers are
+                       1-based, so it reads the data bytes (offset 6) of toucan_a_message_buffers[n
+                       - 1] */
       puVar8 = puVar8 + 1;
       *puVar8 = *puVar7;
       uVar10 = uVar10 + 1;
@@ -5424,7 +5450,7 @@ void mpc555_sciSendServiceResponse(byte param_1,int param_2)
   }
   diag_serial_buffer[3] = 0;
   boot_sci_session_state.response_write_index = 4;
-  diagnostic_callback_ptr = &DAT_003fc1fc;
+  diagnostic_callback_ptr = &mpc555_diagnosticSubcommandDispatcher_ram;
   diag_serial_buffer[2] = param_1;
   mpc555_sciStartResponseTransmit();
   return;
@@ -5467,7 +5493,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_pointer)
     }
     if (eeprom_diag_state == EEPROM_DIAGNOSTIC_SEND_VERSION) {
       cm848_sendSerialDownloadStatusResponse();
-      diagnostic_callback_ptr = &DAT_003fc1fc;
+      diagnostic_callback_ptr = &mpc555_diagnosticSubcommandDispatcher_ram;
       diag_request_pending_flag = 0;
       return;
     }
@@ -5948,9 +5974,17 @@ void mpc555_sciHandleDownloadStart(void)
   
   if (serial_reflash_busy_flag == 0) {
     if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
+                    /* Boot kernel, time-shared RAM: ram0x003fedfd is a dword at an odd address
+                       (inside the application's diag_clear_flags_t_003fedfc) that the download
+                       start zeroes; the Bank-2 flash2_write_callback gets it as its second argument
+                        */
       ram0x003fedfd = 0;
+                    /* Boot kernel, time-shared RAM: ram0x003fee01 is the download start address,
+                       the dword at bytes 2-5 of the request (read here as
+                       _eeprom_write_request_type); later blocks write at it +
+                       eeprom_xfer_state.bytes_transferred */
       ram0x003fee01 = _eeprom_write_request_type;
-      eeprom_xfer_state.block_length = _eeprom_block_length_cal;
+      eeprom_xfer_state.block_length = boot_sci_download_block_length;
       MVar2 = cm848_lookupBootMemoryRegionType(_eeprom_write_request_type,1);
       if (MVar2 != MEMORY_REGION_TYPE_UNMAPPED) {
         uVar1 = 0x73;
@@ -6007,7 +6041,8 @@ void mpc555_sciHandleDownloadDataBlock(void)
     dVar2 = eeprom_xfer_state.block_length;
     if (dVar1 <= dVar2) {
       bVar5 = cm848_trackDownloadBlock
-                        (&DAT_003fecf3,register0x00000010,local_30,BOOT_REQUEST_CHANNEL_SERIAL);
+                        (&boot_sci_request_data,register0x00000010,local_30,
+                         BOOT_REQUEST_CHANNEL_SERIAL);
       serial_download_region_type =
            cm848_lookupBootMemoryRegionType(ram0x003fee01,(uint)local_30[0]);
       if (bVar5 != 0xff) {
@@ -6019,7 +6054,7 @@ void mpc555_sciHandleDownloadDataBlock(void)
         diag_request_pending_flag = 0;
         if (serial_download_region_type != MEMORY_REGION_TYPE_MAIN_FLASH) {
           pcVar3 = (code *)eeprom_xfer_state.flash2_write_callback;
-          sVar4 = (*pcVar3)(&DAT_003fecf3,ram0x003fedfd,local_30[0]);
+          sVar4 = (*pcVar3)(&boot_sci_request_data,ram0x003fedfd,local_30[0]);
           if (sVar4 == 0) {
             serial_reflash_busy_flag = 0;
             mpc555_sciSendServiceResponse(0x40,0x7f);
@@ -6034,7 +6069,7 @@ LAB_00007110:
         dVar1 = eeprom_xfer_state.bytes_transferred;
         dVar2 = eeprom_xfer_state.block_length;
         cVar6 = cm848_dataTransferBufferWrite
-                          (&DAT_003fecf3,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
+                          (&boot_sci_request_data,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
         if (cVar6 != '\x01') {
           serial_reflash_busy_flag = cVar6 == '\x02';
           goto LAB_00007110;
@@ -6043,17 +6078,17 @@ LAB_00007110:
       }
       else if (serial_download_region_type == MEMORY_REGION_TYPE_EEPROM) {
         serial_reflash_busy_flag = 1;
-        DAT_003fee06 = 1;
+        boot_eeprom_download_in_progress_flag = 1;
         mpc555_sciSendServiceResponse(0x78,0x74);
         while (diag_serial_transfer_phase == 3) {
           mpc555_sciPollDuringEepromWrite();
         }
         diag_request_pending_flag = 0;
         pcVar3 = (code *)eeprom_xfer_state.eeprom_write_callback;
-        (*pcVar3)(&DAT_003fecf3,unique0x10000146 - 0x1000000,local_30[0]);
+        (*pcVar3)(&boot_sci_request_data,unique0x10000146 - 0x1000000,local_30[0]);
         serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x73;
-        DAT_003fee06 = 0;
+        boot_eeprom_download_in_progress_flag = 0;
         return;
       }
     }
@@ -6787,21 +6822,6 @@ void cm848_forceSupervisorWatchdogReset(void)
   qsmcm_qspi.SPCR0 = wVar1;
   qsmcm_portqs_low = 0x7b;
   return;
-}
-
-
-
-//
-// Function: cm848_keyOnStatusMonitor @ 0x0000b44c
-//
-
-/* WARNING: Control flow encountered bad instruction data */
-
-void cm848_keyOnStatusMonitor(void)
-
-{
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
 }
 
 
@@ -10931,7 +10951,6 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
@@ -10939,6 +10958,7 @@ void mpc555_dispatchExternalInterrupt(void)
   word saved_interrupt_mask;
   word current_interrupt_mask;
   byte interrupt_code;
+  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -10978,7 +10998,6 @@ void mpc555_dispatchExternalInterrupt(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* WARNING: Unable to use type for symbol entry_time_base_low */
 /* The decrementer exception handler: the application's exception table at ROM 0x8000 branches here
    from slot 9 (vector 0x900). In order: it reads the time base; adds 1 to
    throughput_window_decrementer_count; while power_down_start_flag is set it saves and clears
@@ -10999,12 +11018,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
+  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -12424,8 +12443,7 @@ void cm848_runWastegateDutyController(void)
    wastegate_duty_integrator_q16, governor_rpm_band_rate_working, the duty request of the controller
    state struct and the battery-voltage averaging accumulator wastegate_battery_voltage_filter_state
    (coefficient pointer set to wastegate_battery_voltage_filter_coefficient), and sets the twelve
-   lookup hint words DAT_003fa17e to DAT_003fa19a to 2. (was mpc555_initTurboCompensationVariables)
-    */
+   lookup hint words 0x3fa17e to 0x3fa19a to 2. (was mpc555_initTurboCompensationVariables) */
 
 void cm848_initializeWastegateDutyController(void)
 
@@ -12443,7 +12461,7 @@ void cm848_initializeWastegateDutyController(void)
   turbocharger_speed_derate_gain_cached_axis_offset = 2;
   wastegate_duty_ceiling_adjustment_by_altitude_cached_axis_offset = 2;
   wastegate_duty_second_error_gain_by_error_cached_axis_offset = 2;
-  DAT_003fa192 = 2;
+  wastegate_duty_unused_cached_axis_offset = 2;
   wastegate_duty_floor_cached_axis_offsets[0] = 2;
   wastegate_duty_floor_cached_axis_offsets[1] = 2;
   wastegate_duty_ceiling_cached_axis_offsets[0] = 2;
@@ -13640,11 +13658,11 @@ void cm848_monitorChargePressureInRange(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.boost_in_range_high_error == 0) ||
-       (((&fault_status_records_cal)[DAT_000598da].flags & 0x10) == 0)) ||
-      ((charge_pressure_sensor_fault_gate_bits >> 2 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x40]].flags & 0x10) == 0))
+      || ((charge_pressure_sensor_fault_gate_bits >> 2 & 1) == 0)) &&
      (((fault_detected_cal.boost_in_range_low_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059e0c].flags & 0x10) == 0)) ||
-      ((charge_pressure_sensor_fault_gate_bits >> 3 & 1) == 0)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x2d9]].flags & 0x10) == 0))
+      || ((charge_pressure_sensor_fault_gate_bits >> 3 & 1) == 0)))) {
     bVar1 = false;
   }
   else {
@@ -13835,7 +13853,6 @@ void cm848_initializeChargeTemperatureEstimate(void)
 // Function: cm848_calculateIntakeManifoldTemperatureLeadCompensation @ 0x00013d14
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Lead compensation of the intake manifold temperature sensor lag (sensor channel 9, e2m 18D9):
    intake_manifold_temperature_lead_term (+2 TPE_IMT_Lead_Term) =
    intake_manifold_temperature_lead_time_constant (+4 TPE_IMT_Lead_Time_Constant) x
@@ -13858,7 +13875,7 @@ void cm848_calculateIntakeManifoldTemperatureLeadCompensation(void)
   iVar2 = (uint)intake_manifold_temperature_lead_time_constant *
           ((int)(short)intake_manifold_temperature_sensor_value -
           (int)(short)intake_manifold_temperature_sensor_value_previous);
-  _fuel_demand_limit_b_working = iVar2;
+  intake_manifold_temperature_lead_term_unclamped = iVar2;
   if (iVar2 < 0x7d01) {
     if (iVar2 < -32000) {
       iVar2 = -32000;
@@ -13954,11 +13971,11 @@ void cm848_filterAndSelectIntakeManifoldTemperature(void)
     uVar4 = intake_manifold_temperature_sensor_fault_status | charge_temperature_estimate_status;
   }
   if ((((fault_detected_cal.intake_manifold_temperature_key_on_rationality_error == 0) ||
-       (((&fault_status_records_cal)[DAT_00059b26].flags & 0x10) == 0)) ||
-      ((fuel_pressure_phase_fault_gate_enable >> 5 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x166]].flags & 0x10) == 0))
+      || ((fuel_pressure_phase_fault_gate_enable >> 5 & 1) == 0)) &&
      (((fault_detected_cal.intake_manifold_temperature_rationality_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059b1e].flags & 0x10) == 0)) ||
-      ((fuel_pressure_phase_fault_gate_enable >> 6 & 1) == 0)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x162]].flags & 0x10) == 0))
+      || ((fuel_pressure_phase_fault_gate_enable >> 6 & 1) == 0)))) {
     uVar3 = 0;
   }
   else {
@@ -16019,7 +16036,7 @@ void cm848_initializeOffNominalCompensationLookupCaches(void)
 
 {
   charge_temperature_off_nominal_adjustment_cached_axis_offset = 2;
-  DAT_003fa6d4 = 2;
+  off_nominal_compensation_unused_cached_axis_offset = 2;
   fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_cached_axis_offset = 2;
   injection_timing_off_nominal_adjustment_cached_axis_offset = 2;
   injection_timing_reference_adjustment_cached_axis_offset = 2;
@@ -20600,9 +20617,10 @@ void cm848_processFaultScanGroup(void)
     if ((wVar6 & uVar7) == 0) {
       uVar8 = (uint)fault_scan_index;
       if ((uVar7 & (&fault_previous_pass_cal.faults_0_to_15)[uVar8]) != 0) {
-        uVar1 = *(ushort *)(&fault_code_assignment_table + ((uVar8 * 0x10 + uVar5) * 2 & 0x1fffe));
+        uVar1 = *(ushort *)
+                 ((int)fault_code_assignment_table + ((uVar8 * 0x10 + uVar5) * 2 & 0x1fffe));
         uVar9 = (uint)uVar1;
-        if (((uVar9 < 0xaa) && ((uVar7 & (&DAT_0005a296)[uVar8]) != 0)) &&
+        if (((uVar9 < 0xaa) && ((uVar7 & fault_previous_pass_check_mask_table[uVar8]) != 0)) &&
            (*(char *)(uVar9 + 0x3fe124) != '\0')) {
           if ((uVar7 & fault_enable_bitmask_array[uVar8]) == 0) {
             *(char *)(uVar9 + 0x3fe124) = *(char *)(uVar9 + 0x3fe124) + -1;
@@ -20670,11 +20688,12 @@ void cm848_processFaultScanGroup(void)
     }
     else {
       uVar9 = (uint)fault_scan_index;
-      uVar1 = *(ushort *)(&fault_code_assignment_table + ((uVar9 * 0x10 + uVar5) * 2 & 0x1fffe));
+      uVar1 = *(ushort *)((int)fault_code_assignment_table + ((uVar9 * 0x10 + uVar5) * 2 & 0x1fffe))
+      ;
       uVar8 = (uint)uVar1;
       if (((uVar8 < 0xaa) && ((uVar7 & (&fault_previous_pass_cal.faults_0_to_15)[uVar9]) == 0)) &&
          (active_dtc_list_cal.count != 0x1f)) {
-        if (((uVar7 & (&DAT_0005a296)[uVar9]) == 0) ||
+        if (((uVar7 & fault_previous_pass_check_mask_table[uVar9]) == 0) ||
            ((uVar7 & fault_enable_bitmask_array[uVar9]) != 0)) {
           if ((uVar7 & fault_enable_bitmask_array[uVar9]) != 0) {
             wVar6 = wVar6 & ~uVar7;
@@ -20781,16 +20800,17 @@ void cm848_buildFaultConditionMask(void)
   do {
     fault_enable_bitmask_array[uVar4] = 0;
     if (bVar3 == 0) {
-      fault_enable_bitmask_array[uVar4] = fault_enable_bitmask_array[uVar4] | (&DAT_0005a2fa)[uVar4]
+      fault_enable_bitmask_array[uVar4] =
+           fault_enable_bitmask_array[uVar4] | fault_enable_mask_battery_voltage_out_of_range[uVar4]
       ;
     }
     if (bVar1 == 0) {
-      fault_enable_bitmask_array[uVar4] = fault_enable_bitmask_array[uVar4] | (&DAT_0005a35e)[uVar4]
-      ;
+      fault_enable_bitmask_array[uVar4] =
+           fault_enable_bitmask_array[uVar4] | fault_enable_mask_key_switch_off[uVar4];
     }
     if (EVar2 == ENGINE_STATE_CRANKING) {
-      fault_enable_bitmask_array[uVar4] = fault_enable_bitmask_array[uVar4] | (&DAT_0005a3c2)[uVar4]
-      ;
+      fault_enable_bitmask_array[uVar4] =
+           fault_enable_bitmask_array[uVar4] | fault_enable_mask_cranking[uVar4];
     }
     uVar4 = uVar4 + 1 & 0xff;
   } while (uVar4 < 0x32);
@@ -22730,6 +22750,8 @@ undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
     }
   }
   else if (param_1 < 0x4f) {
+                    /* 0x575dd is the table base minus 0x41: the echo lengths of services 0x41-0x4e
+                       are the bytes at 0x5761e-0x5762b */
     return (&DAT_000575dd)[param_1];
   }
   return 1;
@@ -23169,22 +23191,21 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
                (word fueling,dword point_5_on_droop_line_flag)
 
 {
-  undefined *puVar1;
+  uint uVar1;
   
   if (engine_speed_limit_droop_slope == 0) {
-    puVar1 = (undefined *)(uint)j1939_torque_curve_derate_engine_speed;
+    uVar1 = (uint)j1939_torque_curve_derate_engine_speed;
   }
   else {
-    puVar1 = (undefined *)
-             ((((uint)(ushort)engine_speed_limit_droop_slope *
-               (((uint)engine_speed_limit_ramped_maximum_fuel_quantity - (uint)fueling) * 8 & 0xfff8
-               )) / 0x8888 & 0xffff) + (uint)engine_speed_limit_arbitrated);
-    if (&DAT_00009c40 < puVar1) {
-      puVar1 = &DAT_00009c40;
+    uVar1 = (((uint)(ushort)engine_speed_limit_droop_slope *
+             (((uint)engine_speed_limit_ramped_maximum_fuel_quantity - (uint)fueling) * 8 & 0xfff8))
+             / 0x8888 & 0xffff) + (uint)engine_speed_limit_arbitrated;
+    if (40000 < uVar1) {
+      uVar1 = 40000;
     }
   }
-  j1939_torque_curve_speed_at_point_2 = (word)puVar1;
-  j1939_torque_curve_speed_at_point_5 = (word)puVar1;
+  j1939_torque_curve_speed_at_point_2 = (word)uVar1;
+  j1939_torque_curve_speed_at_point_5 = (word)uVar1;
   if (point_5_on_droop_line_flag == 0) {
     j1939_torque_curve_speed_at_point_5 = j1939_engine_speed_at_point_5;
   }
@@ -25167,7 +25188,7 @@ void cm848_j1939HandlePgn56832Reset(j1939_received_message_t *message)
 
 {
   if (algorithm_enable_flags_29_cal.trip_reset_enable != 0) {
-    DAT_003faa64 = *message->data_pointer;
+    j1939_pgn56832_reset_request_byte = *message->data_pointer;
   }
   if (algorithm_enable_flags_29_cal.service_component_reset_enable != 0) {
     j1939_proprietary_cmd_byte1 = message->data_pointer[1];
@@ -25591,10 +25612,11 @@ void cm848_sendPgn56320AntiTheftStatus(void)
       (j1939_anti_theft_send_status_report_cal != 0)) &&
      (j1939_anti_theft_status_transmit_state == 2)) {
     j1939_anti_theft_send_status_report_cal = 0;
-    DAT_003faa84 = (byte)((int)(short)j1939_anti_theft_status_of_request_cal << 6) |
-                   (byte)((int)(short)j1939_anti_theft_component_status_cal << 4) |
-                   (char)j1939_anti_theft_password_valid_cal << 2 |
-                   (byte)j1939_anti_theft_encryption_seed_present_cal;
+    j1939_pgn56320_anti_theft_status_byte =
+         (byte)((int)(short)j1939_anti_theft_status_of_request_cal << 6) |
+         (byte)((int)(short)j1939_anti_theft_component_status_cal << 4) |
+         (char)j1939_anti_theft_password_valid_cal << 2 |
+         (byte)j1939_anti_theft_encryption_seed_present_cal;
     j1939_pgn56320_encryption_seed = j1939_anti_theft_encryption_seed_cal;
     j1939_pgn56320_tx_message.header.can_id._3_1_ = j1939_pgn56320_source_address;
     j1939_pgn56320_tx_message.header.can_id._2_1_ = j1939_pgn56320_destination_address;
@@ -25621,11 +25643,11 @@ void cm848_initializePgn56320AntiTheftStatusBuffer(void)
   j1939_pgn56320_tx_message.header.can_id =
        CONCAT31(j1939_pgn56320_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn56320_tx_message.header.data_length = 8;
-  j1939_pgn56320_tx_message.data_pointer = &DAT_003faa84;
+  j1939_pgn56320_tx_message.data_pointer = &j1939_pgn56320_anti_theft_status_byte;
   j1939_pgn56320_tx_message.status_pointer = &j1939_pgn56320_transmit_status;
-  DAT_003faa85 = 0xff;
-  DAT_003faa86 = 0xff;
-  DAT_003faa87 = 0xff;
+  j1939_pgn56320_unused_payload_bytes[0] = 0xff;
+  j1939_pgn56320_unused_payload_bytes[1] = 0xff;
+  j1939_pgn56320_unused_payload_bytes[2] = 0xff;
   return;
 }
 
@@ -25887,7 +25909,7 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
 
 {
   byte bVar1;
-  undefined *puVar2;
+  uint uVar2;
   byte bVar3;
   undefined1 local_8;
   
@@ -25904,13 +25926,12 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
     j1939_ccvs1_wheel_based_vehicle_speed = 0xffff;
   }
   else {
-    puVar2 = (undefined *)(uint)vehicle_speed;
-    if (0x9c < (uint)((int)puVar2 >> 8)) {
-      puVar2 = &DAT_00009c00;
+    uVar2 = (uint)vehicle_speed;
+    if (0x9c < (uint)((int)uVar2 >> 8)) {
+      uVar2 = 0x9c00;
     }
-    local_8 = (undefined1)((uint)((int)puVar2 * 0x19c) >> 0x10);
-    j1939_ccvs1_wheel_based_vehicle_speed =
-         CONCAT11((char)((uint)((int)puVar2 * 0x19c) >> 8),local_8);
+    local_8 = (undefined1)(uVar2 * 0x19c >> 0x10);
+    j1939_ccvs1_wheel_based_vehicle_speed = CONCAT11((char)(uVar2 * 0x19c >> 8),local_8);
   }
   if ((switch_input_datalink_source_bits_cal[1] & 0x80) == 0) {
     if (switch_input_state_bits.clutch_switch == 0) {
@@ -26112,12 +26133,12 @@ void cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage(void)
 
 {
   if ((algorithm_enable_flags_3_cal.road_speed_governor_enable == 0) ||
-     (&DAT_00009e00 < (undefined *)(uint)maximum_road_speed)) {
+     (0x9e00 < maximum_road_speed)) {
     j1939_pgn65261_payload.max_vehicle_speed_limit = 0xff;
   }
   else {
     j1939_pgn65261_payload.max_vehicle_speed_limit =
-         (byte)((uint)((int)(uint)maximum_road_speed * 0xa1) / 100 >> 8);
+         (byte)(((uint)maximum_road_speed * 0xa1) / 100 >> 8);
   }
   if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
     j1939_pgn65261_payload.cruise_high_set_limit_speed = 0xff;
@@ -26431,7 +26452,7 @@ void cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void)
             uStack_12 = (undefined1)(uVar1 >> 8);
             *(uint *)((int)&j1939_dm1_tx_message.status_pointer + uVar3 * 4 + 2) =
                  ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_14),uStack_12) |
-                 (byte)(&DAT_0005a4ac)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
+                 (&fault_j1939_data_fmi_byte)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
             j1939_dm1_tx_message.header.data_length = j1939_dm1_tx_message.header.data_length + 4;
           }
           uVar3 = uVar3 + 1 & 0xff;
@@ -26519,7 +26540,7 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
   
   if ((j1939_dm2_transmit_status & 0xf0) == 0) {
     j1939_dm2_tx_message.header.data_length = 2;
-    DAT_003fabda = cm848_buildJ1939LampStatusByte();
+    j1939_dm2_lamp_status_byte = cm848_buildJ1939LampStatusByte();
     if (previously_active_dtc_list_cal.count == 0) {
       j1939_dm2_dtc_mask_working = 0xffffffff;
       j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
@@ -26542,7 +26563,7 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
             uStack_a = (undefined1)(uVar1 >> 8);
             *(uint *)((int)&j1939_dm2_tx_message.status_pointer + uVar3 * 4 + 2) =
                  ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_c),uStack_a) |
-                 (byte)(&DAT_0005a4ac)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
+                 (&fault_j1939_data_fmi_byte)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
             j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
           }
           uVar3 = uVar3 + 1 & 0xff;
@@ -26568,11 +26589,11 @@ void initializePgn65227Dm2Handler(void)
 {
   j1939_dm2_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65227_priority_cal & 7) << 2,0xfecb00);
-  j1939_dm2_tx_message.data_pointer = &DAT_003fabda;
+  j1939_dm2_tx_message.data_pointer = &j1939_dm2_lamp_status_byte;
   j1939_dm2_tx_message.status_pointer = &j1939_dm2_transmit_status;
   j1939_dm2_tx_message.header.can_id =
        CONCAT31(j1939_dm2_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fabdb = 0xff;
+  j1939_dm2_flash_lamp_status_byte = 0xff;
   j1939_dm2_dtc_mask_working._3_1_ = (byte)j1939_dm2_dtc_mask_working & 0x7f | 0x80;
   registerJ1939PgnRequestHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
   return;
@@ -26591,7 +26612,7 @@ void cm848_initializePgn65229Dm4Handler(void)
 {
   j1939_pgn65229_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65229_priority_cal & 7) << 2,0xfecd00);
-  j1939_pgn65229_tx_message.data_pointer = &j1939_dm4_tx_record_size_byte;
+  j1939_pgn65229_tx_message.data_pointer = j1939_pgn65229_payload;
   j1939_pgn65229_tx_message.status_pointer = &j1939_pgn65229_transmit_status;
   j1939_pgn65229_tx_message.header.can_id =
        CONCAT31(j1939_pgn65229_tx_message.header.can_id._0_3_,(char)j1939_source_address);
@@ -26624,16 +26645,16 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
   undefined4 local_18;
   
   if (param_1 == 0) {
-    pbVar6 = &j1939_dm4_tx_record_size_byte;
-    j1939_dm4_tx_record_size_byte = 0x13;
+    pbVar6 = j1939_pgn65229_payload;
+    j1939_pgn65229_payload[0] = 0x13;
     uVar9 = 0;
     do {
-      (&DAT_003fac49)[uVar9] = (&j1939_dm4_manufacturer_specific_parameters)[uVar9];
+      j1939_pgn65229_payload[uVar9 + 0xd] = (&j1939_dm4_manufacturer_specific_parameters)[uVar9];
       uVar9 = uVar9 + 1 & 0xff;
     } while (uVar9 < 6);
   }
   else {
-    pbVar6 = &DAT_003fac42 + param_1 * 0xd;
+    pbVar6 = j1939_pgn65229_payload + param_1 * 0xd + 6;
     *pbVar6 = 0xd;
   }
   if (fault_freeze_frame_entries_cal[param_1].fault_code != 0xaa) {
@@ -26651,7 +26672,8 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
       local_18._2_1_ = (undefined1)(uVar1 >> 8);
       uVar2 = (uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_18._0_1_),local_18._2_1_);
       local_1c = uVar2 << 8;
-      *(uint *)(pbVar6 + 1) = (uVar2 | (byte)(&DAT_0005a4ac)[uVar7 * 4] & 0x1f) << 8 | uVar3 | 0x80;
+      *(uint *)(pbVar6 + 1) =
+           (uVar2 | (&fault_j1939_data_fmi_byte)[uVar7 * 4] & 0x1f) << 8 | uVar3 | 0x80;
       local_18 = uVar1;
     }
     pbVar6[5] = 0xff;
@@ -26700,7 +26722,6 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
 // Function: cm848_j1939HandlePgn65229Dm4FreezeFrame @ 0x00025390
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* handles the J1939 request for PGN 65229 DM4 freeze frame via j1939_pgn_dispatch_table
    (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
@@ -26713,11 +26734,14 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
   if ((j1939_pgn65229_transmit_status & 0xf0) == 0) {
     j1939_pgn65229_tx_message.header.data_length = 0;
     if ((active_dtc_list_cal.count == 0) && (previously_active_dtc_list_cal.count == 0)) {
-      j1939_dm4_tx_record_size_byte = 0;
-      _diag_init_byte_b = 0;
-      DAT_003fac41 = 0xff;
-      DAT_003fac42 = 0xff;
-      DAT_003fac43 = 0xff;
+      j1939_pgn65229_payload[0] = 0;
+      j1939_pgn65229_payload[1] = 0;
+      j1939_pgn65229_payload[2] = 0;
+      j1939_pgn65229_payload[3] = 0;
+      j1939_pgn65229_payload[4] = 0;
+      j1939_pgn65229_payload[5] = 0xff;
+      j1939_pgn65229_payload[6] = 0xff;
+      j1939_pgn65229_payload[7] = 0xff;
       j1939_pgn65229_tx_message.header.data_length = 8;
     }
     else {
@@ -27458,8 +27482,8 @@ void initializePgn65262EngineTemperature1Handler(void)
   j1939_pgn65262_tx_message.header.can_id =
        CONCAT31(j1939_pgn65262_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65262_field1_init_word = 0xffff;
-  DAT_003fae04 = 0xff;
-  DAT_003fae05 = 0xff;
+  j1939_et1_intercooler_temperature_byte = 0xff;
+  j1939_et1_intercooler_thermostat_opening_byte = 0xff;
   registerJ1939PgnRequestHandler(0xfeee,cm848_buildPgn65262EngineTemperature1Message);
   return;
 }
@@ -27686,15 +27710,15 @@ void initializePgn65270InletExhaustConditions1Buffer(void)
   j1939_pgn65270_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65270_priority_cal & 7) << 2,0xfef600);
   j1939_pgn65270_tx_message.header.data_length = 8;
-  j1939_pgn65270_tx_message.data_pointer = &DAT_003fae46;
+  j1939_pgn65270_tx_message.data_pointer = &j1939_ic1_particulate_trap_inlet_pressure;
   j1939_pgn65270_tx_message.status_pointer = &j1939_pgn65270_transmit_status;
   j1939_pgn65270_tx_message.header.can_id =
        CONCAT31(j1939_pgn65270_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fae46 = 0xff;
-  DAT_003fae49 = 0xff;
-  DAT_003fae4a = 0xff;
-  DAT_003fae4b = 0xffff;
-  DAT_003fae4d = 0xff;
+  j1939_ic1_particulate_trap_inlet_pressure = 0xff;
+  j1939_ic1_air_inlet_pressure = 0xff;
+  j1939_ic1_air_filter_differential_pressure = 0xff;
+  j1939_ic1_exhaust_gas_temperature = 0xffff;
+  j1939_ic1_coolant_filter_differential_pressure = 0xff;
   return;
 }
 
@@ -27856,15 +27880,17 @@ void cm848_initializePgn65242SoftwareIdHandler(void)
   j1939_pgn65242_tx_message.header.can_id = CONCAT31(0x18feda,(char)j1939_source_address);
   j1939_pgn65242_payload.number_of_software_identification_fields = 6;
   cm848_formatNumberAsDecimalText
-            (&DAT_003fd69b,j1939_pgn65242_payload.software_identification_field_1,8);
+            (software_identification_field_1_number_cal,
+             j1939_pgn65242_payload.software_identification_field_1,8);
   j1939_pgn65242_payload.software_identification_field_1_delimiter = 0x2a;
   cm848_formatNumberAsDecimalText
-            (&DAT_003fd69f,j1939_pgn65242_payload.software_identification_field_2,8);
+            (software_identification_field_2_number_cal,
+             j1939_pgn65242_payload.software_identification_field_2,8);
   j1939_pgn65242_payload.software_identification_field_2_delimiter = 0x2a;
   uVar1 = 0;
   do {
     j1939_pgn65242_payload.software_identification_field_3[uVar1] =
-         s_0000000000000000000000_003fd6a5[uVar1 + 10];
+         software_identification_field_3_text_cal[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0xc);
   j1939_pgn65242_payload.software_identification_field_3_delimiter = 0x2a;
@@ -28101,16 +28127,16 @@ void cm848_initializePgn65260VehicleIdHandler(void)
   j1939_pgn65260_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65260_priority_cal & 7) << 2,0xfeec00);
   j1939_pgn65260_tx_message.header.data_length = 0x15;
-  j1939_pgn65260_tx_message.data_pointer = &DAT_003faf07;
+  j1939_pgn65260_tx_message.data_pointer = j1939_pgn65260_payload;
   j1939_pgn65260_tx_message.status_pointer = &j1939_pgn65260_transmit_status;
   j1939_pgn65260_tx_message.header.can_id =
        CONCAT31(j1939_pgn65260_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   uVar1 = 0;
   do {
-    (&DAT_003faf07)[uVar1] = vehicle_vin_string_cal[uVar1];
+    j1939_pgn65260_payload[uVar1] = vehicle_vin_string_cal[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0x14);
-  DAT_003faf1b = 0x2a;
+  j1939_pgn65260_payload[0x14] = 0x2a;
   registerJ1939PgnRequestHandler(0xfeec,sendPgn65260VehicleIdentificationMessage);
   return;
 }
@@ -28160,13 +28186,13 @@ void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void)
   j1939_pgn65279_tx_message.header.data_length = 1;
   j1939_pgn65279_tx_message.data_pointer = &j1939_pgn65279_water_in_fuel_indicator_byte;
   j1939_pgn65279_tx_message.status_pointer = &j1939_pgn65279_transmit_status;
-  DAT_003faf1d = 0xff;
-  DAT_003faf1e = 0xff;
-  DAT_003faf1f = 0xff;
-  DAT_003faf20 = 0xff;
-  DAT_003faf21 = 0xff;
-  DAT_003faf22 = 0xff;
-  DAT_003faf23 = 0xff;
+  j1939_pgn65279_unused_payload_bytes[0] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[1] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[2] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[3] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[4] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[5] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[6] = 0xff;
   return;
 }
 
@@ -31479,13 +31505,13 @@ void initializePgn65264PowerTakeOffInformationBuffer(void)
   j1939_pgn65264_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65264_priority_cal & 7) << 2,0xfef000);
   j1939_pgn65264_tx_message.header.data_length = 8;
-  j1939_pgn65264_tx_message.data_pointer = &DAT_003fb002;
+  j1939_pgn65264_tx_message.data_pointer = &j1939_pgn65264_payload_byte_1;
   j1939_pgn65264_tx_message.status_pointer = &j1939_pgn65264_transmit_status;
   j1939_pgn65264_tx_message.header.can_id =
        CONCAT31(j1939_pgn65264_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fb002 = 0xff;
+  j1939_pgn65264_payload_byte_1 = 0xff;
   j1939_pgn65264_payload_bytes_2_to_3 = 0xffff;
-  DAT_003fb009 = 0xff;
+  j1939_pgn65264_payload_byte_8 = 0xff;
   return;
 }
 
@@ -38541,9 +38567,9 @@ LAB_0003670c:
 void cm848_queueSupervisorStatusRead(void)
 
 {
-  j1939_tx_frame_g_byte_0 = 0x4e00;
-  j1939_msg_field_word_b31b = 0x5a00;
-  j1939_msg_field_word_b31d = 0x5c00;
+  supervisor_status_read_transmit_words[0] = 0x4e00;
+  supervisor_status_read_transmit_words[1] = 0x5a00;
+  supervisor_status_read_transmit_words[2] = 0x5c00;
   cm848_queueQspiJob(&supervisor_status_read_job,1);
   return;
 }
@@ -38566,10 +38592,11 @@ void cm848_queueSupervisorStatusRead(void)
 void cm848_onSupervisorStatusRead(void)
 
 {
-  supervisor_input_lines_136_to_143_state = (byte)DAT_003fb31f;
+  supervisor_input_lines_136_to_143_state = (byte)supervisor_status_read_reply_words[0];
   supervisor_input_lines_130_to_135_state =
-       (byte)DAT_003fb321 & 7 | (byte)(DAT_003fb321 >> 2) & 0x38;
-  supervisor_input_lines_144_to_151_state = (byte)DAT_003fb323;
+       (byte)supervisor_status_read_reply_words[1] & 7 |
+       (byte)(supervisor_status_read_reply_words[1] >> 2) & 0x38;
+  supervisor_input_lines_144_to_151_state = (byte)supervisor_status_read_reply_words[2];
   return;
 }
 
@@ -38626,7 +38653,7 @@ void cm848_queueSupervisorRegister36Read(void)
 void cm848_onSupervisorRegister36Read(void)
 
 {
-  supervisor_register_36_bit_1_low_flag = DAT_003fb2e9 & 2 ^ 2;
+  supervisor_register_36_bit_1_low_flag = supervisor_register_36_reply_word & 2 ^ 2;
   if (supervisor_register_36_bit_1_low_flag == 0) {
     if ((supervisor_register_36_bit_1_release_delay_counter != 0) &&
        (supervisor_register_36_bit_1_release_delay_counter =
@@ -38637,7 +38664,8 @@ void cm848_onSupervisorRegister36Read(void)
   }
   else {
     supervisor_register_36_bit_1_low_held_flag = 1;
-    supervisor_register_36_bit_1_release_delay_counter = DAT_00408744;
+    supervisor_register_36_bit_1_release_delay_counter =
+         supervisor_register_36_bit_1_release_delay_limit;
   }
   return;
 }
@@ -38752,19 +38780,19 @@ void cm848_paceSupervisorWatchdogCycle(void)
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
-   registers; command byte 0x5D): queues a 0x2E (46) access with j1939_message_word_b220 when no
-   diagnostic session is active | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence Medium */
+   registers; command byte 0x5D): queues a 0x2E (46) access with supervisor_register_46_command_word
+   when no diagnostic session is active | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence Medium */
 
 void cm848_queueSupervisorRegister46Read(void)
 
 {
   if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
-    j1939_msg_payload_snapshot = j1939_message_word_b220;
+    supervisor_register_46_transmit_word = supervisor_register_46_command_word;
     cm848_queueQspiJob(&supervisor_register_46_read_job,1);
   }
   else {
-    j1939_message_word_b220 = 0x2e00;
+    supervisor_register_46_command_word = 0x2e00;
   }
   return;
 }
@@ -38776,16 +38804,16 @@ void cm848_queueSupervisorRegister46Read(void)
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
-   registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to 0x40b222
-   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-   | supervisor_register_46_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
-   invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
-   cm848_initializeSupervisorRegister46ReadJob - not a dead function */
+   registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to
+   supervisor_register_46_reply | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium | supervisor_register_46_read_job (supervisor chip PCS1 command
+   byte 0x5D) completion_callback - invoked by cm848_completeQspiJob via cm848_onQspiFinished - set
+   by cm848_initializeSupervisorRegister46ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister46Read(void)
 
 {
-  DAT_0040b222 = DAT_003fb33d;
+  supervisor_register_46_reply = supervisor_register_46_reply_word;
   return;
 }
 
@@ -38823,7 +38851,7 @@ void cm848_queueSupervisorRegister162Read(void)
 void cm848_onSupervisorRegister162Read(void)
 
 {
-  supervisor_register_162_status = DAT_003fb285 & 0xff;
+  supervisor_register_162_status = supervisor_register_162_reply_word & 0xff;
   return;
 }
 
@@ -38904,7 +38932,6 @@ void cm848_runSupervisorChipSchedule(void)
 // Function: cm848_configureSupervisorChip @ 0x00036de0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): start-up configuration: repeats 0x8C02 / 0x0C00 / 0xC2xx / 0xC4xx
    / 0xC8xx until the chip reports state 2 then writes 0xDA / 0xDC / 0xD0 / 0xD6 (period = 30000000
@@ -38919,29 +38946,31 @@ void cm848_configureSupervisorChip(void)
   qspi_job_t local_28;
   
   local_28.device_slot = supervisor_qspi_slot;
-  local_28.transmit_words = &j1939_can_frame_word_a;
-  local_28.command_bytes = &supervisor_qspi_command_bytes;
-  local_28.receive_words = (word *)&DAT_003fb34f;
+  local_28.transmit_words = supervisor_start_up_transmit_words;
+  local_28.command_bytes = supervisor_qspi_command_bytes;
+  local_28.receive_words = supervisor_start_up_reply_words;
   do {
-    j1939_can_frame_word_a = 0x8c02;
-    j1939_can_frame_word_b = 0xc00;
+    supervisor_start_up_transmit_words[0] = 0x8c02;
+    supervisor_start_up_transmit_words[1] = 0xc00;
     uVar1 = supervisor_chip_driver_feedback_delay_microseconds & 0xff;
-    j1939_can_frame_word_c = uVar1 | 0xc200;
-    j1939_can_frame_word_d = uVar1 | 0xc400;
-    j1939_pgn_source_byte._0_2_ = uVar1 | 0xc800;
+    supervisor_start_up_transmit_words[2] = uVar1 | 0xc200;
+    supervisor_start_up_transmit_words[3] = uVar1 | 0xc400;
+    supervisor_start_up_transmit_words[4] = uVar1 | 0xc800;
     local_28.word_count = 5;
     local_28.completion_callback = (qspi_completion_callback_function_t *)0x0;
     cm848_queueQspiJob(&local_28,1);
     do {
     } while (local_28.busy_state != 0);
-  } while ((_j1939_session_state & 0xff) != 2);
-  j1939_can_frame_word_a = supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xda00;
-  j1939_can_frame_word_b = supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xdc00;
+  } while ((supervisor_start_up_reply_words[1] & 0xff) != 2);
+  supervisor_start_up_transmit_words[0] =
+       supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xda00;
+  supervisor_start_up_transmit_words[1] =
+       supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xdc00;
   uVar2 = 30000000 /
           ((uint)supervisor_chip_overspeed_limit *
           (uint)supervisor_chip_engine_speed_targets_per_revolution);
-  j1939_can_frame_word_c = (ushort)uVar2 & 0xff | 0xd000;
-  j1939_can_frame_word_d =
+  supervisor_start_up_transmit_words[2] = (ushort)uVar2 & 0xff | 0xd000;
+  supervisor_start_up_transmit_words[3] =
        (ushort)(uVar2 >> 8) & 0xf |
        (supervisor_chip_overspeed_consecutive_occurrence_count & 7) << 4 |
        (supervisor_chip_overspeed_non_latching_flag & 1) << 7 | 0xd600;
@@ -38980,8 +39009,8 @@ void cm848_startSupervisorWatchdog(void)
   bVar7 = 0;
   supervisor_watchdog_job.device_slot = supervisor_qspi_slot;
   supervisor_watchdog_job.transmit_words = supervisor_watchdog_transmit_words;
-  supervisor_watchdog_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_watchdog_job.receive_words = (word *)&DAT_003fb2c7;
+  supervisor_watchdog_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_watchdog_job.receive_words = &supervisor_watchdog_receive_words;
   supervisor_watchdog_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   supervisor_watchdog_transmit_words[0] = 0x1400;
   supervisor_watchdog_transmit_words[1] = 0x1801;
@@ -39051,9 +39080,9 @@ void cm848_initializeSupervisorRegister36ReadJob(void)
 {
   supervisor_register_36_read_job.device_slot = supervisor_qspi_slot;
   supervisor_register_36_read_job.word_count = 1;
-  supervisor_register_36_read_job.transmit_words = (word *)&DAT_0005772c;
-  supervisor_register_36_read_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_register_36_read_job.receive_words = &DAT_003fb2e9;
+  supervisor_register_36_read_job.transmit_words = &supervisor_register_36_read_command;
+  supervisor_register_36_read_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_register_36_read_job.receive_words = &supervisor_register_36_reply_word;
   supervisor_register_36_read_job.completion_callback = cm848_onSupervisorRegister36Read;
   return;
 }
@@ -39074,9 +39103,9 @@ void cm848_initializeSupervisorStatusReadJob(void)
 {
   supervisor_status_read_job.device_slot = supervisor_qspi_slot;
   supervisor_status_read_job.word_count = 3;
-  supervisor_status_read_job.transmit_words = &j1939_tx_frame_g_byte_0;
-  supervisor_status_read_job.receive_words = &DAT_003fb31f;
-  supervisor_status_read_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_status_read_job.transmit_words = supervisor_status_read_transmit_words;
+  supervisor_status_read_job.receive_words = supervisor_status_read_reply_words;
+  supervisor_status_read_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_status_read_job.completion_callback = cm848_onSupervisorStatusRead;
   return;
 }
@@ -39098,7 +39127,7 @@ void cm848_initializeSupervisorOutputWriteJob(void)
   supervisor_output_write_job.device_slot = supervisor_qspi_slot;
   supervisor_output_write_job.word_count = 1;
   supervisor_output_write_job.transmit_words = &supervisor_output_write_transmit_word;
-  supervisor_output_write_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_output_write_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_output_write_job.receive_words = (word *)0x0;
   supervisor_output_write_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   return;
@@ -39120,11 +39149,11 @@ void cm848_initializeSupervisorRegister46ReadJob(void)
 {
   supervisor_register_46_read_job.device_slot = supervisor_qspi_slot;
   supervisor_register_46_read_job.word_count = 1;
-  supervisor_register_46_read_job.transmit_words = &j1939_msg_payload_snapshot;
-  supervisor_register_46_read_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_register_46_read_job.receive_words = &DAT_003fb33d;
+  supervisor_register_46_read_job.transmit_words = &supervisor_register_46_transmit_word;
+  supervisor_register_46_read_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_register_46_read_job.receive_words = &supervisor_register_46_reply_word;
   supervisor_register_46_read_job.completion_callback = cm848_onSupervisorRegister46Read;
-  j1939_message_word_b220 = 0x2e00;
+  supervisor_register_46_command_word = 0x2e00;
   return;
 }
 
@@ -39144,9 +39173,9 @@ void cm848_initializeSupervisorRegister162ReadJob(void)
 {
   supervisor_register_162_read_job.device_slot = supervisor_qspi_slot;
   supervisor_register_162_read_job.word_count = 1;
-  supervisor_register_162_read_job.transmit_words = (word *)&DAT_0005772a;
-  supervisor_register_162_read_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_register_162_read_job.receive_words = &DAT_003fb285;
+  supervisor_register_162_read_job.transmit_words = &supervisor_register_162_read_command;
+  supervisor_register_162_read_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_register_162_read_job.receive_words = &supervisor_register_162_reply_word;
   supervisor_register_162_read_job.completion_callback = cm848_onSupervisorRegister162Read;
   return;
 }
@@ -39169,7 +39198,7 @@ void cm848_initializeSupervisorConfigurationWriteJob(void)
   supervisor_configuration_write_job.device_slot = supervisor_qspi_slot;
   supervisor_configuration_write_job.word_count = 4;
   supervisor_configuration_write_job.transmit_words = supervisor_configuration_transmit_words;
-  supervisor_configuration_write_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_configuration_write_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_configuration_write_job.receive_words = (word *)0x0;
   supervisor_configuration_write_job.completion_callback =
        (qspi_completion_callback_function_t *)0x0;
@@ -39300,7 +39329,7 @@ void cm848_initializeSerialOutputDriverJob(void)
   serial_output_driver_job.device_slot = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
   serial_output_driver_job.word_count = 1;
   serial_output_driver_job.transmit_words = (word *)&serial_output_driver_transmit_word;
-  serial_output_driver_job.command_bytes = &DAT_0005772e;
+  serial_output_driver_job.command_bytes = &serial_output_driver_command_byte;
   serial_output_driver_job.receive_words = &serial_output_driver_reply;
   serial_output_driver_job.completion_callback = cm848_onSerialOutputDriverReply;
   output_line_state.lines_152_to_159 = 0xff;
@@ -40277,7 +40306,6 @@ void cm848_initializeFuelPressureGovernorFaultBlend(void)
 // Function: cm848_checkPciMessageTimeouts @ 0x00038ac8
 //
 
-/* WARNING: Unable to use type for symbol receive_interval */
 /* J1850 PCI message-timeout monitor (not J1939): gated on algorithm_enable_flags_40_cal bit 0x40;
    ages every pci_transmit_message_table / pci_receive_message_table timer by 10 (interrupts masked
    via EID/EIE around each entry) and sets status bit 0x10 once timer exceeds interval +
@@ -41243,288 +41271,337 @@ undefined4 cm848_handlePciLinkEvent(void)
 /* Power-up fill of every PCI RX / TX payload buffer (cm848_initializeJ1939CommunicationSystem from
    cm848_applicationMain): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED
    from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string_cal / RX[0] source 0xF0 (was
-   hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability
-   Medium Accuracy Confidence High (was cm848_initPciMessagePayloads; PR #53 round 97) */
+   hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-26 - Readability High
+   Accuracy Confidence High: every loop pointer starts one byte before its buffer (stbu/lbzu
+   pre-increment) so Ghidra names the previous message timer; a comments.csv line above each loop
+   names the buffer it fills. iVar1 is the decompiler copy that carries next_vin_index into each VIN
+   loop (was cm848_initPciMessagePayloads; PR #53 round 97) */
 
 void cm848_initializePciMessagePayloads(void)
 
 {
-  byte *pbVar1;
-  undefined1 uVar2;
-  undefined1 *puVar3;
-  byte *pbVar4;
-  undefined1 *puVar5;
-  int iVar6;
-  int iVar7;
-  int iVar8;
+  int iVar1;
+  byte *vin_payload_cursor;
+  byte announcement_byte;
+  byte *source_cursor;
+  byte *payload_cursor;
+  byte *vehicle_information_cursor;
+  int next_vin_index;
+  int last_vin_index;
+  int byte_index;
+  int vin_characters_copied;
   
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_7_timer + 1);
+                    /* TX[8] 48 6B OBD response payload (obd_response_source_address..): zero 9
+                       bytes 0x40b47f-0x40b487 */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_7_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 9);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_9_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 9);
+                    /* TX[10] 26 diagnostic response pci_transmit_message_10: pci_ecm_address then
+                       pci_diagnostic_power_up_announcement (9 bytes 0x40b492-0x40b49a) */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_9_timer + 1);
   do {
-    if (iVar7 == 0) {
-      uVar2 = (undefined1)pci_ecm_address;
+    if (byte_index == 0) {
+      announcement_byte = (byte)pci_ecm_address;
     }
     else {
-      uVar2 = *(undefined1 *)(iVar7 + 0x57bb5);
+      announcement_byte = *(byte *)(byte_index + 0x57bb5);
     }
-    puVar3 = puVar3 + 1;
-    *puVar3 = uVar2;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 9);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = announcement_byte;
+    byte_index = byte_index + 1;
+  } while (byte_index < 9);
   pci_transmit_message_10_length = 5;
-  iVar7 = 0;
-  pbVar4 = &pci_transmit_message_10_length;
+                    /* TX[0] 10 pci_transmit_message_0_payload: zero 5 bytes */
+  byte_index = 0;
+  payload_cursor = &pci_transmit_message_10_length;
   do {
-    pbVar4 = pbVar4 + 1;
-    *pbVar4 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_24_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
+                    /* Spare TX 16 pci_spare_transmit_message_payload: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_24_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_5_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
+                    /* TX[2] 35 pci_transmit_message_2_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_5_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_2_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* TX[3] B0 pci_transmit_message_3_payload: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_2_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
   pci_transmit_message_3_payload = 0x80;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_0_timer + 1);
+                    /* TX[4] D1 03 pci_transmit_message_4_engine_load: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_0_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_4_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
+                    /* TX[5] 53 pci_transmit_message_5_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_4_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_11_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* TX[7] 3F pci_transmit_message_7_payload: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_11_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_8_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[9] 4F 10 pci_transmit_message_9_immobilizer_command: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_8_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_10.transmit_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[11] 5D pci_transmit_message_11_payload: zero 5 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_10.transmit_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_11_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
+                    /* RX[13] 92 pci_receive_message_13_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_11_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
   pci_transmit_message_13_fuel_level = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_13_timer + 1);
+                    /* TX[14] C0 pci_transmit_message_14_payload: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_13_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
   pci_transmit_message_15_payload = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_15_timer + 1);
+                    /* TX[16] D2 pci_transmit_message_16_byte_1: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_15_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_16_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[17] D1 01 pci_transmit_message_17_byte_1: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_16_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar5 = (undefined1 *)((int)&pci_transmit_message_17_timer + 1);
-  puVar3 = (undefined1 *)0x57baf;
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* TX[19] ED pci_transmit_message_19_payload: copy 5 bytes of
+                       pci_transmit_message_19_initial_payload */
+  byte_index = 0;
+  vehicle_information_cursor = (byte *)((int)&pci_transmit_message_17_timer + 1);
+  source_cursor = (byte *)0x57baf;
   do {
-    puVar3 = puVar3 + 1;
-    puVar5 = puVar5 + 1;
-    *puVar5 = *puVar3;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
+    source_cursor = source_cursor + 1;
+    vehicle_information_cursor = vehicle_information_cursor + 1;
+    *vehicle_information_cursor = *source_cursor;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
   pci_transmit_message_19_byte_4 = vehicle_engine_type_sales_code;
   pci_transmit_message_19_body_style = vehicle_body_style_code;
   pci_transmit_message_20_payload = vehicle_vin_string_cal[0];
-  iVar8 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_20_timer + 1);
-  pbVar4 = vehicle_vin_string_cal;
-  iVar7 = 1;
+  next_vin_index = 1;
+                    /* TX[21] F0 02 pci_transmit_message_21_payload: VIN characters 2-5 */
+  vin_characters_copied = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_20_timer + 1);
+  source_cursor = vehicle_vin_string_cal;
+  iVar1 = next_vin_index;
   do {
-    iVar6 = iVar7;
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar7 = iVar6 + 1;
-    iVar8 = iVar8 + 1;
-  } while (iVar8 < 4);
-  iVar8 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_21_timer + 1);
-  pbVar4 = vehicle_vin_string_cal + iVar6;
+    last_vin_index = iVar1;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    next_vin_index = last_vin_index + 1;
+    vin_characters_copied = vin_characters_copied + 1;
+    iVar1 = next_vin_index;
+  } while (vin_characters_copied < 4);
+                    /* TX[22] F0 06 pci_transmit_message_22_payload: VIN characters 6-9 */
+  vin_characters_copied = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_21_timer + 1);
+  source_cursor = vehicle_vin_string_cal + last_vin_index;
+  iVar1 = next_vin_index;
   do {
-    iVar6 = iVar7;
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar7 = iVar6 + 1;
-    iVar8 = iVar8 + 1;
-  } while (iVar8 < 4);
-  iVar8 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_22_timer + 1);
-  pbVar4 = vehicle_vin_string_cal + iVar6;
+    last_vin_index = iVar1;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    next_vin_index = last_vin_index + 1;
+    vin_characters_copied = vin_characters_copied + 1;
+    iVar1 = next_vin_index;
+  } while (vin_characters_copied < 4);
+                    /* TX[23] F0 0A pci_transmit_message_23_payload: VIN characters 10-13 */
+  vin_characters_copied = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_22_timer + 1);
+  source_cursor = vehicle_vin_string_cal + last_vin_index;
+  iVar1 = next_vin_index;
   do {
-    iVar6 = iVar7;
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar8 = iVar8 + 1;
-    iVar7 = iVar6 + 1;
-  } while (iVar8 < 4);
-  iVar7 = 0;
-  pbVar1 = (byte *)((int)&pci_transmit_message_23_timer + 1);
-  pbVar4 = vehicle_vin_string_cal + iVar6;
+    last_vin_index = iVar1;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    next_vin_index = last_vin_index + 1;
+    vin_characters_copied = vin_characters_copied + 1;
+    iVar1 = next_vin_index;
+  } while (vin_characters_copied < 4);
+                    /* TX[24] F0 0E pci_transmit_message_24_payload: VIN characters 14-17 */
+  byte_index = 0;
+  vin_payload_cursor = (byte *)((int)&pci_transmit_message_23_timer + 1);
+  source_cursor = vehicle_vin_string_cal + last_vin_index;
   do {
-    pbVar4 = pbVar4 + 1;
-    pbVar1 = pbVar1 + 1;
-    *pbVar1 = *pbVar4;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  pbVar4 = &pci_frame_match_flags;
+    source_cursor = source_cursor + 1;
+    vin_payload_cursor = vin_payload_cursor + 1;
+    *vin_payload_cursor = *source_cursor;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* RX[0] 68 6A OBD request payload (obd_request_source_address..): zero 8 bytes
+                        */
+  byte_index = 0;
+  payload_cursor = &pci_frame_match_flags;
   do {
-    pbVar4 = pbVar4 + 1;
-    *pbVar4 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 8);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 8);
   obd_request_source_address = 0xf0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_1_timer + 1);
+                    /* RX[2] 0E pci_receive_message_2_idle_speed_request: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_1_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  pbVar4 = pci_transmit_message_1_payload + 6;
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* RX[3] 1A pci_receive_message_3_payload: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = pci_transmit_message_1_payload + 6;
   do {
-    pbVar4 = pbVar4 + 1;
-    *pbVar4 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_0_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* RX[1] 24 diagnostic request (pci_diagnostic_request_target_address..): zero 7
+                       bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_0_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 7);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_2_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 7);
+                    /* RX[4] 2D pci_receive_message_4_module_address: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_2_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_4_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* RX[5] 37 pci_receive_message_5_shift_lever_position: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_4_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
   pci_transmit_message_6_payload = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_1_timer + 1);
+                    /* TX[1] 1E pci_transmit_message_1_payload: zero 7 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_1_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 7);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_6_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 7);
+                    /* RX[6] 4F C0 pci_receive_message_6_immobilizer_command: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_6_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_6_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
+                    /* RX[7] 63 pci_receive_message_7_payload: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_6_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_7_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
+                    /* TX[12] 98 pci_transmit_message_12_status_bits: zero 3 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_7_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 3);
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_12_timer + 1);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 3);
+                    /* RX[8] 6C pci_receive_message_8_byte_1: zero 5 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_12_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 5);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 5);
   pci_receive_message_9_payload = 0;
   pci_transmit_message_18_payload = 0;
   pci_receive_message_10_climate_control_bits = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_transmit_message_3_timer + 1);
+                    /* RX[11] 72 pci_receive_message_11_odometer: zero 4 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_transmit_message_3_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 4);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 4);
   pci_receive_message_12_immobilizer_status_bits = 0;
-  iVar7 = 0;
-  puVar3 = (undefined1 *)((int)&pci_receive_message_12_timer + 1);
+                    /* RX[14] 42 pci_receive_message_14_engine_off_time: zero 2 bytes */
+  byte_index = 0;
+  payload_cursor = (byte *)((int)&pci_receive_message_12_timer + 1);
   do {
-    puVar3 = puVar3 + 1;
-    *puVar3 = 0;
-    iVar7 = iVar7 + 1;
-  } while (iVar7 < 2);
+    payload_cursor = payload_cursor + 1;
+    *payload_cursor = 0;
+    byte_index = byte_index + 1;
+  } while (byte_index < 2);
   return;
 }
 
@@ -42132,7 +42209,7 @@ LAB_0003b37c:
         }
         else if (MVar2 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
           if (((ram_refresh_enable != RAM_REFRESH_DISABLED) &&
-              (&DAT_003fd480 < pci_diagnostic_memory_address)) &&
+              (&ram_refresh_protected_region_lower_bound < pci_diagnostic_memory_address)) &&
              (pci_diagnostic_memory_address < &sensor_channel_ram_start)) goto LAB_0003b608;
           cm848_memcpyBytes(pci_diagnostic_memory_address,pci_diagnostic_write_data_pointer,1);
           pci_diagnostic_write_result = 0;
@@ -43721,8 +43798,12 @@ void mpc555_qspiStartJob(dword job_index,dword queue_index)
       do {
         pwVar5 = pwVar5 + 1;
         pwVar3 = pwVar3 + 1;
+                    /* The sthu pre-increments by 2 from 0x30517e, so the loop copies the job's
+                       transmit words into qsmcm_tranram (0x305180) */
         *pwVar3 = *pwVar5;
         pbVar4 = pbVar4 + 1;
+                    /* The stbu pre-increments by 1 from 0x3051bf, so the loop copies the job's
+                       command bytes into qsmcm_comdram_0 onward (0x3051c0) */
         pbVar2 = pbVar2 + 1;
         *pbVar2 = *pbVar4;
         bVar7 = bVar7 + 1;
@@ -43832,6 +43913,8 @@ void cm848_completeQspiJob(void)
       do {
         pwVar5 = pwVar5 + 1;
         pwVar6 = pwVar6 + 1;
+                    /* The lhzu pre-increments by 2 from 0x30513e, so the loop reads qsmcm_recram
+                       (0x305140) into the job's receive words */
         *pwVar6 = *pwVar5;
         bVar3 = bVar3 + 1;
       } while (bVar3 < bVar1);
@@ -44274,7 +44357,7 @@ void cm848_initializeMaximumRoadSpeeds(void)
   drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
   maximum_road_speed = maximum_road_speed_trim_cal;
   cruise_maximum_road_speed_cal = cruise_maximum_road_speed_trim_cal;
-  DAT_0040b5c0 = maximum_road_speed_trim_cal;
+  maximum_road_speed_trim_unused_copy = maximum_road_speed_trim_cal;
   fault_reaction_request_bits_previous = 0;
   return;
 }
@@ -44664,7 +44747,7 @@ void cm848_initializeConverterSlipEngineSpeedLimit(void)
 
 {
   engine_speed_limit_converter_slip_cached_axis_offset = 2;
-  DAT_003fb4ea = 2;
+  engine_speed_limit_unused_cached_axis_offset = 2;
   engine_speed_limit_converter_slip = engine_speed_limit_default_cal;
   return;
 }
@@ -46947,7 +47030,7 @@ void cm848_initializeEngineRetarderRequestState(void)
 void cm848_calculateHighSpeedGovernorCompensatedEngineSpeed(void)
 
 {
-  undefined *puVar1;
+  uint uVar1;
   
   if ((((drivetrain_ratio < high_speed_governor_compensator_maximum_gear_ratio) &&
        (drivetrain_ratio_unsettled_flag == 0)) || (fault_detected_cal.vss_signal_lost_error != 0))
@@ -46978,22 +47061,21 @@ void cm848_calculateHighSpeedGovernorCompensatedEngineSpeed(void)
       (uint)high_speed_governor_compensator_working_filter_coefficient_1 +
       (uint)high_speed_governor_compensator_output_previous *
       (uint)high_speed_governor_compensator_working_filter_coefficient_3) {
-    puVar1 = (undefined *)
-             ((uint)high_speed_governor_compensator_output_previous *
-              (uint)high_speed_governor_compensator_working_filter_coefficient_3 +
-              ((uint)engine_speed_state.filtered_engine_speed *
-               (uint)high_speed_governor_compensator_working_filter_coefficient_1 -
-              (uint)high_speed_governor_compensator_engine_speed_previous *
-              (uint)high_speed_governor_compensator_working_filter_coefficient_2) >> 0xf);
-    if (&DAT_00008ca0 < puVar1) {
-      puVar1 = &DAT_00008ca0;
+    uVar1 = (uint)high_speed_governor_compensator_output_previous *
+            (uint)high_speed_governor_compensator_working_filter_coefficient_3 +
+            ((uint)engine_speed_state.filtered_engine_speed *
+             (uint)high_speed_governor_compensator_working_filter_coefficient_1 -
+            (uint)high_speed_governor_compensator_engine_speed_previous *
+            (uint)high_speed_governor_compensator_working_filter_coefficient_2) >> 0xf;
+    if (36000 < uVar1) {
+      uVar1 = 36000;
     }
   }
   else {
-    puVar1 = (undefined *)0x0;
+    uVar1 = 0;
   }
-  high_speed_governor_compensated_engine_speed = (word)puVar1;
-  high_speed_governor_compensator_output_previous = (word)puVar1;
+  high_speed_governor_compensated_engine_speed = (word)uVar1;
+  high_speed_governor_compensator_output_previous = (word)uVar1;
   high_speed_governor_compensator_engine_speed_previous = engine_speed_state.filtered_engine_speed;
   return;
 }
@@ -47566,13 +47648,13 @@ void hpcr_fillCylinderBalanceAccelerationBuffers(void)
       wVar2 = tpu_a_channel_0_parameters.PARAM4;
       if (((wVar2 & 0xff) == (ushort)bVar1) && (cylinder_event_seq_counter == 0xff)) {
         wVar2 = tpu_a_channel_12_parameters.PARAM7;
-        DAT_003fb57c = (byte)wVar2;
+        cylinder_timing_tpu_param7_snapshot = (byte)wVar2;
         cylinder_timing_tpu_capture_snapshot = tpu_a_channel_14_parameters._6_4_;
         cylinder_event_seq_counter = 0;
       }
       else if (((uint)cylinder_event_seq_counter < (uint)cylinder_event_count_max) &&
-              (wVar2 = tpu_a_channel_12_parameters.PARAM7, (wVar2 & 0xff) == (ushort)DAT_003fb57c))
-      {
+              (wVar2 = tpu_a_channel_12_parameters.PARAM7,
+              (wVar2 & 0xff) == (ushort)cylinder_timing_tpu_param7_snapshot)) {
         iVar3 = tpu_a_channel_14_parameters._6_4_;
         (&cylinder_balance_acceleration_buffer_1)[cylinder_event_seq_counter] =
              (sword)(iVar3 - cylinder_timing_tpu_capture_snapshot >> 2);
@@ -48147,11 +48229,12 @@ void cm848_runCylinderContributionTest(void)
   else {
     cylinder_contribution_test_status = SERVICE_TOOL_TEST_RUNNING;
     cylinder_balance_trim_limits_exceeded_flag = 0;
-    if ((cylinder_contribution_test_request_flag != 0) && (DAT_003fb596 == '\0')) {
+    if ((cylinder_contribution_test_request_flag != 0) &&
+       (cylinder_contribution_test_request_previous_flag == 0)) {
       ram_refresh_enable = RAM_REFRESH_DISABLED;
       uVar5 = 0;
       do {
-        (&DAT_003fb598)[uVar5] = (&cylinder_balance_fueling_trim_cal)[uVar5];
+        cylinder_balance_fueling_trim_backup[uVar5] = (&cylinder_balance_fueling_trim_cal)[uVar5];
         uVar5 = uVar5 + 1 & 0xff;
       } while (uVar5 < 6);
       cylinder_balance_fueling_trim_maximum_snapshot = cylinder_balance_fueling_trim_maximum;
@@ -48183,19 +48266,19 @@ void cm848_runCylinderContributionTest(void)
                 (uint)cylinder_4_contribution_percent) / 3);
   }
   SVar2 = cylinder_contribution_test_status;
-  if ((cylinder_contribution_test_status != SERVICE_TOOL_TEST_RUNNING) && (DAT_003fb597 == '\x01'))
-  {
+  if ((cylinder_contribution_test_status != SERVICE_TOOL_TEST_RUNNING) &&
+     (cylinder_contribution_test_status_previous == SERVICE_TOOL_TEST_RUNNING)) {
     cylinder_balance_fueling_trim_maximum = cylinder_balance_fueling_trim_maximum_snapshot;
     cylinder_balance_fueling_trim_minimum = cylinder_balance_fueling_trim_minimum_snapshot;
     uVar5 = 0;
     do {
-      (&cylinder_balance_fueling_trim_cal)[uVar5] = (&DAT_003fb598)[uVar5];
+      (&cylinder_balance_fueling_trim_cal)[uVar5] = cylinder_balance_fueling_trim_backup[uVar5];
       uVar5 = uVar5 + 1 & 0xff;
     } while (uVar5 < 6);
     ram_refresh_enable = RAM_REFRESH_ENABLED;
   }
-  DAT_003fb596 = bVar1;
-  DAT_003fb597 = SVar2;
+  cylinder_contribution_test_request_previous_flag = bVar1;
+  cylinder_contribution_test_status_previous = SVar2;
   return;
 }
 
@@ -48971,7 +49054,7 @@ LAB_00045154:
      (wVar3 = crank_speed_count + 1, wVar2 = wVar3, wVar3 == crank_tooth_position_target)) {
     wVar2 = tpu_a_channel_0_parameters.PARAM0;
     uVar6 = -((short)wVar2 >> 0xf);
-    DAT_003fb5b8 = (byte)(wVar2 >> 0xf);
+    crank_signal_window_tpu_snapshot = (byte)(wVar2 >> 0xf);
     wVar5 = tpu_a_channel_0_parameters.PARAM4;
     if (uVar6 != 0) {
       wVar5 = wVar5 - crank_signal_tooth_count;
@@ -49065,7 +49148,7 @@ void mpc555_updateCrankSyncState(void)
   word wVar3;
   
   wVar3 = tpu_a_channel_0_parameters.PARAM0;
-  DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+  crank_signal_window_tpu_snapshot = (byte)(wVar3 >> 0xf);
   wVar3 = tpu_a_channel_0_parameters.PARAM4;
   uVar2 = wVar3 >> 8;
   wVar3 = tpu_a_channel_0_parameters.PARAM4;
@@ -49290,7 +49373,7 @@ LAB_00045970:
               (crank_lost_resync_cam_tooth_threshold < cam_crank_plausibility_count_2)))))) &&
            (firing_detection_count == 0)) {
           wVar3 = tpu_a_channel_0_parameters.PARAM0;
-          DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+          crank_signal_window_tpu_snapshot = (byte)(wVar3 >> 0xf);
           if (wVar3 >> 0xf != (ushort)crank_signal_window_with_added_tooth) {
             tpu_a.HSRR1 = 1;
             iVar1 = TBLr;
@@ -49939,8 +50022,8 @@ void cm848_initializeAuxiliaryInjectionQuantityState(void)
   injection_timing_boost_blend_cached_axis_offsets[1] = 2;
   injection_quantity_auxiliary_coolant_factor_cached_axis_offsets[0] = 2;
   injection_quantity_auxiliary_coolant_factor_cached_axis_offsets[1] = 2;
-  DAT_003fb60a = 2;
-  DAT_003fb60c = 2;
+  injection_quantity_unused_cached_axis_offset_a = 2;
+  injection_quantity_unused_cached_axis_offset_b = 2;
   injection_quantity_auxiliary_coolant_limit_cached_axis_offsets[0] = 2;
   injection_quantity_auxiliary_coolant_limit_cached_axis_offsets[1] = 2;
   return;
@@ -52276,6 +52359,8 @@ void cm848_updateInjectorDiagnosticBits(uint param_1,int param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* Rows are 1-based: row n's 8-byte mask record is at 0x57d2e + 8 x n (row 1 at
+                       0x57d36); its second dword (0x57d32 + 8 x n) is the fast-decay flag mask */
   pbVar2 = &calibration_table_ptr_3 + param_2 * 10;
   uVar4 = *(uint *)(&DAT_00057d2e + param_2 * 8);
   uVar3 = param_1 & uVar4;
@@ -59114,6 +59199,9 @@ void mpc555_queueCanReceiveMessage(int param_1)
   pjVar2 = can_receive_queue_write_pointer;
   if (can_receive_queue_full_flag == 0) {
     param_1 = param_1 * 0x10;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
     uVar6 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
             *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
     pjVar2->priority_dp_flags = (char)(uVar6 >> 0x18);
@@ -59467,18 +59555,18 @@ undefined4 refreshEngineTsc1IgnoredRequestEntry(int param_1,uint param_2,int par
 
 {
   byte bVar1;
-  word *pwVar2;
+  engine_tsc1_ignored_request_entry_t *peVar2;
   
-  pwVar2 = &engine_tsc1_ignored_request_entries;
+  peVar2 = engine_tsc1_ignored_request_entries;
   bVar1 = 0;
   if (engine_tsc1_ignored_request_count != 0) {
     do {
-      if ((((short)*pwVar2 == param_1) && (*(byte *)(pwVar2 + 1) == param_2)) &&
-         ((short)pwVar2[2] == param_3)) {
-        pwVar2[3] = j1939_time_limited_node_recovery_time;
+      if ((((short)peVar2->request_type == param_1) && (peVar2->source_address == param_2)) &&
+         ((short)peVar2->override_control_mode == param_3)) {
+        peVar2->remaining_time = j1939_time_limited_node_recovery_time;
         return 1;
       }
-      pwVar2 = pwVar2 + 4;
+      peVar2 = peVar2 + 1;
       bVar1 = bVar1 + 1;
     } while (bVar1 < engine_tsc1_ignored_request_count);
   }
@@ -59502,17 +59590,18 @@ undefined4 cm848_refreshRetarderTsc1IgnoredRequestEntry(uint param_1,int param_2
 
 {
   byte bVar1;
-  byte *pbVar2;
+  retarder_tsc1_ignored_request_entry_t *prVar2;
   
-  pbVar2 = &retarder_tsc1_ignored_request_entries;
+  prVar2 = retarder_tsc1_ignored_request_entries;
   bVar1 = 0;
   if (retarder_tsc1_ignored_request_count != 0) {
     do {
-      if ((*pbVar2 == param_1) && (*(short *)(pbVar2 + 2) == param_2)) {
-        *(word *)(pbVar2 + 4) = j1939_time_limited_node_recovery_time;
+      if ((prVar2->source_address == param_1) && ((short)prVar2->override_control_mode == param_2))
+      {
+        prVar2->remaining_time = j1939_time_limited_node_recovery_time;
         return 1;
       }
-      pbVar2 = pbVar2 + 6;
+      prVar2 = prVar2 + 1;
       bVar1 = bVar1 + 1;
     } while (bVar1 < retarder_tsc1_ignored_request_count);
   }
@@ -59534,7 +59623,7 @@ undefined4 cm848_refreshRetarderTsc1IgnoredRequestEntry(uint param_1,int param_2
    activity timing fault (cm848_updateParkNeutralFlagAndTsc1Activity) (was
    cm848_addCoolantCalEntry). */
 
-void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,undefined1 param_2,undefined2 param_3)
+void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,byte param_2,word param_3)
 
 {
   uint uVar1;
@@ -59542,10 +59631,11 @@ void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,undefined1 param_2,unde
   uVar1 = (uint)engine_tsc1_ignored_request_count;
   if (uVar1 < 10) {
     engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count + 1;
-    (&engine_tsc1_ignored_request_entries)[uVar1 * 4] = param_1;
-    (&DAT_003fb918)[uVar1 * 8] = param_2;
-    (&DAT_003fb91a)[uVar1 * 4] = param_3;
-    (&DAT_003fb91c)[uVar1 * 4] = j1939_time_limited_node_recovery_time;
+    engine_tsc1_ignored_request_entries[uVar1].request_type = param_1;
+    engine_tsc1_ignored_request_entries[uVar1].source_address = param_2;
+    engine_tsc1_ignored_request_entries[uVar1].override_control_mode = param_3;
+    engine_tsc1_ignored_request_entries[uVar1].remaining_time =
+         j1939_time_limited_node_recovery_time;
   }
   return;
 }
@@ -59564,7 +59654,7 @@ void cm848_addEngineTsc1IgnoredRequestEntry(word param_1,undefined1 param_2,unde
    cm848_runJ1939PowertrainControlTimeouts when the retarder torque control request times out (was
    cm848_addCoolantCalEntryAlt). */
 
-void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
+void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,word param_2)
 
 {
   uint uVar1;
@@ -59572,9 +59662,10 @@ void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
   uVar1 = (uint)retarder_tsc1_ignored_request_count;
   if (uVar1 < 10) {
     retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count + 1;
-    (&retarder_tsc1_ignored_request_entries)[uVar1 * 6] = param_1;
-    (&DAT_003fb968)[uVar1 * 3] = param_2;
-    (&DAT_003fb96a)[uVar1 * 3] = j1939_time_limited_node_recovery_time;
+    retarder_tsc1_ignored_request_entries[uVar1].source_address = param_1;
+    retarder_tsc1_ignored_request_entries[uVar1].override_control_mode = param_2;
+    retarder_tsc1_ignored_request_entries[uVar1].remaining_time =
+         j1939_time_limited_node_recovery_time;
   }
   return;
 }
@@ -59595,71 +59686,78 @@ void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
 void cm848_processTsc1IgnoredRequestTimeouts(void)
 
 {
-  word wVar1;
-  short sVar2;
-  word *pwVar3;
-  byte *pbVar4;
-  uint uVar5;
-  word *pwVar6;
-  byte *pbVar7;
-  int iVar8;
-  uint uVar9;
+  engine_tsc1_ignored_request_entry_t *peVar1;
+  retarder_tsc1_ignored_request_entry_t *prVar2;
+  uint uVar3;
+  engine_tsc1_ignored_request_entry_t *peVar4;
+  retarder_tsc1_ignored_request_entry_t *prVar5;
+  word wVar8;
+  int iVar6;
+  uint uVar7;
   
-  uVar5 = (uint)engine_tsc1_ignored_request_count;
-  if (uVar5 != 0) {
-    pwVar3 = &engine_tsc1_ignored_request_entries + uVar5 * 4;
-    for (; uVar5 != 0; uVar5 = uVar5 + 0xff & 0xff) {
-      pwVar6 = pwVar3 + -4;
-      wVar1 = pwVar3[-1];
-      pwVar3[-1] = wVar1 - 1;
-      if ((word)(wVar1 - 1) == 0) {
-        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_transmission_source_address)) &&
-           (pwVar3[-2] == 1)) {
+  uVar3 = (uint)engine_tsc1_ignored_request_count;
+  if (uVar3 != 0) {
+    peVar1 = engine_tsc1_ignored_request_entries + uVar3;
+    for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
+      peVar4 = peVar1 + -1;
+      wVar8 = peVar1[-1].remaining_time - 1;
+      peVar1[-1].remaining_time = wVar8;
+      if (wVar8 == 0) {
+        if (((peVar4->request_type == 1) &&
+            (peVar1[-1].source_address == j1939_transmission_source_address)) &&
+           (peVar1[-1].override_control_mode == 1)) {
           j1939_powertrain_control_state.high_idle_override_active_flag = 0;
           j1939_powertrain_control_state.j1939_blocked_message_bits =
                j1939_powertrain_control_state.j1939_blocked_message_bits & 6;
         }
-        if (engine_tsc1_ignored_request_count == uVar5) {
+        if (engine_tsc1_ignored_request_count == uVar3) {
           engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count - 1;
         }
         else {
-          iVar8 = engine_tsc1_ignored_request_count + 0xff;
-          engine_tsc1_ignored_request_count = (byte)iVar8;
-          uVar9 = iVar8 * 8 & 0x7f8;
-          *pwVar6 = *(word *)((int)&engine_tsc1_ignored_request_entries + uVar9);
-          *(undefined1 *)(pwVar3 + -3) = (&DAT_003fb918)[uVar9];
-          pwVar3[-2] = *(word *)((int)&DAT_003fb91a + uVar9);
-          pwVar3[-1] = *(word *)((int)&DAT_003fb91c + uVar9);
+          iVar6 = engine_tsc1_ignored_request_count + 0xff;
+          engine_tsc1_ignored_request_count = (byte)iVar6;
+          uVar7 = iVar6 * 8 & 0x7f8;
+          peVar4->request_type =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].request_type + uVar7);
+          peVar1[-1].source_address =
+               (&engine_tsc1_ignored_request_entries[0].source_address)[uVar7];
+          peVar1[-1].override_control_mode =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].override_control_mode + uVar7)
+          ;
+          peVar1[-1].remaining_time =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].remaining_time + uVar7);
         }
       }
-      pwVar3 = pwVar6;
+      peVar1 = peVar4;
     }
   }
-  uVar5 = (uint)retarder_tsc1_ignored_request_count;
-  if (uVar5 != 0) {
-    pbVar4 = &retarder_tsc1_ignored_request_entries + uVar5 * 6;
-    for (; uVar5 != 0; uVar5 = uVar5 + 0xff & 0xff) {
-      pbVar7 = pbVar4 + -6;
-      sVar2 = *(short *)(pbVar4 + -2);
-      *(short *)(pbVar4 + -2) = sVar2 + -1;
-      if ((short)(sVar2 + -1) == 0) {
-        if ((*pbVar7 == j1939_transmission_source_address) && (*(short *)(pbVar4 + -4) == 2)) {
+  uVar3 = (uint)retarder_tsc1_ignored_request_count;
+  if (uVar3 != 0) {
+    prVar2 = retarder_tsc1_ignored_request_entries + uVar3;
+    for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
+      prVar5 = prVar2 + -1;
+      wVar8 = prVar2[-1].remaining_time - 1;
+      prVar2[-1].remaining_time = wVar8;
+      if (wVar8 == 0) {
+        if ((prVar5->source_address == j1939_transmission_source_address) &&
+           (prVar2[-1].override_control_mode == 2)) {
           j1939_powertrain_control_state.j1939_blocked_message_bits =
                j1939_powertrain_control_state.j1939_blocked_message_bits & 5;
         }
-        if (retarder_tsc1_ignored_request_count == uVar5) {
+        if (retarder_tsc1_ignored_request_count == uVar3) {
           retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count - 1;
         }
         else {
-          uVar9 = retarder_tsc1_ignored_request_count + 0xff;
-          retarder_tsc1_ignored_request_count = (byte)uVar9;
-          uVar9 = uVar9 & 0xff;
-          *pbVar7 = (&retarder_tsc1_ignored_request_entries)[uVar9 * 6];
-          *(undefined2 *)(pbVar4 + -4) = (&DAT_003fb968)[uVar9 * 3];
-          *(undefined2 *)(pbVar4 + -2) = (&DAT_003fb96a)[uVar9 * 3];
+          uVar7 = retarder_tsc1_ignored_request_count + 0xff;
+          retarder_tsc1_ignored_request_count = (byte)uVar7;
+          uVar7 = uVar7 & 0xff;
+          prVar5->source_address = retarder_tsc1_ignored_request_entries[uVar7].source_address;
+          prVar2[-1].override_control_mode =
+               retarder_tsc1_ignored_request_entries[uVar7].override_control_mode;
+          prVar2[-1].remaining_time = retarder_tsc1_ignored_request_entries[uVar7].remaining_time;
         }
       }
-      pbVar4 = pbVar7;
+      prVar2 = prVar5;
     }
   }
   return;
@@ -59681,18 +59779,18 @@ void cm848_processTsc1IgnoredRequestTimeouts(void)
 void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
 
 {
-  word *pwVar1;
-  word *pwVar2;
+  engine_tsc1_ignored_request_entry_t *peVar1;
+  engine_tsc1_ignored_request_entry_t *peVar2;
   uint uVar3;
   uint uVar4;
   int iVar5;
   
   uVar4 = (uint)engine_tsc1_ignored_request_count;
   if (uVar4 != 0) {
-    pwVar1 = &engine_tsc1_ignored_request_entries + uVar4 * 4;
+    peVar1 = engine_tsc1_ignored_request_entries + uVar4;
     for (; uVar4 != 0; uVar4 = uVar4 + 0xff & 0xff) {
-      pwVar2 = pwVar1 + -4;
-      if (((short)*pwVar2 == param_1) && (*(byte *)(pwVar1 + -3) == param_2)) {
+      peVar2 = peVar1 + -1;
+      if (((short)peVar2->request_type == param_1) && (peVar1[-1].source_address == param_2)) {
         if (engine_tsc1_ignored_request_count == uVar4) {
           engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count - 1;
         }
@@ -59700,13 +59798,18 @@ void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
           iVar5 = engine_tsc1_ignored_request_count + 0xff;
           engine_tsc1_ignored_request_count = (byte)iVar5;
           uVar3 = iVar5 * 8 & 0x7f8;
-          *pwVar2 = *(word *)((int)&engine_tsc1_ignored_request_entries + uVar3);
-          *(undefined1 *)(pwVar1 + -3) = (&DAT_003fb918)[uVar3];
-          pwVar1[-2] = *(word *)((int)&DAT_003fb91a + uVar3);
-          pwVar1[-1] = *(word *)((int)&DAT_003fb91c + uVar3);
+          peVar2->request_type =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].request_type + uVar3);
+          peVar1[-1].source_address =
+               (&engine_tsc1_ignored_request_entries[0].source_address)[uVar3];
+          peVar1[-1].override_control_mode =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].override_control_mode + uVar3)
+          ;
+          peVar1[-1].remaining_time =
+               *(word *)((int)&engine_tsc1_ignored_request_entries[0].remaining_time + uVar3);
         }
       }
-      pwVar1 = pwVar2;
+      peVar1 = peVar2;
     }
   }
   return;
@@ -59725,17 +59828,17 @@ void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
 void cm848_removeRetarderTsc1IgnoredRequestEntry(uint param_1)
 
 {
-  byte *pbVar1;
-  byte *pbVar2;
+  retarder_tsc1_ignored_request_entry_t *prVar1;
+  retarder_tsc1_ignored_request_entry_t *prVar2;
   uint uVar3;
   uint uVar4;
   
   uVar3 = (uint)retarder_tsc1_ignored_request_count;
   if (uVar3 != 0) {
-    pbVar1 = &retarder_tsc1_ignored_request_entries + uVar3 * 6;
+    prVar1 = retarder_tsc1_ignored_request_entries + uVar3;
     for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
-      pbVar2 = pbVar1 + -6;
-      if (*pbVar2 == param_1) {
+      prVar2 = prVar1 + -1;
+      if (prVar2->source_address == param_1) {
         if (retarder_tsc1_ignored_request_count == uVar3) {
           retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count - 1;
         }
@@ -59743,12 +59846,13 @@ void cm848_removeRetarderTsc1IgnoredRequestEntry(uint param_1)
           uVar4 = retarder_tsc1_ignored_request_count + 0xff;
           retarder_tsc1_ignored_request_count = (byte)uVar4;
           uVar4 = uVar4 & 0xff;
-          *pbVar2 = (&retarder_tsc1_ignored_request_entries)[uVar4 * 6];
-          *(undefined2 *)(pbVar1 + -4) = (&DAT_003fb968)[uVar4 * 3];
-          *(undefined2 *)(pbVar1 + -2) = (&DAT_003fb96a)[uVar4 * 3];
+          prVar2->source_address = retarder_tsc1_ignored_request_entries[uVar4].source_address;
+          prVar1[-1].override_control_mode =
+               retarder_tsc1_ignored_request_entries[uVar4].override_control_mode;
+          prVar1[-1].remaining_time = retarder_tsc1_ignored_request_entries[uVar4].remaining_time;
         }
       }
-      pbVar1 = pbVar2;
+      prVar1 = prVar2;
     }
   }
   return;
@@ -60896,14 +61000,18 @@ void initializeQadcModule(void)
   puVar1 = (ushort *)&UNK_003049fe;
   do {
     puVar1 = puVar1 + 1;
-    *puVar1 = (byte)(&DAT_0005831a)[uVar2] & 0x3f | 0xc0;
+                    /* The sthu pre-increments by 2 from 0x3049fe, so the loop fills QADC64A_CCW0
+                       onward (the 64 QADC-A conversion command words at 0x304a00) */
+    *puVar1 = qadc_a_conversion_channel_table[uVar2] & 0x3f | 0xc0;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0x40);
   uVar2 = 0;
   puVar1 = (ushort *)&UNK_00304dfe;
   do {
     puVar1 = puVar1 + 1;
-    *puVar1 = (byte)s_0123<_>__________________________00058326[uVar2 + 0x34] & 0x3f | 0xc0;
+                    /* The sthu pre-increments by 2 from 0x304dfe, so the loop fills QADC64B_CCW0
+                       onward (the 64 QADC-B conversion command words at 0x304e00) */
+    *puVar1 = qadc_b_conversion_channel_table[uVar2] & 0x3f | 0xc0;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0x40);
   return;
@@ -61345,8 +61453,7 @@ uint cm848_calculateCrc16Simple(uint param_1,int param_2,uint param_3)
   pbVar1 = (byte *)(param_2 + -1);
   for (; param_3 != 0; param_3 = param_3 + 0xffff & 0xffff) {
     pbVar1 = pbVar1 + 1;
-    param_1 = (param_1 & 0xffff) >> 8 ^
-              (uint)*(ushort *)(&DAT_0005842e + ((param_1 ^ *pbVar1) & 0xff) * 2);
+    param_1 = (param_1 & 0xffff) >> 8 ^ (uint)crc16_lookup_table[(param_1 ^ *pbVar1) & 0xff];
   }
   return param_1 & 0xffff;
 }
@@ -62993,7 +63100,7 @@ void cm848_initializeSignedSensorChannel
     goto LAB_0050119c;
   }
   if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
-    if ((*(ushort *)(&DAT_003fda58 + iVar7 * 2) & uVar9) != 0) {
+    if ((sensor_channel_default_value_enable_bits_cal[iVar7] & uVar9) != 0) {
       wVar4 = configuration_pointer->default_value;
       filter_state_pointer->accumulator = (int)(short)wVar4 << 0x10;
       (&sensor_channel_filtered_output)[channel_index] = wVar4;
@@ -63253,7 +63360,6 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
 // Function: cm848_processUnsignedSensorChannel @ 0x005012dc
 //
 
-/* WARNING: Unable to use type for symbol recovery_decrement */
 /* The periodic pass of the unsigned sensor channels (lookup flags 0,
    cm848_exponentialMovingAverage; lhz loads). Unlike the signed twin it skips the threshold faults
    of channel 47 (cruise switch) until cruise_control_switches_learned_flag_cal, of channel 71 (A/C
@@ -63262,7 +63368,7 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
    review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
    Confidence High. configuration_pointer typed as sensor_channel_configuration_t* (7
-   default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
+   default/threshold/debounce fields render); 0x3fd8e8 -> governor_temp_protection_disable (now
    oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
    prototype; params 4-6 passed but unused. */
 
@@ -63600,7 +63706,7 @@ void cm848_initializeUnsignedSensorChannel
     goto LAB_005022a4;
   }
   if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
-    if ((*(ushort *)(&DAT_003fda58 + channel_word_index * 2) & sensor_value) != 0) {
+    if ((sensor_channel_default_value_enable_bits_cal[channel_word_index] & sensor_value) != 0) {
       uVar1 = configuration_pointer->default_value;
       filter_state_pointer->accumulator = (uint)uVar1 << 0x10;
       (&sensor_channel_filtered_output)[channel_index] = uVar1;
@@ -63824,11 +63930,11 @@ void cm848_selectBarometricPressure(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.ambient_air_pressure_in_range_error == 0) ||
-       (((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) == 0)) ||
-      ((fuel_boost_final_fault_gate_enable >> 4 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x154]].flags & 0x10) == 0))
+      || ((fuel_boost_final_fault_gate_enable >> 4 & 1) == 0)) &&
      (((fault_detected_cal.boost_ambient_delta_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) == 0)) ||
-      (-1 < (char)fuel_boost_final_fault_gate_enable)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x30a]].flags & 0x10) == 0))
+      || (-1 < (char)fuel_boost_final_fault_gate_enable)))) {
     uVar1 = 0;
   }
   else {
@@ -63901,12 +64007,12 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
      (wVar1 = fuel_demand_maximum, engine_state == ENGINE_STATE_RUNNING)) {
     wVar1 = altitude_derate_turbocharger_overspeed_ambient_pressure;
     if (turbocharger_overspeed_immediate_derate_flag != 1) {
-      if ((((((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) != 0) &&
-           (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
+      if ((((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x154]].flags & 0x10)
+             != 0) && (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
           ((altitude_derate_air_handling_fault_enable_a >> 4 & 1) != 0)) ||
          (((wVar1 = barometric_pressure_sensor_filtered,
-           ((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) != 0 &&
-           (fault_detected_cal.boost_ambient_delta_error != 0)) &&
+           ((&fault_status_records_cal)[(short)fault_code_assignment_table[0x30a]].flags & 0x10) !=
+           0 && (fault_detected_cal.boost_ambient_delta_error != 0)) &&
           ((char)altitude_derate_air_handling_fault_enable_a < '\0')))) {
         wVar1 = barometric_pressure_sensor_config.default_value;
       }
@@ -63931,14 +64037,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) != 0) &&
-          (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x154]].flags & 0x10) !=
+            0) && (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_a >> 4 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) != 0) &&
-          (fault_detected_cal.boost_ambient_delta_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x30a]].flags & 0x10) !=
+            0) && (fault_detected_cal.boost_ambient_delta_error != 0)) &&
          ((char)altitude_derate_air_handling_fault_enable_a < '\0')) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -63953,14 +64059,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b2a].flags & 0x10) != 0) &&
-          (fault_detected_cal.ambient_air_temperature_key_on_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x168]].flags & 0x10) !=
+            0) && (fault_detected_cal.ambient_air_temperature_key_on_rationality_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_b >> 5 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b00].flags & 0x10) != 0) &&
-          (fault_detected_cal.ambient_air_temperature_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x153]].flags & 0x10) !=
+            0) && (fault_detected_cal.ambient_air_temperature_rationality_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_b >> 6 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -63975,14 +64081,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_000598da].flags & 0x10) != 0) &&
-          (fault_detected_cal.boost_in_range_high_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x40]].flags & 0x10) !=
+            0) && (fault_detected_cal.boost_in_range_high_error != 0)) &&
          ((fuel_correction_limit_enable_c >> 2 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059e0c].flags & 0x10) != 0) &&
-          (fault_detected_cal.boost_in_range_low_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x2d9]].flags & 0x10) !=
+            0) && (fault_detected_cal.boost_in_range_low_error != 0)) &&
          ((fuel_correction_limit_enable_c >> 3 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -63997,14 +64103,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b26].flags & 0x10) != 0) &&
-          (fault_detected_cal.intake_manifold_temperature_key_on_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x166]].flags & 0x10) !=
+            0) && (fault_detected_cal.intake_manifold_temperature_key_on_rationality_error != 0)) &&
          ((fuel_correction_limit_enable_d >> 5 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_records_cal)[DAT_00059b1e].flags & 0x10) != 0) &&
-          (fault_detected_cal.intake_manifold_temperature_rationality_error != 0)) &&
+      if (((((&fault_status_records_cal)[(short)fault_code_assignment_table[0x162]].flags & 0x10) !=
+            0) && (fault_detected_cal.intake_manifold_temperature_rationality_error != 0)) &&
          ((fuel_correction_limit_enable_d >> 6 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
@@ -64731,13 +64837,13 @@ void cm848_calculateAirFuelRatioAndIntakeOxygenFraction(void)
   else {
     fuel_air_equivalence_ratio = 0xffff;
   }
-  DAT_003fba00 = stoichiometric_oxygen_fuel_ratio + 0x1d;
-  DAT_003fba02 = (short)(uVar3 + 0x80);
+  intake_charge_oxygen_ratio_numerator = stoichiometric_oxygen_fuel_ratio + 0x1d;
+  intake_charge_oxygen_ratio_denominator = (word)(uVar3 + 0x80);
   uVar1 = (ulonglong)
           ((uint)egr_flow_estimate_terms.egr_fraction_actual *
           (uint)(ushort)(stoichiometric_oxygen_fuel_ratio + 0x1d)) /
           (ulonglong)(uVar3 + 0x80 & 0xffff);
-  DAT_003fba04 = (int)uVar1;
+  intake_charge_oxygen_depletion_term = (dword)uVar1;
   intake_charge_oxygen_fraction = 0x76b - (short)uVar1;
   return;
 }
@@ -65154,8 +65260,8 @@ void cm848_initializeOxygenLimitLookupCaches(void)
 
 /* Converts exhaust_temperature (twice the intake manifold temperature in degF plus the combustion
    temperature rise from cm848_estimateExhaustTemperature) with x 8542 + 7858640 / 1000 into
-   DAT_003fba18, divides cylinder_residual_gas_mass_density_constant x exhaust_pressure by it into
-   cylinder_residual_gas_mass_unclamped and clamps that between
+   residual_gas_temperature_divisor, divides cylinder_residual_gas_mass_density_constant x
+   exhaust_pressure by it into cylinder_residual_gas_mass_unclamped and clamps that between
    cylinder_residual_gas_mass_lower_limit and _upper_limit into cylinder_residual_gas_mass.
    cm848_calculateCylinderOxygenMasses multiplies the clamped value by the residual oxygen fraction.
    (was cm848_sensorProcessing_periodic) */
@@ -65166,7 +65272,7 @@ void cm848_calculateResidualGasMass(void)
   uint uVar1;
   
   uVar1 = ((uint)exhaust_temperature * 0x215e + 0x77e9d0) / 1000;
-  DAT_003fba18 = (short)uVar1;
+  residual_gas_temperature_divisor = (word)uVar1;
   uVar1 = ((uint)cylinder_residual_gas_mass_density_constant * (uint)exhaust_pressure) /
           (uVar1 & 0xffff);
   cylinder_residual_gas_mass_unclamped = (word)uVar1;
@@ -65239,7 +65345,7 @@ void cm848_checkAirHandlingSystemProtectionLevelConditions(void)
   else if (0x7fff < iVar2) {
     iVar2 = 0x7fff;
   }
-  DAT_003fba22 = (short)iVar2;
+  air_handling_system_protection_level_1_ambient_temperature_limit = (short)iVar2;
   if ((air_handling_system_protection_level_1_altitude_limit < iVar1) ||
      ((short)iVar2 < ambient_air_temperature)) {
     air_handling_system_protection_level_1_condition_flag = 0;
@@ -65262,7 +65368,7 @@ void cm848_checkAirHandlingSystemProtectionLevelConditions(void)
   else if (0x7fff < iVar2) {
     iVar2 = 0x7fff;
   }
-  DAT_003fba24 = (short)iVar2;
+  air_handling_system_protection_level_2_ambient_temperature_limit = (short)iVar2;
   if (((air_handling_system_protection_level_2_altitude_limit < iVar1) ||
       ((short)iVar2 < ambient_air_temperature)) ||
      (air_handling_system_protection_level_1_condition_flag != 0)) {
@@ -65446,10 +65552,11 @@ void cm848_initialization_step_5(void)
 
 /* The emission manager's cap: the maximum of nine inputs (the air handling, condensation, engine
    start and warmup, extended idle, extreme ambient overheat, general engine protection and white
-   smoke and misfire AECD caps, DAT_003fba26 and emission_level_cap_reference), slew-limited by
-   emission_level_cap_rate_limit_increase / _decrease, then emission_level_cap_override_value
-   instead while emission_level_cap_user_override_enable_cal is set, into emission_level_cap_command
-   (was fuel_demandMin_maxSelect_rateLimit) */
+   smoke and misfire AECD caps, emission_level_cap_unwritten_input and
+   emission_level_cap_reference), slew-limited by emission_level_cap_rate_limit_increase /
+   _decrease, then emission_level_cap_override_value instead while
+   emission_level_cap_user_override_enable_cal is set, into emission_level_cap_command (was
+   fuel_demandMin_maxSelect_rateLimit) */
 
 void cm848_calculateEmissionLevelCapCommand(void)
 
@@ -65461,7 +65568,7 @@ void cm848_calculateEmissionLevelCapCommand(void)
   if (uVar1 < air_handling_system_protection_emission_level_cap) {
     uVar1 = (uint)air_handling_system_protection_emission_level_cap;
   }
-  uVar2 = (uint)DAT_003fba26;
+  uVar2 = (uint)emission_level_cap_unwritten_input;
   if (uVar2 < uVar1) {
     uVar2 = uVar1;
   }
@@ -65946,7 +66053,8 @@ void cm848_packAuxiliaryEmissionControlState(void)
        condensation_protection_active_flag << 2 |
        (ushort)(white_smoke_and_misfire_protection_state != 0) << 3 |
        extended_idle_protection_active_flag << 4 | engine_start_warmup_protection_active_flag << 5 |
-       (ushort)(general_engine_protection_state != 0) << 6 | DAT_003fba36 << 7;
+       (ushort)(general_engine_protection_state != 0) << 6 |
+       auxiliary_emission_control_unwritten_bit_7_input << 7;
   return;
 }
 
@@ -66045,11 +66153,13 @@ void cm848_updateNotToExceedAverages(void)
            (uint)emission_level_cap_command;
       fuel_demand_timing_demand_ring_buf[uVar3] = emission_level_cap_command;
       fuel_demand_timing_correction_window_sum =
-           fuel_demand_timing_correction_window_sum - (ushort)(&DAT_003fbb64)[uVar3];
+           fuel_demand_timing_correction_window_sum -
+           (&nitrogen_oxide_target_off_nominal_ring_buf)[uVar3];
     }
     uVar2 = fuel_demand_timing_correction_window_sum + nitrogen_oxide_target_off_nominal_adjusted;
     fuel_demand_timing_correction_window_sum = uVar2;
-    (&DAT_003fbb64)[uVar3] = nitrogen_oxide_target_off_nominal_adjusted;
+    (&nitrogen_oxide_target_off_nominal_ring_buf)[uVar3] =
+         nitrogen_oxide_target_off_nominal_adjusted;
     fuel_demand_timing_rolling_avg_index = fuel_demand_timing_rolling_avg_index + 1;
     if (wVar1 == 0) {
       emission_level_cap_average = 0;
@@ -66210,7 +66320,8 @@ void cm848_updateExtremeAmbientOverheatProtection(void)
                  (&extreme_ambient_overheat_protection_cap_cached_axis_offset,
                   coolant_temperature_selected,extreme_ambient_overheat_protection_cap_axis,
                   extreme_ambient_overheat_protection_cap_values,1);
-  DAT_003fbca0 = extreme_ambient_overheat_protection_emission_level_cap;
+  extreme_ambient_overheat_protection_cap_lookup =
+       extreme_ambient_overheat_protection_emission_level_cap;
   if (extreme_ambient_overheat_protection_active_flag == 0) {
     extreme_ambient_overheat_protection_emission_level_cap = 0;
   }
@@ -66312,8 +66423,8 @@ void cm848_calculateCompressorInletDensity(void)
     uVar2 = 0xffff;
   }
   wVar3 = (word)uVar2;
-  if (DAT_003fbca4 == 0) {
-    DAT_003fbca4 = 1;
+  if (compressor_inlet_density_rate_limit_initialized_flag == 0) {
+    compressor_inlet_density_rate_limit_initialized_flag = 1;
   }
   else {
     iVar1 = (uVar2 & 0xffff) - (uint)compressor_inlet_density;
@@ -66368,11 +66479,11 @@ void cm848_selectCompressorInletTemperature(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.ambient_air_temperature_key_on_rationality_error == 0) ||
-       (((&fault_status_records_cal)[DAT_00059b2a].flags & 0x10) == 0)) ||
-      ((fuel_timing_demand_fault_gate_enable >> 5 & 1) == 0)) &&
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x168]].flags & 0x10) == 0))
+      || ((fuel_timing_demand_fault_gate_enable >> 5 & 1) == 0)) &&
      (((fault_detected_cal.ambient_air_temperature_rationality_error == 0 ||
-       (((&fault_status_records_cal)[DAT_00059b00].flags & 0x10) == 0)) ||
-      ((fuel_timing_demand_fault_gate_enable >> 6 & 1) == 0)))) {
+       (((&fault_status_records_cal)[(short)fault_code_assignment_table[0x153]].flags & 0x10) == 0))
+      || ((fuel_timing_demand_fault_gate_enable >> 6 & 1) == 0)))) {
     uVar1 = 0;
   }
   else {
@@ -66572,9 +66683,9 @@ void cm848_resetDataCollector(void)
 {
   data_collector_status = 0;
   data_collector_trigger_active_cal = 0;
-  data_collector_buffer_start_address = &DAT_0040c28a;
-  data_collector_end_address = &DAT_0040c28a;
-  data_collector_start_address = &DAT_0040c28a;
+  data_collector_buffer_start_address = &data_collector_default_buffer;
+  data_collector_end_address = &data_collector_default_buffer;
+  data_collector_start_address = &data_collector_default_buffer;
   data_collector_table_address = (dword)data_collector_address_table_cal;
   data_collector_fill_phase = 0;
   data_collector_table_entry_count = 0;
@@ -66749,7 +66860,8 @@ void cm848_runDataCollector(int param_1)
     iVar4 = 0x8000 - uVar3 * uVar2;
     data_collector_buffer_end_address = data_collector_buffer_start_address + (0x7fff - iVar4);
     data_collector_sample_capacity = (word)uVar2;
-    DAT_003fbcb4 = data_collector_table_entry_count * data_collector_sample_capacity;
+    data_collector_total_sample_bytes =
+         data_collector_table_entry_count * data_collector_sample_capacity;
     data_collector_end_address = data_collector_buffer_start_address;
     data_collector_start_address = data_collector_buffer_start_address;
     data_collector_buffer_has_data_flag = 0;
@@ -66809,7 +66921,8 @@ void cm848_runDataCollector(int param_1)
                   (uint)data_collector_table_entry_count *
                   (uint)(data_collector_sample_capacity >> 1));
       if (data_collector_buffer_end_address < data_collector_fill_stop_address) {
-        data_collector_fill_stop_address = data_collector_fill_stop_address - DAT_003fbcb4;
+        data_collector_fill_stop_address =
+             data_collector_fill_stop_address - data_collector_total_sample_bytes;
       }
       cm848_fillDataCollectorRingBuffer();
       goto LAB_00506360;
@@ -66879,7 +66992,7 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       load_histogram_total_sample_count_cal = 0;
       uVar9 = 0;
       do {
-        (&DAT_003fde4e)[uVar9] = 0;
+        load_histogram_bin_counts_cal[uVar9] = 0;
         uVar9 = uVar9 + 1 & 0xff;
       } while (uVar9 < 0x52);
       uVar9 = 0;
@@ -66969,7 +67082,7 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       if (uVar10 <= uVar10 + 7) {
         uVar5 = uVar10 + 7;
         do {
-          uVar7 = uVar7 + (&DAT_003fde4e)[uVar10];
+          uVar7 = uVar7 + load_histogram_bin_counts_cal[uVar10];
           uVar10 = uVar10 + 1 & 0xff;
         } while (uVar10 <= uVar5);
       }
@@ -66978,12 +67091,14 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
                  (ulonglong)load_histogram_total_sample_count_cal);
       uVar9 = uVar9 + 1 & 0xff;
     } while (uVar9 < 10);
-    DAT_003fdfac = (undefined2)
-                   (CONCAT44((int)((ulonglong)DAT_003fdf8e * 0x6400 >> 0x20),DAT_003fdf8e * 0x6400)
-                   / (ulonglong)load_histogram_total_sample_count_cal);
-    DAT_003fdfae = (undefined2)
-                   (CONCAT44((int)((ulonglong)DAT_003fdf92 * 0x6400 >> 0x20),DAT_003fdf92 * 0x6400)
-                   / (ulonglong)load_histogram_total_sample_count_cal);
+    percent_time_in_load_histogram_bin_80_cal =
+         (word)(CONCAT44((int)((ulonglong)load_histogram_bin_counts_cal[0x50] * 0x6400 >> 0x20),
+                         load_histogram_bin_counts_cal[0x50] * 0x6400) /
+               (ulonglong)load_histogram_total_sample_count_cal);
+    percent_time_in_load_histogram_bin_81_cal =
+         (word)(CONCAT44((int)((ulonglong)load_histogram_bin_counts_cal[0x51] * 0x6400 >> 0x20),
+                         load_histogram_bin_counts_cal[0x51] * 0x6400) /
+               (ulonglong)load_histogram_total_sample_count_cal);
   }
   return;
 }
@@ -67071,16 +67186,18 @@ void cm848_updateEgrValvePositionAutozero(void)
 {
   sword *psVar1;
   
-  psVar1 = &DAT_003fbcc6;
-  DAT_003fbcc8 = egr_valve_position_sensor_value;
-  DAT_003fbcca = egr_valve_position_autozero_tolerance;
-  DAT_003fbcd0 = egr_valve_position_autozero_enable_time;
-  DAT_003fbcd2 = egr_valve_position_autozero_fault_time;
-  DAT_003fbcd8 = egr_valve_position_autozero_error_count_clear_cal;
-  DAT_003fbcdc = 5;
-  PTR_PTR_003fbcde = (undefined *)&PTR_egr_valve_position_autozero_filter_coefficient_003fbcbe;
-  cm848_updateAutozeroOffset(&DAT_003fbcc6);
-  if (DAT_003fbcda == 0) {
+  psVar1 = &egr_valve_position_autozero_offset_filter_output;
+  egr_valve_position_autozero_sample = egr_valve_position_sensor_value;
+  egr_valve_position_autozero_tolerance_working = egr_valve_position_autozero_tolerance;
+  egr_valve_position_autozero_enable_time_working = egr_valve_position_autozero_enable_time;
+  egr_valve_position_autozero_fault_time_working = egr_valve_position_autozero_fault_time;
+  egr_valve_position_autozero_error_count_clear_flag =
+       egr_valve_position_autozero_error_count_clear_cal;
+  egr_valve_position_autozero_pass_increment = 5;
+  egr_valve_position_autozero_offset_filter_pointer =
+       &egr_valve_position_autozero_offset_filter_state;
+  cm848_updateAutozeroOffset(&egr_valve_position_autozero_offset_filter_output);
+  if (egr_valve_position_autozero_error_status == 0) {
     fault_detected_cal._88_2_ = fault_detected_cal._88_2_ & 0xbfff;
     fault_registered_cal._88_2_ = fault_registered_cal._88_2_ & 0xbfff;
   }
@@ -67169,15 +67286,16 @@ void cm848_updateEgrValvePosition(void)
 void cm848_initializeEgrValvePosition(void)
 
 {
-  DAT_003fbcce = 0;
-  DAT_003fbcd4 = 0;
-  DAT_003fbcd6 = 0;
-  DAT_003fbcda = 0;
+  egr_valve_position_autozero_enable_timer = 0;
+  egr_valve_position_autozero_error_counter = 0;
+  egr_valve_position_autozero_sample_window_counter = 0;
+  egr_valve_position_autozero_error_status = 0;
   fault_detected_cal.egr_valve_autozero_error = 0;
   fault_registered_cal.egr_valve_autozero_error = 0;
-  DAT_003fbcc2 = (int)(short)egr_valve_position_sensor_value << 0x10;
-  PTR_egr_valve_position_autozero_filter_coefficient_003fbcbe =
-       (undefined *)&egr_valve_position_autozero_filter_coefficient;
+  egr_valve_position_autozero_offset_filter_state.accumulator =
+       (int)(short)egr_valve_position_sensor_value << 0x10;
+  egr_valve_position_autozero_offset_filter_state.coefficient =
+       &egr_valve_position_autozero_filter_coefficient;
   egr_valve_position = egr_valve_position_sensor_value;
   egr_valve_position_virtual_sensor_copy = egr_valve_position_sensor_value;
   if ((egr_valve_position_sensor_fault_status == 0) || (egr_valve_position_sensor_fault_status == 1)
@@ -67308,7 +67426,7 @@ void cm848_calculateCombustionTemperatureRise(void)
           (uint)engine_speed_state.filtered_engine_speed) / 0x400 +
           ((uint)exhaust_temperature_estimate_boost_pressure_coefficient * (uint)charge_pressure) /
           0x4000 + (uint)exhaust_temperature_estimate_offset;
-  DAT_003fbcf2 = uVar1;
+  exhaust_temperature_estimate_unclamped = uVar1;
   if ((int)uVar1 < 15000) {
     uVar1 = 15000;
   }
@@ -67436,7 +67554,8 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
   int iVar3;
   
   iVar3 = (uint)egr_orifice_temperature_lead_time_constant *
-          ((uint)egr_orifice_temperature_sensor_value - (uint)DAT_003fbcfa);
+          ((uint)egr_orifice_temperature_sensor_value -
+          (uint)egr_orifice_temperature_sensor_value_previous);
   if (iVar3 < 32000) {
     if (iVar3 < -31999) {
       iVar3 = -32000;
@@ -67453,7 +67572,7 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
     uVar1 = (uint)egr_orifice_temperature_estimate_minimum_limit;
   }
   egr_orifice_temperature_after_lead = (word)uVar1;
-  DAT_003fbcfa = egr_orifice_temperature_sensor_value;
+  egr_orifice_temperature_sensor_value_previous = egr_orifice_temperature_sensor_value;
   return;
 }
 
@@ -68017,7 +68136,7 @@ void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
 
 {
   int iVar1;
-  undefined *puVar2;
+  uint uVar2;
   
   if (fault_derate_active_flag == 1) {
     j1939_pgn65251_speed_points_request_flags =
@@ -68026,56 +68145,52 @@ void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
         fault_derate_torque_curve_priority_bit) {
       if ((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable == 0) ||
          (iVar1 = (int)low_speed_governor_droop_selected_slope, iVar1 == 0)) {
-        puVar2 = (undefined *)(uint)low_speed_governor_reference.reference_speed;
+        uVar2 = (uint)low_speed_governor_reference.reference_speed;
       }
       else {
-        puVar2 = (undefined *)
-                 ((uint)low_speed_governor_reference.reference_speed -
-                 (int)(CONCAT44((int)((ulonglong)
-                                      ((longlong)iVar1 *
-                                      (longlong)
-                                      (int)(uint)
-                                           fault_derate_curve_low_speed_governor_intercept_fueling)
-                                     >> 0x20),
-                                iVar1 * (uint)
-                                        fault_derate_curve_low_speed_governor_intercept_fueling) /
-                      0xa7));
-        if ((int)puVar2 < 0) {
-          puVar2 = (undefined *)0x0;
+        uVar2 = (uint)low_speed_governor_reference.reference_speed -
+                (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)iVar1 *
+                                     (longlong)
+                                     (int)(uint)
+                                          fault_derate_curve_low_speed_governor_intercept_fueling)
+                                    >> 0x20),
+                               iVar1 * (uint)fault_derate_curve_low_speed_governor_intercept_fueling
+                              ) / 0xa7);
+        if ((int)uVar2 < 0) {
+          uVar2 = 0;
         }
-        else if (40000 < (int)puVar2) {
-          puVar2 = &DAT_00009c40;
+        else if (40000 < (int)uVar2) {
+          uVar2 = 40000;
         }
       }
-      j1939_torque_curve_speed_at_point_1 = (word)puVar2;
+      j1939_torque_curve_speed_at_point_1 = (word)uVar2;
       if ((((engine_speed_limit_arbitration.limiting_source_number == 2) ||
            (engine_speed_limit_arbitration.limiting_source_number == 1)) ||
           (engine_speed_limit_arbitration.limiting_source_number == 4)) ||
          ((engine_speed_limit_arbitration.limiting_source_number == 5 ||
           (engine_speed_limit_arbitration.limiting_source_number == 0xc)))) {
-        puVar2 = (undefined *)
-                 ((int)(CONCAT44((int)((ulonglong)
-                                       ((longlong)
-                                        (int)((uint)engine_speed_limit_ramped_maximum_fuel_quantity
-                                             - (uint)
-                                               fault_derate_curve_high_speed_governor_intercept_fueling
-                                             ) * (longlong)(int)engine_speed_limit_droop_slope) >>
-                                      0x20),
-                                 ((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
-                                 (uint)fault_derate_curve_high_speed_governor_intercept_fueling) *
-                                 (int)engine_speed_limit_droop_slope) / 0x1111) +
-                 (uint)engine_speed_limit_arbitration.lowest_source_speed_limit);
-        if ((int)puVar2 < 0) {
-          puVar2 = (undefined *)0x0;
+        uVar2 = (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)
+                                      (int)((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
+                                           (uint)
+                                           fault_derate_curve_high_speed_governor_intercept_fueling)
+                                     * (longlong)(int)engine_speed_limit_droop_slope) >> 0x20),
+                               ((uint)engine_speed_limit_ramped_maximum_fuel_quantity -
+                               (uint)fault_derate_curve_high_speed_governor_intercept_fueling) *
+                               (int)engine_speed_limit_droop_slope) / 0x1111) +
+                (uint)engine_speed_limit_arbitration.lowest_source_speed_limit;
+        if ((int)uVar2 < 0) {
+          uVar2 = 0;
         }
-        else if (40000 < (int)puVar2) {
-          puVar2 = &DAT_00009c40;
+        else if (40000 < (int)uVar2) {
+          uVar2 = 40000;
         }
       }
       else {
-        puVar2 = (undefined *)(uint)fault_derate_curve_engine_speed_point_2;
+        uVar2 = (uint)fault_derate_curve_engine_speed_point_2;
       }
-      j1939_torque_curve_speed_at_point_2 = (word)puVar2;
+      j1939_torque_curve_speed_at_point_2 = (word)uVar2;
       j1939_torque_curve_speed_at_point_3 = fault_derate_curve_engine_speed_point_3;
       j1939_torque_curve_speed_at_point_4 = fault_derate_curve_engine_speed_point_4;
       j1939_torque_curve_speed_at_point_5 = fault_derate_curve_engine_speed_point_5;
@@ -68604,7 +68719,7 @@ void cm848_checkEngineProtectionRestartLimitation
     if ((bVar1) && (engine_protection_shutdown_override_request_flag == 1)) {
       state->fueling_duration = 0;
       engine_protection_shutdown_override_lamp_flag = 1;
-      DAT_0040a78c = 0;
+      engine_protection_shutdown_override_spare_word = 0;
     }
     engine_protection_restart_limitation_shutdown_command_flag =
          (word)(configuration->shutdown_warning_time < state->fueling_duration);
@@ -68919,7 +69034,7 @@ LAB_00508a7c:
              engine_protection_shutdown_override_request_flag != 0)) {
             state->fueling_shutdown_time_count = uVar3;
             engine_protection_shutdown_override_lamp_flag = 1;
-            DAT_0040a78c = 0;
+            engine_protection_shutdown_override_spare_word = 0;
           }
           if ((uint)uVar3 + (uint)configuration->shutdown_warning_time <
               (uint)state->fueling_shutdown_time_count) {
@@ -68951,7 +69066,7 @@ LAB_00508b78:
            engine_protection_shutdown_override_request_flag != 0)) {
           state->engine_speed_shutdown_time_count = uVar2;
           engine_protection_shutdown_override_lamp_flag = 1;
-          DAT_0040a78c = 0;
+          engine_protection_shutdown_override_spare_word = 0;
         }
         if ((uint)uVar2 + (uint)configuration->shutdown_warning_time <
             (uint)state->engine_speed_shutdown_time_count) {
@@ -69031,7 +69146,7 @@ void cm848_resetEngineProtectionShutdownState(void)
   fuel_temperature_engine_protection_state.engine_speed_shutdown_time_count = 0;
   engine_protection_shutdown_override_request_flag = 0;
   engine_protection_shutdown_override_lamp_flag = 0;
-  DAT_0040a78c = 0;
+  engine_protection_shutdown_override_spare_word = 0;
   engine_protection_timer_state = 0;
   return;
 }
@@ -69669,7 +69784,8 @@ void cm848_initializeExhaustPressure(void)
 
 /* The e2m EMO general engine protection AECD (blocks 1A41 / 1A42; algorithm_enable_flags_21_cal bit
    0x40, clear on this truck): general_engine_protection_state from egr_system_failure_flag (0x100),
-   DAT_0040a43c (8) and DAT_0040a43e (4), and its cap (was cm848_updateSensorValidationFlags) */
+   general_engine_protection_condition_8_input (8) and general_engine_protection_condition_4_input
+   (4), and its cap (was cm848_updateSensorValidationFlags) */
 
 void cm848_updateGeneralEngineProtection(void)
 
@@ -69680,24 +69796,25 @@ void cm848_updateGeneralEngineProtection(void)
   else {
     egr_system_failure_validation_bit = 0x100;
   }
-  if (DAT_0040a43c == 0) {
-    DAT_003fbd56 = 0;
+  if (general_engine_protection_condition_8_input == 0) {
+    general_engine_protection_condition_bit_8 = 0;
   }
   else {
-    DAT_003fbd56 = 8;
+    general_engine_protection_condition_bit_8 = 8;
   }
-  if (DAT_0040a43e == 0) {
-    DAT_003fbd58 = 0;
+  if (general_engine_protection_condition_4_input == 0) {
+    general_engine_protection_condition_bit_4 = 0;
   }
   else {
-    DAT_003fbd58 = 4;
+    general_engine_protection_condition_bit_4 = 4;
   }
   if (algorithm_enable_flags_21_cal.general_engine_protection_enable == 0) {
     general_engine_protection_state = 0;
   }
   else {
     general_engine_protection_state =
-         DAT_003fbd58 | DAT_003fbd56 | DAT_003fbd54 | DAT_003fbd50 |
+         general_engine_protection_condition_bit_4 | general_engine_protection_condition_bit_8 |
+         general_engine_protection_condition_word_b | general_engine_protection_condition_word_a |
          egr_system_failure_validation_bit;
   }
   general_engine_protection_emission_level_cap =
@@ -69719,8 +69836,8 @@ void cm848_updateGeneralEngineProtection(void)
 void cm848_initializeFlowControlStateVariables(void)
 
 {
-  DAT_003fbd50 = 0;
-  DAT_003fbd54 = 0;
+  general_engine_protection_condition_word_a = 0;
+  general_engine_protection_condition_word_b = 0;
   return;
 }
 
@@ -70301,7 +70418,7 @@ void cm848_updateIdleSwitchesFromLocalInputs(void)
     }
   }
   else {
-    idle_check_accelerator_pedal_raw = DAT_0040bc9a;
+    idle_check_accelerator_pedal_raw = accelerator_pedal_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x2000) == 0) {
       if (qadc_channel_index_table[0xd] < 0x81) {
         uVar3 = (uint)qadc_channel_index_table[0xd];
@@ -70859,7 +70976,8 @@ byte writeJ1939DiagnosticMemory(j1939_received_message_t *request,byte *address,
         return 3;
       }
     }
-    if (((ram_refresh_enable != RAM_REFRESH_DISABLED) && (&DAT_003fd480 < address)) &&
+    if (((ram_refresh_enable != RAM_REFRESH_DISABLED) &&
+        (&ram_refresh_protected_region_lower_bound < address)) &&
        (address < &sensor_channel_ram_start)) {
       return 10;
     }
@@ -73932,7 +74050,8 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
   }
   ambient_saturation_vapor_pressure =
        lookupTableInterpolation
-                 (&DAT_003fcbf4,input,water_saturation_vapor_pressure_by_temperature_axis,
+                 (&ambient_saturation_vapor_pressure_cached_axis_offset,input,
+                  water_saturation_vapor_pressure_by_temperature_axis,
                   water_saturation_vapor_pressure_by_temperature_values,1);
   uVar3 = (uint)barometric_pressure_reference;
   if (uVar3 == 0) {
@@ -73963,7 +74082,8 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
        (word)((uint)charge_pressure * (uint)exhaust_water_vapor_fraction >> 8);
   exhaust_saturation_temperature =
        lookupTableInterpolation
-                 (&DAT_003fcbf8,exhaust_water_vapor_partial_pressure_times_4,
+                 (&exhaust_saturation_temperature_cached_axis_offset,
+                  exhaust_water_vapor_partial_pressure_times_4,
                   fuel_demand_compensation_target_by_pressure_axis,
                   fuel_demand_compensation_target_by_pressure_values,2);
   if (((charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
@@ -73989,9 +74109,9 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
 void cm848_initializeBoostControlInterpolationState(void)
 
 {
-  DAT_003fcbf4 = 2;
+  ambient_saturation_vapor_pressure_cached_axis_offset = 2;
   fuel_demand_compensation_target_by_pressure_cached_axis_offset = 2;
-  DAT_003fcbf8 = 2;
+  exhaust_saturation_temperature_cached_axis_offset = 2;
   return;
 }
 
@@ -74348,7 +74468,7 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
 {
   ushort uVar1;
   uint uVar2;
-  ushort *puVar3;
+  word *pwVar3;
   uint uVar4;
   uint uVar5;
   
@@ -74364,15 +74484,17 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
   uVar2 = (uint)uVar1;
   turbocharger_speed_unfiltered_step = (uint)uVar1 - (uint)turbocharger_speed_unfiltered_previous;
   uVar4 = (uint)turbocharger_speed_first_stage_rate_limited;
-  DAT_003fcc18 = turbocharger_speed_first_stage_rate_limited;
+  turbocharger_speed_first_stage_rate_limited_previous = turbocharger_speed_first_stage_rate_limited
+  ;
   if ((int)(uint)turbocharger_speed_rate_limit_threshold < (int)turbocharger_speed_unfiltered_step)
   {
     uVar2 = (uint)turbocharger_speed_rate_limit_value + (uint)turbocharger_speed_unfiltered_previous
     ;
   }
   turbocharger_speed_first_stage_rate_limited = (word)uVar2;
-  DAT_003fcc14 = (uVar2 & 0xffff) - uVar4;
-  if ((int)(uint)turbocharger_speed_rate_limit_threshold < DAT_003fcc14) {
+  turbocharger_speed_first_stage_rate_limited_step = (uVar2 & 0xffff) - uVar4;
+  if ((int)(uint)turbocharger_speed_rate_limit_threshold <
+      turbocharger_speed_first_stage_rate_limited_step) {
     uVar2 = turbocharger_speed_rate_limit_value + uVar4;
   }
   turbocharger_speed_rate_limited = (word)uVar2;
@@ -74381,12 +74503,13 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
   turbocharger_speed_filtered_limited = (word)uVar2;
   uVar4 = (uint)turbocharger_speed_envelope_filter_buffer_size;
   if (uVar4 != 0) {
-    for (puVar3 = &DAT_003fcc20; puVar3 < &DAT_003fcc20 + uVar4; puVar3 = puVar3 + 1) {
-      if ((uVar2 & 0xffff) < (uint)*puVar3) {
-        uVar2 = (uint)*puVar3;
+    for (pwVar3 = turbocharger_speed_envelope_ring;
+        pwVar3 < turbocharger_speed_envelope_ring + uVar4; pwVar3 = pwVar3 + 1) {
+      if ((uVar2 & 0xffff) < (uint)*pwVar3) {
+        uVar2 = (uint)*pwVar3;
       }
     }
-    (&DAT_003fcc20)[turbocharger_speed_envelope_ring_write_index] =
+    turbocharger_speed_envelope_ring[turbocharger_speed_envelope_ring_write_index] =
          turbocharger_speed_filtered_limited;
     uVar5 = turbocharger_speed_envelope_ring_write_index + 1;
     turbocharger_speed_envelope_ring_write_index = (word)uVar5;
@@ -74928,19 +75051,18 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void)
 
 {
   dword dVar1;
-  undefined *puVar2;
-  uint uVar3;
+  uint uVar2;
   
   if (variable_geometry_turbocharger_enable_flag != 0) {
-    uVar3 = ((uint)variable_geometry_turbocharger_motor_mean_squared_current *
+    uVar2 = ((uint)variable_geometry_turbocharger_motor_mean_squared_current *
              (uint)variable_geometry_turbocharger_normalized_resistance >> 0xb) +
             (uint)(variable_geometry_turbocharger_motor_iron_core_temperature >> 3);
-    if (0xffff < uVar3) {
-      uVar3 = 0xffff;
+    if (0xffff < uVar2) {
+      uVar2 = 0xffff;
     }
-    variable_geometry_turbocharger_motor_winding_temperature_filter_input = (word)uVar3;
+    variable_geometry_turbocharger_motor_winding_temperature_filter_input = (word)uVar2;
     dVar1 = cm848_exponentialMovingAverage
-                      (uVar3 & 0xffff,
+                      (uVar2 & 0xffff,
                        &variable_geometry_turbocharger_motor_winding_temperature_filter_state);
     variable_geometry_turbocharger_motor_winding_temperature = (word)dVar1;
     if (0x12c0 < (dVar1 & 0xffff)) {
@@ -74957,25 +75079,24 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void)
     if (0x5000 < variable_geometry_turbocharger_motor_ambient_temperature) {
       variable_geometry_turbocharger_motor_ambient_temperature = 0x5000;
     }
-    puVar2 = (undefined *)
-             (((int)(((uint)variable_geometry_turbocharger_motor_winding_temperature * 8 -
-                     (uint)variable_geometry_turbocharger_motor_ambient_temperature) *
-                    (uint)variable_geometry_turbocharger_motor_temperature_fraction) >> 10) +
-             (uint)variable_geometry_turbocharger_motor_ambient_temperature);
-    if ((int)puVar2 < 0x9601) {
-      if ((int)puVar2 < 0) {
-        puVar2 = (undefined *)0x0;
+    uVar2 = ((int)(((uint)variable_geometry_turbocharger_motor_winding_temperature * 8 -
+                   (uint)variable_geometry_turbocharger_motor_ambient_temperature) *
+                  (uint)variable_geometry_turbocharger_motor_temperature_fraction) >> 10) +
+            (uint)variable_geometry_turbocharger_motor_ambient_temperature;
+    if ((int)uVar2 < 0x9601) {
+      if ((int)uVar2 < 0) {
+        uVar2 = 0;
       }
     }
     else {
-      puVar2 = &DAT_00009600;
+      uVar2 = 0x9600;
     }
-    variable_geometry_turbocharger_motor_iron_core_temperature_filter_input = (word)puVar2;
+    variable_geometry_turbocharger_motor_iron_core_temperature_filter_input = (word)uVar2;
     dVar1 = cm848_exponentialMovingAverage
-                      ((uint)puVar2 & 0xffff,
+                      (uVar2 & 0xffff,
                        &variable_geometry_turbocharger_motor_iron_core_temperature_filter_state);
     variable_geometry_turbocharger_motor_iron_core_temperature = (word)dVar1;
-    if (&DAT_00009600 < (undefined *)(dVar1 & 0xffff)) {
+    if (0x9600 < (dVar1 & 0xffff)) {
       variable_geometry_turbocharger_motor_iron_core_temperature = 0x9600;
     }
     variable_geometry_turbocharger_motor_temperature_warning_flag =
@@ -75663,7 +75784,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   bool bVar5;
   uint uVar6;
   
-  uVar1 = DAT_0040bd0e;
+  uVar1 = air_conditioning_pressure_adc_forced_reading;
   if ((adc_forced_reading_enable_bits_cal[4] & 0x80) == 0) {
     if (qadc_channel_index_table[0x47] < 0x81) {
       uVar6 = (uint)qadc_channel_index_table[0x47];
@@ -76421,7 +76542,7 @@ void cm848_initializeCruiseControl(void)
   cruise_engine_to_vehicle_speed_ratio_filter_state.accumulator = 0;
   cruise_engine_to_vehicle_speed_ratio_filter_state.coefficient =
        &cruise_engine_to_vehicle_speed_ratio_filter_coefficient;
-  DAT_003fcd90 = 0;
+  cruise_control_unused_word = 0;
   cruise_engine_speed_previous = 0;
   cruise_engine_to_vehicle_speed_ratio_previous = 0;
   cruise_engine_to_vehicle_speed_ratio_integral = 0;
@@ -76880,7 +77001,6 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
 // Function: cm848_checkCruiseSwitchLearnCondition @ 0x00512e70
 //
 
-/* WARNING: Unable to use type for symbol cruise_switch_adc_value */
 /* Returns 1 for a fresh cruise ON / OFF press (cruise_switch_request CRUISE_SWITCH_ON_OFF after
    IDLE) while the cruise switch ADC (channel 47, or its forced reading) is inside
    cruise_switch_sensor_config's window; cm848_cruiseControlPeriodicUpdate then sets
@@ -77186,9 +77306,10 @@ void cm848_initializeEngineWarningFlags(void)
 /* Adds one to coolant_overheat_level_timers[i] for every pass the coolant temperature is above
    level i of five thresholds (ROM words from 0x408772); once
    coolant_overheat_level_timer_reset_count passes coolant_overheat_level_timer_reset_time the
-   counters are added into the totals at DAT_003fee04 + 4 x i and cleared. Feeds
-   cm848_monitorCoolantOverheatAggressiveDerate (was engine_coolantTemp_bucket_accumulate). (was
-   cm848_accumulateCoolantTemperatureBuckets; PR #53 round 53: the e2m's CT_Derate vocabulary) */
+   counters are added into the totals at coolant_overheat_level_time_totals_cal + 4 x i and cleared.
+   Feeds cm848_monitorCoolantOverheatAggressiveDerate (was engine_coolantTemp_bucket_accumulate).
+   (was cm848_accumulateCoolantTemperatureBuckets; PR #53 round 53: the e2m's CT_Derate vocabulary)
+    */
 
 void cm848_accumulateCoolantOverheatLevelTimers(void)
 
@@ -77218,8 +77339,9 @@ void cm848_accumulateCoolantOverheatLevelTimers(void)
       bVar1 = false;
     }
     if (wVar2 < coolant_overheat_level_timer_reset_count) {
-      *(dword *)(&DAT_003fee04 + iVar5 * 4) =
-           *(int *)(&DAT_003fee04 + iVar5 * 4) + coolant_overheat_level_timers[iVar5];
+      *(dword *)(&coolant_overheat_level_time_totals_cal + iVar5 * 4) =
+           *(int *)(&coolant_overheat_level_time_totals_cal + iVar5 * 4) +
+           coolant_overheat_level_timers[iVar5];
       coolant_overheat_level_timers[iVar5] = 0;
       coolant_overheat_level_timer_reset_count = wVar2 + 1;
     }
@@ -77737,13 +77859,13 @@ void cm848_addCoolantOverheatLevelTimersToTotals(void)
 
 {
   dword *pdVar1;
-  int *piVar2;
+  byte *pbVar2;
   
-  piVar2 = (int *)&DAT_003fee04;
+  pbVar2 = &coolant_overheat_level_time_totals_cal;
   pdVar1 = coolant_overheat_level_timers;
   do {
-    *piVar2 = *piVar2 + *pdVar1;
-    piVar2 = piVar2 + 1;
+    *(dword *)pbVar2 = *(int *)pbVar2 + *pdVar1;
+    pbVar2 = pbVar2 + 4;
     pdVar1 = pdVar1 + 1;
   } while (pdVar1 < &engine_overheat_derate_reason_code);
   return;
@@ -79476,7 +79598,7 @@ void cm848_initializeIntakeAirHeaterControl(void)
   intake_air_heater_shutdown_reason = 0;
   intake_air_heater_relay_action_code_previous = 0;
   intake_air_heater_control_state_previous = INTAKE_AIR_HEATER_PHASE_KEY_ON;
-  DAT_003fce68 = 10;
+  intake_air_heater_crank_standby_cycle_limit = 10;
   intake_air_heater_postheat_active_flag = 0;
   intake_air_heater_postheat_schedule_level_cached_axis_offset = 2;
   intake_air_heater_preheat_total_ticks_cached_axis_offsets[0] = 2;
@@ -79519,7 +79641,8 @@ void cm848_computeIntakeAirHeaterPreheatDuration(void)
   else {
     intake_air_heater_preheat_remaining_ticks = intake_air_heater_preheat_total_ticks;
     if (((intake_air_heater_saved_values_cal.redundant_preheat_request == 1) ||
-        (intake_air_heater_preheat_depleted_flag == 1)) && (DAT_003fce53 == '\0')) {
+        (intake_air_heater_preheat_depleted_flag == 1)) &&
+       (intake_air_heater_crank_heat_done_flag == 0)) {
       intake_air_heater_preheat_remaining_ticks = intake_air_heater_redundant_preheat_time;
     }
     if ((algorithm_enable_flags_41_cal.intake_air_heater_monitor_enable == 0) ||
@@ -79660,7 +79783,7 @@ void cm848_updateIntakeAirHeaterCrankPhase(void)
   }
   intake_air_heater_status_flags = intake_air_heater_status_flags & 0xef | 0x10;
   intake_air_heater_preheat_remaining_ticks = 0;
-  DAT_003fce53 = 1;
+  intake_air_heater_crank_heat_done_flag = 1;
   return;
 }
 
@@ -80086,7 +80209,8 @@ void cm848_updateIntakeAirHeaterControl(void)
       else {
         intake_air_heater_crank_standby_cycle_count = 0;
       }
-      if ((DAT_003fce68 <= intake_air_heater_crank_standby_cycle_count) &&
+      if ((intake_air_heater_crank_standby_cycle_limit <=
+           intake_air_heater_crank_standby_cycle_count) &&
          ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK ||
           (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_POSTHEAT)))) {
         intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_PREHEAT;
@@ -81345,7 +81469,7 @@ void cm848_processEngineOilPressure(void)
   if (algorithm_enable_flags_40_cal.engine_oil_pressure_processing_enable == 0) {
     return;
   }
-  low_oil_pressure_debounce_limit = DAT_0005b4d4;
+  low_oil_pressure_debounce_limit = low_oil_pressure_debounce_limit_default;
   uVar2 = 4;
   do {
     if ((short)coolant_temperature_sensor_filtered < *(short *)(uVar2 * 2 + 0x5b4be)) {
@@ -82955,34 +83079,36 @@ void cm848_initializeGovernorPressureControl(void)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-undefined * cm848_sciLookupTable250Or252Address(int param_1,int param_2)
+byte * cm848_sciLookupTable250Or252Address(int param_1,int param_2)
 
 {
   engine_overspeed_event_t *peVar1;
   int iVar2;
   word *pwVar3;
   uint uVar4;
-  uint uVar5;
+  byte *pbVar5;
+  uint uVar6;
   
   if (param_2 == 0) {
-    return (undefined *)0x0;
+    return (byte *)0x0;
   }
   if (param_1 != 0xfa) {
     if (param_1 != 0xfc) {
-      return (undefined *)0x0;
+      return (byte *)0x0;
     }
     if (0x4e < (param_2 + 0xffU & 0xff)) {
-      return (undefined *)0x0;
+      return (byte *)0x0;
     }
-    if (*(undefined **)(&DAT_0053a4b0 + ((param_2 + 0xffU) * 4 & 0x3fc)) == &DAT_003fcf16) {
-      return (undefined *)0x0;
+    pbVar5 = *(byte **)((int)sci_table_252_parameter_addresses + ((param_2 + 0xffU) * 4 & 0x3fc));
+    if (pbVar5 == &sci_unsupported_parameter_placeholder) {
+      return (byte *)0x0;
     }
-    return *(undefined **)(&DAT_0053a4b0 + ((param_2 + 0xffU) * 4 & 0x3fc));
+    return pbVar5;
   }
   uVar4 = param_2 + 0xff;
   if (0x27 < (uVar4 & 0xff)) {
     if (0x2b < (uVar4 & 0xff)) {
-      return (undefined *)0x0;
+      return (byte *)0x0;
     }
     uVar4 = (param_2 + 0x1d7U & 0xff) >> 1 & 1;
     if (uVar4 == 0) {
@@ -82990,44 +83116,44 @@ undefined * cm848_sciLookupTable250Or252Address(int param_1,int param_2)
     }
     else {
       if (uVar4 != 1) {
-        return (undefined *)0x0;
+        return (byte *)0x0;
       }
       pwVar3 = &engine_overspeed_log_index_cal;
     }
-    return (undefined *)((int)pwVar3 + (param_2 + 0x1d7U & 1));
+    return (byte *)((int)pwVar3 + (param_2 + 0x1d7U & 1));
   }
-  uVar5 = (uVar4 >> 3 & 0x1f) % 5;
-  if (uVar5 < 3) {
-    if (uVar5 == 2) {
+  uVar6 = (uVar4 >> 3 & 0x1f) % 5;
+  if (uVar6 < 3) {
+    if (uVar6 == 2) {
       iVar2 = 0x10;
 LAB_0051cea0:
       peVar1 = (engine_overspeed_event_t *)
                ((int)&engine_overspeed_log_cal[0].start_key_on_hour_meter + iVar2);
       goto LAB_0051cec0;
     }
-    if (uVar5 == 0) {
+    if (uVar6 == 0) {
       peVar1 = engine_overspeed_log_cal;
       goto LAB_0051cec0;
     }
-    if (uVar5 != 1) {
-      return (undefined *)0x0;
+    if (uVar6 != 1) {
+      return (byte *)0x0;
     }
     iVar2 = 8;
   }
   else {
-    if (uVar5 == 3) {
+    if (uVar6 == 3) {
       iVar2 = 0x18;
       goto LAB_0051cea0;
     }
-    if (uVar5 != 4) {
-      return (undefined *)0x0;
+    if (uVar6 != 4) {
+      return (byte *)0x0;
     }
     iVar2 = 0x20;
   }
   peVar1 = (engine_overspeed_event_t *)
            ((int)&engine_overspeed_log_cal[0].start_key_on_hour_meter + iVar2);
 LAB_0051cec0:
-  return (undefined *)((int)&peVar1->start_key_on_hour_meter + (uVar4 & 7));
+  return (byte *)((int)&peVar1->start_key_on_hour_meter + (uVar4 & 7));
 }
 
 
@@ -83052,10 +83178,10 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
     if (param_1 == 1) {
       if ((param_2 & 0xff) == 0xd6) {
         if ((transmission_control_flags.overdrive_flags & 2) == 0) {
-          DAT_003fcf18 = 0;
+          sci_overdrive_status_byte = 0;
         }
         else {
-          DAT_003fcf18 = 2;
+          sci_overdrive_status_byte = 2;
         }
       }
       if (4 < (param_2 & 0xff) - 0xd8) {
@@ -83510,30 +83636,33 @@ uint cm848_sciBuildStatusFlagsByte(void)
    cm848_sciLookupTable250Or252Address; 0x3fcf16 = unsupported) | review-function-readability
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-undefined * cm848_sciHighSpeedLookupTableAddress(int param_1,int param_2)
+byte * cm848_sciHighSpeedLookupTableAddress(int param_1,int param_2)
 
 {
-  undefined *puVar1;
+  byte *pbVar1;
   
   if (param_2 != 0) {
     if ((param_1 == 0xfa) || (param_1 == 0xfc)) {
-      puVar1 = (undefined *)cm848_sciLookupTable250Or252Address(param_1);
-      return puVar1;
+      pbVar1 = (byte *)cm848_sciLookupTable250Or252Address(param_1);
+      return pbVar1;
     }
     if (param_1 == 0xf5) {
       if (((param_2 + 0xffU & 0xff) < 0x4c) &&
-         (*(undefined **)(&DAT_0053a380 + ((param_2 + 0xffU) * 4 & 0x3fc)) != &DAT_003fcf16)) {
-        return *(undefined **)(&DAT_0053a380 + ((param_2 + 0xffU) * 4 & 0x3fc));
+         (pbVar1 = *(byte **)((int)sci_table_245_parameter_addresses +
+                             ((param_2 + 0xffU) * 4 & 0x3fc)),
+         pbVar1 != &sci_unsupported_parameter_placeholder)) {
+        return pbVar1;
       }
     }
     else if (((param_1 == 0xfd) && ((param_2 + 0xffU & 0xff) < 0xed)) &&
-            (puVar1 = *(undefined **)(&DAT_0053a5ec + ((param_2 + 0xffU) * 4 & 0x3fc)),
-            puVar1 != &DAT_003fcf16)) {
-      DAT_003fcf17 = cm848_sciBuildStatusFlagsByte();
-      return puVar1;
+            (pbVar1 = *(byte **)((int)sci_table_253_parameter_addresses +
+                                ((param_2 + 0xffU) * 4 & 0x3fc)),
+            pbVar1 != &sci_unsupported_parameter_placeholder)) {
+      sci_table_253_status_flags_byte = cm848_sciBuildStatusFlagsByte();
+      return pbVar1;
     }
   }
-  return (undefined *)0x0;
+  return (byte *)0x0;
 }
 
 
@@ -83838,7 +83967,7 @@ void cm848_updateEepromCalibrationIdentifier(void)
        (calibration_id_byte4 != calibration_identifier_characters_4_to_9_cal[4])) ||
       (calibration_id_byte5 != calibration_identifier_characters_4_to_9_cal[5])))) {
     cm848_writeEepromBytes(&eeprom_calibration_block,&calibration_id_byte0,4);
-    cm848_writeEepromBytes(&DAT_0100004e,&calibration_id_byte4,2);
+    cm848_writeEepromBytes(&eeprom_calibration_id_bytes_4_to_5,&calibration_id_byte4,2);
   }
   return;
 }
@@ -83895,10 +84024,10 @@ switchD_0051dc5c_default:
   case 0xf7:
     goto switchD_0051dc5c_default;
   case 0xf8:
-    DAT_003fcf1a = 0;
+    sci_high_speed_fault_queue_offset = 0;
     goto LAB_0051dcac;
   case 0xf9:
-    DAT_003fcf1a = 4;
+    sci_high_speed_fault_queue_offset = 4;
 LAB_0051dcac:
     sci_next_byte_handler = cm848_sciHighSpeedTable248And249Callback;
     cm848_sciStartTransmit();
@@ -83950,10 +84079,10 @@ undefined4 cm848_sciHighSpeedHandleTableSelect(void)
   case 0xf7:
     return 0;
   case 0xf8:
-    DAT_003fcf1a = 0;
+    sci_high_speed_fault_queue_offset = 0;
     goto LAB_0051ddf4;
   case 0xf9:
-    DAT_003fcf1a = 4;
+    sci_high_speed_fault_queue_offset = 4;
 LAB_0051ddf4:
     sci_next_byte_handler = cm848_sciHighSpeedTable248And249Callback;
     break;
@@ -84005,7 +84134,8 @@ void cm848_sciHighSpeedTable248And249Callback(void)
       cm848_sciEndTransfer();
     }
     else {
-      pfVar4 = fault_entry_pointer_queue_cal[(bVar1 + 0xff & 0xff) / 0x32 + (uint)DAT_003fcf1a];
+      pfVar4 = fault_entry_pointer_queue_cal
+               [(bVar1 + 0xff & 0xff) / 0x32 + (uint)sci_high_speed_fault_queue_offset];
       if (pfVar4 == (fault_entry_t *)0x0) {
         sci_buffer[0] = 0;
         cm848_sciStartTransmit();
@@ -84102,14 +84232,18 @@ void cm848_sciPackOutputStatusWord(void)
 void cm848_sciPackEventHistoryWords(void)
 
 {
-  DAT_003fcf28 = engine_start_count_since_fault_logged_cal[0] << 8 |
-                 engine_start_count_since_fault_logged_cal[1] & 0xff;
-  DAT_003fcf2a = engine_start_count_since_fault_logged_cal[2] << 8 |
-                 engine_start_count_since_fault_logged_cal[3] & 0xff;
-  DAT_003fcf2c = engine_start_count_since_fault_logged_cal[4] << 8 |
-                 engine_start_count_since_fault_logged_cal[5] & 0xff;
-  DAT_003fcf2e = engine_start_count_since_fault_logged_cal[6] << 8 |
-                 engine_start_count_since_fault_logged_cal[7] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[0] =
+       engine_start_count_since_fault_logged_cal[0] << 8 |
+       engine_start_count_since_fault_logged_cal[1] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[1] =
+       engine_start_count_since_fault_logged_cal[2] << 8 |
+       engine_start_count_since_fault_logged_cal[3] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[2] =
+       engine_start_count_since_fault_logged_cal[4] << 8 |
+       engine_start_count_since_fault_logged_cal[5] & 0xff;
+  sci_engine_start_counts_since_fault_logged_packed[3] =
+       engine_start_count_since_fault_logged_cal[6] << 8 |
+       engine_start_count_since_fault_logged_cal[7] & 0xff;
   return;
 }
 
@@ -84128,11 +84262,10 @@ void cm848_sciHighSpeedReadTableByte(uint param_1,uint param_2)
 
 {
   char cVar1;
-  undefined *puVar2;
+  word *pwVar2;
   int iVar3;
-  word *pwVar4;
-  uint uVar5;
-  byte bVar6;
+  uint uVar4;
+  byte bVar5;
   
   cVar1 = cm848_sciHighSpeedHandleTableSelect();
   if (cVar1 != '\0') {
@@ -84142,87 +84275,87 @@ void cm848_sciHighSpeedReadTableByte(uint param_1,uint param_2)
   cm848_sciPackOutputStatusWord();
   cm848_sciPackEventHistoryWords();
   if (param_1 != 0xfb) {
-    pwVar4 = (word *)cm848_sciHighSpeedLookupTableAddress(param_1,param_2);
+    pwVar2 = (word *)cm848_sciHighSpeedLookupTableAddress(param_1,param_2);
     goto LAB_0051e2bc;
   }
   if ((param_2 & 0xff) != 0) {
-    uVar5 = (param_2 & 0xff) + 0xff;
-    if (((uVar5 & 0xff) < 0xf6) &&
-       (puVar2 = *(undefined **)(&DAT_0053aa12 + ((int)(uVar5 & 0xff) >> 1) * 4),
-       puVar2 != &DAT_003fcf24)) {
-      if (puVar2 == (undefined *)0x3fcf30) {
+    uVar4 = (param_2 & 0xff) + 0xff;
+    if (((uVar4 & 0xff) < 0xf6) &&
+       (pwVar2 = (word *)sci_table_251_parameter_word_addresses[(int)(uVar4 & 0xff) >> 1],
+       pwVar2 != (word *)&sci_table_251_unsupported_parameter_placeholder)) {
+      if (pwVar2 == &sci_table_251_accelerator_pedal_filtered_placeholder) {
         if (accelerator_pedal_dual_channel_enable_flag == 0) {
           iVar3 = 0x1a;
 LAB_0051e248:
-          pwVar4 = (word *)((int)&sensor_channel_filtered_output + iVar3 + (uVar5 & 1));
+          pwVar2 = (word *)((int)&sensor_channel_filtered_output + iVar3 + (uVar4 & 1));
           goto LAB_0051e2bc;
         }
       }
-      else if (puVar2 == (undefined *)0x3fcf32) {
+      else if (pwVar2 == &sci_table_251_accelerator_pedal_raw_adc_placeholder) {
         if (accelerator_pedal_dual_channel_enable_flag == 0) {
-          pwVar4 = (word *)((int)&accelerator_pedal_sensor_channel_state.raw_adc_counts +
-                           (uVar5 & 1));
+          pwVar2 = (word *)((int)&accelerator_pedal_sensor_channel_state.raw_adc_counts +
+                           (uVar4 & 1));
           goto LAB_0051e2bc;
         }
       }
-      else if (puVar2 == (undefined *)0x3fcf34) {
+      else if (pwVar2 == &sci_table_251_accelerator_pedal_channel97_filtered_placeholder) {
         if (accelerator_pedal_dual_channel_enable_flag != 0) {
-          pwVar4 = (word *)((int)&accelerator_pedal_channel97_sensor_filtered + (uVar5 & 1));
+          pwVar2 = (word *)((int)&accelerator_pedal_channel97_sensor_filtered + (uVar4 & 1));
           goto LAB_0051e2bc;
         }
       }
-      else if (puVar2 == (undefined *)0x3fcf36) {
+      else if (pwVar2 == &sci_table_251_accelerator_pedal_sensor_1_raw_adc_placeholder) {
         if (accelerator_pedal_dual_channel_enable_flag != 0) {
-          pwVar4 = (word *)((int)&accelerator_pedal_position_sensor_1_channel_state.raw_adc_counts +
-                           (uVar5 & 1));
+          pwVar2 = (word *)((int)&accelerator_pedal_position_sensor_1_channel_state.raw_adc_counts +
+                           (uVar4 & 1));
           goto LAB_0051e2bc;
         }
       }
-      else if (puVar2 == (undefined *)0x3fcf38) {
+      else if (pwVar2 == &sci_table_251_accelerator_pedal_channel98_filtered_placeholder) {
         if (accelerator_pedal_dual_channel_enable_flag != 0) {
           iVar3 = 0xc4;
           goto LAB_0051e248;
         }
       }
       else {
-        if (puVar2 != (undefined *)0x3fcf3a) {
-          pwVar4 = (word *)(puVar2 + (uVar5 & 1));
+        if (pwVar2 != &sci_table_251_accelerator_pedal_sensor_2_raw_adc_placeholder) {
+          pwVar2 = (word *)((int)pwVar2 + (uVar4 & 1));
           goto LAB_0051e2bc;
         }
         if (accelerator_pedal_dual_channel_enable_flag != 0) {
-          pwVar4 = (word *)((int)&accelerator_pedal_position_sensor_2_channel_state.raw_adc_counts +
-                           (uVar5 & 1));
+          pwVar2 = (word *)((int)&accelerator_pedal_position_sensor_2_channel_state.raw_adc_counts +
+                           (uVar4 & 1));
           goto LAB_0051e2bc;
         }
       }
     }
   }
-  pwVar4 = (word *)0x0;
+  pwVar2 = (word *)0x0;
 LAB_0051e2bc:
-  if (pwVar4 == (word *)0x0) {
+  if (pwVar2 == (word *)0x0) {
     cm848_sciHighSpeedClearWordLatch();
     cm848_sciEndTransfer();
   }
   else {
     if ((param_2 & 1) == 0) {
       if (((sci_high_speed_last_table == param_1) && (sci_high_speed_last_offset + 1 == param_2)) &&
-         ((word *)(sci_high_speed_last_address + 1) == pwVar4)) {
-        bVar6 = (byte)sci_high_speed_cached_word;
+         ((word *)(sci_high_speed_last_address + 1) == pwVar2)) {
+        bVar5 = (byte)sci_high_speed_cached_word;
       }
       else {
-        bVar6 = *(byte *)pwVar4;
+        bVar5 = *(byte *)pwVar2;
       }
       cm848_sciHighSpeedClearWordLatch();
     }
     else {
       sci_high_speed_last_table = (byte)param_1;
       sci_high_speed_last_offset = (byte)param_2;
-      sci_high_speed_cached_word._0_1_ = (byte)(*pwVar4 >> 8);
-      bVar6 = sci_high_speed_cached_word._0_1_;
-      sci_high_speed_last_address = (dword)pwVar4;
-      sci_high_speed_cached_word = *pwVar4;
+      sci_high_speed_cached_word._0_1_ = (byte)(*pwVar2 >> 8);
+      bVar5 = sci_high_speed_cached_word._0_1_;
+      sci_high_speed_last_address = (dword)pwVar2;
+      sci_high_speed_cached_word = *pwVar2;
     }
-    sci_buffer[0] = bVar6;
+    sci_buffer[0] = bVar5;
     cm848_sciStartTransmit();
   }
   return;
@@ -84978,7 +85111,7 @@ void cm848_sciCommand20Callback(void)
     }
     break;
   case 6:
-    uVar1 = DAT_0040bc84;
+    uVar1 = coolant_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 4) == 0) {
       if (qadc_channel_index_table[2] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[2];
@@ -84993,7 +85126,7 @@ void cm848_sciCommand20Callback(void)
     break;
   case 7:
     if (accelerator_pedal_dual_channel_enable_flag == 0) {
-      uVar1 = DAT_0040bc9a;
+      uVar1 = accelerator_pedal_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[0] & 0x2000) == 0) {
         if (qadc_channel_index_table[0xd] < 0x81) {
           uVar5 = (uint)qadc_channel_index_table[0xd];
@@ -85091,7 +85224,7 @@ void cm848_sciCommand20Callback(void)
     }
     break;
   case 0x1c:
-    uVar1 = DAT_0040bc92;
+    uVar1 = intake_manifold_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x200) == 0) {
       if (qadc_channel_index_table[9] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[9];
@@ -85215,7 +85348,7 @@ LAB_0051f804:
     }
     break;
   case 0x2e:
-    uVar1 = DAT_0040bc9e;
+    uVar1 = water_in_fuel_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x8000) == 0) {
       if (qadc_channel_index_table[0xf] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0xf];
@@ -85235,7 +85368,7 @@ LAB_0051f804:
   case 0x31:
     break;
   case 0x32:
-    uVar1 = DAT_0040bd0e;
+    uVar1 = air_conditioning_pressure_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[4] & 0x80) == 0) {
       if (qadc_channel_index_table[0x47] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0x47];
@@ -85271,7 +85404,7 @@ LAB_0051f804:
     break;
   case 0x3c:
     if (oil_pressure_switch_only_cal == 0) {
-      uVar1 = DAT_0040bc94;
+      uVar1 = oil_pressure_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[0] & 0x400) == 0) {
         if (qadc_channel_index_table[10] < 0x81) {
           uVar5 = (uint)qadc_channel_index_table[10];
@@ -85296,7 +85429,7 @@ LAB_0051f804:
   case 0x3f:
     break;
   case 0x40:
-    uVar1 = DAT_0040bc82;
+    uVar1 = intake_manifold_pressure_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 2) == 0) {
       if (qadc_channel_index_table[1] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[1];
@@ -85349,7 +85482,7 @@ LAB_0051f804:
   case 0x4d:
     break;
   case 0x4e:
-    uVar1 = DAT_0040bd08;
+    uVar1 = fuel_level_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[4] & 0x10) == 0) {
       if (qadc_channel_index_table[0x44] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0x44];
@@ -85471,10 +85604,10 @@ LAB_0051f804:
     break;
   case 0x72:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
-      uVar1 = DAT_0040bd42;
+      uVar1 = accelerator_pedal_channel97_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[6] & 2) == 0) {
-        if (DAT_003fdb3a < 0x81) {
-          uVar5 = (uint)DAT_003fdb3a;
+        if (accelerator_pedal_channel97_qadc_channel_cal < 0x81) {
+          uVar5 = (uint)accelerator_pedal_channel97_qadc_channel_cal;
         }
         else {
           uVar5 = 0;
@@ -85489,10 +85622,10 @@ LAB_0051f804:
     break;
   case 0x74:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
-      uVar1 = DAT_0040bd44;
+      uVar1 = accelerator_pedal_channel98_adc_forced_reading;
       if ((adc_forced_reading_enable_bits_cal[6] & 4) == 0) {
-        if (DAT_003fdb3c < 0x81) {
-          uVar5 = (uint)DAT_003fdb3c;
+        if (accelerator_pedal_channel98_qadc_channel_cal < 0x81) {
+          uVar5 = (uint)accelerator_pedal_channel98_qadc_channel_cal;
         }
         else {
           uVar5 = 0;
@@ -85545,7 +85678,7 @@ LAB_0051f804:
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x81:
-    uVar1 = DAT_0040bc8e;
+    uVar1 = fuel_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 0x80) == 0) {
       if (qadc_channel_index_table[7] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[7];
@@ -85580,7 +85713,7 @@ LAB_0051f804:
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x85:
-    uVar1 = DAT_0040bca8;
+    uVar1 = ambient_air_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[1] & 0x10) == 0) {
       if (qadc_channel_index_table[0x14] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[0x14];
@@ -85606,7 +85739,7 @@ LAB_0051f804:
     }
     break;
   case 0x87:
-    uVar1 = DAT_0040bc86;
+    uVar1 = barometric_pressure_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[0] & 8) == 0) {
       if (qadc_channel_index_table[3] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[3];
@@ -86183,9 +86316,9 @@ LAB_005212a0:
     if ((bVar1 == 0) || (bVar2 == 0)) {
       uVar4 = 0;
       do {
-        if ((&DAT_003fcf64)[uVar4] != 0) {
+        if (injector_cutout_test_timeout_counts[uVar4] != 0) {
           injector_cutout_test_count = injector_cutout_test_count + -1;
-          (&DAT_003fcf64)[uVar4] = 0;
+          injector_cutout_test_timeout_counts[uVar4] = 0;
           cylinder_cutout_test_mask = 0;
         }
         uVar4 = uVar4 + 1 & 0xff;
@@ -86204,21 +86337,21 @@ LAB_005212a0:
       uVar4 = uVar4 + 0xfb;
       if (bVar2 == 1) {
         uVar3 = uVar4 * 2 & 0x1fe;
-        if (*(short *)((int)&DAT_003fcf64 + uVar3) != 0) {
+        if (*(short *)((int)injector_cutout_test_timeout_counts + uVar3) != 0) {
           injector_cutout_test_count = injector_cutout_test_count + -1;
-          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 0;
+          *(undefined2 *)((int)injector_cutout_test_timeout_counts + uVar3) = 0;
           cylinder_cutout_test_mask = cylinder_cutout_test_mask & ~(ushort)(1 << (uVar4 & 0x3f));
         }
       }
       else {
         uVar3 = uVar4 * 2 & 0x1fe;
-        if (*(short *)((int)&DAT_003fcf64 + uVar3) == 0) {
+        if (*(short *)((int)injector_cutout_test_timeout_counts + uVar3) == 0) {
           injector_cutout_test_count = injector_cutout_test_count + '\x01';
-          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+          *(undefined2 *)((int)injector_cutout_test_timeout_counts + uVar3) = 1000;
           cylinder_cutout_test_mask = cylinder_cutout_test_mask | (ushort)(1 << (uVar4 & 0x3f));
         }
         else {
-          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+          *(undefined2 *)((int)injector_cutout_test_timeout_counts + uVar3) = 1000;
         }
       }
     }
@@ -86344,7 +86477,7 @@ void cm848_initializeSciCommand37TestTimeouts(void)
 void cm848_sciCommand39WriteEepromSetting(void)
 
 {
-  DAT_003fcf82 = 0;
+  sci_command_39_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand39WriteEepromSettingCallback;
   cm848_sciStartTransmit();
   return;
@@ -86369,22 +86502,23 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
   uint uVar4;
   byte local_10 [4];
   
-  (&DAT_003fcf83)[DAT_003fcf82] = *(undefined1 *)sci_buffer_cursor;
-  uVar4 = DAT_003fcf82 + 1;
-  DAT_003fcf82 = (byte)uVar4;
+  (&sci_command_39_setting_group)[sci_command_39_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar4 = sci_command_39_received_byte_count + 1;
+  sci_command_39_received_byte_count = (byte)uVar4;
   if (2 < (uVar4 & 0xff)) {
     if (sci_security_state == 1) {
-      pbVar1 = (byte *)cm848_sciLookupEepromSettingAddress(DAT_003fcf83,DAT_003fcf84);
+      pbVar1 = (byte *)cm848_sciLookupEepromSettingAddress
+                                 (sci_command_39_setting_group,sci_command_39_setting_index);
       if (pbVar1 == (byte *)0x0) {
         sci_buffer[sci_transmit_byte_count] = 0xf0;
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
       }
       else {
-        local_10[0] = DAT_003fcf85;
-        if (DAT_003fcf83 == '\x02') {
-          local_10[0] = (byte)(1 << ((uint)DAT_003fcf84 + ((int)(uint)DAT_003fcf84 >> 3) * -8 & 0x3f
-                                    ));
-          if (DAT_003fcf85 == 0) {
+        local_10[0] = sci_command_39_setting_value;
+        if (sci_command_39_setting_group == 2) {
+          local_10[0] = (byte)(1 << ((uint)sci_command_39_setting_index +
+                                     ((int)(uint)sci_command_39_setting_index >> 3) * -8 & 0x3f));
+          if (sci_command_39_setting_value == 0) {
             local_10[0] = *pbVar1 & ~local_10[0];
             *pbVar1 = local_10[0];
           }
@@ -86440,7 +86574,7 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
 void cm848_sciCommand40ReadEepromSetting(void)
 
 {
-  DAT_003fcf86 = 0;
+  sci_command_40_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand40ReadEepromSettingCallback;
   cm848_sciStartTransmit();
   return;
@@ -86461,15 +86595,17 @@ void cm848_sciCommand40ReadEepromSettingCallback(void)
   byte *pbVar1;
   uint uVar2;
   
-  (&DAT_003fcf87)[DAT_003fcf86] = *(undefined1 *)sci_buffer_cursor;
-  uVar2 = DAT_003fcf86 + 1;
-  DAT_003fcf86 = (byte)uVar2;
+  (&sci_command_40_setting_group)[sci_command_40_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar2 = sci_command_40_received_byte_count + 1;
+  sci_command_40_received_byte_count = (byte)uVar2;
   if (1 < (uVar2 & 0xff)) {
-    pbVar1 = (byte *)cm848_sciLookupEepromSettingAddressForRead(DAT_003fcf87,DAT_003fcf88);
+    pbVar1 = (byte *)cm848_sciLookupEepromSettingAddressForRead
+                               (sci_command_40_setting_group,sci_command_40_setting_index);
     if (pbVar1 != (byte *)0x0) {
-      if (DAT_003fcf87 == '\x02') {
-        if (((uint)*pbVar1 & 1 << ((uint)DAT_003fcf88 + ((int)(uint)DAT_003fcf88 >> 3) * -8 & 0x3f))
-            == 0) {
+      if (sci_command_40_setting_group == 2) {
+        if (((uint)*pbVar1 &
+            1 << ((uint)sci_command_40_setting_index +
+                  ((int)(uint)sci_command_40_setting_index >> 3) * -8 & 0x3f)) == 0) {
           sci_buffer[sci_transmit_byte_count] = 0;
         }
         else {
@@ -86504,7 +86640,7 @@ void cm848_sciCommand40ReadEepromSettingCallback(void)
 void cm848_sciCommand41WriteTableValue(void)
 
 {
-  DAT_003fcf8a = 0;
+  sci_command_41_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand41WriteTableValueCallback;
   cm848_sciStartTransmit();
   return;
@@ -86522,19 +86658,20 @@ void cm848_sciCommand41WriteTableValue(void)
 void cm848_sciCommand41WriteTableValueCallback(void)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   uint uVar2;
   
-  (&DAT_003fcf8b)[DAT_003fcf8a] = *(undefined1 *)sci_buffer_cursor;
-  uVar2 = DAT_003fcf8a + 1;
-  DAT_003fcf8a = (byte)uVar2;
+  (&sci_command_41_table_number)[sci_command_41_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar2 = sci_command_41_received_byte_count + 1;
+  sci_command_41_received_byte_count = (byte)uVar2;
   if (2 < (uVar2 & 0xff)) {
-    puVar1 = (undefined1 *)cm848_sciLookupTable250Or252Address(DAT_003fcf8b,DAT_003fcf8c);
-    if (puVar1 == (undefined1 *)0x0) {
+    pbVar1 = (byte *)cm848_sciLookupTable250Or252Address
+                               (sci_command_41_table_number,sci_command_41_table_offset);
+    if (pbVar1 == (byte *)0x0) {
       sci_buffer[sci_transmit_byte_count] = 0xf0;
     }
     else {
-      *puVar1 = DAT_003fcf8d;
+      *pbVar1 = sci_command_41_value;
       sci_buffer[sci_transmit_byte_count] = 0xe5;
     }
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
@@ -86675,7 +86812,7 @@ void cm848_sciCommand43RequestSecuritySeed(void)
 void cm848_sciCommand44SendSecurityKey(void)
 
 {
-  DAT_003fcf8e = 0;
+  sci_command_44_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand44SendSecurityKeyCallback;
   cm848_sciStartTransmit();
   return;
@@ -86715,27 +86852,29 @@ void cm848_sciCommand44SendSecurityKeyCallback(void)
 {
   uint uVar1;
   
-  (&DAT_003fcf8f)[DAT_003fcf8e] = *(undefined1 *)sci_buffer_cursor;
-  uVar1 = DAT_003fcf8e + 1;
-  DAT_003fcf8e = (byte)uVar1;
+  (&sci_command_44_key_high_byte)[sci_command_44_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar1 = sci_command_44_received_byte_count + 1;
+  sci_command_44_received_byte_count = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
-    if ((char)(DAT_003fcf8f + DAT_003fcf90 + ',') == DAT_003fcf91) {
+    if ((byte)(sci_command_44_key_high_byte + sci_command_44_key_low_byte + 0x2c) ==
+        sci_command_44_checksum) {
       if (sci_security_state == 1) {
         sci_buffer[sci_transmit_byte_count] = 0;
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
       }
-      else if ((DAT_0040b5df < 3) && (sci_security_state != 2)) {
+      else if ((sci_security_failed_key_count < 3) && (sci_security_state != 2)) {
         if (sci_key_retry_delay == 0) {
-          DAT_0040b5d8 = CONCAT11(DAT_003fcf8f,DAT_003fcf90);
+          sci_security_received_key =
+               CONCAT11(sci_command_44_key_high_byte,sci_command_44_key_low_byte);
           cm848_sciValidateSecurityKey();
           if (sci_security_key_matched_flag == 0) {
-            DAT_0040b5df = DAT_0040b5df + 1;
+            sci_security_failed_key_count = sci_security_failed_key_count + 1;
             sci_key_retry_delay = 1000;
             sci_buffer[sci_transmit_byte_count] = 1;
             sci_transmit_byte_count = sci_transmit_byte_count + 1;
           }
           else {
-            DAT_0040b5df = 0;
+            sci_security_failed_key_count = 0;
             sci_key_retry_delay = 0;
             sci_security_state = 1;
             sci_buffer[sci_transmit_byte_count] = 0;
@@ -86994,7 +87133,7 @@ void cm848_sciCommand51ReportActiveFaultDtcs(void)
 void cm848_sciCommand52ReportFaultStatusByDtc(void)
 
 {
-  DAT_003fcf92 = 0;
+  sci_command_52_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand52ReportFaultStatusByDtcCallback;
   cm848_sciStartTransmit();
   return;
@@ -87080,11 +87219,12 @@ void cm848_sciCommand52ReportFaultStatusByDtcCallback(void)
   ushort local_8 [4];
   
   bVar3 = 0;
-  (&DAT_003fcf93)[DAT_003fcf92] = *(undefined1 *)sci_buffer_cursor;
-  uVar1 = DAT_003fcf92 + 1;
-  DAT_003fcf92 = (byte)uVar1;
+  (&sci_command_52_dtc_high_byte)[sci_command_52_received_byte_count] = *(byte *)sci_buffer_cursor;
+  uVar1 = sci_command_52_received_byte_count + 1;
+  sci_command_52_received_byte_count = (byte)uVar1;
   if ((uVar1 & 0xff) < 2) goto LAB_00522660;
-  sVar2 = cm848_lookupFaultIndexByDtcCode(local_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
+  sVar2 = cm848_lookupFaultIndexByDtcCode
+                    (local_8,CONCAT11(sci_command_52_dtc_high_byte,sci_command_52_dtc_low_byte));
   uVar1 = (uint)local_8[0];
   if (sVar2 != 0) {
     bVar3 = (&fault_status_records_cal)[uVar1].flags >> 4 & 6;
@@ -87131,11 +87271,11 @@ LAB_00522660:
 void cm848_sciValidateSecurityKey(void)
 
 {
-  if ((((sci_security_seed ^ *(ushort *)(&DAT_0053abfe + (sci_security_seed >> 0xc & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed >> 8 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed >> 4 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed & 0xf) * 2) ^ 0x1911) & 0xffff) ==
-       (uint)DAT_0040b5d8) || (calibration_download_security_key_cal == 0xff)) {
+  if ((((sci_security_seed ^ sci_security_key_nibble_table[sci_security_seed >> 0xc & 0xf] ^
+         (uint)sci_security_key_nibble_table[sci_security_seed >> 8 & 0xf] ^
+         (uint)sci_security_key_nibble_table[sci_security_seed >> 4 & 0xf] ^
+         (uint)sci_security_key_nibble_table[sci_security_seed & 0xf] ^ 0x1911) & 0xffff) ==
+       (uint)sci_security_received_key) || (calibration_download_security_key_cal == 0xff)) {
     sci_security_key_matched_flag = 1;
   }
   else {
@@ -87175,7 +87315,7 @@ void cm848_updateStackHighWaterMark(void)
          (word)(0x4fb0 / (0x9ff8 - stack_high_water_mark_scan_cursor & 0xffff));
     stack_deepest_address = (undefined *)stack_high_water_mark_scan_cursor;
   }
-  stack_high_water_mark_scan_cursor = (dword)&DAT_003f9808;
+  stack_high_water_mark_scan_cursor = (dword)&stack_high_water_mark_scan_start;
   return;
 }
 
@@ -87192,7 +87332,7 @@ void cm848_updateStackHighWaterMark(void)
 void cm848_initializeStackHighWaterMark(void)
 
 {
-  stack_high_water_mark_scan_cursor = (dword)&DAT_003f9808;
+  stack_high_water_mark_scan_cursor = (dword)&stack_high_water_mark_scan_start;
   stack_deepest_address = &LAB_003f9ff8;
   return;
 }
@@ -87884,7 +88024,7 @@ void cm848_updateTripAndLifetimeCounters(void)
 void initializeGovernorFlagsAuxiliary(void)
 
 {
-  DAT_003fcfba = 0;
+  governor_auxiliary_unused_word = 0;
   return;
 }
 
@@ -88041,8 +88181,8 @@ void cm848_buildPciTransmitMessage9ImmobilizerSecretKey(void)
   if (pci_transmit_message_9_timer == 0) {
     if (immobilizer_secret_key_frame_toggle != 0) {
       pci_transmit_message_9_immobilizer_command = 2;
-      pci_transmit_message_9_immobilizer_data_1 = DAT_003fcfcb;
-      pci_transmit_message_9_immobilizer_data_2 = DAT_003fcfcc;
+      pci_transmit_message_9_immobilizer_data_1 = immobilizer_secret_key_frame_2_byte_3;
+      pci_transmit_message_9_immobilizer_data_2 = immobilizer_secret_key_frame_2_byte_4;
       pci_transmit_message_9_immobilizer_data_3 = 0;
       immobilizer_secret_key_send_enable = 0;
     }
@@ -88051,8 +88191,8 @@ void cm848_buildPciTransmitMessage9ImmobilizerSecretKey(void)
       pci_transmit_message_9_immobilizer_data_1 = eeprom_write_buffer._2_1_;
       pci_transmit_message_9_immobilizer_data_2 = (byte)eeprom_write_buffer;
       pci_transmit_message_9_immobilizer_data_3 = eeprom_config_write_triggered_flag;
-      DAT_003fcfcb = immobilizer_secret_key_byte_3_cal;
-      DAT_003fcfcc = flash2_operation_active_flag._0_1_;
+      immobilizer_secret_key_frame_2_byte_3 = immobilizer_secret_key_byte_3_cal;
+      immobilizer_secret_key_frame_2_byte_4 = flash2_operation_active_flag._0_1_;
     }
     immobilizer_secret_key_frame_toggle = immobilizer_secret_key_frame_toggle == 0;
     pci_transmit_message_9_timer = 1;
@@ -88167,14 +88307,15 @@ void cm848_calculateImmobilizerExpectedKey(void)
    sensor_checksum_verify_session) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
 
-uint cm848_generateImmobilizerSeed(void)
+dword cm848_generateImmobilizerSeed(void)
 
 {
   undefined4 uVar1;
   uint uVar2;
   uint uVar3;
   
-  if ((DAT_003fcfcd == 0) || (uVar2 = DAT_003fcfd0, ram_refresh_enable != RAM_REFRESH_DISABLED)) {
+  if ((immobilizer_fixed_seed_enable == 0) ||
+     (uVar2 = immobilizer_fixed_seed, ram_refresh_enable != RAM_REFRESH_DISABLED)) {
     immobilizer_seed_counter = immobilizer_seed_counter + 1;
     uVar1 = TBLr;
     uVar3 = (uint)immobilizer_seed_counter;
@@ -88437,7 +88578,7 @@ void cm848_verifyCalibrationAndCodeCrc(void)
   
   wVar1 = rom_crc_accumulator;
   if (rom_crc_calc_phase == 0) {
-    rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac3c;
+    rom_crc_descriptor_table_ptr = (dword)&rom_crc_descriptor_table_calibration;
     rom_crc_scan_ptr = (dword)&algorithm_enable_flags_table_length_cal;
     rom_crc_calc_phase = 1;
     rom_crc_segment_count = 1;
@@ -88450,7 +88591,7 @@ LAB_0052443c:
   else {
     if (rom_crc_calc_phase != 1) {
       if (rom_crc_calc_phase == 2) {
-        rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac2a;
+        rom_crc_descriptor_table_ptr = (dword)&rom_crc_descriptor_table_program;
         rom_crc_scan_ptr = 0x8000;
         rom_crc_calc_phase = 3;
         rom_crc_segment_count = 2;
@@ -89590,12 +89731,12 @@ void cm848_updateDrivetrainRatio(void)
           (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) &&
          (drivetrain_ratio_engine_period_valid_flag == 1)) {
         if ((drivetrain_ratio_engine_period_average == 0) ||
-           (&DAT_00007ffd <
-            (undefined *)
-            (CONCAT44((int)((ulonglong)vehicle_speed_sensor_period *
-                            (ulonglong)drivetrain_ratio_period_scale_cal * 0x10 >> 0x20),
-                      vehicle_speed_sensor_period * (uint)drivetrain_ratio_period_scale_cal * 0x10)
-            / (ulonglong)drivetrain_ratio_engine_period_average))) {
+           (0x7ffd < (uint)(CONCAT44((int)((ulonglong)vehicle_speed_sensor_period *
+                                           (ulonglong)drivetrain_ratio_period_scale_cal * 0x10 >>
+                                          0x20),
+                                     vehicle_speed_sensor_period *
+                                     (uint)drivetrain_ratio_period_scale_cal * 0x10) /
+                           (ulonglong)drivetrain_ratio_engine_period_average))) {
           drivetrain_ratio_raw = 0x7ffd;
         }
         else {
@@ -89748,17 +89889,17 @@ void cm848_initializeDrivetrainRatio(void)
 void cm848_calculateDrivetrainRatioFromGearRatio(void)
 
 {
-  undefined *puVar1;
+  uint uVar1;
   
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
       (etc2_gear_ratio_valid_flag == 1)) &&
      ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO ||
       (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)))) {
-    puVar1 = (undefined *)(((ulonglong)etc2_actual_gear_ratio << 0xb) / 1000);
-    if (&DAT_00007ffd < puVar1) {
-      puVar1 = &DAT_00007ffd;
+    uVar1 = (uint)(((ulonglong)etc2_actual_gear_ratio << 0xb) / 1000);
+    if (0x7ffd < uVar1) {
+      uVar1 = 0x7ffd;
     }
-    drivetrain_ratio_raw = (word)puVar1;
+    drivetrain_ratio_raw = (word)uVar1;
   }
   return;
 }
@@ -89811,7 +89952,6 @@ void cm848_calculateDrivetrainRatioFromVehicleSpeed(void)
   undefined4 uVar1;
   uint uVar2;
   uint uVar3;
-  undefined *puVar4;
   
   if (vehicle_speed < vehicle_speed_minimum) {
     return;
@@ -89838,14 +89978,13 @@ void cm848_calculateDrivetrainRatioFromVehicleSpeed(void)
     uVar1 = (undefined4)((ulonglong)uVar2 * 0x1e000 >> 0x20);
     if (((uint)(CONCAT44(uVar1,uVar2 * 0x1e000) / 0xffffffff) <=
          uVar3 * tire_revolutions_per_mile_cal) &&
-       (puVar4 = (undefined *)
-                 (CONCAT44(uVar1,uVar2 * 0x1e000) /
-                 (ulonglong)(uVar3 * tire_revolutions_per_mile_cal)), puVar4 <= &DAT_00007ffd))
+       (uVar3 = (uint)(CONCAT44(uVar1,uVar2 * 0x1e000) /
+                      (ulonglong)(uVar3 * tire_revolutions_per_mile_cal)), uVar3 < 0x7ffe))
     goto LAB_005266e0;
   }
-  puVar4 = &DAT_00007ffd;
+  uVar3 = 0x7ffd;
 LAB_005266e0:
-  drivetrain_ratio_raw = (word)puVar4;
+  drivetrain_ratio_raw = (word)uVar3;
   return;
 }
 
@@ -89865,18 +90004,18 @@ void cm848_calculateTransmissionRatioFromOutputShaft(void)
 
 {
   uint uVar1;
-  undefined *puVar2;
+  uint uVar2;
   
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
       (etc2_gear_ratio_valid_flag == 0)) &&
      (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO)) {
     uVar1 = (uint)output_shaft_speed_saved + (uint)output_shaft_speed_current >> 1;
     output_shaft_speed_avg = (word)uVar1;
-    puVar2 = (undefined *)(((ulonglong)engine_speed_state.engine_speed << 0xb) / (ulonglong)uVar1);
-    if ((uVar1 == 0) || ((undefined *)0x7ffc < puVar2)) {
-      puVar2 = &DAT_00007ffd;
+    uVar2 = (uint)(((ulonglong)engine_speed_state.engine_speed << 0xb) / (ulonglong)uVar1);
+    if ((uVar1 == 0) || (0x7ffc < uVar2)) {
+      uVar2 = 0x7ffd;
     }
-    drivetrain_ratio_raw = (word)puVar2;
+    drivetrain_ratio_raw = (word)uVar2;
     output_shaft_speed_saved = output_shaft_speed_current;
   }
   return;
@@ -90200,8 +90339,9 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
   if (((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) &&
       (vehicle_speed_sensor_tachograph_pulse_width_valid_flag == 0)) &&
      (vehicle_speed_sensor_tachograph_pulse_width == 0)) {
-    DAT_003fd078 = DAT_003fd078 + 1;
-    if (1 < DAT_003fd078) {
+    vehicle_speed_sensor_tachograph_interrupt_count =
+         vehicle_speed_sensor_tachograph_interrupt_count + 1;
+    if (1 < vehicle_speed_sensor_tachograph_interrupt_count) {
       uVar5 = (uint)vehicle_speed_sensor_tpu_channel;
       vehicle_speed_sensor_tachograph_pulse_width._0_2_ =
            (&tpu_b_channel_0_parameters)[uVar5].PARAM4;
@@ -90248,7 +90388,8 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
     vehicle_speed_sensor_period._2_2_ =
          (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM5;
     (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM4 = 0;
-    vehicle_speed_sensor_pulse_total = vehicle_speed_sensor_pulse_total + DAT_003fd07a;
+    vehicle_speed_sensor_pulse_total =
+         vehicle_speed_sensor_pulse_total + vehicle_speed_sensor_pulses_per_interrupt;
   }
   if ((engine_speed_from_backup_sensor_flag == 0) &&
      (engine_speed_state.main_speed_pulse_count_between_vss_pulses != 0)) {
@@ -90293,7 +90434,7 @@ void cm848_initializeVehicleSpeedSensorChannel(void)
   
   vehicle_speed_sensor_period = 0x5e7fb044;
   if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) {
-    DAT_003fd078 = 0;
+    vehicle_speed_sensor_tachograph_interrupt_count = 0;
     vehicle_speed_sensor_tachograph_pulse_width = 0;
     vehicle_speed_sensor_tachograph_pulse_width_valid_flag = 0;
     wVar1 = tpu_b.CPR1;
@@ -90337,7 +90478,7 @@ void cm848_initializeVehicleSpeedSensorChannel(void)
     wVar1 = tpu_b.CIER;
     tpu_b.CIER = wVar1 | 4;
     wVar1 = tpu_b_channel_2_parameters.PARAM1;
-    DAT_003fd07a = (undefined1)(wVar1 >> 8);
+    vehicle_speed_sensor_pulses_per_interrupt = (byte)(wVar1 >> 8);
   }
   vehicle_speed_sensor_tpu_channel = 2;
   return;
@@ -90932,8 +91073,8 @@ void cm848_armTpuChannel10AtEndOfInjectionLimit(void)
     injection_end_limit_angle =
          injection_end_limit_angle + injection_end_limit_speed_limp_home_adjustment;
   }
-  uVar5 = (uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] + (int)injection_timing_table_offset +
-          (int)injection_end_limit_angle;
+  uVar5 = (uint)injection_end_limit_cylinder_offsets[cylinder_event_index] +
+          (int)injection_timing_table_offset + (int)injection_end_limit_angle;
   if (0x77ff < (int)uVar5) {
     uVar5 = uVar5 - 0x7800;
   }
@@ -90999,8 +91140,8 @@ LAB_00528338:
     uVar2 = 10;
   }
   else {
-    uVar2 = (ushort)*(byte *)((int)&DAT_0053ac42 +
-                             (&injector_bank_by_cylinder)[cylinder_event_index] + 2);
+    uVar2 = (ushort)end_of_injection_limit_param0_high_nibble_by_bank
+                    [(&injector_bank_by_cylinder)[cylinder_event_index]];
   }
   tpu_a_channel_10_parameters.PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_period_parameter_address
   ;
@@ -91096,7 +91237,8 @@ void cm848_writeInjectionAngleToTpuChannel5(int param_1,int param_2,undefined2 p
   uint uVar4;
   uint uVar5;
   
-  uVar1 = (uint)(ushort)(&DAT_0005fbb2)[param_1] + param_2 + (int)injection_timing_table_offset;
+  uVar1 = (uint)injection_end_limit_cylinder_offsets[param_1] + param_2 +
+          (int)injection_timing_table_offset;
   if (0x77ff < (int)uVar1) {
     uVar1 = uVar1 - 0x7800;
   }
@@ -91543,7 +91685,7 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
     injector_driver_booster_recharge_off_delay_counter = 0xffff;
     if (engine_state == ENGINE_STATE_SHUTDOWN) {
       if ((fuel_system_hardware_shutdown_check_enable_flag == 1) && (cylinder_cutout_mask == 0)) {
-        uVar1 = DAT_0040bcec;
+        uVar1 = injector_driver_booster_capacitor_a_voltage_adc_forced_reading;
         if ((adc_forced_reading_enable_bits_cal[3] & 0x40) == 0) {
           if (qadc_channel_index_table[0x36] < 0x81) {
             uVar4 = (uint)qadc_channel_index_table[0x36];
@@ -91553,7 +91695,7 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
           }
           uVar1 = *qadc_channel_dispatch_table[uVar4].result_register;
         }
-        uVar2 = DAT_0040bcee;
+        uVar2 = injector_driver_booster_capacitor_b_voltage_adc_forced_reading;
         if ((adc_forced_reading_enable_bits_cal[3] & 0x80) == 0) {
           if (qadc_channel_index_table[0x37] < 0x81) {
             uVar4 = (uint)qadc_channel_index_table[0x37];
@@ -91631,8 +91773,8 @@ void cm848_loadInjectionStartAnglesOnTpuChannel6(void)
     sVar2 = pilot_injection_timing_for_cylinder_event * -5;
   }
   injection_angle_ch6_crank_position =
-       (((uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] + (int)injection_timing_table_offset) -
-       uVar6) + (int)sVar2;
+       (((uint)injection_end_limit_cylinder_offsets[cylinder_event_index] +
+        (int)injection_timing_table_offset) - uVar6) + (int)sVar2;
   injection_angle_ch6_normalized = injection_angle_ch6_crank_position + uVar6;
   if (0x77ff < (int)injection_angle_ch6_normalized) {
     injection_angle_ch6_normalized = injection_angle_ch6_normalized - 0x7800;
@@ -92486,17 +92628,18 @@ void cm848_checkFuelPressureGovernorDemandAtGovernedSpeed(void)
               (injector_diagnostic_bits_short_to_ground == 0)) &&
              (injector_diagnostic_bits_short_to_battery == 0)))))) &&
           (((total_injection_quantity <
-             fuel_pressure_governed_speed_check_injection_quantity_maximum && (DAT_00409ac6 < 0x44))
-           && ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
-               ((((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
-                  (fault_detected_cal.crank_sync_error == 0)) &&
-                 (((fault_detected_cal.faults_0_to_15 & 0x20) == 0 &&
-                  (((fault_detected_cal.cam_crank_sync_mismatch_error == 0 &&
-                    (fault_detected_cal.speed_limp_home_error == 0)) &&
-                   (fault_detected_cal.coolant_temperature_high_error == 0)))))) &&
-                ((fault_detected_cal.coolant_temperature_low_error == 0 &&
-                 (fault_detected_cal.high_pressure_common_rail_cp3_high_current_error == 0))))))))))
-         && (fault_detected_cal.high_pressure_common_rail_cp3_low_current_error == 0)))) &&
+             fuel_pressure_governed_speed_check_injection_quantity_maximum &&
+            (fuel_pressure_monitors_gate_word < 0x44)) &&
+           ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
+            ((((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
+               (fault_detected_cal.crank_sync_error == 0)) &&
+              (((fault_detected_cal.faults_0_to_15 & 0x20) == 0 &&
+               (((fault_detected_cal.cam_crank_sync_mismatch_error == 0 &&
+                 (fault_detected_cal.speed_limp_home_error == 0)) &&
+                (fault_detected_cal.coolant_temperature_high_error == 0)))))) &&
+             ((fault_detected_cal.coolant_temperature_low_error == 0 &&
+              (fault_detected_cal.high_pressure_common_rail_cp3_high_current_error == 0)))))))))) &&
+         (fault_detected_cal.high_pressure_common_rail_cp3_low_current_error == 0)))) &&
        (((fault_detected_cal.cp3_pump_regulator_control_error == 0 &&
          (fault_detected_cal.fuel_pressure_key_on_rationality_error == 0)) &&
         (vehicle_speed_sensor_ok_flag != 0)))) {
@@ -92561,7 +92704,7 @@ void cm848_checkFuelPressureWithoutInjection(void)
      (fuel_pressure_allowed_decay_check_enable == 0)) {
     return;
   }
-  if (((((((DAT_00409aae < engine_speed_state.filtered_engine_speed) &&
+  if (((((((fuel_pressure_check_engine_speed_minimum < engine_speed_state.filtered_engine_speed) &&
           ((short)fuel_pressure_feedback_filtered <= (short)fuel_pressure_feedback_maximum)) &&
          ((short)fuel_pressure_feedback_minimum <= (short)fuel_pressure_feedback_filtered)) &&
         ((engine_state == ENGINE_STATE_RUNNING &&
@@ -92574,7 +92717,7 @@ void cm848_checkFuelPressureWithoutInjection(void)
        (((((injector_diagnostic_bits_open_circuit == 0 &&
            (injector_diagnostic_bits_short_to_ground == 0)) &&
           (injector_diagnostic_bits_short_to_battery == 0)) &&
-         (((DAT_00409ac6 < 0x44 &&
+         (((fuel_pressure_monitors_gate_word < 0x44 &&
            (fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0)) &&
           ((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
            ((fault_detected_cal.crank_sync_error == 0 &&
@@ -92755,10 +92898,10 @@ void cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand(void)
            )))))) && (fuel_metering_feedback_fault_code == 0)) &&
        (((injector_diagnostic_bits_fast_decay == 0 && (injector_diagnostic_bits_open_circuit == 0))
         && (injector_diagnostic_bits_short_to_ground == 0)))) &&
-      (((injector_diagnostic_bits_short_to_battery == 0 && (DAT_00409ac6 < 0x44)) &&
-       ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
-        ((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
-         (fault_detected_cal.crank_sync_error == 0)))))))) &&
+      (((injector_diagnostic_bits_short_to_battery == 0 && (fuel_pressure_monitors_gate_word < 0x44)
+        ) && ((fault_detected_cal.engine_position_sensor_main_channel_lost_error == 0 &&
+              ((fault_detected_cal.engine_position_sensor_backup_channel_lost_error == 0 &&
+               (fault_detected_cal.crank_sync_error == 0)))))))) &&
      ((((fault_detected_cal.faults_0_to_15 & 0x20) == 0 &&
        ((((fault_detected_cal.cam_crank_sync_mismatch_error == 0 &&
           (fault_detected_cal.speed_limp_home_error == 0)) &&
@@ -92773,8 +92916,9 @@ void cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand(void)
   else {
     fuel_metering_feedback_monitor_enable_flag = 0;
   }
-  if (DAT_00409acb != '\0') {
-    fuel_metering_feedback_monitor_enable_flag = DAT_00409acf;
+  if (fuel_metering_feedback_monitor_enable_override != 0) {
+    fuel_metering_feedback_monitor_enable_flag =
+         fuel_metering_feedback_monitor_enable_override_value;
   }
   if (fuel_metering_feedback_monitor_enable_flag == 0) {
     return;
@@ -93857,7 +94001,7 @@ void cm848_calculatePilotInjectionTiming(void)
     uVar1 = injection_wakeup_duration_below_breakpoint;
   }
   injection_timing_static_wakeup_location =
-       DAT_0005fbb2 / 5 -
+       injection_end_limit_cylinder_offsets[0] / 5 -
        (short)(((uint)injection_timing_tooth_base_offset_cylinder_0 * 0x600) / 0x1e);
   uVar2 = CONCAT44((int)((ulonglong)((uint)uVar1 * 6) *
                          (ulonglong)engine_speed_state.filtered_engine_speed * 0x100 >> 0x20),
@@ -95352,7 +95496,7 @@ undefined4 cm848_isDtcStoredOtherThanFault(int param_1)
   
   if ((recent_fault_dtc_codes_cal[0] == 0) ||
      ((recent_fault_dtc_codes_cal[0] ==
-       obd_dtc_code_table[*(short *)(&fault_code_assignment_table + param_1 * 2)] &&
+       obd_dtc_code_table[(short)fault_code_assignment_table[param_1]] &&
       (recent_fault_dtc_codes_cal[1] == 0)))) {
     uVar1 = 0;
   }
@@ -96035,8 +96179,8 @@ void cm848_initializeFuelPressureSensorPlausibilityState(void)
 
 {
   fuel_pressure_sensor_plausibility_state = 0;
-  DAT_003fd1d3 = 0;
-  DAT_003fd1d2 = 0;
+  fuel_pressure_sensor_plausibility_unused_byte_b = 0;
+  fuel_pressure_sensor_plausibility_unused_byte_a = 0;
   fuel_pressure_sensor_plausibility_verdict_locked_flag = 0;
   fuel_pressure_sensor_plausibility_step_count = 0;
   fuel_pressure_sensor_plausibility_average_fuel_demand = 0;
@@ -96407,7 +96551,7 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
   }
   if ((fault_detected_cal.fuel_rail_pressure_high_error != 0) ||
      (fault_detected_cal.fuel_rail_pressure_low_error != 0)) {
-    DAT_003fd1e0 = 1;
+    fuel_pressure_sensor_pre_start_check_done_flag = 1;
     fuel_pressure_sensor_pre_start_check_abort_code = 2;
     fuel_pressure_sensor_pre_start_check_state = 4;
     return;
@@ -96447,11 +96591,11 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
   }
   if (cam_sync_validation_crank_tick_count < fuel_pressure_sensor_pre_start_check_minimum_run_time)
   {
-    DAT_003fd1e0 = 1;
+    fuel_pressure_sensor_pre_start_check_done_flag = 1;
     return;
   }
   if (cam_sync_validation_dwell_counter <= fuel_pressure_sensor_pre_start_check_start_delay) {
-    DAT_003fd1e0 = 1;
+    fuel_pressure_sensor_pre_start_check_done_flag = 1;
     return;
   }
   if ((fuel_pressure_sensor_pre_start_low_sample_count <
@@ -96473,7 +96617,7 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
   }
   monitor_readiness_code_cal = monitor_readiness_code_cal & 0xffffffbf;
 LAB_0053166c:
-  DAT_003fd1e0 = 1;
+  fuel_pressure_sensor_pre_start_check_done_flag = 1;
   diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x40;
   return;
 }
@@ -97219,7 +97363,7 @@ void cm848_monitorIntakeAirHeaterPerformance(void)
         }
         uVar8 = (uint)intake_air_heater_performance_test_sample_ring_index;
         intake_air_heater_performance_test_sample_count = uVar4;
-        *(word *)(&DAT_003fd1f6 + uVar8 * 2) = wVar3;
+        intake_air_heater_performance_test_sample_ring[uVar8] = wVar3;
         wVar1 = intake_air_heater_preheat_remaining_ticks;
         wVar3 = intake_air_heater_performance_test_preheat_end_remaining_ticks;
         if (2 < uVar8) {
@@ -97232,7 +97376,7 @@ void cm848_monitorIntakeAirHeaterPerformance(void)
           uVar8 = 1;
           uVar10 = 0;
           do {
-            uVar10 = uVar10 + *(ushort *)(&DAT_003fd1f6 + uVar8 * 2);
+            uVar10 = uVar10 + intake_air_heater_performance_test_sample_ring[uVar8];
             uVar8 = uVar8 + 1 & 0xff;
           } while (uVar8 < 4);
           uVar8 = (uVar10 & 0xffff) / 3;
@@ -97871,8 +98015,8 @@ void cm848_clearFaultStatusRecord(int param_1)
    starts since the 1st..8th most recent fault was logged; index 0 = newest, parallel to
    recent_fault_dtc_codes_cal) gets +1 while it is below 255. Called once per engine start by
    cm848_auxiliaryControlTask, on the first pass after engine_state is RUNNING, ENGINE_BRAKE or
-   OVERSPEED, behind the once-flag DAT_003fd22b and fault_aging_triggered_flag = 0. 255 in all eight
-   words in the dump. (was diag_protection_history_increment) */
+   OVERSPEED, behind the once-flag engine_start_counted_flag and fault_aging_triggered_flag = 0. 255
+   in all eight words in the dump. (was diag_protection_history_increment) */
 
 void cm848_incrementEngineStartCountsSinceFaultLogged(void)
 
@@ -98391,8 +98535,8 @@ void cm848_auxiliaryControlTask(void)
   if (fault_aging_triggered_flag == 0) {
     if (((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)) ||
        (engine_state == ENGINE_STATE_OVERSPEED)) {
-      if (DAT_003fd22b == 0) {
-        DAT_003fd22b = 1;
+      if (engine_start_counted_flag == 0) {
+        engine_start_counted_flag = 1;
         cm848_incrementEngineStartCountsSinceFaultLogged();
       }
       if (fault_aging_governor_dwell_count < drive_cycle_minimum_engine_run_time) {
@@ -99566,38 +99710,50 @@ void hpcr_injectPressureDiagnostic(void)
     }
     cm848_checkSensorStuckOverDistance
               (0x45,&battery_temperature_stuck_check_last_failed_warm_up_cycle_cal,
-               &battery_temperature_stuck_check_failed_previous_flag_cal,&DAT_003fd251,&DAT_003fd254
-               ,&battery_temperature_stuck_check_distance_traveled,&DAT_003fd23a,
+               &battery_temperature_stuck_check_failed_previous_flag_cal,
+               &battery_temperature_stuck_check_distance_reached_flag,
+               &battery_temperature_stuck_check_armed_flag,
+               &battery_temperature_stuck_check_distance_traveled,
+               &battery_temperature_stuck_check_reference_value,
                &battery_temperature_stuck_check_failed_warm_up_cycle_count_cal,
                battery_temperature_stuck_check_failed_cycle_limit,0x17b,0x17c,
                battery_temperature_stuck_check_distance_threshold,
                battery_temperature_stuck_check_temperature_delta,0x161,0x167,
                &battery_temperature_stuck_check_state,&battery_temperature_key_on_rationality_state,
-               &battery_temperature_stuck_check_accumulated_miles_cal,&DAT_003fd240,
+               &battery_temperature_stuck_check_accumulated_miles_cal,
+               &battery_temperature_stuck_check_accumulated_miles_at_start,
                battery_temperature_stuck_check_accumulated_distance_limit,1);
     cm848_checkSensorStuckOverDistance
               (9,&intake_manifold_temperature_stuck_check_last_failed_warm_up_cycle_cal,
-               &intake_manifold_temperature_stuck_check_failed_previous_flag_cal,&DAT_003fd252,
-               &DAT_003fd255,&intake_manifold_temperature_stuck_check_distance_traveled,
-               &DAT_003fd23c,&intake_manifold_temperature_stuck_check_failed_warm_up_cycle_count_cal
-               ,intake_manifold_temperature_stuck_check_failed_cycle_limit,0x13,0x14,
+               &intake_manifold_temperature_stuck_check_failed_previous_flag_cal,
+               &intake_manifold_temperature_stuck_check_distance_reached_flag,
+               &intake_manifold_temperature_stuck_check_armed_flag,
+               &intake_manifold_temperature_stuck_check_distance_traveled,
+               &intake_manifold_temperature_stuck_check_reference_value,
+               &intake_manifold_temperature_stuck_check_failed_warm_up_cycle_count_cal,
+               intake_manifold_temperature_stuck_check_failed_cycle_limit,0x13,0x14,
                intake_manifold_temperature_stuck_check_distance_threshold,
                intake_manifold_temperature_stuck_check_temperature_delta,0x162,0x166,
                &intake_manifold_temperature_stuck_check_state,
                &intake_manifold_temperature_key_on_rationality_state,
-               &intake_manifold_temperature_stuck_check_accumulated_miles_cal,&DAT_003fd242,
+               &intake_manifold_temperature_stuck_check_accumulated_miles_cal,
+               &intake_manifold_temperature_stuck_check_accumulated_miles_at_start,
                intake_manifold_temperature_stuck_check_accumulated_distance_limit,2);
     cm848_checkSensorStuckOverDistance
               (0x14,&ambient_air_temperature_stuck_check_last_failed_warm_up_cycle_cal,
-               &ambient_air_temperature_stuck_check_failed_previous_flag_cal,&DAT_003fd250,
-               &DAT_003fd253,&ambient_air_temperature_stuck_check_distance_traveled,&DAT_003fd238,
+               &ambient_air_temperature_stuck_check_failed_previous_flag_cal,
+               &ambient_air_temperature_stuck_check_distance_reached_flag,
+               &ambient_air_temperature_stuck_check_armed_flag,
+               &ambient_air_temperature_stuck_check_distance_traveled,
+               &ambient_air_temperature_stuck_check_reference_value,
                &ambient_air_temperature_stuck_check_failed_warm_up_cycle_count_cal,
                ambient_air_temperature_stuck_check_failed_cycle_limit,0x96,0x97,
                ambient_air_temperature_stuck_check_distance_threshold,
                ambient_air_temperature_stuck_check_temperature_delta,0x153,0x168,
                &ambient_air_temperature_stuck_check_state,
                &ambient_air_temperature_key_on_rationality_state,
-               &ambient_air_temperature_stuck_check_accumulated_miles_cal,&DAT_003fd23e,
+               &ambient_air_temperature_stuck_check_accumulated_miles_cal,
+               &ambient_air_temperature_stuck_check_accumulated_miles_at_start,
                ambient_air_temperature_stuck_check_accumulated_distance_limit,3);
     sensor_stuck_check_enable_flag_previous = sensor_stuck_check_enable_flag;
   }
@@ -99961,9 +100117,9 @@ void cm848_resetFuelPressureSetpointNotReachedAccumulator(void)
 void cm848_monitorFuelPressureSetpointNotReached(void)
 
 {
-  undefined1 *puVar1;
-  undefined1 *extraout_r4;
-  undefined1 uVar2;
+  byte *pbVar1;
+  byte *extraout_r4;
+  byte bVar2;
   
   if (switch_input_state_bits.key_switch == 0) {
     fuel_pressure_setpoint_not_reached_monitor_active_flag = 0;
@@ -100014,7 +100170,7 @@ void cm848_monitorFuelPressureSetpointNotReached(void)
         diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x20;
       }
     }
-    puVar1 = &DAT_003fd265;
+    pbVar1 = &fuel_pressure_setpoint_not_reached_conditions_unmet_flag;
     if ((((((fault_detected_cal.cp3_pump_regulator_control_error == 0) &&
            (fault_detected_cal.high_pressure_common_rail_cp3_high_current_error == 0)) &&
           (fault_detected_cal.high_pressure_common_rail_cp3_low_current_error == 0)) &&
@@ -100037,18 +100193,18 @@ void cm848_monitorFuelPressureSetpointNotReached(void)
           ((fuel_pressure_setpoint_not_reached_minimum_engine_speed <=
             engine_speed_state.engine_speed && (supervisor_register_36_bit_1_low_held_flag == 0)))))
          ))))) {
-      if (DAT_003fd265 == '\x01') {
+      if (fuel_pressure_setpoint_not_reached_conditions_unmet_flag == 1) {
         fuel_pressure_setpoint_not_reached_monitor_state = 1;
       }
-      uVar2 = 0;
+      bVar2 = 0;
     }
     else {
       cm848_resetFuelPressureSetpointNotReachedAccumulator();
       fuel_pressure_setpoint_not_reached_monitor_state = 0;
-      uVar2 = 1;
-      puVar1 = extraout_r4;
+      bVar2 = 1;
+      pbVar1 = extraout_r4;
     }
-    *puVar1 = uVar2;
+    *pbVar1 = bVar2;
   }
   return;
 }
@@ -100890,13 +101046,13 @@ void cm848_initializeRamRefresh(void)
   ppuVar1 = &PTR_sensor_channel_cal_block_start_003fd2c4;
   PTR_sensor_channel_cal_block_start_003fd2c4 = (undefined *)&sensor_channel_cal_block_start;
   PTR_sensor_channel_ram_start_003fd2c8 = &sensor_channel_ram_start;
-  PTR_DAT_003fd2cc = (undefined *)&DAT_00064aea;
+  PTR_sensor_channel_cal_rom_defaults_003fd2cc = &sensor_channel_cal_rom_defaults;
   do {
     ppuVar1 = ppuVar1 + 3;
   } while (ppuVar1 < &PTR_PTR_003fd2d0);
   PTR_PTR_003fd2d0 = (undefined *)&PTR_sensor_channel_cal_block_start_003fd2c4;
   sensor_cal_ram_write_ptr = (undefined *)&sensor_channel_cal_block_start;
-  sensor_cal_rom_read_ptr = (undefined *)&DAT_00064aea;
+  sensor_cal_rom_read_ptr = &sensor_channel_cal_rom_defaults;
   sensor_cal_write_dirty_flag = 0;
   ram_refresh_enable = RAM_REFRESH_ENABLED;
   power_down_refresh_enable = 1;
@@ -100938,7 +101094,8 @@ void cm848_refreshRamCalibration(void)
   if (ram_refresh_enable != RAM_REFRESH_DISABLED) {
     if (*(undefined **)(PTR_PTR_003fd2d0 + 4) <= sensor_cal_ram_write_ptr) {
       PTR_PTR_003fd2d0 = PTR_PTR_003fd2d0 + 0xc;
-      if ((undefined *)((int)&PTR_DAT_003fd2cc + 3U) < PTR_PTR_003fd2d0) {
+      if ((undefined *)((int)&PTR_sensor_channel_cal_rom_defaults_003fd2cc + 3U) < PTR_PTR_003fd2d0)
+      {
         PTR_PTR_003fd2d0 = (undefined *)&PTR_sensor_channel_cal_block_start_003fd2c4;
         if (sensor_cal_write_dirty_flag == 0) {
           if ((fault_registered_cal.faults_0_to_15 & 1) != 0) {
@@ -101238,7 +101395,7 @@ void cm848_j1939_system_init(void)
   can_receive_queue_read_pointer = can_receive_queue_buffer;
   can_receive_queue_write_pointer = can_receive_queue_buffer;
   initializeJ1939Transport();
-  DAT_0040ad54 = 4;
+  j1939_transport_unused_init_word = 4;
   uVar5 = 0;
   do {
     j1939_source_address_blocking_table[uVar5] = 0xfe;
@@ -101347,6 +101504,9 @@ void cm848_j1939_system_init(void)
   j1939_transmit_message_object_number = (word)iVar2;
   j1939_last_receive_message_object_number = can_last_message_object_used + 0xf;
   uVar5 = iVar2 * 0x10 & 0xffff0;
+                    /* Mailbox numbers are 1-based: 0x3070f0 + 16 x n is toucan_a_message_buffers[n
+                       - 1], so DAT_003070f1 / DAT_003070f2 here are that buffer's code / length
+                       byte and ID word */
   can_transmit_mailbox_pointer = &UNK_003070f0 + uVar5;
   iVar2 = (int)&toucan_a_message_buffers[0].CONTROL_STATUS + uVar5;
   uVar5 = 0;
@@ -101355,7 +101515,8 @@ void cm848_j1939_system_init(void)
   if (j1939_engine_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_source_address;
     do {
-      *(uint *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
+      *(dword *)(iVar2 + 2) =
+           j1939_receive_message_object_id_templates[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101366,7 +101527,7 @@ void cm848_j1939_system_init(void)
   uVar6 = 0;
   if (j1939_engine_destination_non_specific_receive_message_object_count != 0) {
     do {
-      *(undefined4 *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff];
+      *(dword *)(iVar2 + 2) = j1939_receive_message_object_id_templates[uVar5 & 0xff];
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101378,7 +101539,8 @@ void cm848_j1939_system_init(void)
   if (j1939_retarder_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_engine_retarder_source_address;
     do {
-      *(uint *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
+      *(dword *)(iVar2 + 2) =
+           j1939_receive_message_object_id_templates[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101389,7 +101551,7 @@ void cm848_j1939_system_init(void)
   uVar6 = 0;
   if (j1939_retarder_destination_non_specific_receive_message_object_count != 0) {
     do {
-      *(undefined4 *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff];
+      *(dword *)(iVar2 + 2) = j1939_receive_message_object_id_templates[uVar5 & 0xff];
       uVar5 = uVar5 + 1;
       *(undefined1 *)(iVar2 + 1) = 0x40;
       iVar2 = iVar2 + 0x10;
@@ -101489,6 +101651,8 @@ void cm848_initializeCanHardware(void)
   toucan_a.RX14MSK = 0x1feffe00;
   toucan_a.CANICR = 0x400;
   bVar3 = 0;
+                    /* The stbu pre-increments by 16 from 0x3070f1, so the loop clears byte 1 (the
+                       code / length byte) of each of toucan_a_message_buffers[0-15] */
   puVar2 = &DAT_003070f1;
   do {
     puVar2 = puVar2 + 0x10;
@@ -101967,4 +102131,4 @@ void cm848_updateOutputReadBackFaultBits(void)
 
 
 
-// Export complete - 1971 functions processed
+// Export complete - 1970 functions processed

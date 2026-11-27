@@ -28,9 +28,10 @@ A change is **not applied** when you edit a CSV — it is applied when a fresh `
 | `structure_definitions.csv` | `struct_name,address,field_name,type,size,comment,dependency,Status` | structs, **packed flag bitfields** |
 | `function_renames.csv` | `address,name[,plate_comment]` | function names (`FUN_`) |
 | `function_definitions.csv` | `function_address,function_name,param_index,name,type,comment` | prototypes (params + return) |
-| `local_variables.csv` | `function_address,function_name,old_name,new_name,type,comment` | rename decompiler locals (`uVar1`) |
+| `local_variables.csv` | `function_address,function_name,old_name,new_name,type,comment,keep_merged` | rename decompiler locals (`uVar1`); `keep_merged=yes` keeps every use the decompiler had merged (no split-off placeholders); `old_name` `r6@0x0003a6e8` pins one register value; rows sharing a `new_name` join one variable |
 | `labels.csv` | `address,label_name,comment` | code labels |
 | `constants.csv` | `address,constant_name,value,comment` | document magic numbers |
+| `comments.csv` | `address,comment` | PRE comment above the decompiled statement at an instruction address |
 | `arrays.csv` | `address,array_name,element_type,element_count,comment` | arrays/buffers |
 
 ## Per-type gotchas (the parts that bite)

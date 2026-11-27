@@ -1168,6 +1168,10 @@ j1939_receive_handler_entry_t,,handler,j1939_receive_handler_function_t*,4,The r
 boot_diagnostic_service_entry_t,,service_id,BOOT_DIAGNOSTIC_SERVICE,1,The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads),,verified
 boot_diagnostic_service_entry_t,,handler,boot_diagnostic_service_handler_function_t*,4,The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it,,verified
 
+# Boot SCI command entry (5 bytes - packed): boot_sci_command_dispatch_table (ROM 0x7f7a) - cm848_dispatchBootSciDiagnosticCommand compares command to the received byte and calls handler
+boot_sci_command_entry_t,,command,byte,1,The boot SCI command byte (0x2a / 0x2b / 0x2c / 0x31 / 0x32),,verified
+boot_sci_command_entry_t,,handler,boot_sci_command_handler_function_t*,4,The command handler at offset 1 (unaligned),,verified
+
 # ============================================================================
 # Scheduler Task Statistics - per-task timing and execution counters
 # 40 entries at 0x0040be6a, 12 bytes each, ending at 0x0040c04a (output_enable_bitmap)
@@ -1888,6 +1892,9 @@ memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below st
 memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified
 memory_region_t,0x003f9858,,,,region 4 0x1000000-0x1003fff EEPROM - marker,,verified
 memory_region_t,0x003f9862,,,,region 5 0x2fc000-0x307fff type 3 - effectively 0x2fc000-0x301fff: region 3 matches the rest first - marker,,verified
+# calibration_region_t - one {start, length} record of calibration_eeprom_region_table / calibration_parameter_region_table
+calibration_region_t,,start_address,dword,4,The item's first byte: an EEPROM offset in calibration_eeprom_region_table; an absolute address (ROM / flash2 / EEPROM 0x0100xxxx) in calibration_parameter_region_table,,verified
+calibration_region_t,,length,dword,4,The item's size in bytes,,verified
 # checksum_region_t - one region of checksum_region_table that mpc555_verifyDownloadedCalibration sums (PR #53 round 69)
 checksum_region_t,,expected_sum,word,2,The 16-bit sum of the region's words that the verifier requires,,verified
 checksum_region_t,,start_address,word*,4,The region's first word,,verified
@@ -2783,6 +2790,7 @@ j1939_pgn_request_handler_function_t,,,function:void(j1939_received_message_t* m
 j1939_receive_handler_function_t,,,function:void(j1939_received_message_t* message),0,A J1939 receive handler: cm848_dispatchJ1939ReceivedMessages calls it with the receive ring's record (PR #53 round 98),,verified
 boot_diagnostic_service_handler_function_t,,,function:BOOT_DIAGNOSTIC_RESULT(j1939_received_message_t* request),0,"A boot kernel PGN 61184 service handler: the request in, the result out (PR #53 round 98)",,verified
 qspi_completion_callback_function_t,,,function:void(),0,A QSPI job's completion callback: cm848_completeQspiJob calls it with no argument (PR #53 round 98),,verified
+boot_sci_command_handler_function_t,,,function:void(),0,A boot SCI command handler: cm848_dispatchBootSciDiagnosticCommand calls it with no argument,,verified
 sci_command_handler_function_t,,,function:void(),0,An SCI command's handler: cm848_dispatchSciCommand calls it with no argument (PR #53 round 98),,verified
 interrupt_handler_function_t,,,function:void(),0,An interrupt handler: its dispatcher calls it with no argument (PR #53 round 98),,verified
 sci_next_byte_handler_function_t,,,function:void(),0,The handler of the next received SCI byte: cm848_sciCallbackDispatcher calls it with no argument (PR #53 round 98),,verified
@@ -2803,3 +2811,13 @@ j1939_periodic_transmit_entry_t,,interval_ticks,word,2,The transmit interval in 
 j1939_periodic_transmit_entry_t,,next_tick,word,2,The tick of the next transmission: the runner calls the builder when the queue's current tick equals it and adds interval_ticks,,verified
 j1939_periodic_transmit_entry_t,,builder,j1939_message_builder_function_t*,4,The message's builder function,,verified
 j1939_message_builder_function_t,,,function:void(),0,A periodic J1939 message builder: cm848_runJ1939PeriodicTransmitQueues calls it with no argument (PR #53 round 98),,verified
+# TSC1 ignored request lists (cm848_add / remove / processTsc1IgnoredRequestTimeouts)
+engine_tsc1_ignored_request_entry_t,0x003fb916,request_type,word,2,Entry type (param_1 of cm848_addEngineTsc1IgnoredRequestEntry; type 1 + mode 1 + the primary authorized source clears the high idle override when it expires),,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,source_address,byte,1,J1939 source address whose TSC1 requests are ignored,,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,reserved,byte,1,Padding (never written),,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,override_control_mode,word,2,TSC1 override control mode that is ignored,,verified
+engine_tsc1_ignored_request_entry_t,0x003fb916,remaining_time,word,2,Countdown from j1939_time_limited_node_recovery_time; the entry is removed at 0,,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,source_address,byte,1,J1939 source address whose retarder TSC1 requests are ignored,,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,reserved,byte,1,Padding (never written),,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,override_control_mode,word,2,TSC1 override control mode that is ignored,,verified
+retarder_tsc1_ignored_request_entry_t,0x003fb966,remaining_time,word,2,Countdown from j1939_time_limited_node_recovery_time; the entry is removed at 0,,verified
