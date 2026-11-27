@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:53:19 UTC 2026
+// Generated: Fri Nov 27 02:55:56 UTC 2026
 
 
 //
@@ -10929,14 +10929,14 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  uint entry_time_base_low;
+  dword exit_time_base_low;
+  int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
   word current_interrupt_mask;
   byte interrupt_code;
-  uint entry_time_base_low;
-  dword exit_time_base_low;
-  int entry_time_base_high;
   
   do {
     entry_time_base_high = TBUr;
@@ -69740,23 +69740,24 @@ void cm848_updateGeneralEngineProtection(void)
     egr_system_failure_validation_bit = 0x100;
   }
   if (DAT_0040a43c == 0) {
-    DAT_003fbd56 = 0;
+    general_engine_protection_condition_bit_8 = 0;
   }
   else {
-    DAT_003fbd56 = 8;
+    general_engine_protection_condition_bit_8 = 8;
   }
   if (DAT_0040a43e == 0) {
-    DAT_003fbd58 = 0;
+    general_engine_protection_condition_bit_4 = 0;
   }
   else {
-    DAT_003fbd58 = 4;
+    general_engine_protection_condition_bit_4 = 4;
   }
   if (algorithm_enable_flags_21_cal.general_engine_protection_enable == 0) {
     general_engine_protection_state = 0;
   }
   else {
     general_engine_protection_state =
-         DAT_003fbd58 | DAT_003fbd56 | DAT_003fbd54 | DAT_003fbd50 |
+         general_engine_protection_condition_bit_4 | general_engine_protection_condition_bit_8 |
+         general_engine_protection_condition_word_b | general_engine_protection_condition_word_a |
          egr_system_failure_validation_bit;
   }
   general_engine_protection_emission_level_cap =
@@ -69778,8 +69779,8 @@ void cm848_updateGeneralEngineProtection(void)
 void cm848_initializeFlowControlStateVariables(void)
 
 {
-  DAT_003fbd50 = 0;
-  DAT_003fbd54 = 0;
+  general_engine_protection_condition_word_a = 0;
+  general_engine_protection_condition_word_b = 0;
   return;
 }
 
