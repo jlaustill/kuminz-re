@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:46:56 UTC 2026
+// Generated: Fri Nov 27 03:51:53 UTC 2026
 
 
 //
@@ -4186,6 +4186,9 @@ void mpc555_processCanReceiveBuffer(int param_1)
     puVar8 = (undefined1 *)((int)&pjVar1->data_pointer + 3);
     do {
       puVar7 = puVar7 + 1;
+                    /* The lbzu pre-increments from 0x3070f5 + mailbox offset; mailbox numbers are
+                       1-based, so it reads the data bytes (offset 6) of toucan_a_message_buffers[n
+                       - 1] */
       puVar8 = puVar8 + 1;
       *puVar8 = *puVar7;
       uVar10 = uVar10 + 1;
@@ -11008,12 +11011,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
   word saved_interrupt_mask;
-  uint entry_time_base_low;
   
   do {
     entry_time_base_high = TBUr;
@@ -27868,15 +27871,17 @@ void cm848_initializePgn65242SoftwareIdHandler(void)
   j1939_pgn65242_tx_message.header.can_id = CONCAT31(0x18feda,(char)j1939_source_address);
   j1939_pgn65242_payload.number_of_software_identification_fields = 6;
   cm848_formatNumberAsDecimalText
-            (&DAT_003fd69b,j1939_pgn65242_payload.software_identification_field_1,8);
+            (software_identification_field_1_number_cal,
+             j1939_pgn65242_payload.software_identification_field_1,8);
   j1939_pgn65242_payload.software_identification_field_1_delimiter = 0x2a;
   cm848_formatNumberAsDecimalText
-            (&DAT_003fd69f,j1939_pgn65242_payload.software_identification_field_2,8);
+            (software_identification_field_2_number_cal,
+             j1939_pgn65242_payload.software_identification_field_2,8);
   j1939_pgn65242_payload.software_identification_field_2_delimiter = 0x2a;
   uVar1 = 0;
   do {
     j1939_pgn65242_payload.software_identification_field_3[uVar1] =
-         s_0000000000000000000000_003fd6a5[uVar1 + 10];
+         software_identification_field_3_text_cal[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0xc);
   j1939_pgn65242_payload.software_identification_field_3_delimiter = 0x2a;
@@ -38996,7 +39001,7 @@ void cm848_startSupervisorWatchdog(void)
   supervisor_watchdog_job.device_slot = supervisor_qspi_slot;
   supervisor_watchdog_job.transmit_words = supervisor_watchdog_transmit_words;
   supervisor_watchdog_job.command_bytes = supervisor_qspi_command_bytes;
-  supervisor_watchdog_job.receive_words = (word *)&DAT_003fb2c7;
+  supervisor_watchdog_job.receive_words = &supervisor_watchdog_receive_words;
   supervisor_watchdog_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   supervisor_watchdog_transmit_words[0] = 0x1400;
   supervisor_watchdog_transmit_words[1] = 0x1801;
@@ -43785,8 +43790,12 @@ void mpc555_qspiStartJob(dword job_index,dword queue_index)
       do {
         pwVar5 = pwVar5 + 1;
         pwVar3 = pwVar3 + 1;
+                    /* The sthu pre-increments by 2 from 0x30517e, so the loop copies the job's
+                       transmit words into qsmcm_tranram (0x305180) */
         *pwVar3 = *pwVar5;
         pbVar4 = pbVar4 + 1;
+                    /* The stbu pre-increments by 1 from 0x3051bf, so the loop copies the job's
+                       command bytes into qsmcm_comdram_0 onward (0x3051c0) */
         pbVar2 = pbVar2 + 1;
         *pbVar2 = *pbVar4;
         bVar7 = bVar7 + 1;
@@ -43896,6 +43905,8 @@ void cm848_completeQspiJob(void)
       do {
         pwVar5 = pwVar5 + 1;
         pwVar6 = pwVar6 + 1;
+                    /* The lhzu pre-increments by 2 from 0x30513e, so the loop reads qsmcm_recram
+                       (0x305140) into the job's receive words */
         *pwVar6 = *pwVar5;
         bVar3 = bVar3 + 1;
       } while (bVar3 < bVar1);
@@ -60979,6 +60990,8 @@ void initializeQadcModule(void)
   puVar1 = (ushort *)&UNK_003049fe;
   do {
     puVar1 = puVar1 + 1;
+                    /* The sthu pre-increments by 2 from 0x3049fe, so the loop fills QADC64A_CCW0
+                       onward (the 64 QADC-A conversion command words at 0x304a00) */
     *puVar1 = qadc_a_conversion_channel_table[uVar2] & 0x3f | 0xc0;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0x40);
@@ -60986,6 +60999,8 @@ void initializeQadcModule(void)
   puVar1 = (ushort *)&UNK_00304dfe;
   do {
     puVar1 = puVar1 + 1;
+                    /* The sthu pre-increments by 2 from 0x304dfe, so the loop fills QADC64B_CCW0
+                       onward (the 64 QADC-B conversion command words at 0x304e00) */
     *puVar1 = qadc_b_conversion_channel_table[uVar2] & 0x3f | 0xc0;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0x40);
@@ -96155,8 +96170,8 @@ void cm848_initializeFuelPressureSensorPlausibilityState(void)
 
 {
   fuel_pressure_sensor_plausibility_state = 0;
-  DAT_003fd1d3 = 0;
-  DAT_003fd1d2 = 0;
+  fuel_pressure_sensor_plausibility_unused_byte_b = 0;
+  fuel_pressure_sensor_plausibility_unused_byte_a = 0;
   fuel_pressure_sensor_plausibility_verdict_locked_flag = 0;
   fuel_pressure_sensor_plausibility_step_count = 0;
   fuel_pressure_sensor_plausibility_average_fuel_demand = 0;
