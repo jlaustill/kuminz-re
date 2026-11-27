@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:39:26 UTC 2026
+// Generated: Fri Nov 27 03:44:13 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -20610,7 +20610,7 @@ void cm848_processFaultScanGroup(void)
         uVar1 = *(ushort *)
                  ((int)fault_code_assignment_table + ((uVar8 * 0x10 + uVar5) * 2 & 0x1fffe));
         uVar9 = (uint)uVar1;
-        if (((uVar9 < 0xaa) && ((uVar7 & (&DAT_0005a296)[uVar8]) != 0)) &&
+        if (((uVar9 < 0xaa) && ((uVar7 & fault_previous_pass_check_mask_table[uVar8]) != 0)) &&
            (*(char *)(uVar9 + 0x3fe124) != '\0')) {
           if ((uVar7 & fault_enable_bitmask_array[uVar8]) == 0) {
             *(char *)(uVar9 + 0x3fe124) = *(char *)(uVar9 + 0x3fe124) + -1;
@@ -20683,7 +20683,7 @@ void cm848_processFaultScanGroup(void)
       uVar8 = (uint)uVar1;
       if (((uVar8 < 0xaa) && ((uVar7 & (&fault_previous_pass_cal.faults_0_to_15)[uVar9]) == 0)) &&
          (active_dtc_list_cal.count != 0x1f)) {
-        if (((uVar7 & (&DAT_0005a296)[uVar9]) == 0) ||
+        if (((uVar7 & fault_previous_pass_check_mask_table[uVar9]) == 0) ||
            ((uVar7 & fault_enable_bitmask_array[uVar9]) != 0)) {
           if ((uVar7 & fault_enable_bitmask_array[uVar9]) != 0) {
             wVar6 = wVar6 & ~uVar7;
@@ -20790,16 +20790,17 @@ void cm848_buildFaultConditionMask(void)
   do {
     fault_enable_bitmask_array[uVar4] = 0;
     if (bVar3 == 0) {
-      fault_enable_bitmask_array[uVar4] = fault_enable_bitmask_array[uVar4] | (&DAT_0005a2fa)[uVar4]
+      fault_enable_bitmask_array[uVar4] =
+           fault_enable_bitmask_array[uVar4] | fault_enable_mask_battery_voltage_out_of_range[uVar4]
       ;
     }
     if (bVar1 == 0) {
-      fault_enable_bitmask_array[uVar4] = fault_enable_bitmask_array[uVar4] | (&DAT_0005a35e)[uVar4]
-      ;
+      fault_enable_bitmask_array[uVar4] =
+           fault_enable_bitmask_array[uVar4] | fault_enable_mask_key_switch_off[uVar4];
     }
     if (EVar2 == ENGINE_STATE_CRANKING) {
-      fault_enable_bitmask_array[uVar4] = fault_enable_bitmask_array[uVar4] | (&DAT_0005a3c2)[uVar4]
-      ;
+      fault_enable_bitmask_array[uVar4] =
+           fault_enable_bitmask_array[uVar4] | fault_enable_mask_cranking[uVar4];
     }
     uVar4 = uVar4 + 1 & 0xff;
   } while (uVar4 < 0x32);
@@ -60977,14 +60978,14 @@ void initializeQadcModule(void)
   puVar1 = (ushort *)&UNK_003049fe;
   do {
     puVar1 = puVar1 + 1;
-    *puVar1 = (byte)(&DAT_0005831a)[uVar2] & 0x3f | 0xc0;
+    *puVar1 = qadc_a_conversion_channel_table[uVar2] & 0x3f | 0xc0;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0x40);
   uVar2 = 0;
   puVar1 = (ushort *)&UNK_00304dfe;
   do {
     puVar1 = puVar1 + 1;
-    *puVar1 = (byte)s_0123<_>__________________________00058326[uVar2 + 0x34] & 0x3f | 0xc0;
+    *puVar1 = qadc_b_conversion_channel_table[uVar2] & 0x3f | 0xc0;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0x40);
   return;
@@ -61426,8 +61427,7 @@ uint cm848_calculateCrc16Simple(uint param_1,int param_2,uint param_3)
   pbVar1 = (byte *)(param_2 + -1);
   for (; param_3 != 0; param_3 = param_3 + 0xffff & 0xffff) {
     pbVar1 = pbVar1 + 1;
-    param_1 = (param_1 & 0xffff) >> 8 ^
-              (uint)*(ushort *)(&DAT_0005842e + ((param_1 ^ *pbVar1) & 0xff) * 2);
+    param_1 = (param_1 & 0xffff) >> 8 ^ (uint)crc16_lookup_table[(param_1 ^ *pbVar1) & 0xff];
   }
   return param_1 & 0xffff;
 }
@@ -81444,7 +81444,7 @@ void cm848_processEngineOilPressure(void)
   if (algorithm_enable_flags_40_cal.engine_oil_pressure_processing_enable == 0) {
     return;
   }
-  low_oil_pressure_debounce_limit = DAT_0005b4d4;
+  low_oil_pressure_debounce_limit = low_oil_pressure_debounce_limit_default;
   uVar2 = 4;
   do {
     if ((short)coolant_temperature_sensor_filtered < *(short *)(uVar2 * 2 + 0x5b4be)) {
@@ -83942,7 +83942,7 @@ void cm848_updateEepromCalibrationIdentifier(void)
        (calibration_id_byte4 != calibration_identifier_characters_4_to_9_cal[4])) ||
       (calibration_id_byte5 != calibration_identifier_characters_4_to_9_cal[5])))) {
     cm848_writeEepromBytes(&eeprom_calibration_block,&calibration_id_byte0,4);
-    cm848_writeEepromBytes(&DAT_0100004e,&calibration_id_byte4,2);
+    cm848_writeEepromBytes(&eeprom_calibration_id_bytes_4_to_5,&calibration_id_byte4,2);
   }
   return;
 }
@@ -87290,7 +87290,7 @@ void cm848_updateStackHighWaterMark(void)
          (word)(0x4fb0 / (0x9ff8 - stack_high_water_mark_scan_cursor & 0xffff));
     stack_deepest_address = (undefined *)stack_high_water_mark_scan_cursor;
   }
-  stack_high_water_mark_scan_cursor = (dword)&DAT_003f9808;
+  stack_high_water_mark_scan_cursor = (dword)&stack_high_water_mark_scan_start;
   return;
 }
 
@@ -87307,7 +87307,7 @@ void cm848_updateStackHighWaterMark(void)
 void cm848_initializeStackHighWaterMark(void)
 
 {
-  stack_high_water_mark_scan_cursor = (dword)&DAT_003f9808;
+  stack_high_water_mark_scan_cursor = (dword)&stack_high_water_mark_scan_start;
   stack_deepest_address = &LAB_003f9ff8;
   return;
 }
@@ -88552,7 +88552,7 @@ void cm848_verifyCalibrationAndCodeCrc(void)
   
   wVar1 = rom_crc_accumulator;
   if (rom_crc_calc_phase == 0) {
-    rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac3c;
+    rom_crc_descriptor_table_ptr = (dword)&rom_crc_descriptor_table_calibration;
     rom_crc_scan_ptr = (dword)&algorithm_enable_flags_table_length_cal;
     rom_crc_calc_phase = 1;
     rom_crc_segment_count = 1;
@@ -88565,7 +88565,7 @@ LAB_0052443c:
   else {
     if (rom_crc_calc_phase != 1) {
       if (rom_crc_calc_phase == 2) {
-        rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac2a;
+        rom_crc_descriptor_table_ptr = (dword)&rom_crc_descriptor_table_program;
         rom_crc_scan_ptr = 0x8000;
         rom_crc_calc_phase = 3;
         rom_crc_segment_count = 2;
@@ -101020,13 +101020,13 @@ void cm848_initializeRamRefresh(void)
   ppuVar1 = &PTR_sensor_channel_cal_block_start_003fd2c4;
   PTR_sensor_channel_cal_block_start_003fd2c4 = (undefined *)&sensor_channel_cal_block_start;
   PTR_sensor_channel_ram_start_003fd2c8 = &sensor_channel_ram_start;
-  PTR_DAT_003fd2cc = (undefined *)&DAT_00064aea;
+  PTR_sensor_channel_cal_rom_defaults_003fd2cc = &sensor_channel_cal_rom_defaults;
   do {
     ppuVar1 = ppuVar1 + 3;
   } while (ppuVar1 < &PTR_PTR_003fd2d0);
   PTR_PTR_003fd2d0 = (undefined *)&PTR_sensor_channel_cal_block_start_003fd2c4;
   sensor_cal_ram_write_ptr = (undefined *)&sensor_channel_cal_block_start;
-  sensor_cal_rom_read_ptr = (undefined *)&DAT_00064aea;
+  sensor_cal_rom_read_ptr = &sensor_channel_cal_rom_defaults;
   sensor_cal_write_dirty_flag = 0;
   ram_refresh_enable = RAM_REFRESH_ENABLED;
   power_down_refresh_enable = 1;
@@ -101068,7 +101068,8 @@ void cm848_refreshRamCalibration(void)
   if (ram_refresh_enable != RAM_REFRESH_DISABLED) {
     if (*(undefined **)(PTR_PTR_003fd2d0 + 4) <= sensor_cal_ram_write_ptr) {
       PTR_PTR_003fd2d0 = PTR_PTR_003fd2d0 + 0xc;
-      if ((undefined *)((int)&PTR_DAT_003fd2cc + 3U) < PTR_PTR_003fd2d0) {
+      if ((undefined *)((int)&PTR_sensor_channel_cal_rom_defaults_003fd2cc + 3U) < PTR_PTR_003fd2d0)
+      {
         PTR_PTR_003fd2d0 = (undefined *)&PTR_sensor_channel_cal_block_start_003fd2c4;
         if (sensor_cal_write_dirty_flag == 0) {
           if ((fault_registered_cal.faults_0_to_15 & 1) != 0) {
