@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:58:38 UTC 2026
+// Generated: Fri Nov 27 03:04:19 UTC 2026
 
 
 //
@@ -1912,10 +1912,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &qadc64_b.DDRQA_B;
   wVar1 = qadc64_b.DDRQA_B;
@@ -28098,16 +28098,16 @@ void cm848_initializePgn65260VehicleIdHandler(void)
   j1939_pgn65260_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65260_priority_cal & 7) << 2,0xfeec00);
   j1939_pgn65260_tx_message.header.data_length = 0x15;
-  j1939_pgn65260_tx_message.data_pointer = &DAT_003faf07;
+  j1939_pgn65260_tx_message.data_pointer = j1939_pgn65260_payload;
   j1939_pgn65260_tx_message.status_pointer = &j1939_pgn65260_transmit_status;
   j1939_pgn65260_tx_message.header.can_id =
        CONCAT31(j1939_pgn65260_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   uVar1 = 0;
   do {
-    (&DAT_003faf07)[uVar1] = vehicle_vin_string_cal[uVar1];
+    j1939_pgn65260_payload[uVar1] = vehicle_vin_string_cal[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0x14);
-  DAT_003faf1b = 0x2a;
+  j1939_pgn65260_payload[0x14] = 0x2a;
   registerJ1939PgnRequestHandler(0xfeec,sendPgn65260VehicleIdentificationMessage);
   return;
 }
@@ -28157,13 +28157,13 @@ void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void)
   j1939_pgn65279_tx_message.header.data_length = 1;
   j1939_pgn65279_tx_message.data_pointer = &j1939_pgn65279_water_in_fuel_indicator_byte;
   j1939_pgn65279_tx_message.status_pointer = &j1939_pgn65279_transmit_status;
-  DAT_003faf1d = 0xff;
-  DAT_003faf1e = 0xff;
-  DAT_003faf1f = 0xff;
-  DAT_003faf20 = 0xff;
-  DAT_003faf21 = 0xff;
-  DAT_003faf22 = 0xff;
-  DAT_003faf23 = 0xff;
+  j1939_pgn65279_unused_payload_bytes[0] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[1] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[2] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[3] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[4] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[5] = 0xff;
+  j1939_pgn65279_unused_payload_bytes[6] = 0xff;
   return;
 }
 
@@ -67134,16 +67134,18 @@ void cm848_updateEgrValvePositionAutozero(void)
 {
   sword *psVar1;
   
-  psVar1 = &DAT_003fbcc6;
-  DAT_003fbcc8 = egr_valve_position_sensor_value;
-  DAT_003fbcca = egr_valve_position_autozero_tolerance;
-  DAT_003fbcd0 = egr_valve_position_autozero_enable_time;
-  DAT_003fbcd2 = egr_valve_position_autozero_fault_time;
-  DAT_003fbcd8 = egr_valve_position_autozero_error_count_clear_cal;
-  DAT_003fbcdc = 5;
-  PTR_PTR_003fbcde = (undefined *)&PTR_egr_valve_position_autozero_filter_coefficient_003fbcbe;
-  cm848_updateAutozeroOffset(&DAT_003fbcc6);
-  if (DAT_003fbcda == 0) {
+  psVar1 = &egr_valve_position_autozero_offset_filter_output;
+  egr_valve_position_autozero_sample = egr_valve_position_sensor_value;
+  egr_valve_position_autozero_tolerance_working = egr_valve_position_autozero_tolerance;
+  egr_valve_position_autozero_enable_time_working = egr_valve_position_autozero_enable_time;
+  egr_valve_position_autozero_fault_time_working = egr_valve_position_autozero_fault_time;
+  egr_valve_position_autozero_error_count_clear_flag =
+       egr_valve_position_autozero_error_count_clear_cal;
+  egr_valve_position_autozero_pass_increment = 5;
+  egr_valve_position_autozero_offset_filter_pointer =
+       &egr_valve_position_autozero_offset_filter_state;
+  cm848_updateAutozeroOffset(&egr_valve_position_autozero_offset_filter_output);
+  if (egr_valve_position_autozero_error_status == 0) {
     fault_detected_cal._88_2_ = fault_detected_cal._88_2_ & 0xbfff;
     fault_registered_cal._88_2_ = fault_registered_cal._88_2_ & 0xbfff;
   }
@@ -67232,15 +67234,16 @@ void cm848_updateEgrValvePosition(void)
 void cm848_initializeEgrValvePosition(void)
 
 {
-  DAT_003fbcce = 0;
-  DAT_003fbcd4 = 0;
-  DAT_003fbcd6 = 0;
-  DAT_003fbcda = 0;
+  egr_valve_position_autozero_enable_timer = 0;
+  egr_valve_position_autozero_error_counter = 0;
+  egr_valve_position_autozero_sample_window_counter = 0;
+  egr_valve_position_autozero_error_status = 0;
   fault_detected_cal.egr_valve_autozero_error = 0;
   fault_registered_cal.egr_valve_autozero_error = 0;
-  DAT_003fbcc2 = (int)(short)egr_valve_position_sensor_value << 0x10;
-  PTR_egr_valve_position_autozero_filter_coefficient_003fbcbe =
-       (undefined *)&egr_valve_position_autozero_filter_coefficient;
+  egr_valve_position_autozero_offset_filter_state.accumulator =
+       (int)(short)egr_valve_position_sensor_value << 0x10;
+  egr_valve_position_autozero_offset_filter_state.coefficient =
+       &egr_valve_position_autozero_filter_coefficient;
   egr_valve_position = egr_valve_position_sensor_value;
   egr_valve_position_virtual_sensor_copy = egr_valve_position_sensor_value;
   if ((egr_valve_position_sensor_fault_status == 0) || (egr_valve_position_sensor_fault_status == 1)
@@ -97938,8 +97941,8 @@ void cm848_clearFaultStatusRecord(int param_1)
    starts since the 1st..8th most recent fault was logged; index 0 = newest, parallel to
    recent_fault_dtc_codes_cal) gets +1 while it is below 255. Called once per engine start by
    cm848_auxiliaryControlTask, on the first pass after engine_state is RUNNING, ENGINE_BRAKE or
-   OVERSPEED, behind the once-flag DAT_003fd22b and fault_aging_triggered_flag = 0. 255 in all eight
-   words in the dump. (was diag_protection_history_increment) */
+   OVERSPEED, behind the once-flag engine_start_counted_flag and fault_aging_triggered_flag = 0. 255
+   in all eight words in the dump. (was diag_protection_history_increment) */
 
 void cm848_incrementEngineStartCountsSinceFaultLogged(void)
 
@@ -99633,38 +99636,50 @@ void hpcr_injectPressureDiagnostic(void)
     }
     cm848_checkSensorStuckOverDistance
               (0x45,&battery_temperature_stuck_check_last_failed_warm_up_cycle_cal,
-               &battery_temperature_stuck_check_failed_previous_flag_cal,&DAT_003fd251,&DAT_003fd254
-               ,&battery_temperature_stuck_check_distance_traveled,&DAT_003fd23a,
+               &battery_temperature_stuck_check_failed_previous_flag_cal,
+               &battery_temperature_stuck_check_distance_reached_flag,
+               &battery_temperature_stuck_check_armed_flag,
+               &battery_temperature_stuck_check_distance_traveled,
+               &battery_temperature_stuck_check_reference_value,
                &battery_temperature_stuck_check_failed_warm_up_cycle_count_cal,
                battery_temperature_stuck_check_failed_cycle_limit,0x17b,0x17c,
                battery_temperature_stuck_check_distance_threshold,
                battery_temperature_stuck_check_temperature_delta,0x161,0x167,
                &battery_temperature_stuck_check_state,&battery_temperature_key_on_rationality_state,
-               &battery_temperature_stuck_check_accumulated_miles_cal,&DAT_003fd240,
+               &battery_temperature_stuck_check_accumulated_miles_cal,
+               &battery_temperature_stuck_check_accumulated_miles_at_start,
                battery_temperature_stuck_check_accumulated_distance_limit,1);
     cm848_checkSensorStuckOverDistance
               (9,&intake_manifold_temperature_stuck_check_last_failed_warm_up_cycle_cal,
-               &intake_manifold_temperature_stuck_check_failed_previous_flag_cal,&DAT_003fd252,
-               &DAT_003fd255,&intake_manifold_temperature_stuck_check_distance_traveled,
-               &DAT_003fd23c,&intake_manifold_temperature_stuck_check_failed_warm_up_cycle_count_cal
-               ,intake_manifold_temperature_stuck_check_failed_cycle_limit,0x13,0x14,
+               &intake_manifold_temperature_stuck_check_failed_previous_flag_cal,
+               &intake_manifold_temperature_stuck_check_distance_reached_flag,
+               &intake_manifold_temperature_stuck_check_armed_flag,
+               &intake_manifold_temperature_stuck_check_distance_traveled,
+               &intake_manifold_temperature_stuck_check_reference_value,
+               &intake_manifold_temperature_stuck_check_failed_warm_up_cycle_count_cal,
+               intake_manifold_temperature_stuck_check_failed_cycle_limit,0x13,0x14,
                intake_manifold_temperature_stuck_check_distance_threshold,
                intake_manifold_temperature_stuck_check_temperature_delta,0x162,0x166,
                &intake_manifold_temperature_stuck_check_state,
                &intake_manifold_temperature_key_on_rationality_state,
-               &intake_manifold_temperature_stuck_check_accumulated_miles_cal,&DAT_003fd242,
+               &intake_manifold_temperature_stuck_check_accumulated_miles_cal,
+               &intake_manifold_temperature_stuck_check_accumulated_miles_at_start,
                intake_manifold_temperature_stuck_check_accumulated_distance_limit,2);
     cm848_checkSensorStuckOverDistance
               (0x14,&ambient_air_temperature_stuck_check_last_failed_warm_up_cycle_cal,
-               &ambient_air_temperature_stuck_check_failed_previous_flag_cal,&DAT_003fd250,
-               &DAT_003fd253,&ambient_air_temperature_stuck_check_distance_traveled,&DAT_003fd238,
+               &ambient_air_temperature_stuck_check_failed_previous_flag_cal,
+               &ambient_air_temperature_stuck_check_distance_reached_flag,
+               &ambient_air_temperature_stuck_check_armed_flag,
+               &ambient_air_temperature_stuck_check_distance_traveled,
+               &ambient_air_temperature_stuck_check_reference_value,
                &ambient_air_temperature_stuck_check_failed_warm_up_cycle_count_cal,
                ambient_air_temperature_stuck_check_failed_cycle_limit,0x96,0x97,
                ambient_air_temperature_stuck_check_distance_threshold,
                ambient_air_temperature_stuck_check_temperature_delta,0x153,0x168,
                &ambient_air_temperature_stuck_check_state,
                &ambient_air_temperature_key_on_rationality_state,
-               &ambient_air_temperature_stuck_check_accumulated_miles_cal,&DAT_003fd23e,
+               &ambient_air_temperature_stuck_check_accumulated_miles_cal,
+               &ambient_air_temperature_stuck_check_accumulated_miles_at_start,
                ambient_air_temperature_stuck_check_accumulated_distance_limit,3);
     sensor_stuck_check_enable_flag_previous = sensor_stuck_check_enable_flag;
   }
