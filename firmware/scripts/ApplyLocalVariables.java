@@ -342,7 +342,13 @@ public class ApplyLocalVariables extends GhidraScript {
                     }
 
                     if (!found) {
-                        println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName);
+                        StringBuilder names = new StringBuilder();
+                        java.util.Iterator<HighSymbol> all = localSymbolMap.getSymbols();
+                        while (all.hasNext()) {
+                            names.append(names.length() == 0 ? "" : ", ").append(all.next().getName());
+                        }
+                        println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName +
+                                " (locals: " + names + ")");
                         result.skipped++;
                     }
                 }
@@ -408,7 +414,13 @@ public class ApplyLocalVariables extends GhidraScript {
                 }
             }
             if (high == null) {
-                println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName);
+                StringBuilder names = new StringBuilder();
+                java.util.Iterator<HighSymbol> all = localSymbolMap.getSymbols();
+                while (all.hasNext()) {
+                    names.append(names.length() == 0 ? "" : ", ").append(all.next().getName());
+                }
+                println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName +
+                        " (locals: " + names + ")");
                 return false;
             }
             uses.addAll(java.util.Arrays.asList(high.getInstances()));

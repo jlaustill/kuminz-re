@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 05:32:45 UTC 2026
+// Generated: Fri Nov 27 05:53:24 UTC 2026
 
 
 //
@@ -10958,13 +10958,13 @@ void mpc555_dispatchExternalInterrupt(void)
     entry_time_base_low = TBLr;
     entry_time_base_high_check = TBUr;
   } while (entry_time_base_high != entry_time_base_high_check);
-  interrupt_code = USIU_SIVEC._0_1_;
-  saved_interrupt_mask = USIU_SIMASK._0_2_;
-  current_interrupt_mask = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ =
+  interrupt_code = USIU_SIVEC.interrupt_code;
+  saved_interrupt_mask = USIU_SIMASK.irq_and_level_bits;
+  current_interrupt_mask = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits =
        current_interrupt_mask & mpc555_interrupt_nesting_mask_table[interrupt_code >> 2];
   (*mpc555_interrupt_dispatch_table[interrupt_code >> 2])();
-  USIU_SIMASK._0_2_ = saved_interrupt_mask;
+  USIU_SIMASK.irq_and_level_bits = saved_interrupt_mask;
   if ((saved_interrupt_mask & 1) != 0) {
     do {
       iVar1 = TBUr;
@@ -11025,10 +11025,10 @@ void mpc555_handleDecrementerException(void)
   } while (entry_time_base_high != entry_time_base_high_check);
   throughput_window_decrementer_count = throughput_window_decrementer_count + 1;
   if (power_down_start_flag != 0) {
-    saved_interrupt_mask = USIU_SIMASK._0_2_;
-    USIU_SIMASK._0_2_ = 0;
+    saved_interrupt_mask = USIU_SIMASK.irq_and_level_bits;
+    USIU_SIMASK.irq_and_level_bits = 0;
     cm848_paceSupervisorWatchdogCycle();
-    USIU_SIMASK._0_2_ = saved_interrupt_mask;
+    USIU_SIMASK.irq_and_level_bits = saved_interrupt_mask;
   }
   if (0x13 < throughput_window_decrementer_count) {
     throughput_percent_busy =
@@ -11079,9 +11079,9 @@ void mpc555_handleDecrementerException(void)
 void mpc555_haltOnUnhandledException(void)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   
-  uVar1 = USIU_SIVEC._0_1_;
+  bVar1 = USIU_SIVEC.interrupt_code;
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
@@ -11104,9 +11104,9 @@ void mpc555_haltOnUnhandledException(void)
 void mpc555_haltOnUnhandledExternalInterrupt(void)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   
-  uVar1 = USIU_SIVEC._0_1_;
+  bVar1 = USIU_SIVEC.interrupt_code;
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
@@ -40375,10 +40375,10 @@ void cm848_checkPciMessageTimeouts(void)
 void cm848_onPciControllerInterrupt(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   
-  uVar1 = USIU_SIPEND._0_2_;
-  USIU_SIPEND._0_2_ = uVar1 | 0x200;
+  wVar1 = USIU_SIPEND.irq_and_level_bits;
+  USIU_SIPEND.irq_and_level_bits = wVar1 | 0x200;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
     pci_qspi_queue_result =
          cm848_queueQspiJob(&pci_controller_receive_job,(uint)pci_qspi_queue_priority);
@@ -41729,7 +41729,7 @@ void cm848_resetPciFrameBuffersAndLinkState(void)
 void cm848_initializePciControllerInterface(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   
   mpc555_driveOutputLineLow(0x7c);
   mpc555_driveOutputLineLow(0x7c);
@@ -41753,10 +41753,10 @@ void cm848_initializePciControllerInterface(void)
   pci_controller_command_job.device_slot = pci_controller_qspi_slot;
   pci_controller_receive_job.device_slot = pci_controller_qspi_slot;
   pci_controller_init_queue_result = cm848_queueQspiJob(&pci_controller_command_job,1);
-  uVar1 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = uVar1 | 0x200;
-  uVar1 = USIU_SIEL._0_2_;
-  USIU_SIEL._0_2_ = uVar1 | 0x200;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = wVar1 | 0x200;
+  wVar1 = USIU_SIEL.irq_and_level_bits;
+  USIU_SIEL.irq_and_level_bits = wVar1 | 0x200;
   return;
 }
 
@@ -43977,17 +43977,16 @@ void cm848_onQspiFinished(void)
 void mpc555_initializeQsmcmQspiModule(void)
 
 {
-  ushort uVar1;
-  word wVar2;
+  word wVar1;
   
   QSMCM_PQSPAR = 0x7b;
   QSMCM_DDRQS = 0x7e;
   qsmcm_portqs_low = 0x7f;
   qsmcm_qspi.SPCR0 = 0x800a;
-  uVar1 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = uVar1 | 0x100;
-  wVar2 = qsmcm_qspi.SPCR2;
-  qsmcm_qspi.SPCR2 = wVar2 | 0x8000;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = wVar1 | 0x100;
+  wVar1 = qsmcm_qspi.SPCR2;
+  qsmcm_qspi.SPCR2 = wVar1 | 0x8000;
   return;
 }
 
@@ -59910,9 +59909,9 @@ void mpc555_miosInterruptDispatcher(void)
 void mpc555_haltOnUnhandledMiosInterrupt(void)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   
-  uVar1 = USIU_SIVEC._0_1_;
+  bVar1 = USIU_SIVEC.interrupt_code;
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
@@ -59927,13 +59926,12 @@ void mpc555_haltOnUnhandledMiosInterrupt(void)
 void mpc555_enableSchedulerMiosOutput(void)
 
 {
-  ushort uVar1;
-  word wVar2;
+  word wVar1;
   
-  wVar2 = MIOS1LVL0;
-  MIOS1LVL0 = wVar2 | 0x600;
-  uVar1 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = uVar1 | 4;
+  wVar1 = MIOS1LVL0;
+  MIOS1LVL0 = wVar1 | 0x600;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = wVar1 | 4;
   return;
 }
 
@@ -60050,8 +60048,9 @@ void mpc555_systemStartupInitialization(word param_1)
 void run_power_cycle(void)
 
 {
-  undefined4 uVar1;
-  ushort uVar2;
+  word wVar1;
+  undefined4 uVar2;
+  ushort uVar3;
   dword in_DSISR;
   dword in_DAR;
   dword in_SPRG0;
@@ -60086,22 +60085,22 @@ void run_power_cycle(void)
     local_20[0] = 0;
     cm848_queueEepromByteWritesAtOffset11134
               (&consecutive_incomplete_power_down_count_cal,local_20,2);
-    uVar2 = 0;
+    uVar3 = 0;
     if (consecutive_incomplete_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
-        uVar2 = uVar2 + 1;
-        if (4999 < uVar2) break;
+        uVar3 = uVar3 + 1;
+        if (4999 < uVar3) break;
       } while (consecutive_incomplete_power_down_count_cal != local_20[0]);
     }
     local_20[0] = completed_power_down_count_cal + 1;
     cm848_queueEepromByteWritesAtOffset11134(&completed_power_down_count_cal,local_20,2);
-    uVar2 = 0;
+    uVar3 = 0;
     if (completed_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
-        uVar2 = uVar2 + 1;
-        if (4999 < uVar2) break;
+        uVar3 = uVar3 + 1;
+        if (4999 < uVar3) break;
       } while (completed_power_down_count_cal != local_20[0]);
     }
     fault_detected_cal._10_2_ = fault_detected_cal._10_2_ & 0xfdff;
@@ -60112,22 +60111,22 @@ void run_power_cycle(void)
     local_20[0] = consecutive_incomplete_power_down_count_cal + 1;
     cm848_queueEepromByteWritesAtOffset11134
               (&consecutive_incomplete_power_down_count_cal,local_20,2);
-    uVar2 = 0;
+    uVar3 = 0;
     if (consecutive_incomplete_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
-        uVar2 = uVar2 + 1;
-        if (4999 < uVar2) break;
+        uVar3 = uVar3 + 1;
+        if (4999 < uVar3) break;
       } while (consecutive_incomplete_power_down_count_cal != local_20[0]);
     }
     local_20[0] = incomplete_power_down_count_cal + 1;
     cm848_queueEepromByteWritesAtOffset11134(&incomplete_power_down_count_cal,local_20,2);
-    uVar2 = 0;
+    uVar3 = 0;
     if (incomplete_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
-        uVar2 = uVar2 + 1;
-        if (4999 < uVar2) break;
+        uVar3 = uVar3 + 1;
+        if (4999 < uVar3) break;
       } while (incomplete_power_down_count_cal != local_20[0]);
     }
     high_idle_override_flag._0_2_ = 1;
@@ -60141,12 +60140,12 @@ void run_power_cycle(void)
   }
   local_20[0] = completed_power_down_count_cal + incomplete_power_down_count_cal;
   cm848_queueEepromByteWritesAtOffset11134(&power_cycle_sequence_number_cal,local_20,2);
-  uVar2 = 0;
+  uVar3 = 0;
   if (power_cycle_sequence_number_cal != local_20[0]) {
     do {
       cm848_delayMicroseconds(0x13);
-      uVar2 = uVar2 + 1;
-      if (4999 < uVar2) break;
+      uVar3 = uVar3 + 1;
+      if (4999 < uVar3) break;
     } while (power_cycle_sequence_number_cal != local_20[0]);
   }
   if (flash_write_failure_flag_cal == 0) {
@@ -60427,14 +60426,14 @@ void run_power_cycle(void)
   if (power_on_reset_to_first_main_loop_pass_time == 0) {
     power_on_reset_to_first_main_loop_pass_time = TBLr;
   }
-  uVar2 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = interrupt_mask_saved_at_run_loop_exit | uVar2 | 1;
-  uVar1 = 0x1e848;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = interrupt_mask_saved_at_run_loop_exit | wVar1 | 1;
+  uVar2 = 0x1e848;
   do {
-    uVar1 = cm848_refreshRamCalibration(uVar1);
+    uVar2 = cm848_refreshRamCalibration(uVar2);
   } while (power_down_start_flag == 0);
-  interrupt_mask_saved_at_run_loop_exit = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = 0x100;
+  interrupt_mask_saved_at_run_loop_exit = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = 0x100;
   cm848_flagTripInformationPowerDownDataLoss();
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
@@ -60462,7 +60461,7 @@ void run_power_cycle(void)
 void cm848_restartApplicationWithoutReset(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   undefined4 uVar2;
   
   cm848_initializeDiscreteOutputReadBackChecks();
@@ -60473,14 +60472,14 @@ void cm848_restartApplicationWithoutReset(void)
   if (power_on_reset_to_first_main_loop_pass_time == 0) {
     power_on_reset_to_first_main_loop_pass_time = TBLr;
   }
-  uVar1 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = interrupt_mask_saved_at_run_loop_exit | uVar1 | 1;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = interrupt_mask_saved_at_run_loop_exit | wVar1 | 1;
   uVar2 = 0x1e848;
   do {
     uVar2 = cm848_refreshRamCalibration(uVar2);
   } while (power_down_start_flag == 0);
-  interrupt_mask_saved_at_run_loop_exit = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = 0x100;
+  interrupt_mask_saved_at_run_loop_exit = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = 0x100;
   cm848_flagTripInformationPowerDownDataLoss();
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
@@ -61345,15 +61344,15 @@ void mpc555_initializeTpuConfiguration(void)
     tpu_b.TPUMCR3 = 0x1e;
     tpu_b.CIER = 0;
     tpu_b.TICR = 0x200;
-    uVar5 = USIU_SIMASK._0_2_;
-    USIU_SIMASK._0_2_ = uVar5 | 0x400;
+    wVar1 = USIU_SIMASK.irq_and_level_bits;
+    USIU_SIMASK.irq_and_level_bits = wVar1 | 0x400;
     tpu_a.TPUMCR = 0x4460;
     tpu_a.TPUMCR2 = 0x20;
     tpu_a.TPUMCR3 = 0;
     tpu_a.CIER = 0;
     tpu_a.TICR = 0x100;
-    uVar5 = USIU_SIMASK._0_2_;
-    USIU_SIMASK._0_2_ = uVar5 | 0x1000;
+    wVar1 = USIU_SIMASK.irq_and_level_bits;
+    USIU_SIMASK.irq_and_level_bits = wVar1 | 0x1000;
   }
   return;
 }
@@ -83939,14 +83938,13 @@ void cm848_sciEnableSerialMode(void)
 void cm848_initializeSciPort1(void)
 
 {
-  ushort uVar1;
-  word wVar2;
+  word wVar1;
   
   qsmcm_sci1.SCC1R0 = 0xa0;
-  wVar2 = qsmcm_sci1.SC1SR;
+  wVar1 = qsmcm_sci1.SC1SR;
   qsmcm_sci1.SCC1R1 = 0x102c;
-  uVar1 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = uVar1 | 0x10;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = wVar1 | 0x10;
   return;
 }
 
@@ -101383,8 +101381,7 @@ LAB_00539060:
 void cm848_j1939_system_init(void)
 
 {
-  ushort uVar1;
-  word wVar2;
+  word wVar1;
   int transmit_mailbox_number;
   dword receive_id_template_index;
   dword last_mailbox_before_j1939;
@@ -101505,7 +101502,7 @@ void cm848_j1939_system_init(void)
   registerJ1939MemoryWriteServices();
   registerJ1939DiagnosticHandlers();
   registerJ1939BroadcastAndNoOperationServices();
-  wVar2 = j1939_engine_destination_specific_receive_message_object_count;
+  wVar1 = j1939_engine_destination_specific_receive_message_object_count;
   last_mailbox_before_j1939 = (dword)can_last_message_object_used;
   transmit_mailbox_number = last_mailbox_before_j1939 + 1;
   j1939_transmit_message_object_number = (word)transmit_mailbox_number;
@@ -101530,9 +101527,9 @@ void cm848_j1939_system_init(void)
       receive_mailbox_cursor[1] = 0x40;
       receive_mailbox_cursor = receive_mailbox_cursor + 0x10;
       group_mailbox_index = group_mailbox_index + 1 & 0xff;
-    } while (group_mailbox_index < wVar2);
+    } while (group_mailbox_index < wVar1);
   }
-  wVar2 = j1939_engine_destination_non_specific_receive_message_object_count;
+  wVar1 = j1939_engine_destination_non_specific_receive_message_object_count;
   group_mailbox_index = 0;
   if (j1939_engine_destination_non_specific_receive_message_object_count != 0) {
     do {
@@ -101542,9 +101539,9 @@ void cm848_j1939_system_init(void)
       receive_mailbox_cursor[1] = 0x40;
       receive_mailbox_cursor = receive_mailbox_cursor + 0x10;
       group_mailbox_index = group_mailbox_index + 1 & 0xff;
-    } while (group_mailbox_index < wVar2);
+    } while (group_mailbox_index < wVar1);
   }
-  wVar2 = j1939_retarder_destination_specific_receive_message_object_count;
+  wVar1 = j1939_retarder_destination_specific_receive_message_object_count;
   group_mailbox_index = 0;
   if (j1939_retarder_destination_specific_receive_message_object_count != 0) {
     filter_source_address = (dword)j1939_engine_retarder_source_address;
@@ -101556,9 +101553,9 @@ void cm848_j1939_system_init(void)
       receive_mailbox_cursor[1] = 0x40;
       receive_mailbox_cursor = receive_mailbox_cursor + 0x10;
       group_mailbox_index = group_mailbox_index + 1 & 0xff;
-    } while (group_mailbox_index < wVar2);
+    } while (group_mailbox_index < wVar1);
   }
-  wVar2 = j1939_retarder_destination_non_specific_receive_message_object_count;
+  wVar1 = j1939_retarder_destination_non_specific_receive_message_object_count;
   group_mailbox_index = 0;
   if (j1939_retarder_destination_non_specific_receive_message_object_count != 0) {
     do {
@@ -101568,7 +101565,7 @@ void cm848_j1939_system_init(void)
       receive_mailbox_cursor[1] = 0x40;
       receive_mailbox_cursor = receive_mailbox_cursor + 0x10;
       group_mailbox_index = group_mailbox_index + 1 & 0xff;
-    } while (group_mailbox_index < wVar2);
+    } while (group_mailbox_index < wVar1);
   }
                     /* The shift is transmit_mailbox_number - 1 (the compiler adds 0xffff to
                        transmit_mailbox_number; Ghidra folds that into last_mailbox_before_j1939 +
@@ -101580,13 +101577,13 @@ void cm848_j1939_system_init(void)
   if (j1939_valid_receive_message_object_count != 0) {
     do {
       interrupt_mask_bit = interrupt_mask_bit * 2;
-      wVar2 = toucan_a.IMASK;
-      toucan_a.IMASK = (ushort)interrupt_mask_bit | wVar2;
+      wVar1 = toucan_a.IMASK;
+      toucan_a.IMASK = (ushort)interrupt_mask_bit | wVar1;
       receive_mailbox_index = receive_mailbox_index + 1 & 0xff;
     } while (receive_mailbox_index < j1939_valid_receive_message_object_count);
   }
-  uVar1 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = uVar1 | 0x40;
+  wVar1 = USIU_SIMASK.irq_and_level_bits;
+  USIU_SIMASK.irq_and_level_bits = wVar1 | 0x40;
   return;
 }
 

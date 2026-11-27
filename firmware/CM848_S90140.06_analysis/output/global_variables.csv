@@ -730,10 +730,10 @@ address,name,type,comment
 0x002fc000,USIU_SIUMCR,dword,
 0x002fc004,USIU_SYPCR,dword,
 0x002fc00e,USIU_SWSR,word,
-0x002fc010,USIU_SIPEND,dword,
-0x002fc014,USIU_SIMASK,dword,MPC555 USIU SIU interrupt mask register (SIPEND 0x2fc010 / SIMASK 0x2fc014 / SIEL 0x2fc018 / SIVEC 0x2fc01c) - each set bit enables one SIU interrupt vector - used broadly - mpc555_dispatchExternalInterrupt masks it per vector then dispatches (was scheduler_task_enable_flags)
-0x002fc018,USIU_SIEL,dword,MPC555 USIU SIU interrupt edge/level (SIEL) register at 0x2fc018 - sits between USIU_SIMASK 0x2fc014 and USIU_SIVEC 0x2fc01c in the SIU block - cm848_initializePciControllerInterface sets bit 0x200 here alongside SIMASK to enable PCI interrupt vector 6 (was scheduler_task_pending_flags)
-0x002fc01c,USIU_SIVEC,dword,
+0x002fc010,USIU_SIPEND,usiu_siu_interrupt_register_t,
+0x002fc014,USIU_SIMASK,usiu_siu_interrupt_register_t,MPC555 USIU SIU interrupt mask register (SIPEND 0x2fc010 / SIMASK 0x2fc014 / SIEL 0x2fc018 / SIVEC 0x2fc01c) - each set bit enables one SIU interrupt vector - used broadly - mpc555_dispatchExternalInterrupt masks it per vector then dispatches (was scheduler_task_enable_flags)
+0x002fc018,USIU_SIEL,usiu_siu_interrupt_register_t,MPC555 USIU SIU interrupt edge/level (SIEL) register at 0x2fc018 - sits between USIU_SIMASK 0x2fc014 and USIU_SIVEC 0x2fc01c in the SIU block - cm848_initializePciControllerInterface sets bit 0x200 here alongside SIMASK to enable PCI interrupt vector 6 (was scheduler_task_pending_flags)
+0x002fc01c,USIU_SIVEC,usiu_siu_interrupt_vector_t,
 0x002fc020,USIU_TESR,dword,
 0x002fc024,SIU_SGPIODT1,siu_gpio_data_register_t,MPC555 SIU general-purpose I/O data register 1 - output lines are driven here (was system_capability_flags)
 0x002fc028,SIU_SGPIODT2,siu_gpio_data_register_t,MPC555 SIU general-purpose I/O data register 2 (was calibration_config_word)

@@ -164,8 +164,8 @@ function_address,function_name,old_name,new_name,type,comment,keep_merged
 0x00010274,mpc555_dispatchExternalInterrupt,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
-0x00010274,mpc555_dispatchExternalInterrupt,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
-0x00010274,mpc555_dispatchExternalInterrupt,uVar7,current_interrupt_mask,ushort,SIMASK read again: ANDed with the nesting mask of the interrupt code and written back (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,wVar6,saved_interrupt_mask,word,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,wVar7,current_interrupt_mask,word,SIMASK read again: ANDed with the nesting mask of the interrupt code and written back (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,bVar8,interrupt_code,byte,The SIVEC interrupt code byte (4 x the source number) (PR #53 round 98)
 0x00010274,mpc555_dispatchExternalInterrupt,bVar9,low_sum_carry,bool,Carry of the low word's add into the high word (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,uVar1,entry_time_base_low,undefined4,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
@@ -173,7 +173,7 @@ function_address,function_name,old_name,new_name,type,comment,keep_merged
 0x0001041c,mpc555_handleDecrementerException,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
 0x0001041c,mpc555_handleDecrementerException,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
-0x0001041c,mpc555_handleDecrementerException,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,wVar6,saved_interrupt_mask,word,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
 0x0003a450,cm848_initializePciMessagePayloads,iVar7,byte_index,int32_t,"Loop counter of each buffer fill",yes
 0x0003a450,cm848_initializePciMessagePayloads,iVar8,vin_characters_copied,int32_t,"Counts the 4 VIN characters copied into each of TX[21]-TX[23]",yes
 0x0003a450,cm848_initializePciMessagePayloads,iVar6,last_vin_index,int32_t,"Index of the VIN character copied last; the next copy reads vehicle_vin_string_cal[last_vin_index + 1]",yes

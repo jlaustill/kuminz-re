@@ -1295,6 +1295,14 @@ siu_gpio_data_register_t,,byte_0,byte,1,Bits 31-24: lines 24-31 in SIU_SGPIODT1 
 siu_gpio_data_register_t,,byte_1,byte,1,Bits 23-16: lines 32-39 in SIU_SGPIODT1 / lines 64-71 in SIU_SGPIODT2,,verified
 siu_gpio_data_register_t,,byte_2,byte,1,Bits 15-8: lines 40-47 in SIU_SGPIODT1 / lines 72-79 in SIU_SGPIODT2,,verified
 siu_gpio_data_register_t,,byte_3,byte,1,Bits 7-0: lines 48-55 in SIU_SGPIODT1 / lines 80-87 in SIU_SGPIODT2,,verified
+# usiu_siu_interrupt_register_t: MPC555 USIU SIPEND / SIMASK / SIEL (0x2fc010 / 0x2fc014 / 0x2fc018). Only the high halfword is used, and the firmware reads and writes it with lhz / sth
+usiu_siu_interrupt_register_t,,irq_and_level_bits,word,2,"Bits 0-15, most significant first: IRQ0 LVL0 IRQ1 LVL1 ... IRQ7 LVL7 (0x8000 = IRQ0, 0x4000 = LVL0, 0x0200 = IRQ3, 0x0040 = LVL4, 0x0001 = LVL7)",,verified
+usiu_siu_interrupt_register_t,,reserved,word,2,Bits 16-31: reserved on the MPC555,,verified
+# usiu_siu_interrupt_vector_t: MPC555 USIU SIVEC (0x2fc01c). The firmware reads only the INTC byte with lbz
+usiu_siu_interrupt_vector_t,,interrupt_code,byte,1,"INTC: 4 x the highest-priority pending SIU source (IRQ0 = 0x00, LVL0 = 0x04 ... LVL7 = 0x3c)",,verified
+usiu_siu_interrupt_vector_t,,reserved_1,byte,1,Reserved,,verified
+usiu_siu_interrupt_vector_t,,reserved_2,byte,1,Reserved,,verified
+usiu_siu_interrupt_vector_t,,reserved_3,byte,1,Reserved,,verified
 # discrete_line_image_t: one byte per 8 discrete lines (line N = byte N/8 bit N%8); three instances:
 #   output_line_read_back 0x40c0e4 / input_line_image 0x40c0f8 / output_line_state 0x40c10c
 discrete_line_image_t,,lines_0_to_7,byte,1,Lines 0-7 (bit = line - 0),,verified
